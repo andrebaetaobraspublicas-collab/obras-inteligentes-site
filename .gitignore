@@ -1,0 +1,10 @@
+# Repositorio da pagina inicial estatica.
+# O sistema Flask deve ser publicado pelo repositorio proprio em:
+# Sistema Manutencao Predial/
+
+Sistema Manutenção Predial/
+Gestão e Fiscalização de Contratos/
+
+.DS_Store
+Thumbs.db
+*.log

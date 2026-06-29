@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Obras Inteligentes — tecnologia para a gestão de obras públicas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blueprint:#0a2540;
+  --blueprint-deep:#061a2e;
+  --paper:#f4f6f4;
+  --grid:#cfd8d3;
+  --ink:#11261a;
+  --line:#1c3a52;
+  --cyan:#15b8a6;
+  --amber:#f5a524;
+  --rule:rgba(255,255,255,.16);
+  --mono:"Space Mono",monospace;
+  --display:"Archivo",sans-serif;
+  --body:"Inter",sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--body);background:var(--paper);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+
+/* ---------- HERO ---------- */
+.hero{
+  position:relative;
+  background:var(--blueprint);
+  color:#eaf2f8;
+  padding:0;
+  overflow:hidden;
+  border-bottom:2px solid var(--blueprint-deep);
+}
+.hero::before{
+  content:"";
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.07) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.07) 1px,transparent 1px),
+    linear-gradient(rgba(255,255,255,.13) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.13) 1px,transparent 1px);
+  background-size:28px 28px,28px 28px,140px 140px,140px 140px;
+  pointer-events:none;
+}
+.nav{
+  position:relative;z-index:3;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:22px clamp(20px,5vw,64px);
+  border-bottom:1px solid var(--rule);
+}
+.brand{display:flex;align-items:center;gap:12px;font-family:var(--display);font-weight:800;letter-spacing:-.01em;font-size:18px}
+.brand .mark{
+  width:30px;height:30px;border:2px solid var(--cyan);position:relative;flex:none;
+}
+.brand .mark::before,.brand .mark::after{
+  content:"";position:absolute;background:var(--cyan);
+}
+.brand .mark::before{width:2px;height:14px;left:50%;top:-7px;transform:translateX(-50%)}
+.brand .mark::after{height:2px;width:14px;top:50%;right:-7px;transform:translateY(-50%)}
+.nav-links{display:flex;gap:28px;font-family:var(--mono);font-size:12.5px;letter-spacing:.02em}
+.nav-links a{color:#aebfcc;transition:color .2s}
+.nav-links a:hover{color:#fff}
+.nav-domain{font-family:var(--mono);font-size:12px;color:var(--cyan)}
+
+.hero-grid{
+  position:relative;z-index:2;
+  display:grid;grid-template-columns:1.15fr .85fr;
+  gap:48px;align-items:center;
+  padding:clamp(56px,9vw,110px) clamp(20px,5vw,64px) clamp(64px,9vw,120px);
+  max-width:1320px;margin:0 auto;
+}
+.eyebrow{
+  font-family:var(--mono);font-size:12.5px;letter-spacing:.14em;
+  color:var(--amber);text-transform:uppercase;margin-bottom:24px;
+  display:flex;align-items:center;gap:12px;
+}
+.eyebrow::before{content:"";width:36px;height:1px;background:var(--amber)}
+h1{
+  font-family:var(--display);font-weight:800;
+  font-size:clamp(38px,6vw,68px);line-height:1.02;letter-spacing:-.025em;
+  color:#fff;margin-bottom:24px;
+}
+h1 .hl{color:var(--cyan)}
+.lede{font-size:clamp(16px,1.5vw,19px);color:#b9c8d4;max-width:46ch;margin-bottom:36px}
+.cta-row{display:flex;gap:16px;flex-wrap:wrap}
+.btn{
+  font-family:var(--display);font-weight:600;font-size:15px;
+  padding:14px 28px;border:1.5px solid transparent;cursor:pointer;transition:.2s;
+  display:inline-flex;align-items:center;gap:10px;
+}
+.btn-primary{background:var(--cyan);color:var(--blueprint-deep)}
+.btn-primary:hover{background:#22d3bf;transform:translateY(-2px)}
+.btn-ghost{border-color:var(--rule);color:#eaf2f8}
+.btn-ghost:hover{border-color:var(--cyan);color:var(--cyan)}
+
+/* technical drawing panel */
+.hero-art{position:relative;aspect-ratio:1/1;border:1px solid var(--rule)}
+.hero-art .tag{
+  position:absolute;font-family:var(--mono);font-size:10.5px;
+  color:var(--cyan);letter-spacing:.05em;background:var(--blueprint);padding:2px 6px;
+}
+.hero-art .t1{top:-9px;left:18px}
+.hero-art .t2{bottom:-9px;right:18px;color:var(--amber)}
+.hero-art svg{width:100%;height:100%;display:block}
+
+/* ---------- STATS STRIP ---------- */
+.strip{
+  background:var(--blueprint-deep);color:#9fb3c2;
+  font-family:var(--mono);font-size:12.5px;
+  display:flex;flex-wrap:wrap;justify-content:center;gap:clamp(20px,5vw,64px);
+  padding:18px 24px;border-bottom:1px solid #0d2237;
+}
+.strip span b{color:var(--cyan);font-weight:700}
+
+/* ---------- APPS ---------- */
+.section{padding:clamp(72px,10vw,128px) clamp(20px,5vw,64px);max-width:1320px;margin:0 auto}
+.sec-head{margin-bottom:56px;max-width:640px}
+.sec-eyebrow{font-family:var(--mono);font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan);margin-bottom:16px}
+.sec-head h2{font-family:var(--display);font-weight:800;font-size:clamp(28px,4vw,44px);letter-spacing:-.02em;line-height:1.08;margin-bottom:16px}
+.sec-head p{color:#4a5a50;font-size:17px}
+
+.apps{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--grid);border:1px solid var(--grid)}
+.app{
+  background:var(--paper);padding:40px 32px;position:relative;
+  display:flex;flex-direction:column;min-height:340px;transition:background .25s;
+}
+.app:hover{background:#fff}
+.app-num{font-family:var(--mono);font-size:12px;color:#9aa89f;letter-spacing:.1em;margin-bottom:28px}
+.app-icon{width:48px;height:48px;margin-bottom:24px;color:var(--blueprint)}
+.app h3{font-family:var(--display);font-weight:700;font-size:22px;letter-spacing:-.01em;margin-bottom:12px}
+.app p{color:#54635a;font-size:15px;flex:1}
+.app .meta{font-family:var(--mono);font-size:11.5px;color:#8a988f;margin-top:24px;padding-top:18px;border-top:1px solid var(--grid)}
+.app .arrow{
+  position:absolute;top:36px;right:32px;font-size:20px;color:var(--cyan);
+  opacity:0;transform:translateX(-6px);transition:.25s;
+}
+.app:hover .arrow{opacity:1;transform:translateX(0)}
+
+/* ---------- CONTENT / BLOG ---------- */
+.content{background:var(--blueprint);color:#eaf2f8;position:relative;overflow:hidden}
+.content::before{
+  content:"";position:absolute;inset:0;
+  background-image:linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);
+  background-size:140px 100%;pointer-events:none;
+}
+.content .inner{position:relative;z-index:2;padding:clamp(72px,10vw,128px) clamp(20px,5vw,64px);max-width:1320px;margin:0 auto}
+.content .sec-head h2{color:#fff}
+.content .sec-head p{color:#b9c8d4}
+.posts{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+.post{border:1px solid var(--rule);padding:32px 28px;transition:.25s;display:flex;flex-direction:column}
+.post:hover{border-color:var(--cyan);transform:translateY(-4px)}
+.post .cat{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;color:var(--amber);text-transform:uppercase;margin-bottom:18px}
+.post h3{font-family:var(--display);font-weight:700;font-size:20px;line-height:1.25;letter-spacing:-.01em;margin-bottom:12px;color:#fff}
+.post p{color:#aebfcc;font-size:14.5px;flex:1}
+.post .read{font-family:var(--mono);font-size:12px;color:var(--cyan);margin-top:22px}
+
+/* ---------- CTA ---------- */
+.final{text-align:center;padding:clamp(80px,11vw,140px) 24px;background:var(--paper)}
+.final h2{font-family:var(--display);font-weight:800;font-size:clamp(30px,5vw,52px);letter-spacing:-.025em;line-height:1.05;max-width:18ch;margin:0 auto 20px}
+.final p{color:#54635a;font-size:18px;max-width:48ch;margin:0 auto 36px}
+
+/* ---------- FOOTER ---------- */
+footer{background:var(--blueprint-deep);color:#7d93a4;padding:56px clamp(20px,5vw,64px) 40px}
+.foot-grid{max-width:1320px;margin:0 auto;display:flex;justify-content:space-between;flex-wrap:wrap;gap:32px;align-items:flex-start}
+.foot-brand{font-family:var(--display);font-weight:800;color:#fff;font-size:18px;margin-bottom:10px}
+.foot-domain{font-family:var(--mono);font-size:13px;color:var(--cyan)}
+.foot-cols{display:flex;gap:clamp(40px,6vw,88px);flex-wrap:wrap}
+.foot-col h4{font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:#9fb3c2;margin-bottom:16px}
+.foot-col a{display:block;font-size:14px;margin-bottom:10px;color:#9aaab8;transition:color .2s}
+.foot-col a:hover{color:#fff}
+.foot-base{max-width:1320px;margin:40px auto 0;padding-top:24px;border-top:1px solid #11304a;font-family:var(--mono);font-size:11.5px;color:#5e7488;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+
+@media(max-width:880px){
+  .hero-grid{grid-template-columns:1fr;gap:40px}
+  .hero-art{max-width:380px}
+  .nav-links{display:none}
+  .apps,.posts{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto}}
+:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <nav class="nav">
+    <div class="brand"><span class="mark"></span>Obras Inteligentes</div>
+    <div class="nav-links">
+      <a href="#aplicativos">Aplicativos</a>
+      <a href="#conteudo">Conteúdo</a>
+      <a href="#sobre">Sobre</a>
+    </div>
+    <div class="nav-domain">obrasinteligentes.ia.br</div>
+  </nav>
+
+  <div class="hero-grid">
+    <div>
+      <div class="eyebrow">Lei 14.133/2021 · Engenharia · Tecnologia</div>
+      <h1>Obra pública bem feita começa com <span class="hl">controle</span> e <span class="hl">dados</span>.</h1>
+      <p class="lede">Conteúdo técnico sobre obras públicas e ferramentas práticas para quem planeja, fiscaliza e executa contratos de engenharia no setor público.</p>
+      <div class="cta-row">
+        <a href="#aplicativos" class="btn btn-primary">Ver aplicativos →</a>
+        <a href="#conteudo" class="btn btn-ghost">Ler o conteúdo</a>
+      </div>
+    </div>
+
+    <div class="hero-art">
+      <span class="tag t1">PLANTA · ESC 1:100</span>
+      <span class="tag t2">REV. 03</span>
+      <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <g fill="none" stroke="#15b8a6" stroke-width="1.5">
+          <!-- building footprint -->
+          <rect x="70" y="90" width="200" height="220"/>
+          <rect x="90" y="110" width="70" height="80"/>
+          <rect x="180" y="110" width="70" height="80"/>
+          <rect x="90" y="210" width="160" height="80"/>
+          <!-- annex -->
+          <rect x="270" y="150" width="60" height="100" stroke="#f5a524"/>
+        </g>
+        <!-- dimension lines -->
+        <g stroke="#7da3c0" stroke-width="1">
+          <line x1="70" y1="60" x2="270" y2="60"/>
+          <line x1="70" y1="55" x2="70" y2="65"/>
+          <line x1="270" y1="55" x2="270" y2="65"/>
+          <line x1="40" y1="90" x2="40" y2="310"/>
+          <line x1="35" y1="90" x2="45" y2="90"/>
+          <line x1="35" y1="310" x2="45" y2="310"/>
+        </g>
+        <text x="170" y="50" fill="#9fc0d8" font-family="Space Mono, monospace" font-size="11" text-anchor="middle">20,00 m</text>
+        <text x="28" y="205" fill="#9fc0d8" font-family="Space Mono, monospace" font-size="11" text-anchor="middle" transform="rotate(-90 28 205)">22,00 m</text>
+        <!-- north arrow -->
+        <g transform="translate(330,330)">
+          <path d="M0,-18 L6,8 L0,2 L-6,8 Z" fill="#f5a524"/>
+          <text x="0" y="24" fill="#f5a524" font-family="Space Mono, monospace" font-size="11" text-anchor="middle">N</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+</header>
+
+<div class="strip">
+  <span><b>3</b> aplicativos prontos para uso</span>
+  <span>Conformidade com a <b>Lei 14.133/2021</b></span>
+  <span>Referência em jurisprudência do <b>TCU</b></span>
+  <span>Sem instalação · roda no navegador</span>
+</div>
+
+<!-- APPS -->
+<section class="section" id="aplicativos">
+  <div class="sec-head">
+    <div class="sec-eyebrow">Aplicativos</div>
+    <h2>Ferramentas que resolvem o trabalho real.</h2>
+    <p>Aplicações web autônomas, gratuitas e sem cadastro — feitas para o dia a dia de prefeituras, órgãos públicos e equipes de engenharia.</p>
+  </div>
+
+  <div class="apps">
+    <a class="app" href="https://manutencao.obrasinteligentes.ia.br" target="_blank" rel="noopener" aria-label="Abrir sistema Manutenção Predial">
+      <span class="arrow">→</span>
+      <div class="app-num">01 / MANUTENÇÃO</div>
+      <svg class="app-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 42V14L24 4l18 10v28"/><path d="M6 42h36"/><rect x="16" y="26" width="7" height="16"/><rect x="25" y="26" width="7" height="16"/><path d="M16 16h16"/>
+      </svg>
+      <h3>Manutenção Predial</h3>
+      <p>Planos de manutenção preventiva e corretiva conforme a NBR 5674, com registro de ocorrências, periodicidade e histórico por edificação.</p>
+      <div class="meta">NBR 5674:2012 · gestão de ativos</div>
+    </a>
+
+    <article class="app">
+      <span class="arrow">→</span>
+      <div class="app-num">02 / FISCALIZAÇÃO</div>
+      <svg class="app-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M8 6h26l8 8v28H8z"/><path d="M34 6v8h8"/><path d="M16 24l5 5 11-11"/>
+      </svg>
+      <h3>Fiscalização de Contratos</h3>
+      <p>Acompanhamento da execução contratual: curva S, medições, designação de fiscais, controle de aditivos e geração de relatórios e portarias.</p>
+      <div class="meta">Lei 14.133/2021 · TCU</div>
+    </article>
+
+    <article class="app">
+      <span class="arrow">→</span>
+      <div class="app-num">03 / ORÇAMENTO</div>
+      <svg class="app-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="8" y="6" width="32" height="36"/><path d="M16 16h16M16 24h16M16 32h10"/><path d="M14 6v36"/>
+      </svg>
+      <h3>Orçamentação de Obras</h3>
+      <p>Composições de custos com referências SINAPI, cálculo de BDI por encargos, planilhas orçamentárias e exportação para análise e licitação.</p>
+      <div class="meta">SINAPI · BDI · Acórdão TCU 2.622/2013</div>
+    </article>
+  </div>
+</section>
+
+<!-- CONTENT -->
+<section class="content" id="conteudo">
+  <div class="inner">
+    <div class="sec-head">
+      <div class="sec-eyebrow">Conteúdo</div>
+      <h2>Obras públicas explicadas com clareza.</h2>
+      <p>Análises práticas sobre licitação, fiscalização e jurisprudência — para servidores, engenheiros e cidadãos que querem entender para onde vai o dinheiro público.</p>
+    </div>
+
+    <div class="posts">
+      <article class="post">
+        <div class="cat">Licitação</div>
+        <h3>Quando o aditivo de contrato passa do limite legal?</h3>
+        <p>Os limites de 25% e 50% da Lei 14.133, o que diz o TCU e como justificar acréscimos sem cair em irregularidade.</p>
+        <div class="read">Ler artigo →</div>
+      </article>
+      <article class="post">
+        <div class="cat">Fiscalização</div>
+        <h3>O papel do fiscal de contrato na nova lei</h3>
+        <p>Atribuições, responsabilidades e os erros que mais geram apontamento nos tribunais de contas.</p>
+        <div class="read">Ler artigo →</div>
+      </article>
+      <article class="post">
+        <div class="cat">Orçamento</div>
+        <h3>Como montar um BDI que se sustenta em auditoria</h3>
+        <p>Componentes do BDI, faixas aceitáveis do TCU e os deslizes que inflam o preço de referência da obra.</p>
+        <div class="read">Ler artigo →</div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final" id="sobre">
+  <h2>Tecnologia a serviço da boa obra pública.</h2>
+  <p>O Obras Inteligentes reúne ferramentas e conhecimento para tornar a gestão de obras mais transparente, técnica e eficiente.</p>
+  <a href="#aplicativos" class="btn btn-primary">Começar pelos aplicativos →</a>
+</section>
+
+<footer>
+  <div class="foot-grid">
+    <div>
+      <div class="foot-brand">Obras Inteligentes</div>
+      <div class="foot-domain">www.obrasinteligentes.ia.br</div>
+    </div>
+    <div class="foot-cols">
+      <div class="foot-col">
+        <h4>Aplicativos</h4>
+        <a href="https://manutencao.obrasinteligentes.ia.br" target="_blank" rel="noopener">Manutenção Predial</a>
+        <a href="#aplicativos">Fiscalização de Contratos</a>
+        <a href="#aplicativos">Orçamentação de Obras</a>
+      </div>
+      <div class="foot-col">
+        <h4>Conteúdo</h4>
+        <a href="#conteudo">Licitação</a>
+        <a href="#conteudo">Fiscalização</a>
+        <a href="#conteudo">Orçamento</a>
+      </div>
+      <div class="foot-col">
+        <h4>Sobre</h4>
+        <a href="#sobre">O projeto</a>
+        <a href="#sobre">Contato</a>
+      </div>
+    </div>
+  </div>
+  <div class="foot-base">
+    <span>© 2026 Obras Inteligentes</span>
+    <span>Feito para o setor público brasileiro</span>
+  </div>
+</footer>
+
+</body>
+</html>
