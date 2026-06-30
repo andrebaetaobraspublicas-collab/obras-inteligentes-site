@@ -166,6 +166,42 @@ document.addEventListener('DOMContentLoaded', async function() {
       window.Babel.transformScriptTags();
     }
     document.title = 'Calculadora de Estrutural';
+    const splash = document.createElement('div');
+    splash.id = 'estruturaSplash';
+    splash.innerHTML = `
+      <style>
+        #estruturaSplash{position:fixed;inset:0;z-index:2147483000;display:grid;place-items:center;background:#163a73;color:#fff;font-family:'IBM Plex Sans',system-ui,sans-serif;transition:opacity .45s ease,visibility .45s ease}
+        #estruturaSplash.hide{opacity:0;visibility:hidden;pointer-events:none}
+        .estrutura-splash-panel{display:grid;gap:20px;justify-items:center;text-align:center;padding:28px}
+        .estrutura-splash-icon{width:min(420px,78vw);height:auto;filter:drop-shadow(0 18px 34px rgba(0,0,0,.28))}
+        .estrutura-splash-kicker{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:#9cc0ff;font-weight:600}
+        .estrutura-splash-title{font-size:clamp(32px,5vw,62px);line-height:1;font-weight:700;letter-spacing:-.02em}
+        .estrutura-splash-bar{width:min(320px,70vw);height:3px;border-radius:999px;overflow:hidden;background:rgba(255,255,255,.2)}
+        .estrutura-splash-bar span{display:block;height:100%;width:0;background:#fff;animation:estruturaSplashLoad 3s linear forwards}
+        @keyframes estruturaSplashLoad{to{width:100%}}
+      </style>
+      <div class="estrutura-splash-panel">
+        <svg class="estrutura-splash-icon" viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect width="1200" height="800" fill="#163a73"></rect>
+          <rect x="280" y="300" width="640" height="70" rx="6" fill="#ffffff"></rect>
+          <path d="M320 370 L290 480 L420 480 Z" fill="#9cc0ff"></path>
+          <path d="M880 370 L850 480 L980 480 Z" fill="#9cc0ff"></path>
+          <rect x="250" y="478" width="700" height="14" rx="4" fill="#5b8def"></rect>
+          <g stroke="#9cc0ff" stroke-width="6">
+            <line x1="360" y1="250" x2="360" y2="296"></line>
+            <line x1="480" y1="250" x2="480" y2="296"></line>
+            <line x1="600" y1="250" x2="600" y2="296"></line>
+            <line x1="720" y1="250" x2="720" y2="296"></line>
+            <line x1="840" y1="250" x2="840" y2="296"></line>
+          </g>
+        </svg>
+        <div class="estrutura-splash-kicker">Concreto Armado · NBR 6118:2014</div>
+        <div class="estrutura-splash-title">Calculadora de Estrutural</div>
+        <div class="estrutura-splash-bar"><span></span></div>
+      </div>`;
+    document.body.appendChild(splash);
+    setTimeout(() => splash.classList.add('hide'), 3000);
+    setTimeout(() => splash.remove(), 3550);
   } catch (err) {
     setStatus('Error unpacking: ' + err.message);
     console.error('Bundle unpack error:', err);
