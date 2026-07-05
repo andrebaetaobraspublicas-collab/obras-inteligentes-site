@@ -1,0 +1,1995 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Mapa e Matriz de Riscos - HTML local</title>
+<style>
+:root{
+  --bg:#f4f7fb;--card:#ffffff;--text:#172033;--muted:#667085;--line:#d8dee9;
+  --brand:#1f4e79;--brand-dark:#12324f;--brand-soft:#eaf2fb;--accent:#0f766e;
+  --danger:#b42318;--danger-soft:#fee4e2;--warn:#b54708;--warn-soft:#fef0c7;
+  --ok:#067647;--ok-soft:#dcfae6;--info:#175cd3;--info-soft:#dbeafe;
+  --shadow:0 8px 24px rgba(16,24,40,.08);--radius:16px;
+}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--text)}
+header{background:linear-gradient(120deg,var(--brand),var(--brand-dark));color:white;padding:20px 28px;position:sticky;top:0;z-index:50;box-shadow:0 4px 14px rgba(16,24,40,.15)}
+header h1{margin:0 0 4px;font-size:24px}header p{margin:0;color:#dbeafe;font-size:14px}.topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}.top-actions{display:flex;gap:8px;flex-wrap:wrap}.top-actions .btn{background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.28)}
+.wrap{display:grid;grid-template-columns:310px 1fr;min-height:calc(100vh - 83px)}aside{background:#fff;border-right:1px solid var(--line);padding:16px;position:sticky;top:83px;height:calc(100vh - 83px);overflow:auto}.main{padding:20px;overflow:auto}.nav-section{font-size:11px;font-weight:800;color:#667085;text-transform:uppercase;letter-spacing:.06em;margin:16px 8px 6px}.nav button{display:block;width:100%;text-align:left;border:0;background:transparent;padding:10px 12px;border-radius:10px;color:#233;cursor:pointer;font-size:14px}.nav button:hover,.nav button.active{background:var(--brand-soft);color:#102a43;font-weight:700}.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;margin-bottom:18px}.card h2,.card h3{margin-top:0}.row{display:grid;grid-template-columns:repeat(12,1fr);gap:12px}.field{display:flex;flex-direction:column;gap:6px}.field label{font-size:12px;font-weight:800;color:#344054}.field input,.field select,.field textarea{border:1px solid #cfd7e6;border-radius:10px;padding:10px;background:white;font:inherit;min-width:0}.field textarea{min-height:92px;resize:vertical}.field small{color:var(--muted)}.span-2{grid-column:span 2}.span-3{grid-column:span 3}.span-4{grid-column:span 4}.span-5{grid-column:span 5}.span-6{grid-column:span 6}.span-7{grid-column:span 7}.span-8{grid-column:span 8}.span-9{grid-column:span 9}.span-10{grid-column:span 10}.span-12{grid-column:span 12}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}.btn{border:1px solid #cfd7e6;background:#fff;color:#172033;border-radius:10px;padding:9px 13px;cursor:pointer;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:6px}.btn:hover{filter:brightness(.98)}.btn.primary{background:var(--brand);border-color:var(--brand);color:#fff}.btn.secondary{background:var(--accent);border-color:var(--accent);color:#fff}.btn.warn{background:var(--warn);border-color:var(--warn);color:#fff}.btn.danger{background:#fff;border-color:#f3b1aa;color:var(--danger)}.btn.small{padding:6px 9px;font-size:12px}.btn.ghost{border-color:transparent;background:transparent}.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-bottom:12px}.toolbar-left,.toolbar-right{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.search,.mini-input{border:1px solid #cfd7e6;border-radius:10px;padding:10px}.search{max-width:380px;width:100%}.mini-input{max-width:220px}.table-wrap{overflow:auto;border:1px solid #edf1f7;border-radius:12px}table{width:100%;border-collapse:collapse;background:white}th,td{border-bottom:1px solid #edf1f7;padding:10px;text-align:left;font-size:13px;vertical-align:top}th{background:#f1f5f9;font-weight:800;color:#334155;position:sticky;top:0}tr:hover td{background:#fafcff}.muted{color:var(--muted);font-size:13px}.hidden{display:none!important}.hint{background:var(--info-soft);border:1px solid #bfdbfe;border-radius:12px;padding:12px;color:#1e3a5f}.danger-zone{background:#fff7f7;border:1px dashed #f3b1aa}.kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}.kpi{background:#fff;border:1px solid var(--line);border-radius:15px;padding:15px;box-shadow:var(--shadow)}.kpi strong{font-size:27px;display:block}.kpi span{display:block}.badge{display:inline-block;border-radius:999px;padding:3px 8px;font-size:12px;font-weight:800;white-space:nowrap}.b-baixo{background:#dcfce7;color:#166534}.b-medio{background:#fef3c7;color:#92400e}.b-alto{background:#ffedd5;color:#9a3412}.b-extremo{background:#fee2e2;color:#991b1b}.b-info{background:#dbeafe;color:#175cd3}.b-muted{background:#f2f4f7;color:#475467}.b-ok{background:var(--ok-soft);color:var(--ok)}.b-warn{background:var(--warn-soft);color:var(--warn)}.b-danger{background:var(--danger-soft);color:var(--danger)}.matrix{display:grid;grid-template-columns:84px repeat(5,1fr);gap:4px;max-width:850px}.mxcell{min-height:66px;border-radius:8px;background:#eef2f7;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:800;font-size:12px;padding:6px;flex-direction:column}.mxhead{background:#dbeafe}.mxlow{background:#dcfce7}.mxmed{background:#fef3c7}.mxhigh{background:#ffedd5}.mxext{background:#fee2e2}.mxcount{font-size:11px;font-weight:600;color:#475467;margin-top:4px}.grid-2{display:grid;grid-template-columns:1.1fr .9fr;gap:18px}.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.bar-list{display:flex;flex-direction:column;gap:10px}.bar-row{display:grid;grid-template-columns:170px 1fr 42px;gap:10px;align-items:center}.bar-label{font-size:13px;color:#344054;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.bar-track{height:12px;background:#edf2f7;border-radius:999px;overflow:hidden}.bar-fill{height:100%;background:linear-gradient(90deg,var(--brand),var(--accent));border-radius:999px}.timeline{display:flex;flex-direction:column;gap:8px}.alert{padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:#fff}.alert.high{background:#fff7ed;border-color:#fed7aa}.alert.extreme{background:#fff1f2;border-color:#fecdd3}.alert.ok{background:#f0fdf4;border-color:#bbf7d0}.risk-title{font-size:18px;font-weight:800;margin:6px 0}.section-title{display:flex;align-items:center;justify-content:space-between;gap:10px;border-bottom:1px solid #edf1f7;padding-bottom:8px;margin-bottom:12px}.pill-list{display:flex;gap:8px;flex-wrap:wrap}.empty{padding:20px;border:1px dashed #cfd7e6;border-radius:12px;color:var(--muted);background:#fbfcff}.print-only{display:none}.footer{font-size:12px;color:#667085;padding:12px 0 0}.toast{position:fixed;right:18px;bottom:18px;background:#111827;color:white;padding:12px 14px;border-radius:12px;box-shadow:var(--shadow);z-index:99;max-width:420px}.toast.error{background:#7f1d1d}.toast.ok{background:#064e3b}.toast.warn{background:#7c2d12}.code-note{font-family:Consolas,Monaco,monospace;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:10px;overflow:auto}.splitline{height:1px;background:#edf1f7;margin:14px 0}
+@media(max-width:1100px){.kpis{grid-template-columns:repeat(2,1fr)}.grid-2,.grid-3{grid-template-columns:1fr}.wrap{grid-template-columns:1fr}aside{position:relative;top:0;height:auto}.main{padding:14px}.row{grid-template-columns:1fr}.span-2,.span-3,.span-4,.span-5,.span-6,.span-7,.span-8,.span-9,.span-10,.span-12{grid-column:span 1}.matrix{grid-template-columns:58px repeat(5,1fr)}header{position:relative}.bar-row{grid-template-columns:1fr}.bar-row strong{display:none}}
+@media print{header,aside,.actions,.toolbar,.btn,.toast{display:none!important}.wrap{display:block}.main{padding:0}.card{box-shadow:none;border:0;page-break-inside:avoid}.print-only{display:block}body{background:#fff}.table-wrap{border:0;overflow:visible}th{position:static}}
+</style>
+</head>
+<body>
+<header>
+  <div class="topbar">
+    <div>
+      <h1>Mapa e Matriz de Riscos</h1>
+      <p>Mapa de riscos amplo + matriz de riscos contratual, com relatórios separados e base para tornado/Monte Carlo.</p>
+    </div>
+    <div class="top-actions">
+      <button class="btn small" onclick="backupNow('manual')">Backup</button>
+      <button class="btn small" onclick="exportJSON()">Exportar JSON</button>
+      <button class="btn small" onclick="openReport('executivo', true)">Imprimir/PDF</button>
+    </div>
+  </div>
+</header>
+<div class="wrap">
+<aside>
+  <div class="nav" id="nav"></div>
+  <div class="card" style="padding:12px;margin-top:12px">
+    <strong>Armazenamento local</strong>
+    <p class="muted">Os dados ficam no LocalStorage deste navegador. Use backups e exportações para evitar perdas.</p>
+    <div class="actions"><button class="btn small" onclick="exportJSON()">Exportar JSON</button><button class="btn small" onclick="document.getElementById('importFile').click()">Importar</button><input type="file" id="importFile" accept="application/json" class="hidden" onchange="importJSON(event)"></div>
+  </div>
+</aside>
+<main class="main" id="app"></main>
+</div>
+<div id="toast" class="toast hidden"></div>
+<script>
+'use strict';
+const APP_VERSION='4.0.0';
+const STORE_KEY='mapa_matriz_riscos_v4';
+const BACKUP_KEY='mapa_matriz_riscos_v4_backups';
+const LEGACY_PRO_KEY='matriz_riscos_pro_v3';
+const OLD_STORE_KEY='matriz_riscos_access_html_v2_importado';
+const INITIAL_IMPORTED_RISKS=[
+  {
+    "id": "IMP_R001",
+    "cod": "R001",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "ESTUDO TÉCNICO PRELIMINAR (ETP), elaborado para subsidiar a contratação de obra ou serviço de engenharia, apresente falhas, omissões ou inconsistências que comprometam a definição adequada do objeto, dos requisitos t cnicos ou das condi",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R002",
+    "cod": "R002",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "INCAPACIDADE TÉCNICA do o Contratante/Concedente em elaborar o ANTEPROJETO (AP) ou PROJETO B SICO (PB)",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R003",
+    "cod": "R003",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "ESTUDOS PRELIMINARES e planejamentos inadequados, por parte do o Contratante/Concedente",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R004",
+    "cod": "R004",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "INDEFINIÇÃO do ESCOPO do projeto, no n vel de concep o, estudo preliminar ou anteprojeto por parte do Contratante/Concedente",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R005",
+    "cod": "R005",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "Falhas, omissões ou inconsistências no ANTEPROJETO fornecido pela Contratante/Concedente que que possam comprometer a elabora o do PROJETO B SICO (PB) pela Contratada/Executante",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R006",
+    "cod": "R006",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "Falhas, omissões ou inconsistências no PROJETO B SICO (PB) fornecido pela Contratante/Concedente que possam comprometer a elabora o do PROJETO EXECUTIVO (PE) pela Contratada/Executante.",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R007",
+    "cod": "R007",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "Falhas, omissões ou inconsistências do PROJETO EXECUTIVO (PE) fornecido pela Contratante/Concedente que possam comprometer a execução da obra",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R008",
+    "cod": "R008",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "N o aprova o pelos os Competentes/Concession rias do PROJETO B SICO (PB) fornecido pela Contratante/Concedente",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R009",
+    "cod": "R009",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "Falhas, omissões ou inconsistências na PLANILHA OR AMENT RIA fornecida pela Contratante/Concedente",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R010",
+    "cod": "R010",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "ALTERAÇÃO de PROJETO durante a fase de obra, por solicita o do o Contratante/Concedente, em raz o de mudan as em suas necessidades ou de achados t cnicos identificados na execu",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R011",
+    "cod": "R011",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "DIFICULDADE de FISCALIZAÇÃO da obra por parte do o Contratante/Concedente",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R012",
+    "cod": "R012",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "ATRASO na LIBERAÇÃO dos PAGAMENTOS por parte do o Contratante/Concedente",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R013",
+    "cod": "R013",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "Falhas, omissões ou inconsistências no PROJETO B SICO (PB) elaborado pela Contratada/Executante",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R014",
+    "cod": "R014",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "Falhas, omissões ou inconsistências no PROJETO EXECUTIVO (PE) elaborado pela Contratada/Executante Possibilidade de ocorr ncia de atrasos ou negativa na obtenão de licen as, alvar s e permiss",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R015",
+    "cod": "R015",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "Risco de não aprova o do PROJETO LEGAL (PL), fornecido pela Contratada/Executante",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R016",
+    "cod": "R016",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "ALTERAÇÃO de PROJETO determinado por os de FISCALIZAÇÃO/CONCESSION RIA motivadas por requisitos regulat rios, exig ncias de seguran a ou outras raz",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R017",
+    "cod": "R017",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "Atrasos ou nega o de emiss o de LICENÇAS E ALVARÁS pelos os competentes",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R018",
+    "cod": "R018",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "ALTERAÇÃO de PROJETO a pedido da Empresa Contratada/Executante com o objetivo de otimizar processos, reduzir custos ou adequar-se a condições não previstas.",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R019",
+    "cod": "R019",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "Dificuldade LOGÍSTICA de SUPRIMENTO por parte da Contratada/Executante",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R020",
+    "cod": "R020",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "Dificuldade LOGÍSTICA de MANUTENÃO de equipamento por parte da Contratada/Executante",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R021",
+    "cod": "R021",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "Dificuldade de contratação de MÃO DE OBRA por parte da Contratada/Executante",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R022",
+    "cod": "R022",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "Risco de PLANEJAMENTO INADEQUADO e m gest o da Obra pela Contratada/Executante",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R023",
+    "cod": "R023",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "Mudan a significativa do escopo do PROJETO B SICO (PB) desencadeadas por solicita es subsequentes de stakeholders, determina es de os de aprova o de projetos ou concession rias, restri",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R024",
+    "cod": "R024",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "METAS de contrato SUPERESTIMADAS, estabelecidas tanto pela Contratante/Concedente quanto pela Contratada/Executante",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R025",
+    "cod": "R025",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "NÃO CONFORMIDADE ou descumprimento de NORMAS TÉCNICAS ou PADR ES DE QUALIDADE, desempenho e sustentabilidade",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R026",
+    "cod": "R026",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "CONDIÇÕES CLIMÁTICAS ADVERSAS e imprevistas no planejamento inicial do projeto ou servi",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R027",
+    "cod": "R027",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "Identifica o de CONDIÇÕES HIDROGEOLÓGICAS imprevistas",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R028",
+    "cod": "R028",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "Risco SÓCIO-AMBIENTAL - Rea es de Stakeholders afetados direta ou indiretamente pelo empreendimento.",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R029",
+    "cod": "R029",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "Custos inesperados e flutuações nos preços dos materiais - Risco FINANCEIRO OU CAMBIAL",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R030",
+    "cod": "R030",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "ACHADOS de valor CULTURAL, AMBIENTAL, ANTROPOLÓGICOS OU HISTÓRICOS no local da obra Possibilidade de que a Contratada/Executante paralise ou abandone unilateralmente a execução da obra ou do serviço em andamento, resultando em interrup o planejada do objeto contratual. Esse cen rio pode decorrer de dificuldades financeiras, m",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R031",
+    "cod": "R031",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "Ocorrência de atos de CORRUP",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R032",
+    "cod": "R032",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "RESCISÃO CONTRATUAL prematura a pedido do o Contratante/Concedente",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R033",
+    "cod": "R033",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "LITÍGIO entre a Empresa Contratada/Executante e o Contratante/Concedente",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R034",
+    "cod": "R034",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "PARALISAÇÃO OU ABANDONO unilateral da obra por parte da Empresa Contratada/Executante",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R035",
+    "cod": "R035",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "Risco de RETRABALHO (Intervenão Corretiva) por parte da Contratada/Executante",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R036",
+    "cod": "R036",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "Riscos associados INTERDEPEND NCIA com outros projetos ou servi",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R037",
+    "cod": "R037",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "PRODUTIVIDADE das EQUIPES da Contratada/Executante abaixo do planejado",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R038",
+    "cod": "R038",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "TUMULTOS, GREVES E LOCKOUT no canteiro de trabalho ou em reas circunvizinhas",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R039",
+    "cod": "R039",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "FURTO, ROUBO OU VANDALISMO no local da obra e canteiro do trabalho",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R040",
+    "cod": "R040",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "DANOS f sicos, preju zos de humana e danos materiais a bens e propriedades de terceiros, decorrentes da obra s PROPRIEDADES CIRCUNVIZINHAS",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R041",
+    "cod": "R041",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "POLUI O OU PASSIVO AMBIENTAL Pr -existente",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R042",
+    "cod": "R042",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "Inefic cia ou inadequa o do CONTROLE TECNOL GICO aplicado a serviços especializados de engenharia",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R043",
+    "cod": "R043",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "SINISTRO no local da obra - CAUSAS NATURAIS",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R044",
+    "cod": "R044",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "SINISTRO no local da obra - CAUSAS NÃO NATURAIS",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R045",
+    "cod": "R045",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "ACIDENTE DE TRABALHO no local da obra ou Acidente de Percurso",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R046",
+    "cod": "R046",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "Riscos de FORÇA MAIOR",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R047",
+    "cod": "R047",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "Dificuldade TÉCNICA e/ou FINANCEIRA da Contratada/Executante",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R048",
+    "cod": "R048",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "ATRASO EXCESSIVO na Conclusão da Obra",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R049",
+    "cod": "R049",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "Risco de MAGA (Material Adverse Government Action) - Ato unilateral do Poder Público que que impacta negativamente o contrato, altera suas premissas ou torna a execução mais onerosa.",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R050",
+    "cod": "R050",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "Irregularidade TRABALHISTA sob responsabilidade da Contratada/Executante.",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R051",
+    "cod": "R051",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "Irregularidade AMBIENTAL sob responsabilidade da Contratada/Executante. Existe a possibilidade de ocorr ncia de irregularidades administrativas de natureza social e/ou previdenci ria durante a execução da obra, sob responsabilidade da Contratada/Executante. Esse risco pode decorrer do descumprimento de obriga es previdenci rias e sociais, da aus ncia ou atraso no recolhimento de contribui",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R052",
+    "cod": "R052",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "Irregularidade SOCIAL e PREVIDENCI RIA sob responsabilidade da Contratada/Executante.",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R053",
+    "cod": "R053",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "ACHADOS de UTILIDADES URBANAS PREEXISTENTES com interfer ncia na obras",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R054",
+    "cod": "R054",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "N o realiza o, ou a realiza o com atraso relevante, das LIGA ES EXTERNAS INDISPENS VEIS execução da obra e ao funcionamento pleno da constru",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R055",
+    "cod": "R055",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "Risco de INDISPONIBILIDADE, INADEQUA O ou FALHAS em ativo existente ou fases anteriores da obra, cuja disponibiliza o pela Contratante/Concedente necess ria execução, podendo gerar atrasos, custos adicionais e lit gios.",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R056",
+    "cod": "R056",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "INCOMPATIBILIDADE entre DISCIPLINAS DE PROJETO podendo gerar inviabilidade construtiva, não conformidade normativa e conflitos t cnicos.",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R057",
+    "cod": "R057",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "N o cumprimento de REQUISITOS OBRIGAT RIOS DE SUSTENTABILIDADE",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R058",
+    "cod": "R058",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "Indisponibilidade ou inadequa o de JAZIDAS de MATERIAIS GEOTÉCNICOS para pavimentação e terraplenagem, em conformidade com as especifica es t cnicas do projeto e as dist ncias de transporte economicamente vi veis.",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R059",
+    "cod": "R059",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "Indisponibilidade de MATERIAL BETUMINOSO ou da USINA DE ASFALTO, comprometendo a produção e aplicação das camadas de pavimentação da rodovia.",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R060",
+    "cod": "R060",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "Achados de camada de SOLO MOLE OU TURFA na área do traçado do pavimento",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R061",
+    "cod": "R061",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "Necessidade de ALTERAÇÃO SIGNIFICATIVA - em fase de obra - da solu o de FUNDAÇÃO em raz o da não valida o das Premissas Geot cnicas do AP ou PB",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R062",
+    "cod": "R062",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "Necessidade de READEQUAÇÃO do PROJETO de DRENAGEM em fase de obra",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R063",
+    "cod": "R063",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "INCERTEZAS GEOTÉCNICAS em Servi os de Terraplenagem",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R064",
+    "cod": "R064",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "V CIOS Técnicos na Execução de Servi os de PAVIMENTAÇÃO RODOVI",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R065",
+    "cod": "R065",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "Ocorrência de Falhas Operacionais e Impactos Ambientais durante os Servi os de DESMATAMENTO, DESTOCAMENTO e LIMPEZA em Obras Rodovi rias",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R066",
+    "cod": "R066",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "V CIOS t cnicos em Servi os de DRENAGEM RODOVI RIA decorrentes de Projetos Inadequados, Execução Deficiente, Falhas de Controle Tecnol gico ou Condi es Locais Imprevistas",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R067",
+    "cod": "R067",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "Risco de que as DESAPROPRIAÇÕES, SERVIDÕES ou DESOCUPA ES necess rias obra não sejam conclu das no prazo",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R068",
+    "cod": "R068",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "In cio da Obra sem LICENÇAS AMBIENTAIS, ALVARÁS e AUTORIZAÇÕES necess rias",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R069",
+    "cod": "R069",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "NÃO RECEBIMENTO da OBRA pela Contratante/Concedente ou não aprova o da PRESTA O DE CONTAS apresentada pela Contratada/Executante",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R070",
+    "cod": "R070",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "GERA O de IMPACTOS AMBIENTAIS decorrentes do Empreendimento",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R071",
+    "cod": "R071",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "Indefinição ou definição inadequada dos REQUISITOS DO ESCOPO da obra, gerando expectativas divergentes e conflitos entre stakeholders quanto aos benef cios do empreendimento.",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R072",
+    "cod": "R072",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "FALHAS na CONCRETAGEM de ESTRUTURAS, FUNDA ES E PAVIMENTOS moldados in loco incluindo preparo, lan amento, adensamento, cura e controle tecnol gico podem comprometer desempenho, resist ncia e seguran a, gerando patologias e necessidade de corre",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R073",
+    "cod": "R073",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "Risco de LICITA O DESERTA OU FRACASSADA por baixa atratividade, or amento inadequado ou exig ncias restritivas",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R074",
+    "cod": "R074",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "Necessidade de ALTERAÇÃO DE TRA ADO de Implanta o ou Amplia o de Infraestrutura Vi ria ou Aeroportu",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R075",
+    "cod": "R075",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "Necessidade de RECONFIGURA O DA IMPLANTA O, LOCALIZA O ou ARRANJO FUNCIONAL de Edifica es) Prevista(s) em Plano Diretor, em virtude de Indisponibilidade total ou parcial do terreno originalmente planejado ou identifica o tardia de restri",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R076",
+    "cod": "R076",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "Colapso estrutural total ou parcial de sistemas pr -moldados durante a fase de montagem",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R077",
+    "cod": "R077",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "Possibilidade de impactos adversos EXECU O, ao COMISSIONAMENTO e OPERA O INICIAL da edifica o, decorrentes de falhas de interface, coordena o e compatibiliza o entre a obra, sistemas embarcados, usu",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R078",
+    "cod": "R078",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "Possibilidade de o empreendimento, AP S CONCLU DO, NÃO ATENDER AOS NÍVEIS M NIMOS DE DESEMPENHO operacional, funcional, energ tico, sanit rio ou de conforto previstos em projeto, normas t",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R079",
+    "cod": "R079",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "Falhas na INTEGRA O e INTERFACE entre SISTEMAS e PROCESSOS CONSTRUTIVOS",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R080",
+    "cod": "R080",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "Possibilidade de o projeto NÃO ALCAN AR a EFETIVIDADE ESPERADA por defici ncias no ETP e no EVTEA, custos incorporados na execução e falhas na previs o de custos operacionais e de manutenão, resultando em custos superiores aos benef cios.",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R081",
+    "cod": "R081",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "Possibilidade de o ativo tornar-se inadequado por OBSOLESCÊNCIA FUNCIONAL OU TECNOL GICA, ou pela necessidade de amplia o e incorpora o de novos processos e tecnologias não previstos, gerando interven es prematuras e custos adicionais.",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R082",
+    "cod": "R082",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "N o aceita o do PRAD pelo o ambiental competente no encerramento do Instrumento de Parceria",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R083",
+    "cod": "R083",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "VARIAÇÃO excessiva no CUSTO DA OBRA",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R084",
+    "cod": "R084",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "ELEVA O de CUSTOS DE EXECU O decorrente do descumprimento de normas t cnicas, especifica es contratuais e padr es de qualidade na execução dos servi",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R085",
+    "cod": "R085",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "ATRASO NO CRONOGRAMA F SICO-FINANCEIRO decorrente da paralisa o de frentes de serviço e necessidade de retrabalho, em funão do descumprimento de normas t cnicas, especifica es contratuais e padr es de qualidade na execu",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  },
+  {
+    "id": "IMP_R086",
+    "cod": "R086",
+    "processoId": "",
+    "natureza": "",
+    "categoria": "",
+    "fase": "",
+    "risco": "DIVERG NCIA relevante entre o ORÇAMENTO PARAMÉTRICO (elaborado pela Contratante/Concedente) e o ORÇAMENTO DESCRITIVO (elaborado pela Contratada).",
+    "descricao": "Registro importado automaticamente do arquivo Access por varredura textual do banco."
+  }
+];
+const MATRIZ_OBRAS_TEMPLATE=[
+  {
+    "id": "MOB_001",
+    "cod": "MO001",
+    "tipoRisco": "Ambiental",
+    "descricao": "Surgimentos de novas variantes do Covid-19 ou de outras epidemias causadas dos outros agentes biológicos.",
+    "materializacao": "Aumento do absenteísmo da mão de obra.\nNecessidade de paralisação dos serviços por conta da adoção de medidas restritivas (lockdowns, quarentenas, interrupções do transporte público etc.)\nParalisação dos trabalhos presenciais do contratante e contratado.\nAumentos dos custos de execução associado à implementação de medidas de distanciamento social e fornecimento de equipamentos protetivos (máscaras faciais, álcool em gel etc.).",
+    "mitigacao": "Remuneração do risco assumido pelo construtor.\nAditivo de prorrogação de prazo.\nCláusula contratual atribuindo prerrogativa para a administração suspender unilateralmente a execução contratual e emitir ordem de paralisação dos serviços.",
+    "alocacao": "Risco compartilhado. A administração contratante suporta integralmente os efeitos da pandemia no prazo de execução, prorrogando o ajuste pelo tempo que perdurarem os efeitos das medidas restritivas que inviabilizarem completamente os serviços.\nO contratado suporta integralmente os custos com ociosidades das equipes e equipamentos.\nO contratado suporta integralmente os custos com desmobilização e nova mobilização da obra.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_002",
+    "cod": "MO002",
+    "tipoRisco": "Político",
+    "descricao": "Guerras e conflitos internos e externos",
+    "materializacao": "Falta de matérias primas e insumos necessários para a obra.\nVariação elevado nos valores dos materiais e equipamentos a serem empregados.",
+    "mitigacao": "Remuneração do risco assumido pelo construtor.\nAditivo de prorrogação de prazo.\nCláusula contratual atribuindo prerrogativa para a administração suspender unilateralmente a execução contratual e emitir ordem de paralisação dos serviços.",
+    "alocacao": "Risco compartilhado. A administração contratante suporta integralmente os efeitos de quaisquer conflitos no prazo de execução, prorrogando o ajuste pelo tempo que efetivamente se verificar desabastecimento de algum material/insumo necessário para a obra.\nO contratado suporta integralmente os custos com ociosidades das equipes e equipamentos.\nO contratado suporta integralmente os custos com desmobilização e nova mobilização da obra.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_003",
+    "cod": "MO003",
+    "tipoRisco": "Ambiental",
+    "descricao": "Não cumprimento ou desconformidade com as condicionantes impostas no licenciamento ambiental.",
+    "materializacao": "Atraso no início das obras ou no cronograma de execução.\nAumento dos custos de execução.\nParalisação não prevista dos serviços\nMultas ou outras penalidades aplicadas pelos órgãos ambientais\nEmbargo da obra\nCassação da licença ambiental",
+    "mitigacao": "A Administração, por meio do gerenciamento ambiental deve prover todos os estudos, estimando custos correspondentes, bem como deve adotar medidas tempestivas para assegurar o cumprimento dos condicionantes ambientais.\nA supervisora deve ter o poder de notificar construtora e paralisar serviços.\nA construtora deve seguir fielmente as especificações dos serviços e cumprir as condicionantes ambientais que sejam seu encargo.",
+    "alocacao": "Administração arca com as licenças e com os custos das medidas ambientais.\nPassivo físico por conta da Construtora.\nCustos com autuações de responsabilidade da construtora serão por ela arcados.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_004",
+    "cod": "MO004",
+    "tipoRisco": "Ambiental",
+    "descricao": "Ocorrência de chuvas, alagamentos, geadas, vendavais, raios, granizo ou outros eventos climáticos e ambientais.",
+    "materializacao": "Necessidade de refazimento de serviços.\nAlteração do cronograma de execução.\nAlteração nos custos de construção.\nPerda de serviços já executados e/ou materiais estocados no canteiro.\nDanos às instalações do canteiro de obra.\nDificuldade de acesso à obra.",
+    "mitigacao": "A Administração deve preferencialmente programar a licitação para que a emissão da ordem de serviço inicial ocorra durante o período de estiagem.\nA construtora deve incorporar nos seus preços eventuais encargos com ocorrências climáticas.\nA construtora deve procurar concentrar esforços em períodos de estiagem, inclusive prorrogando os turnos de trabalho ou abrindo novas frentes de serviço.\nRemuneração do risco assumido pelo construtor.\nNos períodos chuvosos, a construtora pode atacar atividades menos impactadas pelas chuvas ou providenciar a locação de tendas ou outros dispositivos de proteção para o prosseguimento da obra.\nO contrato deve prever que o construtor apresente apólice de seguro de risco de engenharia, com validade abrangendo todo o prazo de vigência contratual com cobertura específica para ocorrências climáticas e despesas com desentulho.",
+    "alocacao": "A administração aceita a prorrogação de prazo equivalente ao número de dias de chuva além da média histórica do local, durante o período total de execução da obra, segundo informações obtidas no endereço eletrônico do INMET. Também são admitidas outras prorrogações de prazo estritamente para reparar os estragos causados pelas ocorrências climáticas.\nChuvas em volume aquém da média histórica, segundo informações do INMET, não ensejam a prorrogação do prazo de execução.\nIndependentemente do volume e das consequências causadas por eventos climáticos, o contratado assume integralmente qualquer ônus financeiro decorrente da paralisação de equipamentos, equipes de trabalho ou dos estragos causados pelos eventos climáticos.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_005",
+    "cod": "MO005",
+    "tipoRisco": "Ambiental",
+    "descricao": "Demora ou não obtenção de licenças ambientais por culpa do contratante ou de terceiros.",
+    "materializacao": "Atraso no início das obras ou no cronograma de execução.\nAumento dos custos do empreendimento.\nNecessidade de alteração de projeto.",
+    "mitigacao": "Só licitar a obra se esta estiver devidamente licenciada, com licença de instalação.\nSó emitir ordem de início dos serviços se houve licença de instalação.\nRevisão do prazo de execução contratual.\nReajuste regular do contrato, de acordo com as cláusulas contratuais.\nRescisão do contrato, se for inviável a obtenção da licença.\nNo caso da contratação integrada, licitada a partir de anteprojeto, licitar a obra, se for possível, com a licença prévia, estabelecendo que o encargo de elaborar os projetos básico/executivo, bem como obter a licença ambiental de instalação, com a interveniência da administração, será da construtora.",
+    "alocacao": "O órgão contratante assume o custo com o reajustamento contratual, após o período legal de 12 meses, contados a partir da data de apresentação da proposta ou do orçamento a que esta se referir.\nA Administração também prorroga o contrato durante o período necessário.\nSe a alteração de anteprojeto for imprescindível para o licenciamento ambiental, a Administração arcará com o ônus ou se beneficiará da redução de custos decorrente.\nO contratado assume quaisquer outros riscos e se abstém de pleitear qualquer tipo de indenização por perdas ou lucros cessantes, inclusive no caso de rescisão contratual, fazendo jus apenas aos pagamentos de serviços já realizados e aprovados pela fiscalização, bem como ao custo da desmobilização contratualmente prevista e devolução da garantia.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_006",
+    "cod": "MO006",
+    "tipoRisco": "Ambiental",
+    "descricao": "Não obtenção ou demora na obtenção de licenças ambientais por culpa exclusiva do contratado",
+    "materializacao": "Atraso no início das obras ou no cronograma de execução.\nAumento dos custos do empreendimento.\nNecessidade de alteração de projeto.",
+    "mitigacao": "Só licitar a obra se esta estiver devidamente licenciada, com licença de instalação.\nSó emitir ordem de início dos serviços se houve licença de instalação.\nNo caso da contratação integrada, licitada a partir de anteprojeto, licitar a obra, se for possível, com a licença prévia, estabelecendo que o encargo de elaborar os projetos básico/executivo, bem como obter a licença ambiental de instalação, com a interveniência da administração, será da construtora.\nCláusula contratual prevendo a aplicação de penalidades e de rescisão unilateral do contrato.",
+    "alocacao": "Risco exclusivo do contratado, que não terá direito a nenhuma prorrogação do prazo contratual ou a reajuste de preços em virtude de sua mora na execução dos serviços, além de ser sancionado com as penalidades previstas em contrato.\nSe o órgão ambiental exigir a alteração do projeto elaborado pelo contratado como condição para o licenciamento, este arcará com os custos decorrentes.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_007",
+    "cod": "MO007",
+    "tipoRisco": "Legal",
+    "descricao": "Atraso ou não obtenção das licenças e autorizações diversas para execução da obra",
+    "materializacao": "Modificação do custo ou do prazo de execução.\nEmbargo da obra.",
+    "mitigacao": "Solicitação, em tempo hábil, de alvarás de construção, licenças de transporte, autorizações de supressão vegetal etc.\nCláusula contratual prevendo a aplicação de penalidades e de rescisão unilateral do contrato.\nAditivo de prorrogação de prazo.",
+    "alocacao": "Risco compartilhado entre a Administração e o contratado.\nAtrasos imputáveis exclusivamente ao contratado serão de sua responsabilidade, não cabendo prorrogação de prazo ou reequilíbrio econômico-financeiro do contrato, bem como poderão ensejar a aplicação de sanções.\nAtrasos oriundos da administração ou de terceiros ensejarão a prorrogação de prazo correspondente.\nNesse caso, as partes convencionam que a empresa comprovar estar mobilizada e ficar ociosa, a Administração arcará com a indenização dos custos regularmente comprovados por meio de folhas de pagamento, notas fiscais e outros documentos válidos.\nAs partes convencionam que não haverá qualquer indenização dos equipamentos e ferramentas de propriedade do construtor que ficarem ociosos.\nAs partes convencionam que não haverá incidência de taxa de BDI, lucros, custos indiretos ou despesas indiretas sobre o valor indenizado, podendo ser aceito apenas o acréscimo dos tributos incidentes sobre o valor da indenização cujo pagamento for regularmente comprovado.\nAs ferramentas e equipamentos locados serão indenizados pelo valor da locação.\nSe houver determinação para que a empresa se desmobilize, a Administração arcará com o valor contratual da desmobilização e nova mobilização.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_008",
+    "cod": "MO008",
+    "tipoRisco": "Construção",
+    "descricao": "Aumento ou diminuição das distâncias de transporte ou alteração no valor dos fretes dos produtos, bem como nos royalties",
+    "materializacao": "Alteração da quantidade de caminhões necessária e dos custos com bota-foras e carga/descarga e transporte.\nAlteração no valor dos royalties de indenização das jazidas.",
+    "mitigacao": "Levantamento de campo, com análise e conferência dos locais de empréstimo, depósito e bota-fora.\nVerificação da possibilidade de fornecimento dos principais insumos da obra nos respectivos fornecedores.\nExame do regular licenciamento das usinas de asfalto, pedreiras, concreteiras e areais previstos para abastecer a obra.\nRemuneração do risco assumido pelo construtor.\nAnálise do diagrama de Bruckner.",
+    "alocacao": "Risco exclusivo do contratado.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_009",
+    "cod": "MO009",
+    "tipoRisco": "Construção",
+    "descricao": "Aumento ou diminuição das velocidades de transporte",
+    "materializacao": "Alteração da quantidade de caminhões necessária e dos custos com transporte.",
+    "mitigacao": "Realização de simulações em aplicativos (Google Maps, Waze etc.) sobre as condições do trânsito no trajeto da obra.\nExecução da obra em turnos noturnos de trabalho ou nos finais de semana.\nRemuneração do risco assumido pelo construtor.\nGestão adequada dos caminhos de serviço e sinalização do canteiro.",
+    "alocacao": "Risco exclusivo do contratado, inclusive quando a modificação das velocidades de transporte decorre de eventos causados por terceiros.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_010",
+    "cod": "MO010",
+    "tipoRisco": "Construção",
+    "descricao": "Detecção de nível de lençol freático diverso do previsto.",
+    "materializacao": "Necessidade de realizar ou de alterar o método de esgotamento da vala ou de execução de fundações ou escavações, com a consequente modificação do custo de execução.",
+    "mitigacao": "Realização de sondagens\nAnálise dos projetos\nRemuneração do risco assumido pelo construtor.\nInclusão dos eventuais custos nas composições de custo unitário do construtor ou na taxa de BDI.",
+    "alocacao": "Risco exclusivo do contratado",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_011",
+    "cod": "MO011",
+    "tipoRisco": "Construção",
+    "descricao": "Acidentes causados por queda de objetos ou de trabalhadores na obra ou desmoronamento das estruturas da obra.",
+    "materializacao": "Paralisação das obras ou atraso no cronograma de execução.\nAumento dos custos.\nNecessidade de repor os serviços, materiais e equipamentos danificados.\nResponsabilidade civil por danos à propriedade do contratante ou de terceiros.\nIndenizações por danos materiais ou morais a eventuais vítimas.\nCondenações na esfera trabalhista.\nMultas, embargos e outras penalidades aplicadas por órgãos de fiscalização.\nResponsabilização penal dos responsáveis técnicos.",
+    "mitigacao": "Cumprimento das normas de segurança do trabalho, em especial da NR-18 e da RPT-1.\nAcompanhamento da obra por engenheiro de segurança do trabalho.\nAcompanhamento da obra pelo seu responsável técnico e pela equipe de fiscalização.\nContratação de seguro de responsabilidade civil ou de risco e engenharia com cobertura adequada.\nExecução de bandejas primárias, secundárias e terciárias.\nExecução de tela de proteção, tapumes, guarda-corpos, fechamentos e outros dispositivos de proteção coletiva.\nExecução de linha de vida e fornecimento e EPIs adequados aos trabalhadores.\nRemuneração do risco assumido pelo construtor.",
+    "alocacao": "Risco exclusivo do contratado, cabendo ação de regresso do contratante contra o contratado no caso de a administração ser acionada judicialmente por terceiros em virtude dos acidentes.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_012",
+    "cod": "MO012",
+    "tipoRisco": "Construção",
+    "descricao": "Ocorrência de quaisquer outros eventos na construção que impeçam o cumprimento do prazo ou que aumentem os custos, devido à fatos imputáveis ao construtor.",
+    "materializacao": "Atraso no cronograma.\nAumento de custo.",
+    "mitigacao": "Seguro de Risco de Engenharia.\nRemuneração do risco assumido pelo construtor.\nExigência de Condições de habilitação adequadas.\nFiscalização Contratual Atuante.\nExigências de garantias contratuais.\nAplicação de sanções.",
+    "alocacao": "Risco Exclusivo do Contratado",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_013",
+    "cod": "MO013",
+    "tipoRisco": "Construção",
+    "descricao": "Problemas nos serviços de transporte associados à interrupção ou desvio do trânsito.",
+    "materializacao": "Descontinuidade da prestação do serviço ao usuário.\nPerda de\nprodutividade e aumento do prazo e do custo de execução.",
+    "mitigacao": "Contratado deverá propor plano de ataque da obra e simular condições operacionais.\nRealização de simulações em aplicativos (Google Maps, Waze etc.) sobre as condições do trânsito no trajeto da obra.\nExecução da obra em turnos noturnos de trabalho ou nos finais de semana.\nContratação de seguro de risco de engenharia.\nRemuneração do risco assumido pelo construtor.",
+    "alocacao": "Risco Exclusivo do Contratado",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_014",
+    "cod": "MO014",
+    "tipoRisco": "Construção",
+    "descricao": "Obsolescência tecnológica, falta de inovação técnica e deficiência de equipamentos.",
+    "materializacao": "Retrabalhos;\nNão atingimento dos níveis de qualidade desejados\nAumento de prazo\nAumento de custo de execução",
+    "mitigacao": "Uso da contratação integrada ou semi-integrada, para que a empresa pudesse propor alternativas executivas.\nExigência de garantias contratuais.\nPrevisão contratual de aplicação de penalidades.\nExigência de seguro risco de engenharia.\nExigência de requisitos adequados de habilitação dos licitantes.",
+    "alocacao": "Risco exclusivo do contratado.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_015",
+    "cod": "MO015",
+    "tipoRisco": "Construção",
+    "descricao": "Atraso na liberação da obra por fatos não imputáveis ao contratado.",
+    "materializacao": "Atraso no início da obra e eventual aumento de custos.\nNecessidade de desmobilização.",
+    "mitigacao": "Cláusula contratual prevendo revisão do cronograma e/ou recomposição do equilíbrio econômico-financeiro.\nDeterminação da fiscalização para que a empresa se desmobilize ou ataque outra frente de serviço.",
+    "alocacao": "O Contratante prorrogará o contrato no prazo necessário.\nSe a empresa comprovar estar mobilizada e ficar ociosa, a Administração arcará com a indenização dos custos regularmente comprovados por meio de folhas de pagamento, notas fiscais e outros documentos válidos.\nAs partes convencionam que não haverá qualquer indenização dos equipamentos e ferramentas de propriedade do construtor que ficarem ociosos.\nAs partes convencionam que não haverá incidência de taxa de BDI, lucros, custos indiretos ou despesas indiretas sobre o valor indenizado, podendo ser aceito apenas o acréscimo dos tributos incidentes sobre o valor da indenização cujo pagamento for regularmente comprovado.\nAs ferramentas e equipamentos locados serão indenizados pelo valor da locação.\nSe houver determinação para que a empresa se desmobilize, a Administração arcará com o valor contratual da desmobilização e nova mobilização.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_016",
+    "cod": "MO016",
+    "tipoRisco": "Construção",
+    "descricao": "Roubos e furtos de materiais e equipamentos na obra.",
+    "materializacao": "Aumento de custos de execução.\nEventuais atrasos para a aquisição de novos bens.\nEventuais danos às instalações do canteiro de obras ou do contratante.",
+    "mitigacao": "Seguro contra riscos de engenharia.\nPrevisão de posto de vigia no canteiro de obras.\nRemuneração do risco assumido pelo construtor.",
+    "alocacao": "Risco exclusivo do contratado.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_017",
+    "cod": "MO017",
+    "tipoRisco": "Construção",
+    "descricao": "Acidentes ou quebra de máquinas e veículos.",
+    "materializacao": "Aumento de custos de execução.\nAtrasos para a aquisição ou reparo dos equipamentos.\nEventuais danos às instalações do canteiro de obras ou do contratante ou de terceiros.",
+    "mitigacao": "Seguro contra riscos de engenharia.\nAdoção de plano de manutenção preventiva e corretiva.\nRemuneração do risco assumido pelo construtor.\nExigência de seguro para os equipamentos adquiridos ou utilizados na obra.",
+    "alocacao": "Risco exclusivo do contratado.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_018",
+    "cod": "MO018",
+    "tipoRisco": "Construção",
+    "descricao": "Perda ou perecimento de materiais de construção.",
+    "materializacao": "Aumento de custos de execução.\nAtrasos ocasionais para a aquisição de novos insumos.\nCustos com descarte dos materiais inservíveis.",
+    "mitigacao": "Remuneração do risco assumido pelo construtor.\nInstituição de programa de aquisições de insumos em conformidade com o cronograma da obra.\nAdotar boas práticas para a aquisição e armazenagem dos materiais.\nAtentar para a data de validade dos materiais, se for o caso.",
+    "alocacao": "Risco exclusivo do contratado.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_019",
+    "cod": "MO019",
+    "tipoRisco": "Crédito",
+    "descricao": "Não recebimento pela Administração de materiais, equipamentos e serviços pagos antecipadamente.",
+    "materializacao": "Atraso no andamento do objeto contratado.\nNecessidade de realizar nova aquisição com aumento de custo.\nInadimplemento contratual.",
+    "mitigacao": "Exigência de garantia complementar correspondente ao valor integral antecipado.\nSó adotar a prática de pagamento antecipado se esta for a única forma de adquirir o objeto ou se proporcionar significativa econômica, prevendo, em qualquer caso, o pagamento antecipado no instrumento convocatório.\nRealização de inspeções no fornecedor e o acompanhamento da mercadoria, em qualquer momento do transporte, por representante da Administração.\nComprovação da execução de parte ou de etapa inicial do objeto pelo contratado, para a antecipação do valor remanescente.\nEmissão de título de crédito pelo contratado.\nExigência de certificação do produto ou do fornecedor.\nVerificar a efetiva existência da empresa e o exercício de atividade compatível com o objeto contratual.\nParcelar o objeto em aquisições de menor vulto.",
+    "alocacao": "Risco exclusivo do contratado.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_020",
+    "cod": "MO020",
+    "tipoRisco": "Construção",
+    "descricao": "Atos de vandalismo de empregados ou de terceiros que causem danos às instalações das obras ou aos equipamentos/materiais mobilizados",
+    "materializacao": "Aumento de custos de execução.\nAtrasos do cronograma de execução.\nCustos com reparo ou descarte dos itens danificados.",
+    "mitigacao": "Seguro de riscos de engenharia ou de responsabilidade civil.\nRemuneração do risco assumido pelo construtor.\nFiscalização administrativa do cumprimento das regras trabalhistas pelo contratado.",
+    "alocacao": "Risco exclusivo do contratado.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_021",
+    "cod": "MO021",
+    "tipoRisco": "Construção",
+    "descricao": "Danos causados por acidentes de trabalho ou por segurança inadequada do canteiro de obras.",
+    "materializacao": "Paralisação das obras ou atraso no cronograma de execução.\nAumento dos custos.\nIndenizações por danos materiais ou morais a eventuais vítimas.\nCondenações na esfera trabalhista.\nMultas, embargos e outras penalidades aplicadas por órgãos de fiscalização.\nResponsabilização penal dos responsáveis técnicos e fiscais do contrato.",
+    "mitigacao": "Cumprimento das normas de segurança do trabalho, em especial da NR-18 e da RPT-1.\nAcompanhamento da obra por técnico ou engenheiro de segurança do trabalho, nos termos da NR-4.\nAcompanhamento da obra pelo seu responsável técnico e pela equipe de fiscalização.\nContratação de seguro de responsabilidade civil ou de risco e engenharia.\nExecução de bandejas primárias, secundárias e terciárias.\nExecução de tela de proteção, tapumes, guarda-corpos, fechamentos e outros dispositivos de proteção coletiva.\nExecução de linha de vida e fornecimento e EPIs adequados aos trabalhadores.\nRemuneração do risco assumido pelo construtor.",
+    "alocacao": "Risco exclusivo do contratado, cabendo ação de regresso do contratante contra o contratado no caso de a administração ser acionada judicialmente por terceiros em virtude dos acidentes.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_022",
+    "cod": "MO022",
+    "tipoRisco": "Construção",
+    "descricao": "Prejuízos causados a terceiros devido à realização das obras.",
+    "materializacao": "Aumento dos custos da obra\nEventual embargo da obra ou responsabilização da Administração.",
+    "mitigacao": "Realização de vistoria cautelar dos imóveis na região da obra.\nSeguro de Responsabilidade Civil com cobertura adequada.",
+    "alocacao": "Risco exclusivo do contratado",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_023",
+    "cod": "MO023",
+    "tipoRisco": "Construção",
+    "descricao": "Eventos seguráveis caracterizados como força maior ou caso fortuito.",
+    "materializacao": "Prejuízo a continuidade da obra ou ao regular andamento do cronograma.\nAumento dos custos incorridos pelo contratado.",
+    "mitigacao": "Seguro de Riscos de Engenharia com a cobertura adequada.",
+    "alocacao": "Risco exclusivo do contratado.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_024",
+    "cod": "MO024",
+    "tipoRisco": "Construção",
+    "descricao": "Eventos não seguráveis caracterizados como força maior ou caso fortuito.",
+    "materializacao": "Prejuízo a continuidade da obra ou ao regular andamento do cronograma.\nAumento dos custos incorridos pelo contratado.",
+    "mitigacao": "Recomposição do Equilíbrio Econômico-Financeiro.",
+    "alocacao": "Contratante.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_025",
+    "cod": "MO025",
+    "tipoRisco": "Construção",
+    "descricao": "Gerenciamento e administração inadequada da construção.",
+    "materializacao": "Aumento dos custos ou descumprimento dos prazos contratuais.",
+    "mitigacao": "Exigência de garantias contratuais.\nPresença do responsável técnico da contratada no canteiro.\nVerificar se o responsável técnico constante da ART é o mesmo que foi submetido para efeito da habilitação da empresa.\nPrevisão contratual de aplicação de penalidades.\nExigência de seguro risco de engenharia.\nExigência de requisitos adequados de habilitação dos licitantes.\nFiscalização ostensiva e atuante do contratante.",
+    "alocacao": "Risco exclusivo do contratado.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_026",
+    "cod": "MO026",
+    "tipoRisco": "Construção",
+    "descricao": "Prejuízos causados por subcontratados.",
+    "materializacao": "Aumento dos custos ou descumprimento dos prazos contratuais.\nEventual necessidade de reparar danos causados a outras instalações do contratante ou de terceiros.",
+    "mitigacao": "Exigência de garantias contratuais\nPrevisão contratual de aplicação de penalidades.\nExigência de seguro risco de engenharia.\nExigência de requisitos adequados de habilitação dos licitantes.\nAvaliação, pela equipe de fiscalização, dos pedidos de subcontratação formulados pelo contratado.\nEstabelecer em edital o percentual máximo de subcontratação, bem como que parcelas da obra poderão ou não ser subcontratadas, além dos requisitos e documentos do subcontratado a serem apresentados para a fiscalização.",
+    "alocacao": "Risco exclusivo do contratado.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_027",
+    "cod": "MO027",
+    "tipoRisco": "Construção",
+    "descricao": "Ocorrência de greves ou manifestações dos empregados do contratado ou dos subcontratados",
+    "materializacao": "Aumento dos custos incorridos pelo construtor.\nAtraso na execução dos serviços.\nEventual interposição de ação trabalhista.",
+    "mitigacao": "Fiscalização administrativa do cumprimento das obrigações trabalhistas e previdenciárias do contratado.\nPrevisão contratual de aplicação de penalidades.\nO construtor deve cumprir todas as regras trabalhistas e outras previstas nos instrumentos de negociação coletiva do trabalho.\nDisposição contratual aderente à Instrução Normativa Seges/MDPG nº 6/2018, que obriga a existência de cláusula obrigando que o construtor cumpra rigorosamente todos os direitos trabalhistas dos acordos de negociação coletiva.",
+    "alocacao": "Risco exclusivo do contratado.\nAs partes convencionam que reajustes salariais, concedidos por meio de dissídios, acordos ou convenções coletivas de trabalho, não ensejarão a recomposição extraordinária do equilíbrio econômico-financeiro do contrato, que será reestabelecido por meio dos reajustes anuais do contrato, na data-base contratual.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_028",
+    "cod": "MO028",
+    "tipoRisco": "Construção",
+    "descricao": "Ocorrência de greves ou manifestações de empregados de terceiros que possam interferir com o andamento da obra, tal como dos setores de transporte público, de órgãos governamentais ou de fornecedores.",
+    "materializacao": "Atraso na obra, em virtude do atraso no fornecimento dos materiais ou de falta dos empregados ao trabalho.\nAtraso na obra devido a órgão públicos diversos\nAumento de custos.",
+    "mitigacao": "Remuneração do risco assumido pelo construtor.\nProrrogação contratual.",
+    "alocacao": "Risco compartilhado entre o contratado e o contratante, por meio de cláusula contratual prevendo que o contratado arca com os prejuízos e atrasos decorrentes em greves de até 15 dias, a cada período de 12 meses\nNo caso de greves oriundas de períodos superiores a 15 dias, de comprovado impacto no andamento dos trabalhos, a Administração prorrogará o contrato pelo prazo necessário, mas não suportará nenhum encargo financeiros adicional.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_029",
+    "cod": "MO029",
+    "tipoRisco": "Construção",
+    "descricao": "Ocorrência de greves ou manifestações de empregados da própria administração contratante que possam ser caracterizadas como fato da administração.",
+    "materializacao": "Atraso na obra.\nAumento de custos.",
+    "mitigacao": "Pagamento de atualização financeira sobre as faturas em atraso.\nReequilíbrio econômico-financeiro do contrato.\nProrrogação contratual.",
+    "alocacao": "Risco do contratante, que, nos casos em que a paralisação de suas atividades comprovadamente afetar a execução da obra ou causar prejuízos ao contratado, prorrogará o contrato e celebrará o aditamento do contrato recompondo o seu reequilíbrio econômico-financeiro.\nHaverá pagamento de atualização financeira das faturas liquidadas com mais de 30 dias de atraso, sem o prejuízo de o contratado suspender a execução dos serviços se o atraso nos pagamentos se prolongar para além de 60 dias.\nSe a empresa comprovar estar mobilizada e ficar ociosa, a Administração arcará com a indenização dos custos regularmente comprovados por meio de folhas de pagamento, notas fiscais e outros documentos válidos.\nAs partes convencionam que não haverá pagamento de qualquer indenização por equipamentos e ferramentas ociosos de propriedade do construtor.\nAs partes convencionam que não haverá incidência de taxa de BDI, lucros, custos indiretos ou despesas indiretas sobre o valor indenizado, podendo ser aceito apenas o acréscimo dos tributos incidentes sobre o valor da indenização cujo pagamento for regularmente comprovado.\nAs ferramentas e equipamentos locados serão indenizados pelo valor da locação.\nSe houver determinação para que a empresa se desmobilize, a Administração arcará com o valor contratual da desmobilização e nova mobilização, mas não arcará com qualquer indenização de equipamentos ou equipes ociosas.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_030",
+    "cod": "MO030",
+    "tipoRisco": "Construção",
+    "descricao": "Ocorrência de outros eventos que causem o atraso na conclusão da obra ou o aumento do seu custo por culpa do contratado.",
+    "materializacao": "Atraso na obra.\nAumento de custos.",
+    "mitigacao": "Cláusula contratual prevendo a aplicação de penalidades e de rescisão unilateral do contrato.\nExigência de garantias contratuais.\nFiscalização efetiva da execução do objeto pela administração.\nRemuneração do risco assumido pelo construtor.",
+    "alocacao": "Risco exclusivo do contratado.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_031",
+    "cod": "MO031",
+    "tipoRisco": "Construção",
+    "descricao": "Erros e defeitos na execução da obra ensejando reconstrução total ou parcial.",
+    "materializacao": "Atraso na obra.\nAumento de custos.\nDespesas com a demolição e desentulho dos itens defeituosos.",
+    "mitigacao": "Cláusula contratual prevendo a aplicação de penalidades e de rescisão unilateral do contrato.\nExigência de garantias contratuais.\nRemuneração do risco assumido pelo construtor.\nContratação e seguro de risco de engenharia.\nAcompanhamento da obra por equipe de fiscalização atuante.\nContratação de supervisora.\nRealização do controle tecnológico dos materiais empregados.",
+    "alocacao": "Risco exclusivo do contratado.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_032",
+    "cod": "MO032",
+    "tipoRisco": "Legal",
+    "descricao": "Interposição de ações judiciais contra o construtor e os seus subcontratados por força da execução da obra.",
+    "materializacao": "Condenação do contratado, aumentando os custos de execução.\nResponsabilização solidária ou subsidiária da administração.\nParalisação da obra por ordem judicial.",
+    "mitigacao": "Remuneração do risco assumido pelo construtor.\nCláusula prevendo retenções de pagamentos, no valor da causa, no caso de a administração ser incluída no polo passivo da ação.",
+    "alocacao": "Risco exclusivo do contratado.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_033",
+    "cod": "MO033",
+    "tipoRisco": "Crédito",
+    "descricao": "Inadimplência dos fornecedores de materiais e equipamentos.",
+    "materializacao": "Perda de valores pelo construtor pagos aos seus fornecedores.\nProblemas de liquidez do construtor.\nAtrasos oriundos de novas compras ou encomendas de insumos",
+    "mitigacao": "Remuneração do risco assumido\npelo construtor.",
+    "alocacao": "Risco exclusivo do contratado.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_034",
+    "cod": "MO034",
+    "tipoRisco": "Crédito",
+    "descricao": "Inadimplência ou atraso de pagamentos pelo contratante.",
+    "materializacao": "Problemas de liquidez do construtor.\nEventual paralisação dos serviços.\nEventual aumento do custo em virtude de pagamentos de mobilizações e desmobilizações da obra, bem como de atualizações financeiras.",
+    "mitigacao": "Adequada gestão orçamentária e financeira pelo órgão contratante.\nCláusula prevendo que o contratado pode suspender os serviços o contrato após inadimplência superior a três meses.\nCláusula prevendo o pagamento de atualização financeira sobre as faturas em atraso.\nProrrogação do contrato.\nUso de uma conta vinculada, na qual o valor integral do objeto é previamente depositado, sendo liberado ao contratado na medida em que o objeto é executado.\nObservância da ordem cronológica de pagamentos.",
+    "alocacao": "Contratante, que arcará com a atualização financeira prevista em contrato no caso de o atraso nos pagamentos superar os 30 dias.\nTambém haverá prorrogação do prazo se o período de inadimplência superar os 90 dias.\nSe a empresa se desmobilizar, após o período de 90 dias, a administração arcará com os valores contratualmente previstos para a desmobilização e nova mobilização da empresa.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_035",
+    "cod": "MO035",
+    "tipoRisco": "Desapropriação",
+    "descricao": "Falta de frentes liberadas para o contratado iniciar o empreendimento devido a atraso na desapropriação ou de não conseguir desocupar efetivamente as já desapropriadas.",
+    "materializacao": "Atraso no cronograma.\nAumento de custo.",
+    "mitigacao": "Administração deve fazer levantamento das áreas, cadastro e avaliação.\nEstimar o custo da desapropriação e relocação, incluindo indenizações.\nPublicidade.\nSó contratar a execução das obras após o término dos procedimentos de desapropriação.\nPossibilidade de aditivo de prazo e reajustamento decorrente do atraso nessa atividade, e se for o caso, reequilíbrio econômico-financeiro.\nUso da contratação integrada ou semi-integrada, estipulando que o contratado será responsável por parte dos procedimentos de levantamentos cadastrais e desapropriação.",
+    "alocacao": "Risco do contratante.\nAtos de levantamento, indenização e demais executórios da expropriação são de responsabilidade da administração.\nHaverá prorrogação do prazo de execução contratual pelo período pertinente ao atraso.\nNos casos em que a paralisação de suas atividades comprovadamente afetar a execução da obra ou causar prejuízos ao contratado, prorrogará o contrato e celebrará o aditamento do contrato recompondo o seu reequilíbrio econômico-financeiro.\nSe a empresa comprovar estar mobilizada e ficar ociosa, a Administração arcará com a indenização dos custos regularmente comprovados por meio de folhas de pagamento, notas fiscais e outros documentos válidos.\nAs partes convencionam que não haverá pagamento de qualquer indenização por equipamentos e ferramentas ociosos de propriedade do construtor.\nAs partes convencionam que não haverá incidência de taxa de BDI, lucros, custos indiretos ou despesas indiretas sobre o valor indenizado, podendo ser aceito apenas o acréscimo dos tributos incidentes sobre o valor da indenização cujo pagamento for regularmente comprovado.\nAs ferramentas e equipamentos locados serão indenizados pelo valor da locação.\nSe houver determinação para que a empresa se desmobilize, a Administração arcará com o valor contratual da desmobilização e nova mobilização.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_036",
+    "cod": "MO036",
+    "tipoRisco": "Geológico",
+    "descricao": "Existência de rochas a serem escavadas com dureza diferente da prevista.",
+    "materializacao": "Alteração da classificação da rocha de branda para sã.\nModificação do método de desmonte.\nMudança no cronograma e alteração do custo de execução dos serviços.",
+    "mitigacao": "Realizar o levantamento geotécnico, com sondagens rotativas.\nRemuneração do risco assumido\npelo construtor.",
+    "alocacao": "Risco exclusivo do contratado.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_037",
+    "cod": "MO037",
+    "tipoRisco": "Geológico",
+    "descricao": "Diferença nos fatores de empolamento ou contração do solo em relação ao estimado.",
+    "materializacao": "Alteração do volume do material solto e, por conseguinte, da quantidade de caminhões necessária e dos custos com bota-foras e espalhamento do material.",
+    "mitigacao": "Realização de ensaios de campo.\nRemuneração do risco assumido\npelo construtor.\nSeguro de riscos de engenharia",
+    "alocacao": "Risco exclusivo do contratado.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_038",
+    "cod": "MO038",
+    "tipoRisco": "Geológico",
+    "descricao": "Mudança dos volumes de escavação, necessidade de tratamentos especiais com maior consumo de aço ou concreto, ou ainda, mudança na técnica de construção prevista.",
+    "materializacao": "Modificação do cronograma e/ou do custo de execução",
+    "mitigacao": "Realização de levantamento topográfico apurado.\nRemuneração do risco assumido\npelo construtor.\nSeguro de riscos de engenharia",
+    "alocacao": "Risco exclusivo do contratado.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_039",
+    "cod": "MO039",
+    "tipoRisco": "Geológico",
+    "descricao": "Alteração da quantidade de serviços necessários à estabilização de taludes (maior abatimento, por exemplo);",
+    "materializacao": "Modificação do cronograma e/ou do custo de execução",
+    "mitigacao": "Remuneração do risco assumido\npelo construtor.\nSeguro de riscos de engenharia",
+    "alocacao": "Risco exclusivo do contratado.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_040",
+    "cod": "MO040",
+    "tipoRisco": "Geológico",
+    "descricao": "Alteração do comprimento ou do volume das fundações.",
+    "materializacao": "Modificação do cronograma e/ou do custo de execução",
+    "mitigacao": "Realização de sondagens e outros procedimentos de investigação geotécnica.\nRemuneração do risco assumido\npelo construtor.\nSeguro de riscos de engenharia",
+    "alocacao": "Risco exclusivo do contratado.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_041",
+    "cod": "MO041",
+    "tipoRisco": "Geológico",
+    "descricao": "Detecção de condições geológicas que ensejem a alteração da solução das fundações previstas no anteprojeto ou projeto básico.",
+    "materializacao": "Modificação do cronograma e/ou do custo de execução",
+    "mitigacao": "Realização de sondagens e outros procedimentos de investigação geotécnica.\nProrrogação de prazo e celebração de termo de aditamento alterando o método executivo da fundação.",
+    "alocacao": "Risco do Contratante, por meio da celebração de aditivo qualitativo e, eventualmente, da necessária prorrogação do prazo de execução.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_042",
+    "cod": "MO042",
+    "tipoRisco": "Interferência",
+    "descricao": "Detecção de interferências não indicadas no anteprojeto ou no projeto básico.",
+    "materializacao": "Alteração do traçado/profundidade das redes, com modificação de custos e do prazo de execução.\nNecessidade de remanejar as interferências.",
+    "mitigacao": "Realização de cadastro de redes por parte do Poder Público.\nRealização de vistoria pelos licitantes ou pela administração contratante.\nProrrogação de prazo e celebração de termo de aditamento alterando o método executivo da fundação.\nAbertura da vala através de escavação de maneira cuidadosa de modo a evitar danificar as tubulações de grande porte.\nEscoramento das interferências com material apropriado.\nQuando aplicável execução do envelopamento da tubulação com a envoltória especificada em projeto.",
+    "alocacao": "Contratante, havendo a celebração de termo de aditamento contratual com ajustes qualitativos e quantitativos no objeto licitado, bem como da alteração do prazo de execução.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_043",
+    "cod": "MO043",
+    "tipoRisco": "Jazidas e Bota-foras",
+    "descricao": "Inexistência de áreas desbloqueadas de exploração ou aparecimento de jazidas não consideradas no projeto.",
+    "materializacao": "Mudança no cronograma e alteração do custo de execução dos serviços.",
+    "mitigacao": "Realização de levantamentos de campo\nRemuneração do risco assumido\npelo construtor.",
+    "alocacao": "Risco exclusivo do contratado.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_044",
+    "cod": "MO044",
+    "tipoRisco": "Legal",
+    "descricao": "Alteração da legislação, regulamentos e normas que causem alteração do projeto.",
+    "materializacao": "Atraso no cronograma para ajustes nos projetos.\nCustos associados com a alteração dos projetos.",
+    "mitigacao": "Celebração de aditivo contratual.",
+    "alocacao": "Contratante, que aditará o contrato no prazo necessário para os ajustes no projeto e arcará com os custos das alterações nestes.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_045",
+    "cod": "MO045",
+    "tipoRisco": "Legal",
+    "descricao": "Alteração da legislação, regulamentos e normas que causem novos encargos ou obrigações ao contratado.",
+    "materializacao": "Aumento dos custos da obra.",
+    "mitigacao": "Recomposição do Equilíbrio Econômico-Financeiro.",
+    "alocacao": "Contratante, que poderá aditar o contrato, recompondo o seu equilíbrio econômico-financeiro, se restar caracterizado que se trata de fato de príncipe.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_046",
+    "cod": "MO046",
+    "tipoRisco": "Legal",
+    "descricao": "Mudanças tributárias alterando os custos da obra, exceto alterações do imposto de renda e da contribuição social sobre o lucro líquido.",
+    "materializacao": "Alteração da carga tributária incidente sobre o construtor.",
+    "mitigacao": "Recomposição do Equilíbrio Econômico-Financeiro.",
+    "alocacao": "Contratante, que celebrará aditivo de reequilíbrio econômico-financeiro.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_047",
+    "cod": "MO047",
+    "tipoRisco": "Legal",
+    "descricao": "Alteração das alíquotas do imposto de renda e da contribuição social sobre o lucro líquido.",
+    "materializacao": "Alteração da carga tributária incidente sobre o construtor.",
+    "mitigacao": "Remuneração do risco assumido\npelo construtor.",
+    "alocacao": "Risco exclusivo do contratado.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_048",
+    "cod": "MO048",
+    "tipoRisco": "Mercado",
+    "descricao": "Alteração nos custos com salários e materiais de construção não decorrentes de alterações tributárias ou políticas públicas, ensejando alteração de custos superiores aos índices de reajuste contratual.",
+    "materializacao": "Alteração dos custos incorridos pelo construtor.",
+    "mitigacao": "Remuneração do risco assumido\npelo construtor.\nCelebração de pré-contratos com fornecedores.\nPolítica de compras antecipadas.\nReajuste anual ordinário de preços, conforme índice(s) definido(s) no contrato.",
+    "alocacao": "Risco compartilhado entre a Administração e o Construtor.\nQuando o impacto da variação dos custos dos insumos satisfazer a condição abaixo, será realizado o reequilíbrio econômico-financeiro do contrato:\n|(𝐒𝐂𝐑−𝐒𝐀𝐂/SAC )| ∗𝟏𝟎𝟎%> 𝐋𝐎𝐑;\nonde:\nSCR é o Saldo do Contrato com aplicação do Realinhamento;\nSAC é o Saldo Atual do Contrato;\nLOR é a taxa percentual de Lucro Operacional Referencial informado na composição do BDI do orçamento de referência da Administração.\nSe a relação acima não for satisfeita por conta do aumento dos insumos, caberá apenas o pagamento do reajuste anual dos preços contratuais por meio da cláusula contratual aplicável.\nAs partes convencionam que reajustes salariais, concedidos por meio de dissídios, acordos ou convenções coletivas de trabalho, não ensejarão a recomposição extraordinária do equilíbrio econômico-financeiro do contrato, que será reestabelecido por meio dos reajustes anuais do contrato, na data-base contratual.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_049",
+    "cod": "MO049",
+    "tipoRisco": "Legal",
+    "descricao": "Interposição de ações judiciais contra o contratante por conta da realização da obra por fatores atribuíveis ao contratado.",
+    "materializacao": "Encargos administrativos do órgão contratante para se defender no processo e perdas decorrentes de sentenças judiciais.",
+    "mitigacao": "Cláusula contratual prevendo a retenção de parte dos pagamentos devidos ao contratado no caso do contratante ser acionado judicialmente por fatores imputáveis ao contratado.\nExigência de garantias de execução contratual.",
+    "alocacao": "Risco exclusivo do contratado.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_050",
+    "cod": "MO050",
+    "tipoRisco": "Legal",
+    "descricao": "Rescisão ou anulação do contrato por fatores atribuíveis ao contratante.",
+    "materializacao": "Frustração de receitas futuras do construtor.",
+    "mitigacao": "Cláusula específica sobre rescisão e anulação contratual, dispondo sobre os critérios para reembolso dos custos incorridos pelo contratado.",
+    "alocacao": "Risco do contratante.\nAs partes convencionam que o valor da indenização paga ao contratado será adstrita as seguintes parcelas:\ndesmobilização contratualmente prevista.\npagamento dos serviços executados e dos materiais postos no canteiro de obras.\ndevolução das garantias contratuais.\nAs partes de comum acordo estabelecem que o contratado não fará jus a nenhum tipo de indenização por lucro cessante no caso de rescisão contratual.\nAs partes convencionam que não haverá incidência de taxa de BDI, lucros, custos indiretos ou despesas indiretas sobre o valor indenizado, podendo ser aceito apenas o acréscimo dos tributos incidentes sobre o valor da indenização cujo pagamento for regularmente comprovado.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_051",
+    "cod": "MO051",
+    "tipoRisco": "Legal",
+    "descricao": "Rescisão ou anulação do contrato por fatores atribuíveis ao contratado.",
+    "materializacao": "Custos administrativos para realização de nova licitação/contratação.\nPossível perecimento dos serviços executados.\nPostergação da conclusão da obra.",
+    "mitigacao": "Cláusula contratual prevendo a aplicação de penalidades e de rescisão unilateral do contrato.\nCláusula contratual prevendo a imputação ao contratado de quaisquer outras perdas e danos da Administração em virtude da rescisão contratual por culpa do contratado.\nExigência de garantias contratuais.",
+    "alocacao": "Risco exclusivo do contratado.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_052",
+    "cod": "MO052",
+    "tipoRisco": "Legal",
+    "descricao": "Paralisação ou interferência na obra em virtude de fiscalizações por órgãos de controle, tal como Delegacia Regional do Trabalho, Ministério Público, Tribunal de Contas, Polícia Federal, Polícia Civil, CGU e órgãos ambientais.",
+    "materializacao": "Eventual paralisação ou atraso do empreendimento.\nCustos associados ao atraso da obra.\nEventual aplicação de sanções a agentes públicos do contratante e à construtora.\nEventual anulação do contrato.\nDeterminação para que que o contrato seja repactuado com vista a reduzir os preços ajustados, adequando-os aos de mercado.",
+    "mitigacao": "Cumprimento da legislação pertinente.\nAdequado assessoramento jurídico.\nCláusula contratual prevendo a aplicação de penalidades e de rescisão unilateral do contrato.\nCláusula contratual prevendo a imputação ao contratado de quaisquer outras perdas e danos da Administração em virtude da rescisão contratual por culpa do contratado.\nExigência de garantias contratuais.",
+    "alocacao": "Risco compartilhado entre o contratado e o contratante\nArcará com as consequências da fiscalização exercida pelo órgão de controle a parte que der causa à irregularidade.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_053",
+    "cod": "MO053",
+    "tipoRisco": "Liquidez",
+    "descricao": "Problemas de liquidez financeira do construtor ou de subcontratados, bem como declaração de falência ou recuperação judicial do contratado.",
+    "materializacao": "Custos administrativos para realização de nova licitação/contratação.\nPossível perecimento dos serviços executados.\nPostergação da conclusão da obra",
+    "mitigacao": "Cláusula contratual prevendo a aplicação de penalidades e de rescisão unilateral do contrato.\nCláusula contratual prevendo a imputação ao contratado de quaisquer outras perdas e danos da Administração em virtude da rescisão contratual por culpa do contratado.\nExigência de garantias contratuais.\nPrevisão de retenção das medições ainda não liquidadas.\nPagamento direto para empregados, fornecedores e subcontratados da construtora.",
+    "alocacao": "Risco exclusivo do contratado.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_054",
+    "cod": "MO054",
+    "tipoRisco": "Liquidez",
+    "descricao": "Restrição orçamentária e/ou financeira do órgão contratante.",
+    "materializacao": "Atraso ou paralisação dos serviços.\nPossível inadimplência no pagamento dos serviços executados e medidos.\nCustos com desmobilização da empresa.\nAtraso na emissão de empenhos.\nAtraso na assinatura de contratos ou de termos de aditamento contratual.\nAtraso na realização de apostilamento do contrato com a concessão de reajustes.",
+    "mitigacao": "Adequada gestão orçamentária e financeira.\nProrrogação de prazo contratual.\nReequilíbrio econômico-financeiro do contrato.\nUso de uma conta vinculada, na qual o valor integral do objeto é previamente depositado, sendo liberado ao contratado na medida em que o objeto é executado.\nObservância da ordem cronológica de pagamentos.\nGestão política em busca de recursos para o início/continuidade da obra.",
+    "alocacao": "Risco do contratante, que prorrogará o contrato.\nSe a empresa comprovar estar mobilizada e ficar ociosa, a Administração arcará com a indenização dos custos regularmente comprovados por meio de folhas de pagamento, notas fiscais e outros documentos válidos.\nAs partes convencionam que não haverá pagamento de qualquer indenização por equipamentos e ferramentas ociosos que sejam de propriedade do construtor.\nAs partes convencionam que não haverá incidência de taxa de BDI, lucros, custos indiretos ou despesas indiretas sobre o valor indenizado, podendo ser aceito apenas o acréscimo dos tributos incidentes sobre o valor da indenização cujo pagamento for regularmente comprovado.\nAs ferramentas e equipamentos locados serão indenizados pelo valor da locação.\nSe a empresa tiver se desmobilizado a pedido da administração fará jus ao pagamento da verba contratualmente prevista para desmobilização e nova mobilização, mas não terá direito a pagamento de custos improdutivos.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_055",
+    "cod": "MO055",
+    "tipoRisco": "Mercado",
+    "descricao": "Variações nas taxas de câmbio ou juros.",
+    "materializacao": "Alterar o custo de aquisição de insumos importados.\nAlterar as condições do pagamento de financiamentos e dívidas em moeda estrangeira ou nacional.",
+    "mitigacao": "Proteção por meio de instrumentos de hedge, tais como contratos futuros, swaps etc.\nPolítica de compra antecipada de bens importados.",
+    "alocacao": "Risco exclusivo do contratado.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_056",
+    "cod": "MO056",
+    "tipoRisco": "Orçamento",
+    "descricao": "Erros e omissões na proposta comercial",
+    "materializacao": "Constatação superveniente de erros e omissões na proposta comercial",
+    "mitigacao": "Previsão no Edital de que a PROPONENTE é responsável pela proposta comercial apresentada.\nCláusula contratual prevendo a aplicação de penalidades e de rescisão unilateral do contrato no caso de inadimplemento pelo construtor.",
+    "alocacao": "Risco exclusivo do contratado.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_057",
+    "cod": "MO057",
+    "tipoRisco": "Orçamento",
+    "descricao": "Erro na estimativa de custo da obra, inclusive os decorrentes de omissão de serviços no orçamento e de previsões erradas de quantitativos de serviços, ou, ainda, previsão de preços unitários que não correspondem aos parâmetros de mercado.",
+    "materializacao": "Alteração da lucratividade prevista",
+    "mitigacao": "Seguro contra riscos de engenharia.\nRemuneração do risco assumido\npelo construtor.\nAnálise criteriosa do projeto e do orçamento.\nUtilização da empreitada por preço unitário.\nLicitação com projeto executivo.\nCelebração de termos de aditamento contratual.",
+    "alocacao": "No caso de uso da empreitada por preço unitário, o risco de erros de quantitativos será compartilhado entre o contratante e o contratado, realizando-se os pagamentos pelos quantitativos efetivamente executados.\nNa contratação semi-integrada e nas empreitadas por preço global e integral, o risco de erros e omissões de quantitativos são exclusivos do construtor para pequenas variações de serviços (até 10% em relação ao quantitativo previsto por item na planilha orçamentária), cabendo a celebração de aditivos nos casos de erros que superem esse patamar e se refiram, cumulativamente, a serviços constantes da parte “A” da curva ABC.\nAinda na contratação semi-integrada e nas empreitadas por preço global e integral, excepcionalmente, caso haja uma diferença, entre as quantidades apuradas pela contratada durante a execução e as quantidades previstas no projeto básico elaborado pela Administração de mais de 10%, para mais ou para menos, é cabível, mediante a celebração de termo de aditamento contratual, o ressarcimento por parte da Administração ou da contratada, conforme o caso, da diferença que exceder esse percentual, a maior ou a menor.\nNa contratação integrada, o risco de erros e omissões de quantitativos é exclusivo do contratado, não cabendo a celebração de termo de aditamento contratual por conta de qualquer erro na planilha orçamentária.\nNos regimes de empreitada, a inclusão de itens novos nas planilhas só ocorrerá se houver alteração qualitativa do escopo do projeto básico licitado, não sendo admitidas as inclusão de itens novos a título de omissões ou erros na planilha orçamentária.\nPara tanto, os preços unitários ofertados devem incluir todos os custos diretos e indiretos para perfeita execução dos serviços, inclusive das despesas com materiais e/ou equipamentos, ferramentas, fretes, transportes, carga, descarga, armazenagem, vigilância, logística, manutenção, conservação, instalação, supervisão, gerenciamento, operação, processamento, tratamento, combustíveis, ART, todo o controle tecnológico dos materiais es serviços exigidos pelas normas da ABNT, emissão de laudos, certificação, comissionamento, plotagens e impressões, despesas junto a concessionárias públicos (água, energia, gás, telefone, esgoto), mão de obra especializada ou não, seguros em geral, garantias, encargos financeiros, riscos, encargos da Legislação Social Trabalhista, Previdenciária, da Infortunística do Trabalho e responsabilidade civil por qualquer dano causado a terceiros ou dispêndios resultantes de tributos, taxas, emolumentos, multas, regulamentos e posturas municipais, estaduais e federais, enfim, tudo o que for necessário para a execução total e completa dos serviços, bem como o seu lucro, conforme especificações constantes do Edital, sem que caiba, em qualquer caso, qualquer tipo de pleito ao contratante com a alegação de que alguma parcela do custo foi omitida.\nEm qualquer regime de execução contratual adotado, os erros nos preços unitários são risco exclusivo do contratado.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_058",
+    "cod": "MO058",
+    "tipoRisco": "Patrimônio Histórico, Artístico e Cultural",
+    "descricao": "Descobertas arqueológicas ou outras interferências com patrimônio cultural.",
+    "materializacao": "Alterações de prazo e de custo da obra.",
+    "mitigacao": "Obter previamente à licitação o licenciamento ambiental da obra.\nAdministração, por meio do gerenciamento ambiental, deve avaliar áreas de relevância arqueológica, tornando público o estudo.\nProrrogação de prazo e aditivos de alteração de projeto.",
+    "alocacao": "O contratante fará a prorrogação de prazo necessária, bem como suportará o custo de eventuais alterações de projeto e do regular reajustamento contratual.\nSe for necessário explorar novas jazidas, as partes convencionam que os custos de transportes serão arcados pelo Contratado.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_059",
+    "cod": "MO059",
+    "tipoRisco": "Projeto",
+    "descricao": "Não atendimento dos requisitos e parâmetros mínimos de performance estabelecidos no anteprojeto ou no projeto básico.",
+    "materializacao": "O projeto básico e/ou executivo elaborado pelo contratado não é aprovado pela Administração ou por outros órgãos licenciadores.\nNecessidade de refazer o projeto.\nAumento de custos.\nAtraso no cronograma",
+    "mitigacao": "Cláusula contratual prevendo a aplicação de penalidades e de rescisão unilateral do contrato.\nAcompanhamento da obra por equipe de fiscalização atuante.\nContratação de supervisora.\nEstabelecimento de requisitos de habilitação de licitantes adequados.\nCelebração de termos de aditamento contratual, nos regimes de empreitada.",
+    "alocacao": "Na contratação integrada e semi-integrada, trata-se de risco exclusivo do contratado.\nNos demais regimes de execução contratual, a alteração de prazo e o encargo decorrente da alteração do projeto será suportado exclusivamente pelo contratante.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_060",
+    "cod": "MO060",
+    "tipoRisco": "Projeto",
+    "descricao": "Inadequação do projeto elaborado pelo contratado para provimento dos serviços na qualidade, quantidade e custo.",
+    "materializacao": "Aumento dos custos de implantação e inadequação dos serviços.",
+    "mitigacao": "Uso da Contratação integrada – responsabilidade da solução de engenharia do contratado.\nNão pagamento se os níveis de serviço do anteprojeto não forem atingidos.\nContratação de seguro performance;\nRemuneração do risco",
+    "alocacao": "Risco exclusivo do contratado.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_061",
+    "cod": "MO061",
+    "tipoRisco": "Projeto",
+    "descricao": "Inadequação do projeto elaborado pela administração para provimento dos serviços na qualidade, quantidade e custo.",
+    "materializacao": "Aumento dos custos de implantação e inadequação dos serviços.",
+    "mitigacao": "Uso da Contratação integrada – responsabilidade da solução de engenharia do contratado.\nCelebração de termos de aditamento contratual e de prorrogação de prazo.",
+    "alocacao": "O contratante suportará os encargos decorrentes da alteração de prazo e das alterações no escopo do projeto licitado.\nO custo com a adequação do projeto será suportado pelo contratante.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_062",
+    "cod": "MO062",
+    "tipoRisco": "Projeto",
+    "descricao": "Modificações das especificações de serviço no anteprojeto ou no projeto básico pela administração.",
+    "materializacao": "Administração poderá modificar especificações de serviço existentes no anteprojeto ou no projeto básico, se este já estiver aprovado, alterando o escopo dos serviços contratados, o que impactará nos custos e no prazo de execução.",
+    "mitigacao": "Celebração de termo de aditamento contratual com ajustes qualitativos e quantitativos no objeto licitado, bem como da alteração do prazo de execução.",
+    "alocacao": "O contratante arcará com os custos decorrentes da modificação dos projetos e com a necessária prorrogação de prazo, desde que as modificações de projeto solicitadas não decorram de erros cometidos pelo próprio contratado.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_063",
+    "cod": "MO063",
+    "tipoRisco": "Projeto",
+    "descricao": "Dificuldade de contemplar no projeto básico as especificações constantes do anteprojeto.",
+    "materializacao": "Não atingimento dos parâmetros de qualidade, durabilidade, performance, rendimento, garantia contra defeitos e prazo de execução previstos no anteprojeto.",
+    "mitigacao": "Cláusula contratual impondo a obrigação de alteração do projeto pelo contratado.",
+    "alocacao": "Risco exclusivo do contratado.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_064",
+    "cod": "MO064",
+    "tipoRisco": "Projeto",
+    "descricao": "Atraso na elaboração dos projetos básicos e/ou executivo, gerando custos adicionais.",
+    "materializacao": "Atraso na execução do objeto contratual.",
+    "mitigacao": "Exigência de garantia contratual ou seguro garantia (performance bond).\nCláusula contratual prevendo a aplicação de penalidades e de rescisão unilateral do contrato.",
+    "alocacao": "Risco exclusivo do contratado.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_065",
+    "cod": "MO065",
+    "tipoRisco": "Projeto",
+    "descricao": "Não aprovação dos projetos pelo contratante.",
+    "materializacao": "Atraso na execução do objeto contratual.\nCustos adicionais com o refazimento dos projetos.",
+    "mitigacao": "Exigência de garantia contratual ou seguro garantia (Performance Bond).\nCláusula contratual prevendo a aplicação de penalidades e de rescisão unilateral do contrato.",
+    "alocacao": "Risco exclusivo do contratado.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_066",
+    "cod": "MO066",
+    "tipoRisco": "Projeto",
+    "descricao": "Mudanças de projeto por determinação de outras entidades públicas (prefeitura, corpo de bombeiros etc.) ou exigidas para obtenção do licenciamento ambiental do empreendimento.",
+    "materializacao": "Atraso na execução do objeto contratual.\nCustos adicionais associados com o refazimento dos projetos.",
+    "mitigacao": "Celebração de aditivo contratual.",
+    "alocacao": "O contratante arcará com os custos decorrentes da modificação dos projetos e com a necessária prorrogação de prazo, desde que as modificações de projeto solicitadas não decorram de erros cometidos pelo próprio contratado.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_067",
+    "cod": "MO067",
+    "tipoRisco": "Projeto",
+    "descricao": "Erros nos projetos elaborados pelo contratado.",
+    "materializacao": "Atraso na execução do objeto contratual.\nCustos adicionais associados com o refazimento dos projetos.",
+    "mitigacao": "Cláusula contratual impondo a correção dos erros por conta do contratado.\nExigência da garantia contratual\nCláusula contratual prevendo a aplicação de penalidades e de rescisão unilateral do contrato.",
+    "alocacao": "Risco exclusivo do contratado.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_068",
+    "cod": "MO068",
+    "tipoRisco": "Projeto",
+    "descricao": "Erro na estimativa de prazo da obra.",
+    "materializacao": "Alteração no prazo de execução do objeto contratual.",
+    "mitigacao": "Realizar a adequada programação da obra.\nSeguro contra riscos de engenharia.\nRemuneração pelo risco assumido.",
+    "alocacao": "Risco exclusivo do contratado.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_069",
+    "cod": "MO069",
+    "tipoRisco": "Social",
+    "descricao": "Invasão e ocupação irregular da obra",
+    "materializacao": "Depredação dos equipamentos e serviços executados;\nFurto de materiais e equipamentos;\nParalisação e atraso na obra;",
+    "mitigacao": "Vigilância ostensiva da obra.\nNegociação com os invasores.\nAcionamento das forças policiais.\nInterposição de ação de reintegração de posse.",
+    "alocacao": "Contratante suportará os prejuízos observados na obra e prorrogará o prazo de execução pelo tempo necessário.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_070",
+    "cod": "MO070",
+    "tipoRisco": "Construção",
+    "descricao": "Atraso na disponibilização da energia pela concessionária.",
+    "materializacao": "Modificação do cronograma de obra e operação assistida e/ou do custo de execução",
+    "mitigacao": "Remuneração do construtor pelo risco assumido.",
+    "alocacao": "Risco exclusivo do contratado.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_071",
+    "cod": "MO071",
+    "tipoRisco": "Construção",
+    "descricao": "Demora na mobilização inicial da empresa.",
+    "materializacao": "Alteração no prazo de execução do objeto contratual.\nPostergação do início da obra.",
+    "mitigacao": "Exigência de garantia contratual.\nPrevisão de rescisão do contrato e aplicação de sanções.\nRealizar a adequada programação da obra.\nSeguro contra riscos de engenharia.\nRemuneração pelo risco assumido.",
+    "alocacao": "Risco exclusivo do contratado.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_072",
+    "cod": "MO072",
+    "tipoRisco": "Operacional",
+    "descricao": "Disponibilização do serviço",
+    "materializacao": "A operação assistida e a disponibilização do serviço são feitas de forma deficiente",
+    "mitigacao": "Previsão no Termo de Referência de que o CONSTRUTOR é o responsável pelo comissionamento e pela operação assistida, com a entrega do Data Book.\nPrevisão contratual de multa ou de rescisão unilateral pela administração no caso de inadimplemento contratual",
+    "alocacao": "Risco exclusivo do contratado.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_073",
+    "cod": "MO073",
+    "tipoRisco": "Operacional",
+    "descricao": "Dificuldade em atingir parâmetros mínimos de performance operacional",
+    "materializacao": "Perdas de receita da contratante.",
+    "mitigacao": "Previsão no Termo de Referência de comissionamento e operação assistida.\nPrevisão contratual de multa ou de rescisão unilateral pela administração no caso de inadimplemento contratual",
+    "alocacao": "Risco exclusivo do contratado.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_074",
+    "cod": "MO074",
+    "tipoRisco": "Ambiental",
+    "descricao": "Dificuldade na obtenção de Licenças e Autorizações Ambientais necessárias à Operação",
+    "materializacao": "Modificações e/ou intervenção pela contratada que impactem no atendimento as condicionantes ambientais e, consequentemente, na liberação da licença de operação para a Contratante.",
+    "mitigacao": "Previsão no Contrato de penalidades e multas se o atraso na obtenção de licenças e autorizações se der por motivos imputáveis à contratada.",
+    "alocacao": "Risco exclusivo do contratado.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_075",
+    "cod": "MO075",
+    "tipoRisco": "Construção",
+    "descricao": "Danos às propriedades adjacentes da obra.",
+    "materializacao": "Aumento do custo de execução.\nParalisação da obra por ações judiciais ou por órgãos de fiscalização.\nPagamento de indenizações.\nAplicação de multas e sanções pelos órgãos competentes.",
+    "mitigacao": "Instrumentação e monitoramento dos recalques.\nLevantamento e cadastro das edificações ao longo do trajeto da obra.\nRealização de vistoria cautelar ao longo da adutora para registro de danos que poderão ser atribuídos à obra.\nExigência de seguro de responsabilidade civil contra danos ao patrimônio de terceiros.",
+    "alocacao": "Risco exclusivo do contratado.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_076",
+    "cod": "MO076",
+    "tipoRisco": "Construção",
+    "descricao": "Danos à tubulação enterrada por ocorrência de empuxo negativo",
+    "materializacao": "Danos ao patrimônio público e de terceiros.\nNecessidade de reparos de grande vulto\nAtraso na implantação da obra",
+    "mitigacao": "Exigência de seguro de risco de engenharia.\nRevisão do dimensionamento do sistema de ancoragem da adutora.",
+    "alocacao": "Risco exclusivo do contratado.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_077",
+    "cod": "MO077",
+    "tipoRisco": "Construção",
+    "descricao": "Falta de previsão de testes hidrostáticos",
+    "materializacao": "Danos ao patrimônio público e de terceiros.\nNecessidade de reparos de grande vulto\nAtraso na implantação da obra\nOcorrência de vazamentos não detectados",
+    "mitigacao": "Testes de todas as soldas da tubulação e conexões.\nNo início da pré-operação, as adutoras poderão ser cheias até as válvulas de bloqueio localizadas nas interligações.",
+    "alocacao": "Risco exclusivo do contratado.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_078",
+    "cod": "MO078",
+    "tipoRisco": "Construção",
+    "descricao": "Dificuldades não prevista na realização de travessias aéreas e subterrâneas",
+    "materializacao": "Necessidade de alterar o traçado projetado da adutora.\nNecessidade de alteração da solução de travessia.\nAlteração dos custos de construção e dos prazos de execução.",
+    "mitigacao": "Executar a nova adutora na faixa de domínio da adutora existente.\nUso da contratação semi-integrada atribuindo ao contratado a definição da solução a ser utilizada.",
+    "alocacao": "Risco exclusivo do contratado.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  },
+  {
+    "id": "MOB_079",
+    "cod": "MO079",
+    "tipoRisco": "Construção",
+    "descricao": "Não obtenção das produtividades previstas em projeto para soldagem da tubulação.",
+    "materializacao": "Alteração do custo de execução e do prazo de construção.",
+    "mitigacao": "Previsão contratual atribuindo poderes para a fiscalização contratual determinar a abertura de novas frentes de serviço.\nPrevisão contratual atribuindo poderes para a fiscalização determinar a realização de obras em dois turnos, com custo integral e exclusivamente suportado pelo contratado, até que o atraso no cronograma seja superado.\nPrevisão contratual de multa por atraso no cronograma.\nPrevisão contratual de cláusula de remuneração variável atribuindo bonificação ao contratado por antecipação do prazo previsto.",
+    "alocacao": "Risco exclusivo do contratado.",
+    "origem": "Matriz de Riscos - Obras.docx"
+  }
+];
+
+const DEFAULT_SUPPORT={
+  naturezas:['Técnico','Projeto','Ambiental','Financeiro ou Cambial','Contratual','Regulatório','Desapropriação','Arqueológico','Logístico','Trabalhista','Força Maior','Caso Fortuito','Operacional','Segurança','Governança','Político','Legal','Construção','Crédito','Geológico','Interferência','Jazidas e Bota-foras','Mercado','Orçamento','Patrimônio Histórico, Artístico e Cultural','Liquidez','Social'],
+  categorias:['Riscos do planejamento da contratação','Riscos da licitação','Riscos de projeto','Riscos de engenharia','Riscos ambientais','Riscos econômico-financeiros','Riscos de execução','Riscos de suprimentos','Riscos regulatórios','Riscos de segurança','Riscos jurídicos','Riscos sociais','Riscos de interface','Riscos de desempenho','Riscos de equilíbrio econômico-financeiro','Riscos exclusivos do contratado','Riscos exclusivos do contratante','Riscos compartilhados'],
+  fatores:['Prazo','Custo','Qualidade','Escopo','Imagem institucional','Continuidade do serviço','Segurança','Desempenho operacional','Sustentabilidade','Conformidade legal','Equilíbrio econômico-financeiro','Licitação/competitividade'],
+  premissas:['Estudos preliminares','Projeto básico','Anteprojeto','Projeto executivo','Licenças','Disponibilidade orçamentária','Terreno/jazida','Interferências','Cronograma','Fontes de preço','Stakeholders','Normas técnicas','Regime de execução','Condições de alocação'],
+  fases:['Planejamento','Licitação','Projeto','Pré-obra','Execução','Comissionamento','Operação inicial','Encerramento'],
+  tiposObra:['Edificação','Rodovia','Ferrovia','Saneamento','Aeroporto','Infraestrutura urbana','Manutenção predial','Contratação integrada','Concessão/PPP','Serviço de engenharia','Obras de infraestrutura'],
+  estrategias:['Evitar','Reduzir/Mitigar','Transferir','Compartilhar','Aceitar','Explorar oportunidade'],
+  statusRisco:['Ativo','Em revisão','Mitigado','Materializado','Encerrado','Desativado','Biblioteca'],
+  simNao:['Sim','Não'],
+  matrizFlag:['Não','Sim'],
+  equilibrio:['A avaliar','Sim','Não','Parcial']
+};
+const MODELOS_OBRA={
+  'Edificação':['R001','R002','R005','R006','R017','R025','R056','R072','R076','R077','R078','R081'],
+  'Rodovia':['R017','R026','R027','R053','R058','R059','R060','R062','R063','R064','R065','R066','R067','R074'],
+  'Saneamento':['R017','R026','R027','R041','R053','R054','R056','R070','R079'],
+  'Concessão/PPP':['R024','R029','R032','R033','R049','R069','R078','R080','R081','R083'],
+  'Contratação integrada':['R001','R002','R004','R005','R013','R014','R018','R056','R073','R086']
+};
+const NAV_GROUPS=[
+  ['Visão geral',[['dashboard','Painel mapa × matriz'],['ficha','Ficha consolidada do risco'],['tratamento','Plano de tratamento'],['relatorios','Relatórios gerais']]],
+  ['Mapa de riscos',[['processos','00 - Processo'],['riscos','01 - Registro de riscos'],['premissas','01A - Premissas'],['causas','02 - Causas prováveis'],['gatilhos','03 - Gatilhos'],['impactos','04 - Impactos prováveis'],['avaliacoes','05 - Avaliação dos riscos'],['prevContratante','06 - Preventivas - Contratante'],['prevContratada','07 - Preventivas - Contratada'],['respContratante','08 - Respostas - Contratante'],['respContratada','09 - Respostas - Contratada']]],
+  ['Matriz de riscos',[['alocacao','10 - Alocação contratual'],['seguro','11 - Proposta de seguro'],['matrizObras','Modelo: matriz de obras']]],
+  ['Conhecimento e quantitativo',[['licoes','12 - Lições aprendidas'],['quantificacoes','13 - Quantificação'],['tornado','Futuro: diagrama de tornado'],['montecarlo','Futuro: Monte Carlo']]],
+  ['Administração',[['modelos','Modelos por tipo de obra'],['backups','Backups e restauração'],['apoio','Formulários de apoio']]]
+];
+const REQUIRED={
+  processos:['objeto'],riscos:['cod','risco','incluiMapa','incluiMatriz'],avaliacoes:['codRisc','prob','impacto'],alocacao:['codRisc','alocacao'],causas:['codRisc','causa'],gatilhos:['codRisc','gatilho'],impactos:['codRisc','impacto'],premissas:['codRisc','descricao'],prevContratante:['codRisc','acao'],prevContratada:['codRisc','acao'],respContratante:['codRisc','resposta'],respContratada:['codRisc','resposta'],quantificacoes:['codRisc','variavel','tipoImpacto','minimo','maisProvavel','maximo']
+};
+
+let db=load();
+let current='dashboard';
+let editing=null;
+let selectedRisk=db.riscos[0]?.cod||'';
+let prefill={};
+function nowISO(){return new Date().toISOString()}
+function brDate(d){if(!d)return'';try{return new Date(d).toLocaleString('pt-BR')}catch(e){return d}}
+function uid(prefix){return prefix+Date.now().toString(36)+Math.random().toString(36).slice(2,7).toUpperCase()}
+function esc(v){return String(v??'').replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]))}
+function txt(v){return String(v??'').replace(/<[^>]*>/g,'').trim()}
+function trunc(v,n=110){v=String(v??'');return v.length>n?v.slice(0,n-1)+'…':v}
+function money(v){let n=Number(v||0);if(!Number.isFinite(n)||n===0)return'';return n.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}
+function numberOrBlank(v){return v===''||v==null?'':Number(v)}
+function toast(msg,type='ok'){const el=document.getElementById('toast');el.textContent=msg;el.className='toast '+type;el.classList.remove('hidden');clearTimeout(window.__toastTimer);window.__toastTimer=setTimeout(()=>el.classList.add('hidden'),3600)}
+function repairText(s){
+  if(!s)return'';
+  let t=String(s);
+  const reps=[
+    [/\bN o\b/g,'Não'],[/\bn o\b/g,'não'],[/\bm gest/g,'má gest'],[/\bB SICO\b/g,'BÁSICO'],[/\bB sico\b/g,'Básico'],[/\bT CNIC/g,'TÉCNIC'],[/\bt cnic/g,'técnic'],[/\bt cnico/g,'técnico'],[/\bt cnica/g,'técnica'],[/\bt cnicos/g,'técnicos'],[/\bt cnicas/g,'técnicas'],
+    [/\bconcep o\b/g,'concepção'],[/\belabora o\b/g,'elaboração'],[/\bexecu o\b/g,'execução'],[/\bexecu\b/g,'execução'],[/\bsolu o\b/g,'solução'],[/\baprova o\b/g,'aprovação'],[/\bobtenão\b/g,'obtenção'],[/\blicen as\b/g,'licenças'],[/\balvar s\b/g,'alvarás'],[/\bpermiss es\b/g,'permissões'],
+    [/\bCompetentes\/Concession rias\b/g,'competentes/concessionárias'],[/\bCONCESSION RIA\b/g,'CONCESSIONÁRIA'],[/\brg os\b/g,'órgãos'],[/\bos competentes\b/g,'órgãos competentes'],[/\brazo\b/g,'razão'],[/\braz es\b/g,'razões'],
+    [/\bOR AMENT RIA\b/g,'ORÇAMENTÁRIA'],[/\bORÇAMENTO PARAMÉTRICO\b/g,'ORÇAMENTO PARAMÉTRICO'],[/\bPADR ES\b/g,'PADRÕES'],[/\bNORMAS TÉCNICAS\b/g,'NORMAS TÉCNICAS'],[/\bIntervenão\b/g,'Intervenção'],[/\bMANUTENÃO\b/g,'MANUTENÇÃO'],[/\bfunão\b/g,'função'],
+    [/\bMudan a\b/g,'Mudança'],[/\bmudan as\b/g,'mudanças'],[/\baus ncia\b/g,'ausência'],[/\bocorr ncia\b/g,'ocorrência'],[/\bprevidenci ria\b/g,'previdenciária'],[/\bobriga es\b/g,'obrigações'],[/\bcontribui\b/g,'contribuições'],
+    [/\bf sico\b/g,'físico'],[/\bpreju zos\b/g,'prejuízos'],[/\bhumana\b/g,'vida humana'],[/\bs PROPRIEDADES\b/g,'às PROPRIEDADES'],[/\bPOLUI O\b/g,'POLUIÇÃO'],[/\bPr -existente\b/g,'pré-existente'],
+    [/\bInefic cia\b/g,'Ineficácia'],[/\binadequa o\b/g,'inadequação'],[/\bCONTROLE TECNOL GICO\b/g,'CONTROLE TECNOLÓGICO'],[/\bINTERDEPEND NCIA\b/g,'INTERDEPENDÊNCIA'],[/\breas\b/g,'áreas'],[/\brea es\b/g,'reações'],
+    [/\bServi os\b/g,'Serviços'],[/\bservi os\b/g,'serviços'],[/\bRODOVI RIA\b/g,'RODOVIÁRIA'],[/\bRodovi rias\b/g,'Rodoviárias'],[/\bVi ria\b/g,'Viária'],[/\bAeroportu\b/g,'Aeroportuária'],[/\bTra Ado\b/g,'Traçado'],
+    [/\bFUNDAÇÃO\b/g,'FUNDAÇÃO'],[/\bPremissas Geot cnicas\b/g,'Premissas Geotécnicas'],[/\bn vel\b/g,'nível'],[/\bvi veis\b/g,'viáveis'],[/\bdist ncias\b/g,'distâncias'],[/\bespecifica es\b/g,'especificações'],
+    [/\bnecess rias\b/g,'necessárias'],[/\bconclu das\b/g,'concluídas'],[/\bIn cio\b/g,'Início'],[/\bPRESTA O DE CONTAS\b/g,'PRESTAÇÃO DE CONTAS'],[/\bGERA O\b/g,'GERAÇÃO'],[/\bbenef cios\b/g,'benefícios'],
+    [/\bFALHAS na CONCRETAGEM de ESTRUTURAS, FUNDA ES\b/g,'FALHAS na CONCRETAGEM de ESTRUTURAS, FUNDAÇÕES'],[/\blan amento\b/g,'lançamento'],[/\bresist ncia\b/g,'resistência'],[/\bseguran a\b/g,'segurança'],[/\bcorre\b/g,'correção'],
+    [/\bLICITA O\b/g,'LICITAÇÃO'],[/\bor amento\b/g,'orçamento'],[/\bexig ncias\b/g,'exigências'],[/\bImplanta o\b/g,'Implantação'],[/\bRECONFIGURA O\b/g,'RECONFIGURAÇÃO'],[/\bLOCALIZA O\b/g,'LOCALIZAÇÃO'],[/\bidentifica o\b/g,'identificação'],[/\brestri\b/g,'restrições'],
+    [/\bpr -moldados\b/g,'pré-moldados'],[/\bEXECU O\b/g,'EXECUÇÃO'],[/\bOPERA O\b/g,'OPERAÇÃO'],[/\busu rios\b/g,'usuários'],[/\bAP S CONCLU DO\b/g,'APÓS CONCLUÍDO'],[/\bM NIMOS\b/g,'MÍNIMOS'],[/\benerg tico\b/g,'energético'],
+    [/\bINTEGRA O\b/g,'INTEGRAÇÃO'],[/\bALCAN AR\b/g,'ALCANÇAR'],[/\bprevis o\b/g,'previsão'],[/\bmanutenão\b/g,'manutenção'],[/\bOBSOLESCÊNCIA FUNCIONAL OU TECNOL GICA\b/g,'OBSOLESCÊNCIA FUNCIONAL OU TECNOLÓGICA'],[/\bamplia o\b/g,'ampliação'],[/\binterven es\b/g,'intervenções'],
+    [/\bambiental competente\b/g,'órgão ambiental competente'],[/\bELEVA O\b/g,'ELEVAÇÃO'],[/\bDIVERG NCIA\b/g,'DIVERGÊNCIA'],[/\bdescritivo\b/g,'descritivo']
+  ];
+  reps.forEach(([a,b])=>t=t.replace(a,b));
+  return t.replace(/\s+/g,' ').trim();
+}
+function inferNatureza(s){s=s.toLowerCase();if(/ambient|licen|prad|desmat/.test(s))return'Ambiental';if(/custo|finance|cambial|orçament|pagamento|preço/.test(s))return'Financeiro ou Cambial';if(/contrat|litígio|rescis|licita/.test(s))return'Contratual';if(/regulat|concession|alvar|órgão/.test(s))return'Regulatório';if(/mão de obra|trabalh|previd/.test(s))return'Trabalhista';if(/furto|acidente|sinistro|vandal|segurança/.test(s))return'Segurança';if(/logíst|suprimento|material|jazida|usina/.test(s))return'Logístico';if(/projeto|anteprojeto|básico|executivo|escopo|compatibil/.test(s))return'Projeto';return'Técnico'}
+function inferCategoria(s){s=s.toLowerCase();if(/ambient|licen|prad|desmat/.test(s))return'Riscos ambientais';if(/custo|finance|cambial|preço|orçament/.test(s))return'Riscos econômico-financeiros';if(/projeto|anteprojeto|básico|executivo|escopo|compatibil/.test(s))return'Riscos de projeto';if(/suprimento|material|jazida|logíst/.test(s))return'Riscos de suprimentos';if(/contrat|litígio|rescis|licita/.test(s))return'Riscos jurídicos';if(/segurança|acidente|sinistro|furto/.test(s))return'Riscos de segurança';if(/desempenho|comissionamento|operação/.test(s))return'Riscos de desempenho';return'Riscos de execução'}
+function inferFase(s){s=s.toLowerCase();if(/licita/.test(s))return'Licitação';if(/etp|preliminar|planejamento|evtea/.test(s))return'Planejamento';if(/anteprojeto|projeto básico|projeto executivo|projeto legal/.test(s))return'Projeto';if(/licença|alvará|desapropria/.test(s))return'Pré-obra';if(/obra|execução|canteiro|concretagem|paviment|drenagem|terraplenagem/.test(s))return'Execução';if(/comissionamento|operação inicial|recebimento/.test(s))return'Comissionamento';return''}
+
+function normalizeImportedRisks(){return INITIAL_IMPORTED_RISKS.map((r,i)=>{let risco=repairText(r.risco||'');let desc=repairText(r.descricao||'');return {id:r.id||('IMP_'+String(i+1).padStart(3,'0')),cod:r.cod||('R'+String(i+1).padStart(3,'0')),processoId:r.processoId||'',tipoObra:'',natureza:r.natureza||inferNatureza(risco),categoria:r.categoria||inferCategoria(risco),fase:r.fase||inferFase(risco),risco,descricao:desc,donoRisco:'',status:'Ativo',incluiMapa:'Sim',incluiMatriz:'Não',impactaEquilibrio:'A avaliar',justificativaMatriz:'Risco importado para o mapa de riscos. Avaliar se deve compor a matriz contratual nos termos dos arts. 22 e 103 da Lei 14.133/2021.',origem:'Importado do Access',origemModeloItemId:'',revisaoTexto:(risco===(r.risco||''))?'Não revisado':'Correção automática sugerida',createdAt:nowISO(),updatedAt:nowISO()}})}
+function inferAlocacao(txt=''){let t=txt.toLowerCase();if(/compartilhado|compartilhada|entre/.test(t))return'Compartilhado';if(/contratante|administração|administracao/.test(t)&&!/contratado/.test(t))return'Contratante/Concedente';if(/contratado|construtor|construtora/.test(t)&&!/contratante|administração|administracao/.test(t))return'Contratada/Executante';if(/contratante|administração|administracao/.test(t)&&/contratado|construtor|construtora/.test(t))return'Compartilhado';return'A definir'}
+function inferEquilibrio(txt=''){let t=txt.toLowerCase();if(/risco exclusivo do contratado|exclusivo do contratado|remuneração do risco assumido|remuneracao do risco assumido/.test(t)&&!/contratante arcar|administração arcar|administracao arcar|reequil|recompos/.test(t))return'Não';if(/reequil|recompos|indeniza|aditivo|reajust|prorroga|prazo|custo|financeir/.test(t))return'Sim';return'A avaliar'}
+function normalizeMatrizObrasRisks(){return MATRIZ_OBRAS_TEMPLATE.map((m,i)=>{let desc=repairText(m.descricao||'');let tipo=(m.tipoRisco||'').replace(/\.$/,'');return {id:'MOB_R_'+String(i+1).padStart(3,'0'),cod:m.cod||('MO'+String(i+1).padStart(3,'0')),processoId:'',tipoObra:'Obras de infraestrutura',natureza:tipo||inferNatureza(desc),categoria:'Riscos de equilíbrio econômico-financeiro',fase:inferFase(desc+' '+m.materializacao)||'Execução',risco:desc,descricao:'Risco proveniente do modelo de matriz de riscos de obras de infraestrutura. Materialização: '+repairText(m.materializacao||''),donoRisco:inferAlocacao(m.alocacao||''),status:'Ativo',incluiMapa:'Sim',incluiMatriz:'Sim',impactaEquilibrio:inferEquilibrio((m.alocacao||'')+' '+(m.mitigacao||'')),justificativaMatriz:'Incluído na matriz porque o modelo possui coluna própria de alocação de responsabilidade pelo risco e descreve efeitos sobre prazo, custo, execução ou equilíbrio contratual.',origem:'Modelo Matriz de Riscos - Obras',origemModeloItemId:m.id,revisaoTexto:'Revisado por modelo',createdAt:nowISO(),updatedAt:nowISO()}})}
+function seedModelRelated(){let impactos=[],prevContratante=[],prevContratada=[],respContratante=[],respContratada=[],alocacao=[];MATRIZ_OBRAS_TEMPLATE.forEach((m,i)=>{let cod=m.cod,al=inferAlocacao(m.alocacao||''),eq=inferEquilibrio((m.alocacao||'')+' '+(m.mitigacao||''));impactos.push({id:'MOB_I_'+String(i+1).padStart(3,'0'),codRisc:cod,fator:(/prazo/i.test(m.materializacao)?'Prazo':'Custo'),estimativaFinanceira:'',estimativaPrazoDias:'',impacto:repairText(m.materializacao||''),createdAt:nowISO(),updatedAt:nowISO()});alocacao.push({id:'MOB_AL_'+String(i+1).padStart(3,'0'),codRisc:cod,alocacao:al,natureza:m.tipoRisco,direitoReequilibrio:eq,direitoPrazo:/prazo|prorroga/i.test((m.alocacao||'')+' '+(m.mitigacao||''))?'Sim':'A definir',condicoes:repairText(m.alocacao||''),observacoes:'Alocação importada do modelo de matriz de riscos de obras.',createdAt:nowISO(),updatedAt:nowISO()});let row={id:'MOB_PC_'+String(i+1).padStart(3,'0'),codRisc:cod,acao:repairText(m.mitigacao||''),responsavel:al==='Contratada/Executante'?'Contratada/Executante':al==='Contratante/Concedente'?'Contratante/Concedente':'Contratante e Contratada',prazo:'Conforme planejamento da contratação e cronograma contratual',createdAt:nowISO(),updatedAt:nowISO()};if(al==='Contratada/Executante')prevContratada.push({...row,id:'MOB_PE_'+String(i+1).padStart(3,'0')});else prevContratante.push(row);if(al==='Contratada/Executante'||al==='Compartilhado')respContratada.push({id:'MOB_RE_'+String(i+1).padStart(3,'0'),codRisc:cod,resposta:'Executar as medidas de mitigação e assumir as consequências conforme matriz contratual.',condicao:repairText(m.alocacao||''),createdAt:nowISO(),updatedAt:nowISO()});if(al==='Contratante/Concedente'||al==='Compartilhado')respContratante.push({id:'MOB_RC_'+String(i+1).padStart(3,'0'),codRisc:cod,resposta:'Atuar conforme matriz contratual, inclusive prorrogação, reequilíbrio ou providências administrativas quando cabíveis.',condicao:repairText(m.alocacao||''),createdAt:nowISO(),updatedAt:nowISO()});});return {impactos,prevContratante,prevContratada,respContratante,respContratada,alocacao}}
+function seed(){let modelo=seedModelRelated();return {meta:{app:'Mapa e Matriz de Riscos',version:APP_VERSION,createdAt:nowISO(),updatedAt:nowISO(),lastAutoBackupAt:null,terminologia:'Mapa de riscos é mais amplo e contém planejamento de respostas; matriz de riscos é subconjunto com alocação contratual.'},processos:[],riscos:[...normalizeImportedRisks(),...normalizeMatrizObrasRisks()],premissas:[],causas:[],gatilhos:[],impactos:modelo.impactos,avaliacoes:[],prevContratante:modelo.prevContratante,prevContratada:modelo.prevContratada,respContratante:modelo.respContratante,respContratada:modelo.respContratada,alocacao:modelo.alocacao,seguro:[],licoes:[],quantificacoes:[],apoio:JSON.parse(JSON.stringify(DEFAULT_SUPPORT)),importacao:{origem:'Matriz de Riscos.accdb.mdb + Matriz de Riscos - Obras.docx',riscosImportados:INITIAL_IMPORTED_RISKS.length,riscosModeloObras:MATRIZ_OBRAS_TEMPLATE.length,observacao:'Base inicial com riscos do Access como mapa de riscos e modelo de obras como matriz contratual.'}}}
+function ensureMatrizObras(data){data.riscos=data.riscos||[];let existing=new Set(data.riscos.map(r=>r.origemModeloItemId).filter(Boolean));let modelRisks=normalizeMatrizObrasRisks().filter(r=>!existing.has(r.origemModeloItemId)&&!data.riscos.some(x=>x.cod===r.cod));if(modelRisks.length){data.riscos.push(...modelRisks);let rel=seedModelRelated();['impactos','prevContratante','prevContratada','respContratante','respContratada','alocacao'].forEach(k=>{data[k]=data[k]||[];let ids=new Set(data[k].map(x=>x.id));rel[k].forEach(x=>{if(!ids.has(x.id)&&data.riscos.some(r=>r.cod===x.codRisc))data[k].push(x)})});data.importacao={...(data.importacao||{}),riscosModeloObras:MATRIZ_OBRAS_TEMPLATE.length}}return data}
+function migrate(data){let base=seed();data={...base,...(data||{})};data.meta={...base.meta,...(data.meta||{}),app:'Mapa e Matriz de Riscos',version:APP_VERSION,updatedAt:nowISO()};data.apoio={...base.apoio,...(data.apoio||{})};Object.keys(base).forEach(k=>{if(Array.isArray(base[k])&&!Array.isArray(data[k]))data[k]=[]});data.riscos=(data.riscos||[]).map(r=>({...r,risco:repairText(r.risco||''),descricao:repairText(r.descricao||''),status:r.status||'Ativo',incluiMapa:r.incluiMapa||'Sim',incluiMatriz:r.incluiMatriz||'Não',impactaEquilibrio:r.impactaEquilibrio||'A avaliar',justificativaMatriz:r.justificativaMatriz||''}));return ensureMatrizObras(data)}
+function load(){try{let raw=localStorage.getItem(STORE_KEY)||localStorage.getItem(LEGACY_PRO_KEY);if(raw)return migrate(JSON.parse(raw));let old=localStorage.getItem(OLD_STORE_KEY);if(old){toast('Dados da versão anterior encontrados e migrados.','ok');return migrate(JSON.parse(old))}return seed()}catch(e){console.error(e);return seed()}}
+function persist(silent=false){db.meta.updatedAt=nowISO();localStorage.setItem(STORE_KEY,JSON.stringify(db));maybeAutoBackup();if(!silent)toast('Dados salvos.','ok');render()}
+function maybeAutoBackup(){try{let last=db.meta.lastAutoBackupAt?new Date(db.meta.lastAutoBackupAt).getTime():0;let enough=(Date.now()-last)>30*60*1000;if(enough){backupNow('automático',true);db.meta.lastAutoBackupAt=nowISO();localStorage.setItem(STORE_KEY,JSON.stringify(db))}}catch(e){console.warn(e)}}
+function backupList(){try{return JSON.parse(localStorage.getItem(BACKUP_KEY)||'[]')}catch(e){return[]}}
+function setBackupList(list){localStorage.setItem(BACKUP_KEY,JSON.stringify(list.slice(0,12)))}
+function backupNow(reason='manual',silent=false){let list=backupList();let snap={id:uid('BK'),createdAt:nowISO(),reason,version:APP_VERSION,size:JSON.stringify(db).length,data:db};list.unshift(snap);setBackupList(list);if(!silent)toast('Backup criado.','ok')}
+function restoreBackup(id){let b=backupList().find(x=>x.id===id);if(!b)return toast('Backup não encontrado.','error');if(confirm('Restaurar este backup? Os dados atuais serão substituídos.')){db=migrate(b.data);localStorage.setItem(STORE_KEY,JSON.stringify(db));toast('Backup restaurado.','ok');render()}}
+function deleteBackup(id){if(confirm('Excluir este backup?')){setBackupList(backupList().filter(x=>x.id!==id));render()}}
+function exportBackup(id){let b=backupList().find(x=>x.id===id);if(!b)return;downloadFile('matriz_riscos_backup_'+b.createdAt.slice(0,10)+'.json',JSON.stringify(b.data,null,2),'application/json')}
+function riskLabel(score){score=+score||0;if(score>=20)return ['Extremo','b-extremo']; if(score>=12)return ['Alto','b-alto']; if(score>=6)return ['Médio','b-medio']; if(score>0)return ['Baixo','b-baixo']; return ['Sem avaliação','b-muted']}
+function evalScore(a){return (+a?.prob||0)*(+a?.impacto||0)}
+function residualScore(a){return (+a?.probResidual||0)*(+a?.impactoResidual||0)}
+function latestEval(cod){let arr=db.avaliacoes.filter(a=>a.codRisc===cod);return arr[arr.length-1]||null}
+function getRisk(cod){return db.riscos.find(r=>r.cod===cod)}
+function getProcess(id){return db.processos.find(p=>p.id===id)}
+function related(key,cod){return (db[key]||[]).filter(x=>x.codRisc===cod)}
+function riskCode(){let nums=db.riscos.map(r=>String(r.cod||'').match(/R(\d+)/i)).filter(Boolean).map(m=>+m[1]);let n=(Math.max(0,...nums)+1).toString().padStart(3,'0');return 'R'+n}
+function riskOptions(sel=''){return '<option value="">Selecione...</option>'+db.riscos.filter(r=>r.status!=='Desativado').map(r=>`<option ${sel==r.cod?'selected':''} value="${esc(r.cod)}">${esc(r.cod)} - ${esc(trunc(r.risco||'sem descrição',120))}</option>`).join('')}
+function processoOptions(sel=''){return '<option value="">Sem vínculo</option>'+db.processos.map(p=>`<option ${sel==p.id?'selected':''} value="${esc(p.id)}">${esc(p.nup||p.edital||trunc(p.objeto,60)||p.id)}</option>`).join('')}
+function arrayOptions(arr,sel='',includeBlank=true){return (includeBlank?'<option value="">Selecione...</option>':'')+(arr||[]).map(x=>`<option ${sel==x?'selected':''} value="${esc(x)}">${esc(x)}</option>`).join('')}
+
+function isActiveRisk(r){return r&&r.status!=='Desativado'}
+function isMapRisk(r){return isActiveRisk(r)&&r.incluiMapa!=='Não'}
+function isMatrixRisk(r){return isMapRisk(r)&&r.incluiMatriz==='Sim'}
+function riskScopeText(r){return isMatrixRisk(r)?'Mapa + Matriz':isMapRisk(r)?'Mapa':'Fora do mapa'}
+function scopeBadge(r){let s=riskScopeText(r),cls=s==='Mapa + Matriz'?'b-info':s==='Mapa'?'b-ok':'b-muted';return `<span class="badge ${cls}">${esc(s)}</span>`}
+function mapRisks(){return db.riscos.filter(isMapRisk)}
+function matrixRisks(){return db.riscos.filter(isMatrixRisk)}
+
+function nav(){document.getElementById('nav').innerHTML=NAV_GROUPS.map(([g,items])=>`<div class="nav-section">${esc(g)}</div>`+items.map(([k,t])=>`<button class="${current===k?'active':''}" onclick="go('${k}')">${esc(t)}</button>`).join('')).join('')}
+function go(k,extra={}){current=k;editing=null;prefill=extra.prefill||{};if(extra.cod)selectedRisk=extra.cod;render()}
+function render(){nav();const app=document.getElementById('app');try{if(current==='dashboard')return dashboard(app);if(current==='ficha')return ficha(app);if(current==='tratamento')return tratamento(app);if(current==='relatorios')return relatorios(app);if(current==='modelos')return modelos(app);if(current==='matrizObras')return matrizObras(app);if(current==='tornado')return tornado(app);if(current==='montecarlo')return montecarlo(app);if(current==='backups')return backups(app);if(current==='apoio')return apoio(app);return crud(app,current)}catch(e){console.error(e);app.innerHTML=`<div class="card"><h2>Erro ao renderizar</h2><p class="muted">${esc(e.message)}</p></div>`}}
+
+function allAlerts(){let alerts=[];mapRisks().forEach(r=>{let a=latestEval(r.cod);let score=evalScore(a);let [label]=riskLabel(score);let gaps=[];if(!a)gaps.push('sem avaliação');if(score>=12){if(!related('prevContratante',r.cod).length&&!related('prevContratada',r.cod).length)gaps.push('sem ação preventiva');if(!related('respContratante',r.cod).length&&!related('respContratada',r.cod).length)gaps.push('sem resposta/contingência');if(!a?.responsavelMonitoramento&&!r.donoRisco)gaps.push('sem responsável');}if(isMatrixRisk(r)&&!related('alocacao',r.cod).length)gaps.push('risco da matriz sem alocação contratual');if(r.incluiMatriz==='Sim'&&r.incluiMapa==='Não')gaps.push('matriz deve estar contida no mapa');if(gaps.length)alerts.push({cod:r.cod,risco:r.risco,label,score,gaps,level:score>=20?'extreme':score>=12?'high':'normal'})});return alerts.sort((x,y)=>y.score-x.score)}
+function dashboard(app){let mapa=mapRisks(),matriz=matrixRisks(),mapOnly=mapa.filter(r=>!isMatrixRisk(r));let high=mapa.filter(r=>evalScore(latestEval(r.cod))>=12).length;let extreme=mapa.filter(r=>evalScore(latestEval(r.cod))>=20).length;let alerts=allAlerts();app.innerHTML=`
+  <div class="card hint"><div class="section-title"><h2>Conceito adotado no sistema</h2><span class="badge b-info">Mapa × Matriz</span></div><p><strong>Mapa de riscos</strong> é o documento amplo da fase preparatória: registra riscos que podem comprometer a licitação e a boa execução contratual e contém o planejamento das respostas. <strong>Matriz de riscos</strong> é um subconjunto do mapa: reúne os riscos contratualmente alocados entre contratante e contratado, sobretudo aqueles que podem afetar prazo, custo ou equilíbrio econômico-financeiro. Portanto, todo risco da matriz também aparece no mapa, mas nem todo risco do mapa integra a matriz.</p></div>
+  <div class="kpis">
+    <div class="kpi"><span class="muted">Riscos no mapa</span><strong>${mapa.length}</strong></div>
+    <div class="kpi"><span class="muted">Riscos na matriz</span><strong>${matriz.length}</strong></div>
+    <div class="kpi"><span class="muted">Somente mapa</span><strong>${mapOnly.length}</strong></div>
+    <div class="kpi"><span class="muted">Altos/extremos</span><strong>${high}</strong></div>
+    <div class="kpi"><span class="muted">Extremos</span><strong>${extreme}</strong></div>
+    <div class="kpi"><span class="muted">Alertas</span><strong>${alerts.length}</strong></div>
+  </div>
+  <div class="grid-2">
+    <div class="card"><div class="section-title"><h2>Matriz Probabilidade × Impacto</h2><span class="badge b-info">escala 5×5</span></div><p class="muted">A matriz de avaliação prioriza os riscos do mapa. A matriz contratual é gerada em relatório próprio, com alocação entre as partes.</p>${matrix()}</div>
+    <div class="card"><div class="section-title"><h2>Alertas prioritários</h2><button class="btn small" onclick="go('tratamento')">Ver plano</button></div>${alerts.slice(0,8).map(a=>`<div class="alert ${a.level==='extreme'?'extreme':a.level==='high'?'high':''}"><strong>${esc(a.cod)} · ${esc(a.label)}</strong><br><span class="muted">${esc(trunc(a.risco,115))}</span><br><span class="badge b-warn">${esc(a.gaps.join(' · '))}</span></div>`).join('')||'<div class="alert ok"><strong>Nenhum alerta crítico.</strong><br><span class="muted">Riscos críticos possuem tratamento mínimo cadastrado.</span></div>'}</div>
+  </div>
+  <div class="grid-3">
+    <div class="card"><h3>Mapa por natureza</h3>${barChart(countBy(mapa,'natureza'))}</div>
+    <div class="card"><h3>Matriz por alocação</h3>${barChart(countAllocation())}</div>
+    <div class="card"><h3>Riscos por fase</h3>${barChart(countBy(mapa,'fase'))}</div>
+  </div>
+  <div class="card"><div class="section-title"><h2>Modelo de matriz de obras</h2><span class="badge b-ok">${MATRIZ_OBRAS_TEMPLATE.length} itens cadastrados</span></div><p class="muted">A base já contém o modelo de matriz de riscos de obras de infraestrutura como registros MO001 a MO${String(MATRIZ_OBRAS_TEMPLATE.length).padStart(3,'0')}, todos marcados como Mapa + Matriz.</p><div class="actions"><button class="btn" onclick="go('matrizObras')">Ver biblioteca</button><button class="btn" onclick="openReport('matriz',true)">Imprimir matriz</button></div></div>`}
+function countAllocation(){let map={};matrixRisks().forEach(r=>{let al=related('alocacao',r.cod)[0]?.alocacao||'A definir';map[al]=(map[al]||0)+1});return Object.entries(map).sort((a,b)=>b[1]-a[1])}
+
+function countBy(rows,key){let map={};rows.forEach(r=>{let k=r[key]||'Não informado';map[k]=(map[k]||0)+1});return Object.entries(map).sort((a,b)=>b[1]-a[1])}
+function barChart(data){if(!data.length)return'<p class="muted">Sem dados.</p>';let max=Math.max(...data.map(x=>x[1]),1);return `<div class="bar-list">${data.slice(0,8).map(([k,v])=>`<div class="bar-row"><div class="bar-label" title="${esc(k)}">${esc(k)}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.round(v/max*100)}%"></div></div><strong>${v}</strong></div>`).join('')}</div>`}
+function matrix(){let counts={};db.avaliacoes.forEach(a=>{let p=+a.prob||0,i=+a.impacto||0;if(p&&i)counts[p+'x'+i]=(counts[p+'x'+i]||0)+1});let html='<div class="matrix"><div></div>';for(let i=1;i<=5;i++)html+=`<div class="mxcell mxhead">Impacto ${i}</div>`;for(let p=1;p<=5;p++){html+=`<div class="mxcell mxhead">Prob. ${p}</div>`;for(let i=1;i<=5;i++){let s=p*i,c=s>=20?'mxext':s>=12?'mxhigh':s>=6?'mxmed':'mxlow',n=counts[p+'x'+i]||0;html+=`<div class="mxcell ${c}"><span>${s}</span><span class="mxcount">${n} risco${n===1?'':'s'}</span></div>`}}return html+'</div>'}
+function ficha(app){if(!selectedRisk&&db.riscos[0])selectedRisk=db.riscos[0].cod;let r=getRisk(selectedRisk);let a=r?latestEval(r.cod):null;let score=evalScore(a),resid=residualScore(a),[label,cls]=riskLabel(score),[rlabel,rcls]=riskLabel(resid);if(!r){app.innerHTML='<div class="card"><h2>Ficha consolidada</h2><p class="muted">Nenhum risco cadastrado.</p></div>';return}let proc=getProcess(r.processoId);let gaps=allAlerts().find(x=>x.cod===r.cod)?.gaps||[];app.innerHTML=`
+  <div class="card">
+    <div class="section-title"><h2>Ficha consolidada do risco</h2><div class="actions" style="margin:0"><button class="btn small" onclick="downloadRiskDoc('${esc(r.cod)}')">Exportar Word</button><button class="btn small" onclick="openRiskPrint('${esc(r.cod)}')">Imprimir/PDF</button></div></div>
+    <div class="row"><div class="field span-8"><label>Selecionar risco</label><select onchange="selectedRisk=this.value;render()">${riskOptions(selectedRisk)}</select></div><div class="field span-4"><label>Status</label><select onchange="updateRiskStatus('${esc(r.cod)}',this.value)">${arrayOptions(DEFAULT_SUPPORT.statusRisco,r.status||'Ativo',false)}</select></div></div>
+  </div>
+  <div class="card">
+    <div class="pill-list"><span class="badge ${cls}">${esc(label)} ${score||''}</span>${resid?`<span class="badge ${rcls}">Residual ${esc(rlabel)} ${resid}</span>`:''}<span class="badge b-info">${esc(r.natureza||'sem natureza')}</span><span class="badge b-muted">${esc(r.fase||'sem fase')}</span></div>
+    <div class="risk-title">${esc(r.cod)} · ${esc(r.risco)}</div>
+    <p class="muted">${esc(r.descricao||'Sem descrição detalhada.')}</p>
+    <div class="grid-3">
+      <div><strong>Processo</strong><br><span class="muted">${esc(proc?.objeto||proc?.nup||'Sem vínculo')}</span></div>
+      <div><strong>Categoria</strong><br><span class="muted">${esc(r.categoria||'Não informado')}</span></div>
+      <div><strong>Dono/monitoramento</strong><br><span class="muted">${esc(r.donoRisco||a?.responsavelMonitoramento||'Não definido')}</span></div>
+    </div>
+    ${gaps.length?`<div class="splitline"></div><div class="alert high"><strong>Lacunas:</strong> ${esc(gaps.join(' · '))}</div>`:''}
+  </div>
+  <div class="grid-2">
+    ${miniSection('Avaliação','avaliacoes',r.cod,['prob','impacto','impactoFinanceiro','impactoPrazoDias','estrategia','responsavelMonitoramento','dataRevisao','obs'])}
+    ${miniSection('Alocação contratual','alocacao',r.cod,['alocacao','natureza','condicoes','observacoes'])}
+  </div>
+  <div class="grid-2">
+    ${miniSection('Causas prováveis','causas',r.cod,['causa'])}
+    ${miniSection('Gatilhos e indicadores','gatilhos',r.cod,['gatilho','indicador','limite'])}
+  </div>
+  <div class="grid-2">
+    ${miniSection('Impactos prováveis','impactos',r.cod,['fator','impacto','estimativaFinanceira','estimativaPrazoDias'])}
+    ${miniSection('Proposta de seguro','seguro',r.cod,['apolice','seguravel','franquia','observacoes'])}
+  </div>
+  <div class="grid-2">
+    ${miniSection('Preventivas - Contratante','prevContratante',r.cod,['acao','responsavel','prazo'])}
+    ${miniSection('Preventivas - Contratada','prevContratada',r.cod,['acao','responsavel','prazo'])}
+  </div>
+  <div class="grid-2">
+    ${miniSection('Respostas - Contratante','respContratante',r.cod,['resposta','condicao'])}
+    ${miniSection('Respostas - Contratada','respContratada',r.cod,['resposta','condicao'])}
+  </div>
+  ${miniSection('Lições aprendidas','licoes',r.cod,['categoria','licao','recomendacao'],true)}
+  `}
+function updateRiskStatus(cod,status){let r=getRisk(cod);if(r){r.status=status;r.updatedAt=nowISO();persist()}}
+function miniSection(title,key,cod,cols,wide=false){let rows=related(key,cod);let body=rows.length?`<div class="table-wrap"><table><thead><tr>${cols.map(c=>`<th>${esc(header(c))}</th>`).join('')}</tr></thead><tbody>${rows.map(row=>`<tr>${cols.map(c=>`<td>${formatCell(c,row[c])}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`:`<div class="empty">Nenhum registro nesta seção.</div>`;return `<div class="card ${wide?'span-12':''}"><div class="section-title"><h3>${esc(title)}</h3><button class="btn small" onclick="go('${key}',{prefill:{codRisc:'${esc(cod)}'}})">Adicionar</button></div>${body}</div>`}
+function tratamento(app){let alerts=allAlerts();let rows=db.riscos.filter(r=>r.status!=='Desativado').map(r=>{let a=latestEval(r.cod),score=evalScore(a),[label,cls]=riskLabel(score),aloc=related('alocacao',r.cod)[0],prev=related('prevContratante',r.cod).length+related('prevContratada',r.cod).length,resp=related('respContratante',r.cod).length+related('respContratada',r.cod).length,gaps=alerts.find(x=>x.cod===r.cod)?.gaps||[];return {r,a,score,label,cls,aloc:aloc?.alocacao||'',prev,resp,gaps}}).sort((x,y)=>y.score-x.score);app.innerHTML=`<div class="card"><div class="section-title"><h2>Plano de tratamento</h2><div class="actions" style="margin:0"><button class="btn small" onclick="downloadTreatmentCSV()">Exportar CSV</button><button class="btn small" onclick="openReport('tratamento',true)">Imprimir/PDF</button></div></div><p class="muted">Lista os riscos por criticidade e evidencia lacunas de governança.</p><input class="search" id="q" placeholder="Pesquisar no plano..." oninput="filterTable()"></div><div class="card"><div class="table-wrap"><table id="grid"><thead><tr><th>Risco</th><th>Classe</th><th>Residual</th><th>Alocação</th><th>Preventivas</th><th>Respostas</th><th>Lacunas</th><th>Ações</th></tr></thead><tbody>${rows.map(x=>{let resid=residualScore(x.a),[rl,rcls]=riskLabel(resid);return `<tr><td><strong>${esc(x.r.cod)}</strong><br>${esc(trunc(x.r.risco,130))}</td><td><span class="badge ${x.cls}">${esc(x.label)} ${x.score||''}</span></td><td>${resid?`<span class="badge ${rcls}">${esc(rl)} ${resid}</span>`:'-'}</td><td>${esc(x.aloc||'Não definida')}</td><td>${x.prev}</td><td>${x.resp}</td><td>${x.gaps.length?`<span class="badge b-warn">${esc(x.gaps.join(' · '))}</span>`:'<span class="badge b-ok">OK</span>'}</td><td><button class="btn small" onclick="go('ficha',{cod:'${esc(x.r.cod)}'})">Ficha</button></td></tr>`}).join('')}</tbody></table></div></div>`}
+
+function relatorios(app){app.innerHTML=`
+  <div class="card"><h2>Relatórios gerais</h2><p class="muted">O sistema separa as saídas: o mapa de riscos mostra planejamento de respostas e não exibe alocação; a matriz de riscos mostra apenas o subconjunto com alocação contratual.</p></div>
+  <div class="grid-3">
+    <div class="card"><h3>Mapa de riscos</h3><p class="muted">Relatório amplo: riscos da licitação e da execução, causas, impactos, avaliação, preventivas e respostas. Sem alocação entre partes.</p><div class="actions"><button class="btn primary" onclick="openReport('mapa',true)">Imprimir/PDF</button><button class="btn" onclick="downloadReportDoc('mapa')">Word</button><button class="btn" onclick="downloadMapCSV()">CSV/Excel</button></div></div>
+    <div class="card"><h3>Matriz de riscos</h3><p class="muted">Relatório contratual: apenas riscos marcados para matriz, com materialização, mitigação e alocação de responsabilidade.</p><div class="actions"><button class="btn primary" onclick="openReport('matriz',true)">Imprimir/PDF</button><button class="btn" onclick="downloadReportDoc('matriz')">Word</button><button class="btn" onclick="downloadMatrixCSV()">CSV/Excel</button></div></div>
+    <div class="card"><h3>Plano de tratamento</h3><p class="muted">Riscos por prioridade, lacunas, responsáveis e prazos.</p><div class="actions"><button class="btn primary" onclick="openReport('tratamento',true)">Imprimir/PDF</button><button class="btn" onclick="downloadReportDoc('tratamento')">Word</button><button class="btn" onclick="downloadTreatmentCSV()">CSV/Excel</button></div></div>
+  </div>
+  <div class="grid-2">
+    <div class="card"><h3>Relatório executivo</h3><p class="muted">Resumo gerencial com KPIs, matriz de avaliação, riscos críticos e lacunas.</p><div class="actions"><button class="btn primary" onclick="openReport('executivo',true)">Imprimir/PDF</button><button class="btn" onclick="downloadReportDoc('executivo')">Word</button><button class="btn" onclick="downloadReportHTML('executivo')">HTML</button></div></div>
+    <div class="card"><h3>Base de dados</h3><div class="actions"><button class="btn" onclick="exportJSON()">Exportar JSON completo</button><button class="btn" onclick="downloadRisksCSV()">Exportar riscos CSV</button><button class="btn" onclick="backupNow('manual')">Criar backup interno</button><button class="btn" onclick="document.getElementById('importFile').click()">Importar JSON</button></div><p class="muted">CSV abre diretamente em Excel/LibreOffice. JSON preserva a estrutura completa para restauração.</p></div>
+  </div>`}
+function modelos(app){let procOptions=processoOptions('');app.innerHTML=`<div class="card"><h2>Modelos por tipo de obra</h2><p class="muted">Esses modelos são sugestões derivadas da base do Access. A matriz de obras de infraestrutura está em biblioteca própria.</p><div class="row"><div class="field span-4"><label>Tipo de obra</label><select id="modeloTipo">${arrayOptions(Object.keys(MODELOS_OBRA),'',false)}</select></div><div class="field span-5"><label>Processo de destino</label><select id="modeloProc">${procOptions}</select></div><div class="field span-3"><label>Ação</label><button class="btn primary" onclick="aplicarModelo()">Aplicar modelo</button></div></div></div><div class="grid-2">${Object.entries(MODELOS_OBRA).map(([tipo,cods])=>`<div class="card"><div class="section-title"><h3>${esc(tipo)}</h3><span class="badge b-info">${cods.length} riscos</span></div><p class="muted">${cods.map(c=>esc(c)).join(', ')}</p><div class="table-wrap"><table><thead><tr><th>Cód.</th><th>Risco</th></tr></thead><tbody>${cods.map(c=>{let r=getRisk(c);return `<tr><td>${esc(c)}</td><td>${esc(trunc(r?.risco||'Não encontrado',160))}</td></tr>`}).join('')}</tbody></table></div></div>`).join('')}</div>`}
+function aplicarModelo(){let tipo=document.getElementById('modeloTipo').value,proc=document.getElementById('modeloProc').value,cods=MODELOS_OBRA[tipo]||[],created=0;cods.forEach(c=>{let r=getRisk(c);if(!r)return;let exists=db.riscos.some(x=>x.processoId===proc&&x.risco===r.risco&&x.tipoObra===tipo);if(!exists){db.riscos.push({...r,id:uid('RM'),cod:riskCode(),processoId:proc,tipoObra:tipo,origem:'Modelo por tipo de obra',incluiMapa:'Sim',incluiMatriz:'Não',impactaEquilibrio:'A avaliar',createdAt:nowISO(),updatedAt:nowISO()});created++}});persist(true);toast(`${created} risco(s) adicionados ao processo.`,created?'ok':'error')}
+function matrizObras(app){let rows=MATRIZ_OBRAS_TEMPLATE;app.innerHTML=`<div class="card"><div class="section-title"><h2>Modelo de Matriz de Riscos - Obras de Infraestrutura</h2><span class="badge b-info">${rows.length} riscos</span></div><p class="muted">Modelo cadastrado com os campos: tipo de risco, descrição, materialização, mitigação e alocação de responsabilidade. Os itens MO001 a MO${String(rows.length).padStart(3,'0')} já foram incorporados como riscos do tipo Mapa + Matriz.</p><div class="actions"><button class="btn primary" onclick="reaplicarMatrizObras()">Recriar/atualizar itens MO</button><button class="btn" onclick="openReport('matriz',true)">Imprimir matriz de riscos</button><button class="btn" onclick="downloadMatrixCSV()">CSV/Excel</button></div></div><div class="card"><div class="toolbar"><h3>Biblioteca cadastrada</h3><input class="search" id="q" placeholder="Pesquisar..." oninput="filterTable()"></div><div class="table-wrap"><table id="grid"><thead><tr><th>Cód.</th><th>Tipo</th><th>Descrição</th><th>Materialização</th><th>Mitigação</th><th>Alocação</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${esc(r.cod)}</td><td>${esc(r.tipoRisco)}</td><td>${esc(r.descricao)}</td><td>${esc(r.materializacao)}</td><td>${esc(r.mitigacao)}</td><td>${esc(r.alocacao)}</td></tr>`).join('')}</tbody></table></div></div>`}
+function reaplicarMatrizObras(){backupNow('antes de atualizar matriz de obras',true);db=ensureMatrizObras(db);persist(true);toast('Modelo de matriz de obras atualizado sem duplicar itens existentes.','ok')}
+function tornado(app){let rows=db.quantificacoes||[];let ranked=rows.map(q=>({...q,range:Math.abs((+q.maximo||0)-(+q.minimo||0))})).sort((a,b)=>b.range-a.range);app.innerHTML=`<div class="card"><div class="section-title"><h2>Futuro módulo: diagrama de tornado</h2><span class="badge b-warn">estrutura preparada</span></div><p class="muted">O sistema já possui cadastro de variáveis quantitativas por risco. Esta tela apresenta um ranking preliminar pela amplitude mín.-máx.; futuramente poderá calcular sensibilidade sobre custo total, prazo total ou VPL.</p><div class="actions"><button class="btn primary" onclick="go('quantificacoes')">Cadastrar variáveis</button></div></div><div class="card"><h3>Ranking preliminar de sensibilidade</h3>${ranked.length?barChart(ranked.map(q=>[`${q.codRisc} · ${q.variavel} (${q.tipoImpacto})`,q.range])):'<p class="muted">Nenhuma variável quantitativa cadastrada.</p>'}</div>`}
+function montecarlo(app){let rows=db.quantificacoes||[];app.innerHTML=`<div class="card"><div class="section-title"><h2>Futuro módulo: simulação de Monte Carlo</h2><span class="badge b-warn">estrutura preparada</span></div><p class="muted">As variáveis quantitativas aceitam mínimo, mais provável, máximo, unidade e distribuição. O módulo futuro poderá simular custo e prazo agregados, percentis P50/P80/P90 e reservas de contingência.</p><div class="actions"><button class="btn primary" onclick="runSimpleMonteCarlo()">Rodar simulação simplificada local</button><button class="btn" onclick="go('quantificacoes')">Cadastrar variáveis</button></div></div><div class="card"><h3>Resultado preliminar</h3><div id="mcResult">${rows.length?'<p class="muted">Clique em rodar simulação simplificada para estimar os percentis.</p>':'<p class="muted">Nenhuma variável quantitativa cadastrada.</p>'}</div></div>`}
+function triangular(min,mode,max){let u=Math.random(),c=(mode-min)/(max-min||1);return u<c?min+Math.sqrt(u*(max-min)*(mode-min)):max-Math.sqrt((1-u)*(max-min)*(max-mode))}
+function percentile(arr,p){if(!arr.length)return 0;let a=[...arr].sort((x,y)=>x-y),idx=(a.length-1)*p,lo=Math.floor(idx),hi=Math.ceil(idx);return a[lo]+(a[hi]-a[lo])*(idx-lo)}
+function runSimpleMonteCarlo(){let vars=(db.quantificacoes||[]).filter(q=>q.minimo!==''&&q.maisProvavel!==''&&q.maximo!=='');let n=5000,custos=[],prazos=[];for(let i=0;i<n;i++){let c=0,p=0;vars.forEach(q=>{let v=triangular(+q.minimo,+q.maisProvavel,+q.maximo);if(q.tipoImpacto==='Prazo')p+=v;else c+=v});custos.push(c);prazos.push(p)}let el=document.getElementById('mcResult');if(!vars.length){el.innerHTML='<p class="muted">Cadastre variáveis quantitativas antes de simular.</p>';return}el.innerHTML=`<table><thead><tr><th>Indicador</th><th>P50</th><th>P80</th><th>P90</th></tr></thead><tbody><tr><td>Custo agregado</td><td>${money(percentile(custos,.5))}</td><td>${money(percentile(custos,.8))}</td><td>${money(percentile(custos,.9))}</td></tr><tr><td>Prazo agregado (dias)</td><td>${Math.round(percentile(prazos,.5))}</td><td>${Math.round(percentile(prazos,.8))}</td><td>${Math.round(percentile(prazos,.9))}</td></tr></tbody></table><p class="muted">Simulação simplificada com ${n} iterações, assumindo independência entre variáveis e distribuição triangular.</p>`}
+
+function backups(app){let list=backupList();app.innerHTML=`<div class="card"><div class="section-title"><h2>Backups e restauração</h2><button class="btn primary" onclick="backupNow('manual')">Criar backup agora</button></div><p class="muted">Mantém até 12 snapshots no navegador. Exporte JSON para guardar fora do computador.</p></div><div class="card"><div class="table-wrap"><table><thead><tr><th>Data</th><th>Motivo</th><th>Versão</th><th>Tamanho</th><th>Ações</th></tr></thead><tbody>${list.map(b=>`<tr><td>${esc(brDate(b.createdAt))}</td><td>${esc(b.reason)}</td><td>${esc(b.version)}</td><td>${Math.round((b.size||0)/1024)} KB</td><td><button class="btn small" onclick="restoreBackup('${esc(b.id)}')">Restaurar</button> <button class="btn small" onclick="exportBackup('${esc(b.id)}')">Baixar</button> <button class="btn small danger" onclick="deleteBackup('${esc(b.id)}')">Excluir</button></td></tr>`).join('')||'<tr><td colspan="5" class="muted">Nenhum backup criado.</td></tr>'}</tbody></table></div></div>`}
+
+const cfg={
+processos:{title:'00 - Processo',prefix:'P',fields:[['nup','NUP / Processo','text',4],['edital','Nr. do edital/contrato/instrumento','text',4],['tipoObra','Tipo de obra','tipoObra',4],['uge','UGE','text',3],['sigla','Sigla UGE','text',3],['regime','Regime de contratação','select:Empreitada por preço global|Empreitada por preço unitário|Contratação integrada|Contratação semi-integrada|Concessão|PPP|Outro',3],['status','Status','select:Planejamento|Licitação|Contratado|Em execução|Suspenso|Encerrado',3],['valorEstimado','Valor estimado','currency',3],['prazoContratualDias','Prazo contratual em dias','number',3],['responsavel','Responsável','text',6],['objeto','Objeto','textarea',12],['observacoes','Observações','textarea',12]],cols:['nup','edital','tipoObra','objeto','valorEstimado','status']},
+riscos:{title:'01 - Registro de riscos do mapa e da matriz',prefix:'R',defaults:()=>({cod:riskCode(),status:'Ativo',incluiMapa:'Sim',incluiMatriz:'Não',impactaEquilibrio:'A avaliar'}),fields:[['cod','Código do risco','text',3],['processoId','Processo vinculado','processo',5],['tipoObra','Tipo de obra','tipoObra',4],['incluiMapa','Inclui no mapa de riscos?','select:Sim|Não',3],['incluiMatriz','Inclui na matriz de riscos?','select:Não|Sim',3],['impactaEquilibrio','Pode afetar equilíbrio econômico-financeiro?','select:A avaliar|Sim|Não|Parcial',6],['natureza','Natureza/tipo do risco','natureza',4],['categoria','Categoria','categoria',4],['fase','Fase da obra/contrato','fase',4],['donoRisco','Dono/gestor do risco','text',4],['status','Status','statusRisco',4],['risco','Risco','textarea',12],['descricao','Descrição detalhada / materialização resumida','textarea',12],['justificativaMatriz','Justificativa para inclusão ou exclusão da matriz','textarea',12],['origem','Origem','text',4],['revisaoTexto','Revisão textual','select:Não revisado|Correção automática sugerida|Revisado por especialista|Revisado por modelo',4]],cols:['cod','incluiMapa','incluiMatriz','impactaEquilibrio','natureza','risco','status']},
+premissas:{title:'01A - Premissas',prefix:'PR',fields:[['codRisc','Código do risco','risco',4],['tipo','Tipo de premissa','premissa',4],['fonte','Fonte/referência','text',4],['descricao','Premissa','textarea',12]],cols:['codRisc','tipo','fonte','descricao']},
+causas:{title:'02 - Causas prováveis',prefix:'C',fields:[['codRisc','Código do risco','risco',4],['causa','Causa provável','textarea',12]],cols:['codRisc','causa']},
+gatilhos:{title:'03 - Gatilhos',prefix:'G',fields:[['codRisc','Código do risco','risco',4],['gatilho','Evento gatilho','textarea',12],['indicador','Indicador de monitoramento','text',6],['limite','Limite de alerta','text',6]],cols:['codRisc','gatilho','indicador','limite']},
+impactos:{title:'04 - Impactos prováveis / materialização',prefix:'I',fields:[['codRisc','Código do risco','risco',4],['fator','Fator de risco afetado','fator',4],['estimativaFinanceira','Impacto financeiro estimado','currency',4],['estimativaPrazoDias','Impacto em dias','number',4],['impacto','Impacto provável ou materialização','textarea',12]],cols:['codRisc','fator','estimativaFinanceira','estimativaPrazoDias','impacto']},
+avaliacoes:{title:'05 - Avaliação dos riscos',prefix:'A',fields:[['codRisc','Código do risco','risco',5],['prob','Probabilidade inerente 1 a 5','number',3],['impacto','Impacto inerente 1 a 5','number',3],['impactoFinanceiro','Impacto financeiro estimado','currency',4],['impactoPrazoDias','Impacto em dias','number',4],['estrategia','Estratégia de tratamento','estrategia',4],['probResidual','Probabilidade residual 1 a 5','number',3],['impactoResidual','Impacto residual 1 a 5','number',3],['responsavelMonitoramento','Responsável pelo monitoramento','text',6],['dataRevisao','Próxima revisão','date',3],['obs','Observações','textarea',12]],cols:['codRisc','prob','impacto','impactoFinanceiro','impactoPrazoDias','estrategia','responsavelMonitoramento']},
+prevContratante:{title:'06 - Preventivas - Contratante/Concedente',prefix:'PC',fields:[['codRisc','Código do risco','risco',4],['acao','Ação preventiva','textarea',12],['responsavel','Responsável','text',6],['prazo','Prazo','text',6]],cols:['codRisc','acao','responsavel','prazo']},
+prevContratada:{title:'07 - Preventivas - Contratada/Executante',prefix:'PE',fields:[['codRisc','Código do risco','risco',4],['acao','Ação preventiva','textarea',12],['responsavel','Responsável','text',6],['prazo','Prazo','text',6]],cols:['codRisc','acao','responsavel','prazo']},
+respContratante:{title:'08 - Respostas - Contratante/Concedente',prefix:'RC',fields:[['codRisc','Código do risco','risco',4],['resposta','Ação de resposta/contingência','textarea',12],['condicao','Condição de acionamento','textarea',12]],cols:['codRisc','resposta','condicao']},
+respContratada:{title:'09 - Respostas - Contratada/Executante',prefix:'RE',fields:[['codRisc','Código do risco','risco',4],['resposta','Ação de resposta/contingência','textarea',12],['condicao','Condição de acionamento','textarea',12]],cols:['codRisc','resposta','condicao']},
+alocacao:{title:'10 - Matriz de riscos: alocação contratual',prefix:'AL',fields:[['codRisc','Código do risco','risco',4],['alocacao','Alocação','select:Contratante/Concedente|Contratada/Executante|Compartilhado|Seguradora|Terceiro|A definir',4],['natureza','Natureza/tipo','natureza',4],['direitoReequilibrio','Gera direito a reequilíbrio?','select:Não|Sim|Parcial|A definir',4],['direitoPrazo','Gera direito a prazo?','select:Não|Sim|Parcial|A definir',4],['condicoes','Condições de alocação','textarea',12],['observacoes','Observações','textarea',12]],cols:['codRisc','alocacao','natureza','direitoReequilibrio','direitoPrazo','condicoes']},
+seguro:{title:'11 - Proposta de seguro',prefix:'S',fields:[['codRisc','Código do risco','risco',4],['apolice','Apólice/cobertura proposta','text',4],['seguravel','Segurável?','select:Sim|Não|Parcialmente|A avaliar',4],['limiteCobertura','Limite de cobertura','currency',4],['franquia','Franquia/limite','text',4],['observacoes','Observações','textarea',12]],cols:['codRisc','apolice','seguravel','limiteCobertura','franquia']},
+licoes:{title:'12 - Lições aprendidas',prefix:'L',fields:[['codRisc','Código do risco','risco',4],['categoria','Categoria','categoria',4],['licao','Lição aprendida','textarea',12],['recomendacao','Recomendação para contratações futuras','textarea',12]],cols:['codRisc','categoria','licao','recomendacao']},
+quantificacoes:{title:'13 - Quantificação para tornado e Monte Carlo',prefix:'Q',fields:[['codRisc','Código do risco','risco',4],['variavel','Variável incerta','text',4],['tipoImpacto','Tipo de impacto','select:Custo|Prazo',4],['distribuicao','Distribuição','select:Triangular|Uniforme|Normal|A definir',3],['minimo','Mínimo','number',3],['maisProvavel','Mais provável','number',3],['maximo','Máximo','number',3],['unidade','Unidade','select:R$|dias|%|índice|unidade',3],['observacoes','Observações','textarea',12]],cols:['codRisc','variavel','tipoImpacto','minimo','maisProvavel','maximo','unidade']}
+};
+
+function inputFor(f,val=''){let [name,label,type,span]=f;val=val??'';let h='';if(prefill[name]!==undefined&&!editing)val=prefill[name];
+  if(type==='textarea')h=`<textarea name="${name}">${esc(val)}</textarea>`;
+  else if(type==='risco')h=`<select name="${name}">${riskOptions(val)}</select>`;
+  else if(type==='processo')h=`<select name="${name}">${processoOptions(val)}</select>`;
+  else if(type==='natureza')h=`<select name="${name}">${arrayOptions(db.apoio.naturezas,val)}</select>`;
+  else if(type==='categoria')h=`<select name="${name}">${arrayOptions(db.apoio.categorias,val)}</select>`;
+  else if(type==='fator')h=`<select name="${name}">${arrayOptions(db.apoio.fatores,val)}</select>`;
+  else if(type==='premissa')h=`<select name="${name}">${arrayOptions(db.apoio.premissas,val)}</select>`;
+  else if(type==='fase')h=`<select name="${name}">${arrayOptions(db.apoio.fases,val)}</select>`;
+  else if(type==='tipoObra')h=`<select name="${name}">${arrayOptions(db.apoio.tiposObra,val)}</select>`;
+  else if(type==='estrategia')h=`<select name="${name}">${arrayOptions(db.apoio.estrategias,val)}</select>`;
+  else if(type==='statusRisco')h=`<select name="${name}">${arrayOptions(db.apoio.statusRisco,val||'Ativo')}</select>`;
+  else if(type==='currency')h=`<input name="${name}" type="number" step="0.01" min="0" value="${esc(val)}">`;
+  else if(type.startsWith('select:'))h=`<select name="${name}"><option value="">Selecione...</option>${type.slice(7).split('|').map(x=>`<option ${val==x?'selected':''} value="${esc(x)}">${esc(x)}</option>`).join('')}</select>`;
+  else if(type==='date')h=`<input name="${name}" type="date" value="${esc(val)}">`;
+  else h=`<input name="${name}" type="${type}" ${type==='number'?'min="0" step="1"':''} value="${esc(val)}">`;
+  let req=(REQUIRED[current]||[]).includes(name)?' *':'';return `<div class="field span-${span}"><label>${esc(label+req)}</label>${h}</div>`}
+function crud(app,key){let c=cfg[key],rows=db[key]||[],rec=editing?rows.find(x=>x.id===editing)||{}:{...(c.defaults?c.defaults():{})};app.innerHTML=`<div class="card"><div class="section-title"><h2>${esc(c.title)}</h2>${key==='riscos'?'<button class="btn small" onclick="repairAllRiskTexts()">Reparar textos importados</button>':''}</div><form id="form"><div class="row">${c.fields.map(f=>inputFor(f,rec[f[0]])).join('')}</div><div class="actions"><button class="btn primary" type="submit">${editing?'Atualizar':'Salvar'}</button>${editing?'<button class="btn" type="button" onclick="editing=null;prefill={};render()">Cancelar edição</button>':''}</div></form></div><div class="card"><div class="toolbar"><div class="toolbar-left"><h3>Registros</h3></div><div class="toolbar-right"><input class="search" id="q" placeholder="Pesquisar..." oninput="filterTable()">${key==='riscos'?'<select class="mini-input" id="statusFilter" onchange="filterTable()"><option value="">Todos os status</option><option>Ativo</option><option>Em revisão</option><option>Mitigado</option><option>Materializado</option><option>Encerrado</option><option>Desativado</option></select>':''}</div></div><div id="tablebox">${table(key,rows,c)}</div></div>`;document.getElementById('form').onsubmit=e=>{e.preventDefault();let data=Object.fromEntries(new FormData(e.target).entries());cleanData(key,data);let errors=validateRecord(key,data,editing);if(errors.length){toast(errors.join(' | '),'error');return}if(editing){let target=rows.find(x=>x.id===editing);Object.assign(target,data,{updatedAt:nowISO()});editing=null}else{data.id=uid(c.prefix);data.createdAt=nowISO();data.updatedAt=nowISO();rows.push(data)}prefill={};persist()}}
+function cleanData(key,data){Object.keys(data).forEach(k=>{if(typeof data[k]==='string')data[k]=data[k].trim()});if(key==='avaliacoes'){['prob','impacto','probResidual','impactoResidual'].forEach(k=>{if(data[k]!==''&&data[k]!=null)data[k]=Math.max(1,Math.min(5,+data[k]||1))});['impactoFinanceiro','impactoPrazoDias'].forEach(k=>{if(data[k]!==''&&data[k]!=null)data[k]=+data[k]||0})}if(key==='impactos'){['estimativaFinanceira','estimativaPrazoDias'].forEach(k=>{if(data[k]!==''&&data[k]!=null)data[k]=+data[k]||0})}if(key==='processos'){['valorEstimado','prazoContratualDias'].forEach(k=>{if(data[k]!==''&&data[k]!=null)data[k]=+data[k]||0})}if(key==='seguro'){if(data.limiteCobertura!==''&&data.limiteCobertura!=null)data.limiteCobertura=+data.limiteCobertura||0}if(key==='riscos'){data.risco=repairText(data.risco);data.descricao=repairText(data.descricao);if(!data.natureza)data.natureza=inferNatureza(data.risco);if(!data.categoria)data.categoria=inferCategoria(data.risco);if(!data.fase)data.fase=inferFase(data.risco);if(!data.status)data.status='Ativo'}}
+
+function validateRecord(key,data,editId=null){let errs=[];(REQUIRED[key]||[]).forEach(k=>{if(!String(data[k]??'').trim())errs.push(`${header(k)} é obrigatório.`)});if(key==='riscos'){let dup=db.riscos.find(r=>r.cod===data.cod&&r.id!==editId);if(dup)errs.push('Código do risco já existe.');if(data.incluiMatriz==='Sim'&&data.incluiMapa==='Não')errs.push('Todo risco da matriz de riscos deve estar incluído no mapa de riscos.');if(data.incluiMatriz==='Sim'&&data.impactaEquilibrio==='Não')errs.push('Revise a coerência: risco marcado para matriz normalmente deve ter impacto econômico-financeiro, de prazo, custo ou responsabilidade contratual.')}if(key==='avaliacoes'){['prob','impacto','probResidual','impactoResidual'].forEach(k=>{if(data[k]==='')return;let n=+data[k];if(n<1||n>5)errs.push(`${header(k)} deve estar entre 1 e 5.`)});let dup=db.avaliacoes.find(a=>a.codRisc===data.codRisc&&a.id!==editId);if(dup)errs.push('Já existe avaliação para este risco. Edite a avaliação existente para manter a ficha consolidada consistente.')}if(key==='quantificacoes'){let min=+data.minimo,mp=+data.maisProvavel,max=+data.maximo;if(!(min<=mp&&mp<=max))errs.push('A quantificação deve obedecer: mínimo ≤ mais provável ≤ máximo.')}return errs}
+
+function table(key,rows,c){if(!rows.length)return'<p class="muted">Nenhum registro cadastrado.</p>';return `<div class="table-wrap"><table id="grid"><thead><tr>${c.cols.map(x=>`<th>${esc(header(x))}</th>`).join('')}<th>Ações</th></tr></thead><tbody>${rows.map(r=>`<tr data-status="${esc(r.status||'')}">${c.cols.map(col=>`<td>${formatCell(col,r[col],r,key)}</td>`).join('')}<td>${rowActions(key,r)}</td></tr>`).join('')}</tbody></table></div>`}
+function header(k){return ({codRisc:'Risco',prob:'Prob.',impacto:'Impacto',impactoFinanceiro:'Impacto financeiro',impactoPrazoDias:'Impacto em dias',estimativaFinanceira:'Estimativa financeira',estimativaPrazoDias:'Estimativa em dias',valorEstimado:'Valor estimado',processoId:'Processo',direitoReequilibrio:'Reequilíbrio',direitoPrazo:'Prazo',responsavelMonitoramento:'Resp. monitoramento',dataRevisao:'Próxima revisão',incluiMapa:'Mapa?',incluiMatriz:'Matriz?',impactaEquilibrio:'Equilíbrio?',justificativaMatriz:'Justificativa matriz',tipoImpacto:'Tipo de impacto',maisProvavel:'Mais provável'}[k]||k).replace(/([A-Z])/g,' $1')}
+function formatCell(col,v,row={},key=''){if(col==='incluiMapa'||col==='incluiMatriz')return `<span class="badge ${v==='Sim'?'b-ok':'b-muted'}">${esc(v||'Não')}</span>`;if(col==='impactaEquilibrio')return `<span class="badge ${v==='Sim'?'b-info':v==='Não'?'b-muted':'b-warn'}">${esc(v||'A avaliar')}</span>`;if(col==='valorEstimado'||col==='impactoFinanceiro'||col==='estimativaFinanceira'||col==='limiteCobertura')return esc(money(v));if(col==='codRisc')return `<button class="btn small ghost" onclick="go('ficha',{cod:'${esc(v)}'})">${esc(v)}</button>`;if(col==='cod'&&key==='riscos')return `<button class="btn small ghost" onclick="go('ficha',{cod:'${esc(v)}'})">${esc(v)}</button>`;if(col==='prob'||col==='impacto'){let score=key==='avaliacoes'?evalScore(row):0;let [l,c]=riskLabel(score);return `${esc(v)}${col==='impacto'?`<br><span class="badge ${c}">${esc(l)} ${score||''}</span>`:''}`}if(col==='status'){let cls=v==='Ativo'?'b-ok':v==='Desativado'?'b-muted':'b-info';return `<span class="badge ${cls}">${esc(v||'')}</span>`}if(String(v??'').length>120)return esc(trunc(v,120));return esc(v)}
+function rowActions(key,r){let buttons=`<button class="btn small" onclick="editing='${esc(r.id)}';prefill={};render()">Editar</button> `;if(key==='riscos')buttons+=`<button class="btn small" onclick="go('ficha',{cod:'${esc(r.cod)}'})">Ficha</button> <button class="btn small warn" onclick="toggleRisk('${esc(r.id)}')">${r.status==='Desativado'?'Ativar':'Desativar'}</button> `;buttons+=`<button class="btn small danger" onclick="del('${key}','${esc(r.id)}')">Excluir</button>`;return buttons}
+function filterTable(){let q=(document.getElementById('q')?.value||'').toLowerCase();let sf=document.getElementById('statusFilter')?.value||'';document.querySelectorAll('#grid tbody tr').forEach(tr=>{let ok=tr.innerText.toLowerCase().includes(q);if(sf)ok=ok&&tr.dataset.status===sf;tr.style.display=ok?'':'none'})}
+function del(key,id){let row=(db[key]||[]).find(x=>x.id===id);if(!row)return;if(key==='riscos'){let linked=['premissas','causas','gatilhos','impactos','avaliacoes','prevContratante','prevContratada','respContratante','respContratada','alocacao','seguro','licoes'].some(k=>db[k].some(x=>x.codRisc===row.cod));let msg=linked?'Este risco possui registros vinculados. Digite EXCLUIR para confirmar a exclusão definitiva.':'Digite EXCLUIR para confirmar a exclusão definitiva do risco.';if(prompt(msg)!=='EXCLUIR')return}else if(!confirm('Excluir este registro?'))return;db[key]=db[key].filter(x=>x.id!==id);persist()}
+function toggleRisk(id){let r=db.riscos.find(x=>x.id===id);if(!r)return;r.status=r.status==='Desativado'?'Ativo':'Desativado';r.updatedAt=nowISO();persist()}
+function repairAllRiskTexts(){db.riscos.forEach(r=>{r.risco=repairText(r.risco);r.descricao=repairText(r.descricao);if(!r.natureza)r.natureza=inferNatureza(r.risco);if(!r.categoria)r.categoria=inferCategoria(r.risco);if(!r.fase)r.fase=inferFase(r.risco);r.revisaoTexto=r.revisaoTexto||'Correção automática sugerida'});persist(true);toast('Textos reparados com regras automáticas. Recomenda-se revisão humana.','ok')}
+function apoio(app){function block(k,t){return `<div class="field span-6"><label>${esc(t)} - uma opção por linha</label><textarea data-k="${esc(k)}">${esc((db.apoio[k]||[]).join('\n'))}</textarea></div>`}app.innerHTML=`<div class="card"><h2>Formulários de apoio</h2><p class="muted">Cadastros auxiliares usados nos formulários e relatórios.</p><form id="apoioForm"><div class="row">${block('naturezas','Naturezas do risco')}${block('categorias','Categorias dos riscos')}${block('fatores','Fatores de risco')}${block('premissas','Tipos de premissas')}${block('fases','Fases')}${block('tiposObra','Tipos de obra')}${block('estrategias','Estratégias de tratamento')}${block('statusRisco','Status do risco')}</div><div class="actions"><button class="btn primary" type="submit">Salvar apoio</button><button class="btn" type="button" onclick="db.apoio=JSON.parse(JSON.stringify(DEFAULT_SUPPORT));persist()">Restaurar padrão</button></div></form></div>`;document.getElementById('apoioForm').onsubmit=e=>{e.preventDefault();e.target.querySelectorAll('textarea').forEach(t=>db.apoio[t.dataset.k]=t.value.split('\n').map(x=>x.trim()).filter(Boolean));persist()}}
+
+function reportCSS(){return `<style>body{font-family:Segoe UI,Arial,sans-serif;color:#172033;margin:28px}h1,h2,h3{color:#12324f}table{width:100%;border-collapse:collapse;margin:12px 0}th,td{border:1px solid #d8dee9;padding:7px;font-size:12px;vertical-align:top;white-space:pre-wrap}th{background:#f1f5f9}.badge{display:inline-block;border-radius:12px;padding:2px 7px;font-size:11px;font-weight:700}.b-baixo{background:#dcfce7;color:#166534}.b-medio{background:#fef3c7;color:#92400e}.b-alto{background:#ffedd5;color:#9a3412}.b-extremo{background:#fee2e2;color:#991b1b}.b-muted{background:#f2f4f7;color:#475467}.muted{color:#667085}.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.kpi{border:1px solid #d8dee9;border-radius:10px;padding:10px}.kpi strong{font-size:22px;display:block}@media print{button{display:none}}</style>`}
+function reportHTML(type='executivo'){let mapa=mapRisks(),matriz=matrixRisks(),alerts=allAlerts(),high=mapa.filter(r=>evalScore(latestEval(r.cod))>=12).length,extreme=mapa.filter(r=>evalScore(latestEval(r.cod))>=20).length;let titles={executivo:'Relatório executivo do mapa e da matriz de riscos',mapa:'Mapa de riscos',matriz:'Matriz de riscos',tratamento:'Plano de tratamento dos riscos'};let title=titles[type]||titles.executivo;let body=`<h1>${esc(title)}</h1><p class="muted">Gerado em ${esc(brDate(nowISO()))} · Versão ${APP_VERSION}</p>`;if(type==='executivo'){body+=`<p><strong>Critério:</strong> mapa de riscos é o cadastro amplo com planejamento de respostas; matriz de riscos é o subconjunto com alocação contratual.</p><div class="kpis"><div class="kpi"><span>Riscos no mapa</span><strong>${mapa.length}</strong></div><div class="kpi"><span>Riscos na matriz</span><strong>${matriz.length}</strong></div><div class="kpi"><span>Altos/extremos</span><strong>${high}</strong></div><div class="kpi"><span>Extremos</span><strong>${extreme}</strong></div></div><h2>Riscos prioritários do mapa</h2>${reportRiskTable(mapa.filter(r=>evalScore(latestEval(r.cod))>=12).sort((a,b)=>evalScore(latestEval(b.cod))-evalScore(latestEval(a.cod))).slice(0,25),true)}<h2>Lacunas de governança</h2>${alerts.length?`<table><thead><tr><th>Risco</th><th>Pontuação</th><th>Lacunas</th></tr></thead><tbody>${alerts.map(a=>`<tr><td>${esc(a.cod)} - ${esc(trunc(a.risco,150))}</td><td>${a.score}</td><td>${esc(a.gaps.join(' · '))}</td></tr>`).join('')}</tbody></table>`:'<p>Não há lacunas críticas identificadas.</p>'}`}
+if(type==='mapa'){body+=`<p>Este relatório não apresenta alocação de responsabilidade entre contratante e contratado. Seu objetivo é planejar respostas aos riscos da licitação e da boa execução contratual.</p><table><thead><tr><th>Cód.</th><th>Risco</th><th>Natureza</th><th>Fase</th><th>Classe</th><th>Impactos/materialização</th><th>Preventivas</th><th>Respostas</th><th>Responsável</th></tr></thead><tbody>${mapa.map(r=>{let a=latestEval(r.cod),score=evalScore(a),[l,c]=riskLabel(score),imp=related('impactos',r.cod).map(x=>x.impacto).join('\n---\n'),prev=[...related('prevContratante',r.cod),...related('prevContratada',r.cod)].map(x=>x.acao).join('\n---\n'),resp=[...related('respContratante',r.cod),...related('respContratada',r.cod)].map(x=>x.resposta).join('\n---\n');return `<tr><td>${esc(r.cod)}</td><td>${esc(r.risco)}</td><td>${esc(r.natureza)}</td><td>${esc(r.fase)}</td><td><span class="badge ${c}">${esc(l)} ${score||''}</span></td><td>${esc(imp||r.descricao||'')}</td><td>${esc(prev)}</td><td>${esc(resp)}</td><td>${esc(a?.responsavelMonitoramento||r.donoRisco||'')}</td></tr>`}).join('')}</tbody></table>`}
+if(type==='matriz'){body+=`<p>Este relatório contém somente riscos marcados para a matriz. Por definição, esses riscos também integram o mapa de riscos.</p><table><thead><tr><th>Cód.</th><th>Tipo/natureza</th><th>Descrição do risco</th><th>Materialização</th><th>Mitigação</th><th>Alocação de responsabilidade</th><th>Reequilíbrio</th><th>Prazo</th></tr></thead><tbody>${matriz.map(r=>{let al=related('alocacao',r.cod)[0]||{},imp=related('impactos',r.cod).map(x=>x.impacto).join('\n---\n'),mit=[...related('prevContratante',r.cod),...related('prevContratada',r.cod)].map(x=>x.acao).join('\n---\n');return `<tr><td>${esc(r.cod)}</td><td>${esc(r.natureza)}</td><td>${esc(r.risco)}</td><td>${esc(imp||r.descricao||'')}</td><td>${esc(mit)}</td><td>${esc(al.condicoes||al.alocacao||'A definir')}</td><td>${esc(al.direitoReequilibrio||'A definir')}</td><td>${esc(al.direitoPrazo||'A definir')}</td></tr>`}).join('')}</tbody></table>`}
+if(type==='tratamento'){body+=`<table><thead><tr><th>Risco</th><th>Escopo</th><th>Classe</th><th>Estratégia</th><th>Responsável</th><th>Preventivas</th><th>Respostas</th><th>Lacunas</th></tr></thead><tbody>${mapa.map(r=>{let a=latestEval(r.cod),score=evalScore(a),[l,c]=riskLabel(score),al=allAlerts().find(x=>x.cod===r.cod);return `<tr><td>${esc(r.cod)} - ${esc(trunc(r.risco,180))}</td><td>${esc(riskScopeText(r))}</td><td><span class="badge ${c}">${esc(l)} ${score||''}</span></td><td>${esc(a?.estrategia||'')}</td><td>${esc(a?.responsavelMonitoramento||r.donoRisco||'')}</td><td>${related('prevContratante',r.cod).length+related('prevContratada',r.cod).length}</td><td>${related('respContratante',r.cod).length+related('respContratada',r.cod).length}</td><td>${esc(al?.gaps.join(' · ')||'')}</td></tr>`}).join('')}</tbody></table>`}return `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>${esc(title)}</title>${reportCSS()}</head><body>${body}</body></html>`}
+function reportRiskTable(rows,showScope=false){if(!rows.length)return'<p>Nenhum risco alto ou extremo avaliado.</p>';return `<table><thead><tr><th>Cód.</th>${showScope?'<th>Escopo</th>':''}<th>Risco</th><th>Natureza</th><th>Categoria</th><th>Classe</th><th>Alocação quando matriz</th></tr></thead><tbody>${rows.map(r=>{let a=latestEval(r.cod),score=evalScore(a),[l,c]=riskLabel(score),al=related('alocacao',r.cod)[0];return `<tr><td>${esc(r.cod)}</td>${showScope?`<td>${esc(riskScopeText(r))}</td>`:''}<td>${esc(r.risco)}</td><td>${esc(r.natureza)}</td><td>${esc(r.categoria)}</td><td><span class="badge ${c}">${esc(l)} ${score}</span></td><td>${isMatrixRisk(r)?esc(al?.alocacao||'A definir'):'Não aplicável'}</td></tr>`}).join('')}</tbody></table>`}
+
+function openReport(type,print=false){let w=window.open('','_blank');w.document.write(reportHTML(type));w.document.close();if(print)setTimeout(()=>w.print(),400)}
+function downloadReportDoc(type){downloadFile(`matriz_riscos_${type}.doc`,reportHTML(type),'application/msword')}
+function downloadReportHTML(type){downloadFile(`matriz_riscos_${type}.html`,reportHTML(type),'text/html')}
+
+function riskHTML(cod){let r=getRisk(cod),a=latestEval(cod);if(!r)return reportHTML('executivo');let score=evalScore(a),[l,c]=riskLabel(score);let parts=`<h1>Ficha do Risco ${esc(r.cod)}</h1><p class="muted">Gerado em ${esc(brDate(nowISO()))}</p><h2>${esc(r.risco)}</h2><p>${esc(r.descricao||'')}</p><p><span class="badge ${c}">${esc(l)} ${score||''}</span> Escopo: ${esc(riskScopeText(r))} · Natureza: ${esc(r.natureza||'')} · Categoria: ${esc(r.categoria||'')} · Fase: ${esc(r.fase||'')}</p><p><strong>Impacta equilíbrio?</strong> ${esc(r.impactaEquilibrio||'A avaliar')}<br><strong>Justificativa matriz:</strong> ${esc(r.justificativaMatriz||'')}</p>`;['premissas','causas','gatilhos','impactos','avaliacoes','prevContratante','prevContratada','respContratante','respContratada'].forEach(k=>{let rows=related(k,cod);if(rows.length){parts+=`<h2>${esc(cfg[k]?.title||k)}</h2><table><tbody>${rows.map(row=>`<tr>${Object.entries(row).filter(([kk])=>!['id','createdAt','updatedAt','codRisc'].includes(kk)).map(([kk,v])=>`<td><strong>${esc(header(kk))}</strong><br>${esc(v)}</td>`).join('')}</tr>`).join('')}</tbody></table>`}});if(isMatrixRisk(r)){['alocacao','seguro'].forEach(k=>{let rows=related(k,cod);if(rows.length){parts+=`<h2>${esc(cfg[k]?.title||k)}</h2><table><tbody>${rows.map(row=>`<tr>${Object.entries(row).filter(([kk])=>!['id','createdAt','updatedAt','codRisc'].includes(kk)).map(([kk,v])=>`<td><strong>${esc(header(kk))}</strong><br>${esc(v)}</td>`).join('')}</tr>`).join('')}</tbody></table>`}})}let licoes=related('licoes',cod);if(licoes.length){parts+=`<h2>Lições aprendidas</h2><table><tbody>${licoes.map(row=>`<tr>${Object.entries(row).filter(([kk])=>!['id','createdAt','updatedAt','codRisc'].includes(kk)).map(([kk,v])=>`<td><strong>${esc(header(kk))}</strong><br>${esc(v)}</td>`).join('')}</tr>`).join('')}</tbody></table>`}return `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Ficha ${esc(cod)}</title>${reportCSS()}</head><body>${parts}</body></html>`}
+
+function downloadRiskDoc(cod){downloadFile(`ficha_risco_${cod}.doc`,riskHTML(cod),'application/msword')}
+function openRiskPrint(cod){let w=window.open('','_blank');w.document.write(riskHTML(cod));w.document.close();setTimeout(()=>w.print(),400)}
+function csvEscape(v){v=String(v??'');return '"'+v.replace(/"/g,'""')+'"'}
+function toCSV(rows,cols){return '\ufeff'+cols.join(';')+'\n'+rows.map(r=>cols.map(c=>csvEscape(r[c])).join(';')).join('\n')}
+
+function downloadRisksCSV(){let rows=db.riscos.map(r=>({...r,escopo:riskScopeText(r),score:evalScore(latestEval(r.cod)),alocacao:related('alocacao',r.cod)[0]?.alocacao||''}));downloadFile('base_riscos_mapa_matriz.csv',toCSV(rows,['cod','escopo','risco','natureza','categoria','fase','status','impactaEquilibrio','score','alocacao']),'text/csv;charset=utf-8')}
+function downloadMapCSV(){let rows=mapRisks().map(r=>{let a=latestEval(r.cod),imp=related('impactos',r.cod).map(x=>x.impacto).join(' | '),prev=[...related('prevContratante',r.cod),...related('prevContratada',r.cod)].map(x=>x.acao).join(' | '),resp=[...related('respContratante',r.cod),...related('respContratada',r.cod)].map(x=>x.resposta).join(' | ');return {cod:r.cod,risco:r.risco,natureza:r.natureza,categoria:r.categoria,fase:r.fase,score:evalScore(a),classe:riskLabel(evalScore(a))[0],impactos:imp,preventivas:prev,respostas:resp,responsavel:a?.responsavelMonitoramento||r.donoRisco||''}});downloadFile('mapa_de_riscos.csv',toCSV(rows,['cod','risco','natureza','categoria','fase','score','classe','impactos','preventivas','respostas','responsavel']),'text/csv;charset=utf-8')}
+function downloadMatrixCSV(){let rows=matrixRisks().map(r=>{let al=related('alocacao',r.cod)[0]||{},imp=related('impactos',r.cod).map(x=>x.impacto).join(' | '),mit=[...related('prevContratante',r.cod),...related('prevContratada',r.cod)].map(x=>x.acao).join(' | ');return {cod:r.cod,tipo:r.natureza,descricao:r.risco,materializacao:imp||r.descricao,mitigacao:mit,alocacao:al.condicoes||al.alocacao||'',responsabilidade:al.alocacao||'',direitoReequilibrio:al.direitoReequilibrio||'',direitoPrazo:al.direitoPrazo||''}});downloadFile('matriz_de_riscos.csv',toCSV(rows,['cod','tipo','descricao','materializacao','mitigacao','responsabilidade','alocacao','direitoReequilibrio','direitoPrazo']),'text/csv;charset=utf-8')}
+function downloadContractCSV(){return downloadMatrixCSV()}
+function downloadTreatmentCSV(){let rows=mapRisks().map(r=>{let a=latestEval(r.cod),alert=allAlerts().find(x=>x.cod===r.cod);return {cod:r.cod,escopo:riskScopeText(r),risco:r.risco,score:evalScore(a),classe:riskLabel(evalScore(a))[0],estrategia:a?.estrategia||'',responsavel:a?.responsavelMonitoramento||r.donoRisco||'',preventivas:related('prevContratante',r.cod).length+related('prevContratada',r.cod).length,respostas:related('respContratante',r.cod).length+related('respContratada',r.cod).length,lacunas:alert?.gaps.join(' | ')||''}});downloadFile('plano_tratamento_riscos.csv',toCSV(rows,['cod','escopo','risco','score','classe','estrategia','responsavel','preventivas','respostas','lacunas']),'text/csv;charset=utf-8')}
+
+function exportJSON(){downloadFile('matriz_riscos_backup_completo.json',JSON.stringify(db,null,2),'application/json')}
+function importJSON(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{backupNow('antes da importação',true);db=migrate(JSON.parse(r.result));localStorage.setItem(STORE_KEY,JSON.stringify(db));toast('JSON importado com sucesso.','ok');render()}catch(err){toast('Arquivo JSON inválido.','error')}};r.readAsText(f);e.target.value=''}
+function downloadFile(name,content,type='text/plain'){let blob=new Blob([content],{type});let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+render();
+</script>
+</body>
+</html>
