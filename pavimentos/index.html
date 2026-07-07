@@ -647,7 +647,8 @@
       z-index: 9999;
       display: none;
       place-items: center;
-      background: rgba(7, 30, 115, .92);
+      background: rgba(16, 15, 12, .86);
+      backdrop-filter: blur(3px);
       padding: 24px;
     }
 
@@ -662,71 +663,74 @@
     }
 
     .license-card {
-      width: min(560px, 94vw);
+      width: min(820px, 94vw);
+      max-height: min(86vh, 780px);
       background: #fff;
       border-radius: 6px;
       box-shadow: 0 24px 70px rgba(0,0,0,.34);
       padding: 24px;
       color: var(--text);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
     }
 
-    .license-logo {
-      display: block;
-      width: 240px;
-      max-width: 100%;
-      height: auto;
-      margin-bottom: 18px;
-      background: #071e73;
-      border-radius: 3px;
+    .license-kicker {
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .16em;
+      color: var(--terracota);
+      text-transform: uppercase;
     }
 
     .license-card h2 {
-      font-size: 19px;
+      font-size: clamp(22px, 3vw, 30px);
       line-height: 1.25;
-      margin-bottom: 8px;
+      margin-bottom: 0;
       color: var(--accent);
     }
 
-    .license-card p {
-      font-size: 13px;
-      color: var(--muted);
-      margin-bottom: 16px;
-    }
-
-    .license-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-
-    .license-grid label {
-      display: grid;
-      gap: 5px;
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--muted);
-    }
-
-    .license-grid input {
-      width: 100%;
-      background: var(--panel2);
+    .license-text {
+      overflow-y: auto;
       border: 1px solid var(--border);
       border-radius: var(--r);
-      padding: 8px 9px;
-      color: var(--text);
+      background: var(--panel2);
+      padding: 16px 18px;
+      max-height: 48vh;
       font-size: 13px;
+      color: var(--muted);
+      line-height: 1.65;
     }
 
-    .license-hint {
-      margin-top: 12px;
-      padding: 9px 10px;
-      border: 1px solid rgba(29,78,124,.20);
+    .license-text p { margin-bottom: 12px; }
+    .license-text p:last-child { margin-bottom: 0; }
+
+    .license-text ul {
+      margin: 10px 0 14px 20px;
+      display: grid;
+      gap: 6px;
+    }
+
+    .license-accept {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 12px;
       border-radius: var(--r);
       background: var(--accent-dim);
-      color: var(--accent);
-      font-family: var(--mono);
-      font-size: 10px;
-      line-height: 1.5;
+      border: 1px solid rgba(29,78,124,.20);
+      color: var(--text);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .license-accept input {
+      width: 16px;
+      height: 16px;
+      margin-top: 1px;
+      accent-color: var(--accent);
+      flex: 0 0 auto;
     }
 
     .license-error {
@@ -739,8 +743,10 @@
 
     .license-actions {
       display: flex;
+      align-items: center;
+      gap: 12px;
       justify-content: flex-end;
-      margin-top: 12px;
+      margin-top: 0;
     }
 
     .license-actions button {
@@ -753,6 +759,11 @@
       font-weight: 600;
       font-size: 11px;
       cursor: pointer;
+    }
+
+    .license-actions button:disabled {
+      opacity: .45;
+      cursor: not-allowed;
     }
 
     /* ── KPIs ───────────────────────────────────────────────────────────────── */
@@ -1041,6 +1052,36 @@
   </div>
 </div>
 
+<div id="licenseModal" class="license-modal" role="dialog" aria-modal="true" aria-labelledby="licenseTitle">
+  <div class="license-card">
+    <div class="license-kicker">IMPORTANTE - LEIA ANTES DE UTILIZAR O SISTEMA</div>
+    <h2 id="licenseTitle">Aviso de Responsabilidade Técnica</h2>
+    <div class="license-text" tabindex="0">
+      <p>Este software constitui ferramenta de apoio à engenharia, destinada a auxiliar na modelagem, análise e dimensionamento de elementos estruturais. Os resultados produzidos dependem integralmente da qualidade, exatidão e completude dos dados de entrada fornecidos pelo usuário.</p>
+      <p>O software não substitui a análise técnica, o julgamento profissional, a experiência, a supervisão e a responsabilidade do engenheiro legalmente habilitado, que permanece como único responsável pela concepção estrutural, pela definição das hipóteses de cálculo, pela escolha do modelo estrutural, pela interpretação dos resultados, pela verificação de sua consistência e pela aprovação do projeto final.</p>
+      <p>É obrigação do usuário:</p>
+      <ul>
+        <li>conferir todos os dados de entrada;</li>
+        <li>verificar a adequação das hipóteses adotadas;</li>
+        <li>revisar criticamente todos os resultados obtidos;</li>
+        <li>confirmar a compatibilidade do projeto com as normas técnicas aplicáveis;</li>
+        <li>realizar verificações independentes sempre que necessário.</li>
+      </ul>
+      <p>O desenvolvedor não garante que o software seja adequado para qualquer finalidade específica ou para todas as situações de projeto, nem assegura que os resultados obtidos estejam livres de erros decorrentes de informações incorretas, hipóteses inadequadas, utilização indevida, limitações do modelo matemático ou interpretação equivocada dos resultados.</p>
+      <p>Na máxima extensão permitida pela legislação aplicável, o desenvolvedor não será responsável por danos diretos, indiretos, incidentais, lucros cessantes, perdas econômicas, atrasos, paralisações, falhas construtivas ou quaisquer prejuízos decorrentes da utilização do software ou da confiança exclusiva em seus resultados.</p>
+      <p>Ao utilizar este sistema, o usuário declara possuir conhecimento técnico compatível com sua utilização e reconhece que toda decisão de engenharia deverá ser tomada exclusivamente pelo profissional legalmente habilitado, que assume integral responsabilidade técnica pelo projeto.</p>
+    </div>
+    <label class="license-accept">
+      <input id="licenseAccept" type="checkbox"/>
+      <span>Li e concordo com o aviso de responsabilidade técnica e reconheço que os resultados devem ser conferidos por profissional legalmente habilitado.</span>
+    </label>
+    <div class="license-actions">
+      <div id="licenseError" class="license-error" aria-live="polite"></div>
+      <button id="licenseContinue" type="button" disabled>CONCORDAR E ABRIR SISTEMA</button>
+    </div>
+  </div>
+</div>
+
 <div class="topbar">
   <div class="topbar-mark" aria-hidden="true"></div>
   <div class="topbar-title">
@@ -1271,6 +1312,8 @@
 
 <!-- ══════════════════════════ JAVASCRIPT ════════════════════════════════════ -->
 <script>
+const REPORT_LEGAL_NOTICE = 'Este relatório foi gerado automaticamente pelo sistema e possui caráter auxiliar. Os resultados devem ser obrigatoriamente conferidos por profissional legalmente habilitado. A responsabilidade técnica pelo projeto estrutural, pela verificação dos resultados e pelo atendimento às normas técnicas é exclusiva do engenheiro responsável.';
+
 // ─── BANCO DE SOLOS ───────────────────────────────────────────────────────────
 const SOLOS = {
   // ── GRANULARES ─────────────────────────────────────────────────────────────
@@ -1931,6 +1974,9 @@ function gerarMemorial(resultado, camadas, total, custo, area, n, nCalcObj) {
   add('  MEMORIAL DESCRITIVO E DE CÁLCULO — DIMENSIONAMENTO DE PAVIMENTO','mem-section');
   add('══════════════════════════════════════════════════════════════════','mem-section');
   br();
+  add('AVISO RESUMIDO DE RESPONSABILIDADE TÉCNICA','mem-section');
+  add(`   ${REPORT_LEGAL_NOTICE}`,'mem-obs');
+  br();
   add('1. IDENTIFICAÇÃO');
   add(`   Empreendimento : ${txt('obra')}`);
   add(`   Trecho/Local   : ${txt('trecho')}`);
@@ -2212,6 +2258,32 @@ function limpar() {
   $('mainContent').innerHTML = `<div class="empty-state"><div class="empty-icon">⬡</div><div class="empty-text">Preencha os parâmetros nas abas à esquerda<br>e clique em <strong>DIMENSIONAR</strong></div></div>`;
 }
 
+function exportarPdfRelatorio() {
+  window.print();
+}
+
+function mostrarAvisoResponsabilidade() {
+  const modal = document.getElementById('licenseModal');
+  const accept = document.getElementById('licenseAccept');
+  const button = document.getElementById('licenseContinue');
+  const error = document.getElementById('licenseError');
+  if (!modal || !accept || !button) return;
+
+  document.body.classList.add('license-locked');
+  modal.classList.add('show');
+  accept.checked = false;
+  button.disabled = true;
+  if (error) error.textContent = '';
+  setTimeout(() => modal.querySelector('.license-text')?.focus(), 80);
+}
+
+function liberarSistemaAposAviso() {
+  const modal = document.getElementById('licenseModal');
+  if (!modal) return;
+  modal.classList.remove('show');
+  document.body.classList.remove('license-locked');
+}
+
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 recalcN();
 onSoloChange();
@@ -2227,6 +2299,13 @@ onSoloChange();
   const duration = 2800;
   const delay = 900;
   const start = performance.now() + delay;
+  let finished = false;
+  function finishStartup() {
+    if (finished) return;
+    finished = true;
+    screen.classList.add('hide');
+    setTimeout(mostrarAvisoResponsabilidade, 420);
+  }
   function tick(now) {
     const progress = Math.max(0, Math.min(1, (now - start) / duration));
     percent.textContent = `${Math.round(progress * 100)}%`;
@@ -2234,10 +2313,28 @@ onSoloChange();
       requestAnimationFrame(tick);
       return;
     }
-    setTimeout(() => screen.classList.add('hide'), 350);
+    setTimeout(finishStartup, 350);
   }
   requestAnimationFrame(tick);
-  screen.addEventListener('click', () => screen.classList.add('hide'));
+  screen.addEventListener('click', finishStartup);
+})();
+
+(function initAvisoResponsabilidade() {
+  const accept = document.getElementById('licenseAccept');
+  const button = document.getElementById('licenseContinue');
+  const error = document.getElementById('licenseError');
+  if (!accept || !button) return;
+  accept.addEventListener('change', () => {
+    button.disabled = !accept.checked;
+    if (error) error.textContent = '';
+  });
+  button.addEventListener('click', () => {
+    if (!accept.checked) {
+      if (error) error.textContent = 'Marque a confirmação para prosseguir.';
+      return;
+    }
+    liberarSistemaAposAviso();
+  });
 })();
 </script>
 </body>
