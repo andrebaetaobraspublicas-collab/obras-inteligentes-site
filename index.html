@@ -124,7 +124,7 @@ h1 .hl{color:var(--cyan)}
 .sec-head h2{font-family:var(--display);font-weight:800;font-size:clamp(28px,4vw,44px);letter-spacing:-.02em;line-height:1.08;margin-bottom:16px}
 .sec-head p{color:#4a5a50;font-size:17px}
 
-.apps{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1px;background:var(--grid);border:1px solid var(--grid)}
+.apps{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--grid);border:1px solid var(--grid)}
 .app{
   background:var(--paper);padding:40px 32px;position:relative;
   display:flex;flex-direction:column;min-height:340px;transition:background .25s;
@@ -180,6 +180,9 @@ footer{background:var(--blueprint-deep);color:#7d93a4;padding:56px clamp(20px,5v
   .hero-art{max-width:380px}
   .nav-links{display:none}
   .apps,.posts{grid-template-columns:1fr}
+}
+@media(min-width:881px) and (max-width:1120px){
+  .apps{grid-template-columns:repeat(2,1fr)}
 }
 @media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto}}
 :focus-visible{outline:2px solid var(--amber);outline-offset:3px}
@@ -244,7 +247,7 @@ footer{background:var(--blueprint-deep);color:#7d93a4;padding:56px clamp(20px,5v
 </header>
 
 <div class="strip">
-  <span><b>5</b> aplicativos prontos para uso</span>
+  <span><b>6</b> aplicativos prontos para uso</span>
   <span>Conformidade com a <b>Lei 14.133/2021</b></span>
   <span>Referência em jurisprudência do <b>TCU</b></span>
   <span>Sem instalação · roda no navegador</span>
@@ -313,6 +316,17 @@ footer{background:var(--blueprint-deep);color:#7d93a4;padding:56px clamp(20px,5v
       <p>Gestão de riscos para obras, licitações e contratos públicos, com mapa amplo, matriz contratual, classificação por impacto e probabilidade e relatórios técnicos.</p>
       <div class="meta">Abrir sistema &middot; gestão de riscos</div>
     </a>
+
+    <a class="app" href="/administracao-canteiro/" aria-label="Abrir Calculadora de Administração Local e Canteiro de Obra">
+      <span class="arrow">&rarr;</span>
+      <div class="app-num">06 / CANTEIRO</div>
+      <svg class="app-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 40h36"/><path d="M10 40V20l14-8 14 8v20"/><path d="M18 40V28h12v12"/><path d="M14 20h20"/><path d="M36 13l6 6"/><path d="M40 9l4 4"/><path d="M4 30h10"/>
+      </svg>
+      <h3>Administração Local e Canteiro de Obra</h3>
+      <p>Estimativa e composição de administração local, instalações de apoio, canteiro e custos indiretos de obra, com parâmetros legados e modelo paramétrico.</p>
+      <div class="meta">Abrir sistema &middot; custos indiretos</div>
+    </a>
   </div>
 </section>
 
@@ -369,6 +383,7 @@ footer{background:var(--blueprint-deep);color:#7d93a4;padding:56px clamp(20px,5v
         <a href="https://www.obrasinteligentes.ia.br/estrutural/">Calculadora de Estrutural</a>
         <a href="https://www.obrasinteligentes.ia.br/pavimentos/">Calculadora de Pavimentos</a>
         <a href="/riscos/">Mapa &amp; Matriz de Riscos</a>
+        <a href="/administracao-canteiro/">Administração Local e Canteiro</a>
       </div>
       <div class="foot-col">
         <h4>Conteúdo</h4>
