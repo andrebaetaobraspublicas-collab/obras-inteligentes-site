@@ -36,8 +36,13 @@
     function soData(v) { return v ? String(v).split('T')[0].split(' ')[0] : null; }
 
     // ---------- Sessão / Login ----------
+    var PUBLIC_SESSION = { user_id: null, nome: 'Acesso livre', perfil: 'Administrador', acesso_publico: true };
     var _sessao = null;
     try { _sessao = JSON.parse(sessionStorage.getItem('mp_sessao') || 'null'); } catch (e) { _sessao = null; }
+    if (!_sessao) {
+        _sessao = PUBLIC_SESSION;
+        try { sessionStorage.setItem('mp_sessao', JSON.stringify(_sessao)); } catch (e) {}
+    }
     window.MPAuth = {
         login: function (email, senha) {
             var u = tabela('usuarios').find(function (x) { return (x.email || '').toLowerCase() === String(email).toLowerCase(); });
@@ -48,8 +53,11 @@
             }
             return false;
         },
-        logout: function () { _sessao = null; sessionStorage.removeItem('mp_sessao'); },
-        session: function () { return _sessao; }
+        logout: function () {
+            _sessao = PUBLIC_SESSION;
+            try { sessionStorage.setItem('mp_sessao', JSON.stringify(_sessao)); } catch (e) {}
+        },
+        session: function () { return _sessao || PUBLIC_SESSION; }
     };
 
     // ---------- Sub-entidades de contrato (CRUD genérico) ----------
@@ -131,7 +139,7 @@
         }
         if (path === '/logout') { window.MPAuth.logout(); return ok({ ok: true }); }
         if (path === '/api/me') {
-            return ok(_sessao ? { id: _sessao.user_id, nome: _sessao.nome, perfil: _sessao.perfil } : { id: null, nome: null, perfil: null });
+            return ok(_sessao ? { id: _sessao.user_id, nome: _sessao.nome, perfil: _sessao.perfil, acesso_publico: !!_sessao.acesso_publico } : { id: null, nome: PUBLIC_SESSION.nome, perfil: PUBLIC_SESSION.perfil, acesso_publico: true });
         }
         if (path === '/api/change_password' && method === 'POST') {
             var u = tabela('usuarios').find(function (x) { return x.id === (_sessao && _sessao.user_id); });
