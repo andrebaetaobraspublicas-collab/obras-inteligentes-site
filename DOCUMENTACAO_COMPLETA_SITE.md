@@ -5,7 +5,7 @@ Dominio publicado: https://www.obrasinteligentes.ia.br/
 Diretorio local principal: `C:\Obras Inteligentes`  
 Repositorio GitHub: `https://github.com/andrebaetaobraspublicas-collab/obras-inteligentes-site.git`  
 Branch de publicacao: `main`  
-Ultimo commit verificado nesta documentacao: `a475e6a` - `Adiciona modulo CircuitoPro`
+Ultimo commit base verificado nesta documentacao: `c2d2bf7` - `Documenta site Obras Inteligentes`
 
 ## Objetivo deste documento
 
@@ -69,7 +69,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/muros-arrimo/` | 91962 bytes | 91962 caracteres |
 | `/casa-parametrica/` | 38883 bytes | 38883 caracteres |
 | `/termopro/` | 205855 bytes | 205855 caracteres |
-| `/circuitopro/` | 195744 bytes | 195744 caracteres |
+| `/circuitopro/` | 222608 bytes | 222608 caracteres |
 
 ## Estrutura local principal
 
@@ -270,10 +270,11 @@ Observacoes:
 Rota: `/circuitopro/`  
 Arquivo: `circuitopro/index.html`
 
-Ultima inclusao:
+Ultima atualizacao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\CircuitoPro (2).html`
-- Commit: `a475e6a` - `Adiciona modulo CircuitoPro`
+- Fonte: `C:\Users\ACER\Documents\Downloads\CircuitoPro (3).html`
+- Data: 19/07/2026
+- Alteracao: substituicao integral de `circuitopro/index.html` pela nova versao do aplicativo.
 
 Observacoes:
 
@@ -434,4 +435,3 @@ Use este contexto em novas conversas:
 ```text
 Estamos trabalhando no site estatico www.obrasinteligentes.ia.br, cujo repositorio local fica em C:\Obras Inteligentes e publica na Hostinger via push para o GitHub https://github.com/andrebaetaobraspublicas-collab/obras-inteligentes-site.git, branch main. Leia primeiro C:\Obras Inteligentes\DOCUMENTACAO_COMPLETA_SITE.md. Nao inclua arquivos nao versionados soltos do diretorio raiz, salvo pedido expresso. Para alterar modulo, copie o HTML para a pasta da rota, valide scripts, teste localmente, faca commit e push. Para Casa Parametrica, preserve a camada estatica em static/static-api.js e atualize query string de cache no index.html quando mexer em JS.
 ```
-
