@@ -46,7 +46,8 @@
       status: 200,
       headers: {
         "Content-Type": "application/pdf",
-        "Content-Disposition": "attachment; filename=\"casa-parametrica-relatorio.pdf\""
+        "Content-Disposition": "attachment; filename=\"casa-parametrica-relatorio.pdf\"",
+        "Cache-Control": "no-store, max-age=0"
       }
     });
   };
@@ -131,19 +132,20 @@
     });
     objects.push("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>");
 
+    const encoder = new TextEncoder();
     let pdf = "%PDF-1.4\n";
     const offsets = [0];
     objects.forEach((object, index) => {
-      offsets.push(pdf.length);
+      offsets.push(encoder.encode(pdf).length);
       pdf += `${index + 1} 0 obj\n${object}\nendobj\n`;
     });
-    const xrefOffset = pdf.length;
+    const xrefOffset = encoder.encode(pdf).length;
     pdf += `xref\n0 ${objects.length + 1}\n0000000000 65535 f \n`;
     offsets.slice(1).forEach((offset) => {
       pdf += `${String(offset).padStart(10, "0")} 00000 n \n`;
     });
     pdf += `trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${xrefOffset}\n%%EOF`;
-    return new Uint8Array([...pdf].map((char) => char.charCodeAt(0)));
+    return encoder.encode(pdf);
   }
 
   async function loadParameters() {
