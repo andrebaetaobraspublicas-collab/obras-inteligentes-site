@@ -13,34 +13,107 @@
   });
 
   const pdfReportResponse = (request, result) => {
-    const lines = [
+    const priceBase = result.price_base || {};
+    const compatibility = result.program_compatibility || {};
+    const terrain = request.terrain || {};
+    const building = request.building || {};
+    const program = request.program || {};
+    const construction = request.construction || {};
+    const extras = request.extras || {};
+    const lines = [];
+    const section = (title) => lines.push("", title);
+    const row = (label, value) => lines.push(`${label}: ${value}`);
+    const money = moneyText;
+
+    lines.push(
       "Casa Parametrica - Relatorio preliminar",
       "",
-      `Cenario: ${request.name || "Estimativa"}`,
-      `Local: ${(request.location?.city || "-")} - ${(request.location?.state || "-")}`,
-      `Area principal: ${result.main_area} m2`,
-      `Area equivalente: ${result.equivalent_area} m2-eq`,
-      `Custo tecnico: ${moneyText(result.technical_cost)}`,
-      `Investimento total: ${moneyText(result.investment_total)}`,
-      `Faixa provavel: ${moneyText(result.investment_minimum)} a ${moneyText(result.investment_maximum)}`,
-      `Custo por m2 principal: ${moneyText(result.investment_cost_per_main_m2)}/m2`,
-      `Prazo estimado: ${(result.estimated_duration_months || []).join(" a ")} meses`,
-      `Base de precos: ${result.price_base?.version || result.parameter_version}`,
-      "",
-      "Compatibilidade area x programa",
-      `${result.program_compatibility?.label || "-"} - ${result.program_compatibility?.message || "-"}`,
-      `Faixa recomendada: ${result.program_compatibility?.recommended_min || "-"} a ${result.program_compatibility?.recommended_max || "-"} m2`,
-      "",
-      "Principais parcelas",
-      ...((result.breakdown || []).slice(0, 8).map((item) => `${item.category}: ${moneyText(item.amount)}`)),
-      "",
-      "Recomendacoes",
-      ...((result.recommendations || []).map((item) => `- ${item}`)),
-      "",
-      "Aviso tecnico",
-      "Relatorio gerado em modo estatico. Valores preliminares e demonstrativos.",
-      "Nao substitui orcamento analitico, projeto executivo ou responsabilidade tecnica de profissional habilitado."
-    ];
+      request.name || "Estimativa",
+      `${request.location?.city || "Municipio nao informado"} - ${request.location?.state || "--"} | Base de precos: ${priceBase.version || result.parameter_version} | Data-base: ${priceBase.date_base || result.date_base}`
+    );
+
+    section("Resumo executivo");
+    row("Custo tecnico", money(result.technical_cost));
+    row("Investimento provavel", money(result.investment_total));
+    row("Investimento minimo", money(result.investment_minimum));
+    row("Investimento maximo", money(result.investment_maximum));
+    row("Area principal", `${formatNumberText(result.main_area)} m2`);
+    row("Area equivalente", `${formatNumberText(result.equivalent_area)} m2-eq`);
+    row("Custo tecnico/m2", `${money(result.technical_cost_per_main_m2)}/m2`);
+    row("Investimento/m2", `${money(result.investment_cost_per_main_m2)}/m2`);
+    row("Prazo provavel", `${(result.estimated_duration_months || []).join(" a ")} meses`);
+    row("Confiabilidade", result.confidence || "-");
+    row("Completude", `${formatNumberText(result.completeness_score)}%`);
+    row("Incerteza", `+/- ${formatNumberText(result.uncertainty_percent)}%`);
+    row("Contingencia", `${formatNumberText(result.contingency_percent)}%`);
+
+    section("Base de precos utilizada");
+    row("Escopo/local", `${priceBase.scope || "-"} - ${priceBase.city || priceBase.state || "-"}`);
+    row("Versao e data-base", `${priceBase.version || "-"} | ${priceBase.date_base || "-"}`);
+    row("Custo-base", `${money(priceBase.base_cost_m2 || result.base_cost_m2)}/m2`);
+    row("Fonte", priceBase.source || "-");
+    row("Observacoes", priceBase.notes || "-");
+
+    section("Premissas do imovel");
+    row("Terreno", `${formatNumberText(terrain.land_area)} m2; inclinacao ${terrain.slope || "-"}; solo ${terrain.soil || "-"}; acesso ${terrain.access || "-"}`);
+    row("Edificacao", `${formatNumberText(building.built_area)} m2 principais; ${building.floors || 1} pavimento(s); ${building.garage_spaces || 0} vaga(s); complexidade ${building.complexity || "-"}`);
+    row("Programa", `${program.bedrooms || 0} quarto(s); ${program.suites || 0} suite(s); ${program.bathrooms || 0} banheiro(s); ${program.half_baths || 0} lavabo(s)`);
+    row("Solucao", `${construction.system || "-"}; cobertura ${construction.roof || "-"}; padrao ${construction.finish || "-"}; piso ${construction.flooring || "-"}`);
+    row("Complementos", `Piscina: ${extras.pool ? "sim" : "nao"}; solar: ${extras.solar ? "sim" : "nao"}; automacao: ${extras.automation ? "sim" : "nao"}; climatizacao: ${extras.air_conditioned_rooms || 0} ambiente(s)`);
+
+    section("Compatibilidade entre area e programa");
+    row("Classificacao", compatibility.label || "-");
+    row("Indice de adequacao", `${compatibility.score ?? "-"} / 100`);
+    row("Area informada", `${formatNumberText(compatibility.main_area)} m2`);
+    row("Minimo parametrico", `${formatNumberText(compatibility.minimum_area)} m2`);
+    row("Faixa recomendada", `${formatNumberText(compatibility.recommended_min)} a ${formatNumberText(compatibility.recommended_max)} m2`);
+    row("Metodo", compatibility.method_version || "-");
+    lines.push(compatibility.message || "");
+    (compatibility.components || []).forEach((item) => {
+      lines.push(`- ${item.label}: ${formatNumberText(item.area)} m2 | ${item.note || ""}`);
+    });
+    (compatibility.suggestions || []).forEach((item) => lines.push(`- ${item}`));
+    if (compatibility.disclaimer) lines.push(compatibility.disclaimer);
+
+    section("Separacao entre custo tecnico e investimento total");
+    (result.investment_breakdown || []).forEach((item) => {
+      lines.push(`${item.category} | Incluida: ${item.included ? "Sim" : "Nao"} | Valor: ${money(item.amount)} | ${item.note || ""}`);
+    });
+    lines.push(`INVESTIMENTO TOTAL PROVAVEL: ${money(result.investment_total)}`);
+
+    section("Custo tecnico por subsistema");
+    lines.push(result.formula_summary || "");
+    (result.breakdown || []).forEach((item) => {
+      const quantity = item.quantity !== null && item.quantity !== undefined ? `${formatNumberText(item.quantity)} ${item.unit || ""}` : "-";
+      const unitCost = item.unit_cost !== null && item.unit_cost !== undefined ? `${money(item.unit_cost)}/${item.unit || "un"}` : "-";
+      lines.push(`${item.category} | Quantidade-base: ${quantity} | Custo efetivo: ${unitCost} | Valor: ${money(item.amount)} | ${item.basis || ""}`);
+    });
+    lines.push(`CUSTO TECNICO: ${money(result.technical_cost)}`);
+
+    section("Quantitativos parametricos intermediarios");
+    lines.push("As quantidades abaixo orientam o modelo de custo. Elas sao aproximacoes de viabilidade e nao podem ser usadas para compra, medicao ou dimensionamento.");
+    (result.quantities || []).forEach((item) => {
+      lines.push(`${item.category} | ${item.label} | ${formatNumberText(item.quantity)} ${item.unit || ""} | Conf.: ${confidenceText(item.confidence)} | ${item.basis || ""}`);
+    });
+
+    section("Fatores aplicados");
+    (result.factors || []).forEach((item) => {
+      lines.push(`${item.label} | Multiplicador: ${Number(item.value || 0).toFixed(3)}x | Impacto aproximado: ${signedMoneyText(item.impact)}`);
+    });
+
+    section("Principais impactos");
+    (result.sensitivity || []).forEach((item) => {
+      lines.push(`${item.label} | ${item.direction === "decrease" ? "Reduz" : "Aumenta"} | ${money(Math.abs(item.impact || 0))}`);
+    });
+
+    section("Alertas");
+    (result.warnings || []).forEach((item) => lines.push(`- ${item}`));
+    section("Recomendacoes");
+    (result.recommendations || []).forEach((item) => lines.push(`- ${item}`));
+    section("Premissas e limitacoes");
+    (result.assumptions || []).forEach((item) => lines.push(`- ${item}`));
+    lines.push("- Este relatorio foi gerado automaticamente pelo sistema e possui carater auxiliar. A responsabilidade tecnica e do profissional habilitado.");
+
     const pdfBytes = buildSimplePdf(lines, `${request.name || "Casa Parametrica"} - Relatorio`);
     return new Response(pdfBytes, {
       status: 200,
@@ -56,8 +129,27 @@
     return `R$ ${Number(value || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   }
 
+  function signedMoneyText(value) {
+    const number = Number(value || 0);
+    return `${number >= 0 ? "+" : "-"}${moneyText(Math.abs(number))}`;
+  }
+
+  function formatNumberText(value, digits = 2) {
+    const number = Number(value || 0);
+    const maximumFractionDigits = Math.abs(number - Math.round(number)) < 0.005 ? 0 : digits;
+    return number.toLocaleString("pt-BR", { minimumFractionDigits: 0, maximumFractionDigits });
+  }
+
+  function confidenceText(value) {
+    return ({ high: "alta", medium: "media", low: "baixa" }[value] || value || "-");
+  }
+
   function pdfEscape(value) {
     return String(value ?? "")
+      .replace(/²/g, "2")
+      .replace(/³/g, "3")
+      .replace(/[º°]/g, "o")
+      .replace(/[–—]/g, "-")
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "")
       .replace(/[^\x20-\x7E]/g, "-")
@@ -283,6 +375,7 @@
     }));
     const building = request.building || {};
     const terrain = request.terrain || {};
+    const program = request.program || {};
     const construction = request.construction || {};
     const extras = request.extras || {};
     const costs = request.costs || {};
@@ -322,17 +415,79 @@
     const technicalCost = directCore + poolCost + landscapingCost + retainingCost + demolitionCost + extrasCost;
     const designsCost = costs.include_designs ? technicalCost * 0.055 : 0;
     const indirectCost = costs.include_indirects ? technicalCost * 0.12 : 0;
-    const contingencyPercent = costs.include_contingency ? 8 : 0;
+    const riskAdd = (terrain.soil_report ? 0 : 3) + (terrain.slope === "muito_inclinado" ? 2 : 0) + (terrain.soil === "mole" ? 2 : 0) + (building.complexity === "complexa" ? 1.5 : 0);
+    const contingencyPercent = costs.include_contingency ? 8 + riskAdd : 0;
     const contingencyCost = technicalCost * contingencyPercent / 100;
     const other = Number(costs.other_investment_costs || 0);
     const investmentTotal = technicalCost + designsCost + indirectCost + contingencyCost + other;
-    const uncertaintyPercent = 18;
+    const uncertaintyPercent = 18 + (terrain.soil_report ? 0 : 5) + (building.complexity === "complexa" ? 2 : 0) + (terrain.slope === "muito_inclinado" ? 2 : 0);
     const compatibility = programCompatibility({
       built_area: mainArea,
       floors: building.floors,
       complexity: building.complexity,
       program: request.program || {}
     });
+    const floors = Math.max(1, Number(building.floors || 1));
+    const balconiesArea = Number(building.balconies_area || 0);
+    const basementArea = Number(building.basement_area || 0);
+    const doubleHeightArea = Number(building.double_height_area || 0);
+    const physicalArea = mainArea + garageArea + balconiesArea + basementArea;
+    const projectionArea = mainArea / floors;
+    const complexityPerimeter = { compacta: 1, regular: 1.08, articulada: 1.22, complexa: 1.38 }[building.complexity] || 1.08;
+    const perimeter = Math.sqrt(Math.max(1, projectionArea)) * 4 * complexityPerimeter;
+    const facadeArea = perimeter * 2.8 * floors + doubleHeightArea * 1.4;
+    const internalWallFaces = mainArea * (1.35 + Number(program.bedrooms || 0) * 0.08 + Number(program.bathrooms || 0) * 0.05);
+    const wallGuideArea = facadeArea + internalWallFaces + basementArea * 0.9;
+    const foundationArea = projectionArea + garageArea * 0.45 + balconiesArea * 0.35 + basementArea * 0.65;
+    const structuralArea = mainArea + garageArea * 0.35 + balconiesArea * 0.6 + basementArea * 1.15 + doubleHeightArea * 0.25;
+    const concreteVolume = structuralArea * ({ alvenaria_concreto: 0.095, alvenaria_estrutural: 0.07, paredes_concreto: 0.11, steel_frame: 0.045, wood_frame: 0.035, estrutura_metalica: 0.055, pre_moldado: 0.08, modular: 0.04 }[construction.system] || 0.085);
+    const steelMass = structuralArea * ({ alvenaria_concreto: 15, alvenaria_estrutural: 9, paredes_concreto: 13, steel_frame: 22, wood_frame: 5, estrutura_metalica: 28, pre_moldado: 14, modular: 8 }[construction.system] || 13);
+    const earthVolume = projectionArea * ({ plano: 0.18, leve: 0.45, inclinado: 0.85, muito_inclinado: 1.25 }[terrain.slope] || 0.45) + basementArea * 1.8;
+    const roofArea = projectionArea * ({ colonial_ceramica: 1.28, embutido_termoacustica: 1.12, fibrocimento: 1.08, shingle: 1.2, laje_impermeabilizada: 1.02, cobertura_verde: 1.08 }[construction.roof] || 1.12);
+    const wetFloorArea = Number(program.bathrooms || 0) * 5.5 + Number(program.half_baths || 0) * 2.2 + 12 + (program.gourmet_area ? 10 : 0);
+    const wetWallArea = Number(program.bathrooms || 0) * 22 + Number(program.half_baths || 0) * 10 + 18 + (program.gourmet_area ? 18 : 0);
+    const waterproofArea = wetFloorArea + balconiesArea * 0.55 + basementArea * 0.65 + (construction.roof === "laje_impermeabilizada" ? roofArea * 0.7 : roofArea * 0.12);
+    const windowArea = mainArea * ({ aluminio_basico: 0.11, aluminio_medio: 0.13, aluminio_superior: 0.15, pvc: 0.15, madeira: 0.14, grandes_vaos: 0.19 }[construction.windows] || 0.13);
+    const doorCount = Math.max(4, Number(program.bedrooms || 0) + Number(program.bathrooms || 0) + Number(program.half_baths || 0) + 4);
+    const electricalPoints = Math.round(mainArea * 0.42 + Number(program.bedrooms || 0) * 5 + Number(extras.air_conditioned_rooms || 0) * 3 + (extras.automation ? 18 : 0));
+    const plumbingPoints = Math.round(Number(program.bathrooms || 0) * 8 + Number(program.half_baths || 0) * 4 + 9 + (program.gourmet_area ? 5 : 0) + (extras.pool ? 4 : 0));
+    const installationPoints = electricalPoints + plumbingPoints * 1.25 + Number(extras.air_conditioned_rooms || 0) * 3;
+    const ceilingArea = mainArea + basementArea * 0.9 + balconiesArea * 0.35;
+    const paintingArea = Math.max(0, wallGuideArea + ceilingArea - wetWallArea * 0.65);
+    const subsystemShares = [
+      ["Servicos preliminares e canteiro", physicalArea, "m2", 0.045, "Area fisica total estimada."],
+      ["Terraplenagem e fundacoes", foundationArea, "m2", 0.105, "Projecao, garagem, varandas e subsolo."],
+      ["Estrutura", structuralArea, "m2", 0.145, "Areas cobertas ponderadas por esforco estrutural."],
+      ["Vedacoes e alvenarias", wallGuideArea, "m2", 0.095, "Fachadas + faces internas + parcela de subsolo."],
+      ["Cobertura", roofArea, "m2", 0.075, "Projecao coberta x solucao de cobertura."],
+      ["Impermeabilizacao", waterproofArea, "m2", 0.04, "Areas molhadas, varandas, subsolo e cobertura."],
+      ["Esquadrias e vidros", windowArea, "m2", 0.095, "Percentual da area principal conforme padrao de vaos."],
+      ["Instalacoes eletricas e hidraulicas", installationPoints, "pt-eq", 0.13, "Pontos eletricos + hidraulicos ponderados."],
+      ["Pisos e revestimentos", physicalArea, "m2", 0.17, "Casa, subsolo, varandas e garagem."],
+      ["Pintura, acabamentos e entrega", paintingArea, "m2", 0.10, "Paredes e tetos menos revestimentos molhados."]
+    ];
+    const subtotalShares = subsystemShares.reduce((acc, item) => acc + item[3], 0);
+    const subsystemBreakdown = subsystemShares.map(([category, quantity, unit, share, basis]) => {
+      const amount = directCore * share / subtotalShares;
+      return { kind: "direct", category, quantity: Number(quantity.toFixed(2)), unit, unit_cost: Number((amount / Math.max(1, quantity)).toFixed(2)), amount: Number(amount.toFixed(2)), basis };
+    });
+    const optionalBreakdown = [
+      { kind: "specific", category: "Demolicao", quantity: Number(terrain.demolition_area || 0), unit: "m2", unit_cost: Number(specific.demolition_m2 || 175), amount: Number(demolitionCost.toFixed(2)), basis: "Area informada pelo usuario." },
+      { kind: "specific", category: "Muros de contencao informados", quantity: Number(terrain.retaining_wall_area || 0), unit: "m2", unit_cost: Number(specific.retaining_wall_m2 || 1850), amount: Number(retainingCost.toFixed(2)), basis: "Area informada pelo usuario." },
+      { kind: "specific", category: "Piscina", quantity: Number(extras.pool_area || 0), unit: "m2", unit_cost: Number(specific.pool_m2 || 4300), amount: Number(poolCost.toFixed(2)), basis: "Item opcional." },
+      { kind: "specific", category: "Paisagismo", quantity: Number(extras.landscaping_area || 0), unit: "m2", unit_cost: Number(specific.landscaping_m2 || 310), amount: Number(landscapingCost.toFixed(2)), basis: "Item opcional." },
+      { kind: "specific", category: "Sistema fotovoltaico preliminar", quantity: extras.solar ? 1 : 0, unit: "conj.", unit_cost: 42000, amount: extras.solar ? 42000 : 0, basis: "Verba parametrica preliminar." },
+      { kind: "specific", category: "Automacao residencial", quantity: extras.automation ? 1 : 0, unit: "vb", unit_cost: 28000, amount: extras.automation ? 28000 : 0, basis: "Verba parametrica preliminar." },
+      { kind: "specific", category: "Climatizacao", quantity: Number(extras.air_conditioned_rooms || 0), unit: "amb.", unit_cost: 5200, amount: Number(extras.air_conditioned_rooms || 0) * 5200, basis: "Ambientes climatizados informados." },
+      { kind: "specific", category: "Elevador residencial", quantity: extras.elevator ? 1 : 0, unit: "un", unit_cost: 125000, amount: extras.elevator ? 125000 : 0, basis: "Item opcional." },
+      { kind: "specific", category: "Carregador para veiculo eletrico", quantity: extras.ev_charger ? 1 : 0, unit: "un", unit_cost: 8500, amount: extras.ev_charger ? 8500 : 0, basis: "Item opcional." },
+      { kind: "specific", category: "Reaproveitamento de agua pluvial", quantity: extras.rainwater_reuse ? 1 : 0, unit: "conj.", unit_cost: 18000, amount: extras.rainwater_reuse ? 18000 : 0, basis: "Item opcional." }
+    ].filter((item) => item.amount > 0);
+    const factorResults = factorItems.map(([label, value]) => ({ label, value, impact: directCore * (value - 1) / Math.max(1, globalFactor) }));
+    const sensitivityItems = [
+      ...factorResults.map((item) => ({ label: item.label, impact: Math.abs(item.impact), direction: item.impact < 0 ? "decrease" : "increase" })),
+      ...optionalBreakdown.map((item) => ({ label: item.category, impact: item.amount, direction: "increase" }))
+    ].filter((item) => item.impact > 0).sort((a, b) => b.impact - a.impact);
 
     return {
       parameter_version: parameters.version || "2026.07-demo",
@@ -354,13 +509,7 @@
       contingency_percent: contingencyPercent,
       formula_summary: "Area equivalente x custo-base regional x fatores parametricos + itens especificos + custos indiretos.",
       program_compatibility: compatibility,
-      breakdown: [
-        { kind: "direct", category: "Construcao principal", quantity: Number(equivalentArea.toFixed(2)), unit: "m2-eq", unit_cost: Number((baseCost * globalFactor).toFixed(2)), amount: Number(directCore.toFixed(2)), basis: "Area equivalente ajustada por fatores" },
-        { kind: "specific", category: "Piscina", quantity: Number(extras.pool_area || 0), unit: "m2", unit_cost: Number(specific.pool_m2 || 4300), amount: Number(poolCost.toFixed(2)), basis: "Item opcional" },
-        { kind: "specific", category: "Paisagismo", quantity: Number(extras.landscaping_area || 0), unit: "m2", unit_cost: Number(specific.landscaping_m2 || 310), amount: Number(landscapingCost.toFixed(2)), basis: "Item opcional" },
-        { kind: "specific", category: "Contencoes e demolicoes", quantity: 1, unit: "vb", unit_cost: null, amount: Number((retainingCost + demolitionCost).toFixed(2)), basis: "Condicionantes do terreno" },
-        { kind: "specific", category: "Sistemas extras", quantity: 1, unit: "vb", unit_cost: null, amount: Number(extrasCost.toFixed(2)), basis: "Energia, automacao, ar-condicionado e itens especiais" }
-      ].filter((item) => item.amount > 0),
+      breakdown: [...subsystemBreakdown, ...optionalBreakdown],
       investment_breakdown: [
         { category: "Custo tecnico da execucao", amount: Number(technicalCost.toFixed(2)), included: true, note: "Estimativa parametrica" },
         { category: "Projetos e aprovacoes", amount: Number(designsCost.toFixed(2)), included: costs.include_designs, note: "Percentual preliminar" },
@@ -370,27 +519,58 @@
       ],
       quantities: [
         { category: "Area", label: "Area principal", quantity: mainArea, unit: "m2", confidence: "high", basis: "Informada pelo usuario" },
+        { category: "Area", label: "Area fisica estimada da garagem", quantity: Number(garageArea.toFixed(2)), unit: "m2", confidence: "medium", basis: `${building.garage_spaces || 0} vaga(s) x ${parameters.equivalent_area_coefficients?.garage_area_per_space || 13.5} m2.` },
+        { category: "Area", label: "Area fisica total estimada", quantity: Number(physicalArea.toFixed(2)), unit: "m2", confidence: "high", basis: "Casa + garagem + varandas + subsolo." },
         { category: "Area", label: "Area equivalente", quantity: Number(equivalentArea.toFixed(2)), unit: "m2-eq", confidence: "medium", basis: "Coeficientes parametricos" },
-        { category: "Garagem", label: "Area equivalente de garagem", quantity: Number(garageArea.toFixed(2)), unit: "m2", confidence: "medium", basis: "Vagas informadas" }
+        { category: "Geometria", label: "Projecao aproximada da casa", quantity: Number(projectionArea.toFixed(2)), unit: "m2", confidence: "medium", basis: "Area principal dividida pelo numero de pavimentos." },
+        { category: "Geometria", label: "Perimetro externo estimado", quantity: Number(perimeter.toFixed(2)), unit: "m", confidence: "low", basis: "Planta equivalente quadrada ajustada pela complexidade." },
+        { category: "Vedacoes", label: "Area estimada de fachadas", quantity: Number(facadeArea.toFixed(2)), unit: "m2", confidence: "low", basis: "Perimetro x pe-direito x pavimentos." },
+        { category: "Vedacoes", label: "Faces de paredes internas", quantity: Number(internalWallFaces.toFixed(2)), unit: "m2", confidence: "low", basis: "Coeficiente por area e quantidade de ambientes." },
+        { category: "Vedacoes", label: "Area total de paredes direcionadora", quantity: Number(wallGuideArea.toFixed(2)), unit: "m2", confidence: "low", basis: "Fachadas + faces internas + parcela de subsolo." },
+        { category: "Estrutura", label: "Area equivalente de fundacoes", quantity: Number(foundationArea.toFixed(2)), unit: "m2", confidence: "low", basis: "Projecao, garagem, varandas e subsolo." },
+        { category: "Estrutura", label: "Area estrutural equivalente", quantity: Number(structuralArea.toFixed(2)), unit: "m2", confidence: "medium", basis: "Areas cobertas ponderadas por esforco estrutural." },
+        { category: "Estrutura", label: "Volume preliminar de concreto", quantity: Number(concreteVolume.toFixed(2)), unit: "m3", confidence: "low", basis: "Coeficiente por sistema aplicado a area estrutural." },
+        { category: "Estrutura", label: "Massa estrutural equivalente de aco", quantity: Number(steelMass.toFixed(2)), unit: "kg", confidence: "low", basis: "Coeficiente por sistema; nao serve para compra." },
+        { category: "Terreno", label: "Movimentacao de terra preliminar", quantity: Number(earthVolume.toFixed(2)), unit: "m3", confidence: "low", basis: "Projecao x classe de inclinacao + subsolo." },
+        { category: "Cobertura", label: "Area efetiva estimada da cobertura", quantity: Number(roofArea.toFixed(2)), unit: "m2", confidence: "medium", basis: "Projecao coberta x multiplicador da solucao." },
+        { category: "Impermeabilizacao", label: "Area equivalente de impermeabilizacao", quantity: Number(waterproofArea.toFixed(2)), unit: "m2", confidence: "low", basis: "Areas molhadas, varandas, subsolo e cobertura." },
+        { category: "Esquadrias", label: "Area estimada de esquadrias e vidros", quantity: Number(windowArea.toFixed(2)), unit: "m2", confidence: "low", basis: "Percentual da area principal conforme padrao de vaos." },
+        { category: "Esquadrias", label: "Quantidade estimada de portas", quantity: doorCount, unit: "un", confidence: "medium", basis: "Programa de ambientes + portas de acesso e servico." },
+        { category: "Instalacoes", label: "Pontos eletricos estimados", quantity: electricalPoints, unit: "pt", confidence: "low", basis: "Area, quartos, banheiros, climatizacao e automacao." },
+        { category: "Instalacoes", label: "Pontos hidraulicos estimados", quantity: plumbingPoints, unit: "pt", confidence: "medium", basis: "Banheiros, cozinha, lavanderia e complementos." },
+        { category: "Instalacoes", label: "Pontos equivalentes de instalacoes", quantity: Number(installationPoints.toFixed(2)), unit: "pt-eq", confidence: "low", basis: "Pontos eletricos + hidraulicos ponderados." },
+        { category: "Acabamentos", label: "Area de pisos molhados", quantity: Number(wetFloorArea.toFixed(2)), unit: "m2", confidence: "medium", basis: "Programa de banheiros, cozinha, lavanderia e gourmet." },
+        { category: "Acabamentos", label: "Area de revestimentos em paredes molhadas", quantity: Number(wetWallArea.toFixed(2)), unit: "m2", confidence: "low", basis: "Coeficientes por ambiente molhado." },
+        { category: "Acabamentos", label: "Area total de pisos e revestimentos de piso", quantity: Number(physicalArea.toFixed(2)), unit: "m2", confidence: "high", basis: "Casa, subsolo, varandas e garagem." },
+        { category: "Acabamentos", label: "Area estimada de tetos e forros", quantity: Number(ceilingArea.toFixed(2)), unit: "m2", confidence: "medium", basis: "Areas internas e parcelas cobertas externas." },
+        { category: "Acabamentos", label: "Area estimada de pintura", quantity: Number(paintingArea.toFixed(2)), unit: "m2", confidence: "low", basis: "Paredes e tetos menos revestimentos molhados." }
       ],
-      sensitivity: [
-        { label: "Acabamento superior/inferior", impact: technicalCost * 0.12, direction: "increase" },
-        { label: "Solo e fundacoes", impact: technicalCost * 0.07, direction: terrain.soil_report ? "decrease" : "increase" },
-        { label: "Complexidade arquitetonica", impact: technicalCost * 0.08, direction: "increase" }
-      ],
+      sensitivity: sensitivityItems.slice(0, 14),
       warnings: [
         "Valores demonstrativos e preliminares, sem substituicao de orcamento analitico.",
-        terrain.soil_report ? "Sondagem informada pelo usuario." : "Sem sondagem: fundacoes e contencoes possuem maior incerteza."
+        terrain.soil_report ? "Sondagem informada pelo usuario." : "Sem sondagem: fundacoes e contencoes possuem maior incerteza.",
+        priceBase.scope === "state" && request.location?.city ? `Nao ha base municipal ativa para ${request.location.city}; foi usada base estadual de ${request.location?.state || "-"}.` : "Base de precos selecionada conforme dados informados."
       ],
       recommendations: [
         "Conferir area, padrao de acabamento, sistemas construtivos e condicionantes do terreno.",
-        "Atualizar bases de preco com fontes tecnicas regionais antes de tomada de decisao."
+        "Atualizar bases de preco com fontes tecnicas regionais antes de tomada de decisao.",
+        "Realizar sondagem e levantamento topografico antes de consolidar o orcamento.",
+        "Comparar padroes de acabamento por ambiente para localizar economias sem reduzir toda a especificacao.",
+        "Compactar perimetro e recortes reduz paredes, fachadas, estrutura e cobertura.",
+        extras.pool || extras.landscaping_area ? "Executar piscina e paisagismo em fase posterior reduz o desembolso inicial." : "Avaliar complementos em etapas futuras conforme disponibilidade orcamentaria."
       ],
       assumptions: [
+        "A area principal exclui garagem, varandas, piscina e subsolo.",
+        `Cada vaga de garagem foi estimada em ${parameters.equivalent_area_coefficients?.garage_area_per_space || 13.5} m2.`,
+        "Os quantitativos intermediarios sao aproximacoes parametricas e nao substituem levantamento de projeto.",
+        `A compatibilidade area x programa usa o metodo ${compatibility.method_version} e nao substitui estudo arquitetonico.`,
+        "Cada subsistema usa um quantitativo direcionador, um benchmark de custo e apenas os fatores tecnicamente expostos.",
+        "O custo tecnico reune a execucao fisica; o investimento total acrescenta projetos, indiretos/BDI, contingencia e verbas externas informadas.",
+        "A faixa minimo-maximo representa incerteza parametrica preliminar, nao intervalo estatistico certificado.",
         parameters.notice || "Parametros demonstrativos.",
         "Modelo executado integralmente no navegador para publicacao estatica."
       ],
-      factors: factorItems.map(([label, value]) => ({ label, value, impact: technicalCost * (value - 1) / factorItems.length }))
+      factors: factorResults
     };
   }
 
