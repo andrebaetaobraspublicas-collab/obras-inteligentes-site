@@ -42,7 +42,7 @@
     row("Custo tecnico/m2", `${money(result.technical_cost_per_main_m2)}/m2`);
     row("Investimento/m2", `${money(result.investment_cost_per_main_m2)}/m2`);
     row("Prazo provavel", `${(result.estimated_duration_months || []).join(" a ")} meses`);
-    row("Confiabilidade", result.confidence || "-");
+    row("Confiabilidade", confidenceText(result.confidence));
     row("Completude", `${formatNumberText(result.completeness_score)}%`);
     row("Incerteza", `+/- ${formatNumberText(result.uncertainty_percent)}%`);
     row("Contingencia", `${formatNumberText(result.contingency_percent)}%`);
@@ -158,14 +158,15 @@
       .replace(/\)/g, "\\)");
   }
 
-  function wrapPdfLine(line, width = 92) {
+  function wrapPdfText(line, fontSize = 10, width = 460) {
+    const capacity = Math.max(12, Math.floor(width / (fontSize * 0.48)));
     const words = String(line || " ").split(/\s+/);
     const output = [];
     let current = "";
     for (const word of words) {
       if (!current) {
         current = word;
-      } else if ((current.length + word.length + 1) <= width) {
+      } else if ((current.length + word.length + 1) <= capacity) {
         current += ` ${word}`;
       } else {
         output.push(current);
@@ -179,38 +180,188 @@
   function buildSimplePdf(lines, title) {
     const pageWidth = 595;
     const pageHeight = 842;
-    const margin = 52;
-    const lineHeight = 15;
-    const contentStreams = [];
-    let cursorY = pageHeight - margin;
-    let pageLines = [];
+    const margin = 42;
+    const contentWidth = pageWidth - margin * 2;
+    const sectionTitles = new Set([
+      "Resumo executivo",
+      "Base de precos utilizada",
+      "Premissas do imovel",
+      "Compatibilidade entre area e programa",
+      "Separacao entre custo tecnico e investimento total",
+      "Custo tecnico por subsistema",
+      "Quantitativos parametricos intermediarios",
+      "Fatores aplicados",
+      "Principais impactos",
+      "Alertas",
+      "Recomendacoes",
+      "Premissas e limitacoes"
+    ]);
+    const pages = [];
+    let page = [];
+    let y = pageHeight - 86;
 
-    const flushPage = () => {
-      if (!pageLines.length) return;
-      const body = [
-        "BT",
-        "/F1 16 Tf",
-        `${margin} ${pageHeight - margin} Td`,
-        `(${pdfEscape(title)}) Tj`,
-        "0 -28 Td",
-        "/F1 10 Tf",
-        ...pageLines.map((line) => [`(${pdfEscape(line)}) Tj`, `0 -${lineHeight} Td`]).flat(),
-        "ET"
-      ].join("\n");
-      contentStreams.push(body);
-      pageLines = [];
-      cursorY = pageHeight - margin;
+    const color = {
+      ink: "0.09 0.14 0.20",
+      muted: "0.36 0.43 0.50",
+      blue: "0.04 0.25 0.43",
+      cyan: "0.00 0.54 0.62",
+      line: "0.82 0.86 0.88",
+      soft: "0.93 0.97 0.98",
+      pale: "0.98 0.99 0.99",
+      white: "1 1 1",
+      warn: "0.99 0.93 0.82"
     };
 
-    for (const rawLine of lines) {
-      const wrapped = rawLine ? wrapPdfLine(rawLine) : [" "];
-      for (const line of wrapped) {
-        if (cursorY < margin + lineHeight) flushPage();
-        pageLines.push(line);
-        cursorY -= lineHeight;
+    const newPage = () => {
+      if (page.length) pages.push(page);
+      page = [];
+      y = pageHeight - 86;
+    };
+    const ensure = (height) => {
+      if (y - height < 58) newPage();
+    };
+    const rect = (x, rectY, w, h, fill = null, stroke = null) => {
+      if (fill) page.push(`${fill} rg ${x} ${rectY} ${w} ${h} re f`);
+      if (stroke) page.push(`${stroke} RG ${x} ${rectY} ${w} ${h} re S`);
+    };
+    const text = (value, x, textY, size = 10, font = "F1", fill = color.ink) => {
+      page.push(`BT ${fill} rg /${font} ${size} Tf ${x} ${textY} Td (${pdfEscape(value)}) Tj ET`);
+    };
+    const paragraph = (value, options = {}) => {
+      const size = options.size || 9.2;
+      const x = options.x || margin;
+      const width = options.width || contentWidth;
+      const font = options.font || "F1";
+      const fill = options.fill || color.ink;
+      const leading = options.leading || size * 1.42;
+      const wrapped = wrapPdfText(value, size, width);
+      ensure(wrapped.length * leading + 4);
+      wrapped.forEach((line) => {
+        text(line, x, y, size, font, fill);
+        y -= leading;
+      });
+      y -= options.after ?? 2;
+    };
+    const section = (value) => {
+      ensure(34);
+      y -= 6;
+      rect(margin, y - 17, contentWidth, 22, color.blue);
+      text(value, margin + 10, y - 11, 10.5, "F2", color.white);
+      y -= 31;
+    };
+    const keyValue = (line, shaded = false) => {
+      const parts = line.split(/:\s+/);
+      if (parts.length < 2) return paragraph(line);
+      const label = parts.shift();
+      const value = parts.join(": ");
+      const labelWidth = 138;
+      const valueWidth = contentWidth - labelWidth - 22;
+      const wrapped = wrapPdfText(value, 8.8, valueWidth);
+      const height = Math.max(19, wrapped.length * 12 + 8);
+      ensure(height + 2);
+      if (shaded) rect(margin, y - height + 5, contentWidth, height, color.pale, color.line);
+      text(label, margin + 8, y - 8, 8.4, "F2", color.muted);
+      wrapped.forEach((row, index) => text(row, margin + labelWidth, y - 8 - index * 12, 8.8, "F1", color.ink));
+      y -= height;
+    };
+    const tableRow = (line, index = 0) => {
+      const cells = line.split(" | ");
+      if (cells.length < 2) return paragraph(line);
+      const widths = cells.length >= 5 ? [100, 92, 94, 80, 148] :
+        cells.length === 4 ? [170, 72, 92, 170] :
+        cells.length === 3 ? [210, 90, 210] : [160, 340];
+      const normalizedWidths = widths.slice(0, cells.length);
+      const total = normalizedWidths.reduce((a, b) => a + b, 0);
+      const scale = contentWidth / total;
+      const scaled = normalizedWidths.map((w) => w * scale);
+      const wrappedCells = cells.map((cell, cellIndex) => wrapPdfText(cell, 7.2, Math.max(42, scaled[cellIndex] - 10)));
+      const rows = Math.max(...wrappedCells.map((cell) => cell.length));
+      const height = Math.max(19, rows * 9.8 + 8);
+      ensure(height + 2);
+      rect(margin, y - height + 5, contentWidth, height, index % 2 ? color.pale : color.soft, color.line);
+      let x = margin;
+      cells.forEach((_, cellIndex) => {
+        const cellLines = wrappedCells[cellIndex];
+        if (cellIndex > 0) page.push(`${color.line} RG ${x} ${y - height + 5} m ${x} ${y + 5} l S`);
+        cellLines.forEach((row, rowIndex) => text(row, x + 5, y - 7 - rowIndex * 9.8, 7.2, cellIndex === 0 ? "F2" : "F1", color.ink));
+        x += scaled[cellIndex];
+      });
+      y -= height;
+    };
+    const metricGrid = (rows) => {
+      const metrics = rows.map((line) => {
+        const [label, ...rest] = line.split(/:\s+/);
+        return { label, value: rest.join(": ") };
+      });
+      for (let i = 0; i < metrics.length; i += 2) {
+        const pair = metrics.slice(i, i + 2);
+        ensure(47);
+        pair.forEach((item, index) => {
+          const x = margin + index * (contentWidth / 2 + 6);
+          const w = contentWidth / 2 - 6;
+          rect(x, y - 39, w, 38, color.soft, color.line);
+          text(item.label, x + 10, y - 13, 7.8, "F2", color.muted);
+          text(item.value, x + 10, y - 29, 11.2, "F2", color.blue);
+        });
+        y -= 45;
+      }
+    };
+
+    const subtitle = lines[0] || "Casa Parametrica - Relatorio preliminar";
+    const projectName = lines[2] || title;
+    const metadata = lines[3] || "";
+    paragraph(subtitle, { size: 9, fill: color.muted, after: 6 });
+    paragraph(projectName, { size: 20, font: "F2", fill: color.blue, leading: 24, after: 2 });
+    paragraph(metadata, { size: 8.8, fill: color.muted, after: 12 });
+
+    for (let index = 4; index < lines.length; index += 1) {
+      const line = lines[index];
+      if (!line) {
+        y -= 4;
+        continue;
+      }
+      if (sectionTitles.has(line)) {
+        section(line);
+        if (line === "Resumo executivo") {
+          const metricRows = [];
+          let scan = index + 1;
+          while (scan < lines.length && lines[scan] && !sectionTitles.has(lines[scan])) {
+            if (lines[scan].includes(": ")) metricRows.push(lines[scan]);
+            scan += 1;
+          }
+          metricGrid(metricRows);
+          index = scan - 1;
+        }
+        continue;
+      }
+      if (line.startsWith("- ")) {
+        paragraph(`• ${line.slice(2)}`, { x: margin + 10, width: contentWidth - 10, size: 8.6, fill: color.ink });
+      } else if (line.includes(" | ")) {
+        tableRow(line, index);
+      } else if (line.includes(": ")) {
+        keyValue(line, index % 2 === 0);
+      } else if (/^[A-Z0-9 .:-]+$/.test(line) && line.length < 52) {
+        paragraph(line, { size: 9.2, font: "F2", fill: color.blue });
+      } else {
+        paragraph(line, { size: 8.8, fill: color.ink });
       }
     }
-    flushPage();
+    if (page.length) pages.push(page);
+
+    const contentStreams = pages.map((bodyCommands, index) => {
+      const header = [
+        `${color.blue} rg 0 ${pageHeight - 46} ${pageWidth} 46 re f`,
+        `${color.cyan} rg 0 ${pageHeight - 49} ${pageWidth} 3 re f`,
+        `BT ${color.white} rg /F2 12 Tf ${margin} ${pageHeight - 28} Td (Casa Parametrica) Tj ET`,
+        `BT 0.78 0.88 0.92 rg /F1 8 Tf ${pageWidth - margin - 155} ${pageHeight - 28} Td (Estimativa parametrica preliminar) Tj ET`
+      ];
+      const footer = [
+        `${color.line} RG ${margin} 42 m ${pageWidth - margin} 42 l S`,
+        `BT ${color.muted} rg /F1 7.5 Tf ${margin} 28 Td (Relatorio gerado automaticamente. Conferencia obrigatoria por profissional habilitado.) Tj ET`,
+        `BT ${color.muted} rg /F1 7.5 Tf ${pageWidth - margin - 48} 28 Td (Pagina ${index + 1}/${pages.length}) Tj ET`
+      ];
+      return [...header, ...bodyCommands, ...footer].join("\n");
+    });
 
     const objects = [
       "<< /Type /Catalog /Pages 2 0 R >>",
@@ -219,10 +370,11 @@
     contentStreams.forEach((stream, index) => {
       const pageObjectNumber = 3 + index * 2;
       const contentObjectNumber = pageObjectNumber + 1;
-      objects.push(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${pageWidth} ${pageHeight}] /Resources << /Font << /F1 ${3 + contentStreams.length * 2} 0 R >> >> /Contents ${contentObjectNumber} 0 R >>`);
+      objects.push(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${pageWidth} ${pageHeight}] /Resources << /Font << /F1 ${3 + contentStreams.length * 2} 0 R /F2 ${4 + contentStreams.length * 2} 0 R >> >> /Contents ${contentObjectNumber} 0 R >>`);
       objects.push(`<< /Length ${stream.length} >>\nstream\n${stream}\nendstream`);
     });
     objects.push("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>");
+    objects.push("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>");
 
     const encoder = new TextEncoder();
     let pdf = "%PDF-1.4\n";
