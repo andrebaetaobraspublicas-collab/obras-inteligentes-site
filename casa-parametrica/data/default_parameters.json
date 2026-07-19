@@ -1,0 +1,413 @@
+{
+  "version": "2026.07-demo-4-programa-area-abertura",
+  "date_base": "2026-07",
+  "currency": "BRL",
+  "notice": "Parâmetros e bases municipais exclusivamente demonstrativos. Substitua-os por fontes técnicas, regionais, rastreáveis e calibradas antes de uso comercial.",
+  "base_cost_m2": 3200.0,
+  "region_factors": {
+    "AC": 1.09,
+    "AL": 0.96,
+    "AP": 1.13,
+    "AM": 1.12,
+    "BA": 0.97,
+    "CE": 0.96,
+    "DF": 1.1,
+    "ES": 1.03,
+    "GO": 0.99,
+    "MA": 0.98,
+    "MT": 1.04,
+    "MS": 1.03,
+    "MG": 1.0,
+    "PA": 1.08,
+    "PB": 0.95,
+    "PR": 1.04,
+    "PE": 0.98,
+    "PI": 0.95,
+    "RJ": 1.1,
+    "RN": 0.97,
+    "RS": 1.04,
+    "RO": 1.08,
+    "RR": 1.15,
+    "SC": 1.08,
+    "SP": 1.08,
+    "SE": 0.95,
+    "TO": 1.02
+  },
+  "finish_factors": {
+    "economico": 0.84,
+    "medio": 1.0,
+    "superior": 1.28,
+    "alto_luxo": 1.66
+  },
+  "system_factors": {
+    "alvenaria_concreto": 1.0,
+    "alvenaria_estrutural": 0.95,
+    "paredes_concreto": 0.97,
+    "steel_frame": 1.08,
+    "wood_frame": 1.05,
+    "estrutura_metalica": 1.16,
+    "pre_moldado": 1.02,
+    "modular": 1.01
+  },
+  "roof_factors": {
+    "colonial_ceramica": 1.09,
+    "embutido_termoacustica": 1.02,
+    "fibrocimento": 0.94,
+    "shingle": 1.13,
+    "laje_impermeabilizada": 1.17,
+    "cobertura_verde": 1.36
+  },
+  "flooring_factors": {
+    "ceramica_economica": 0.94,
+    "ceramica_media": 0.98,
+    "porcelanato_medio": 1.0,
+    "porcelanato_grande": 1.11,
+    "vinilico_laminado": 1.02,
+    "madeira": 1.18,
+    "pedra_natural": 1.25,
+    "marmore": 1.39
+  },
+  "window_factors": {
+    "aluminio_basico": 0.96,
+    "aluminio_medio": 1.0,
+    "aluminio_superior": 1.1,
+    "pvc": 1.16,
+    "madeira": 1.14,
+    "grandes_vaos": 1.28
+  },
+  "slope_factors": {
+    "plano": 1.0,
+    "leve": 1.05,
+    "inclinado": 1.15,
+    "muito_inclinado": 1.29
+  },
+  "soil_factors": {
+    "firme": 1.0,
+    "arenoso": 1.05,
+    "argiloso": 1.04,
+    "mole": 1.17,
+    "desconhecido": 1.08
+  },
+  "access_factors": {
+    "facil": 1.0,
+    "medio": 1.03,
+    "dificil": 1.09
+  },
+  "floors_factors": {
+    "1": 1.0,
+    "2": 1.06,
+    "3": 1.13,
+    "4": 1.2
+  },
+  "complexity_factors": {
+    "compacta": 0.96,
+    "regular": 1.0,
+    "articulada": 1.1,
+    "complexa": 1.22
+  },
+  "equivalent_area_coefficients": {
+    "garage_covered": 0.48,
+    "garage_uncovered": 0.22,
+    "balcony": 0.58,
+    "basement": 1.3,
+    "double_height_extra": 0.27,
+    "garage_area_per_space": 13.5
+  },
+  "specific_costs": {
+    "pool_m2": 4300.0,
+    "landscaping_m2": 310.0,
+    "retaining_wall_m2": 1850.0,
+    "demolition_m2": 175.0,
+    "solar_system": 36000.0,
+    "air_conditioned_room": 7200.0,
+    "elevator": 128000.0,
+    "ev_charger": 7200.0,
+    "rainwater_reuse": 19500.0,
+    "gourmet_equipment": 18000.0,
+    "bathroom_above_reference": 14500.0,
+    "rock_surcharge_percent": 0.045
+  },
+  "rates": {
+    "designs": 0.055,
+    "indirects_bdi": 0.125,
+    "base_contingency": 0.065,
+    "max_contingency": 0.16,
+    "automation_percent": 0.028
+  },
+  "phase_weights": {
+    "Serviços preliminares e canteiro": 0.055,
+    "Terraplenagem e fundações": 0.125,
+    "Estrutura": 0.155,
+    "Vedações e alvenarias": 0.09,
+    "Cobertura": 0.08,
+    "Impermeabilização": 0.04,
+    "Esquadrias e vidros": 0.095,
+    "Instalações elétricas e hidráulicas": 0.135,
+    "Pisos e revestimentos": 0.145,
+    "Pintura, acabamentos e entrega": 0.08
+  },
+  "subsystem_weights": {
+    "Serviços preliminares e canteiro": 0.055,
+    "Terraplenagem e fundações": 0.125,
+    "Estrutura": 0.155,
+    "Vedações e alvenarias": 0.09,
+    "Cobertura": 0.08,
+    "Impermeabilização": 0.04,
+    "Esquadrias e vidros": 0.095,
+    "Instalações elétricas e hidráulicas": 0.135,
+    "Pisos e revestimentos": 0.145,
+    "Pintura, acabamentos e entrega": 0.08
+  },
+  "subsystem_factor_exposure": {
+    "Serviços preliminares e canteiro": {
+      "system": 0.25,
+      "slope": 0.35,
+      "soil": 0.15,
+      "access": 0.8,
+      "floors": 0.25,
+      "complexity": 0.25
+    },
+    "Terraplenagem e fundações": {
+      "system": 0.2,
+      "slope": 1.0,
+      "soil": 1.0,
+      "access": 0.2,
+      "floors": 0.75,
+      "complexity": 0.2
+    },
+    "Estrutura": {
+      "system": 1.0,
+      "slope": 0.15,
+      "soil": 0.2,
+      "floors": 1.0,
+      "complexity": 0.8
+    },
+    "Vedações e alvenarias": {
+      "system": 1.0,
+      "finish": 0.1,
+      "floors": 0.15,
+      "complexity": 0.55
+    },
+    "Cobertura": {
+      "roof": 1.0,
+      "system": 0.1,
+      "finish": 0.15,
+      "floors": -0.35,
+      "complexity": 0.75
+    },
+    "Impermeabilização": {
+      "roof": 0.55,
+      "finish": 0.15,
+      "slope": 0.1,
+      "complexity": 0.25
+    },
+    "Esquadrias e vidros": {
+      "windows": 1.0,
+      "finish": 0.35,
+      "complexity": 0.35
+    },
+    "Instalações elétricas e hidráulicas": {
+      "finish": 0.45,
+      "floors": 0.4,
+      "complexity": 0.3
+    },
+    "Pisos e revestimentos": {
+      "flooring": 1.0,
+      "finish": 0.65,
+      "complexity": 0.15
+    },
+    "Pintura, acabamentos e entrega": {
+      "finish": 0.7,
+      "complexity": 0.25
+    }
+  },
+  "quantity_coefficients": {
+    "average_ceiling_height_m": 2.8,
+    "perimeter_shape_factors": {
+      "compacta": 0.94,
+      "regular": 1.0,
+      "articulada": 1.16,
+      "complexa": 1.34
+    },
+    "internal_wall_face_m2_per_built_m2": 1.72,
+    "internal_wall_room_addition_m2": 4.2,
+    "window_area_ratios": {
+      "aluminio_basico": 0.13,
+      "aluminio_medio": 0.15,
+      "aluminio_superior": 0.17,
+      "pvc": 0.16,
+      "madeira": 0.15,
+      "grandes_vaos": 0.235
+    },
+    "roof_area_multipliers": {
+      "colonial_ceramica": 1.19,
+      "embutido_termoacustica": 1.1,
+      "fibrocimento": 1.08,
+      "shingle": 1.21,
+      "laje_impermeabilizada": 1.02,
+      "cobertura_verde": 1.06
+    },
+    "roof_balcony_coverage_share": 0.72,
+    "foundation_garage_share": 0.72,
+    "foundation_balcony_share": 0.4,
+    "structure_garage_share": 0.58,
+    "structure_balcony_share": 0.72,
+    "wet_floor_full_bath_m2": 4.6,
+    "wet_floor_half_bath_m2": 2.1,
+    "wet_floor_kitchen_laundry_m2": 17.0,
+    "wet_floor_gourmet_m2": 7.0,
+    "wet_wall_full_bath_m2": 22.0,
+    "wet_wall_half_bath_m2": 9.0,
+    "wet_wall_kitchen_laundry_m2": 19.0,
+    "wet_wall_gourmet_m2": 8.0,
+    "electrical_points_per_built_m2": 0.38,
+    "electrical_base_points": 12.0,
+    "electrical_points_per_bedroom": 2.0,
+    "electrical_points_per_bathroom": 2.5,
+    "electrical_points_gourmet": 5.0,
+    "electrical_points_automation": 9.0,
+    "hydraulic_points_full_bath": 5.0,
+    "hydraulic_points_half_bath": 2.0,
+    "hydraulic_points_kitchen_laundry": 9.0,
+    "hydraulic_points_gourmet": 3.0,
+    "hydraulic_points_pool": 3.0,
+    "hydraulic_points_reuse": 3.0,
+    "concrete_m3_per_structural_m2": {
+      "alvenaria_concreto": 0.155,
+      "alvenaria_estrutural": 0.105,
+      "paredes_concreto": 0.165,
+      "steel_frame": 0.055,
+      "wood_frame": 0.048,
+      "estrutura_metalica": 0.07,
+      "pre_moldado": 0.095,
+      "modular": 0.05
+    },
+    "structural_steel_kg_per_m2": {
+      "alvenaria_concreto": 18.0,
+      "alvenaria_estrutural": 10.0,
+      "paredes_concreto": 20.0,
+      "steel_frame": 32.0,
+      "wood_frame": 7.0,
+      "estrutura_metalica": 42.0,
+      "pre_moldado": 14.0,
+      "modular": 24.0
+    },
+    "earthwork_m3_per_footprint": {
+      "plano": 0.18,
+      "leve": 0.35,
+      "inclinado": 0.75,
+      "muito_inclinado": 1.25
+    },
+    "basement_excavation_depth_m": 3.1,
+    "waterproofing_basement_m2_per_m2": 1.35,
+    "ceiling_covered_garage_share": 0.85,
+    "ceiling_balcony_share": 0.65,
+    "paint_wet_wall_deduction_share": 0.82,
+    "door_base_count": 3.0,
+    "door_per_floor_above_one": 1.0
+  },
+  "subsystem_quantity_drivers": {
+    "Serviços preliminares e canteiro": {
+      "quantity_key": "estimated_total_area",
+      "reference_per_equivalent_m2": 1.08,
+      "elasticity": 0.45,
+      "min_ratio": 0.7,
+      "max_ratio": 1.45
+    },
+    "Terraplenagem e fundações": {
+      "quantity_key": "foundation_area",
+      "reference_per_equivalent_m2": 0.72,
+      "elasticity": 0.78,
+      "min_ratio": 0.55,
+      "max_ratio": 1.8
+    },
+    "Estrutura": {
+      "quantity_key": "structural_area",
+      "reference_per_equivalent_m2": 1.0,
+      "elasticity": 0.72,
+      "min_ratio": 0.7,
+      "max_ratio": 1.45
+    },
+    "Vedações e alvenarias": {
+      "quantity_key": "wall_area",
+      "reference_per_equivalent_m2": 2.55,
+      "elasticity": 0.72,
+      "min_ratio": 0.6,
+      "max_ratio": 1.7
+    },
+    "Cobertura": {
+      "quantity_key": "roof_area",
+      "reference_per_equivalent_m2": 0.82,
+      "elasticity": 0.88,
+      "min_ratio": 0.48,
+      "max_ratio": 1.75
+    },
+    "Impermeabilização": {
+      "quantity_key": "waterproofing_area",
+      "reference_per_equivalent_m2": 0.34,
+      "elasticity": 0.82,
+      "min_ratio": 0.45,
+      "max_ratio": 2.1
+    },
+    "Esquadrias e vidros": {
+      "quantity_key": "window_area",
+      "reference_per_equivalent_m2": 0.155,
+      "elasticity": 0.92,
+      "min_ratio": 0.55,
+      "max_ratio": 1.8
+    },
+    "Instalações elétricas e hidráulicas": {
+      "quantity_key": "installation_points",
+      "reference_per_equivalent_m2": 0.64,
+      "elasticity": 0.78,
+      "min_ratio": 0.65,
+      "max_ratio": 1.65
+    },
+    "Pisos e revestimentos": {
+      "quantity_key": "floor_finish_area",
+      "reference_per_equivalent_m2": 1.08,
+      "elasticity": 0.86,
+      "min_ratio": 0.72,
+      "max_ratio": 1.5
+    },
+    "Pintura, acabamentos e entrega": {
+      "quantity_key": "paint_area",
+      "reference_per_equivalent_m2": 3.55,
+      "elasticity": 0.68,
+      "min_ratio": 0.6,
+      "max_ratio": 1.7
+    }
+  },
+  "regional_fallback_source": "Base estadual demonstrativa derivada dos parâmetros globais Casa Paramétrica",
+  "program_area_compatibility": {
+    "method_version": "programa-area-v1-2026.07",
+    "social_core_by_bedrooms": {
+      "0": 20.0,
+      "1": 24.0,
+      "2": 30.0,
+      "3": 36.0,
+      "4": 40.0
+    },
+    "social_core_extra_bedroom_m2": 4.0,
+    "bedroom_m2": 10.5,
+    "suite_bedroom_m2": 13.0,
+    "full_bath_m2": 4.2,
+    "half_bath_m2": 2.0,
+    "service_base_m2": 6.0,
+    "service_per_bedroom_m2": 0.65,
+    "storage_base_m2": 2.5,
+    "storage_per_bedroom_m2": 0.5,
+    "gourmet_m2": 15.0,
+    "stair_first_extra_floor_m2": 8.0,
+    "stair_additional_floor_m2": 3.5,
+    "circulation_wall_factors": {
+      "compacta": 0.17,
+      "regular": 0.2,
+      "articulada": 0.23,
+      "complexa": 0.26
+    },
+    "minimum_ratio": 0.91,
+    "recommended_max_ratio": 1.22,
+    "generous_limit_ratio": 1.25
+  }
+}

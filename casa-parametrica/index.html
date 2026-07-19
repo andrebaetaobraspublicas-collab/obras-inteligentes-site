@@ -1,0 +1,537 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Casa Paramétrica: estimativa preliminar de custo e compatibilidade entre área e programa residencial.">
+  <title>Casa Paramétrica v4 | Quanto custa minha casa?</title>
+  <link rel="icon" href="static/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="static/styles.css">
+  <script defer src="static/static-api.js"></script>
+  <script defer src="static/app.js"></script>
+</head>
+<body class="opening-active">
+  <section class="cp-opening" id="openingScreen" aria-labelledby="openingTitle">
+    <div class="cp-opening-grid" aria-hidden="true"></div>
+    <button type="button" class="cp-skip" id="skipOpeningAnimation">Pular animação</button>
+
+    <div class="cp-splash" id="openingSplash">
+      <svg class="cp-building" viewBox="0 0 440 340" role="img" aria-label="Ilustração animada de uma casa sendo construída">
+        <g class="cp-crane" stroke="#5eead4" stroke-width="2" fill="none" stroke-linecap="round">
+          <line x1="404" y1="66" x2="404" y2="256"></line>
+          <line x1="392" y1="88" x2="404" y2="66"></line><line x1="416" y1="88" x2="404" y2="66"></line>
+          <line x1="404" y1="66" x2="150" y2="66"></line><line x1="404" y1="66" x2="426" y2="66"></line>
+          <line x1="150" y1="66" x2="404" y2="112" stroke-dasharray="4 6" opacity=".7"></line>
+          <line x1="150" y1="66" x2="150" y2="104"></line>
+          <rect x="140" y="104" width="20" height="12" rx="2" fill="#5eead4" opacity=".9"></rect>
+        </g>
+        <rect class="cp-el cp-foundation" x="52" y="250" width="322" height="12" rx="2" fill="#0f5a5a"></rect>
+        <rect class="cp-el cp-volume-main" x="98" y="122" width="150" height="128" fill="#f2f7f8"></rect>
+        <rect class="cp-el cp-volume-side" x="246" y="178" width="120" height="72" fill="#dfeaec"></rect>
+        <rect class="cp-el cp-roof-main" x="86" y="110" width="174" height="14" rx="2" fill="#0f766e"></rect>
+        <rect class="cp-el cp-roof-side" x="238" y="166" width="136" height="14" rx="2" fill="#0f766e"></rect>
+        <rect class="cp-el cp-glass-main" x="114" y="150" width="62" height="100" fill="#7fd8e6"></rect>
+        <line class="cp-el cp-glass-line" x1="145" y1="150" x2="145" y2="250" stroke="#f2f7f8" stroke-width="3"></line>
+        <rect class="cp-el cp-window-upper" x="190" y="140" width="42" height="40" fill="#7fd8e6"></rect>
+        <rect class="cp-el cp-window-side" x="262" y="192" width="60" height="42" fill="#7fd8e6"></rect>
+        <rect class="cp-el cp-door" x="334" y="204" width="24" height="46" fill="#0f5a5a"></rect>
+        <g stroke="#5eead4" stroke-width="1.6" fill="none">
+          <line class="cp-line cp-dimension-horizontal" x1="52" y1="284" x2="374" y2="284" stroke-dasharray="330"></line>
+          <line class="cp-el cp-dimension-cap" x1="52" y1="278" x2="52" y2="290"></line>
+          <line class="cp-el cp-dimension-cap" x1="374" y1="278" x2="374" y2="290"></line>
+          <line class="cp-line cp-dimension-vertical" x1="74" y1="122" x2="74" y2="250" stroke-dasharray="128"></line>
+          <line class="cp-el cp-dimension-cap" x1="68" y1="122" x2="80" y2="122"></line>
+          <line class="cp-el cp-dimension-cap" x1="68" y1="250" x2="80" y2="250"></line>
+        </g>
+        <text class="cp-el cp-dimension-label" x="213" y="302" text-anchor="middle" fill="#5eead4" font-size="12">área construída · m²</text>
+      </svg>
+
+      <div class="cp-brand-reveal">
+        <div class="cp-brand-icon" aria-hidden="true">
+          <svg width="36" height="36" viewBox="0 0 32 32" fill="none"><path d="M6 15L16 6l10 9" stroke="#07333b" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"></path><path d="M9 14v11h14V14" stroke="#07333b" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"></path><rect x="14" y="18" width="4" height="7" fill="#07333b"></rect></svg>
+        </div>
+        <div>
+          <div class="cp-brand-name">Casa <span>Paramétrica</span></div>
+          <div class="cp-brand-tagline">estimativa · custo · construção</div>
+        </div>
+      </div>
+
+      <h1 class="cp-opening-title" id="openingTitle">Quanto Custa Minha Casa?</h1>
+
+      <div class="cp-legal-card">
+        <div class="cp-legal-heading"><span aria-hidden="true">!</span><strong>Aviso legal — leia antes de continuar</strong></div>
+        <p>A <strong>Casa Paramétrica</strong> gera estimativas <strong>preliminares</strong> de custo por modelo paramétrico, com finalidade exclusivamente informativa e de apoio à decisão inicial. Os valores <strong>não constituem orçamento, proposta comercial, projeto executivo, laudo ou parecer técnico</strong> e não substituem orçamento analítico, projetos, sondagem geotécnica nem a responsabilidade técnica de profissional habilitado. Os resultados dependem dos dados informados e das bases de preços vigentes, podendo divergir significativamente dos custos reais.</p>
+        <label class="cp-agreement">
+          <input type="checkbox" id="legalAgreement">
+          <span>Li e concordo com o <strong>Aviso Legal</strong>, os Termos de Uso e a Política de Privacidade.</span>
+        </label>
+        <button type="button" class="cp-primary" id="acceptLegalButton" disabled>Marque a caixa para continuar</button>
+      </div>
+    </div>
+
+    <div class="cp-ready hidden" id="openingReady">
+      <div class="cp-ready-logo">
+        <div class="cp-brand-icon" aria-hidden="true"><svg width="30" height="30" viewBox="0 0 32 32" fill="none"><path d="M6 15L16 6l10 9" stroke="#07333b" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"></path><path d="M9 14v11h14V14" stroke="#07333b" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"></path><rect x="14" y="18" width="4" height="7" fill="#07333b"></rect></svg></div>
+        <strong>Casa <span>Paramétrica</span></strong>
+      </div>
+      <h2>Tudo pronto para<br>estimar a sua casa.</h2>
+      <p>Descreva o terreno, o programa e os acabamentos. O sistema verifica a compatibilidade da área e apresenta faixa provável de custo, premissas e maiores impactos.</p>
+      <button type="button" class="cp-primary cp-ready-button" id="startApplicationButton">Iniciar nova estimativa →</button>
+    </div>
+  </section>
+
+  <div class="application-root" id="applicationRoot" aria-hidden="true">
+  <header class="topbar">
+    <div class="brand-wrap">
+      <div class="brand-mark" aria-hidden="true">CP</div>
+      <div>
+        <strong class="brand">Casa Paramétrica</strong>
+        <span class="brand-subtitle">Estimativa paramétrica residencial</span>
+      </div>
+    </div>
+    <div class="topbar-actions">
+      <button type="button" class="intro-link" id="openIntroButton" aria-label="Reabrir tela de abertura">Tela inicial</button>
+      <div class="health" id="healthBadge"><span></span> verificando motor</div>
+    </div>
+  </header>
+
+  <main class="app-shell">
+    <nav class="tabs" aria-label="Navegação principal">
+      <button type="button" class="tab active" data-view="estimate">Nova estimativa</button>
+      <button type="button" class="tab" data-view="scenarios">Cenários salvos</button>
+      <button type="button" class="tab" data-view="admin">Parâmetros</button>
+    </nav>
+
+    <section class="view active" id="view-estimate">
+      <div class="hero">
+        <div>
+          <span class="eyebrow">Viabilidade inicial</span>
+          <h1>Quanto pode custar a sua casa?</h1>
+          <p>Descreva terreno, programa, sistema e acabamentos. O motor calcula uma faixa preliminar, mostra premissas e explica os maiores impactos.</p>
+        </div>
+        <div class="hero-actions">
+          <button type="button" class="button secondary" id="loadSampleButton">Preencher exemplo</button>
+          <button type="button" class="button ghost" id="resetButton">Limpar</button>
+        </div>
+      </div>
+
+      <div class="notice warning-notice">
+        <strong>Importante:</strong> os parâmetros fornecidos neste MVP são demonstrativos. A estimativa não substitui orçamento analítico, projetos, sondagem ou responsabilidade técnica.
+      </div>
+
+      <form id="estimatorForm" novalidate>
+        <ol class="stepper" aria-label="Etapas da estimativa">
+          <li class="active" data-step-indicator="0"><span>1</span><small>Local</small></li>
+          <li data-step-indicator="1"><span>2</span><small>Terreno</small></li>
+          <li data-step-indicator="2"><span>3</span><small>Casa</small></li>
+          <li data-step-indicator="3"><span>4</span><small>Solução</small></li>
+          <li data-step-indicator="4"><span>5</span><small>Extras</small></li>
+        </ol>
+
+        <div class="wizard-card">
+          <section class="wizard-step active" data-step="0">
+            <div class="section-heading">
+              <div><span class="step-kicker">Etapa 1 de 5</span><h2>Identificação e localização</h2></div>
+              <p>O sistema procura a base municipal mais recente e, se necessário, usa a base estadual. Você também pode escolher uma versão histórica.</p>
+            </div>
+            <div class="form-grid">
+              <label class="field span-2">
+                <span>Nome da estimativa</span>
+                <input id="name" type="text" maxlength="120" value="Casa de 180 m²" required>
+              </label>
+              <label class="field">
+                <span>UF</span>
+                <select id="state" required>
+                  <option>AC</option><option>AL</option><option>AP</option><option>AM</option><option>BA</option><option>CE</option><option>DF</option><option>ES</option><option>GO</option><option>MA</option><option>MT</option><option>MS</option><option>MG</option><option>PA</option><option>PB</option><option>PR</option><option>PE</option><option>PI</option><option>RJ</option><option>RN</option><option>RS</option><option>RO</option><option>RR</option><option>SC</option><option selected>SP</option><option>SE</option><option>TO</option>
+                </select>
+              </label>
+              <label class="field">
+                <span>Município</span>
+                <input id="city" type="text" maxlength="120" placeholder="Ex.: Campinas">
+              </label>
+              <label class="field span-2">
+                <span>Bairro ou região <em>opcional</em></span>
+                <input id="neighborhood" type="text" maxlength="120" placeholder="Ex.: Barão Geraldo">
+              </label>
+              <label class="field span-2">
+                <span>Base de preços</span>
+                <select id="priceBaseId"><option value="">Automática - versão ativa mais específica</option></select>
+                <small class="field-help" id="priceBaseStatus">A base será resolvida conforme UF e município.</small>
+              </label>
+            </div>
+          </section>
+
+          <section class="wizard-step" data-step="1">
+            <div class="section-heading">
+              <div><span class="step-kicker">Etapa 2 de 5</span><h2>Características do terreno</h2></div>
+              <p>Topografia, solo e acesso alteram fundações, contenções, logística e risco.</p>
+            </div>
+            <div class="form-grid">
+              <label class="field">
+                <span>Área do terreno (m²)</span>
+                <input id="landArea" type="number" min="31" max="200000" step="1" value="360" required>
+              </label>
+              <label class="field">
+                <span>Inclinação</span>
+                <select id="slope"><option value="plano">Plano</option><option value="leve" selected>Levemente inclinado</option><option value="inclinado">Inclinado</option><option value="muito_inclinado">Muito inclinado</option></select>
+              </label>
+              <label class="field">
+                <span>Condição aparente do solo</span>
+                <select id="soil"><option value="desconhecido" selected>Desconhecido</option><option value="firme">Firme</option><option value="arenoso">Arenoso</option><option value="argiloso">Argiloso</option><option value="mole">Mole</option></select>
+              </label>
+              <label class="field">
+                <span>Acesso de caminhões e máquinas</span>
+                <select id="access"><option value="facil" selected>Fácil</option><option value="medio">Médio</option><option value="dificil">Difícil</option></select>
+              </label>
+              <label class="field">
+                <span>Área de demolição (m²)</span>
+                <input id="demolitionArea" type="number" min="0" step="1" value="0">
+              </label>
+              <label class="field">
+                <span>Contenção já estimada (m² de muro)</span>
+                <input id="retainingWallArea" type="number" min="0" step="1" value="0">
+              </label>
+              <label class="check-card">
+                <input id="soilReport" type="checkbox">
+                <span><strong>Há sondagem geotécnica</strong><small>Reduz a incerteza da fundação.</small></span>
+              </label>
+              <label class="check-card">
+                <input id="rock" type="checkbox">
+                <span><strong>Há indício de rocha</strong><small>Aplica acréscimo preliminar e risco.</small></span>
+              </label>
+            </div>
+          </section>
+
+          <section class="wizard-step" data-step="2">
+            <div class="section-heading">
+              <div><span class="step-kicker">Etapa 3 de 5</span><h2>Área e programa da casa</h2></div>
+              <p>A área principal não inclui garagem, varanda, piscina nem subsolo; esses itens recebem coeficientes próprios.</p>
+            </div>
+            <div class="form-grid">
+              <label class="field">
+                <span>Área principal da casa (m²)</span>
+                <input id="builtArea" type="number" min="21" max="50000" step="1" value="180" required>
+              </label>
+              <label class="field">
+                <span>Número de pavimentos</span>
+                <select id="floors"><option value="1" selected>1 - térrea</option><option value="2">2 - sobrado</option><option value="3">3 pavimentos</option><option value="4">4 pavimentos</option></select>
+              </label>
+              <label class="field">
+                <span>Área de subsolo (m²)</span>
+                <input id="basementArea" type="number" min="0" step="1" value="0">
+              </label>
+              <label class="field">
+                <span>Varandas e sacadas (m²)</span>
+                <input id="balconiesArea" type="number" min="0" step="1" value="20">
+              </label>
+              <label class="field">
+                <span>Área com pé-direito duplo (m²)</span>
+                <input id="doubleHeightArea" type="number" min="0" step="1" value="0">
+              </label>
+              <label class="field">
+                <span>Forma da planta</span>
+                <select id="complexity"><option value="compacta">Compacta</option><option value="regular" selected>Regular</option><option value="articulada">Articulada, com recortes</option><option value="complexa">Complexa, muitos vãos/balanços</option></select>
+              </label>
+              <label class="field">
+                <span>Vagas de garagem</span>
+                <input id="garageSpaces" type="number" min="0" max="20" step="1" value="2">
+              </label>
+              <label class="check-card compact-check">
+                <input id="garageCovered" type="checkbox" checked>
+                <span><strong>Garagem coberta</strong><small>Coeficiente maior que vaga descoberta.</small></span>
+              </label>
+              <label class="field">
+                <span>Quartos</span>
+                <input id="bedrooms" type="number" min="0" max="30" step="1" value="3">
+              </label>
+              <label class="field">
+                <span>Suítes</span>
+                <input id="suites" type="number" min="0" max="30" step="1" value="1">
+              </label>
+              <label class="field">
+                <span>Banheiros completos</span>
+                <input id="bathrooms" type="number" min="0" max="40" step="1" value="3">
+              </label>
+              <label class="field">
+                <span>Lavabos</span>
+                <input id="halfBaths" type="number" min="0" max="20" step="1" value="1">
+              </label>
+              <label class="check-card span-2">
+                <input id="gourmetArea" type="checkbox" checked>
+                <span><strong>Área gourmet equipada</strong><small>Considera complementos, bancada e equipamentos básicos.</small></span>
+              </label>
+
+              <aside class="program-fit-card span-2 is-loading" id="programCompatibilityCard" data-status="loading" aria-live="polite">
+                <div class="program-fit-heading">
+                  <div><span class="fit-eyebrow">Verificação automática</span><h3>Compatibilidade entre área e programa</h3></div>
+                  <span class="fit-status" id="programFitStatus">Analisando</span>
+                </div>
+                <p class="fit-message" id="programFitMessage">Informe área, pavimentos e programa para calcular a faixa recomendada.</p>
+                <div class="fit-track-wrap" aria-hidden="true">
+                  <div class="fit-track"><span class="fit-range" id="programFitRange"></span><span class="fit-marker" id="programFitMarker"></span></div>
+                  <div class="fit-track-labels"><span>0</span><span id="programFitScaleMax">— m²</span></div>
+                </div>
+                <div class="fit-metrics">
+                  <article><span>Área informada</span><strong id="programFitMainArea">—</strong></article>
+                  <article><span>Mínimo paramétrico</span><strong id="programFitMinimum">—</strong></article>
+                  <article><span>Faixa recomendada</span><strong id="programFitRecommended">—</strong></article>
+                  <article><span>Índice de adequação</span><strong id="programFitScore">—</strong></article>
+                </div>
+                <ul class="fit-suggestions" id="programFitSuggestions"></ul>
+                <div class="fit-actions">
+                  <small id="programFitDisclaimer">Faixa orientativa; não substitui estudo arquitetônico.</small>
+                  <button type="button" class="button secondary hidden" id="applyRecommendedAreaButton">Usar área recomendada</button>
+                </div>
+              </aside>
+            </div>
+          </section>
+
+          <section class="wizard-step" data-step="3">
+            <div class="section-heading">
+              <div><span class="step-kicker">Etapa 4 de 5</span><h2>Sistema, cobertura e acabamentos</h2></div>
+              <p>Escolha a solução predominante. O painel administrativo permite trocar todos os fatores.</p>
+            </div>
+            <div class="form-grid">
+              <label class="field span-2">
+                <span>Sistema construtivo</span>
+                <select id="system"><option value="alvenaria_concreto" selected>Alvenaria convencional + concreto armado</option><option value="alvenaria_estrutural">Alvenaria estrutural</option><option value="paredes_concreto">Paredes de concreto</option><option value="steel_frame">Steel frame</option><option value="wood_frame">Wood frame</option><option value="estrutura_metalica">Estrutura metálica</option><option value="pre_moldado">Pré-moldado</option><option value="modular">Construção modular</option></select>
+              </label>
+              <label class="field span-2">
+                <span>Tipo de cobertura</span>
+                <select id="roof"><option value="colonial_ceramica">Telhado colonial / telha cerâmica</option><option value="embutido_termoacustica" selected>Telhado embutido / telha termoacústica</option><option value="fibrocimento">Telha de fibrocimento</option><option value="shingle">Telha shingle</option><option value="laje_impermeabilizada">Laje impermeabilizada</option><option value="cobertura_verde">Cobertura verde</option></select>
+              </label>
+              <label class="field">
+                <span>Padrão construtivo</span>
+                <select id="finish"><option value="economico">Econômico</option><option value="medio">Médio</option><option value="superior" selected>Superior</option><option value="alto_luxo">Alto luxo</option></select>
+              </label>
+              <label class="field">
+                <span>Piso predominante</span>
+                <select id="flooring"><option value="ceramica_economica">Cerâmica econômica</option><option value="ceramica_media">Cerâmica média</option><option value="porcelanato_medio" selected>Porcelanato médio</option><option value="porcelanato_grande">Porcelanato grande formato</option><option value="vinilico_laminado">Vinílico / laminado</option><option value="madeira">Madeira</option><option value="pedra_natural">Pedra natural</option><option value="marmore">Mármore</option></select>
+              </label>
+              <label class="field span-2">
+                <span>Esquadrias predominantes</span>
+                <select id="windows"><option value="aluminio_basico">Alumínio básico</option><option value="aluminio_medio" selected>Alumínio padrão médio</option><option value="aluminio_superior">Alumínio superior</option><option value="pvc">PVC</option><option value="madeira">Madeira</option><option value="grandes_vaos">Grandes vãos envidraçados</option></select>
+              </label>
+            </div>
+          </section>
+
+          <section class="wizard-step" data-step="4">
+            <div class="section-heading">
+              <div><span class="step-kicker">Etapa 5 de 5</span><h2>Complementos e composição global</h2></div>
+              <p>Itens especiais entram como parcelas específicas, além do núcleo calculado por área equivalente.</p>
+            </div>
+            <div class="form-grid">
+              <label class="check-card">
+                <input id="pool" type="checkbox" checked>
+                <span><strong>Incluir piscina</strong><small>Custo paramétrico por área.</small></span>
+              </label>
+              <label class="field" id="poolAreaField">
+                <span>Área da piscina (m²)</span>
+                <input id="poolArea" type="number" min="0" step="1" value="18">
+              </label>
+              <label class="field span-2">
+                <span>Área de paisagismo (m²)</span>
+                <input id="landscapingArea" type="number" min="0" step="1" value="80">
+              </label>
+              <label class="check-card"><input id="solar" type="checkbox"><span><strong>Sistema fotovoltaico</strong><small>Pacote residencial preliminar.</small></span></label>
+              <label class="check-card"><input id="automation" type="checkbox"><span><strong>Automação residencial</strong><small>Percentual sobre o núcleo da obra.</small></span></label>
+              <label class="field span-2"><span>Ambientes climatizados</span><input id="airConditionedRooms" type="number" min="0" step="1" value="4"></label>
+              <label class="check-card"><input id="elevator" type="checkbox"><span><strong>Elevador residencial</strong><small>Parcela específica.</small></span></label>
+              <label class="check-card"><input id="evCharger" type="checkbox"><span><strong>Carregador veicular</strong><small>Infraestrutura e equipamento.</small></span></label>
+              <label class="check-card span-2"><input id="rainwaterReuse" type="checkbox"><span><strong>Reaproveitamento de água pluvial</strong><small>Cisterna, filtros, bomba e rede preliminar.</small></span></label>
+            </div>
+
+            <div class="subsection">
+              <h3>Itens globais da estimativa</h3>
+              <div class="form-grid three">
+                <label class="check-card"><input id="includeDesigns" type="checkbox" checked><span><strong>Projetos e aprovações</strong><small>Percentual configurável.</small></span></label>
+                <label class="check-card"><input id="includeIndirects" type="checkbox" checked><span><strong>Indiretos e BDI</strong><small>Administração e mobilização.</small></span></label>
+                <label class="check-card"><input id="includeContingency" type="checkbox" checked><span><strong>Contingência</strong><small>Ajustada ao risco informado.</small></span></label>
+              </div>
+            </div>
+
+            <div class="subsection">
+              <h3>Outros aportes para o investimento total <small class="muted-inline">opcional</small></h3>
+              <div class="form-grid">
+                <label class="field">
+                  <span>Valor adicional informado (R$)</span>
+                  <input id="otherInvestmentCosts" type="number" min="0" step="100" value="0">
+                </label>
+                <label class="field">
+                  <span>Descrição da verba</span>
+                  <input id="otherInvestmentDescription" type="text" maxlength="160" placeholder="Ex.: mobiliário, taxas ou custo do terreno">
+                </label>
+              </div>
+              <p class="section-note">Essa verba entra somente no investimento total e não é estimada nem recebe incerteza pelo motor.</p>
+            </div>
+          </section>
+
+          <div class="wizard-actions">
+            <button type="button" class="button ghost" id="previousButton" disabled>Voltar</button>
+            <div class="wizard-actions-right">
+              <span id="validationMessage" class="validation-message" role="alert"></span>
+              <button type="button" class="button primary" id="nextButton">Continuar</button>
+              <button type="submit" class="button primary hidden" id="calculateButton">Calcular estimativa</button>
+            </div>
+          </div>
+        </div>
+      </form>
+
+      <section class="results hidden" id="resultPanel" aria-live="polite">
+        <div class="result-heading">
+          <div><span class="eyebrow">Resultado paramétrico v4</span><h2 id="resultTitle">Estimativa</h2><p id="resultMeta"></p></div>
+          <div class="result-actions">
+            <button type="button" class="button secondary" id="saveButton">Salvar cenário</button>
+            <button type="button" class="button primary" id="pdfButton">Gerar PDF</button>
+          </div>
+        </div>
+
+        <div class="range-cards four">
+          <article class="range-card technical"><span>Custo técnico da execução</span><strong id="technicalCost">-</strong><small id="technicalCostPerM2">Materiais, mão de obra, equipamentos e itens físicos.</small></article>
+          <article class="range-card probable"><span>Investimento total provável</span><strong id="investmentTotal">-</strong><small id="investmentCostPerM2">Custo técnico + parcelas globais escolhidas.</small></article>
+          <article class="range-card"><span>Investimento mínimo</span><strong id="minimumTotal">-</strong><small>Cenário favorável dentro das premissas.</small></article>
+          <article class="range-card"><span>Investimento máximo</span><strong id="maximumTotal">-</strong><small>Cenário conservador dentro da incerteza.</small></article>
+        </div>
+
+        <div class="metrics-grid eight">
+          <article><span>Base de preços</span><strong id="priceBaseMetric">-</strong></article>
+          <article><span>Custo-base</span><strong id="baseCostM2">-</strong></article>
+          <article><span>Área equivalente</span><strong id="equivalentArea">-</strong></article>
+          <article><span>Prazo provável</span><strong id="duration">-</strong></article>
+          <article><span>Confiabilidade</span><strong id="confidence">-</strong></article>
+          <article><span>Completude</span><strong id="completeness">-</strong></article>
+          <article><span>Incerteza</span><strong id="uncertainty">-</strong></article>
+          <article><span>Contingência</span><strong id="contingency">-</strong></article>
+        </div>
+
+
+        <article class="panel program-compatibility-result" id="programCompatibilityResult">
+          <div class="panel-heading">
+            <div><h3>Compatibilidade da área com o programa</h3><p>Faixa paramétrica antes do desenvolvimento do projeto arquitetônico.</p></div>
+            <span class="fit-status" id="resultProgramFitStatus">—</span>
+          </div>
+          <div class="result-fit-grid">
+            <div class="result-fit-summary">
+              <p id="resultProgramFitMessage">Avaliação indisponível para este cenário.</p>
+              <div class="fit-metrics compact">
+                <article><span>Área informada</span><strong id="resultProgramMainArea">—</strong></article>
+                <article><span>Mínimo</span><strong id="resultProgramMinimum">—</strong></article>
+                <article><span>Faixa recomendada</span><strong id="resultProgramRecommended">—</strong></article>
+                <article><span>Adequação</span><strong id="resultProgramScore">—</strong></article>
+              </div>
+              <ul class="message-list recommendations program-fit-result-suggestions" id="resultProgramSuggestions"></ul>
+              <small class="section-note" id="resultProgramDisclaimer"></small>
+            </div>
+            <div class="table-wrap"><table><thead><tr><th>Componente do programa</th><th>Área paramétrica</th><th>Critério</th></tr></thead><tbody id="resultProgramComponents"></tbody></table></div>
+          </div>
+        </article>
+
+        <div class="result-grid">
+          <article class="panel span-7">
+            <div class="panel-heading"><div><h3>Custo técnico por subsistema</h3><p>Cada etapa usa um quantitativo direcionador e somente os fatores aos quais está exposta.</p></div><strong id="technicalBreakdownTotal">-</strong></div>
+            <div class="table-wrap"><table><thead><tr><th>Etapa / item</th><th>Quantidade-base</th><th>Custo efetivo</th><th>Valor</th><th>% técnico</th></tr></thead><tbody id="technicalBreakdownBody"></tbody></table></div>
+          </article>
+          <article class="panel span-5">
+            <div class="panel-heading"><div><h3>Ponte até o investimento total</h3><p>Separação entre execução física e demais parcelas do empreendimento.</p></div><strong id="investmentBreakdownTotal">-</strong></div>
+            <div class="table-wrap"><table><thead><tr><th>Parcela</th><th>Incluída</th><th>Valor</th></tr></thead><tbody id="investmentBody"></tbody></table></div>
+          </article>
+        </div>
+
+        <article class="panel">
+          <div class="panel-heading"><div><h3>Quantitativos paramétricos intermediários</h3><p>Memória geométrica e de pontos usada para direcionar os subsistemas. Não substitui quantitativo de projeto.</p></div></div>
+          <div class="table-wrap"><table><thead><tr><th>Grupo</th><th>Quantitativo</th><th>Quantidade</th><th>Confiabilidade</th><th>Critério</th></tr></thead><tbody id="quantitiesBody"></tbody></table></div>
+        </article>
+
+        <div class="result-grid">
+          <article class="panel span-5">
+            <div class="panel-heading"><div><h3>Maiores impactos</h3><p>Efeito marginal aproximado dos fatores, quantitativos e itens específicos.</p></div></div>
+            <div class="impact-list" id="sensitivityList"></div>
+          </article>
+          <article class="panel span-7">
+            <div class="panel-heading"><div><h3>Fatores aplicados</h3><p id="formulaSummary"></p></div></div>
+            <div class="table-wrap"><table><thead><tr><th>Fator</th><th>Multiplicador</th><th>Impacto sequencial</th></tr></thead><tbody id="factorsBody"></tbody></table></div>
+          </article>
+        </div>
+
+        <div class="result-grid">
+          <article class="panel span-6"><div class="panel-heading"><div><h3>Alertas</h3><p>Pontos que aumentam risco ou precisam de projeto.</p></div></div><ul class="message-list warnings" id="warningsList"></ul></article>
+          <article class="panel span-6"><div class="panel-heading"><div><h3>Recomendações</h3><p>Alternativas para qualificar a próxima etapa.</p></div></div><ul class="message-list recommendations" id="recommendationsList"></ul></article>
+        </div>
+
+        <article class="panel">
+          <details class="assumptions"><summary>Ver premissas, base utilizada e limitações</summary><ul id="assumptionsList"></ul></details>
+        </article>
+      </section>
+    </section>
+
+    <section class="view" id="view-scenarios">
+      <div class="hero compact-hero">
+        <div><span class="eyebrow">Histórico local</span><h1>Cenários salvos</h1><p>Abra, duplique, compare ou gere o relatório de uma simulação.</p></div>
+        <button type="button" class="button secondary" id="refreshScenariosButton">Atualizar lista</button>
+      </div>
+      <article class="panel">
+        <div class="table-wrap"><table><thead><tr><th>Nome</th><th>Local</th><th>Área</th><th>Custo técnico</th><th>Investimento</th><th>Base</th><th>Atualização</th><th>Ações</th></tr></thead><tbody id="scenariosBody"></tbody></table></div>
+        <div class="empty-state hidden" id="emptyScenarios">Nenhum cenário salvo.</div>
+      </article>
+
+      <article class="panel compare-panel">
+        <div class="panel-heading"><div><h3>Comparar dois cenários</h3><p>Diferenças de custo, área e prazo.</p></div><button type="button" class="button secondary" id="compareButton">Comparar</button></div>
+        <div class="form-grid">
+          <label class="field"><span>Cenário A</span><select id="compareA"><option value="">Selecione</option></select></label>
+          <label class="field"><span>Cenário B</span><select id="compareB"><option value="">Selecione</option></select></label>
+        </div>
+        <div id="comparisonResult" class="hidden"></div>
+      </article>
+    </section>
+
+    <section class="view" id="view-admin">
+      <div class="hero compact-hero">
+        <div><span class="eyebrow">Governança e histórico</span><h1>Parâmetros e bases de preços</h1><p>Cadastre versões municipais/estaduais sem apagar o histórico e edite os coeficientes do motor com rastreabilidade.</p></div>
+      </div>
+      <div class="notice warning-notice"><strong>Ambiente de MVP:</strong> a chave padrão é <code>admin-demo</code>. Altere <code>CASAPARAMETRICA_ADMIN_KEY</code> antes de disponibilizar o sistema.</div>
+
+      <article class="panel">
+        <div class="panel-heading"><div><h3>Nova versão de preços</h3><p>Ao ativar uma nova versão, a anterior permanece no histórico e deixa de ser a escolha automática.</p></div></div>
+        <div class="form-grid three">
+          <label class="field"><span>Escopo</span><select id="priceBaseScope"><option value="municipal">Municipal</option><option value="state">Estadual</option></select></label>
+          <label class="field"><span>UF</span><select id="priceBaseState"></select></label>
+          <label class="field" id="priceBaseCityField"><span>Município</span><input id="priceBaseCity" type="text" maxlength="120" placeholder="Ex.: Campinas"></label>
+          <label class="field"><span>Data-base</span><input id="priceBaseDate" type="month" value="2026-07"></label>
+          <label class="field"><span>Custo-base (R$/m²)</span><input id="priceBaseCost" type="number" min="1" step="0.01" placeholder="3500,00"></label>
+          <label class="field"><span>Identificador da versão</span><input id="priceBaseVersion" type="text" maxlength="120" placeholder="campinas-2026.07-v1"></label>
+          <label class="field span-2"><span>Fonte</span><input id="priceBaseSource" type="text" maxlength="240" value="Base cadastrada pelo administrador"></label>
+          <label class="field"><span>Observações</span><input id="priceBaseNotes" type="text" maxlength="1000" placeholder="Metodologia, documento ou responsável"></label>
+        </div>
+        <div class="panel-footer"><button type="button" class="button primary" id="createPriceBaseButton">Cadastrar e ativar versão</button></div>
+      </article>
+
+      <article class="panel">
+        <div class="panel-heading"><div><h3>Histórico municipal e estadual</h3><p>Consulte todas as versões; versões antigas continuam disponíveis para simulações históricas.</p></div><button type="button" class="button secondary" id="loadPriceBasesButton">Atualizar</button></div>
+        <div class="form-grid">
+          <label class="field"><span>Filtrar por UF</span><select id="baseFilterState"></select></label>
+          <label class="field"><span>Município <em>opcional</em></span><input id="baseFilterCity" type="text" maxlength="120" placeholder="Deixe vazio para ver toda a UF"></label>
+        </div>
+        <div class="table-wrap admin-table"><table><thead><tr><th>Escopo/local</th><th>Data-base</th><th>Versão</th><th>R$/m²</th><th>Estado</th><th>Fonte</th><th>Ação</th></tr></thead><tbody id="priceBasesBody"></tbody></table></div>
+      </article>
+
+      <article class="panel">
+        <div class="admin-toolbar">
+          <label class="field admin-key"><span>Chave administrativa</span><input type="password" id="adminKey" value="admin-demo"></label>
+          <div><button type="button" class="button secondary" id="loadParametersButton">Recarregar parâmetros</button> <button type="button" class="button primary" id="saveParametersButton">Salvar nova revisão</button></div>
+        </div>
+        <label class="field"><span>Observação da revisão</span><input id="parameterChangeNote" type="text" maxlength="500" value="Ajuste pelo painel administrativo"></label>
+        <label class="field parameter-editor"><span>JSON versionado do motor</span><textarea id="parametersEditor" rows="30" spellcheck="false"></textarea></label>
+      </article>
+
+      <article class="panel">
+        <div class="panel-heading"><div><h3>Histórico dos parâmetros do motor</h3><p>Cada salvamento cria uma revisão íntegra do JSON.</p></div><button type="button" class="button secondary" id="loadParameterHistoryButton">Atualizar</button></div>
+        <div class="table-wrap"><table><thead><tr><th>Versão</th><th>Data-base</th><th>Registro</th><th>Observação</th><th>Ação</th></tr></thead><tbody id="parameterHistoryBody"></tbody></table></div>
+      </article>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <div class="loading-overlay hidden" id="loadingOverlay"><div class="spinner"></div><span>Processando...</span></div>
+  </div>
+</body>
+</html>
