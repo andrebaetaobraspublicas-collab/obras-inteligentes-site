@@ -71,7 +71,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/casa-parametrica/` | 38883 bytes | 38883 caracteres |
 | `/termopro/` | 205855 bytes | 205855 caracteres |
 | `/circuitopro/` | 236513 bytes | 236513 caracteres |
-| `/reservatoriopro/` | 185094 bytes | 185094 caracteres |
+| `/reservatoriopro/` | 161199 bytes | 161199 caracteres |
 
 ## Estrutura local principal
 
@@ -290,11 +290,11 @@ Observacoes:
 Rota: `/reservatoriopro/`  
 Arquivo: `reservatoriopro/index.html`
 
-Ultima inclusao:
+Ultima atualizacao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\ReservatorioPro.html`
+- Fonte: `C:\Users\ACER\Documents\Downloads\ReservatorioPro (2).html`
 - Data: 19/07/2026
-- Alteracao: inclusao de novo card na home e publicacao do aplicativo como HTML standalone.
+- Alteracao: substituicao integral de `reservatoriopro/index.html` pela nova versao do aplicativo.
 
 Observacoes:
 
