@@ -12,27 +12,139 @@
     headers: { "Content-Type": "application/json; charset=utf-8" }
   });
 
-  const textReportResponse = (request, result) => {
+  const pdfReportResponse = (request, result) => {
     const lines = [
       "Casa Parametrica - Relatorio preliminar",
       "",
       `Cenario: ${request.name || "Estimativa"}`,
       `Local: ${(request.location?.city || "-")} - ${(request.location?.state || "-")}`,
       `Area principal: ${result.main_area} m2`,
-      `Custo tecnico: R$ ${Math.round(result.technical_cost).toLocaleString("pt-BR")}`,
-      `Investimento total: R$ ${Math.round(result.investment_total).toLocaleString("pt-BR")}`,
+      `Area equivalente: ${result.equivalent_area} m2-eq`,
+      `Custo tecnico: ${moneyText(result.technical_cost)}`,
+      `Investimento total: ${moneyText(result.investment_total)}`,
+      `Faixa provavel: ${moneyText(result.investment_minimum)} a ${moneyText(result.investment_maximum)}`,
+      `Custo por m2 principal: ${moneyText(result.investment_cost_per_main_m2)}/m2`,
+      `Prazo estimado: ${(result.estimated_duration_months || []).join(" a ")} meses`,
+      `Base de precos: ${result.price_base?.version || result.parameter_version}`,
       "",
+      "Compatibilidade area x programa",
+      `${result.program_compatibility?.label || "-"} - ${result.program_compatibility?.message || "-"}`,
+      `Faixa recomendada: ${result.program_compatibility?.recommended_min || "-"} a ${result.program_compatibility?.recommended_max || "-"} m2`,
+      "",
+      "Principais parcelas",
+      ...((result.breakdown || []).slice(0, 8).map((item) => `${item.category}: ${moneyText(item.amount)}`)),
+      "",
+      "Recomendacoes",
+      ...((result.recommendations || []).map((item) => `- ${item}`)),
+      "",
+      "Aviso tecnico",
       "Relatorio gerado em modo estatico. Valores preliminares e demonstrativos.",
-      "Nao substitui orcamento analitico, projeto executivo ou responsabilidade tecnica."
+      "Nao substitui orcamento analitico, projeto executivo ou responsabilidade tecnica de profissional habilitado."
     ];
-    return new Response(lines.join("\n"), {
+    const pdfBytes = buildSimplePdf(lines, `${request.name || "Casa Parametrica"} - Relatorio`);
+    return new Response(pdfBytes, {
       status: 200,
       headers: {
-        "Content-Type": "text/plain; charset=utf-8",
-        "Content-Disposition": "attachment; filename=\"casa-parametrica-relatorio.txt\""
+        "Content-Type": "application/pdf",
+        "Content-Disposition": "attachment; filename=\"casa-parametrica-relatorio.pdf\""
       }
     });
   };
+
+  function moneyText(value) {
+    return `R$ ${Number(value || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  }
+
+  function pdfEscape(value) {
+    return String(value ?? "")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^\x20-\x7E]/g, "-")
+      .replace(/\\/g, "\\\\")
+      .replace(/\(/g, "\\(")
+      .replace(/\)/g, "\\)");
+  }
+
+  function wrapPdfLine(line, width = 92) {
+    const words = String(line || " ").split(/\s+/);
+    const output = [];
+    let current = "";
+    for (const word of words) {
+      if (!current) {
+        current = word;
+      } else if ((current.length + word.length + 1) <= width) {
+        current += ` ${word}`;
+      } else {
+        output.push(current);
+        current = word;
+      }
+    }
+    output.push(current || " ");
+    return output;
+  }
+
+  function buildSimplePdf(lines, title) {
+    const pageWidth = 595;
+    const pageHeight = 842;
+    const margin = 52;
+    const lineHeight = 15;
+    const contentStreams = [];
+    let cursorY = pageHeight - margin;
+    let pageLines = [];
+
+    const flushPage = () => {
+      if (!pageLines.length) return;
+      const body = [
+        "BT",
+        "/F1 16 Tf",
+        `${margin} ${pageHeight - margin} Td`,
+        `(${pdfEscape(title)}) Tj`,
+        "0 -28 Td",
+        "/F1 10 Tf",
+        ...pageLines.map((line) => [`(${pdfEscape(line)}) Tj`, `0 -${lineHeight} Td`]).flat(),
+        "ET"
+      ].join("\n");
+      contentStreams.push(body);
+      pageLines = [];
+      cursorY = pageHeight - margin;
+    };
+
+    for (const rawLine of lines) {
+      const wrapped = rawLine ? wrapPdfLine(rawLine) : [" "];
+      for (const line of wrapped) {
+        if (cursorY < margin + lineHeight) flushPage();
+        pageLines.push(line);
+        cursorY -= lineHeight;
+      }
+    }
+    flushPage();
+
+    const objects = [
+      "<< /Type /Catalog /Pages 2 0 R >>",
+      `<< /Type /Pages /Kids [${contentStreams.map((_, index) => `${3 + index * 2} 0 R`).join(" ")}] /Count ${contentStreams.length} >>`
+    ];
+    contentStreams.forEach((stream, index) => {
+      const pageObjectNumber = 3 + index * 2;
+      const contentObjectNumber = pageObjectNumber + 1;
+      objects.push(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${pageWidth} ${pageHeight}] /Resources << /Font << /F1 ${3 + contentStreams.length * 2} 0 R >> >> /Contents ${contentObjectNumber} 0 R >>`);
+      objects.push(`<< /Length ${stream.length} >>\nstream\n${stream}\nendstream`);
+    });
+    objects.push("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>");
+
+    let pdf = "%PDF-1.4\n";
+    const offsets = [0];
+    objects.forEach((object, index) => {
+      offsets.push(pdf.length);
+      pdf += `${index + 1} 0 obj\n${object}\nendobj\n`;
+    });
+    const xrefOffset = pdf.length;
+    pdf += `xref\n0 ${objects.length + 1}\n0000000000 65535 f \n`;
+    offsets.slice(1).forEach((offset) => {
+      pdf += `${String(offset).padStart(10, "0")} 00000 n \n`;
+    });
+    pdf += `trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${xrefOffset}\n%%EOF`;
+    return new Uint8Array([...pdf].map((char) => char.charCodeAt(0)));
+  }
 
   async function loadParameters() {
     if (!parametersCache) {
@@ -321,7 +433,7 @@
     if (/^\/api\/price-bases\/[^/]+\/activate$/.test(path)) return jsonResponse({ id: path.split("/")[3], is_active: true });
     if (path === "/api/program-compatibility") return jsonResponse(programCompatibility(readBody(options)));
     if (path === "/api/estimate") return jsonResponse(await estimate(readBody(options)));
-    if (path === "/api/report.pdf") return textReportResponse(readBody(options), await estimate(readBody(options)));
+    if (path === "/api/report.pdf") return pdfReportResponse(readBody(options), await estimate(readBody(options)));
 
     const simulationMatch = path.match(/^\/api\/simulations\/([^/]+)(?:\/(duplicate|report\.pdf))?$/);
     if (path === "/api/simulations" && (options.method || "GET") === "GET") {
@@ -339,7 +451,7 @@
       const items = scenarios();
       const record = items.find((item) => item.id === id);
       if (!record) return jsonResponse({ detail: "Cenario nao encontrado." }, 404);
-      if (action === "report.pdf") return textReportResponse(record.input, record.result);
+      if (action === "report.pdf") return pdfReportResponse(record.input, record.result);
       if (action === "duplicate" && options.method === "POST") {
         const clone = { ...record, id: crypto.randomUUID(), name: `${record.name} - copia`, created_at: new Date().toISOString(), updated_at: new Date().toISOString() };
         saveScenarios([clone, ...items]);
