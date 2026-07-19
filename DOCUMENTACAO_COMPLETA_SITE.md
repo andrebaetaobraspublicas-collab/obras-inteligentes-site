@@ -69,7 +69,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/muros-arrimo/` | 91962 bytes | 91962 caracteres |
 | `/casa-parametrica/` | 38883 bytes | 38883 caracteres |
 | `/termopro/` | 205855 bytes | 205855 caracteres |
-| `/circuitopro/` | 222608 bytes | 222608 caracteres |
+| `/circuitopro/` | 236513 bytes | 236513 caracteres |
 
 ## Estrutura local principal
 
@@ -272,7 +272,7 @@ Arquivo: `circuitopro/index.html`
 
 Ultima atualizacao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\CircuitoPro (3).html`
+- Fonte: `C:\Users\ACER\Documents\Downloads\CircuitoPro (4).html`
 - Data: 19/07/2026
 - Alteracao: substituicao integral de `circuitopro/index.html` pela nova versao do aplicativo.
 
