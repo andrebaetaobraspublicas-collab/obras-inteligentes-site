@@ -19,7 +19,7 @@ O site `www.obrasinteligentes.ia.br` e uma pagina estatica hospedada na Hostinge
 C:\Obras Inteligentes\index.html
 ```
 
-A tela inicial possui atualmente 13 cards de aplicativos. Cada card aponta para uma rota estatica dentro do dominio. A regra geral e:
+A tela inicial possui atualmente 14 cards de aplicativos. Cada card aponta para uma rota estatica dentro do dominio. A regra geral e:
 
 ```text
 https://www.obrasinteligentes.ia.br/nome-da-rota/
@@ -52,6 +52,7 @@ Verificacao feita em 19/07/2026. Todos os cards da home possuem arquivo local co
 | 11 / TERMOPRO | TermoPro | `/termopro/` | `C:\Obras Inteligentes\termopro\index.html` | existe | 200 |
 | 12 / CIRCUITOS | CircuitoPro | `/circuitopro/` | `C:\Obras Inteligentes\circuitopro\index.html` | existe | 200 |
 | 13 / RESERVATORIO | ReservatorioPro | `/reservatoriopro/` | `C:\Obras Inteligentes\reservatoriopro\index.html` | existe | 200 |
+| 14 / BOMBAS | BombaPro | `/bombapro/` | `C:\Obras Inteligentes\bombapro\index.html` | existe | 200 |
 
 ## Tamanhos verificados
 
@@ -72,6 +73,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/termopro/` | 205855 bytes | 205855 caracteres |
 | `/circuitopro/` | 236513 bytes | 236513 caracteres |
 | `/reservatoriopro/` | 161199 bytes | 161199 caracteres |
+| `/bombapro/` | 106420 bytes | 106420 caracteres |
 
 ## Estrutura local principal
 
@@ -113,7 +115,7 @@ C:\Obras Inteligentes
    └─ index.html
 ```
 
-Atualizacao posterior: tambem existe a pasta `C:\Obras Inteligentes\reservatoriopro\index.html`, correspondente ao card 13 / RESERVATORIO.
+Atualizacao posterior: tambem existem as pastas `C:\Obras Inteligentes\reservatoriopro\index.html`, correspondente ao card 13 / RESERVATORIO, e `C:\Obras Inteligentes\bombapro\index.html`, correspondente ao card 14 / BOMBAS.
 
 ## Estado funcional importante por modulo
 
@@ -302,6 +304,24 @@ Observacoes:
 - Tela inicial do site aponta para `/reservatoriopro/`.
 - Validar apos futuras alteracoes se a tela de abertura, calculos, exportacoes e relatorios continuam carregando sem dependencias externas.
 
+### BombaPro
+
+Rota: `/bombapro/`  
+Arquivo: `bombapro/index.html`
+
+Ultima inclusao:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\BombaPro.html`
+- Data: 19/07/2026
+- Alteracao: inclusao de novo card na home e publicacao do aplicativo como HTML standalone.
+
+Observacoes:
+
+- Aplicativo standalone.
+- Usa bibliotecas via CDN: Chart.js, xlsx e jsPDF.
+- Tela inicial do site aponta para `/bombapro/`.
+- Validar apos futuras alteracoes se graficos, exportacao Excel e relatorios PDF continuam carregando corretamente.
+
 ## Fluxo padrao para atualizar um modulo
 
 1. Verificar o estado do Git:
@@ -442,7 +462,8 @@ $headers=@{ 'User-Agent'='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
   '/casa-parametrica/',
   '/termopro/',
   '/circuitopro/',
-  '/reservatoriopro/'
+  '/reservatoriopro/',
+  '/bombapro/'
 ) | ForEach-Object {
   $url = "https://www.obrasinteligentes.ia.br$_?v=check"
   $r = Invoke-WebRequest -UseBasicParsing -Headers $headers -Uri $url -TimeoutSec 30
