@@ -73,7 +73,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/termopro/` | 205855 bytes | 205855 caracteres |
 | `/circuitopro/` | 236513 bytes | 236513 caracteres |
 | `/reservatoriopro/` | 161199 bytes | 161199 caracteres |
-| `/bombapro/` | 106420 bytes | 106420 caracteres |
+| `/bombapro/` | 820300 bytes | 820300 caracteres |
 
 ## Estrutura local principal
 
@@ -309,11 +309,11 @@ Observacoes:
 Rota: `/bombapro/`  
 Arquivo: `bombapro/index.html`
 
-Ultima inclusao:
+Ultima atualizacao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\BombaPro.html`
-- Data: 19/07/2026
-- Alteracao: inclusao de novo card na home e publicacao do aplicativo como HTML standalone.
+- Fonte: `C:\Users\ACER\Documents\Downloads\BombaPro (4).html`
+- Data: 20/07/2026
+- Alteracao: substituicao integral de `bombapro/index.html` pela nova versao do aplicativo.
 
 Observacoes:
 
