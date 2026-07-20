@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A remuneração variável nos contratos administrativos da Lei 14.133/2021 | Obras Inteligentes</title>
+  <link rel="stylesheet" href="../artigo.css">
+</head>
+<body data-pages="33">
+  <nav class="top">
+    <div class="top-inner">
+      <div class="brand">
+        <a href="/">Obras Inteligentes</a>
+        <a href="/#conteudo">Artigos</a>
+      </div>
+      <div class="actions">
+        <a class="btn" href="../pdfs/remuneracao-variavel-obras-publicas.pdf" target="_blank" rel="noopener">Abrir PDF original</a>
+        <a class="btn primary" href="../pdfs/remuneracao-variavel-obras-publicas.pdf" download>Baixar PDF</a>
+      </div>
+    </div>
+  </nav>
+  <header>
+    <div class="eyebrow">Contratos administrativos</div>
+    <h1>A remuneração variável no âmbito dos contratos administrativos da Lei 14.133/2021 e sua aplicação para melhorar a execução das obras públicas</h1>
+    <p class="lead">Artigo sobre mecanismos de incentivo e desincentivo em contratos administrativos para aprimorar prazo, qualidade e desempenho em obras públicas.</p>
+    <div class="meta">
+      <span>Autor: André Pachioni Baeta</span>
+      <span>33 páginas</span>
+      <span>Visualização fiel ao PDF</span>
+    </div>
+  </header>
+  <main class="viewer">
+    <div class="note">Abaixo, cada página do PDF foi renderizada como imagem para preservar a formatação original, incluindo tabelas, figuras, notas e paginação. Use o botão acima para abrir ou baixar o PDF original.</div>
+    <div class="pages" id="pages"></div>
+  </main>
+  <footer>www.obrasinteligentes.ia.br</footer>
+  <script>
+    const total=Number(document.body.dataset.pages);
+    const box=document.getElementById('pages');
+    for(let i=1;i<=total;i++){
+      const n=String(i).padStart(2,'0');
+      const page=document.createElement('section');
+      page.className='page';
+      page.innerHTML=`<img loading="lazy" src="pages/page-${n}.png" alt="Página ${i} do artigo"><div class="page-caption">Página ${i} de ${total}</div>`;
+      box.appendChild(page);
+    }
+  </script>
+</body>
+</html>

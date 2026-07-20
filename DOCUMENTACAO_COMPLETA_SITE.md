@@ -322,6 +322,25 @@ Observacoes:
 - Tela inicial do site aponta para `/bombapro/`.
 - Validar apos futuras alteracoes se graficos, exportacao Excel e relatorios PDF continuam carregando corretamente.
 
+## Artigos publicados na home
+
+Em 20/07/2026, os tres cards do bloco `Conteudo` da home foram substituidos por artigos reais enviados em PDF. A estrategia adotada foi renderizar cada pagina do PDF como PNG dentro de uma pagina HTML propria, preservando a diagramacao original, tabelas, figuras e paginacao. Cada pagina tambem oferece link para abrir/baixar o PDF original.
+
+| Card | Titulo | Rota publicada | PDF original | Paginas |
+|---|---|---|---|---:|
+| Licitacao | O uso dos concursos para a contratacao de projetos | `/artigos/concursos-projetos/` | `artigos/pdfs/concursos-projetos.pdf` | 20 |
+| Contratos | A remuneracao variavel nos contratos administrativos | `/artigos/remuneracao-variavel-obras-publicas/` | `artigos/pdfs/remuneracao-variavel-obras-publicas.pdf` | 33 |
+| Orcamento | Calculando contingencias em orcamentos de obras publicas | `/artigos/contingencias-obras-publicas/` | `artigos/pdfs/contingencias-obras-publicas.pdf` | 11 |
+
+Arquivos de apoio:
+
+- CSS comum: `artigos/artigo.css`
+- Imagens renderizadas: `artigos/<slug>/pages/page-XX.png`
+
+Backup antes desta alteracao:
+
+- `C:\Obras Inteligentes\backups\site-b66b9dd-before-artigos-20260720-071940.zip`
+
 ## Fluxo padrao para atualizar um modulo
 
 1. Verificar o estado do Git:

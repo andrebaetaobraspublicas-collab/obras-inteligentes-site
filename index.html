@@ -152,7 +152,7 @@ h1 .hl{color:var(--cyan)}
 .content .sec-head h2{color:#fff}
 .content .sec-head p{color:#b9c8d4}
 .posts{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
-.post{border:1px solid var(--rule);padding:32px 28px;transition:.25s;display:flex;flex-direction:column}
+.post{border:1px solid var(--rule);padding:32px 28px;transition:.25s;display:flex;flex-direction:column;color:inherit;text-decoration:none}
 .post:hover{border-color:var(--cyan);transform:translateY(-4px)}
 .post .cat{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;color:var(--amber);text-transform:uppercase;margin-bottom:18px}
 .post h3{font-family:var(--display);font-weight:700;font-size:20px;line-height:1.25;letter-spacing:-.01em;margin-bottom:12px;color:#fff}
@@ -428,24 +428,24 @@ footer{background:var(--blueprint-deep);color:#7d93a4;padding:56px clamp(20px,5v
     </div>
 
     <div class="posts">
-      <article class="post">
+      <a class="post" href="/artigos/concursos-projetos/">
         <div class="cat">Licitação</div>
-        <h3>Quando o aditivo de contrato passa do limite legal?</h3>
-        <p>Os limites de 25% e 50% da Lei 14.133, o que diz o TCU e como justificar acréscimos sem cair em irregularidade.</p>
+        <h3>O uso dos concursos para a contratação de projetos</h3>
+        <p>Análise da modalidade concurso na Lei 14.133/2021 e de seu potencial para qualificar projetos de obras públicas.</p>
         <div class="read">Ler artigo →</div>
-      </article>
-      <article class="post">
-        <div class="cat">Fiscalização</div>
-        <h3>O papel do fiscal de contrato na nova lei</h3>
-        <p>Atribuições, responsabilidades e os erros que mais geram apontamento nos tribunais de contas.</p>
+      </a>
+      <a class="post" href="/artigos/remuneracao-variavel-obras-publicas/">
+        <div class="cat">Contratos</div>
+        <h3>A remuneração variável nos contratos administrativos</h3>
+        <p>Estudo sobre incentivos contratuais na Lei 14.133/2021 para melhorar prazo, qualidade e desempenho em obras públicas.</p>
         <div class="read">Ler artigo →</div>
-      </article>
-      <article class="post">
+      </a>
+      <a class="post" href="/artigos/contingencias-obras-publicas/">
         <div class="cat">Orçamento</div>
-        <h3>Como montar um BDI que se sustenta em auditoria</h3>
-        <p>Componentes do BDI, faixas aceitáveis do TCU e os deslizes que inflam o preço de referência da obra.</p>
+        <h3>Calculando contingências em orçamentos de obras públicas</h3>
+        <p>Metodologia com simulações de Monte Carlo aplicada à estimativa de contingências em orçamentos de obras públicas.</p>
         <div class="read">Ler artigo →</div>
-      </article>
+      </a>
     </div>
   </div>
 </section>
