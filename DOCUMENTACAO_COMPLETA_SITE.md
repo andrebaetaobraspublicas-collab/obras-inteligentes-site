@@ -186,6 +186,10 @@ Abertura - Mapa e Matriz de Riscos.html
 mapa_matriz_riscos_pro_v4.html
 ```
 
+Observacoes:
+
+- Em 21/07/2026, recebeu tela inicial com aviso de uso demonstrativo, isencao de responsabilidade e botao de concordancia antes de iniciar a abertura do sistema.
+
 ### Administracao Local e Canteiro de Obra
 
 Rota: `/administracao-canteiro/`  
