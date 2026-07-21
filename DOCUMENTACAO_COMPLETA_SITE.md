@@ -140,6 +140,7 @@ Observacoes:
 
 - Foi ajustado para acesso livre, sem exigir login.
 - O backend e simulado/local em JavaScript, adequado a hospedagem estatica.
+- Em 21/07/2026, recebeu tela inicial com aviso de uso demonstrativo, isencao de responsabilidade e botao de concordancia antes de liberar o aplicativo.
 - A pasta antiga `Sistema Manutenção Predial` existe como historico, mas esta ignorada no Git.
 
 ### Fiscalizacao de Contratos
@@ -150,6 +151,7 @@ Arquivo: `fiscalizacao/index.html`
 Observacoes:
 
 - Card e rota publicados e funcionais.
+- Em 21/07/2026, recebeu tela inicial com aviso de uso demonstrativo, isencao de responsabilidade e botao de concordancia antes de liberar o aplicativo.
 - Existe pasta historica `Gestão e Fiscalização de Contratos`, ignorada pelo Git.
 
 ### Calculadora Estrutural

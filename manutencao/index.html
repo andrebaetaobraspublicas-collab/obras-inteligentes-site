@@ -717,9 +717,42 @@
             .sidebar-overlay.show{display:block;}
         }
 
+        body.legal-locked{overflow:hidden;}
+        body.legal-locked > :not(#legalDemoOverlay){visibility:hidden;}
+        #legalDemoOverlay{
+            position:fixed;inset:0;z-index:9000;visibility:visible!important;
+            display:flex;align-items:center;justify-content:center;
+            background:linear-gradient(135deg,#102333 0%,#234a66 100%);
+            padding:24px;
+        }
+        .legal-demo-box{
+            width:min(760px,100%);max-height:90vh;overflow:auto;
+            background:#fff;border-radius:16px;box-shadow:0 24px 70px rgba(0,0,0,.32);
+            padding:34px;color:#1f2937;
+        }
+        .legal-demo-box h1{margin:0 0 18px;color:#1f2937;font-size:1.65rem;line-height:1.2;}
+        .legal-demo-box p{margin:0 0 14px;line-height:1.65;color:#334155;font-size:1rem;}
+        .legal-demo-box strong{color:#0f172a;}
+        .legal-demo-actions{margin-top:24px;}
+        .legal-demo-actions button{
+            width:100%;border:0;border-radius:10px;padding:14px 18px;
+            background:#2563eb;color:#fff;font-weight:800;font-size:1rem;cursor:pointer;
+        }
+        .legal-demo-actions button:hover{background:#1d4ed8;}
+
     </style>
 </head>
-<body>
+<body class="legal-locked">
+    <div id="legalDemoOverlay" role="dialog" aria-modal="true" aria-labelledby="legalDemoTitle">
+        <div class="legal-demo-box">
+            <h1 id="legalDemoTitle">Aviso de Uso e Isen&ccedil;&atilde;o de Responsabilidade</h1>
+            <p>Este software &eacute; disponibilizado exclusivamente como uma <strong>demonstra&ccedil;&atilde;o de uso de intelig&ecirc;ncia artificial</strong> para fins educacionais e experimentais. <strong>N&atilde;o se trata de um sistema pronto, acabado ou homologado</strong> para uso oficial em &oacute;rg&atilde;os p&uacute;blicos ou privados.</p>
+            <p>Todos os dados inseridos e gerados s&atilde;o armazenados exclusivamente no armazenamento local do seu navegador (localStorage) e n&atilde;o em servidores externos, sendo de total responsabilidade do usu&aacute;rio a gest&atilde;o, a seguran&ccedil;a e o backup de suas informa&ccedil;&otilde;es. Os desenvolvedores n&atilde;o se responsabilizam por eventuais falhas, incorre&ccedil;&otilde;es nos dados, interpreta&ccedil;&otilde;es de normas legais ou perdas de informa&ccedil;&otilde;es decorrentes do uso desta ferramenta.</p>
+            <div class="legal-demo-actions">
+                <button type="button" onclick="aceitarAvisoLegalDemo()">Concordo com os termos e desejo acessar a demonstra&ccedil;&atilde;o</button>
+            </div>
+        </div>
+    </div>
     <div id="loginOverlay" style="display:none;position:fixed;inset:0;z-index:5000;align-items:center;justify-content:center;background:linear-gradient(135deg,#2c3e50 0%,#3498db 100%);padding:20px;">
         <div style="background:#fff;width:100%;max-width:400px;border-radius:14px;box-shadow:0 18px 50px rgba(0,0,0,.25);padding:36px 32px;">
             <div style="display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:4px;">
@@ -4238,6 +4271,10 @@
             loginOverlay.style.display = 'none';
             await iniciarApp();
         });
+        window.aceitarAvisoLegalDemo = function() {
+            document.getElementById('legalDemoOverlay').style.display = 'none';
+            document.body.classList.remove('legal-locked');
+        };
     </script>
 </body>
 </html>
