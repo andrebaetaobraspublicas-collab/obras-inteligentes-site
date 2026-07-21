@@ -77,7 +77,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/circuitopro/` | 236513 bytes | 236513 caracteres |
 | `/reservatoriopro/` | 161199 bytes | 161199 caracteres |
 | `/bombapro/` | 128127 bytes | 128127 caracteres |
-| `/paraboltpro/` | 1199790 bytes | 1199790 caracteres |
+| `/paraboltpro/` | 1147646 bytes | 1147646 caracteres |
 | `/steelpro/` | 229160 bytes | 229160 caracteres |
 | `/cronogramapro/` | 505340 bytes | 505340 caracteres |
 
@@ -211,7 +211,7 @@ Ultima atualizacao relevante:
 Rota: `/muros-arrimo/`  
 Arquivo: `muros-arrimo/index.html`
 
-Ultima inclusao:
+Ultima atualizacao:
 
 - Fonte: `Calculadora de Muros de Arrimo -completo-.html`.
 - Commit historico: `a3ee841` - `Adiciona calculadora de muros de arrimo`.
@@ -335,13 +335,13 @@ Arquivo: `paraboltpro/index.html`
 
 Ultima inclusao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\ParaboltPro (1).html`
+- Fonte: `C:\Users\ACER\Documents\Downloads\ParaboltPro-v2.7.1-exemplos-corrigidos.html`
 - Data: 20/07/2026
-- Alteracao: inclusao de novo card na home e publicacao do aplicativo como HTML standalone.
+- Alteracao: substituicao integral de `paraboltpro/index.html` pela versao 2.7.1 com exemplos corrigidos.
 
 Observacoes:
 
-- Aplicativo standalone empacotado em HTML unico.
+- Aplicativo standalone em HTML unico.
 - Tela inicial do site aponta para `/paraboltpro/`.
 - Validar apos futuras alteracoes se a abertura, calculos, exportacoes e relatorios continuam carregando corretamente.
 
