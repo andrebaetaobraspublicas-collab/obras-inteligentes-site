@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reforma Tributaria e o IVA Equivalente | Obras Inteligentes</title>
+  <link rel="stylesheet" href="../artigo.css">
+</head>
+<body data-pages="28">
+  <nav class="top">
+    <div class="top-inner">
+      <div class="brand">
+        <a href="/">Obras Inteligentes</a>
+        <a href="/#conteudo">Artigos</a>
+      </div>
+      <div class="actions">
+        <a class="btn" href="../pdfs/reforma-tributaria-iva-equivalente.pdf" target="_blank" rel="noopener">Abrir PDF original</a>
+        <a class="btn primary" href="../pdfs/reforma-tributaria-iva-equivalente.pdf" download>Baixar PDF</a>
+      </div>
+    </div>
+  </nav>
+  <header>
+    <div class="eyebrow">Tributacao</div>
+    <h1>Reforma Tributaria e o IVA Equivalente: implicacoes para a formacao de precos publicos</h1>
+    <p class="lead">Artigo sobre os impactos da Reforma Tributaria e do IVA dual na modelagem do BDI e na formacao de precos de obras publicas.</p>
+    <div class="meta">
+      <span>Autores: Rafael Jardim Cavalcante, Andre Pachioni Baeta e coautores</span>
+      <span>28 paginas</span>
+      <span>Visualizacao fiel ao PDF</span>
+    </div>
+  </header>
+  <main class="viewer">
+    <div class="note">Abaixo, cada pagina do PDF foi renderizada como imagem para preservar a formatacao original, incluindo tabelas, figuras, notas e paginacao. Use o botao acima para abrir ou baixar o PDF original.</div>
+    <div class="pages" id="pages"></div>
+  </main>
+  <footer>www.obrasinteligentes.ia.br</footer>
+  <script>
+    const total=Number(document.body.dataset.pages);
+    const box=document.getElementById('pages');
+    for(let i=1;i<=total;i++){
+      const n=String(i).padStart(2,'0');
+      const page=document.createElement('section');
+      page.className='page';
+      page.innerHTML=`<img loading="lazy" src="pages/page-${n}.png" alt="Pagina ${i} do artigo"><div class="page-caption">Pagina ${i} de ${total}</div>`;
+      box.appendChild(page);
+    }
+  </script>
+</body>
+</html>

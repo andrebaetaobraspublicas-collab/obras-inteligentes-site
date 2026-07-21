@@ -151,7 +151,7 @@ h1 .hl{color:var(--cyan)}
 .content .inner{position:relative;z-index:2;padding:clamp(72px,10vw,128px) clamp(20px,5vw,64px);max-width:1320px;margin:0 auto}
 .content .sec-head h2{color:#fff}
 .content .sec-head p{color:#b9c8d4}
-.posts{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+.posts{display:grid;grid-template-columns:repeat(4,1fr);gap:22px}
 .post{border:1px solid var(--rule);padding:32px 28px;transition:.25s;display:flex;flex-direction:column;color:inherit;text-decoration:none}
 .post:hover{border-color:var(--cyan);transform:translateY(-4px)}
 .post .cat{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;color:var(--amber);text-transform:uppercase;margin-bottom:18px}
@@ -183,6 +183,7 @@ footer{background:var(--blueprint-deep);color:#7d93a4;padding:56px clamp(20px,5v
 }
 @media(min-width:881px) and (max-width:1180px){
   .apps{grid-template-columns:repeat(2,1fr)}
+  .posts{grid-template-columns:repeat(2,1fr)}
 }
 @media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto}}
 :focus-visible{outline:2px solid var(--amber);outline-offset:3px}
@@ -510,6 +511,12 @@ footer{background:var(--blueprint-deep);color:#7d93a4;padding:56px clamp(20px,5v
         <div class="cat">Orçamento</div>
         <h3>Calculando contingências em orçamentos de obras públicas</h3>
         <p>Metodologia com simulações de Monte Carlo aplicada à estimativa de contingências em orçamentos de obras públicas.</p>
+        <div class="read">Ler artigo →</div>
+      </a>
+      <a class="post" href="/artigos/reforma-tributaria-iva-equivalente/">
+        <div class="cat">Tributação</div>
+        <h3>Reforma Tributária e o IVA Equivalente</h3>
+        <p>Impactos do IVA dual na formação de preços públicos, com foco na modelagem do BDI em obras públicas.</p>
         <div class="read">Ler artigo →</div>
       </a>
     </div>

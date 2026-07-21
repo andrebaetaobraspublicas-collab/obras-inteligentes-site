@@ -438,13 +438,14 @@ Observacoes:
 
 ## Artigos publicados na home
 
-Em 20/07/2026, os tres cards do bloco `Conteudo` da home foram substituidos por artigos reais enviados em PDF. A estrategia adotada foi renderizar cada pagina do PDF como PNG dentro de uma pagina HTML propria, preservando a diagramacao original, tabelas, figuras e paginacao. Cada pagina tambem oferece link para abrir/baixar o PDF original.
+Em 20/07/2026, os tres cards iniciais do bloco `Conteudo` da home foram substituidos por artigos reais enviados em PDF. Em 21/07/2026, foi incluido um quarto artigo. A estrategia adotada foi renderizar cada pagina do PDF como PNG dentro de uma pagina HTML propria, preservando a diagramacao original, tabelas, figuras e paginacao. Cada pagina tambem oferece link para abrir/baixar o PDF original.
 
 | Card | Titulo | Rota publicada | PDF original | Paginas |
 |---|---|---|---|---:|
 | Licitacao | O uso dos concursos para a contratacao de projetos | `/artigos/concursos-projetos/` | `artigos/pdfs/concursos-projetos.pdf` | 20 |
 | Contratos | A remuneracao variavel nos contratos administrativos | `/artigos/remuneracao-variavel-obras-publicas/` | `artigos/pdfs/remuneracao-variavel-obras-publicas.pdf` | 33 |
 | Orcamento | Calculando contingencias em orcamentos de obras publicas | `/artigos/contingencias-obras-publicas/` | `artigos/pdfs/contingencias-obras-publicas.pdf` | 11 |
+| Tributacao | Reforma Tributaria e o IVA Equivalente | `/artigos/reforma-tributaria-iva-equivalente/` | `artigos/pdfs/reforma-tributaria-iva-equivalente.pdf` | 28 |
 
 Arquivos de apoio:
 
