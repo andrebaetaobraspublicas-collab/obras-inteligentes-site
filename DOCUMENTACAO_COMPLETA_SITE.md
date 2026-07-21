@@ -86,7 +86,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/cronogramapro/` | 505340 bytes | 505340 caracteres |
 | `/drenapro/` | 185925 bytes | 185925 caracteres |
 | `/taludepro/` | 97674 bytes | 97674 caracteres |
-| `/solarpro/` | 205028 bytes | 205028 caracteres |
+| `/solarpro/` | 485745 bytes | 485745 caracteres |
 | `/pgrcc/` | 67446 bytes | 67446 caracteres |
 
 ## Estrutura local principal
@@ -434,9 +434,9 @@ Arquivo: `solarpro/index.html`
 
 Ultima inclusao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\SolarPro - Geracao Fotovoltaica.html`
+- Fonte: `C:\Users\ACER\Documents\Downloads\SolarPro_Geracao_Fotovoltaica_Irradiacao_Automatica.html`
 - Data: 21/07/2026
-- Alteracao: inclusao de novo card na home e publicacao do aplicativo como HTML standalone.
+- Alteracao: atualizacao do aplicativo SolarPro para nova versao standalone com irradiacao automatica.
 
 Observacoes:
 
