@@ -19,7 +19,7 @@ O site `www.obrasinteligentes.ia.br` e uma pagina estatica hospedada na Hostinge
 C:\Obras Inteligentes\index.html
 ```
 
-A tela inicial possui atualmente 15 cards de aplicativos. Cada card aponta para uma rota estatica dentro do dominio. A regra geral e:
+A tela inicial possui atualmente 16 cards de aplicativos. Cada card aponta para uma rota estatica dentro do dominio. A regra geral e:
 
 ```text
 https://www.obrasinteligentes.ia.br/nome-da-rota/
@@ -54,6 +54,7 @@ Verificacao feita em 19/07/2026. Todos os cards da home possuem arquivo local co
 | 13 / RESERVATORIO | ReservatorioPro | `/reservatoriopro/` | `C:\Obras Inteligentes\reservatoriopro\index.html` | existe | 200 |
 | 14 / BOMBAS | BombaPro | `/bombapro/` | `C:\Obras Inteligentes\bombapro\index.html` | existe | 200 |
 | 15 / CHUMBADORES | ParaboltPro | `/paraboltpro/` | `C:\Obras Inteligentes\paraboltpro\index.html` | existe | 200 |
+| 16 / ACO | SteelPro | `/steelpro/` | `C:\Obras Inteligentes\steelpro\index.html` | existe | 200 |
 
 ## Tamanhos verificados
 
@@ -76,6 +77,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/reservatoriopro/` | 161199 bytes | 161199 caracteres |
 | `/bombapro/` | 128127 bytes | 128127 caracteres |
 | `/paraboltpro/` | 1199790 bytes | 1199790 caracteres |
+| `/steelpro/` | 229160 bytes | 229160 caracteres |
 
 ## Estrutura local principal
 
@@ -117,7 +119,7 @@ C:\Obras Inteligentes
    └─ index.html
 ```
 
-Atualizacao posterior: tambem existem as pastas `C:\Obras Inteligentes\reservatoriopro\index.html`, correspondente ao card 13 / RESERVATORIO, `C:\Obras Inteligentes\bombapro\index.html`, correspondente ao card 14 / BOMBAS, e `C:\Obras Inteligentes\paraboltpro\index.html`, correspondente ao card 15 / CHUMBADORES.
+Atualizacao posterior: tambem existem as pastas `C:\Obras Inteligentes\reservatoriopro\index.html`, correspondente ao card 13 / RESERVATORIO, `C:\Obras Inteligentes\bombapro\index.html`, correspondente ao card 14 / BOMBAS, `C:\Obras Inteligentes\paraboltpro\index.html`, correspondente ao card 15 / CHUMBADORES, e `C:\Obras Inteligentes\steelpro\index.html`, correspondente ao card 16 / ACO.
 
 ## Estado funcional importante por modulo
 
@@ -341,6 +343,23 @@ Observacoes:
 - Tela inicial do site aponta para `/paraboltpro/`.
 - Validar apos futuras alteracoes se a abertura, calculos, exportacoes e relatorios continuam carregando corretamente.
 
+### SteelPro
+
+Rota: `/steelpro/`  
+Arquivo: `steelpro/index.html`
+
+Ultima inclusao:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\SteelPro - offline (1).html`
+- Data: 20/07/2026
+- Alteracao: inclusao de novo card na home e publicacao do aplicativo como HTML standalone.
+
+Observacoes:
+
+- Aplicativo standalone empacotado em HTML unico.
+- Tela inicial do site aponta para `/steelpro/`.
+- Validar apos futuras alteracoes se a abertura, calculos, exportacoes e relatorios continuam carregando corretamente.
+
 ## Artigos publicados na home
 
 Em 20/07/2026, os tres cards do bloco `Conteudo` da home foram substituidos por artigos reais enviados em PDF. A estrategia adotada foi renderizar cada pagina do PDF como PNG dentro de uma pagina HTML propria, preservando a diagramacao original, tabelas, figuras e paginacao. Cada pagina tambem oferece link para abrir/baixar o PDF original.
@@ -502,7 +521,8 @@ $headers=@{ 'User-Agent'='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
   '/circuitopro/',
   '/reservatoriopro/',
   '/bombapro/',
-  '/paraboltpro/'
+  '/paraboltpro/',
+  '/steelpro/'
 ) | ForEach-Object {
   $url = "https://www.obrasinteligentes.ia.br$_?v=check"
   $r = Invoke-WebRequest -UseBasicParsing -Headers $headers -Uri $url -TimeoutSec 30
