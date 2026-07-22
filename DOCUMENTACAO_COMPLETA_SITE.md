@@ -168,6 +168,7 @@ Observacoes:
 
 - Em atualizacoes futuras, preservar/forcar o aviso legal quando o usuario pedir nova versao.
 - Em alteracoes com JavaScript ou aceite legal, usar cache busting se necessario.
+- Em 22/07/2026, foi ajustada para exibir o aviso legal a cada novo acesso ao modulo, sem pular a tela por aceite antigo salvo no `localStorage`.
 
 ### Calculadora de Pavimentos
 
