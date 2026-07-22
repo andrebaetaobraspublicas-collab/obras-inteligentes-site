@@ -19,7 +19,7 @@ O site `www.obrasinteligentes.ia.br` e uma pagina estatica hospedada na Hostinge
 C:\Obras Inteligentes\index.html
 ```
 
-A tela inicial possui atualmente 21 cards de aplicativos. Cada card aponta para uma rota estatica dentro do dominio. A regra geral e:
+A tela inicial possui atualmente 22 cards de aplicativos. Cada card aponta para uma rota estatica dentro do dominio. A regra geral e:
 
 ```text
 https://www.obrasinteligentes.ia.br/nome-da-rota/
@@ -60,6 +60,7 @@ Verificacao feita em 21/07/2026. Todos os cards da home possuem arquivo local co
 | 19 / TALUDES | TaludePro | `/taludepro/` | `C:\Obras Inteligentes\taludepro\index.html` | existe | 200 |
 | 20 / SOLAR | SolarPro | `/solarpro/` | `C:\Obras Inteligentes\solarpro\index.html` | existe | 200 |
 | 21 / RESIDUOS | Calculadora de Residuos e PGRCC | `/pgrcc/` | `C:\Obras Inteligentes\pgrcc\index.html` | existe | 200 |
+| 22 / VENTO | VentoPro | `/ventopro/` | `C:\Obras Inteligentes\ventopro\index.html` | existe | 200 |
 
 ## Tamanhos verificados
 
@@ -88,6 +89,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/taludepro/` | 97674 bytes | 97674 caracteres |
 | `/solarpro/` | 485745 bytes | 485745 caracteres |
 | `/pgrcc/` | 67446 bytes | 67446 caracteres |
+| `/ventopro/` | 275065 bytes | 275065 caracteres |
 
 ## Estrutura local principal
 
@@ -129,7 +131,7 @@ C:\Obras Inteligentes
    └─ index.html
 ```
 
-Atualizacao posterior: tambem existem as pastas `C:\Obras Inteligentes\reservatoriopro\index.html`, correspondente ao card 13 / RESERVATORIO, `C:\Obras Inteligentes\bombapro\index.html`, correspondente ao card 14 / BOMBAS, `C:\Obras Inteligentes\paraboltpro\index.html`, correspondente ao card 15 / CHUMBADORES, `C:\Obras Inteligentes\steelpro\index.html`, correspondente ao card 16 / ACO, `C:\Obras Inteligentes\cronogramapro\index.html`, correspondente ao card 17 / CRONOGRAMA, `C:\Obras Inteligentes\drenapro\index.html`, correspondente ao card 18 / DRENAGEM, `C:\Obras Inteligentes\taludepro\index.html`, correspondente ao card 19 / TALUDES, `C:\Obras Inteligentes\solarpro\index.html`, correspondente ao card 20 / SOLAR, e `C:\Obras Inteligentes\pgrcc\index.html`, correspondente ao card 21 / RESIDUOS.
+Atualizacao posterior: tambem existem as pastas `C:\Obras Inteligentes\reservatoriopro\index.html`, correspondente ao card 13 / RESERVATORIO, `C:\Obras Inteligentes\bombapro\index.html`, correspondente ao card 14 / BOMBAS, `C:\Obras Inteligentes\paraboltpro\index.html`, correspondente ao card 15 / CHUMBADORES, `C:\Obras Inteligentes\steelpro\index.html`, correspondente ao card 16 / ACO, `C:\Obras Inteligentes\cronogramapro\index.html`, correspondente ao card 17 / CRONOGRAMA, `C:\Obras Inteligentes\drenapro\index.html`, correspondente ao card 18 / DRENAGEM, `C:\Obras Inteligentes\taludepro\index.html`, correspondente ao card 19 / TALUDES, `C:\Obras Inteligentes\solarpro\index.html`, correspondente ao card 20 / SOLAR, `C:\Obras Inteligentes\pgrcc\index.html`, correspondente ao card 21 / RESIDUOS, e `C:\Obras Inteligentes\ventopro\index.html`, correspondente ao card 22 / VENTO.
 
 ## Estado funcional importante por modulo
 
@@ -461,6 +463,23 @@ Observacoes:
 - Tela inicial do site aponta para `/pgrcc/`.
 - Validar apos futuras alteracoes se a abertura, estimativas de residuos, classes, destinacao e geracao do PGRCC continuam carregando corretamente.
 
+### VentoPro
+
+Rota: `/ventopro/`  
+Arquivo: `ventopro/index.html`
+
+Ultima inclusao:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\VentoPro Abertura.html`
+- Data: 21/07/2026
+- Alteracao: inclusao de novo card na home e publicacao do aplicativo como HTML standalone.
+
+Observacoes:
+
+- Aplicativo standalone empacotado em HTML unico.
+- Tela inicial do site aponta para `/ventopro/`.
+- Validar apos futuras alteracoes se a abertura, o calculo de forcas devidas ao vento, os parametros, os coeficientes, as pressoes e os relatorios continuam carregando corretamente.
+
 ## Artigos publicados na home
 
 Em 20/07/2026, os tres cards iniciais do bloco `Conteudo` da home foram substituidos por artigos reais enviados em PDF. Em 21/07/2026, foi incluido um quarto artigo. A estrategia adotada foi renderizar cada pagina do PDF como PNG dentro de uma pagina HTML propria, preservando a diagramacao original, tabelas, figuras e paginacao. Cada pagina tambem oferece link para abrir/baixar o PDF original.
@@ -629,7 +648,8 @@ $headers=@{ 'User-Agent'='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
   '/drenapro/',
   '/taludepro/',
   '/solarpro/',
-  '/pgrcc/'
+  '/pgrcc/',
+  '/ventopro/'
 ) | ForEach-Object {
   $url = "https://www.obrasinteligentes.ia.br$_?v=check"
   $r = Invoke-WebRequest -UseBasicParsing -Headers $headers -Uri $url -TimeoutSec 30
