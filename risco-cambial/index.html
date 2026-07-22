@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Simulador de Risco Cambial e Contingência — Revisado v2</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0a1322; display: flex; align-items: center; justify-content: center; min-height: 100vh; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
+    #__bundler_loading { position: fixed; bottom: 20px; right: 20px; font: 13px/1.4 -apple-system, BlinkMacSystemFont, sans-serif; color: #666; background: #fff; padding: 8px 14px; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.12); z-index: 10000; }
+    #__bundler_thumbnail { position: fixed; inset: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #0a1322; z-index: 9999; }
+    #__bundler_thumbnail svg { width: 100%; height: 100%; object-fit: contain; }
+    #__bundler_placeholder { color: #999; font-size: 14px; }
+  </style>
+  <noscript>
+    <style>#__bundler_loading { display: none; }</style>
+    <div style="position:fixed;bottom:12px;left:12px;font:13px/1.4 -apple-system,BlinkMacSystemFont,sans-serif;color:#999;background:rgba(255,255,255,0.9);padding:6px 12px;border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,0.08);z-index:10000;">
+      This page requires JavaScript to display.
+    </div>
+  </noscript>
+</head>
+<body>
+  <div id="__bundler_thumbnail">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#0a1322"></rect>
+    <g transform="translate(360,480)">
+      <rect x="0" y="-60" width="50" height="140" rx="6" fill="#4f8ef7"></rect>
+      <rect x="70" y="-140" width="50" height="220" rx="6" fill="#7a6cf0"></rect>
+      <rect x="140" y="-220" width="50" height="300" rx="6" fill="#38c6b4"></rect>
+      <rect x="210" y="-160" width="50" height="240" rx="6" fill="#e07be0"></rect>
+      <rect x="280" y="-90" width="50" height="170" rx="6" fill="#f2a13c"></rect>
+      <rect x="350" y="-40" width="50" height="120" rx="6" fill="#5fd07a"></rect>
+    </g>
+    <path d="M300,260 C450,180 600,320 750,220 S1000,280 1050,200" fill="none" stroke="#4f8ef7" stroke-width="10" stroke-linecap="round" opacity="0.85"></path>
+  </svg>
+</div>
+  <div id="__bundler_loading">Unpacking...</div>
+
+  <script>
+    
+document.addEventListener('DOMContentLoaded', async function() {
+  const loading = document.getElementById('__bundler_loading');
+  function setStatus(msg) { if (loading) loading.textContent = msg; }
+
+  const FONT_MIME = /^(font[/]|application[/](x-)?font-|application[/]vnd\.ms-fontobject)/i;
+  const MIME_TOKEN = /^[\w.+-]+[/][\w.+-]+$/;
+  function toBase64(bytes) {
+    let bin = '';
+    for (let i = 0; i < bytes.length; i += 0x8000) {
+      bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+    }
+    return btoa(bin);
+  }
+
+  // Error sink persists across replaceWith since it's on window, not the DOM.
+  window.addEventListener('error', function(e) {
+    // Failed resource loads (CSP-blocked links, scripts, images) fire plain
+    // events at the element — warn only; real JS errors carry message/error.
+    if (!e.message && !e.error && e.target && e.target !== window) {
+      console.warn('[bundle] resource failed to load:',
+        e.target.tagName, String(e.target.src || e.target.href || ''));
+      return;
+    }
+    var p = document.body || document.documentElement;
+    var d = document.getElementById('__bundler_err') || p.appendChild(document.createElement('div'));
+    d.id = '__bundler_err';
+    d.style.cssText = 'position:fixed;bottom:12px;left:12px;right:12px;font:12px/1.4 ui-monospace,monospace;background:#2a1215;color:#ff8a80;padding:10px 14px;border-radius:8px;border:1px solid #5c2b2e;z-index:99999;white-space:pre-wrap;max-height:40vh;overflow:auto';
+    d.textContent = (d.textContent ? d.textContent + String.fromCharCode(10) : '') +
+      '[bundle] ' + (e.message || e.type) +
+      (e.filename ? ' (' + e.filename.slice(0, 60) + ':' + e.lineno + ')' : '');
+  }, true);
+
+  try {
+    const manifestEl = document.querySelector('script[type="__bundler/manifest"]');
+    const templateEl = document.querySelector('script[type="__bundler/template"]');
+    if (!manifestEl || !templateEl) {
+      setStatus('Error: missing bundle data');
+      console.error('[bundler] Missing script tags — manifestEl:', !!manifestEl, 'templateEl:', !!templateEl);
+      return;
+    }
+
+    const manifest = JSON.parse(manifestEl.textContent);
+    let template = JSON.parse(templateEl.textContent);
+
+    // Nested page bundles (iframe targets). Each ships ONCE, in the ROOT
+    // document's manifest; frame srcs carry an about:blank#<uuid> marker
+    // instead of a substitutable uuid. Every document mints the blobs for
+    // its OWN frames — from local text at the root, or text obtained from
+    // its DIRECT parent over the relay protocol below — so each frame
+    // navigation stays same-origin with its initiator and a deduped page
+    // loads at any depth on any host, including a file:// download's
+    // opaque origins (where a blob minted by one document cannot be
+    // navigated to by another).
+    const pageOrderEl = document.querySelector('script[type="__bundler/page_order"]');
+    const pageOrder = pageOrderEl ? JSON.parse(pageOrderEl.textContent) : [];
+    const pageSet = new Set(pageOrder);
+    const pageTexts = {};
+
+    // ── Nested-page text protocol (parent-chain relay) ──
+    // Page bundles ship once, in the ROOT document's manifest. Every
+    // document mints the blobs for its OWN frames, obtaining page text
+    // through a strict parent-chain relay: a document only ever SENDS to
+    // its direct parent (which, for every document the publisher's own
+    // runtime minted, is another publisher document) and only ACCEPTS
+    // text from that direct parent; requests from below are honored only
+    // for the document's own child frames, and the ROOT never sends
+    // upward at all. That last rule is load-bearing: the artifact host's
+    // frame-ancestors allows claude.ai (and friends) to frame an
+    // artifact, so window.top can be a FOREIGN document — a top-addressed
+    // protocol would hand page uuids to that ancestor and accept forged
+    // "page text" from it, minting attacker HTML as an artifact-origin
+    // blob document. The chain never touches the ancestor: requests stop
+    // at the root, replies are origin-addressed per hop (never '*' when
+    // an origin exists), and both directions are origin-gated (on https
+    // a foreign sender's origin can never equal this document's; in
+    // opaque contexts — file:// — everything serializes as 'null', where
+    // an embedded EXTERNAL frame still fails the gate by carrying its
+    // own real origin, and a sandboxed child of such a frame is excluded
+    // by the own-child-frames check plus uuid unguessability). Shape is
+    // deny-by-default: one request form, one reply form, no error
+    // replies.
+    // window.origin is the SERIALIZED SECURITY origin ('null' in opaque
+    // contexts such as a sandboxed preview iframe) — location.origin is
+    // computed from the URL and stays 'https://…' even when the document
+    // is sandboxed, which would misgate every opaque chain.
+    const OWN_TARGET = /^https?:[/][/]/.test(window.origin || '')
+      ? window.origin
+      : '*';
+    function trustedOrigin(e) {
+      if (e.origin === window.origin) return true; // https chains; opaque==opaque
+      // file:// trees: Chrome serializes the file document's origin as
+      // 'file://' while the blob: documents it mints serialize as 'null',
+      // so the two legitimate shapes can never string-match — accept the
+      // pair in both directions. https origins never serialize as either,
+      // and sender identity (own child frame / direct parent) is checked
+      // separately.
+      return (
+        (e.origin === 'null' &&
+          (window.origin === 'file://' ||
+            window.location.protocol === 'file:')) ||
+        (/^file:/.test(e.origin) && window.origin === 'null')
+      );
+    }
+    // Non-empty only in the root document (nested bundles ship an empty
+    // island), so it doubles as the root marker: the root answers from
+    // local text and treats a miss as authoritative — never relaying to
+    // its (possibly foreign) parent.
+    const isPageRoot = pageOrder.length > 0;
+    const blobUrls = {};
+    const resourceBlobs = {};
+    const UUID_SHAPE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
+    const pendingFrames = {}; // uuid -> [{el, frag}] awaiting text for own frames
+    const pendingRelays = {}; // uuid -> [childWindow] awaiting text to pass down
+    function mountPage(el, frag, text) {
+      const pageBlob = new Blob([text], { type: 'text/html' });
+      const u = URL.createObjectURL(pageBlob);
+      resourceBlobs[u] = pageBlob;
+      el.src = u + frag;
+    }
+    function deliverPage(uuid, text) {
+      const frames = pendingFrames[uuid];
+      delete pendingFrames[uuid];
+      if (frames) for (const f of frames) mountPage(f.el, f.frag, text);
+      const relays = pendingRelays[uuid];
+      delete pendingRelays[uuid];
+      if (relays) {
+        for (const cw of relays) {
+          try { cw.postMessage({ __bundler_page: uuid, __bundler_text: text }, OWN_TARGET); } catch (err) { /* gone */ }
+        }
+      }
+    }
+    function ownFrameWindows() {
+      const out = [];
+      for (const f of Array.from(document.querySelectorAll('iframe'))) {
+        try { if (f.contentWindow) out.push(f.contentWindow); } catch (err) { /* detached */ }
+      }
+      return out;
+    }
+    window.addEventListener('message', function (e) {
+      const d = e.data;
+      if (!d || typeof d !== 'object' || !e.source) return;
+      // Origin gate first; the structural checks below (own-child-frames
+      // for requests, direct-parent + solicited-uuid for replies, the
+      // root's never-relay rule) are what hold in fully opaque chains
+      // where origin strings can't discriminate — a sandboxed root's
+      // FOREIGN wrapper still fails all three even though both serialize
+      // as real-vs-'null' rather than matching.
+      if (!trustedOrigin(e)) return;
+      if (typeof d.__bundler_need === 'string' && UUID_SHAPE.test(d.__bundler_need)) {
+        // Requests are honored only for this document's own child frames.
+        if (ownFrameWindows().indexOf(e.source) < 0) return;
+        const uuid = d.__bundler_need;
+        const text = pageTexts[uuid];
+        if (typeof text === 'string') {
+          try { e.source.postMessage({ __bundler_page: uuid, __bundler_text: text }, OWN_TARGET); } catch (err) { /* gone */ }
+          return;
+        }
+        if (isPageRoot || window.parent === window) return; // authoritative miss
+        const waiting = pendingRelays[uuid];
+        if (waiting) {
+          if (waiting.indexOf(e.source) < 0) waiting.push(e.source);
+          return;
+        }
+        // Never-answered uuids would otherwise accumulate forever under a
+        // request spray; past the cap (far above any real page count) new
+        // relays are dropped rather than remembered.
+        if (Object.keys(pendingRelays).length >= 128) return;
+        pendingRelays[uuid] = [e.source];
+        window.parent.postMessage({ __bundler_need: uuid }, OWN_TARGET);
+      } else if (
+        typeof d.__bundler_page === 'string' &&
+        UUID_SHAPE.test(d.__bundler_page) &&
+        typeof d.__bundler_text === 'string'
+      ) {
+        // The shape test is load-bearing beyond tidiness: the solicited
+        // check below uses the in operator, which matches prototype keys
+        // ('__proto__', 'constructor') — an unshaped key would reach
+        // deliverPage and throw, painting the error banner.
+        // Text is accepted only from the direct parent — the document
+        // that minted this one.
+        if (e.source !== window.parent || window.parent === window) return;
+        if (!(d.__bundler_page in pendingFrames) && !(d.__bundler_page in pendingRelays)) return;
+        deliverPage(d.__bundler_page, d.__bundler_text);
+      }
+    });
+
+    const uuids = Object.keys(manifest);
+    setStatus('Unpacking ' + uuids.length + ' assets...');
+
+    await Promise.all(uuids.map(async (uuid) => {
+      const entry = manifest[uuid];
+      try {
+        const binaryStr = atob(entry.data);
+        const bytes = new Uint8Array(binaryStr.length);
+        for (let i = 0; i < binaryStr.length; i++) bytes[i] = binaryStr.charCodeAt(i);
+
+        let finalBytes = bytes;
+        if (entry.compressed) {
+          if (typeof DecompressionStream !== 'undefined') {
+            const ds = new DecompressionStream('gzip');
+            const writer = ds.writable.getWriter();
+            const reader = ds.readable.getReader();
+            writer.write(bytes);
+            writer.close();
+            const chunks = [];
+            let totalLen = 0;
+            while (true) {
+              const { done, value } = await reader.read();
+              if (done) break;
+              chunks.push(value);
+              totalLen += value.length;
+            }
+            finalBytes = new Uint8Array(totalLen);
+            let offset = 0;
+            for (const chunk of chunks) { finalBytes.set(chunk, offset); offset += chunk.length; }
+          } else {
+            console.warn('DecompressionStream not available, asset ' + uuid + ' may not render');
+          }
+        }
+
+        if (pageSet.has(uuid)) {
+          pageTexts[uuid] = new TextDecoder().decode(finalBytes);
+          return;
+        }
+        if (FONT_MIME.test(entry.mime) && MIME_TOKEN.test(entry.mime)) {
+          // Strict artifact hosts allow font-src data: but not blob:.
+          blobUrls[uuid] = 'data:' + entry.mime + ';base64,' +
+            (entry.compressed ? toBase64(finalBytes) : entry.data);
+        } else {
+          const blob = new Blob([finalBytes], { type: entry.mime });
+          blobUrls[uuid] = URL.createObjectURL(blob);
+          resourceBlobs[blobUrls[uuid]] = blob;
+        }
+      } catch (err) {
+        console.error('Failed to decode asset ' + uuid + ':', err);
+        const blob = new Blob([], { type: entry.mime });
+        blobUrls[uuid] = URL.createObjectURL(blob);
+        resourceBlobs[blobUrls[uuid]] = blob;
+      }
+    }));
+
+    const extResEl = document.querySelector('script[type="__bundler/ext_resources"]');
+    const extResources = extResEl ? JSON.parse(extResEl.textContent) : [];
+    const resourceMap = {};
+    for (const entry of extResources) {
+      if (blobUrls[entry.uuid]) resourceMap[entry.id] = blobUrls[entry.uuid];
+    }
+
+    // Artifact-host CSP (connect-src 'self') refuses fetch() of blob: URLs —
+    // consumers read these Blobs directly. Survives the swap like the error sink.
+    window.__resourceBlobs = resourceBlobs;
+
+    setStatus('Rendering...');
+    // Page uuids have no blob here — they ride inside about:blank#<uuid>
+    // frame markers the pass below resolves after the swap.
+    for (const uuid of uuids) {
+      if (pageSet.has(uuid)) continue;
+      template = template.split(uuid).join(blobUrls[uuid]);
+    }
+
+    // Strip integrity + crossorigin — blob URLs from a file:// document inherit
+    // a null origin, so crossorigin forces a CORS fetch that SRI then rejects.
+    // The manifest bytes are ours; SRI protects against CDN compromise, not this.
+    template = template.replace(/\s+integrity="[^"]*"/gi, '').replace(/\s+crossorigin="[^"]*"/gi, '');
+
+    const resourceScript = '<script>window.__resources = ' +
+      JSON.stringify(resourceMap).replace(/<\//g, '<\\/') +
+      ';</' + 'script>';
+    // Inject after <head> so the DOCTYPE stays first; prepending the script
+    // would push the parser into quirks mode. DOMParser always emits a <head>
+    // (synthesizing one if the source HTML omitted it) but may carry
+    // attributes through, so match the full opening tag. slice() rather than
+    // replace() keeps us clear of $-pattern substitution in resourceScript.
+    const headOpen = template.match(/<head[^>]*>/i);
+    if (headOpen) {
+      const i = headOpen.index + headOpen[0].length;
+      template = template.slice(0, i) + resourceScript + template.slice(i);
+    }
+
+    // Parse the template and swap the root element. Scripts inserted via
+    // DOMParser/replaceWith are inert per spec — re-create each with
+    // createElement so they execute, awaiting onload for src scripts to
+    // preserve ordering (React before ReactDOM before Babel before text/babel).
+    const doc = new DOMParser().parseFromString(template, 'text/html');
+    document.documentElement.replaceWith(doc.documentElement);
+
+    // Resolve page-frame markers: mint this document's own blob for each
+    // framed page — from local text when this is the root, otherwise by
+    // asking the direct parent over the relay protocol above. An
+    // unanswered request leaves the frame on about:blank, the same
+    // degraded state as a refused embed.
+    {
+      const MARKER = /^about:blank#([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})(#.*)?$/;
+      const needed = [];
+      for (const el of Array.from(document.querySelectorAll('iframe'))) {
+        const m = MARKER.exec(el.getAttribute('src') || '');
+        if (!m) continue;
+        const text = pageTexts[m[1]];
+        if (typeof text === 'string') {
+          mountPage(el, m[2] || '', text);
+        } else if (window.parent !== window && !isPageRoot) {
+          const had = pendingFrames[m[1]];
+          (pendingFrames[m[1]] = had || []).push({ el: el, frag: m[2] || '' });
+          if (!had) needed.push(m[1]);
+        }
+      }
+      for (const uuid of needed) {
+        window.parent.postMessage({ __bundler_need: uuid }, OWN_TARGET);
+      }
+    }
+
+    const dead = Array.from(document.scripts);
+    for (const old of dead) {
+      const s = document.createElement('script');
+      for (const a of old.attributes) s.setAttribute(a.name, a.value);
+      s.textContent = old.textContent;
+      // text/babel scripts with a src: read and inline. transformScriptTags
+      // does XHR against the src, but blob:null/ from a file:// origin is
+      // silently dropped. Inlining makes it a plain inline babel script,
+      // which transformScriptTags handles unconditionally.
+      if ((s.type === 'text/babel' || s.type === 'text/jsx') && s.src) {
+        const pre = resourceBlobs[s.src.split('#')[0]];
+        s.textContent = pre ? await pre.text() : await (await fetch(s.src)).text();
+        s.removeAttribute('src');
+      }
+      const p = s.src ? new Promise(function(r) { s.onload = s.onerror = r; }) : null;
+      old.replaceWith(s);
+      if (p) await p;
+    }
+    // Babel standalone auto-transforms type=text/babel on DOMContentLoaded,
+    // which fired before we swapped the document. Trigger manually if present.
+    if (window.Babel && typeof window.Babel.transformScriptTags === 'function') {
+      window.Babel.transformScriptTags();
+    }
+  } catch (err) {
+    setStatus('Error unpacking: ' + err.message);
+    console.error('Bundle unpack error:', err);
+  }
+});
+
+  </script>
+
+  <script type="__bundler/manifest">
+{}
+  </script>
+
+  <script type="__bundler/ext_resources">
+[]
+  </script>
+
+  <script type="__bundler/page_order">
+[]
+  </script>
+
+  <script type="__bundler/template">
+"<!DOCTYPE html>\n<html lang=\"pt-BR\"><head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <title>Simulador de Risco Cambial e Contingência — Revisado v2<\u002Ftitle>\n  <style>\n    :root{\n      --bg:#f4f7fb; --card:#fff; --text:#1d2733; --muted:#5e6b78; --line:#d9e1ea;\n      --accent:#1f5aa6; --accent2:#2b7a78; --danger:#a63d40; --warn:#8a6d1d;\n      --ok:#2f6f44; --shadow:0 10px 30px rgba(21,34,50,.08); --radius:18px;\n    }\n    *{box-sizing:border-box}\n    body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}\n    .wrap{max-width:1500px;margin:0 auto;padding:24px}\n    h1,h2,h3,h4{margin:0 0 10px}\n    p{line-height:1.5}\n    .subtitle{color:var(--muted);margin-bottom:20px}\n    .grid{display:grid;grid-template-columns:minmax(360px,450px) minmax(0,1fr);gap:20px;align-items:start}\n    .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}\n    .card + .card{margin-top:16px}\n    .section-title{font-size:18px;margin-bottom:14px;color:var(--accent);font-weight:800}\n    .fields{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}\n    .field{display:flex;flex-direction:column;gap:6px;min-width:0}\n    .field.full{grid-column:1/-1}\n    label{font-size:13px;color:var(--muted);font-weight:700}\n    input,select,textarea{width:100%;max-width:100%;min-width:0;border:1px solid var(--line);border-radius:12px;padding:11px 12px;font-size:14px;outline:none;background:#fff;color:var(--text)}\n    input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(31,90,166,.10)}\n    textarea{min-height:126px;resize:vertical;font-family:Consolas,monospace}\n    .btn-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}\n    button{border:none;border-radius:12px;padding:11px 15px;font-size:14px;font-weight:700;cursor:pointer;transition:.15s ease}\n    button:hover{transform:translateY(-1px)}\n    .primary{background:var(--accent);color:#fff}.secondary{background:#eaf0f8;color:var(--accent)}\n    .ghost{background:#f3f5f8;color:var(--text)}.danger{background:#f7eaea;color:var(--danger)}\n    .small-btn{padding:7px 10px;border-radius:9px;font-size:12px}\n    .summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}\n    .metric{background:linear-gradient(180deg,#fff 0%,#fbfcfe 100%);border:1px solid var(--line);border-radius:16px;padding:14px;min-height:102px}\n    .metric .k{font-size:12px;color:var(--muted);margin-bottom:8px;font-weight:700;text-transform:uppercase;letter-spacing:.04em}\n    .metric .v{font-size:23px;font-weight:800;line-height:1.1}.metric .s{margin-top:6px;font-size:12px;color:var(--muted)}\n    .results-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}\n    .table-wrap{overflow:auto;border:1px solid var(--line);border-radius:16px}\n    table{width:100%;border-collapse:collapse;font-size:13px;background:#fff}\n    th,td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}\n    th{background:#f7f9fc;color:var(--muted)}\n    td input{width:100%;min-width:70px;padding:7px 8px;border-radius:8px}\n    .note{background:#f8fafc;border-left:4px solid var(--accent);padding:12px 14px;border-radius:10px;color:#334250;font-size:14px}\n    .note.warn{border-left-color:var(--warn);background:#fffaf0}.note.ok{border-left-color:var(--ok);background:#f4fbf6}\n    canvas{width:100%;height:330px;display:block;background:#fff;border:1px solid var(--line);border-radius:16px}\n    .small{font-size:12px;color:var(--muted)}.footer{margin-top:18px;color:var(--muted);font-size:12px}\n    .model-panel{display:none}.model-panel.active{display:block}\n    .inline-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px;min-width:0}\n    .inline-actions>*{min-width:0}\n    .online-grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,.75fr);gap:10px;margin-top:10px}\n    .online-status{margin-top:9px;padding:9px 11px;border-radius:10px;background:#f8fafc;border:1px solid var(--line);font-size:12px;color:var(--muted);line-height:1.4}\n    .online-status.ok{background:#f4fbf6;border-color:#cce6d3;color:var(--ok)}\n    .online-status.error{background:#fff4f4;border-color:#efd0d0;color:var(--danger)}\n    .online-status.loading{background:#f3f7fc;border-color:#cfdcec;color:var(--accent)}\n    .pill{display:inline-flex;padding:5px 9px;border-radius:999px;background:#eaf0f8;color:var(--accent);font-size:12px;font-weight:700}\n    .status{margin-top:10px;font-size:12px;color:var(--muted)}\n    .legend{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px;font-size:12px;color:var(--muted)}\n    .legend span::before{content:\"\";display:inline-block;width:12px;height:3px;margin-right:5px;vertical-align:middle;background:var(--c)}\n    .hidden{display:none!important}\n    @media print{\n      body{background:#fff}.wrap{max-width:none;padding:0}.grid{display:block}.grid>div:first-child{display:none}.card{box-shadow:none;border:none}.btn-row{display:none}\n    }\n    @media(max-width:1150px){.grid{grid-template-columns:1fr}.summary{grid-template-columns:repeat(2,1fr)}.results-grid{grid-template-columns:1fr}}\n    @media(max-width:700px){.fields,.online-grid{grid-template-columns:1fr}.summary{grid-template-columns:1fr}}\n  <\u002Fstyle>\n\n<\u002Fhead>\n<body>\n<div class=\"wrap\">\n  <h1>Simulador de Risco Cambial e Contingência<\u002Fh1>\n  <p class=\"subtitle\">Simulação de Monte Carlo com modelos triangular, lognormal, cenários discretos e bootstrap histórico, cronograma de exposição, hedge parcial, VaR, CVaR e distribuição econômica separada da reserva não negativa.<\u002Fp>\n\n  <div class=\"grid\">\n    <div>\n      <div class=\"card\">\n        <div class=\"section-title\">1. Dados do contrato<\u002Fdiv>\n        <div class=\"fields\">\n          <div class=\"field full\"><label for=\"nomeProjeto\">Projeto / contrato<\u002Flabel><input id=\"nomeProjeto\" value=\"Obra com equipamentos importados\"><\u002Fdiv>\n          <div class=\"field\"><label for=\"valorTotal\">Valor total do contrato (R$)<\u002Flabel><input id=\"valorTotal\" type=\"number\" min=\"0\" step=\"1000\" value=\"12000000\"><\u002Fdiv>\n          <div class=\"field\"><label for=\"valorExposto\">Parcela exposta ao câmbio (R$)<\u002Flabel><input id=\"valorExposto\" type=\"number\" min=\"0\" step=\"1000\" value=\"3000000\"><\u002Fdiv>\n          <div class=\"field\"><label for=\"moedaBase\">Moeda<\u002Flabel><select id=\"moedaBase\"><option>USD<\u002Foption><option>EUR<\u002Foption><option>CNY<\u002Foption><\u002Fselect><\u002Fdiv>\n          <div class=\"field\"><label for=\"horizonteMeses\">Horizonte máximo (meses)<\u002Flabel><input id=\"horizonteMeses\" type=\"number\" min=\"1\" max=\"120\" value=\"10\"><\u002Fdiv>\n          <div class=\"field\"><label for=\"fxBase\">Câmbio-base (R$/moeda)<\u002Flabel><input id=\"fxBase\" type=\"number\" min=\"0.0001\" step=\"0.0001\" value=\"5.20\"><\u002Fdiv>\n          <div class=\"field\"><label for=\"fxCenario\">Câmbio do cenário determinístico<\u002Flabel><input id=\"fxCenario\" type=\"number\" min=\"0.0001\" step=\"0.0001\" value=\"5.85\"><\u002Fdiv>\n          <div class=\"field full\"><label for=\"repasse\">Fator global de repasse cambial aos custos (%)<\u002Flabel><input id=\"repasse\" type=\"number\" min=\"0\" max=\"100\" value=\"100\"><\u002Fdiv>\n        <\u002Fdiv>\n      <\u002Fdiv>\n\n      <div class=\"card\">\n        <div class=\"section-title\">2. Cronograma de exposição<\u002Fdiv>\n        <div class=\"small\">Cada parcela representa uma fração da exposição total. O hedge fixa a parcela protegida no câmbio-base. A soma das participações deve ser 100%.<\u002Fdiv>\n        <div class=\"table-wrap\" style=\"margin-top:10px\">\n          <table id=\"scheduleTable\">\n            <thead><tr><th>Mês<\u002Fth><th>Participação (%)<\u002Fth><th>Hedge (%)<\u002Fth><th><\u002Fth><\u002Ftr><\u002Fthead>\n            <tbody><\u002Ftbody>\n          <\u002Ftable>\n        <\u002Fdiv>\n        <div class=\"inline-actions\">\n          <button class=\"secondary small-btn\" id=\"addSchedule\">Adicionar parcela<\u002Fbutton>\n          <button class=\"ghost small-btn\" id=\"equalSchedule\">Distribuir igualmente<\u002Fbutton>\n          <span class=\"pill\" id=\"scheduleTotal\">Total: 0%<\u002Fspan>\n        <\u002Fdiv>\n      <\u002Fdiv>\n\n      <div class=\"card\">\n        <div class=\"section-title\">3. Modelo estatístico<\u002Fdiv>\n        <div class=\"field full\"><label for=\"modelType\">Modelo de simulação<\u002Flabel>\n          <select id=\"modelType\">\n            <option value=\"lognormal\" selected=\"\">Lognormal por volatilidade<\u002Foption>\n            <option value=\"triangular\">Triangular por cenários<\u002Foption>\n            <option value=\"discrete\">Cenários discretos ponderados<\u002Foption>\n            <option value=\"bootstrap\">Bootstrap histórico<\u002Foption>\n          <\u002Fselect>\n        <\u002Fdiv>\n\n        <div id=\"panelLognormal\" class=\"model-panel active\" style=\"margin-top:12px\">\n          <div class=\"fields\">\n            <div class=\"field\"><label for=\"driftAnnual\">Tendência anual esperada (%)<\u002Flabel><input id=\"driftAnnual\" type=\"number\" step=\"0.1\" value=\"8\"><\u002Fdiv>\n            <div class=\"field\"><label for=\"volAnnual\">Volatilidade anual (%)<\u002Flabel><input id=\"volAnnual\" type=\"number\" min=\"0.1\" step=\"0.1\" value=\"18\"><\u002Fdiv>\n          <\u002Fdiv>\n          <div class=\"note\" style=\"margin-top:10px\">O horizonte e as datas do cronograma afetam a dispersão. São simuladas trajetórias mensais coerentes, e não apenas um único sorteio terminal.<\u002Fdiv>\n        <\u002Fdiv>\n\n        <div id=\"panelTriangular\" class=\"model-panel\" style=\"margin-top:12px\">\n          <div class=\"fields\">\n            <div class=\"field\"><label for=\"fxMin\">Câmbio mínimo no horizonte<\u002Flabel><input id=\"fxMin\" type=\"number\" step=\"0.0001\" value=\"4.95\"><\u002Fdiv>\n            <div class=\"field\"><label for=\"fxMode\">Câmbio mais provável<\u002Flabel><input id=\"fxMode\" type=\"number\" step=\"0.0001\" value=\"5.70\"><\u002Fdiv>\n            <div class=\"field full\"><label for=\"fxMax\">Câmbio máximo no horizonte<\u002Flabel><input id=\"fxMax\" type=\"number\" step=\"0.0001\" value=\"6.70\"><\u002Fdiv>\n          <\u002Fdiv>\n          <div class=\"note warn\" style=\"margin-top:10px\">Modelo subjetivo. O histograma tende a reproduzir a forma triangular porque o impacto é uma transformação do câmbio sorteado.<\u002Fdiv>\n        <\u002Fdiv>\n\n        <div id=\"panelDiscrete\" class=\"model-panel\" style=\"margin-top:12px\">\n          <div class=\"table-wrap\"><table id=\"scenarioTable\"><thead><tr><th>Cenário<\u002Fth><th>FX terminal<\u002Fth><th>Prob. (%)<\u002Fth><\u002Ftr><\u002Fthead><tbody><\u002Ftbody><\u002Ftable><\u002Fdiv>\n          <div class=\"small\" id=\"scenarioTotal\" style=\"margin-top:8px\">Probabilidades: 0%<\u002Fdiv>\n        <\u002Fdiv>\n\n        <div id=\"panelBootstrap\" class=\"model-panel\" style=\"margin-top:12px\">\n          <div class=\"note\" style=\"margin-bottom:10px\"><strong>Busca automática:<\u002Fstrong> o sistema pode obter cotações históricas pela internet e convertê-las em uma série mensal compatível com o bootstrap.<\u002Fdiv>\n          <div class=\"online-grid\">\n            <div class=\"field\"><label for=\"onlineSource\">Fonte dos dados<\u002Flabel><select id=\"onlineSource\"><option value=\"bcb\" selected=\"\">Banco Central do Brasil — PTAX<\u002Foption><option value=\"frankfurter\">Frankfurter — múltiplos bancos centrais<\u002Foption><\u002Fselect><\u002Fdiv>\n            <div class=\"field\"><label for=\"historyYears\">Período histórico<\u002Flabel><select id=\"historyYears\"><option value=\"3\">Últimos 3 anos<\u002Foption><option value=\"5\" selected=\"\">Últimos 5 anos<\u002Foption><option value=\"10\">Últimos 10 anos<\u002Foption><\u002Fselect><\u002Fdiv>\n          <\u002Fdiv>\n          <div class=\"inline-actions\">\n            <button class=\"secondary small-btn\" id=\"fetchHistory\" type=\"button\">Buscar série online<\u002Fbutton>\n            <label style=\"display:flex;align-items:center;gap:7px;font-weight:600;color:var(--muted);font-size:12px\"><input id=\"updateFxBase\" type=\"checkbox\" checked=\"\" style=\"width:auto\">Atualizar o câmbio-base com a última cotação<\u002Flabel>\n          <\u002Fdiv>\n          <div id=\"onlineStatus\" class=\"online-status\">A busca exige conexão com a internet. Em caso de indisponibilidade da fonte, permanece disponível a importação manual abaixo.<\u002Fdiv>\n          <div class=\"field full\" style=\"margin-top:12px\"><label for=\"historyData\">Série histórica mensal de câmbio<\u002Flabel><textarea id=\"historyData\" placeholder=\"Aceita um valor por linha ou data;valor. Ex.:\\n2025-01;5,90\\n2025-02;5,75\"><\u002Ftextarea><\u002Fdiv>\n          <div class=\"inline-actions\"><input id=\"historyFile\" type=\"file\" accept=\".csv,.txt\"><span class=\"pill\" id=\"historyStatus\">Nenhuma série carregada<\u002Fspan><\u002Fdiv>\n          <div class=\"note\" style=\"margin-top:10px\">O sistema calcula retornos logarítmicos mensais consecutivos e sorteia retornos com reposição para formar trajetórias mensais. Para a PTAX, utiliza-se a cotação de venda do boletim de fechamento e a última observação disponível de cada mês.<\u002Fdiv>\n        <\u002Fdiv>\n      <\u002Fdiv>\n\n      <div class=\"card\">\n        <div class=\"section-title\">4. Simulação e visualização<\u002Fdiv>\n        <div class=\"fields\">\n          <div class=\"field\"><label for=\"iterations\">Iterações<\u002Flabel><input id=\"iterations\" type=\"number\" min=\"1000\" max=\"500000\" step=\"1000\" value=\"30000\"><\u002Fdiv>\n          <div class=\"field\"><label for=\"targetPercentile\">Percentil alvo<\u002Flabel><select id=\"targetPercentile\"><option value=\"0.50\">P50<\u002Foption><option value=\"0.80\" selected=\"\">P80<\u002Foption><option value=\"0.90\">P90<\u002Foption><option value=\"0.95\">P95<\u002Foption><\u002Fselect><\u002Fdiv>\n          <div class=\"field\"><label for=\"histMetric\">Histograma de<\u002Flabel><select id=\"histMetric\"><option value=\"net\">Impacto econômico líquido<\u002Foption><option value=\"loss\" selected=\"\">Perdas / contingência não negativa<\u002Foption><\u002Fselect><\u002Fdiv>\n          <div class=\"field\"><label for=\"histMode\">Escala do histograma<\u002Flabel><select id=\"histMode\"><option value=\"relative\" selected=\"\">Frequência relativa<\u002Foption><option value=\"count\">Frequência absoluta<\u002Foption><option value=\"density\">Densidade<\u002Foption><\u002Fselect><\u002Fdiv>\n          <div class=\"field\"><label for=\"binsMode\">Número de classes<\u002Flabel><select id=\"binsMode\"><option value=\"auto\" selected=\"\">Automático (Freedman–Diaconis)<\u002Foption><option value=\"manual\">Manual<\u002Foption><\u002Fselect><\u002Fdiv>\n          <div class=\"field\"><label for=\"bins\">Classes manuais<\u002Flabel><input id=\"bins\" type=\"number\" min=\"10\" max=\"100\" value=\"35\" disabled=\"\"><\u002Fdiv>\n          <div class=\"field full\"><label for=\"seed\">Semente aleatória (reprodutibilidade)<\u002Flabel><input id=\"seed\" value=\"risco-cambial-2026\"><\u002Fdiv>\n        <\u002Fdiv>\n        <div class=\"btn-row\">\n          <button class=\"primary\" id=\"calculate\">Calcular<\u002Fbutton>\n          <button class=\"secondary\" id=\"loadExample\">Carregar exemplo<\u002Fbutton>\n          <button class=\"ghost\" id=\"exportCsv\">Exportar resumo CSV<\u002Fbutton>\n          <button class=\"danger\" id=\"printPdf\">Imprimir / PDF<\u002Fbutton>\n        <\u002Fdiv>\n        <div id=\"validation\" class=\"status\"><\u002Fdiv>\n      <\u002Fdiv>\n    <\u002Fdiv>\n\n    <div>\n      <div class=\"card\">\n        <div class=\"section-title\">Painel de resultados<\u002Fdiv>\n        <div class=\"summary\">\n          <div class=\"metric\"><div class=\"k\">Impacto determinístico<\u002Fdiv><div class=\"v\" id=\"mDet\">R$ 0,00<\u002Fdiv><div class=\"s\" id=\"mDetPct\">0,00% do contrato<\u002Fdiv><\u002Fdiv>\n          <div class=\"metric\"><div class=\"k\">Impacto líquido esperado<\u002Fdiv><div class=\"v\" id=\"mNetMean\">R$ 0,00<\u002Fdiv><div class=\"s\" id=\"mProbLoss\">Probabilidade de perda: 0,00%<\u002Fdiv><\u002Fdiv>\n          <div class=\"metric\"><div class=\"k\">Contingência alvo<\u002Fdiv><div class=\"v\" id=\"mTarget\">R$ 0,00<\u002Fdiv><div class=\"s\" id=\"mTargetPct\">0,00% do contrato<\u002Fdiv><\u002Fdiv>\n          <div class=\"metric\"><div class=\"k\">CVaR no percentil alvo<\u002Fdiv><div class=\"v\" id=\"mCvar\">R$ 0,00<\u002Fdiv><div class=\"s\">Média da cauda adversa<\u002Fdiv><\u002Fdiv>\n        <\u002Fdiv>\n\n        <div class=\"results-grid\">\n          <div><h3 id=\"histTitle\">Histograma<\u002Fh3><canvas id=\"histCanvas\" width=\"900\" height=\"330\"><\u002Fcanvas><div class=\"legend\"><span style=\"--c:#1f5aa6\">Média<\u002Fspan><span style=\"--c:#2b7a78\">Percentil alvo<\u002Fspan><span style=\"--c:#a63d40\">Cenário determinístico<\u002Fspan><\u002Fdiv><\u002Fdiv>\n          <div><h3>Curva acumulada das perdas<\u002Fh3><canvas id=\"cdfCanvas\" width=\"900\" height=\"330\"><\u002Fcanvas><div class=\"small\">As linhas horizontal e vertical identificam o percentil de contingência selecionado.<\u002Fdiv><\u002Fdiv>\n        <\u002Fdiv>\n\n        <div class=\"results-grid\">\n          <div><h3>Indicadores estatísticos<\u002Fh3><div class=\"table-wrap\"><table id=\"statsTable\"><thead><tr><th>Indicador<\u002Fth><th>Valor<\u002Fth><\u002Ftr><\u002Fthead><tbody><\u002Ftbody><\u002Ftable><\u002Fdiv><\u002Fdiv>\n          <div><h3>Percentis e risco de cauda<\u002Fh3><div class=\"table-wrap\"><table id=\"pctTable\"><thead><tr><th>Medida<\u002Fth><th>Impacto<\u002Fth><th>% contrato<\u002Fth><\u002Ftr><\u002Fthead><tbody><\u002Ftbody><\u002Ftable><\u002Fdiv><\u002Fdiv>\n        <\u002Fdiv>\n\n        <div class=\"results-grid\">\n          <div><h3>Resumo interpretativo<\u002Fh3><div class=\"note\" id=\"interpretation\">Preencha os dados e clique em <strong>Calcular<\u002Fstrong>.<\u002Fdiv><\u002Fdiv>\n          <div><h3>Premissas registradas<\u002Fh3><div class=\"table-wrap\"><table id=\"assumptionsTable\"><thead><tr><th>Premissa<\u002Fth><th>Valor<\u002Fth><\u002Ftr><\u002Fthead><tbody><\u002Ftbody><\u002Ftable><\u002Fdiv><\u002Fdiv>\n        <\u002Fdiv>\n\n        <div class=\"footer\">Ferramenta de apoio à estimativa. Não substitui política de hedge, análise contratual, avaliação tributária ou parecer econômico-financeiro especializado.<\u002Fdiv>\n      <\u002Fdiv>\n    <\u002Fdiv>\n  <\u002Fdiv>\n<\u002Fdiv>\n\n<script>\n(() => {\n  'use strict';\n\n  let lastRun = null;\n  const $ = id => document.getElementById(id);\n\n  const brMoney = v => new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number.isFinite(v)?v:0);\n  const brNumber = (v,d=2) => new Intl.NumberFormat('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d}).format(Number.isFinite(v)?v:0);\n  const pctOf = (v,t) => t>0 ? v/t*100 : 0;\n  const clamp = (v,a,b) => Math.min(b,Math.max(a,v));\n  const escapeHtml = s => String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('\"','&quot;').replaceAll(\"'\",'&#039;');\n\n  function hashString(str){\n    let h = 2166136261 >>> 0;\n    for(let i=0;i<str.length;i++){ h ^= str.charCodeAt(i); h = Math.imul(h,16777619); }\n    return h >>> 0;\n  }\n  function mulberry32(seed){\n    let a = seed >>> 0;\n    return function(){\n      a |= 0; a = a + 0x6D2B79F5 | 0;\n      let t = Math.imul(a ^ a >>> 15, 1 | a);\n      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;\n      return ((t ^ t >>> 14) >>> 0) / 4294967296;\n    };\n  }\n  function normalRandom(rng){\n    let u=0,v=0;\n    while(u===0) u=rng();\n    while(v===0) v=rng();\n    return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);\n  }\n  function triangularRandom(min,mode,max,rng){\n    if(max===min) return min;\n    const u=rng();\n    const c=(mode-min)/(max-min);\n    return u<c ? min+Math.sqrt(u*(max-min)*(mode-min)) : max-Math.sqrt((1-u)*(max-min)*(max-mode));\n  }\n  function weightedChoice(rows,rng){\n    let u=rng(), acc=0;\n    for(const r of rows){ acc += r.probability; if(u<=acc) return r.fx; }\n    return rows[rows.length-1].fx;\n  }\n  function mean(arr){ return arr.length ? arr.reduce((a,b)=>a+b,0)/arr.length : 0; }\n  function stdev(arr){\n    if(arr.length<2) return 0;\n    const m=mean(arr); return Math.sqrt(arr.reduce((s,x)=>s+(x-m)**2,0)/(arr.length-1));\n  }\n  function quantile(sorted,q){\n    if(!sorted.length) return 0;\n    const p=(sorted.length-1)*q, b=Math.floor(p), r=p-b;\n    return sorted[b+1]!==undefined ? sorted[b]+r*(sorted[b+1]-sorted[b]) : sorted[b];\n  }\n  function cvar(sorted,q){\n    if(!sorted.length) return 0;\n    const threshold=quantile(sorted,q);\n    const tail=sorted.filter(x=>x>=threshold);\n    return mean(tail);\n  }\n  function skewness(arr){\n    if(arr.length<3) return 0;\n    const m=mean(arr), s=stdev(arr); if(s===0) return 0;\n    return arr.reduce((a,x)=>a+((x-m)/s)**3,0)/arr.length;\n  }\n  function excessKurtosis(arr){\n    if(arr.length<4) return 0;\n    const m=mean(arr), s=stdev(arr); if(s===0) return 0;\n    return arr.reduce((a,x)=>a+((x-m)/s)**4,0)/arr.length-3;\n  }\n  function shortMoney(v){\n    const a=Math.abs(v); if(a>=1e9) return 'R$ '+brNumber(v/1e9,2)+' bi'; if(a>=1e6) return 'R$ '+brNumber(v/1e6,2)+' mi'; if(a>=1e3) return 'R$ '+brNumber(v/1e3,0)+' mil'; return 'R$ '+brNumber(v,0);\n  }\n\n  function addScheduleRow(month=10,share=100,hedge=0){\n    const tr=document.createElement('tr');\n    tr.innerHTML=`<td><input class=\"s-month\" type=\"number\" min=\"1\" max=\"120\" value=\"${month}\"><\u002Ftd><td><input class=\"s-share\" type=\"number\" min=\"0\" max=\"100\" step=\"0.1\" value=\"${share}\"><\u002Ftd><td><input class=\"s-hedge\" type=\"number\" min=\"0\" max=\"100\" step=\"0.1\" value=\"${hedge}\"><\u002Ftd><td><button class=\"danger small-btn remove-row\">×<\u002Fbutton><\u002Ftd>`;\n    $('scheduleTable').querySelector('tbody').appendChild(tr);\n    tr.querySelectorAll('input').forEach(i=>i.addEventListener('input',updateScheduleTotal));\n    tr.querySelector('.remove-row').addEventListener('click',()=>{tr.remove();updateScheduleTotal();});\n    updateScheduleTotal();\n  }\n  function getSchedule(){\n    return [...$('scheduleTable').querySelectorAll('tbody tr')].map(tr=>({\n      month:Number(tr.querySelector('.s-month').value),\n      share:Number(tr.querySelector('.s-share').value)/100,\n      hedge:Number(tr.querySelector('.s-hedge').value)/100\n    }));\n  }\n  function updateScheduleTotal(){\n    const total=getSchedule().reduce((a,r)=>a+(Number.isFinite(r.share)?r.share:0),0)*100;\n    $('scheduleTotal').textContent='Total: '+brNumber(total,1)+'%';\n    $('scheduleTotal').style.background=Math.abs(total-100)<0.05?'#e8f5ec':'#fff3d6';\n    $('scheduleTotal').style.color=Math.abs(total-100)<0.05?'#2f6f44':'#8a6d1d';\n  }\n  function equalizeSchedule(){\n    const rows=[...$('scheduleTable').querySelectorAll('tbody tr')];\n    if(!rows.length) return;\n    const each=100/rows.length;\n    rows.forEach(r=>r.querySelector('.s-share').value=each.toFixed(4)); updateScheduleTotal();\n  }\n\n  function buildScenarios(){\n    const data=[['Otimista',5.10,20],['Base',5.70,50],['Adverso',6.30,25],['Extremo',7.10,5]];\n    const body=$('scenarioTable').querySelector('tbody'); body.innerHTML='';\n    data.forEach(([n,fx,p])=>{\n      const tr=document.createElement('tr');\n      tr.innerHTML=`<td><input class=\"c-name\" value=\"${n}\"><\u002Ftd><td><input class=\"c-fx\" type=\"number\" step=\"0.0001\" value=\"${fx}\"><\u002Ftd><td><input class=\"c-p\" type=\"number\" min=\"0\" max=\"100\" step=\"0.1\" value=\"${p}\"><\u002Ftd>`;\n      body.appendChild(tr); tr.querySelectorAll('input').forEach(i=>i.addEventListener('input',updateScenarioTotal));\n    }); updateScenarioTotal();\n  }\n  function getScenarios(){\n    return [...$('scenarioTable').querySelectorAll('tbody tr')].map(tr=>({\n      name:tr.querySelector('.c-name').value.trim()||'Cenário', fx:Number(tr.querySelector('.c-fx').value), probability:Number(tr.querySelector('.c-p').value)/100\n    }));\n  }\n  function updateScenarioTotal(){\n    const total=getScenarios().reduce((a,r)=>a+(Number.isFinite(r.probability)?r.probability:0),0)*100;\n    $('scenarioTotal').textContent='Probabilidades: '+brNumber(total,1)+'%';\n    $('scenarioTotal').style.color=Math.abs(total-100)<0.05?'#2f6f44':'#a63d40';\n  }\n\n  function parseFlexibleNumber(token){\n    let s=String(token).trim().replace(/\\s/g,'');\n    if(!s) return NaN;\n    if(s.includes(',') && s.includes('.')){\n      if(s.lastIndexOf(',')>s.lastIndexOf('.')) s=s.replaceAll('.','').replace(',','.'); else s=s.replaceAll(',','');\n    } else if(s.includes(',')) s=s.replace(',','.');\n    return Number(s);\n  }\n  function parseHistory(text){\n    const values=[];\n    String(text).split(/\\r?\\n/).forEach(line=>{\n      const clean=line.trim(); if(!clean) return;\n      const parts=clean.split(/[;\\t]/);\n      let candidates=parts.length>1?parts:[clean];\n      for(let i=candidates.length-1;i>=0;i--){\n        const v=parseFlexibleNumber(candidates[i]); if(Number.isFinite(v)&&v>0){values.push(v);break;}\n      }\n    });\n    return values;\n  }\n  function historyReturns(values){\n    const out=[]; for(let i=1;i<values.length;i++) out.push(Math.log(values[i]/values[i-1])); return out;\n  }\n\n  function setOnlineStatus(message,type=''){\n    const el=$('onlineStatus');\n    el.textContent=message;\n    el.className='online-status'+(type?' '+type:'');\n  }\n  function isoDate(date){\n    const y=date.getFullYear(),m=String(date.getMonth()+1).padStart(2,'0'),d=String(date.getDate()).padStart(2,'0');\n    return `${y}-${m}-${d}`;\n  }\n  function bcbDate(date){\n    const y=date.getFullYear(),m=String(date.getMonth()+1).padStart(2,'0'),d=String(date.getDate()).padStart(2,'0');\n    return `${m}-${d}-${y}`;\n  }\n  function monthlyLast(rows){\n    const map=new Map();\n    rows.filter(r=>r&&r.date&&Number.isFinite(r.value)&&r.value>0)\n      .sort((a,b)=>String(a.date).localeCompare(String(b.date)))\n      .forEach(r=>map.set(String(r.date).slice(0,7),{date:String(r.date).slice(0,10),value:r.value}));\n    return [...map.entries()].map(([month,r])=>({month,date:r.date,value:r.value}));\n  }\n  function formatHistoryRows(rows){\n    return rows.map(r=>`${r.month};${r.value.toFixed(6).replace('.',',')}`).join('\\n');\n  }\n  async function fetchBcbHistory(currency,from,to){\n    const endpoint='https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/CotacaoMoedaPeriodo(moeda=@moeda,dataInicial=@dataInicial,dataFinalCotacao=@dataFinalCotacao)';\n    const url=endpoint+`?@moeda='${encodeURIComponent(currency)}'&@dataInicial='${bcbDate(from)}'&@dataFinalCotacao='${bcbDate(to)}'&$top=10000&$filter=${encodeURIComponent(\"tipoBoletim eq 'Fechamento'\")}&$orderby=${encodeURIComponent('dataHoraCotacao asc')}&$format=json&$select=cotacaoVenda,dataHoraCotacao,tipoBoletim`;\n    const response=await fetch(url,{headers:{Accept:'application/json'}});\n    if(!response.ok) throw new Error(`BCB respondeu HTTP ${response.status}.`);\n    const payload=await response.json();\n    const data=Array.isArray(payload.value)?payload.value:[];\n    const rows=data.map(item=>({date:String(item.dataHoraCotacao||'').slice(0,10),value:Number(item.cotacaoVenda)}));\n    const monthly=monthlyLast(rows);\n    if(monthly.length<12) throw new Error(`A PTAX retornou apenas ${monthly.length} observações mensais para ${currency}.`);\n    return {rows:monthly,source:'Banco Central do Brasil — PTAX, venda, fechamento'};\n  }\n  async function fetchFrankfurterHistory(currency,from,to){\n    const url=`https://api.frankfurter.dev/v1/${isoDate(from)}..${isoDate(to)}?base=${encodeURIComponent(currency)}&symbols=BRL`;\n    const response=await fetch(url,{headers:{Accept:'application/json'}});\n    if(!response.ok) throw new Error(`Frankfurter respondeu HTTP ${response.status}.`);\n    const payload=await response.json();\n    const rows=Object.entries(payload.rates||{}).map(([date,rates])=>({date,value:Number(rates&&rates.BRL)}));\n    const monthly=monthlyLast(rows);\n    if(monthly.length<12) throw new Error(`A fonte retornou apenas ${monthly.length} observações mensais para ${currency}.`);\n    return {rows:monthly,source:'Frankfurter — série agregada de bancos centrais'};\n  }\n  async function fetchOnlineHistory(){\n    const button=$('fetchHistory');\n    const currency=$('moedaBase').value;\n    const years=Number($('historyYears').value)||5;\n    const source=$('onlineSource').value;\n    const to=new Date();\n    const from=new Date(to.getFullYear()-years,to.getMonth(),to.getDate());\n    button.disabled=true;\n    button.textContent='Buscando…';\n    setOnlineStatus(`Consultando ${currency} de ${isoDate(from)} a ${isoDate(to)}…`,'loading');\n    try{\n      let result;\n      if(source==='bcb'){\n        try{\n          result=await fetchBcbHistory(currency,from,to);\n        }catch(primaryError){\n          result=await fetchFrankfurterHistory(currency,from,to);\n          result.source+=` (alternativa usada porque a consulta PTAX falhou: ${primaryError.message})`;\n        }\n      }else{\n        result=await fetchFrankfurterHistory(currency,from,to);\n      }\n      $('historyData').value=formatHistoryRows(result.rows);\n      updateHistoryStatus();\n      const latest=result.rows[result.rows.length-1];\n      if($('updateFxBase').checked) $('fxBase').value=latest.value.toFixed(4);\n      setOnlineStatus(`${result.rows.length} observações mensais carregadas. Período: ${result.rows[0].month} a ${latest.month}. Última cotação: ${brNumber(latest.value,4)}. Fonte: ${result.source}.`,'ok');\n      if($('modelType').value==='bootstrap') calculate();\n    }catch(error){\n      setOnlineStatus(`Não foi possível buscar a série: ${error.message} Use a importação CSV/TXT ou tente outra fonte.`,'error');\n    }finally{\n      button.disabled=false;\n      button.textContent='Buscar série online';\n    }\n  }\n  function updateHistoryStatus(){\n    const vals=parseHistory($('historyData').value);\n    $('historyStatus').textContent=vals.length>=3 ? `${vals.length} observações; ${vals.length-1} retornos` : 'Série insuficiente';\n    $('historyStatus').style.background=vals.length>=3?'#e8f5ec':'#fff3d6';\n    $('historyStatus').style.color=vals.length>=3?'#2f6f44':'#8a6d1d';\n  }\n\n  function switchModel(){\n    document.querySelectorAll('.model-panel').forEach(p=>p.classList.remove('active'));\n    const map={lognormal:'panelLognormal',triangular:'panelTriangular',discrete:'panelDiscrete',bootstrap:'panelBootstrap'};\n    $(map[$('modelType').value]).classList.add('active');\n  }\n\n  function readInputs(){\n    const d={\n      name:$('nomeProjeto').value.trim(), total:Number($('valorTotal').value), exposed:Number($('valorExposto').value), currency:$('moedaBase').value,\n      horizon:Number($('horizonteMeses').value), fxBase:Number($('fxBase').value), fxScenario:Number($('fxCenario').value), passThrough:Number($('repasse').value)/100,\n      model:$('modelType').value, drift:Number($('driftAnnual').value)/100, vol:Number($('volAnnual').value)/100,\n      fxMin:Number($('fxMin').value), fxMode:Number($('fxMode').value), fxMax:Number($('fxMax').value),\n      schedule:getSchedule(), scenarios:getScenarios(), history:parseHistory($('historyData').value),\n      iterations:Number($('iterations').value), target:Number($('targetPercentile').value), histMetric:$('histMetric').value,\n      histMode:$('histMode').value, binsMode:$('binsMode').value, bins:Number($('bins').value), seed:$('seed').value||'default'\n    };\n    const errors=[];\n    if(!(d.total>0)) errors.push('O valor total deve ser maior que zero.');\n    if(!(d.exposed>=0&&d.exposed<=d.total)) errors.push('A parcela exposta deve ficar entre zero e o valor total.');\n    if(!(d.horizon>=1&&d.horizon<=120)) errors.push('O horizonte deve ficar entre 1 e 120 meses.');\n    if(!(d.fxBase>0&&d.fxScenario>0)) errors.push('Os câmbios-base e determinístico devem ser positivos.');\n    if(!(d.passThrough>=0&&d.passThrough<=1)) errors.push('O repasse deve ficar entre 0% e 100%.');\n    if(!(d.iterations>=1000&&d.iterations<=500000)) errors.push('As iterações devem ficar entre 1.000 e 500.000.');\n    if(!d.schedule.length) errors.push('Inclua ao menos uma parcela no cronograma.');\n    const shareTotal=d.schedule.reduce((a,r)=>a+r.share,0);\n    if(Math.abs(shareTotal-1)>0.0005) errors.push('As participações do cronograma devem totalizar 100%.');\n    d.schedule.forEach((r,i)=>{\n      if(!(r.month>=1&&r.month<=d.horizon)) errors.push(`O mês da parcela ${i+1} deve ficar entre 1 e o horizonte.`);\n      if(!(r.share>=0&&r.share<=1)) errors.push(`A participação da parcela ${i+1} é inválida.`);\n      if(!(r.hedge>=0&&r.hedge<=1)) errors.push(`O hedge da parcela ${i+1} é inválido.`);\n    });\n    if(d.model==='lognormal' && (!(d.vol>0)||!Number.isFinite(d.drift))) errors.push('Informe tendência e volatilidade válidas.');\n    if(d.model==='triangular' && !(d.fxMin>0&&d.fxMin<=d.fxMode&&d.fxMode<=d.fxMax)) errors.push('Na triangular, use mínimo ≤ mais provável ≤ máximo.');\n    if(d.model==='discrete'){\n      const p=d.scenarios.reduce((a,r)=>a+r.probability,0);\n      if(Math.abs(p-1)>0.0005) errors.push('As probabilidades dos cenários devem totalizar 100%.');\n      if(d.scenarios.some(r=>!(r.fx>0)||r.probability<0)) errors.push('Revise os valores e probabilidades dos cenários.');\n    }\n    if(d.model==='bootstrap' && d.history.length<12) errors.push('O bootstrap requer preferencialmente ao menos 12 observações históricas.');\n    return {d,errors};\n  }\n\n  function deterministicPath(d){\n    const path=new Array(d.horizon+1).fill(d.fxBase);\n    const logRatio=Math.log(d.fxScenario/d.fxBase);\n    for(let m=1;m<=d.horizon;m++) path[m]=d.fxBase*Math.exp(logRatio*m/d.horizon);\n    return path;\n  }\n  function simulatePath(d,rng,bootstrapReturns){\n    const path=new Array(d.horizon+1); path[0]=d.fxBase;\n    if(d.model==='lognormal'){\n      const dt=1/12;\n      for(let m=1;m<=d.horizon;m++) path[m]=path[m-1]*Math.exp((d.drift-.5*d.vol*d.vol)*dt+d.vol*Math.sqrt(dt)*normalRandom(rng));\n      return path;\n    }\n    if(d.model==='bootstrap'){\n      for(let m=1;m<=d.horizon;m++) path[m]=path[m-1]*Math.exp(bootstrapReturns[Math.floor(rng()*bootstrapReturns.length)]);\n      return path;\n    }\n    const terminal=d.model==='triangular' ? triangularRandom(d.fxMin,d.fxMode,d.fxMax,rng) : weightedChoice(d.scenarios,rng);\n    const logRatio=Math.log(terminal/d.fxBase);\n    for(let m=1;m<=d.horizon;m++) path[m]=d.fxBase*Math.exp(logRatio*m/d.horizon);\n    return path;\n  }\n  function impactForPath(d,path){\n    let impact=0;\n    for(const r of d.schedule){\n      const baseBrl=d.exposed*r.share;\n      const foreign=baseBrl/d.fxBase;\n      const unhedged=foreign*(1-r.hedge);\n      impact += unhedged*(path[Math.round(r.month)]-d.fxBase)*d.passThrough;\n    }\n    return impact;\n  }\n\n  function simulate(d){\n    const rng=mulberry32(hashString(d.seed));\n    const bootstrapReturns=d.model==='bootstrap'?historyReturns(d.history):[];\n    const net=new Array(d.iterations), loss=new Array(d.iterations), terminalFx=new Array(d.iterations);\n    for(let i=0;i<d.iterations;i++){\n      const path=simulatePath(d,rng,bootstrapReturns);\n      const imp=impactForPath(d,path);\n      net[i]=imp; loss[i]=Math.max(0,imp); terminalFx[i]=path[d.horizon];\n    }\n    net.sort((a,b)=>a-b); loss.sort((a,b)=>a-b); terminalFx.sort((a,b)=>a-b);\n    const det=impactForPath(d,deterministicPath(d));\n    const probLoss=net.length ? net.filter(x=>x>0).length/net.length : 0;\n    const probGain=net.length ? net.filter(x=>x<0).length/net.length : 0;\n    const positive=net.filter(x=>x>0), negative=net.filter(x=>x<0);\n    const p={}; [0.5,0.8,0.9,0.95,0.99].forEach(q=>p[q]=quantile(loss,q));\n    return {\n      net,loss,terminalFx,det,probLoss,probGain,\n      netMean:mean(net), lossMean:mean(loss), gainMean:negative.length?mean(negative):0, conditionalLoss:positive.length?mean(positive):0,\n      sd:stdev(net), skew:skewness(net), kurt:excessKurtosis(net), fxMean:mean(terminalFx), fxP50:quantile(terminalFx,.5),\n      p, target:quantile(loss,d.target), cvarTarget:cvar(loss,d.target), targetQ:d.target\n    };\n  }\n\n  function autoBins(sorted){\n    const n=sorted.length; if(n<2) return 10;\n    const min=sorted[0],max=sorted[n-1],iqr=quantile(sorted,.75)-quantile(sorted,.25);\n    if(max===min) return 10;\n    if(iqr<=0) return clamp(Math.ceil(Math.sqrt(n)),10,100);\n    const width=2*iqr/Math.cbrt(n);\n    return clamp(Math.ceil((max-min)/width),10,100);\n  }\n  function histogram(sorted,bins){\n    const min=sorted[0]??0,max0=sorted[sorted.length-1]??1,max=max0===min?min+1:max0,width=(max-min)/bins,counts=new Array(bins).fill(0);\n    for(const v of sorted){let idx=Math.floor((v-min)/width);if(idx>=bins)idx=bins-1;if(idx<0)idx=0;counts[idx]++;}\n    return {min,max,width,counts};\n  }\n  function drawAxes(ctx,w,h,pad,xMin,xMax,yMax,yFormatter){\n    const pw=w-pad.l-pad.r,ph=h-pad.t-pad.b;\n    ctx.strokeStyle='#d9e1ea';ctx.lineWidth=1;ctx.fillStyle='#5e6b78';ctx.font='12px Arial';\n    for(let i=0;i<=5;i++){\n      const y=pad.t+ph*i/5;ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(w-pad.r,y);ctx.stroke();ctx.textAlign='right';ctx.fillText(yFormatter(yMax*(5-i)/5),pad.l-8,y+4);\n    }\n    ctx.strokeStyle='#44525f';ctx.lineWidth=1.3;ctx.beginPath();ctx.moveTo(pad.l,pad.t);ctx.lineTo(pad.l,h-pad.b);ctx.lineTo(w-pad.r,h-pad.b);ctx.stroke();\n    ctx.textAlign='center';ctx.fillStyle='#5e6b78';\n    for(let i=0;i<=4;i++){const x=pad.l+pw*i/4,val=xMin+(xMax-xMin)*i/4;ctx.fillText(shortMoney(val),x,h-18);}\n  }\n  function drawVerticalMarker(ctx,value,min,max,pad,w,h,color,label){\n    if(!Number.isFinite(value)||value<min||value>max)return;\n    const x=pad.l+(value-min)/((max-min)||1)*(w-pad.l-pad.r);\n    ctx.strokeStyle=color;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x,pad.t);ctx.lineTo(x,h-pad.b);ctx.stroke();ctx.fillStyle=color;ctx.font='12px Arial';ctx.textAlign='left';ctx.fillText(label,Math.min(w-pad.r-55,x+4),pad.t+14);\n  }\n  function drawHistogram(canvas,sorted,bins,mode,markers){\n    const ctx=canvas.getContext('2d'),w=canvas.width,h=canvas.height,pad={l:68,r:20,t:20,b:48};\n    ctx.clearRect(0,0,w,h);ctx.fillStyle='#fff';ctx.fillRect(0,0,w,h);\n    const hist=histogram(sorted,bins),n=sorted.length;\n    const vals=hist.counts.map(c=>mode==='count'?c:mode==='density'?c/(n*hist.width):c/n);\n    const yMax=Math.max(...vals,1e-12), pw=w-pad.l-pad.r,ph=h-pad.t-pad.b,bw=pw/hist.counts.length;\n    drawAxes(ctx,w,h,pad,hist.min,hist.max,yMax,v=>mode==='count'?String(Math.round(v)):mode==='density'?brNumber(v,4):brNumber(v*100,1)+'%');\n    ctx.fillStyle='#7ba6d8';vals.forEach((v,i)=>{const bh=v/yMax*ph,x=pad.l+i*bw+1,y=h-pad.b-bh;ctx.fillRect(x,y,Math.max(1,bw-2),bh);});\n    drawVerticalMarker(ctx,markers.mean,hist.min,hist.max,pad,w,h,'#1f5aa6','Média');\n    drawVerticalMarker(ctx,markers.target,hist.min,hist.max,pad,w,h,'#2b7a78','Alvo');\n    drawVerticalMarker(ctx,markers.det,hist.min,hist.max,pad,w,h,'#a63d40','Det.');\n  }\n  function drawCDF(canvas,sorted,targetQ,targetValue){\n    const ctx=canvas.getContext('2d'),w=canvas.width,h=canvas.height,pad={l:68,r:20,t:20,b:48};\n    ctx.clearRect(0,0,w,h);ctx.fillStyle='#fff';ctx.fillRect(0,0,w,h);\n    const min=sorted[0]??0,max0=sorted[sorted.length-1]??1,max=max0===min?min+1:max0,pw=w-pad.l-pad.r,ph=h-pad.t-pad.b;\n    ctx.strokeStyle='#d9e1ea';ctx.fillStyle='#5e6b78';ctx.font='12px Arial';\n    for(let i=0;i<=5;i++){const y=pad.t+ph*i/5;ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(w-pad.r,y);ctx.stroke();ctx.textAlign='right';ctx.fillText(brNumber((5-i)*20,0)+'%',pad.l-8,y+4);}\n    ctx.strokeStyle='#1f5aa6';ctx.lineWidth=2;ctx.beginPath();\n    sorted.forEach((v,i)=>{const x=pad.l+(v-min)/(max-min)*pw,y=h-pad.b-(i/(sorted.length-1||1))*ph;i?ctx.lineTo(x,y):ctx.moveTo(x,y);});ctx.stroke();\n    ctx.strokeStyle='#44525f';ctx.lineWidth=1.3;ctx.beginPath();ctx.moveTo(pad.l,pad.t);ctx.lineTo(pad.l,h-pad.b);ctx.lineTo(w-pad.r,h-pad.b);ctx.stroke();\n    ctx.fillStyle='#5e6b78';ctx.textAlign='center';for(let i=0;i<=4;i++){const x=pad.l+pw*i/4,val=min+(max-min)*i/4;ctx.fillText(shortMoney(val),x,h-18);}\n    const tx=pad.l+(targetValue-min)/(max-min)*pw,ty=h-pad.b-targetQ*ph;\n    ctx.strokeStyle='#2b7a78';ctx.lineWidth=2;ctx.setLineDash([6,4]);ctx.beginPath();ctx.moveTo(pad.l,ty);ctx.lineTo(tx,ty);ctx.lineTo(tx,h-pad.b);ctx.stroke();ctx.setLineDash([]);\n    ctx.fillStyle='#2b7a78';ctx.textAlign='left';ctx.fillText('P'+Math.round(targetQ*100),Math.min(tx+5,w-pad.r-30),Math.max(pad.t+13,ty-5));\n  }\n\n  function buildTable(id,rows){\n    const body=$(id).querySelector('tbody');body.innerHTML='';\n    rows.forEach(row=>{const tr=document.createElement('tr');row.forEach(c=>{const td=document.createElement('td');td.innerHTML=c;tr.appendChild(td);});body.appendChild(tr);});\n  }\n  function modelLabel(d){return {lognormal:'Lognormal por volatilidade',triangular:'Triangular por cenários',discrete:'Cenários discretos',bootstrap:'Bootstrap histórico'}[d.model];}\n  function updateResults(d,r){\n    $('mDet').textContent=brMoney(r.det); $('mDetPct').textContent=brNumber(pctOf(r.det,d.total),2)+'% do contrato';\n    $('mNetMean').textContent=brMoney(r.netMean); $('mProbLoss').textContent='Probabilidade de perda: '+brNumber(r.probLoss*100,2)+'%';\n    $('mTarget').textContent=brMoney(r.target); $('mTargetPct').textContent=brNumber(pctOf(r.target,d.total),2)+'% do contrato';\n    $('mCvar').textContent=brMoney(r.cvarTarget);\n\n    buildTable('statsTable',[\n      ['Modelo estatístico',modelLabel(d)],['Impacto líquido esperado',brMoney(r.netMean)],['Perda esperada não negativa',brMoney(r.lossMean)],\n      ['Probabilidade de perda',brNumber(r.probLoss*100,2)+'%'],['Probabilidade de ganho',brNumber(r.probGain*100,2)+'%'],\n      ['Perda média condicionada à perda',brMoney(r.conditionalLoss)],['Ganho médio condicionado ao ganho',brMoney(r.gainMean)],\n      ['Desvio padrão do impacto líquido',brMoney(r.sd)],['Assimetria',brNumber(r.skew,3)],['Curtose excedente',brNumber(r.kurt,3)],\n      ['FX terminal médio',brNumber(r.fxMean,4)],['FX terminal mediano',brNumber(r.fxP50,4)]\n    ]);\n    buildTable('pctTable',[\n      ['P50',brMoney(r.p[.5]),brNumber(pctOf(r.p[.5],d.total),2)+'%'],['P80',brMoney(r.p[.8]),brNumber(pctOf(r.p[.8],d.total),2)+'%'],\n      ['P90',brMoney(r.p[.9]),brNumber(pctOf(r.p[.9],d.total),2)+'%'],['P95',brMoney(r.p[.95]),brNumber(pctOf(r.p[.95],d.total),2)+'%'],\n      ['P99',brMoney(r.p[.99]),brNumber(pctOf(r.p[.99],d.total),2)+'%'],['CVaR P'+Math.round(d.target*100),brMoney(r.cvarTarget),brNumber(pctOf(r.cvarTarget,d.total),2)+'%']\n    ]);\n    const scheduleText=d.schedule.map(x=>`M${x.month}: ${brNumber(x.share*100,1)}% / hedge ${brNumber(x.hedge*100,1)}%`).join('<br>');\n    const modelDetails=d.model==='lognormal'?`Tendência ${brNumber(d.drift*100,2)}% a.a.; volatilidade ${brNumber(d.vol*100,2)}% a.a.`:\n      d.model==='triangular'?`Mín. ${brNumber(d.fxMin,4)}; moda ${brNumber(d.fxMode,4)}; máx. ${brNumber(d.fxMax,4)}`:\n      d.model==='discrete'?d.scenarios.map(s=>`${escapeHtml(s.name)}: ${brNumber(s.fx,4)} (${brNumber(s.probability*100,1)}%)`).join('<br>'):\n      `${d.history.length} observações históricas`;\n    buildTable('assumptionsTable',[\n      ['Projeto',escapeHtml(d.name||'—')],['Moeda',d.currency],['Valor total',brMoney(d.total)],['Parcela exposta',brMoney(d.exposed)],\n      ['Câmbio-base',brNumber(d.fxBase,4)],['Câmbio determinístico',brNumber(d.fxScenario,4)],['Horizonte',d.horizon+' meses'],\n      ['Fator de repasse',brNumber(d.passThrough*100,1)+'%'],['Modelo',modelLabel(d)],['Parâmetros do modelo',modelDetails],\n      ['Cronograma',scheduleText],['Iterações',new Intl.NumberFormat('pt-BR').format(d.iterations)],['Semente',escapeHtml(d.seed)]\n    ]);\n\n    const series=d.histMetric==='net'?r.net:r.loss;\n    const bins=d.binsMode==='auto'?autoBins(series):d.bins;\n    $('histTitle').textContent=d.histMetric==='net'?'Histograma do impacto econômico líquido':'Histograma das perdas / contingência';\n    drawHistogram($('histCanvas'),series,bins,d.histMode,{mean:mean(series),target:r.target,det:d.histMetric==='net'?r.det:Math.max(0,r.det)});\n    drawCDF($('cdfCanvas'),r.loss,d.target,r.target);\n\n    const targetName='P'+Math.round(d.target*100);\n    $('interpretation').innerHTML=[\n      `O modelo <strong>${modelLabel(d)}<\u002Fstrong> produziu impacto econômico líquido esperado de <strong>${brMoney(r.netMean)}<\u002Fstrong>.`,\n      `A probabilidade simulada de aumento de custo foi de <strong>${brNumber(r.probLoss*100,2)}%<\u002Fstrong>. A perda esperada, desconsiderando ganhos para fins de reserva, foi de <strong>${brMoney(r.lossMean)}<\u002Fstrong>.`,\n      `Para uma reserva no nível <strong>${targetName}<\u002Fstrong>, a contingência é <strong>${brMoney(r.target)}<\u002Fstrong> (${brNumber(pctOf(r.target,d.total),2)}% do contrato).`,\n      `Nos cenários além desse limite, a perda média de cauda — CVaR ${targetName} — foi de <strong>${brMoney(r.cvarTarget)}<\u002Fstrong>.`,\n      d.histMetric==='loss'?'O histograma exibido representa apenas perdas. Resultados favoráveis foram preservados na distribuição econômica, mas convertidos em zero somente na série usada para contingência.':'O histograma exibido representa a distribuição econômica completa, incluindo ganhos e perdas.'\n    ].join('<br><br>');\n  }\n\n  function calculate(){\n    const {d,errors}=readInputs();\n    if(errors.length){$('validation').innerHTML='<span style=\"color:#a63d40\"><strong>Revise:<\u002Fstrong> '+errors.map(escapeHtml).join(' • ')+'<\u002Fspan>';return;}\n    $('validation').textContent='';\n    const r=simulate(d); lastRun={d,r}; updateResults(d,r);\n  }\n\n  function exportCsv(){\n    if(!lastRun){alert('Execute a simulação primeiro.');return;}\n    const {d,r}=lastRun;\n    const rows=[\n      ['Projeto',d.name],['Modelo',modelLabel(d)],['Valor total',d.total],['Parcela exposta',d.exposed],['Moeda',d.currency],['Horizonte meses',d.horizon],\n      ['Câmbio base',d.fxBase],['Câmbio determinístico',d.fxScenario],['Repasse',d.passThrough],['Iterações',d.iterations],['Semente',d.seed],\n      ['Impacto determinístico',r.det],['Impacto líquido esperado',r.netMean],['Perda esperada',r.lossMean],['Probabilidade de perda',r.probLoss],\n      ['P50',r.p[.5]],['P80',r.p[.8]],['P90',r.p[.9]],['P95',r.p[.95]],['P99',r.p[.99]],['Contingência alvo',r.target],['CVaR alvo',r.cvarTarget]\n    ];\n    d.schedule.forEach((s,i)=>rows.push([`Parcela ${i+1}`,`Mês ${s.month}; participação ${s.share}; hedge ${s.hedge}`]));\n    const csv='\\ufeff'+rows.map(r=>r.map(v=>'\"'+String(v).replaceAll('\"','\"\"')+'\"').join(';')).join('\\n');\n    const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'}),url=URL.createObjectURL(blob),a=document.createElement('a');\n    a.href=url;a.download='resultado_risco_cambial_revisado.csv';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);\n  }\n\n  function loadExample(){\n    $('nomeProjeto').value='Exemplo: elevadores e equipamentos importados';$('valorTotal').value='12000000';$('valorExposto').value='3000000';$('horizonteMeses').value='10';\n    $('fxBase').value='5.20';$('fxCenario').value='5.85';$('repasse').value='100';$('modelType').value='lognormal';$('driftAnnual').value='8';$('volAnnual').value='18';\n    $('iterations').value='30000';$('targetPercentile').value='0.80';$('histMetric').value='loss';$('histMode').value='relative';$('binsMode').value='auto';$('seed').value='risco-cambial-2026';\n    const body=$('scheduleTable').querySelector('tbody');body.innerHTML='';addScheduleRow(3,20,0);addScheduleRow(6,35,30);addScheduleRow(10,45,0);switchModel();calculate();\n  }\n\n  $('modelType').addEventListener('change',switchModel);\n  $('binsMode').addEventListener('change',()=>{$('bins').disabled=$('binsMode').value==='auto';});\n  $('addSchedule').addEventListener('click',()=>addScheduleRow(Number($('horizonteMeses').value)||1,0,0));\n  $('equalSchedule').addEventListener('click',equalizeSchedule);\n  $('calculate').addEventListener('click',calculate);$('loadExample').addEventListener('click',loadExample);$('exportCsv').addEventListener('click',exportCsv);$('printPdf').addEventListener('click',()=>window.print());\n  $('historyData').addEventListener('input',updateHistoryStatus);\n  $('fetchHistory').addEventListener('click',fetchOnlineHistory);\n  $('historyFile').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const reader=new FileReader();reader.onload=()=>{$('historyData').value=reader.result;updateHistoryStatus();};reader.readAsText(f);});\n  $('histMetric').addEventListener('change',()=>{if(lastRun)updateResults(lastRun.d,lastRun.r);});\n  $('histMode').addEventListener('change',()=>{if(lastRun)updateResults(lastRun.d,lastRun.r);});\n  $('binsMode').addEventListener('change',()=>{if(lastRun)updateResults(lastRun.d,lastRun.r);});\n  $('bins').addEventListener('input',()=>{if(lastRun&&$('binsMode').value==='manual')updateResults(lastRun.d,lastRun.r);});\n\n  buildScenarios(); loadExample();\n})();\n<\u002Fscript>\n\n<!-- ===== Tela de abertura: animação Monte Carlo + aviso legal ===== -->\n<style>\n#mcSplash{position:fixed;inset:0;z-index:99999;background:#0a1322;overflow:hidden;transition:opacity .7s ease}\n#mcSplash.fadeout{opacity:0;pointer-events:none}\n#mcSplash canvas{position:absolute;inset:0;width:100%;height:100%;display:block;border:none;border-radius:0;background:transparent}\n#mcHead{position:absolute;top:9%;left:0;right:0;text-align:center;color:#eaf2fc;font-family:Arial,Helvetica,sans-serif;pointer-events:none}\n#mcHead h1{font-size:clamp(28px,4.2vw,58px);font-weight:800;letter-spacing:.02em;margin:0 0 10px;text-shadow:0 4px 30px rgba(64,140,255,.35);opacity:0;animation:mcFadeUp 1.1s .25s ease forwards}\n#mcHead p{font-size:clamp(13px,1.3vw,18px);color:#9db4d3;margin:0;letter-spacing:.14em;text-transform:uppercase;opacity:0;animation:mcFadeUp 1.1s .7s ease forwards}\n#mcCounter{position:absolute;bottom:4.5%;left:0;right:0;text-align:center;font:600 clamp(12px,1.1vw,15px)/1.4 Consolas,monospace;color:#7f97b8;letter-spacing:.08em;pointer-events:none}\n@keyframes mcFadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}\n#mcVeil{position:absolute;inset:0;background:rgba(6,11,20,.62);backdrop-filter:blur(5px);opacity:0;pointer-events:none;transition:opacity .6s ease;display:flex;align-items:center;justify-content:center;padding:24px}\n#mcSplash.legal #mcVeil{opacity:1;pointer-events:auto}\n#mcLegal{background:#fff;color:#1d2733;max-width:640px;width:100%;border-radius:18px;box-shadow:0 30px 80px rgba(0,0,0,.5);padding:28px 30px;font-family:Arial,Helvetica,sans-serif;transform:translateY(24px) scale(.97);transition:transform .6s cubic-bezier(.2,.8,.25,1)}\n#mcSplash.legal #mcLegal{transform:none}\n#mcLegal h2{margin:0 0 4px;font-size:22px;color:#1f5aa6}\n#mcLegal .sys{font-size:12px;color:#5e6b78;text-transform:uppercase;letter-spacing:.1em;margin-bottom:14px}\n#mcLegal .terms{max-height:min(38vh,300px);overflow:auto;border:1px solid #d9e1ea;border-radius:12px;padding:14px 16px;font-size:13.5px;line-height:1.55;color:#334250;background:#f8fafc}\n#mcLegal .terms p{margin:0 0 10px}\n#mcLegal .terms p:last-child{margin:0;font-weight:700}\n#mcAgreeRow{display:flex;gap:10px;align-items:flex-start;margin:16px 0}\n#mcAgreeRow input{width:18px;height:18px;margin-top:1px;accent-color:#1f5aa6;cursor:pointer}\n#mcAgreeRow label{font-size:14px;font-weight:700;color:#1d2733;cursor:pointer;line-height:1.4}\n#mcEnter{width:100%;border:none;border-radius:12px;padding:13px;font-size:15px;font-weight:800;font-family:inherit;cursor:pointer;background:#1f5aa6;color:#fff;transition:.15s ease}\n#mcEnter:disabled{background:#c7d3e0;cursor:not-allowed}\n#mcEnter:not(:disabled):hover{transform:translateY(-1px);box-shadow:0 8px 22px rgba(31,90,166,.35)}\n<\u002Fstyle>\n<div id=\"mcSplash\">\n  <canvas id=\"mcTrails\"><\u002Fcanvas>\n  <canvas id=\"mcTop\"><\u002Fcanvas>\n  <div id=\"mcHead\"><h1>Simulador de Risco Cambial<\u002Fh1><p>Simulação de Monte Carlo · Análise probabilística<\u002Fp><\u002Fdiv>\n  <div id=\"mcCounter\">0 cenários simulados<\u002Fdiv>\n  <div id=\"mcVeil\">\n    <div id=\"mcLegal\" role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"mcLegalTitle\">\n      <h2 id=\"mcLegalTitle\">Aviso Legal<\u002Fh2>\n      <div class=\"sys\">Simulador de Risco Cambial<\u002Fdiv>\n      <div class=\"terms\">\n        <p>Este sistema é uma ferramenta de apoio à análise, baseada em simulações estatísticas pelo método de Monte Carlo e em premissas informadas pelo usuário.<\u002Fp>\n        <p><strong>1.<\u002Fstrong> Os resultados apresentados são estimativas probabilísticas e não constituem previsão, garantia de resultado, recomendação de investimento, nem aconselhamento financeiro, contábil ou jurídico.<\u002Fp>\n        <p><strong>2.<\u002Fstrong> A qualidade dos resultados depende integralmente das premissas, dos parâmetros e dos dados inseridos. Dados históricos não asseguram o comportamento futuro do câmbio.<\u002Fp>\n        <p><strong>3.<\u002Fstrong> As decisões tomadas com base nas informações geradas por este sistema são de exclusiva responsabilidade do usuário, recomendando-se a validação por profissionais habilitados.<\u002Fp>\n        <p><strong>4.<\u002Fstrong> Os desenvolvedores e distribuidores não se responsabilizam por perdas ou danos, diretos ou indiretos, decorrentes do uso ou da impossibilidade de uso desta ferramenta.<\u002Fp>\n        <p>Ao prosseguir, você declara ter lido, compreendido e aceito integralmente estes termos.<\u002Fp>\n      <\u002Fdiv>\n      <div id=\"mcAgreeRow\">\n        <input type=\"checkbox\" id=\"mcAgree\">\n        <label for=\"mcAgree\">Li, compreendi e concordo com os termos acima.<\u002Flabel>\n      <\u002Fdiv>\n      <button id=\"mcEnter\" disabled=\"\">Acessar o sistema<\u002Fbutton>\n    <\u002Fdiv>\n  <\u002Fdiv>\n<\u002Fdiv>\n<script>\n(function(){\n  var splash=document.getElementById('mcSplash');\n  var trails=document.getElementById('mcTrails'),topCv=document.getElementById('mcTop');\n  var tctx=trails.getContext('2d'),uctx=topCv.getContext('2d');\n  var counterEl=document.getElementById('mcCounter');\n  document.body.style.overflow='hidden';\n  var W,H,dpr;\n  function resize(){\n    dpr=Math.min(window.devicePixelRatio||1,3);\n    W=window.innerWidth;H=window.innerHeight;\n    [trails,topCv].forEach(function(c){c.width=Math.round(W*dpr);c.height=Math.round(H*dpr);});\n    tctx.setTransform(dpr,0,0,dpr,0,0);uctx.setTransform(dpr,0,0,dpr,0,0);\n    tctx.fillStyle='#0a1322';tctx.fillRect(0,0,W,H);\n  }\n  resize();window.addEventListener('resize',resize);\n  function gauss(){var u=0,v=0;while(u===0)u=Math.random();while(v===0)v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}\n  var NBINS=42,counts=new Array(NBINS).fill(0),barH=new Array(NBINS).fill(0),total=0;\n  var hues=[210,262,175,320,25,140,45,285];\n  function layout(){\n    return {x0:W*0.08,x1:W*0.92,cy:H*0.40,spread:H*0.17,base:H*0.865,barMax:H*0.30};\n  }\n  var paths=[],drops=[];\n  function newPath(stagger){\n    var L=layout();\n    return {x:L.x0-(stagger?Math.random()*(L.x1-L.x0):0),y:L.cy,drift:(Math.random()-0.48)*0.14,\n      vol:H*0.004*(0.6+Math.random()),speed:(L.x1-L.x0)/(70+Math.random()*60),\n      hue:hues[Math.floor(Math.random()*hues.length)]+Math.random()*18,px:0,py:0};\n  }\n  for(var i=0;i<34;i++)paths.push(newPath(true));\n  function binFor(y){var L=layout();var t=(y-(L.cy-L.spread))/(2*L.spread);return Math.max(0,Math.min(NBINS-1,Math.floor(t*NBINS)));}\n  var t0=null,raf=null,shown=false,done=false;\n  function frame(ts){\n    if(t0===null)t0=ts;\n    var elapsed=ts-t0;\n    var L=layout();\n    tctx.fillStyle='rgba(10,19,34,0.075)';tctx.fillRect(0,0,W,H);\n    tctx.lineWidth=Math.max(1.4,W/1100);tctx.lineCap='round';\n    paths.forEach(function(p){\n      p.px=p.x;p.py=p.y;\n      p.x+=p.speed;\n      p.y+=p.drift*p.speed+gauss()*p.vol;\n      var maxDev=L.spread*1.05;\n      if(p.y<L.cy-maxDev)p.y=L.cy-maxDev;if(p.y>L.cy+maxDev)p.y=L.cy+maxDev;\n      if(p.px>=L.x0-1){\n        tctx.strokeStyle='hsla('+p.hue+',90%,64%,0.9)';\n        tctx.shadowColor='hsla('+p.hue+',95%,60%,0.8)';tctx.shadowBlur=6;\n        tctx.beginPath();tctx.moveTo(Math.max(p.px,L.x0),p.py);tctx.lineTo(p.x,p.y);tctx.stroke();\n        tctx.shadowBlur=0;\n      }\n      if(p.x>=L.x1){\n        drops.push({x:p.x,y:p.y,vy:0,hue:p.hue,bin:binFor(p.y)});\n        var np=newPath(false);p.x=np.x;p.y=np.y;p.drift=np.drift;p.vol=np.vol;p.speed=np.speed;p.hue=np.hue;\n      }\n    });\n    if(elapsed>600){var extra=Math.min(14,Math.floor(elapsed/300));for(var k=0;k<extra;k++){var g=gauss()*0.16+0.5;var b=Math.max(0,Math.min(NBINS-1,Math.floor(g*NBINS)));counts[b]++;total++;}}\n    uctx.clearRect(0,0,W,H);\n    for(var d=drops.length-1;d>=0;d--){\n      var o=drops[d];o.vy+=H*0.0011;o.y+=o.vy;\n      var bw=(L.x1-L.x0)/NBINS,bx=L.x0+o.bin*bw+bw/2;\n      o.x+=(bx-o.x)*0.15;\n      uctx.fillStyle='hsla('+o.hue+',92%,66%,0.95)';\n      uctx.shadowColor='hsla('+o.hue+',95%,60%,0.9)';uctx.shadowBlur=10;\n      uctx.beginPath();uctx.arc(o.x,o.y,Math.max(2.2,W/560),0,7);uctx.fill();uctx.shadowBlur=0;\n      if(o.y>=L.base-barH[o.bin]){counts[o.bin]++;total++;drops.splice(d,1);}\n    }\n    var maxC=1;for(var m=0;m<NBINS;m++)if(counts[m]>maxC)maxC=counts[m];\n    var bw2=(L.x1-L.x0)/NBINS;\n    for(var b2=0;b2<NBINS;b2++){\n      var target=counts[b2]/maxC*L.barMax;\n      barH[b2]+=(target-barH[b2])*0.12;\n      var hgt=barH[b2];if(hgt<0.5)continue;\n      var hx=L.x0+b2*bw2;\n      var hue=205+(b2/NBINS)*130;\n      var grad=uctx.createLinearGradient(0,L.base-hgt,0,L.base);\n      grad.addColorStop(0,'hsla('+hue+',88%,66%,0.95)');\n      grad.addColorStop(1,'hsla('+hue+',80%,42%,0.85)');\n      uctx.fillStyle=grad;\n      if(uctx.roundRect){uctx.beginPath();uctx.roundRect(hx+bw2*0.12,L.base-hgt,bw2*0.76,hgt,[3,3,0,0]);uctx.fill();}\n      else{uctx.fillRect(hx+bw2*0.12,L.base-hgt,bw2*0.76,hgt);}\n    }\n    uctx.strokeStyle='rgba(157,180,211,0.35)';uctx.lineWidth=1;\n    uctx.beginPath();uctx.moveTo(L.x0,L.base+1);uctx.lineTo(L.x1,L.base+1);uctx.stroke();\n    counterEl.textContent=total.toLocaleString('pt-BR')+' cenários simulados';\n    if(elapsed>5000&&!shown){shown=true;splash.classList.add('legal');}\n    if(!done)raf=requestAnimationFrame(frame);\n  }\n  raf=requestAnimationFrame(frame);\n  var agree=document.getElementById('mcAgree'),enter=document.getElementById('mcEnter');\n  agree.addEventListener('change',function(){enter.disabled=!agree.checked;});\n  enter.addEventListener('click',function(){\n    splash.classList.add('fadeout');\n    document.body.style.overflow='';\n    setTimeout(function(){done=true;cancelAnimationFrame(raf);splash.remove();},750);\n  });\n})();\n<\u002Fscript>\n\n\n\n<\u002Fbody><\u002Fhtml>"
+  </script>
+</body>
+</html>
