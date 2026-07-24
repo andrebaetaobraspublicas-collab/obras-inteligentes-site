@@ -99,7 +99,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/aterramentopro/` | 164648 bytes | 164648 caracteres |
 | `/parafusopro/` | 223926 bytes | 223926 caracteres |
 | `/risco-cambial/` | 68775 bytes | 68775 caracteres |
-| `/protendpro/` | 768485 bytes | 768485 caracteres |
+| `/protendpro/` | 820879 bytes | 820879 caracteres |
 
 ## Estrutura local principal
 
@@ -566,9 +566,9 @@ Arquivo: `protendpro/index.html`
 
 Ultima inclusao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\ProtendPro_Aprimorado_v1_4_0_FINAL.html`
+- Fonte: `C:\Users\ACER\Documents\Downloads\ProtendPro_Aprimorado_v1_6_0_FINAL.html`
 - Data: 24/07/2026
-- Alteracao: inclusao de novo card na home e publicacao do aplicativo como HTML standalone.
+- Alteracao: atualizacao do aplicativo ProtendPro para nova versao standalone 1.6.0.
 
 Observacoes:
 
