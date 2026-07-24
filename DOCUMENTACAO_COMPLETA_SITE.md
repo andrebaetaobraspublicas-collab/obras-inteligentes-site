@@ -98,7 +98,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/concretopro/` | 621889 bytes | 621889 caracteres |
 | `/aterramentopro/` | 164648 bytes | 164648 caracteres |
 | `/parafusopro/` | 223926 bytes | 223926 caracteres |
-| `/risco-cambial/` | 79410 bytes | 79410 caracteres |
+| `/risco-cambial/` | 68775 bytes | 68775 caracteres |
 | `/protendpro/` | 768485 bytes | 768485 caracteres |
 
 ## Estrutura local principal
@@ -549,9 +549,9 @@ Arquivo: `risco-cambial/index.html`
 
 Ultima inclusao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\Simulador de Risco Cambial (offline).html`
-- Data: 22/07/2026
-- Alteracao: inclusao de novo card na home e publicacao do aplicativo como HTML standalone.
+- Fonte: `C:\Users\ACER\Documents\Downloads\Simulador_de_Risco_Cambial_v2026.09.html`
+- Data: 24/07/2026
+- Alteracao: atualizacao do aplicativo Simulador de Risco Cambial para nova versao standalone v2026.09.
 
 Observacoes:
 
