@@ -19,7 +19,7 @@ O site `www.obrasinteligentes.ia.br` e uma pagina estatica hospedada na Hostinge
 C:\Obras Inteligentes\index.html
 ```
 
-A tela inicial possui atualmente 27 cards de aplicativos. Cada card aponta para uma rota estatica dentro do dominio. A regra geral e:
+A tela inicial possui atualmente 28 cards de aplicativos. Cada card aponta para uma rota estatica dentro do dominio. A regra geral e:
 
 ```text
 https://www.obrasinteligentes.ia.br/nome-da-rota/
@@ -66,6 +66,7 @@ Verificacao feita em 21/07/2026. Todos os cards da home possuem arquivo local co
 | 25 / PARAFUSOS | ParafusoPro | `/parafusopro/` | `C:\Obras Inteligentes\parafusopro\index.html` | existe | 200 |
 | 26 / CAMBIO | Simulador de Risco Cambial | `/risco-cambial/` | `C:\Obras Inteligentes\risco-cambial\index.html` | existe | 200 |
 | 27 / PROTENSAO | ProtendPro | `/protendpro/` | `C:\Obras Inteligentes\protendpro\index.html` | existe | 200 |
+| 28 / EVENTOGRAMA | EventogramaPro | `/eventogramapro/` | `C:\Obras Inteligentes\eventogramapro\index.html` | existe | 200 |
 
 ## Tamanhos verificados
 
@@ -100,6 +101,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/parafusopro/` | 223926 bytes | 223926 caracteres |
 | `/risco-cambial/` | 68775 bytes | 68775 caracteres |
 | `/protendpro/` | 820879 bytes | 820879 caracteres |
+| `/eventogramapro/` | 728843 bytes | 728843 caracteres |
 
 ## Estrutura local principal
 
@@ -141,7 +143,7 @@ C:\Obras Inteligentes
    └─ index.html
 ```
 
-Atualizacao posterior: tambem existem as pastas `C:\Obras Inteligentes\reservatoriopro\index.html`, correspondente ao card 13 / RESERVATORIO, `C:\Obras Inteligentes\bombapro\index.html`, correspondente ao card 14 / BOMBAS, `C:\Obras Inteligentes\paraboltpro\index.html`, correspondente ao card 15 / CHUMBADORES, `C:\Obras Inteligentes\steelpro\index.html`, correspondente ao card 16 / ACO, `C:\Obras Inteligentes\cronogramapro\index.html`, correspondente ao card 17 / CRONOGRAMA, `C:\Obras Inteligentes\drenapro\index.html`, correspondente ao card 18 / DRENAGEM, `C:\Obras Inteligentes\taludepro\index.html`, correspondente ao card 19 / TALUDES, `C:\Obras Inteligentes\solarpro\index.html`, correspondente ao card 20 / SOLAR, `C:\Obras Inteligentes\pgrcc\index.html`, correspondente ao card 21 / RESIDUOS, `C:\Obras Inteligentes\ventopro\index.html`, correspondente ao card 22 / VENTO, `C:\Obras Inteligentes\concretopro\index.html`, correspondente ao card 23 / CONCRETO, `C:\Obras Inteligentes\aterramentopro\index.html`, correspondente ao card 24 / ATERRAMENTO, `C:\Obras Inteligentes\parafusopro\index.html`, correspondente ao card 25 / PARAFUSOS, `C:\Obras Inteligentes\risco-cambial\index.html`, correspondente ao card 26 / CAMBIO, e `C:\Obras Inteligentes\protendpro\index.html`, correspondente ao card 27 / PROTENSAO.
+Atualizacao posterior: tambem existem as pastas `C:\Obras Inteligentes\reservatoriopro\index.html`, correspondente ao card 13 / RESERVATORIO, `C:\Obras Inteligentes\bombapro\index.html`, correspondente ao card 14 / BOMBAS, `C:\Obras Inteligentes\paraboltpro\index.html`, correspondente ao card 15 / CHUMBADORES, `C:\Obras Inteligentes\steelpro\index.html`, correspondente ao card 16 / ACO, `C:\Obras Inteligentes\cronogramapro\index.html`, correspondente ao card 17 / CRONOGRAMA, `C:\Obras Inteligentes\drenapro\index.html`, correspondente ao card 18 / DRENAGEM, `C:\Obras Inteligentes\taludepro\index.html`, correspondente ao card 19 / TALUDES, `C:\Obras Inteligentes\solarpro\index.html`, correspondente ao card 20 / SOLAR, `C:\Obras Inteligentes\pgrcc\index.html`, correspondente ao card 21 / RESIDUOS, `C:\Obras Inteligentes\ventopro\index.html`, correspondente ao card 22 / VENTO, `C:\Obras Inteligentes\concretopro\index.html`, correspondente ao card 23 / CONCRETO, `C:\Obras Inteligentes\aterramentopro\index.html`, correspondente ao card 24 / ATERRAMENTO, `C:\Obras Inteligentes\parafusopro\index.html`, correspondente ao card 25 / PARAFUSOS, `C:\Obras Inteligentes\risco-cambial\index.html`, correspondente ao card 26 / CAMBIO, `C:\Obras Inteligentes\protendpro\index.html`, correspondente ao card 27 / PROTENSAO, e `C:\Obras Inteligentes\eventogramapro\index.html`, correspondente ao card 28 / EVENTOGRAMA.
 
 ## Estado funcional importante por modulo
 
@@ -576,6 +578,23 @@ Observacoes:
 - Tela inicial do site aponta para `/protendpro/`.
 - Validar apos futuras alteracoes se a abertura, o dimensionamento de vigas protendidas, tracado de cabos, perdas, verificacoes de servico e relatorios continuam carregando corretamente.
 
+### EventogramaPro
+
+Rota: `/eventogramapro/`  
+Arquivo: `eventogramapro/index.html`
+
+Ultima inclusao:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\EventogramaPro - sistema completo com nova abertura.html`
+- Data: 25/07/2026
+- Alteracao: inclusao de novo card na home e publicacao do aplicativo como HTML standalone.
+
+Observacoes:
+
+- Aplicativo standalone empacotado em HTML unico.
+- Tela inicial do site aponta para `/eventogramapro/`.
+- Validar apos futuras alteracoes se a abertura, geracao de eventograma, etapas, marcos, dependencias e relatorios continuam carregando corretamente.
+
 ## Artigos publicados na home
 
 Em 20/07/2026, os tres cards iniciais do bloco `Conteudo` da home foram substituidos por artigos reais enviados em PDF. Em 21/07/2026, foi incluido um quarto artigo. A estrategia adotada foi renderizar cada pagina do PDF como PNG dentro de uma pagina HTML propria, preservando a diagramacao original, tabelas, figuras e paginacao. Cada pagina tambem oferece link para abrir/baixar o PDF original.
@@ -750,7 +769,8 @@ $headers=@{ 'User-Agent'='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
   '/aterramentopro/',
   '/parafusopro/',
   '/risco-cambial/',
-  '/protendpro/'
+  '/protendpro/',
+  '/eventogramapro/'
 ) | ForEach-Object {
   $url = "https://www.obrasinteligentes.ia.br$_?v=check"
   $r = Invoke-WebRequest -UseBasicParsing -Headers $headers -Uri $url -TimeoutSec 30
