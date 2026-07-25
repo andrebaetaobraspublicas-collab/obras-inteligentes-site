@@ -19,7 +19,7 @@ O site `www.obrasinteligentes.ia.br` e uma pagina estatica hospedada na Hostinge
 C:\Obras Inteligentes\index.html
 ```
 
-A tela inicial possui atualmente 28 cards de aplicativos. Cada card aponta para uma rota estatica dentro do dominio. A regra geral e:
+A tela inicial possui atualmente 29 cards de aplicativos. Cada card aponta para uma rota estatica dentro do dominio. A regra geral e:
 
 ```text
 https://www.obrasinteligentes.ia.br/nome-da-rota/
@@ -67,6 +67,7 @@ Verificacao feita em 21/07/2026. Todos os cards da home possuem arquivo local co
 | 26 / CAMBIO | Simulador de Risco Cambial | `/risco-cambial/` | `C:\Obras Inteligentes\risco-cambial\index.html` | existe | 200 |
 | 27 / PROTENSAO | ProtendPro | `/protendpro/` | `C:\Obras Inteligentes\protendpro\index.html` | existe | 200 |
 | 28 / EVENTOGRAMA | EventogramaPro | `/eventogramapro/` | `C:\Obras Inteligentes\eventogramapro\index.html` | existe | 200 |
+| 29 / TERMO MASSA | Termo Massa | `/termo-massa/` | `C:\Obras Inteligentes\termo-massa\index.html` | existe | 200 |
 
 ## Tamanhos verificados
 
@@ -102,6 +103,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/risco-cambial/` | 68775 bytes | 68775 caracteres |
 | `/protendpro/` | 820879 bytes | 820879 caracteres |
 | `/eventogramapro/` | 728843 bytes | 728843 caracteres |
+| `/termo-massa/` | 145812 bytes | 145812 caracteres |
 
 ## Estrutura local principal
 
@@ -143,7 +145,7 @@ C:\Obras Inteligentes
    └─ index.html
 ```
 
-Atualizacao posterior: tambem existem as pastas `C:\Obras Inteligentes\reservatoriopro\index.html`, correspondente ao card 13 / RESERVATORIO, `C:\Obras Inteligentes\bombapro\index.html`, correspondente ao card 14 / BOMBAS, `C:\Obras Inteligentes\paraboltpro\index.html`, correspondente ao card 15 / CHUMBADORES, `C:\Obras Inteligentes\steelpro\index.html`, correspondente ao card 16 / ACO, `C:\Obras Inteligentes\cronogramapro\index.html`, correspondente ao card 17 / CRONOGRAMA, `C:\Obras Inteligentes\drenapro\index.html`, correspondente ao card 18 / DRENAGEM, `C:\Obras Inteligentes\taludepro\index.html`, correspondente ao card 19 / TALUDES, `C:\Obras Inteligentes\solarpro\index.html`, correspondente ao card 20 / SOLAR, `C:\Obras Inteligentes\pgrcc\index.html`, correspondente ao card 21 / RESIDUOS, `C:\Obras Inteligentes\ventopro\index.html`, correspondente ao card 22 / VENTO, `C:\Obras Inteligentes\concretopro\index.html`, correspondente ao card 23 / CONCRETO, `C:\Obras Inteligentes\aterramentopro\index.html`, correspondente ao card 24 / ATERRAMENTO, `C:\Obras Inteligentes\parafusopro\index.html`, correspondente ao card 25 / PARAFUSOS, `C:\Obras Inteligentes\risco-cambial\index.html`, correspondente ao card 26 / CAMBIO, `C:\Obras Inteligentes\protendpro\index.html`, correspondente ao card 27 / PROTENSAO, e `C:\Obras Inteligentes\eventogramapro\index.html`, correspondente ao card 28 / EVENTOGRAMA.
+Atualizacao posterior: tambem existem as pastas `C:\Obras Inteligentes\reservatoriopro\index.html`, correspondente ao card 13 / RESERVATORIO, `C:\Obras Inteligentes\bombapro\index.html`, correspondente ao card 14 / BOMBAS, `C:\Obras Inteligentes\paraboltpro\index.html`, correspondente ao card 15 / CHUMBADORES, `C:\Obras Inteligentes\steelpro\index.html`, correspondente ao card 16 / ACO, `C:\Obras Inteligentes\cronogramapro\index.html`, correspondente ao card 17 / CRONOGRAMA, `C:\Obras Inteligentes\drenapro\index.html`, correspondente ao card 18 / DRENAGEM, `C:\Obras Inteligentes\taludepro\index.html`, correspondente ao card 19 / TALUDES, `C:\Obras Inteligentes\solarpro\index.html`, correspondente ao card 20 / SOLAR, `C:\Obras Inteligentes\pgrcc\index.html`, correspondente ao card 21 / RESIDUOS, `C:\Obras Inteligentes\ventopro\index.html`, correspondente ao card 22 / VENTO, `C:\Obras Inteligentes\concretopro\index.html`, correspondente ao card 23 / CONCRETO, `C:\Obras Inteligentes\aterramentopro\index.html`, correspondente ao card 24 / ATERRAMENTO, `C:\Obras Inteligentes\parafusopro\index.html`, correspondente ao card 25 / PARAFUSOS, `C:\Obras Inteligentes\risco-cambial\index.html`, correspondente ao card 26 / CAMBIO, `C:\Obras Inteligentes\protendpro\index.html`, correspondente ao card 27 / PROTENSAO, `C:\Obras Inteligentes\eventogramapro\index.html`, correspondente ao card 28 / EVENTOGRAMA, e `C:\Obras Inteligentes\termo-massa\index.html`, correspondente ao card 29 / TERMO MASSA.
 
 ## Estado funcional importante por modulo
 
@@ -595,6 +597,23 @@ Observacoes:
 - Tela inicial do site aponta para `/eventogramapro/`.
 - Validar apos futuras alteracoes se a abertura, geracao de eventograma, etapas, marcos, dependencias e relatorios continuam carregando corretamente.
 
+### Termo Massa
+
+Rota: `/termo-massa/`  
+Arquivo: `termo-massa/index.html`
+
+Ultima inclusao:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\Termo Massa - Analisador de Temperatura de Concretagem.html`
+- Data: 25/07/2026
+- Alteracao: inclusao de novo card na home e publicacao do aplicativo como HTML standalone.
+
+Observacoes:
+
+- Aplicativo standalone empacotado em HTML unico.
+- Tela inicial do site aponta para `/termo-massa/`.
+- Validar apos futuras alteracoes se a abertura, analise de temperatura de concretagem, gradientes termicos, limites, riscos e relatorios continuam carregando corretamente.
+
 ## Artigos publicados na home
 
 Em 20/07/2026, os tres cards iniciais do bloco `Conteudo` da home foram substituidos por artigos reais enviados em PDF. Em 21/07/2026, foi incluido um quarto artigo. A estrategia adotada foi renderizar cada pagina do PDF como PNG dentro de uma pagina HTML propria, preservando a diagramacao original, tabelas, figuras e paginacao. Cada pagina tambem oferece link para abrir/baixar o PDF original.
@@ -770,7 +789,8 @@ $headers=@{ 'User-Agent'='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
   '/parafusopro/',
   '/risco-cambial/',
   '/protendpro/',
-  '/eventogramapro/'
+  '/eventogramapro/',
+  '/termo-massa/'
 ) | ForEach-Object {
   $url = "https://www.obrasinteligentes.ia.br$_?v=check"
   $r = Invoke-WebRequest -UseBasicParsing -Headers $headers -Uri $url -TimeoutSec 30
