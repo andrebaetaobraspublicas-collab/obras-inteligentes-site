@@ -195,35 +195,6 @@ footer{background:var(--blueprint-deep);color:#7d93a4;padding:56px clamp(20px,5v
 .foot-col a:hover{color:#fff}
 .foot-base{max-width:1320px;margin:40px auto 0;padding-top:24px;border-top:1px solid #11304a;font-family:var(--mono);font-size:11.5px;color:#5e7488;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
 
-.site-modal{
-  position:fixed;inset:0;z-index:20;display:none;align-items:center;justify-content:center;
-  padding:24px;background:rgba(6,26,46,.76);
-}
-.site-modal.is-open{display:flex}
-.site-modal__panel{
-  width:min(760px,100%);max-height:min(780px,88vh);overflow:auto;
-  background:var(--paper);color:var(--ink);border:1px solid var(--grid);
-  box-shadow:0 28px 80px rgba(0,0,0,.34);
-}
-.site-modal__head{
-  display:flex;align-items:flex-start;justify-content:space-between;gap:20px;
-  padding:28px 32px 18px;border-bottom:1px solid var(--grid);
-}
-.site-modal__eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--cyan);margin-bottom:8px}
-.site-modal h2{font-family:var(--display);font-size:clamp(26px,4vw,36px);line-height:1.08;letter-spacing:-.02em}
-.site-modal__close{
-  border:1px solid var(--grid);background:#fff;color:var(--blueprint);width:38px;height:38px;
-  font-size:24px;line-height:1;cursor:pointer;flex:none;
-}
-.site-modal__close:hover{border-color:var(--blueprint)}
-.site-modal__body{padding:28px 32px 34px}
-.site-modal__body p{margin-bottom:16px;color:#3e4e45}
-.site-modal__body h3{font-family:var(--display);font-size:18px;margin:24px 0 10px;color:var(--blueprint)}
-.site-modal__body ul{padding-left:20px;margin:0 0 18px}
-.site-modal__body li{margin-bottom:9px;color:#3e4e45}
-.site-modal__body strong{color:var(--blueprint)}
-body.modal-open{overflow:hidden}
-
 @media(max-width:880px){
   .hero-grid{grid-template-columns:1fr;gap:40px}
   .hero-art{max-width:380px}
@@ -771,8 +742,6 @@ body.modal-open{overflow:hidden}
       <div class="foot-col">
         <h4>Sobre</h4>
         <a href="#sobre">O projeto</a>
-        <a href="#autor" data-modal-open="authorModal">Autor</a>
-        <a href="#aviso-legal" data-modal-open="legalModal">Aviso legal</a>
         <a href="#sobre">Contato</a>
       </div>
     </div>
@@ -782,63 +751,6 @@ body.modal-open{overflow:hidden}
     <span>Feito para o setor público brasileiro</span>
   </div>
 </footer>
-
-<div class="site-modal" id="authorModal" role="dialog" aria-modal="true" aria-labelledby="authorModalTitle" aria-hidden="true">
-  <div class="site-modal__panel" role="document">
-    <div class="site-modal__head">
-      <div>
-        <div class="site-modal__eyebrow">Sobre o autor</div>
-        <h2 id="authorModalTitle">Andr&eacute; Baeta</h2>
-      </div>
-      <button class="site-modal__close" type="button" data-modal-close aria-label="Fechar">&times;</button>
-    </div>
-    <div class="site-modal__body">
-      <p>Andr&eacute; Baeta &eacute; engenheiro graduado pela Universidade de Bras&iacute;lia. Possui p&oacute;s-gradua&ccedil;&atilde;o em gest&atilde;o p&uacute;blica e em Direito Administrativo e Licita&ccedil;&otilde;es.</p>
-      <p>Desde 2004, exerce o cargo de Auditor Federal de Controle Externo do Tribunal de Contas da Uni&atilde;o, atuando no controle e fiscaliza&ccedil;&atilde;o de obras p&uacute;blicas.</p>
-
-      <h3>Livros de autoria</h3>
-      <ul>
-        <li><strong>Or&ccedil;amento e Controle de Pre&ccedil;os de Obras P&uacute;blicas</strong>, da Editora Pini.</li>
-        <li><strong>Regime Diferenciado de Contrata&ccedil;&otilde;es P&uacute;blicas - Aplicado &agrave;s Licita&ccedil;&otilde;es e Contratos de Obras P&uacute;blicas</strong>, publicado pela Editora Pini.</li>
-      </ul>
-
-      <h3>Livros em coautoria</h3>
-      <ul>
-        <li><strong>Terceiriza&ccedil;&atilde;o, Legisla&ccedil;&atilde;o, Doutrina e Jurisprud&ecirc;ncia</strong>, publicado pela Editora F&oacute;rum.</li>
-        <li><strong>Lei Anticorrup&ccedil;&atilde;o e Temas de Compliance</strong>, editado pela Editora Juspodivm.</li>
-        <li><strong>Pareceres de Engenharia</strong>, do Clube dos Autores.</li>
-        <li><strong>Novo Regime Jur&iacute;dico das Licita&ccedil;&otilde;es e Contratos das Empresas Estatais</strong>, da Editora F&oacute;rum.</li>
-        <li><strong>Reforma Tribut&aacute;ria: Impacto nas Obras P&uacute;blicas e o Novo BDI</strong>, da Editora F&oacute;rum.</li>
-      </ul>
-    </div>
-  </div>
-</div>
-
-<div class="site-modal" id="legalModal" role="dialog" aria-modal="true" aria-labelledby="legalModalTitle" aria-hidden="true">
-  <div class="site-modal__panel" role="document">
-    <div class="site-modal__head">
-      <div>
-        <div class="site-modal__eyebrow">Aviso legal</div>
-        <h2 id="legalModalTitle">Uso do site e dos aplicativos</h2>
-      </div>
-      <button class="site-modal__close" type="button" data-modal-close aria-label="Fechar">&times;</button>
-    </div>
-    <div class="site-modal__body">
-      <p>O site Obras Inteligentes &eacute; gratuito e se destina a disseminar conte&uacute;do sobre obras p&uacute;blicas e a ilustrar exemplos de uso de intelig&ecirc;ncia artificial, apresentando aplicativos em diferentes est&aacute;gios de evolu&ccedil;&atilde;o.</p>
-      <p>Alguns aplicativos t&ecirc;m fun&ccedil;&atilde;o meramente demonstrativa e educacional. Outros est&atilde;o em uma arquitetura mais funcional, mas devem ser utilizados com cautela e por profissionais habilitados.</p>
-
-      <h3>Responsabilidade do usu&aacute;rio</h3>
-      <p>Cabe ao usu&aacute;rio conferir dados de entrada, unidades, normas aplic&aacute;veis, coeficientes de seguran&ccedil;a e a ader&ecirc;ncia do modelo ao caso real, bem como a inspe&ccedil;&atilde;o, a manuten&ccedil;&atilde;o e os crit&eacute;rios de dimensionamento.</p>
-
-      <h3>Isen&ccedil;&atilde;o de garantias</h3>
-      <p>O sistema &eacute; fornecido "no estado em que se encontra", sem garantia de exatid&atilde;o, adequa&ccedil;&atilde;o a finalidade espec&iacute;fica ou aus&ecirc;ncia de erros.</p>
-      <p>Os autores e distribuidores n&atilde;o respondem por perdas, danos materiais, pessoais ou lucros cessantes decorrentes do uso ou da impossibilidade de uso desta ferramenta.</p>
-
-      <h3>Dados e privacidade</h3>
-      <p>Os projetos salvos permanecem apenas neste navegador, em armazenamento local. Nenhum dado &eacute; enviado a servidores.</p>
-    </div>
-  </div>
-</div>
 
 <script>
 (function(){
@@ -962,58 +874,6 @@ body.modal-open{overflow:hidden}
     searchInput.addEventListener("input", applyFilters);
   }
   applyFilters();
-})();
-
-(function(){
-  const openButtons = Array.from(document.querySelectorAll("[data-modal-open]"));
-  const closeButtons = Array.from(document.querySelectorAll("[data-modal-close]"));
-  const modals = Array.from(document.querySelectorAll(".site-modal"));
-  let activeModal = null;
-
-  function openModal(modal){
-    if(!modal) return;
-    activeModal = modal;
-    modal.classList.add("is-open");
-    modal.setAttribute("aria-hidden", "false");
-    document.body.classList.add("modal-open");
-    const closeButton = modal.querySelector("[data-modal-close]");
-    if(closeButton) closeButton.focus();
-  }
-
-  function closeModal(modal){
-    if(!modal) return;
-    modal.classList.remove("is-open");
-    modal.setAttribute("aria-hidden", "true");
-    document.body.classList.remove("modal-open");
-    activeModal = null;
-  }
-
-  openButtons.forEach(function(button){
-    button.addEventListener("click", function(event){
-      event.preventDefault();
-      openModal(document.getElementById(button.dataset.modalOpen));
-    });
-  });
-
-  closeButtons.forEach(function(button){
-    button.addEventListener("click", function(){
-      closeModal(button.closest(".site-modal"));
-    });
-  });
-
-  modals.forEach(function(modal){
-    modal.addEventListener("click", function(event){
-      if(event.target === modal){
-        closeModal(modal);
-      }
-    });
-  });
-
-  document.addEventListener("keydown", function(event){
-    if(event.key === "Escape" && activeModal){
-      closeModal(activeModal);
-    }
-  });
 })();
 </script>
 
