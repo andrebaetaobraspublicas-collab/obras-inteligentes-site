@@ -101,7 +101,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/pgrcc/` | 67446 bytes | 67446 caracteres |
 | `/ventopro/` | 275065 bytes | 275065 caracteres |
 | `/concretopro/` | 621889 bytes | 621889 caracteres |
-| `/aterramentopro/` | 164648 bytes | 164648 caracteres |
+| `/aterramentopro/` | 324591 bytes | 324591 caracteres |
 | `/parafusopro/` | 223926 bytes | 223926 caracteres |
 | `/risco-cambial/` | 68775 bytes | 68775 caracteres |
 | `/protendpro/` | 820879 bytes | 820879 caracteres |
@@ -525,9 +525,9 @@ Arquivo: `aterramentopro/index.html`
 
 Ultima inclusao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\AterramentoPro - Tela de Abertura.html`
-- Data: 22/07/2026
-- Alteracao: inclusao de novo card na home e publicacao do aplicativo como HTML standalone.
+- Fonte: `C:\Users\ACER\Documents\Downloads\AterramentoPro_v1.6.html`
+- Data: 26/07/2026
+- Alteracao: atualizacao do aplicativo AterramentoPro para nova versao standalone v1.6.
 
 Observacoes:
 
