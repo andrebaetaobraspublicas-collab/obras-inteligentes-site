@@ -109,7 +109,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/termo-massa/` | 145812 bytes | 145812 caracteres |
 | `/cabocalc/` | 129693 bytes | 129693 caracteres |
 | `/subestacaopro/` | 730239 bytes | 730239 caracteres |
-| `/brucknercalc/` | 573607 bytes | 573607 caracteres |
+| `/brucknercalc/` | 1399176 bytes | 1399176 caracteres |
 
 ## Estrutura local principal
 
@@ -661,16 +661,16 @@ Arquivo: `brucknercalc/index.html`
 
 Ultima inclusao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\BrucknerCalc Pro (standalone) (1).html`
+- Fonte: `C:\Users\ACER\Documents\Downloads\BrucknerCalc_Pro_v2.3_SICRO_DF_04-2026.html`
 - Data: 26/07/2026
-- Alteracao: inclusao de novo card na home e publicacao do aplicativo como HTML standalone.
+- Alteracao: atualizacao do aplicativo BrucknerCalc para nova versao standalone v2.3 com SICRO DF 04/2026.
 
 Observacoes:
 
 - Aplicativo standalone empacotado em HTML unico.
 - Tela inicial do site aponta para `/brucknercalc/`.
 - O card foi classificado no filtro `Pavimentacao`, conforme pedido do usuario.
-- Validar apos futuras alteracoes se o otimizador de terraplenagem por curva de massas, cortes, aterros, volumes e distancias de transporte continuam carregando corretamente.
+- Validar apos futuras alteracoes se o otimizador de terraplenagem por curva de massas, cortes, aterros, volumes, distancias de transporte, orcamento e dados SICRO continuam carregando corretamente.
 
 ## Artigos publicados na home
 
