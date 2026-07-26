@@ -1,6 +1,6 @@
 # Documentacao completa do site Obras Inteligentes
 
-Atualizado em: 19/07/2026  
+Atualizado em: 26/07/2026  
 Dominio publicado: https://www.obrasinteligentes.ia.br/  
 Diretorio local principal: `C:\Obras Inteligentes`  
 Repositorio GitHub: `https://github.com/andrebaetaobraspublicas-collab/obras-inteligentes-site.git`  
@@ -19,7 +19,7 @@ O site `www.obrasinteligentes.ia.br` e uma pagina estatica hospedada na Hostinge
 C:\Obras Inteligentes\index.html
 ```
 
-A tela inicial possui atualmente 31 cards de aplicativos. Cada card aponta para uma rota estatica dentro do dominio. A regra geral e:
+A tela inicial possui atualmente 32 cards de aplicativos. Cada card aponta para uma rota estatica dentro do dominio. A regra geral e:
 
 ```text
 https://www.obrasinteligentes.ia.br/nome-da-rota/
@@ -35,7 +35,7 @@ Excecoes/observacoes:
 
 ## Inventario verificado dos aplicativos
 
-Verificacao feita em 21/07/2026. Todos os cards da home possuem arquivo local correspondente e todas as rotas publicadas responderam HTTP `200`.
+Inventario originalmente verificado em 21/07/2026 e atualizado em 26/07/2026 para inclusao do BrucknerCalc. Todos os cards listados possuem arquivo local correspondente.
 
 | Card | Aplicativo | Rota publicada | Arquivo local principal | Status local | Status site |
 |---|---|---|---|---|---|
@@ -70,6 +70,7 @@ Verificacao feita em 21/07/2026. Todos os cards da home possuem arquivo local co
 | 29 / TERMO MASSA | Termo Massa | `/termo-massa/` | `C:\Obras Inteligentes\termo-massa\index.html` | existe | 200 |
 | 30 / CABOS | CaboCalc | `/cabocalc/` | `C:\Obras Inteligentes\cabocalc\index.html` | existe | 200 |
 | 31 / SUBESTACAO | SubestacaoPro | `/subestacaopro/` | `C:\Obras Inteligentes\subestacaopro\index.html` | existe | 200 |
+| 32 / TERRAPLENAGEM | BrucknerCalc | `/brucknercalc/` | `C:\Obras Inteligentes\brucknercalc\index.html` | existe | 200 |
 
 ## Tamanhos verificados
 
@@ -107,7 +108,8 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/eventogramapro/` | 728843 bytes | 728843 caracteres |
 | `/termo-massa/` | 145812 bytes | 145812 caracteres |
 | `/cabocalc/` | 129693 bytes | 129693 caracteres |
-| `/subestacaopro/` | 458512 bytes | 458512 caracteres |
+| `/subestacaopro/` | 730239 bytes | 730239 caracteres |
+| `/brucknercalc/` | 573607 bytes | 573607 caracteres |
 
 ## Estrutura local principal
 
@@ -149,7 +151,7 @@ C:\Obras Inteligentes
    └─ index.html
 ```
 
-Atualizacao posterior: tambem existem as pastas `C:\Obras Inteligentes\reservatoriopro\index.html`, correspondente ao card 13 / RESERVATORIO, `C:\Obras Inteligentes\bombapro\index.html`, correspondente ao card 14 / BOMBAS, `C:\Obras Inteligentes\paraboltpro\index.html`, correspondente ao card 15 / CHUMBADORES, `C:\Obras Inteligentes\steelpro\index.html`, correspondente ao card 16 / ACO, `C:\Obras Inteligentes\cronogramapro\index.html`, correspondente ao card 17 / CRONOGRAMA, `C:\Obras Inteligentes\drenapro\index.html`, correspondente ao card 18 / DRENAGEM, `C:\Obras Inteligentes\taludepro\index.html`, correspondente ao card 19 / TALUDES, `C:\Obras Inteligentes\solarpro\index.html`, correspondente ao card 20 / SOLAR, `C:\Obras Inteligentes\pgrcc\index.html`, correspondente ao card 21 / RESIDUOS, `C:\Obras Inteligentes\ventopro\index.html`, correspondente ao card 22 / VENTO, `C:\Obras Inteligentes\concretopro\index.html`, correspondente ao card 23 / CONCRETO, `C:\Obras Inteligentes\aterramentopro\index.html`, correspondente ao card 24 / ATERRAMENTO, `C:\Obras Inteligentes\parafusopro\index.html`, correspondente ao card 25 / PARAFUSOS, `C:\Obras Inteligentes\risco-cambial\index.html`, correspondente ao card 26 / CAMBIO, `C:\Obras Inteligentes\protendpro\index.html`, correspondente ao card 27 / PROTENSAO, `C:\Obras Inteligentes\eventogramapro\index.html`, correspondente ao card 28 / EVENTOGRAMA, `C:\Obras Inteligentes\termo-massa\index.html`, correspondente ao card 29 / TERMO MASSA, `C:\Obras Inteligentes\cabocalc\index.html`, correspondente ao card 30 / CABOS, e `C:\Obras Inteligentes\subestacaopro\index.html`, correspondente ao card 31 / SUBESTACAO.
+Atualizacao posterior: tambem existem as pastas `C:\Obras Inteligentes\reservatoriopro\index.html`, correspondente ao card 13 / RESERVATORIO, `C:\Obras Inteligentes\bombapro\index.html`, correspondente ao card 14 / BOMBAS, `C:\Obras Inteligentes\paraboltpro\index.html`, correspondente ao card 15 / CHUMBADORES, `C:\Obras Inteligentes\steelpro\index.html`, correspondente ao card 16 / ACO, `C:\Obras Inteligentes\cronogramapro\index.html`, correspondente ao card 17 / CRONOGRAMA, `C:\Obras Inteligentes\drenapro\index.html`, correspondente ao card 18 / DRENAGEM, `C:\Obras Inteligentes\taludepro\index.html`, correspondente ao card 19 / TALUDES, `C:\Obras Inteligentes\solarpro\index.html`, correspondente ao card 20 / SOLAR, `C:\Obras Inteligentes\pgrcc\index.html`, correspondente ao card 21 / RESIDUOS, `C:\Obras Inteligentes\ventopro\index.html`, correspondente ao card 22 / VENTO, `C:\Obras Inteligentes\concretopro\index.html`, correspondente ao card 23 / CONCRETO, `C:\Obras Inteligentes\aterramentopro\index.html`, correspondente ao card 24 / ATERRAMENTO, `C:\Obras Inteligentes\parafusopro\index.html`, correspondente ao card 25 / PARAFUSOS, `C:\Obras Inteligentes\risco-cambial\index.html`, correspondente ao card 26 / CAMBIO, `C:\Obras Inteligentes\protendpro\index.html`, correspondente ao card 27 / PROTENSAO, `C:\Obras Inteligentes\eventogramapro\index.html`, correspondente ao card 28 / EVENTOGRAMA, `C:\Obras Inteligentes\termo-massa\index.html`, correspondente ao card 29 / TERMO MASSA, `C:\Obras Inteligentes\cabocalc\index.html`, correspondente ao card 30 / CABOS, `C:\Obras Inteligentes\subestacaopro\index.html`, correspondente ao card 31 / SUBESTACAO, e `C:\Obras Inteligentes\brucknercalc\index.html`, correspondente ao card 32 / TERRAPLENAGEM.
 
 ## Estado funcional importante por modulo
 
@@ -651,6 +653,24 @@ Observacoes:
 - Aplicativo standalone empacotado em HTML unico.
 - Tela inicial do site aponta para `/subestacaopro/`.
 - Validar apos futuras alteracoes se a abertura, dimensionamento de subestacoes prediais, demandas, transformadores, protecoes e relatorios continuam carregando corretamente.
+
+### BrucknerCalc
+
+Rota: `/brucknercalc/`  
+Arquivo: `brucknercalc/index.html`
+
+Ultima inclusao:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\BrucknerCalc Pro (standalone) (1).html`
+- Data: 26/07/2026
+- Alteracao: inclusao de novo card na home e publicacao do aplicativo como HTML standalone.
+
+Observacoes:
+
+- Aplicativo standalone empacotado em HTML unico.
+- Tela inicial do site aponta para `/brucknercalc/`.
+- O card foi classificado no filtro `Pavimentacao`, conforme pedido do usuario.
+- Validar apos futuras alteracoes se o otimizador de terraplenagem por curva de massas, cortes, aterros, volumes e distancias de transporte continuam carregando corretamente.
 
 ## Artigos publicados na home
 
