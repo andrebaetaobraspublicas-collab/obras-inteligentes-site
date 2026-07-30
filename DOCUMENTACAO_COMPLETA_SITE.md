@@ -115,7 +115,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/brucknercalc/` | 1399176 bytes | 1399176 caracteres |
 | `/molapro/` | 183572 bytes | 183572 caracteres |
 | `/calculadora-eixos/` | 173241 bytes | 173241 caracteres |
-| `/mancalpro/` | 606308 bytes | 606308 caracteres |
+| `/mancalpro/` | 1138677 bytes | 1138677 caracteres |
 
 ## Estrutura local principal
 
@@ -721,16 +721,16 @@ Arquivo: `mancalpro/index.html`
 
 Ultima inclusao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\MancalPro_v0.5.html`
+- Fonte: `C:\Users\ACER\Documents\Downloads\MancalPro v0.6 - abertura (offline) (1).html`
 - Data: 30/07/2026
-- Alteracao: atualizacao do aplicativo MancalPro para a versao standalone v0.5.
+- Alteracao: atualizacao do aplicativo MancalPro para a versao standalone v0.6, com tela de abertura.
 
 Observacoes:
 
 - Aplicativo standalone empacotado em HTML unico.
 - Tela inicial do site aponta para `/mancalpro/`.
 - O card foi classificado no filtro `Engenharia Mecanica`.
-- Validar apos futuras alteracoes se a engenharia de mancais e rolamentos, selecao, vida util, arranjos, lubrificacao, cargas, ajustes e projeto termico continuam carregando corretamente.
+- Validar apos futuras alteracoes se a engenharia de mancais e rolamentos, selecao, vida util, arranjos, lubrificacao, cargas, ajustes, projeto termico, TEHD e rotodinamica continuam carregando corretamente.
 
 ## Artigos publicados na home
 
