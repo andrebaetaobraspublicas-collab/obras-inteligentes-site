@@ -114,7 +114,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/subestacaopro/` | 730239 bytes | 730239 caracteres |
 | `/brucknercalc/` | 1399176 bytes | 1399176 caracteres |
 | `/molapro/` | 183572 bytes | 183572 caracteres |
-| `/calculadora-eixos/` | 26836 bytes | 26836 caracteres |
+| `/calculadora-eixos/` | 173241 bytes | 173241 caracteres |
 | `/mancalpro/` | 402625 bytes | 402625 caracteres |
 
 ## Estrutura local principal
@@ -703,16 +703,16 @@ Arquivo: `calculadora-eixos/index.html`
 
 Ultima inclusao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\Calculadora de Eixos - revisado.html`
-- Data: 29/07/2026
-- Alteracao: inclusao de novo card na home e publicacao do aplicativo como HTML standalone.
+- Fonte: `C:\Users\ACER\Documents\Downloads\Calculadora de Eixos v3.0 (offline).html`
+- Data: 30/07/2026
+- Alteracao: atualizacao do aplicativo Calculadora de Eixos para a versao standalone v3.0.
 
 Observacoes:
 
 - Aplicativo standalone empacotado em HTML unico.
 - Tela inicial do site aponta para `/calculadora-eixos/`.
 - O card foi classificado no filtro `Engenharia Mecanica`.
-- Validar apos futuras alteracoes se o dimensionamento de eixos e arvores mecanicas, torcao, flexao, tensoes e criterios de projeto continuam carregando corretamente.
+- Validar apos futuras alteracoes se o dimensionamento, verificacao, eixo escalonado, torcao, flexao, tensoes e criterios de projeto continuam carregando corretamente.
 
 ### MancalPro
 

@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Avançada de Eixos e Árvores</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f3f4f6; }
+        .input-group label { display: block; font-size: 0.875rem; font-weight: 600; color: #374151; margin-bottom: 0.25rem; }
+        .input-group input, .input-group select { width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem; }
+        .input-group input:focus, .input-group select:focus { outline: none; border-color: #3b82f6; ring: 2px; ring-color: #bfdbfe; }
+        .input-group input[disabled] { background-color: #e5e7eb; cursor: not-allowed; }
+        .input-group .unit { font-size: 0.75rem; color: #6b7280; margin-left: 0.25rem; }
+        
+        .result-card { background: linear-gradient(135deg, #0f172a, #1e3a8a); color: white; }
+        .result-item { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px solid rgba(255,255,255,0.15); }
+        .result-item:last-child { border-bottom: none; }
+        .result-value { font-weight: bold; font-size: 1.125rem; }
+        .highlight-result { font-size: 2.25rem; font-weight: 800; color: #fbbf24; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); }
+        .commercial-result { font-size: 1.5rem; font-weight: 700; color: #10b981; }
+        
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #888; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #555; }
+
+        @media print {
+            body { background: white; -webkit-print-color-adjust: exact; }
+            .no-print { display: none !important; }
+            .result-card { background: #f8fafc !important; color: #000 !important; border: 1px solid #cbd5e1; box-shadow: none; }
+            .highlight-result, .commercial-result { color: #000 !important; text-shadow: none; }
+            .result-item { border-bottom: 1px solid #e2e8f0; }
+        }
+    </style>
+</head>
+<body class="text-gray-800 antialiased p-4 md:p-8">
+
+    <div class="max-w-7xl mx-auto">
+        <header class="mb-8 flex flex-col md:flex-row justify-between items-start md:items-end border-b pb-4 border-gray-300 gap-4">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900"><i class="fas fa-cogs text-blue-700 mr-3"></i>Dimensionamento de Eixos 2.1</h1>
+                <p class="text-gray-600 mt-1">Análise de eixos maciços/vazados com amplo banco de materiais ferrosos e não ferrosos.</p>
+            </div>
+            <div class="flex flex-wrap gap-2 no-print">
+                <button onclick="window.print()" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-4 py-2 rounded shadow-sm text-sm font-semibold transition"><i class="fas fa-print mr-2"></i>Relatório PDF</button>
+                <button onclick="salvarConfiguracao()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded shadow-sm text-sm font-semibold transition"><i class="fas fa-save mr-2"></i>Salvar Perfil</button>
+                <button onclick="limparDados()" class="bg-red-50 hover:bg-red-100 text-red-600 px-4 py-2 rounded shadow-sm text-sm font-semibold transition"><i class="fas fa-trash mr-2"></i>Limpar</button>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <div class="lg:col-span-2 space-y-6">
+                
+                <!-- Card 1: Material -->
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                    <h2 class="text-lg font-bold text-gray-800 mb-4 border-l-4 border-blue-600 pl-2"><i class="fas fa-cubes text-gray-500 mr-2"></i>Propriedades do Material</h2>
+                    <div class="mb-4">
+                        <select id="mat_selector" onchange="atualizarMaterial()" class="w-full p-2 border border-gray-300 rounded bg-gray-50 focus:ring-blue-500 focus:border-blue-500 font-semibold">
+                            <option value="custom">Personalizado (Inserir Manualmente)</option>
+                            <optgroup label="Aços Carbono (Laminados a Frio - CD)">
+                                <option value="sae1020_cd">Aço SAE 1020 CD</option>
+                                <option value="sae1045_cd">Aço SAE 1045 CD</option>
+                            </optgroup>
+                            <optgroup label="Aços Carbono (Laminados a Quente - HR)">
+                                <option value="sae1020_hr">Aço SAE 1020 HR</option>
+                                <option value="sae1045_hr">Aço SAE 1045 HR</option>
+                            </optgroup>
+                            <optgroup label="Aços Liga e Temperados">
+                                <option value="sae4140_qt">Aço SAE 4140 (Temperado/Revenido)</option>
+                                <option value="sae4340_qt">Aço SAE 4340 (Temperado/Revenido)</option>
+                                <option value="sae8620_cd">Aço SAE 8620 CD</option>
+                            </optgroup>
+                            <optgroup label="Aços Inoxidáveis">
+                                <option value="inox_304">Aço Inox 304 (Recozido)</option>
+                                <option value="inox_316">Aço Inox 316 (Recozido)</option>
+                            </optgroup>
+                            <optgroup label="Ligas de Alumínio (Não Ferrosos)">
+                                <option value="alu_6061_t6">Alumínio 6061-T6 (Estrutural)</option>
+                                <option value="alu_7075_t6">Alumínio 7075-T6 (Aeroespacial)</option>
+                            </optgroup>
+                            <optgroup label="Ligas Especiais e Bronze">
+                                <option value="ti_6al_4v">Titânio Ti-6Al-4V (Grau 5)</option>
+                                <option value="bronze_c93200">Bronze C93200 (SAE 660)</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div class="input-group">
+                            <label>Sy <span class="unit">[MPa]</span></label>
+                            <input type="number" id="val_sy" step="any" value="390" oninput="calcular()">
+                        </div>
+                        <div class="input-group">
+                            <label>Sut <span class="unit">[MPa]</span></label>
+                            <input type="number" id="val_sut" step="any" value="470" oninput="calcular()">
+                        </div>
+                        <div class="input-group">
+                            <label>E <span class="unit">[GPa]</span></label>
+                            <input type="number" id="val_e" step="any" value="205" oninput="calcular()">
+                        </div>
+                        <div class="input-group">
+                            <label>G <span class="unit">[GPa]</span></label>
+                            <input type="number" id="val_g" step="any" value="79" oninput="calcular()">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: Esforços e Geometria -->
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                    <h2 class="text-lg font-bold text-gray-800 mb-4 border-l-4 border-green-500 pl-2"><i class="fas fa-arrows-alt text-gray-500 mr-2"></i>Esforços e Geometria (Flexão Biplanar)</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        <div class="input-group">
+                            <label>Torque Constante (T) <span class="unit">[N.m]</span></label>
+                            <input type="number" id="val_torque" step="any" value="150" oninput="calcular()">
+                        </div>
+                        <div class="input-group">
+                            <label>Momento Fletor Vertical (My) <span class="unit">[N.m]</span></label>
+                            <input type="number" id="val_my" step="any" value="120" oninput="calcular()">
+                        </div>
+                        <div class="input-group">
+                            <label>Momento Fletor Horiz. (Mz) <span class="unit">[N.m]</span></label>
+                            <input type="number" id="val_mz" step="any" value="160" oninput="calcular()">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 border-t pt-4 border-gray-100">
+                        <div class="input-group">
+                            <label>Comprimento Eixo (L) <span class="unit">[mm]</span></label>
+                            <input type="number" id="val_comp" step="any" value="500" oninput="calcular()">
+                        </div>
+                        <div class="input-group">
+                            <label>Fator de Segurança (n) <span class="unit">[-]</span></label>
+                            <input type="number" id="val_fs" step="any" value="2.0" oninput="calcular()">
+                        </div>
+                        <div class="input-group">
+                            <label title="Razão diâmetro interno / externo. 0 = Eixo Maciço">Eixo Vazado: c (di / do) <span class="unit">[0 a 0.99]</span></label>
+                            <input type="number" id="val_c" step="0.01" value="0.00" min="0" max="0.99" oninput="calcular()">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: Fadiga e Limites -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-lg font-bold text-gray-800 border-l-4 border-purple-500 pl-2"><i class="fas fa-wave-square text-gray-500 mr-2"></i>Fadiga</h2>
+                        </div>
+                        <div class="input-group mb-4">
+                            <label>Critério de Falha por Fadiga:</label>
+                            <select id="crit_fadiga" onchange="calcular()" class="bg-purple-50 border-purple-200 text-purple-900">
+                                <option value="goodman">Goodman (Conservador, peças dúcteis)</option>
+                                <option value="soderberg">Soderberg (Muito Conservador)</option>
+                                <option value="asme">ASME Elliptic (Recomendado eixos)</option>
+                            </select>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2 text-sm">
+                            <div class="input-group"><label>Ka</label><input type="number" id="val_ka" step="0.01" value="0.79" oninput="calcular()"></div>
+                            <div class="input-group"><label>Kb</label><input type="number" id="val_kb" step="0.01" value="0.85" oninput="calcular()"></div>
+                            <div class="input-group"><label>Kc</label><input type="number" id="val_kc" step="0.01" value="1.00" oninput="calcular()"></div>
+                            <div class="input-group"><label>Kd</label><input type="number" id="val_kd" step="0.01" value="1.00" oninput="calcular()"></div>
+                            <div class="input-group"><label>Ke</label><input type="number" id="val_ke" step="0.01" value="0.814" oninput="calcular()"></div>
+                            <div class="input-group"><label>Kf</label><input type="number" id="val_kf" step="0.01" value="1.6" oninput="calcular()"></div>
+                            <div class="input-group col-span-3"><label>Kfs (Torção)</label><input type="number" id="val_kfs" step="0.01" value="1.3" oninput="calcular()"></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                        <h2 class="text-lg font-bold text-gray-800 mb-4 border-l-4 border-yellow-500 pl-2"><i class="fas fa-ruler-combined text-gray-500 mr-2"></i>Limites de Deformação</h2>
+                        <div class="space-y-4">
+                            <div class="input-group">
+                                <label>Ângulo Máximo de Torção <span class="unit">[graus/metro]</span></label>
+                                <input type="number" id="val_theta" step="any" value="0.26" oninput="calcular()">
+                            </div>
+                            <div class="input-group">
+                                <label>Deflexão Máxima (Flecha y) <span class="unit">[mm]</span></label>
+                                <input type="number" id="val_ymax" step="any" value="0.5" oninput="calcular()">
+                            </div>
+                            <div class="p-3 bg-gray-50 border border-gray-200 rounded text-xs text-gray-600 mt-2 text-justify">
+                                <i class="fas fa-info-circle mr-1"></i> A deflexão é baseada em momento máximo central (viga biapoiada simples). O Momento Resultante calculado é M<sub>res</sub> = &radic;(My&sup2; + Mz&sup2;).
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Coluna de Resultados -->
+            <div class="lg:col-span-1">
+                <div class="result-card p-6 rounded-xl shadow-lg sticky top-6">
+                    <h2 class="text-xl font-bold mb-4 border-b border-white/20 pb-2"><i class="fas fa-calculator mr-2"></i>Resultados do Diâmetro Externo (d<sub>o</sub>)</h2>
+                    
+                    <div class="mb-4 text-sm bg-white/10 p-2 rounded text-blue-100 flex justify-between">
+                        <span>Momento Resultante:</span>
+                        <strong id="res_mres">0.00 N.m</strong>
+                    </div>
+
+                    <div class="space-y-3 mb-6">
+                        <div class="result-item">
+                            <span class="text-sm opacity-90 text-blue-100">von Mises (Estático)</span>
+                            <span class="result-value" id="res_estatico">0.00 mm</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="text-sm opacity-90 text-blue-100"><span id="lbl_fadiga">Fadiga</span></span>
+                            <span class="result-value" id="res_fadiga">0.00 mm</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="text-sm opacity-90 text-blue-100">Rigidez Torsional</span>
+                            <span class="result-value" id="res_rigidez">0.00 mm</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="text-sm opacity-90 text-blue-100">Deflexão Máxima</span>
+                            <span class="result-value" id="res_deflexao">0.00 mm</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-white/10 rounded-lg p-4 text-center border border-white/20 shadow-inner backdrop-blur-sm mb-4">
+                        <h3 class="text-xs uppercase tracking-wider font-semibold opacity-90 mb-1 text-blue-100">Diâmetro Externo Mínimo Exato</h3>
+                        <div class="highlight-result" id="res_final">0.00 mm</div>
+                        <p class="text-xs mt-1 text-blue-200" id="res_motivo">Governado por: -</p>
+                    </div>
+
+                    <div class="bg-green-500/20 rounded-lg p-4 text-center border border-green-400/30 shadow-inner backdrop-blur-sm">
+                        <h3 class="text-xs uppercase tracking-wider font-semibold mb-1 text-green-100">Diâmetro Comercial Recomendado (ISO)</h3>
+                        <div class="commercial-result" id="res_comercial">0 mm</div>
+                        <p class="text-xs mt-1 text-green-200" id="res_interno_msg" style="display:none;">Diâmetro Interno: <span id="res_di">0.00</span> mm</p>
+                    </div>
+                    
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const materiaisDB = {
+            "sae1020_cd": { Sy: 390, Sut: 470, E: 205, G: 79 },
+            "sae1045_cd": { Sy: 530, Sut: 630, E: 206, G: 80 },
+            "sae1020_hr": { Sy: 210, Sut: 380, E: 205, G: 79 },
+            "sae1045_hr": { Sy: 310, Sut: 570, E: 206, G: 80 },
+            "sae4140_qt": { Sy: 950, Sut: 1080, E: 207, G: 80 },
+            "sae4340_qt": { Sy: 1120, Sut: 1210, E: 207, G: 80 },
+            "sae8620_cd": { Sy: 360, Sut: 530, E: 205, G: 80 },
+            "inox_304": { Sy: 205, Sut: 515, E: 193, G: 75 },
+            "inox_316": { Sy: 205, Sut: 515, E: 193, G: 75 },
+            "alu_6061_t6": { Sy: 276, Sut: 310, E: 69, G: 26 },
+            "alu_7075_t6": { Sy: 503, Sut: 572, E: 71.7, G: 26.9 },
+            "ti_6al_4v": { Sy: 880, Sut: 950, E: 114, G: 44 },
+            "bronze_c93200": { Sy: 125, Sut: 240, E: 100, G: 38 }
+        };
+
+        const commercial_sizes = [
+            10, 12, 14, 15, 16, 17, 18, 20, 22, 25, 28, 30, 32, 35, 38, 40, 
+            42, 45, 48, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100, 110, 
+            120, 130, 140, 150, 160, 170, 180, 190, 200, 220, 240, 250, 300
+        ];
+
+        const els = {
+            mat: document.getElementById('mat_selector'), sy: document.getElementById('val_sy'),
+            sut: document.getElementById('val_sut'), e: document.getElementById('val_e'),
+            g: document.getElementById('val_g'), t: document.getElementById('val_torque'),
+            my: document.getElementById('val_my'), mz: document.getElementById('val_mz'),
+            l: document.getElementById('val_comp'), n: document.getElementById('val_fs'),
+            c: document.getElementById('val_c'), crit: document.getElementById('crit_fadiga'),
+            ka: document.getElementById('val_ka'), kb: document.getElementById('val_kb'),
+            kc: document.getElementById('val_kc'), kd: document.getElementById('val_kd'),
+            ke: document.getElementById('val_ke'), kf: document.getElementById('val_kf'),
+            kfs: document.getElementById('val_kfs'), theta: document.getElementById('val_theta'),
+            ymax: document.getElementById('val_ymax'),
+        };
+
+        const out = {
+            mres: document.getElementById('res_mres'), est: document.getElementById('res_estatico'),
+            fad: document.getElementById('res_fadiga'), rig: document.getElementById('res_rigidez'),
+            def: document.getElementById('res_deflexao'), final: document.getElementById('res_final'),
+            motivo: document.getElementById('res_motivo'), lbl_fadiga: document.getElementById('lbl_fadiga'),
+            comercial: document.getElementById('res_comercial'), interno_msg: document.getElementById('res_interno_msg'),
+            di: document.getElementById('res_di')
+        };
+
+        function atualizarMaterial() {
+            const matKey = els.mat.value;
+            if (matKey !== "custom" && materiaisDB[matKey]) {
+                const props = materiaisDB[matKey];
+                els.sy.value = props.Sy; els.sut.value = props.Sut;
+                els.e.value = props.E; els.g.value = props.G;
+                [els.sy, els.sut, els.e, els.g].forEach(el => el.classList.add('bg-gray-100', 'text-gray-600'));
+            } else {
+                [els.sy, els.sut, els.e, els.g].forEach(el => el.classList.remove('bg-gray-100', 'text-gray-600'));
+            }
+            calcular(); salvarAutomaticamente();
+        }
+
+        [els.sy, els.sut, els.e, els.g].forEach(el => {
+            el.addEventListener('input', () => { els.mat.value = 'custom'; atualizarMaterial(); });
+        });
+
+        function calcular() {
+            try {
+                const sy = parseFloat(els.sy.value); const sut = parseFloat(els.sut.value);
+                const e = parseFloat(els.e.value); const g = parseFloat(els.g.value);
+                const t = parseFloat(els.t.value); const my = parseFloat(els.my.value);
+                const mz = parseFloat(els.mz.value); const l = parseFloat(els.l.value);
+                const n = parseFloat(els.n.value); const c_ratio = parseFloat(els.c.value);
+                const ka = parseFloat(els.ka.value); const kb = parseFloat(els.kb.value);
+                const kc = parseFloat(els.kc.value); const kd = parseFloat(els.kd.value);
+                const ke = parseFloat(els.ke.value); const kf = parseFloat(els.kf.value);
+                const kfs = parseFloat(els.kfs.value); const theta = parseFloat(els.theta.value);
+                const ymax = parseFloat(els.ymax.value); const criterio = els.crit.value;
+
+                if (sy <= 0 || sut <= 0 || e <= 0 || g <= 0 || n <= 0 || c_ratio < 0 || c_ratio >= 1) {
+                    throw new Error("Valores inválidos.");
+                }
+
+                const M_res = Math.sqrt(Math.pow(my, 2) + Math.pow(mz, 2));
+                out.mres.innerText = M_res.toFixed(2) + " N.m";
+
+                const M_nmm = M_res * 1000; const T_nmm = t * 1000;
+                const E_mpa = e * 1000; const G_mpa = g * 1000;
+                const h_fator = 1 - Math.pow(c_ratio, 4);
+
+                // 1. Estático
+                let d_est = 0;
+                const raiz_mises = Math.sqrt(4 * Math.pow(M_nmm, 2) + 3 * Math.pow(T_nmm, 2));
+                if(raiz_mises > 0) d_est = Math.pow((16 * n * raiz_mises) / (Math.PI * sy * h_fator), 1/3);
+
+                // 2. Fadiga
+                out.lbl_fadiga.innerText = "Fadiga (" + (criterio.charAt(0).toUpperCase() + criterio.slice(1)) + ")";
+                let se_prime = sut > 1400 ? 700 : 0.5 * sut;
+                const Se = ka * kb * kc * kd * ke * se_prime;
+                let d_fad = 0;
+
+                const t_M = (kf * M_nmm) / Se;
+                const t_T_goodman = (kfs * T_nmm) / sut;
+                const t_T_soder = (kfs * T_nmm) / sy;
+
+                if (criterio === "goodman") {
+                    d_fad = Math.pow((16 * n / (Math.PI * h_fator)) * (2 * t_M + Math.sqrt(3) * t_T_goodman), 1/3);
+                } else if (criterio === "soderberg") {
+                    d_fad = Math.pow((16 * n / (Math.PI * h_fator)) * (2 * t_M + Math.sqrt(3) * t_T_soder), 1/3);
+                } else if (criterio === "asme") {
+                    d_fad = Math.pow((16 * n / (Math.PI * h_fator)) * Math.sqrt(4 * Math.pow(t_M, 2) + 3 * Math.pow(t_T_soder, 2)), 1/3);
+                }
+
+                // 3. Rigidez Torsional
+                let d_rig = 0;
+                if (t > 0 && theta > 0) {
+                    const theta_rad_mm = (theta * Math.PI / 180) / 1000;
+                    d_rig = Math.pow((32 * T_nmm) / (Math.PI * G_mpa * theta_rad_mm * h_fator), 0.25);
+                }
+
+                // 4. Deflexão Máxima
+                let d_def = 0;
+                if (M_res > 0 && ymax > 0 && l > 0) {
+                    d_def = Math.pow((64 * M_nmm * Math.pow(l, 2)) / (12 * Math.PI * E_mpa * ymax * h_fator), 0.25);
+                }
+
+                out.est.innerText = isNaN(d_est) ? "0.00 mm" : d_est.toFixed(2) + " mm";
+                out.fad.innerText = isNaN(d_fad) ? "0.00 mm" : d_fad.toFixed(2) + " mm";
+                out.rig.innerText = isNaN(d_rig) ? "0.00 mm" : d_rig.toFixed(2) + " mm";
+                out.def.innerText = isNaN(d_def) ? "0.00 mm" : d_def.toFixed(2) + " mm";
+
+                const crit = [
+                    { nome: "Estático (von Mises)", valor: d_est || 0 },
+                    { nome: "Fadiga ("+criterio+")", valor: d_fad || 0 },
+                    { nome: "Rigidez Torsional", valor: d_rig || 0 },
+                    { nome: "Deflexão Máxima", valor: d_def || 0 }
+                ].sort((a, b) => b.valor - a.valor);
+                
+                const d_final = crit[0].valor;
+                out.final.innerText = d_final.toFixed(2) + " mm";
+                out.motivo.innerText = d_final > 0 ? "Governado por: " + crit[0].nome : "Insira esforços.";
+
+                // Comercial
+                let d_comercial = commercial_sizes.find(val => val >= d_final);
+                if (!d_comercial) d_comercial = Math.ceil(d_final / 10) * 10;
+                
+                if (d_final > 0) {
+                    out.comercial.innerText = d_comercial + " mm";
+                    if (c_ratio > 0) {
+                        out.interno_msg.style.display = 'block';
+                        out.di.innerText = (d_comercial * c_ratio).toFixed(2);
+                    } else {
+                        out.interno_msg.style.display = 'none';
+                    }
+                } else {
+                    out.comercial.innerText = "0 mm";
+                    out.interno_msg.style.display = 'none';
+                }
+
+                salvarAutomaticamente();
+            } catch (e) {
+                console.error(e);
+                out.final.innerText = "Erro"; out.motivo.innerText = "Verifique os parâmetros.";
+            }
+        }
+
+        function salvarAutomaticamente() {
+            const dados = {};
+            document.querySelectorAll('input, select').forEach(el => { if(el.id) dados[el.id] = el.value; });
+            localStorage.setItem('dadosEixoV2', JSON.stringify(dados));
+        }
+
+        function salvarConfiguracao() { salvarAutomaticamente(); alert("Perfil salvo no navegador!"); }
+        
+        function carregarDoLocalStorage() {
+            const salvo = localStorage.getItem('dadosEixoV2');
+            if (salvo) {
+                try {
+                    const dados = JSON.parse(salvo);
+                    Object.keys(dados).forEach(key => {
+                        const el = document.getElementById(key);
+                        if (el) el.value = dados[key];
+                    });
+                    if(els.mat.value !== "custom") atualizarMaterial(); else calcular();
+                } catch(e) {}
+            } else { calcular(); }
+        }
+
+        function limparDados() {
+            if(confirm("Deseja limpar todos os campos?")) { localStorage.removeItem('dadosEixoV2'); location.reload(); }
+        }
+
+        window.addEventListener('load', carregarDoLocalStorage);
+    </script>
+</body>
+</html>
