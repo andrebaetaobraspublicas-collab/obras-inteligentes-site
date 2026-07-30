@@ -115,7 +115,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/brucknercalc/` | 1399176 bytes | 1399176 caracteres |
 | `/molapro/` | 183572 bytes | 183572 caracteres |
 | `/calculadora-eixos/` | 173241 bytes | 173241 caracteres |
-| `/mancalpro/` | 402625 bytes | 402625 caracteres |
+| `/mancalpro/` | 606308 bytes | 606308 caracteres |
 
 ## Estrutura local principal
 
@@ -721,9 +721,9 @@ Arquivo: `mancalpro/index.html`
 
 Ultima inclusao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\MancalPro_v0.2.html`
-- Data: 29/07/2026
-- Alteracao: inclusao de novo card na home e publicacao do aplicativo como HTML standalone.
+- Fonte: `C:\Users\ACER\Documents\Downloads\MancalPro_v0.5.html`
+- Data: 30/07/2026
+- Alteracao: atualizacao do aplicativo MancalPro para a versao standalone v0.5.
 
 Observacoes:
 
