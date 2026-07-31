@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#05090d">
+  <title>EngrenageCalc Pro - Dimensionamento de Engrenagens</title>
+  <meta name="description" content="Calculadora tecnica para pre-dimensionamento de engrenagens cilindricas e conicas.">
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <style>
+    :root {
+      --ink: #eaf3f7;
+      --muted: #94a6b1;
+      --line: rgba(157, 199, 220, 0.18);
+      --cyan: #56c5e6;
+      --amber: #f4a94d;
+      --night: #05090d;
+    }
+    * { box-sizing: border-box; }
+    html, body { width: 100%; min-height: 100%; margin: 0; background: var(--night); color: var(--ink); font-family: Arial, Helvetica, sans-serif; }
+    button, input { font: inherit; }
+    .entry-shell {
+      position: relative;
+      min-height: 100svh;
+      overflow: hidden;
+      isolation: isolate;
+      background:
+        radial-gradient(circle at 50% 35%, rgba(33, 87, 109, 0.19), transparent 34%),
+        radial-gradient(circle at 68% 65%, rgba(244, 169, 77, 0.05), transparent 26%),
+        linear-gradient(145deg, #030609 0%, #081119 48%, #030609 100%);
+    }
+    .entry-grid {
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      opacity: 0.32;
+      background-image:
+        linear-gradient(rgba(141, 190, 212, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(141, 190, 212, 0.035) 1px, transparent 1px);
+      background-size: 64px 64px;
+      mask-image: linear-gradient(to bottom, black, transparent 82%);
+    }
+    .gear-scene {
+      position: absolute;
+      inset: -4% -2% 3%;
+      opacity: 0;
+      transform: scale(1.07);
+      animation: scene-in 1.2s cubic-bezier(0.2, 0.75, 0.2, 1) 0.15s forwards;
+      transition: opacity 0.62s ease, transform 0.72s cubic-bezier(0.3, 0, 0.7, 1), filter 0.62s ease;
+    }
+    .gear-scene canvas { display: block; width: 100%; height: 100%; }
+    .gear-scene.is-ending { opacity: 0; filter: blur(8px); transform: scale(1.11); }
+    .vector-gears { width: 100%; height: 100%; overflow: visible; }
+    .vector-pinion { transform-origin: 382px 350px; animation: vector-pinion-spin 3.8s linear infinite; }
+    .vector-wheel { transform-origin: 648px 350px; animation: vector-wheel-spin 5.7s linear infinite; }
+    .brand-lockup {
+      position: absolute;
+      left: clamp(24px, 7vw, 110px);
+      bottom: clamp(72px, 12vh, 145px);
+      z-index: 2;
+      max-width: 700px;
+      opacity: 0;
+      transform: translateY(22px);
+      animation: lockup-in 0.8s ease 0.52s forwards;
+      transition: opacity 0.48s ease, transform 0.48s ease;
+    }
+    .brand-lockup.is-ending, .motion-specs.is-ending { opacity: 0; transform: translateY(10px); }
+    .brand-kicker {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 11px;
+      color: #b4c5cd;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+    }
+    .brand-kicker span { width: 42px; height: 1px; background: var(--cyan); box-shadow: 0 0 12px rgba(86, 197, 230, 0.78); }
+    .brand-lockup h1 {
+      margin: 0;
+      font-size: clamp(54px, 8vw, 116px);
+      font-weight: 660;
+      letter-spacing: -0.065em;
+      line-height: 0.92;
+      text-shadow: 0 16px 46px rgba(0, 0, 0, 0.44);
+    }
+    .brand-lockup h1 span { color: var(--cyan); }
+    .brand-lockup p { margin: 20px 0 0 4px; color: #a7b6be; font-size: clamp(14px, 1.5vw, 19px); letter-spacing: 0.02em; }
+    .progress-track { width: min(380px, 70vw); height: 2px; margin: 31px 0 0 4px; overflow: hidden; background: rgba(255, 255, 255, 0.09); }
+    .progress-track span { display: block; width: 100%; height: 100%; transform: scaleX(0); transform-origin: left; background: linear-gradient(90deg, var(--cyan), #f5f9fb); box-shadow: 0 0 13px var(--cyan); animation: load-progress 4.35s linear 0.35s forwards; }
+    .motion-specs { position: absolute; right: clamp(24px, 4.2vw, 70px); bottom: 35px; display: flex; gap: 23px; color: rgba(194, 211, 219, 0.58); font-family: Consolas, monospace; font-size: 10px; letter-spacing: 0.11em; transition: opacity 0.42s ease, transform 0.42s ease; }
+    .legal-stage { position: relative; min-height: 100svh; display: none; place-items: center; padding: 32px 18px; animation: legal-stage-in 0.7s ease both; }
+    .legal-stage.on { display: grid; }
+    .legal-ambient { position: absolute; width: min(74vw, 850px); aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle, rgba(40, 145, 181, 0.13), transparent 66%); filter: blur(18px); }
+    .legal-card {
+      position: relative;
+      z-index: 1;
+      width: min(760px, 100%);
+      padding: clamp(26px, 4vw, 46px);
+      border: 1px solid rgba(148, 193, 213, 0.2);
+      border-radius: 24px;
+      background: rgba(10, 17, 23, 0.88);
+      box-shadow: 0 35px 100px rgba(0, 0, 0, 0.58), inset 0 1px 0 rgba(255, 255, 255, 0.035);
+      backdrop-filter: blur(20px);
+    }
+    .legal-card::before { position: absolute; top: -1px; left: 12%; width: 32%; height: 1px; content: ""; background: linear-gradient(90deg, transparent, var(--cyan), transparent); box-shadow: 0 0 18px rgba(86, 197, 230, 0.7); }
+    .legal-mark { position: absolute; top: 37px; right: 42px; display: grid; width: 44px; height: 44px; place-items: center; border: 1px solid rgba(86, 197, 230, 0.35); border-radius: 50%; color: var(--cyan); font-family: Consolas, monospace; font-size: 11px; letter-spacing: 0.08em; }
+    .eyebrow { margin: 0 0 10px; color: var(--cyan); font-size: 10px; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; }
+    .legal-card h1 { max-width: 580px; margin: 0; color: #f2f7f9; font-size: clamp(28px, 4vw, 43px); font-weight: 610; letter-spacing: -0.045em; line-height: 1.08; }
+    .legal-intro { margin: 13px 0 23px; color: var(--muted); font-size: 14px; }
+    .legal-scroll { max-height: min(39svh, 320px); overflow-y: auto; padding-right: 8px; border-block: 1px solid rgba(157, 199, 220, 0.12); scrollbar-color: #31586a transparent; }
+    .legal-scroll article { display: grid; grid-template-columns: 38px 1fr; gap: 15px; padding: 17px 2px; border-bottom: 1px solid rgba(157, 199, 220, 0.09); }
+    .legal-scroll article:last-child { border-bottom: 0; }
+    .legal-scroll article > span { padding-top: 2px; color: rgba(86, 197, 230, 0.65); font-family: Consolas, monospace; font-size: 11px; }
+    .legal-scroll h2 { margin: 0 0 5px; color: #d9e5ea; font-size: 13px; font-weight: 700; letter-spacing: 0.01em; }
+    .legal-scroll p { margin: 0; color: #82959f; font-size: 12px; line-height: 1.55; }
+    .accept-row { display: grid; grid-template-columns: 22px 1fr; gap: 12px; align-items: start; margin: 22px 0 18px; cursor: pointer; }
+    .accept-row input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+    .accept-row > span { position: relative; width: 20px; height: 20px; border: 1px solid #415763; border-radius: 5px; background: #091017; transition: 0.18s ease; }
+    .accept-row input:focus-visible + span { outline: 2px solid #fff; outline-offset: 3px; }
+    .accept-row input:checked + span { border-color: var(--cyan); background: var(--cyan); box-shadow: 0 0 18px rgba(86, 197, 230, 0.28); }
+    .accept-row input:checked + span::after { position: absolute; left: 6px; top: 2px; width: 5px; height: 10px; content: ""; border: solid #061015; border-width: 0 2px 2px 0; transform: rotate(45deg); }
+    .accept-row strong { color: #b8c7ce; font-size: 12px; font-weight: 560; line-height: 1.5; }
+    .enter-button { display: flex; width: 100%; align-items: center; justify-content: space-between; padding: 15px 18px; border: 1px solid var(--cyan); border-radius: 9px; color: #041016; background: var(--cyan); box-shadow: 0 10px 35px rgba(48, 171, 208, 0.18); font-size: 13px; font-weight: 800; cursor: pointer; transition: transform 0.18s ease, filter 0.18s ease, opacity 0.18s ease; }
+    .enter-button:not(:disabled):hover { filter: brightness(1.08); transform: translateY(-1px); }
+    .enter-button:disabled { border-color: #253844; color: #64747d; background: #15212a; box-shadow: none; cursor: not-allowed; opacity: 0.64; }
+    .enter-button span { font-size: 20px; line-height: 1; }
+    .legal-foot { margin: 14px 0 0; color: #52656f; font-family: Consolas, monospace; font-size: 9px; letter-spacing: 0.075em; text-align: center; }
+    .calculator-shell { display: none; width: 100%; min-height: 100svh; overflow: hidden; background: #f5f7fa; }
+    .calculator-shell.on { display: block; }
+    .calculator-frame { display: block; width: 100%; height: 100svh; min-height: 100svh; border: 0; background: #f5f7fa; }
+    .hidden { display: none !important; }
+    @keyframes scene-in { to { opacity: 1; transform: scale(1); } }
+    @keyframes lockup-in { to { opacity: 1; transform: translateY(0); } }
+    @keyframes load-progress { to { transform: scaleX(1); } }
+    @keyframes legal-stage-in { from { opacity: 0; transform: scale(0.98); } }
+    @keyframes vector-pinion-spin { to { transform: rotate(360deg); } }
+    @keyframes vector-wheel-spin { to { transform: rotate(-360deg); } }
+    @media (max-width: 760px) {
+      .gear-scene { inset: -12% -42% 21% -38%; }
+      .brand-lockup { right: 22px; bottom: 72px; }
+      .motion-specs { right: auto; left: 26px; bottom: 25px; gap: 13px; }
+      .legal-stage { align-items: start; overflow-y: auto; }
+      .legal-card { margin-block: auto; border-radius: 18px; }
+      .legal-mark { display: none; }
+      .legal-scroll { max-height: 34svh; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .gear-scene, .brand-lockup, .progress-track span, .legal-stage { animation-duration: 0.01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <main id="entryShell" class="entry-shell" aria-live="polite">
+    <div class="entry-grid" aria-hidden="true"></div>
+    <div id="gearScene" class="gear-scene" aria-hidden="true"></div>
+    <div id="brandLockup" class="brand-lockup">
+      <div class="brand-kicker"><span></span>Engenharia mecânica aplicada</div>
+      <h1>Engrenage<span>Calc</span></h1>
+      <p>Dimensionamento de engrenagens cilíndricas e cônicas</p>
+      <div class="progress-track"><span></span></div>
+    </div>
+    <div id="motionSpecs" class="motion-specs" aria-hidden="true">
+      <span>ISO 6336</span>
+      <span>AGMA 2001</span>
+      <span>ISO 10300</span>
+    </div>
+
+    <section id="legalStage" class="legal-stage" aria-labelledby="legal-title">
+      <div class="legal-ambient" aria-hidden="true"></div>
+      <div class="legal-card" role="dialog" aria-modal="true">
+        <div class="legal-mark" aria-hidden="true">EC</div>
+        <p class="eyebrow">Antes de começar</p>
+        <h1 id="legal-title">Avisos legais e termo de responsabilidade</h1>
+        <p class="legal-intro">Leia os pontos abaixo. O acesso à calculadora depende da sua concordância.</p>
+        <div class="legal-scroll" tabindex="0">
+          <article>
+            <span>01</span>
+            <div>
+              <h2>Ferramenta de apoio</h2>
+              <p>O EngrenageCalc Pro auxilia o pré-dimensionamento. Seus resultados não substituem projeto, verificação independente, julgamento técnico ou responsabilidade de profissional legalmente habilitado.</p>
+            </div>
+          </article>
+          <article>
+            <span>02</span>
+            <div>
+              <h2>Validação técnica</h2>
+              <p>Entradas, hipóteses, materiais, fatores, unidades, normas e resultados devem ser conferidos para as condições reais de fabricação, montagem, lubrificação, operação e segurança.</p>
+            </div>
+          </article>
+          <article>
+            <span>03</span>
+            <div>
+              <h2>Limitação de responsabilidade</h2>
+              <p>O usuário assume integral responsabilidade pelo uso das informações. Não há garantia de adequação a uma finalidade específica, nem responsabilidade por perdas decorrentes de decisões tomadas apenas com base nesta ferramenta.</p>
+            </div>
+          </article>
+          <article>
+            <span>04</span>
+            <div>
+              <h2>Dados e versões normativas</h2>
+              <p>Os dados da sessão são processados no navegador. Cabe ao usuário confirmar a vigência e a aplicabilidade das normas técnicas indicadas no memorial de cálculo.</p>
+            </div>
+          </article>
+        </div>
+        <label class="accept-row">
+          <input id="acceptTerms" type="checkbox">
+          <span aria-hidden="true"></span>
+          <strong>Li, compreendi e concordo com os avisos e assumo responsabilidade pela conferência técnica dos resultados.</strong>
+        </label>
+        <button id="enterButton" type="button" class="enter-button" disabled>
+          Abrir EngrenageCalc Pro
+          <span aria-hidden="true">→</span>
+        </button>
+        <p class="legal-foot">ABNT NBR ISO 6336 · AGMA 2001 · ISO 10300 · DIN 3990</p>
+      </div>
+    </section>
+  </main>
+
+  <main id="calculatorShell" class="calculator-shell">
+    <iframe id="calculatorFrame" class="calculator-frame" title="EngrenageCalc Pro - calculadora de engrenagens"></iframe>
+  </main>
+
+  <script type="module">
+    import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.179.1/build/three.module.js";
+
+    const gearScene = document.getElementById("gearScene");
+    const brandLockup = document.getElementById("brandLockup");
+    const motionSpecs = document.getElementById("motionSpecs");
+    const legalStage = document.getElementById("legalStage");
+    const entryShell = document.getElementById("entryShell");
+    const calculatorShell = document.getElementById("calculatorShell");
+    const calculatorFrame = document.getElementById("calculatorFrame");
+    const acceptTerms = document.getElementById("acceptTerms");
+    const enterButton = document.getElementById("enterButton");
+
+    function gearGeometry(teeth, rootRadius, outerRadius, thickness, holeRadius) {
+      const shape = new THREE.Shape();
+      const pointsPerTooth = 8;
+      for (let index = 0; index < teeth * pointsPerTooth; index += 1) {
+        const toothPoint = index % pointsPerTooth;
+        const angle = (index / (teeth * pointsPerTooth)) * Math.PI * 2;
+        const radius = toothPoint === 2 || toothPoint === 3 || toothPoint === 4 || toothPoint === 5 ? outerRadius : rootRadius;
+        const x = Math.cos(angle) * radius;
+        const y = Math.sin(angle) * radius;
+        if (index === 0) shape.moveTo(x, y);
+        else shape.lineTo(x, y);
+      }
+      shape.closePath();
+      const hole = new THREE.Path();
+      hole.absarc(0, 0, holeRadius, 0, Math.PI * 2, true);
+      shape.holes.push(hole);
+      const geometry = new THREE.ExtrudeGeometry(shape, { depth: thickness, bevelEnabled: true, bevelSegments: 4, steps: 1, bevelSize: 0.1, bevelThickness: 0.1, curveSegments: 96 });
+      geometry.center();
+      geometry.computeVertexNormals();
+      return geometry;
+    }
+
+    function gearPath(cx, cy, teeth, root, outer) {
+      const pointCount = teeth * 8;
+      const points = Array.from({ length: pointCount }, (_, index) => {
+        const position = index % 8;
+        const radius = position === 2 || position === 3 || position === 4 || position === 5 ? outer : root;
+        const angle = (index / pointCount) * Math.PI * 2;
+        return `${cx + Math.cos(angle) * radius},${cy + Math.sin(angle) * radius}`;
+      });
+      return `M ${points.join(" L ")} Z`;
+    }
+
+    function showVectorFallback() {
+      const pinionPath = gearPath(382, 350, 16, 96, 124);
+      const wheelPath = gearPath(648, 350, 24, 145, 174);
+      gearScene.innerHTML = `
+        <svg class="vector-gears" viewBox="0 0 1000 700" role="img" aria-label="Duas engrenagens metalicas acopladas e girando">
+          <defs>
+            <linearGradient id="silver" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eef6f8"/><stop offset=".23" stop-color="#7b8d97"/><stop offset=".48" stop-color="#e3eaed"/><stop offset=".76" stop-color="#566974"/><stop offset="1" stop-color="#b4c2c9"/></linearGradient>
+            <linearGradient id="gunmetal" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#80939d"/><stop offset=".38" stop-color="#263944"/><stop offset=".7" stop-color="#6f828c"/><stop offset="1" stop-color="#1b2b34"/></linearGradient>
+            <radialGradient id="hub" cx=".36" cy=".28"><stop offset="0" stop-color="#293b45"/><stop offset=".65" stop-color="#0d171d"/><stop offset="1" stop-color="#020506"/></radialGradient>
+            <filter id="soft-shadow" x="-40%" y="-40%" width="180%" height="180%"><feDropShadow dx="0" dy="22" stdDeviation="19" flood-color="#000" flood-opacity=".65"/></filter>
+          </defs>
+          <ellipse cx="520" cy="516" rx="355" ry="66" fill="rgba(0,0,0,.5)"/>
+          <g class="vector-wheel" filter="url(#soft-shadow)"><path d="${wheelPath}" fill="#101b22" transform="translate(0 19)"/><path d="${wheelPath}" fill="#263842" transform="translate(0 10)"/><path d="${wheelPath}" fill="url(#gunmetal)"/><circle cx="648" cy="350" r="73" fill="url(#hub)" stroke="#82939c" stroke-width="5"/><circle cx="648" cy="350" r="36" fill="#05090c" stroke="#1f303a" stroke-width="7"/></g>
+          <g class="vector-pinion" filter="url(#soft-shadow)"><path d="${pinionPath}" fill="#26353d" transform="translate(0 17)"/><path d="${pinionPath}" fill="#778891" transform="translate(0 8)"/><path d="${pinionPath}" fill="url(#silver)"/><circle cx="382" cy="350" r="52" fill="url(#hub)" stroke="#cbd4d8" stroke-width="5"/><circle cx="382" cy="350" r="27" fill="#05090c" stroke="#263a45" stroke-width="6"/></g>
+        </svg>`;
+    }
+
+    function startGearScene() {
+      if (!gearScene || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        showVectorFallback();
+        return;
+      }
+      let renderer;
+      try {
+        renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
+      } catch (error) {
+        showVectorFallback();
+        return;
+      }
+
+      const scene = new THREE.Scene();
+      scene.fog = new THREE.FogExp2(0x071018, 0.022);
+      const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 100);
+      camera.position.set(0, -14.5, 12.5);
+      camera.lookAt(0, 0.2, 0);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      renderer.outputColorSpace = THREE.SRGBColorSpace;
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.18;
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      gearScene.appendChild(renderer.domElement);
+
+      const gearMaterial = new THREE.MeshPhysicalMaterial({ color: 0xcbd4db, metalness: 0.94, roughness: 0.2, clearcoat: 0.42, clearcoatRoughness: 0.18, envMapIntensity: 1.2 });
+      const darkMetal = new THREE.MeshPhysicalMaterial({ color: 0x344654, metalness: 0.9, roughness: 0.24, clearcoat: 0.25 });
+      const pinion = new THREE.Mesh(gearGeometry(16, 2.0, 2.56, 1.08, 0.7), gearMaterial);
+      const wheel = new THREE.Mesh(gearGeometry(24, 3.03, 3.58, 1.28, 0.92), darkMetal);
+      pinion.position.set(-2.88, 0.5, 0.42);
+      wheel.position.set(2.62, -0.05, -0.16);
+      pinion.rotation.z = Math.PI / 16;
+      wheel.rotation.z = -Math.PI / 24;
+      pinion.castShadow = true;
+      pinion.receiveShadow = true;
+      wheel.castShadow = true;
+      wheel.receiveShadow = true;
+      scene.add(pinion, wheel);
+
+      const axleMaterial = new THREE.MeshStandardMaterial({ color: 0x111820, metalness: 0.85, roughness: 0.28 });
+      const pinionAxle = new THREE.Mesh(new THREE.CylinderGeometry(0.68, 0.68, 2.5, 72), axleMaterial);
+      const wheelAxle = new THREE.Mesh(new THREE.CylinderGeometry(0.9, 0.9, 2.8, 72), axleMaterial);
+      pinionAxle.rotation.x = Math.PI / 2;
+      wheelAxle.rotation.x = Math.PI / 2;
+      pinionAxle.position.copy(pinion.position);
+      wheelAxle.position.copy(wheel.position);
+      scene.add(pinionAxle, wheelAxle);
+
+      const floor = new THREE.Mesh(new THREE.CircleGeometry(15, 128), new THREE.MeshStandardMaterial({ color: 0x071018, metalness: 0.15, roughness: 0.78, transparent: true, opacity: 0.72 }));
+      floor.position.z = -1.25;
+      floor.receiveShadow = true;
+      scene.add(floor);
+      scene.add(new THREE.HemisphereLight(0xb8dbef, 0x05080b, 1.45));
+      const key = new THREE.SpotLight(0xe6f5ff, 98, 38, Math.PI / 5, 0.42, 1.3);
+      key.position.set(-6, -7, 14);
+      key.castShadow = true;
+      key.shadow.mapSize.set(2048, 2048);
+      scene.add(key);
+      const rim = new THREE.PointLight(0x2fa7d8, 52, 30, 1.5);
+      rim.position.set(8, 4, 7);
+      scene.add(rim);
+      const warm = new THREE.PointLight(0xffb65b, 26, 24, 1.7);
+      warm.position.set(-8, 4, 4);
+      scene.add(warm);
+
+      function resize() {
+        const width = gearScene.clientWidth || window.innerWidth;
+        const height = gearScene.clientHeight || window.innerHeight;
+        renderer.setSize(width, height, false);
+        camera.aspect = width / Math.max(height, 1);
+        camera.updateProjectionMatrix();
+      }
+      resize();
+      window.addEventListener("resize", resize);
+      const clock = new THREE.Clock();
+      function animate() {
+        const delta = Math.min(clock.getDelta(), 0.035);
+        pinion.rotation.z += delta * 0.88;
+        wheel.rotation.z -= delta * 0.88 * (16 / 24);
+        pinionAxle.rotation.z = pinion.rotation.z;
+        wheelAxle.rotation.z = wheel.rotation.z;
+        scene.rotation.x = Math.sin(clock.elapsedTime * 0.32) * 0.025;
+        scene.rotation.y = Math.sin(clock.elapsedTime * 0.24) * 0.055;
+        renderer.render(scene, camera);
+        requestAnimationFrame(animate);
+      }
+      animate();
+    }
+
+    function showLegal() {
+      gearScene.classList.add("is-ending");
+      brandLockup.classList.add("is-ending");
+      motionSpecs.classList.add("is-ending");
+      setTimeout(() => {
+        gearScene.classList.add("hidden");
+        brandLockup.classList.add("hidden");
+        motionSpecs.classList.add("hidden");
+        legalStage.classList.add("on");
+        document.querySelector(".legal-scroll")?.focus();
+      }, 620);
+    }
+
+    function openCalculator() {
+      calculatorFrame.src = "./EngrenageCalcPro_v1.0.html";
+      entryShell.classList.add("hidden");
+      calculatorShell.classList.add("on");
+      document.title = "EngrenageCalc Pro v1.0 - Dimensionamento de Engrenagens";
+    }
+
+    acceptTerms.addEventListener("change", () => {
+      enterButton.disabled = !acceptTerms.checked;
+    });
+    enterButton.addEventListener("click", openCalculator);
+    startGearScene();
+    setTimeout(showLegal, 5000);
+  </script>
+</body>
+</html>
