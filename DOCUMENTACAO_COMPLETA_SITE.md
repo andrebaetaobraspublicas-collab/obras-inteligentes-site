@@ -114,7 +114,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/cabocalc/` | 129693 bytes | 129693 caracteres |
 | `/subestacaopro/` | 730239 bytes | 730239 caracteres |
 | `/brucknercalc/` | 1399176 bytes | 1399176 caracteres |
-| `/molapro/` | 183572 bytes | 183572 caracteres |
+| `/molapro/` | 304857 bytes | 304857 caracteres |
 | `/calculadora-eixos/` | 173241 bytes | 173241 caracteres |
 | `/mancalpro/` | 1138677 bytes | 1138677 caracteres |
 | `/engrenagecalc/` | 22861 bytes | 22861 caracteres |
@@ -688,16 +688,16 @@ Arquivo: `molapro/index.html`
 
 Ultima inclusao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\MolaPro v1.0 (standalone).html`
-- Data: 29/07/2026
-- Alteracao: inclusao de novo card na home e publicacao do aplicativo como HTML standalone.
+- Fonte: `C:\Users\ACER\Documents\Downloads\MolaPro_v1.5.html`
+- Data: 31/07/2026
+- Alteracao: atualizacao do aplicativo MolaPro para a versao standalone v1.5, com tela de abertura e aceite legal.
 
 Observacoes:
 
 - Aplicativo standalone empacotado em HTML unico.
 - Tela inicial do site aponta para `/molapro/`.
 - O card foi classificado no filtro `Engenharia Mecanica`, novo menu criado para aplicativos mecanicos.
-- Validar apos futuras alteracoes se a calculadora de molas helicoidais de compressao, tracao, torcao, rigidez, esforcos e verificacoes tecnicas continua carregando corretamente.
+- Validar apos futuras alteracoes se a calculadora de molas helicoidais de compressao, tracao, torcao, rigidez, esforcos, fabricacao, inspecao, fadiga, tolerancias e verificacoes tecnicas continua carregando corretamente.
 
 ### Calculadora de Eixos
 
