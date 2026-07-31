@@ -1,0 +1,1697 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EngrenageCalc Pro v1.0 — Dimensionamento de Engrenagens</title>
+<style>
+:root{
+  --bg:#f5f7fa; --panel:#ffffff; --panel2:#eef2f7; --border:#d3dbe5;
+  --txt:#1c2733; --txt2:#5b6b7d; --accent:#1565c0; --accent2:#0d47a1;
+  --ok:#1b7f3b; --warn:#b26a00; --err:#c62828; --shadow:0 1px 3px rgba(20,40,70,.10);
+  --svgbg:#ffffff; --svgline:#1565c0; --svgaux:#8a97a6; --svgdim:#c62828; --svgfill:#e3edf9;
+}
+html[data-theme="dark"]{
+  --bg:#0d1117; --panel:#161b22; --panel2:#1c2330; --border:#2b3542;
+  --txt:#c9d1d9; --txt2:#8b96a3; --accent:#58a6ff; --accent2:#79b8ff;
+  --ok:#3fb950; --warn:#d29922; --err:#f85149; --shadow:0 1px 3px rgba(0,0,0,.5);
+  --svgbg:#161b22; --svgline:#58a6ff; --svgaux:#6e7a89; --svgdim:#f85149; --svgfill:#1c2f47;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--txt);font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+header{background:var(--panel);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;position:sticky;top:0;z-index:50;box-shadow:var(--shadow)}
+header h1{font-size:17px;margin:0;font-weight:600;letter-spacing:-.2px}
+header h1 small{font-weight:400;color:var(--txt2);font-size:12px;margin-left:6px}
+.spacer{flex:1}
+button,select,input{font-family:inherit;font-size:14px}
+.btn{background:var(--accent);color:#fff;border:none;border-radius:6px;padding:8px 14px;cursor:pointer;font-weight:600}
+.btn:hover{background:var(--accent2)}
+.btn.sec{background:transparent;color:var(--txt);border:1px solid var(--border)}
+.btn.sec:hover{background:var(--panel2)}
+.btn.sm{padding:5px 10px;font-size:12.5px;font-weight:500}
+.wrap{max-width:1420px;margin:0 auto;padding:14px 16px 60px}
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--border);margin-bottom:14px;flex-wrap:wrap}
+.tab{padding:9px 16px;border:none;background:transparent;color:var(--txt2);cursor:pointer;font-weight:600;border-bottom:2px solid transparent;margin-bottom:-2px}
+.tab.on{color:var(--accent);border-bottom-color:var(--accent)}
+.grid{display:grid;grid-template-columns:390px 1fr;gap:14px;align-items:start}
+@media(max-width:1000px){.grid{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:12px;box-shadow:var(--shadow)}
+.card h3{margin:0 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:.6px;color:var(--txt2);font-weight:700}
+.card h4{margin:14px 0 8px;font-size:14px;color:var(--accent)}
+label{display:block;font-size:12px;color:var(--txt2);margin:9px 0 3px;font-weight:600}
+input[type=number],input[type=text],select{width:100%;padding:7px 9px;border:1px solid var(--border);border-radius:5px;background:var(--panel2);color:var(--txt)}
+input:focus,select:focus{outline:2px solid var(--accent);outline-offset:-1px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.hint{font-size:11px;color:var(--txt2);margin-top:3px;line-height:1.35}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:6px 8px;border-bottom:1px solid var(--border);text-align:left}
+th{color:var(--txt2);font-size:11.5px;text-transform:uppercase;letter-spacing:.4px}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+tr.hl td{background:var(--panel2);font-weight:600}
+.badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11.5px;font-weight:700}
+.b-ok{background:rgba(27,127,59,.15);color:var(--ok)}
+.b-warn{background:rgba(178,106,0,.15);color:var(--warn)}
+.b-err{background:rgba(198,40,40,.15);color:var(--err)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:12px}
+.kpi{background:var(--panel);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:6px;padding:10px 12px}
+.kpi .k{font-size:11px;color:var(--txt2);text-transform:uppercase;letter-spacing:.5px;font-weight:700}
+.kpi .v{font-size:21px;font-weight:700;font-variant-numeric:tabular-nums;margin-top:2px}
+.kpi .u{font-size:12px;color:var(--txt2);font-weight:500}
+.kpi.ok{border-left-color:var(--ok)} .kpi.warn{border-left-color:var(--warn)} .kpi.err{border-left-color:var(--err)}
+.msg{padding:9px 12px;border-radius:6px;margin:8px 0;font-size:13px;border-left:3px solid}
+.m-ok{background:rgba(27,127,59,.10);border-color:var(--ok)}
+.m-warn{background:rgba(178,106,0,.10);border-color:var(--warn)}
+.m-err{background:rgba(198,40,40,.10);border-color:var(--err)}
+.subtabs{display:flex;gap:4px;margin-bottom:12px;flex-wrap:wrap}
+.subtab{padding:6px 13px;border:1px solid var(--border);background:var(--panel);color:var(--txt2);border-radius:20px;cursor:pointer;font-size:12.5px;font-weight:600}
+.subtab.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.hide{display:none!important}
+.svgbox{background:var(--svgbg);border:1px solid var(--border);border-radius:6px;overflow:hidden;position:relative}
+.svgbox svg{display:block;width:100%;height:auto;touch-action:none;cursor:grab}
+.svgbox svg:active{cursor:grabbing}
+.svgtools{position:absolute;top:6px;right:6px;display:flex;gap:4px;z-index:5}
+.dgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:800px){.dgrid{grid-template-columns:1fr}.row3{grid-template-columns:1fr}}
+.mem{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:26px 30px;font-size:13.5px;line-height:1.62}
+.mem h2{font-size:16px;margin:0 0 4px;text-align:center;text-transform:uppercase;letter-spacing:.8px}
+.mem h3{font-size:13.5px;margin:20px 0 6px;color:var(--accent);border-bottom:1px solid var(--border);padding-bottom:3px;text-transform:none;letter-spacing:0}
+.mem h4{font-size:13px;margin:12px 0 4px;color:var(--txt)}
+.mem .sub{text-align:center;color:var(--txt2);font-size:12px;margin-bottom:18px}
+.mem table{margin:6px 0 10px;font-size:12.5px}
+.mem .form{background:var(--panel2);border-left:3px solid var(--accent);padding:7px 11px;margin:6px 0;font-family:"Courier New",monospace;font-size:12.5px;white-space:pre-wrap;border-radius:0 4px 4px 0}
+.mem ul{margin:4px 0;padding-left:20px}
+.mem .assin{margin-top:34px;text-align:center;font-size:12.5px}
+.mem .assin .line{border-top:1px solid var(--txt2);width:290px;margin:38px auto 4px}
+.tut{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;z-index:100;padding:16px}
+.tut .box{background:var(--panel);border-radius:10px;max-width:520px;padding:22px;box-shadow:0 10px 40px rgba(0,0,0,.35)}
+.tut h3{margin:0 0 8px;color:var(--accent);font-size:16px;text-transform:none;letter-spacing:0}
+.tut p{font-size:13.5px;color:var(--txt);margin:0 0 12px}
+.tut .nav{display:flex;gap:8px;justify-content:flex-end;align-items:center}
+.tut .step{flex:1;font-size:12px;color:var(--txt2)}
+.hist{max-height:230px;overflow:auto}
+.hist .it{padding:7px 9px;border:1px solid var(--border);border-radius:5px;margin-bottom:6px;cursor:pointer;font-size:12.5px}
+.hist .it:hover{background:var(--panel2)}
+.hist .it b{color:var(--accent)}
+.foot{text-align:center;color:var(--txt2);font-size:11.5px;padding:20px 0 0}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--txt2);margin-top:6px}
+.legend i{display:inline-block;width:14px;height:0;border-top:2px solid;vertical-align:middle;margin-right:4px}
+@media print{
+  header,.tabs,.subtabs,.svgtools,.no-print,.btn{display:none!important}
+  body{background:#fff;color:#000}
+  .mem{border:none;padding:0}
+  .wrap{max-width:none;padding:0}
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>⚙️ EngrenageCalc Pro <small>v1.0 — Cilíndricas e Cônicas</small></h1>
+  <div class="spacer"></div>
+  <button class="btn sec sm" id="btnTut">🎓 Tutorial</button>
+  <button class="btn sec sm" id="btnEx">📋 Exemplo</button>
+  <button class="btn sec sm" id="btnTheme">🌙 Tema</button>
+</header>
+
+<div class="wrap">
+  <div class="tabs">
+    <button class="tab on" data-tipo="cil">Cilíndrica (reta / helicoidal)</button>
+    <button class="tab" data-tipo="con">Cônica (bevel)</button>
+  </div>
+
+  <div class="grid">
+    <!-- ============ COLUNA DE ENTRADA ============ -->
+    <div>
+      <div class="card">
+        <h3>1. Dados de serviço</h3>
+        <div class="row">
+          <div><label>Torque no pinhão T₁ (N·m)</label><input type="number" id="T1" value="100" step="any"></div>
+          <div><label>Rotação do pinhão n₁ (rpm)</label><input type="number" id="n1" value="1500" step="any"></div>
+        </div>
+        <div class="row">
+          <div><label>Relação de transmissão i</label><input type="number" id="i" value="2" step="any"></div>
+          <div><label>Vida útil desejada (h)</label><input type="number" id="Lh" value="5000" step="any"></div>
+        </div>
+        <label>Fator de aplicação K<sub>o</sub> (choque)</label>
+        <select id="Ko">
+          <option value="1.00">1,00 — Motor uniforme / carga uniforme</option>
+          <option value="1.25" selected>1,25 — Choque leve</option>
+          <option value="1.50">1,50 — Choque moderado</option>
+          <option value="1.75">1,75 — Choque forte</option>
+          <option value="2.25">2,25 — Choque severo</option>
+        </select>
+        <div class="hint">AGMA 2001-D04 / DIN 3990 — combinação motriz × acionada.</div>
+      </div>
+
+      <div class="card">
+        <h3>2. Geometria</h3>
+        <div id="boxCil">
+          <div class="row">
+            <div><label>Dentado</label>
+              <select id="dentado"><option value="reta">Reta</option><option value="helic">Helicoidal</option></select>
+            </div>
+            <div><label>Ângulo de hélice β (°)</label><input type="number" id="beta" value="0" step="any"></div>
+          </div>
+        </div>
+        <div id="boxCon" class="hide">
+          <div class="row">
+            <div><label>Ângulo entre eixos Σ (°)</label><input type="number" id="sigma" value="90" step="any"></div>
+            <div><label>Fator de largura b/R<sub>e</sub></label><input type="number" id="kbcon" value="0.30" step="any"></div>
+          </div>
+          <div class="hint">ISO 10300 recomenda b ≤ 0,30·R<sub>e</sub> (limite prático 0,33).</div>
+        </div>
+        <div class="row">
+          <div><label>Ângulo de pressão α<sub>n</sub> (°)</label>
+            <select id="alfa"><option>14.5</option><option selected>20</option><option>25</option></select>
+          </div>
+          <div><label>Nº de dentes do pinhão Z₁</label><input type="number" id="Z1" value="20" step="1"></div>
+        </div>
+        <label>Modo de definição do módulo</label>
+        <select id="modo">
+          <option value="auto" selected>Automático — busca o módulo mínimo normalizado</option>
+          <option value="manual">Manual — módulo informado</option>
+        </select>
+        <div class="row" id="boxManual" style="display:none">
+          <div><label>Módulo normal m<sub>n</sub> (mm)</label><input type="number" id="mn" value="2.5" step="any"></div>
+          <div><label>Largura b (mm)</label><input type="number" id="bman" value="25" step="any"></div>
+        </div>
+        <div id="boxAuto">
+          <label>Coeficiente de largura ψ = b / m<sub>n</sub></label>
+          <input type="number" id="psi" value="10" step="any">
+          <div class="hint">Usual 8–12 (montagem comum) · 12–16 (mancais rígidos) · 6–8 (montagem em balanço).</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>3. Material e qualidade</h3>
+        <label>Material do pinhão e da coroa</label>
+        <select id="mat"></select>
+        <div class="row">
+          <div><label>Grau AGMA</label>
+            <select id="grau"><option value="1" selected>Grau 1</option><option value="2">Grau 2</option></select>
+          </div>
+          <div><label>Qualidade Q<sub>v</sub> (AGMA)</label>
+            <select id="Qv"><option>5</option><option>6</option><option selected>7</option><option>8</option><option>9</option><option>10</option><option>11</option></select>
+          </div>
+        </div>
+        <div class="row">
+          <div><label>Confiabilidade R</label>
+            <select id="R"><option value="0.90">90 %</option><option value="0.99" selected>99 %</option><option value="0.999">99,9 %</option><option value="0.9999">99,99 %</option></select>
+          </div>
+          <div><label>Temperatura de operação (°C)</label><input type="number" id="temp" value="70" step="any"></div>
+        </div>
+        <div class="row">
+          <div><label>FS mínimo — flexão S<sub>F</sub></label><input type="number" id="SFmin" value="1.30" step="any"></div>
+          <div><label>FS mínimo — contato S<sub>H</sub></label><input type="number" id="SHmin" value="1.10" step="any"></div>
+        </div>
+        <label>Precisão / montagem (K<sub>H</sub> — distribuição de carga)</label>
+        <select id="mont">
+          <option value="aberta">Engrenagem aberta</option>
+          <option value="comercial" selected>Unidade fechada comercial</option>
+          <option value="precisao">Unidade fechada de precisão</option>
+          <option value="extra">Unidade extra-precisa</option>
+        </select>
+      </div>
+
+      <div class="card no-print">
+        <button class="btn" id="btnCalc" style="width:100%;padding:11px;font-size:15px">▶ Calcular dimensionamento</button>
+        <div class="row" style="margin-top:8px">
+          <button class="btn sec sm" id="btnSave">💾 Salvar</button>
+          <button class="btn sec sm" id="btnClear">↺ Restaurar padrões</button>
+        </div>
+      </div>
+
+      <div class="card no-print">
+        <h3>Histórico (local)</h3>
+        <div class="hist" id="hist"><div class="hint">Nenhum cálculo salvo ainda.</div></div>
+      </div>
+    </div>
+
+    <!-- ============ COLUNA DE RESULTADO ============ -->
+    <div>
+      <div id="alerts"></div>
+      <div class="kpis" id="kpis"></div>
+      <div class="subtabs no-print">
+        <button class="subtab on" data-p="pGeo">📐 Geometria</button>
+        <button class="subtab" data-p="pRes">🔬 Resistência</button>
+        <button class="subtab" data-p="pDes">✏️ Desenhos</button>
+        <button class="subtab" data-p="pGraf">📊 Gráficos</button>
+        <button class="subtab" data-p="pMem">📄 Memorial</button>
+      </div>
+      <div id="pGeo" class="pane"></div>
+      <div id="pRes" class="pane hide"></div>
+      <div id="pDes" class="pane hide"></div>
+      <div id="pGraf" class="pane hide"></div>
+      <div id="pMem" class="pane hide"></div>
+    </div>
+  </div>
+  <div class="foot">EngrenageCalc Pro v1.0 — ABNT NBR ISO 6336 · AGMA 2001-D04 / 908-B89 · ISO 10300 · DIN 3990.<br>
+  Ferramenta de apoio ao pré-dimensionamento. Os resultados devem ser verificados por profissional habilitado (ART/RRT).</div>
+</div>
+<script>
+/* ==========================================================================
+   EngrenageCalc Pro v1.0 — Motor de cálculo
+   Normas: ABNT NBR ISO 6336-1/2/3/5 · AGMA 2001-D04 · AGMA 908-B89
+           ISO 10300-1/2/3 (cônicas) · DIN 3990 · ISO 53 (perfil de referência)
+   ========================================================================== */
+(function(global){
+'use strict';
+
+const EC = {};
+EC.VERSAO = '1.0';
+
+/* ---------- 1. BASES DE DADOS NORMATIVAS -------------------------------- */
+
+// Módulos normalizados — ISO 54 / ABNT NBR 8767 (séries I e II)
+EC.MODULOS = [0.5,0.6,0.8,1,1.25,1.5,2,2.5,3,4,5,6,8,10,12,16,20,25,32,40,50];
+
+// Fator de forma de Lewis Y — perfil normal ISO 53, α=20°, x=0 (AGMA 908-B89)
+EC.LEWIS_Y = {
+  12:0.245, 13:0.261, 14:0.277, 15:0.290, 16:0.296, 17:0.303, 18:0.309,
+  19:0.314, 20:0.322, 21:0.328, 22:0.331, 24:0.337, 26:0.346, 28:0.353,
+  30:0.359, 34:0.371, 38:0.384, 43:0.397, 50:0.409, 60:0.422, 75:0.435,
+  100:0.447, 150:0.460, 300:0.472, 400:0.480, 10000:0.485
+};
+
+// Fator de concentração de tensão no pé Kf (Dolan-Broghamer, α=20°, raio ISO 53)
+EC.KF_TAB = { 12:1.68, 15:1.65, 20:1.61, 25:1.58, 30:1.56, 40:1.53, 50:1.51,
+              75:1.48, 100:1.46, 150:1.44, 300:1.42, 10000:1.40 };
+
+// Materiais — σ_FE (limite de flexão) e σ_HE (limite de contato), MPa
+// Ref.: ABNT NBR ISO 6336-5 (tabelas de MQ/ME) e AGMA 2001-D04 (grade 1 e 2)
+EC.MATERIAIS = {
+  'SAE 1020 normalizado':          {sFlim:[150,180], sHlim:[600,700],  E:206000, nu:0.30, HB:120, dens:7850, trat:'Normalizado, sem tratamento superficial'},
+  'SAE 1045 temperado/revenido':   {sFlim:[225,265], sHlim:[830,930],  E:206000, nu:0.30, HB:220, dens:7850, trat:'Têmpera e revenimento — núcleo 220 HB'},
+  'SAE 4140 temperado/revenido':   {sFlim:[260,300], sHlim:[930,1030], E:206000, nu:0.30, HB:300, dens:7850, trat:'Têmpera e revenimento — núcleo 300 HB'},
+  'SAE 4140 temp. por indução':    {sFlim:[310,380], sHlim:[1160,1275],E:206000, nu:0.30, HB:500, dens:7850, trat:'Têmpera superficial por indução — 50 HRC'},
+  'SAE 8620 cementado':            {sFlim:[380,450], sHlim:[1240,1550],E:206000, nu:0.30, HB:600, dens:7850, trat:'Cementado e temperado — 58/62 HRC'},
+  '18CrNiMo7-6 cementado':         {sFlim:[420,500], sHlim:[1300,1650],E:206000, nu:0.30, HB:650, dens:7850, trat:'Cementado e temperado — 60/62 HRC'},
+  '20MnCr5 cementado':             {sFlim:[400,470], sHlim:[1275,1600],E:206000, nu:0.30, HB:640, dens:7850, trat:'Cementado e temperado — 59/62 HRC'},
+  '38CrMoAl nitretado':            {sFlim:[300,360], sHlim:[1130,1250],E:206000, nu:0.30, HB:700, dens:7850, trat:'Nitretado gasoso — camada 0,4 mm'},
+  'Ferro fundido nodular FE 70002':{sFlim:[150,180], sHlim:[580,660],  E:174000, nu:0.28, HB:230, dens:7100, trat:'Fundido, perlítico'},
+  'Bronze TM 620 (coroa)':         {sFlim:[95,110],  sHlim:[430,480],  E:105000, nu:0.34, HB:120, dens:8800, trat:'Bronze ao alumínio, fundido centrifugado'}
+};
+
+// Fator empírico de distribuição de carga na face (AGMA 2001 — C_pf/C_ma)
+EC.MONTAGEM = { aberta:[0.247,0.0167,-0.765e-4], comercial:[0.127,0.0158,-0.930e-4],
+                precisao:[0.0675,0.0128,-0.926e-4], extra:[0.00360,0.0102,-0.822e-4] };
+
+/* ---------- 2. UTILITÁRIOS ---------------------------------------------- */
+const rad = g => g*Math.PI/180, deg = r => r*180/Math.PI;
+EC.rad = rad; EC.deg = deg;
+
+EC.interpTab = function(tab, z){
+  const ks = Object.keys(tab).map(Number).sort((a,b)=>a-b);
+  if (z <= ks[0]) return tab[ks[0]];
+  if (z >= ks[ks.length-1]) return tab[ks[ks.length-1]];
+  for (let i=0;i<ks.length-1;i++){
+    if (z >= ks[i] && z <= ks[i+1]){
+      const t = (z-ks[i])/(ks[i+1]-ks[i]);
+      return tab[ks[i]] + t*(tab[ks[i+1]]-tab[ks[i]]);
+    }
+  }
+  return tab[ks[ks.length-1]];
+};
+EC.lewisY = z => EC.interpTab(EC.LEWIS_Y, z);
+EC.kf     = z => EC.interpTab(EC.KF_TAB, z);
+EC.moduloNormalizado = m => EC.MODULOS.find(x => x >= m - 1e-9) || EC.MODULOS[EC.MODULOS.length-1];
+
+/* ---------- 3. FATORES DE SERVIÇO --------------------------------------- */
+
+// Kv — fator dinâmico (AGMA 2001-D04, v em m/s)
+EC.fatorKv = function(Qv, v){
+  const B = 0.25*Math.pow(12-Qv, 2/3);
+  const A = 50 + 56*(1-B);
+  const Kv = Math.pow((A + Math.sqrt(200*v))/A, B);
+  const vmax = Math.pow(A+(Qv-3),2)/200;      // velocidade limite da faixa de validade
+  return {Kv, A, B, vmax, foraFaixa: v > vmax};
+};
+
+// Ks — fator de tamanho (AGMA: baseado no módulo; Ks=1 até m=5 mm)
+EC.fatorKs = function(mn){ return mn <= 5 ? 1.00 : Math.min(1.25, 0.8768 + 0.0535*mn*0.5); };
+
+// KH (Km) — fator de distribuição de carga (AGMA 2001-D04 simplificado)
+EC.fatorKH = function(b, d1, montagem){
+  const c = EC.MONTAGEM[montagem] || EC.MONTAGEM.comercial;
+  const bmm = b, dmm = d1;
+  let Cpf = bmm/(10*dmm) - 0.025;                       // proporção da face
+  if (bmm/dmm <= 0.5) Cpf = 0.025;
+  if (bmm > 25)  Cpf = bmm/(10*dmm) - 0.0375 + 0.000492*bmm;
+  if (bmm > 432) Cpf = bmm/(10*dmm) - 0.1109 + 0.000815*bmm - 0.000000353*bmm*bmm;
+  Cpf = Math.max(Cpf, 0.0);
+  const Cma = c[0] + c[1]*(bmm/25.4)*25.4/25.4 + c[2]*Math.pow(bmm,2)/1;
+  const CmaC = c[0] + c[1]*bmm + c[2]*bmm*bmm;
+  const KH = 1 + (Cpf + Math.max(CmaC,0));
+  return {KH: Math.max(KH,1.0), Cpf, Cma: Math.max(CmaC,0)};
+};
+
+// KT — fator de temperatura (AGMA: 1,0 até 120 °C)
+EC.fatorKT = t => t <= 120 ? 1.0 : (273+t)/393;
+
+// KR — fator de confiabilidade (AGMA 2001-D04)
+EC.fatorKR = function(R){
+  if (R < 0.5) R = 0.5;
+  if (R > 0.9999) R = 0.9999;
+  return R >= 0.99 ? 0.50 - 0.109*Math.log(1-R) : 0.658 - 0.0759*Math.log(1-R);
+};
+
+// YN — fator de vida à flexão (AGMA 2001-D04)
+EC.fatorYN = function(N){
+  if (N < 1e3) N = 1e3;
+  if (N <= 3e6) return Math.min(2.4, 6.1514*Math.pow(N,-0.1192));
+  return Math.max(0.85, 1.3558*Math.pow(N,-0.0178));
+};
+// Inversa de YN → nº de ciclos correspondente a um dado YN.
+// O ramo é escolhido pelo valor do fator (não pelo N recalculado), pois as duas
+// expressões da AGMA 2001-D04 se cruzam em N ≈ 3,00·10⁶ e não exatamente em 3·10⁶.
+EC.YN_BREAK = 6.1514*Math.pow(3e6,-0.1192);
+EC.cicloDeYN = function(y){
+  if (y < EC.YN_BREAK) return Math.pow(y/1.3558, -1/0.0178);
+  return Math.pow(y/6.1514, -1/0.1192);
+};
+
+// ZN — fator de vida ao contato (AGMA 2001-D04)
+EC.fatorZN = function(N){
+  if (N < 1e4) N = 1e4;
+  if (N <= 1e7) return Math.min(2.0, 2.466*Math.pow(N,-0.056));
+  return Math.max(0.80, 1.4488*Math.pow(N,-0.023));
+};
+EC.ZN_BREAK = 2.466*Math.pow(1e7,-0.056);
+EC.cicloDeZN = function(z){
+  if (z < EC.ZN_BREAK) return Math.pow(z/1.4488, -1/0.023);
+  return Math.pow(z/2.466, -1/0.056);
+};
+
+// ZE — coeficiente elástico (√MPa) — AGMA/ISO 6336-2
+EC.coefElastico = function(E1,nu1,E2,nu2){
+  return Math.sqrt(1/(Math.PI*((1-nu1*nu1)/E1 + (1-nu2*nu2)/E2)));
+};
+
+/* ---------- 4. GEOMETRIA — CILÍNDRICAS ---------------------------------- */
+EC.geoCilindrica = function(p){
+  const {mn, Z1, Z2, beta, alfan, b} = p;
+  const br = rad(beta), ar = rad(alfan);
+  const mt   = mn/Math.cos(br);                      // módulo transversal
+  const alfat= deg(Math.atan(Math.tan(ar)/Math.cos(br)));
+  const d1 = mt*Z1, d2 = mt*Z2;
+  const a  = (d1+d2)/2;
+  const ha = 1.00*mn, hf = 1.25*mn, h = 2.25*mn;     // ISO 53 — perfil de referência
+  const c  = 0.25*mn;                                // folga de fundo
+  const da1= d1+2*ha, da2= d2+2*ha;
+  const df1= d1-2*hf, df2= d2-2*hf;
+  const db1= d1*Math.cos(rad(alfat)), db2= d2*Math.cos(rad(alfat));
+  const pt = Math.PI*mt, pn = Math.PI*mn, px = beta>0 ? pn/Math.sin(br) : Infinity;
+  const s  = pn/2;                                   // espessura no primitivo (x=0)
+  // Razão de condução (transversal)
+  const at = rad(alfat);
+  const ea = (Math.sqrt(Math.pow(da1/2,2)-Math.pow(db1/2,2)) + Math.sqrt(Math.pow(da2/2,2)-Math.pow(db2/2,2))
+              - a*Math.sin(at)) / (Math.PI*mt*Math.cos(at));
+  const eb = beta>0 ? (b*Math.sin(br))/(Math.PI*mn) : 0;   // razão de recobrimento
+  // Zv — nº virtual de dentes (helicoidal)
+  const Zv1 = Z1/Math.pow(Math.cos(br),3), Zv2 = Z2/Math.pow(Math.cos(br),3);
+  /* Interferência de trajetória — nº mínimo de dentes do pinhão sem correção de perfil.
+     Fórmula geral (k = 1,0 para adendo pleno ISO 53), função da relação u = Z2/Z1:
+        Z_min = [2k·cosβ / ((1+2u)·sen²αt)] · [ u + √(u² + (1+2u)·sen²αt) ]
+     Casos-limite: u = 1 → 13 dentes;  u → ∞ (pinhão-cremalheira) → 18 dentes. */
+  const u_  = Z2/Z1, s2 = Math.pow(Math.sin(at),2), k_ = 1.0;
+  const Zmin = Math.ceil((2*k_*Math.cos(br)/((1+2*u_)*s2)) * (u_ + Math.sqrt(u_*u_ + (1+2*u_)*s2)));
+  const Zmin_rack = Math.ceil(2*k_*Math.cos(br)/s2);   // limite conservador (cremalheira)
+  return {mn,mt,alfat,d1,d2,a,ha,hf,h,c,da1,da2,df1,df2,db1,db2,pt,pn,px,s,ea,eb,
+          eg:ea+eb, Zv1,Zv2, Zmin, Zmin_rack, b, Z1, Z2, beta, alfan,
+          largura_util: b, volume1: Math.PI*Math.pow(d1/2,2)*b/1e9};
+};
+
+/* ---------- 5. GEOMETRIA — CÔNICAS (Tredgold / ISO 10300) --------------- */
+EC.geoConica = function(p){
+  const {met, Z1, Z2, sigma, alfan, kb} = p;         // met = módulo externo transversal
+  const sr = rad(sigma);
+  const d1e = met*Z1, d2e = met*Z2;                  // diâmetros primitivos externos
+  const delta1 = deg(Math.atan(Math.sin(sr)/((Z2/Z1)+Math.cos(sr))));
+  const delta2 = sigma - delta1;
+  const Re = d2e/(2*Math.sin(rad(delta2)));          // geratriz externa (cone distance)
+  const b  = Math.min(kb*Re, 10*met);                // ISO 10300: b ≤ 0,3Re e b ≤ 10·met
+  const Rm = Re - b/2;                               // geratriz média
+  const mmn= met*Rm/Re;                              // módulo médio
+  const dm1= mmn*Z1, dm2= mmn*Z2;                    // diâmetros primitivos médios
+  const ha = 1.00*met, hf = 1.20*met, c = 0.20*met;  // ISO 23509 (perfil cônico)
+  const da1= d1e + 2*ha*Math.cos(rad(delta1));
+  const da2= d2e + 2*ha*Math.cos(rad(delta2));
+  const theta_a = deg(Math.atan(ha/Re)), theta_f = deg(Math.atan(hf/Re));
+  const Zv1 = Z1/Math.cos(rad(delta1)), Zv2 = Z2/Math.cos(rad(delta2));  // Tredgold
+  const dv1 = mmn*Zv1, dv2 = mmn*Zv2;
+  return {met,mmn,Z1,Z2,sigma,alfan,delta1,delta2,Re,Rm,b,d1e,d2e,dm1,dm2,
+          ha,hf,c,da1,da2,theta_a,theta_f,Zv1,Zv2,dv1,dv2,kb,
+          bmax: kb*Re, limite_b: b >= kb*Re - 1e-6 ? 'geratriz' : 'módulo'};
+};
+
+/* ---------- 6. RESISTÊNCIA — LEWIS (flexão) + HERTZ (contato) ----------- */
+EC.resistencia = function(o){
+  /* o = {tipo, geo, T1, n1, i, Ko, Qv, montagem, temp, R, mat, grau, Lh} */
+  const g = o.geo, M = EC.MATERIAIS[o.mat], gi = (o.grau|0)===2 ? 1 : 0;
+  const conica = o.tipo === 'con';
+
+  // --- diâmetro e largura de referência para a força tangencial
+  const dref = conica ? g.dm1 : g.d1;
+  const b    = g.b;
+  const Zeq1 = conica ? g.Zv1 : g.Zv1;
+  const Zeq2 = conica ? g.Zv2 : g.Zv2;
+  const mref = conica ? g.mmn : g.mn;
+
+  // --- cinemática
+  const v  = Math.PI*dref*o.n1/60000;                 // m/s  (d em mm, n em rpm)
+  const Ft = 2*o.T1*1000/dref;                        // N
+  const P  = o.T1*o.n1*Math.PI/30/1000;               // kW
+  const Fr = Ft*Math.tan(rad(conica ? g.alfan : g.alfat))*(conica?Math.cos(rad(g.delta1)):1);
+  const Fa = conica ? Ft*Math.tan(rad(g.alfan))*Math.sin(rad(g.delta1))
+                    : Ft*Math.tan(rad(g.beta||0));
+
+  // --- fatores comuns
+  const kv = EC.fatorKv(o.Qv, v);
+  const Ks = EC.fatorKs(mref);
+  const kh = EC.fatorKH(b, dref, o.montagem);
+  const KT = EC.fatorKT(o.temp);
+  const KR = EC.fatorKR(o.R);
+  const KB = 1.0;                                     // fator de espessura de aro (aro cheio)
+  const Kbev = conica ? 1.15 : 1.00;                  // majoração ISO 10300 (cônica reta)
+
+  // --- ciclos de carga
+  const N1 = 60*o.n1*o.Lh;
+  const N2 = N1/o.i;
+
+  /* ===== 6.1 FLEXÃO — critério de Lewis com fatores AGMA =================
+     σ_F = (Ft · Ko · Kv · Ks · KH · KB · Kf · Kbev) / (b · m · Y)          */
+  const Y1 = EC.lewisY(Zeq1), Y2 = EC.lewisY(Zeq2);
+  const Kf1= EC.kf(Zeq1),     Kf2= EC.kf(Zeq2);
+  const J1 = Y1/Kf1, J2 = Y2/Kf2;                     // fator geométrico equivalente (AGMA 908)
+  const base = (Ft*o.Ko*kv.Kv*Ks*kh.KH*KB*Kbev)/(b*mref);
+  const sF1 = base/J1, sF2 = base/J2;
+
+  const sFlim = M.sFlim[gi];
+  const YN1 = EC.fatorYN(N1), YN2 = EC.fatorYN(N2);
+  const sFP1 = sFlim*YN1/(KT*KR), sFP2 = sFlim*YN2/(KT*KR);
+  const SF1 = sFP1/sF1, SF2 = sFP2/sF2;
+
+  /* ===== 6.2 CONTATO — pressão de Hertz ==================================
+     σ_H = ZE · √( Ft·Ko·Kv·Ks·KH / (b·d1·I) )                              */
+  const at   = rad(conica ? g.alfan : g.alfat);
+  const bb   = conica ? 0 : rad(g.beta||0);
+  const mN   = (!conica && g.eb >= 1) ? (g.ea/(0.95*(g.ea+g.eb))) : 1.0;  // razão de partilha
+  const u    = o.i;
+  const Ig   = (Math.cos(at)*Math.sin(at)/(2*mN))*(u/(u+1));
+  const ZE   = EC.coefElastico(M.E,M.nu,M.E,M.nu);
+  const sH   = ZE*Math.sqrt((Ft*o.Ko*kv.Kv*Ks*kh.KH*Kbev)/(b*dref*Ig));
+
+  const sHlim = M.sHlim[gi];
+  const ZN1 = EC.fatorZN(N1), ZN2 = EC.fatorZN(N2);
+  const ZW  = 1.0;                                    // dureza equivalente pinhão/coroa
+  const sHP1= sHlim*ZN1*ZW/(KT*KR), sHP2 = sHlim*ZN2*ZW/(KT*KR);
+  const SH1 = sHP1/sH, SH2 = sHP2/sH;
+
+  /* ===== 6.3 VIDA ÚTIL ESTIMADA ========================================= */
+  // Flexão: YN necessário para SF = 1
+  const YNreq1 = sF1*KT*KR/sFlim, YNreq2 = sF2*KT*KR/sFlim;
+  const Nf1 = EC.cicloDeYN(YNreq1), Nf2 = EC.cicloDeYN(YNreq2);
+  // Contato: ZN necessário para SH = 1
+  const ZNreq1 = sH*KT*KR/(sHlim*ZW), ZNreq2 = ZNreq1;
+  const Nc1 = EC.cicloDeZN(ZNreq1), Nc2 = EC.cicloDeZN(ZNreq2);
+
+  const h = n => Math.min(n/(60*o.n1), 1e9);
+  const Lf1 = h(Nf1), Lc1 = h(Nc1);
+  const Lf2 = Math.min(Nf2/(60*o.n1/o.i), 1e9), Lc2 = Math.min(Nc2/(60*o.n1/o.i), 1e9);
+  const Lvida = Math.min(Lf1,Lc1,Lf2,Lc2);
+  const modoFalha = [[Lf1,'Flexão no pé do dente — pinhão'],[Lc1,'Fadiga de contato (pitting) — pinhão'],
+                     [Lf2,'Flexão no pé do dente — coroa'],[Lc2,'Fadiga de contato (pitting) — coroa']]
+                    .sort((a,b)=>a[0]-b[0])[0][1];
+
+  return {v,Ft,Fr,Fa,P,N1,N2,Kv:kv.Kv,kvInfo:kv,Ks,KH:kh.KH,khInfo:kh,KT,KR,KB,Kbev,
+          Y1,Y2,Kf1,Kf2,J1,J2,sF1,sF2,sFlim,YN1,YN2,sFP1,sFP2,SF1,SF2,
+          Ig,ZE,mN,sH,sHlim,ZN1,ZN2,ZW,sHP1,sHP2,SH1,SH2,
+          Lf1,Lc1,Lf2,Lc2,Lvida,modoFalha,dref,mref,b,
+          SFmin: Math.min(SF1,SF2), SHmin: Math.min(SH1,SH2)};
+};
+
+/* ---------- 7. DIMENSIONAMENTO AUTOMÁTICO (iteração de módulo) ---------- */
+EC.dimensionar = function(inp){
+  const conica = inp.tipo === 'con';
+  const Z2 = Math.round(inp.Z1*inp.i);
+  const varredura = [];
+  let escolhido = null;
+
+  for (const m of EC.MODULOS){
+    let geo, b;
+    if (!conica){
+      b = inp.modo === 'manual' ? inp.bman : inp.psi*m;
+      geo = EC.geoCilindrica({mn:m, Z1:inp.Z1, Z2, beta:inp.beta, alfan:inp.alfan, b});
+    } else {
+      geo = EC.geoConica({met:m, Z1:inp.Z1, Z2, sigma:inp.sigma, alfan:inp.alfan, kb:inp.kb});
+      b = geo.b;
+    }
+    const r = EC.resistencia({tipo:inp.tipo, geo, T1:inp.T1, n1:inp.n1, i:inp.i, Ko:inp.Ko,
+                              Qv:inp.Qv, montagem:inp.montagem, temp:inp.temp, R:inp.R,
+                              mat:inp.mat, grau:inp.grau, Lh:inp.Lh});
+    const ok = r.SFmin >= inp.SFmin && r.SHmin >= inp.SHmin && r.Lvida >= inp.Lh;
+    varredura.push({m, b, SF:r.SFmin, SH:r.SHmin, sF:r.sF1, sH:r.sH, L:r.Lvida, ok,
+                    a: conica ? geo.Re : geo.a, massa: EC.massa(geo, inp.mat, conica)});
+    if (ok && !escolhido) escolhido = {m, geo, r, b};
+  }
+  return {varredura, escolhido, Z2};
+};
+
+EC.massa = function(geo, mat, conica){
+  const rho = EC.MATERIAIS[mat].dens/1e9;           // kg/mm³
+  if (conica){
+    const v1 = Math.PI*Math.pow(geo.dm1/2,2)*geo.b*0.75;
+    const v2 = Math.PI*Math.pow(geo.dm2/2,2)*geo.b*0.75;
+    return (v1+v2)*rho;
+  }
+  const v1 = Math.PI*Math.pow(geo.d1/2,2)*geo.b;
+  const v2 = Math.PI*Math.pow(geo.d2/2,2)*geo.b;
+  return (v1+v2)*rho;
+};
+
+/* ---------- 8. VALIDAÇÃO DE ENTRADA E COERÊNCIA ------------------------- */
+EC.validar = function(inp, res){
+  const av = [];
+  const add = (n,t,m)=>av.push({nivel:n, titulo:t, msg:m});
+
+  if (!(inp.T1 > 0))  add('err','Torque inválido','O torque no pinhão deve ser maior que zero.');
+  if (!(inp.n1 > 0))  add('err','Rotação inválida','A rotação do pinhão deve ser maior que zero.');
+  if (!(inp.i  > 0))  add('err','Relação inválida','A relação de transmissão i deve ser maior que zero.');
+  if (!(inp.Lh > 0))  add('err','Vida útil inválida','A vida útil desejada deve ser maior que zero.');
+  if (inp.Z1 < 12)    add('err','Nº de dentes insuficiente','Z₁ = '+inp.Z1+'. Com α = 20° o mínimo prático sem correção de perfil é 17 dentes (12 com adendo reduzido). Há risco de interferência de trajetória.');
+  else if (inp.Z1 < 17) add('warn','Risco de interferência','Z₁ = '+inp.Z1+' < 17, que é o limite conservador do engrenamento pinhão-cremalheira para α = 20°. O limite exato depende da relação u e é verificado adiante; pode ser necessária correção de perfil (x⁺).');
+  if (inp.i > 8 && inp.tipo==='cil') add('warn','Relação elevada em um estágio','i = '+inp.i.toFixed(2)+'. Acima de 6–8 recomenda-se redutor de dois estágios.');
+  if (inp.tipo==='con' && inp.i > 5) add('warn','Relação elevada para cônica','i = '+inp.i.toFixed(2)+'. Engrenagens cônicas retas usualmente operam com i ≤ 5.');
+  if (inp.tipo==='cil' && inp.beta > 0 && (inp.beta < 8 || inp.beta > 30))
+    add('warn','Ângulo de hélice fora da faixa usual','β = '+inp.beta+'°. Faixa usual: 8° a 30° (15°–20° é o mais comum). Valores altos elevam o empuxo axial.');
+  if (inp.tipo==='con' && (inp.sigma < 60 || inp.sigma > 120))
+    add('warn','Ângulo entre eixos incomum','Σ = '+inp.sigma+'°. O caso normalizado e mais usual é Σ = 90°.');
+  if (inp.temp > 120) add('warn','Temperatura elevada','T = '+inp.temp+' °C. Acima de 120 °C aplica-se K_T > 1 e o lubrificante deve ser reavaliado.');
+
+  if (res && res.escolhido){
+    const {geo, r} = res.escolhido, conica = inp.tipo==='con';
+    // coerência geométrica
+    if (!conica){
+      if (Math.abs(geo.a - (geo.d1+geo.d2)/2) > 1e-6) add('err','Incoerência geométrica','Distância entre centros divergente da média dos primitivos.');
+      if (geo.df1 <= 0) add('err','Diâmetro de raiz inválido','d_f1 ≤ 0 — módulo excessivo para o número de dentes adotado.');
+      if (geo.b/geo.d1 > 1.5) add('warn','Largura excessiva','b/d₁ = '+(geo.b/geo.d1).toFixed(2)+' > 1,5. Risco de má distribuição de carga; considerar mancais mais rígidos ou reduzir ψ.');
+      if (geo.b/geo.mn < 6)  add('warn','Largura reduzida','b/mₙ = '+(geo.b/geo.mn).toFixed(1)+' < 6. Dentado muito estreito para a carga; a rigidez de engrenamento fica baixa.');
+      if (geo.Z1 < geo.Zmin) add('warn','Interferência para esta relação','Z₁ = '+geo.Z1+' < Z_min = '+geo.Zmin+' (calculado para u = '+EC.fmt(geo.Z2/geo.Z1,2)+' e αₜ = '+EC.fmt(geo.alfat,2)+'°). Adotar correção de perfil x₁ > 0 ou aumentar Z₁.');
+      if (geo.eg < 1.2) add('warn','Razão de condução baixa','ε_γ = '+geo.eg.toFixed(2)+' < 1,2. Engrenamento com pouca sobreposição — ruído e carga de impacto elevados.');
+      if (geo.eb > 0 && geo.eb < 1) add('warn','Recobrimento incompleto','ε_β = '+geo.eb.toFixed(2)+' < 1,0. Para helicoidais, o ideal é ε_β ≥ 1 (largura ≥ passo axial).');
+    } else {
+      if (geo.b > 0.33*geo.Re) add('warn','Largura de dente excessiva','b = '+geo.b.toFixed(1)+' mm > 0,33·Rₑ. ISO 10300 limita b/Rₑ ≤ 0,30.');
+      if (geo.b > 10*geo.met) add('warn','Largura acima do limite de módulo','b > 10·mₑₜ — limite prático de fabricação de cônicas retas.');
+    }
+    // resistência
+    if (r.SFmin < inp.SFmin) add('err','Segurança à flexão insuficiente','S_F = '+r.SFmin.toFixed(2)+' < '+inp.SFmin.toFixed(2)+'. Aumentar módulo, largura ou classe do material.');
+    if (r.SHmin < inp.SHmin) add('err','Segurança ao contato insuficiente','S_H = '+r.SHmin.toFixed(2)+' < '+inp.SHmin.toFixed(2)+'. Aumentar diâmetro/largura ou adotar material de maior σ_Hlim.');
+    if (r.Lvida < inp.Lh) add('err','Vida útil abaixo do requisito','Vida estimada '+EC.fmtH(r.Lvida)+' h < '+EC.fmtH(inp.Lh)+' h desejadas.');
+    else if (r.Lvida < 1.3*inp.Lh) add('warn','Margem de vida reduzida','Vida estimada é apenas '+(r.Lvida/inp.Lh).toFixed(2)+'× a desejada. Considerar margem maior.');
+    if (r.kvInfo.foraFaixa) add('warn','Velocidade acima da faixa de Q_v','v = '+r.v.toFixed(1)+' m/s excede o limite de '+r.kvInfo.vmax.toFixed(1)+' m/s para Q_v = '+inp.Qv+'. Especificar qualidade superior.');
+    if (r.v > 25) add('warn','Alta velocidade periférica','v = '+r.v.toFixed(1)+' m/s. Exige balanceamento, lubrificação forçada e Q_v ≥ 10.');
+    if (Math.abs(r.Fa) > 0.35*r.Ft) add('warn','Empuxo axial elevado','F_a = '+r.Fa.toFixed(0)+' N ('+(100*Math.abs(r.Fa)/r.Ft).toFixed(0)+'% de F_t). Prever mancais axiais adequados.');
+  } else if (res && !res.escolhido){
+    add('err','Nenhum módulo atende','Nenhum módulo normalizado da série ISO 54 satisfaz simultaneamente S_F, S_H e a vida útil. Aumentar Z₁, ψ (largura), a classe do material ou reduzir o torque por estágio.');
+  }
+  return av;
+};
+
+/* ---------- 9. FORMATAÇÃO BRASILEIRA ------------------------------------ */
+EC.fmt = function(v, d){
+  if (v === undefined || v === null || !isFinite(v)) return '—';
+  d = d === undefined ? 2 : d;
+  return v.toLocaleString('pt-BR',{minimumFractionDigits:d, maximumFractionDigits:d});
+};
+EC.fmtH = function(h){
+  if (!isFinite(h)) return '∞';
+  if (h >= 1e6) return EC.fmt(h/1e3,0)+' mil';
+  return EC.fmt(h,0);
+};
+EC.fmtE = function(v, d){
+  if (!isFinite(v)) return '—';
+  const e = Math.floor(Math.log10(Math.abs(v)));
+  return EC.fmt(v/Math.pow(10,e), d===undefined?2:d)+'·10'+String(e).replace(/[0-9]/g,c=>'⁰¹²³⁴⁵⁶⁷⁸⁹'[c]);
+};
+
+global.EC = EC;
+if (typeof module !== 'undefined' && module.exports) module.exports = EC;
+})(typeof window !== 'undefined' ? window : globalThis);
+</script>
+<script>
+/* ==========================================================================
+   EngrenageCalc Pro — Desenhos técnicos paramétricos (SVG) e gráficos
+   Perfil de dente gerado por involuta verdadeira (equação paramétrica)
+   ========================================================================== */
+(function(global){
+'use strict';
+const D = {}, EC = global.EC;
+const rad = g => g*Math.PI/180;
+
+/* ---------- Perfil de involuta verdadeiro ------------------------------- */
+// Retorna os pontos (x,y) de UM dente centrado no eixo +Y
+D.perfilDente = function(m, z, alfa, x0){
+  x0 = x0 || 0;
+  const a = rad(alfa);
+  const rp = m*z/2;
+  const rb = rp*Math.cos(a);
+  const ra = rp + m*(1+x0);
+  const rf = Math.max(rp - 1.25*m + x0*m, 0.1);
+  const inv = t => t - Math.atan(t);              // involuta: inv α = tg α − α
+  const invA = inv(Math.tan(a));
+  const half = (Math.PI/(2*z)) + (2*x0*Math.tan(a))/z;   // meia espessura angular no primitivo
+  const halfPitch = Math.PI/z;                    // meio passo angular (meio-vão)
+  const pol = (r,th) => [r*Math.sin(th), r*Math.cos(th)];
+  const pts = [];
+  const N = 34, rStart = Math.max(rb, rf);
+
+  // 1) arco de raiz do meio-vão até a base do flanco (lado +)
+  const thFlanco = half + invA - (Math.tan(Math.acos(Math.min(1, rb/rStart))) - Math.acos(Math.min(1, rb/rStart)));
+  for (let k=0;k<=4;k++) pts.push(pol(rf, halfPitch + (thFlanco-halfPitch)*k/4));
+  if (rf < rStart) pts.push(pol(rStart, thFlanco));   // trecho radial do pé até o círculo de base
+
+  // 2) flanco evolvental ascendente (lado +)
+  for (let k=0;k<=N;k++){
+    const r = rStart + (ra-rStart)*k/N;
+    const ang = Math.acos(Math.min(1, rb/r));
+    pts.push(pol(r, half + invA - (Math.tan(ang) - ang)));
+  }
+  // 3) topo do dente
+  const angTop = Math.atan2(pts[pts.length-1][0], pts[pts.length-1][1]);
+  for (let k=1;k<=8;k++) pts.push(pol(ra, angTop - 2*angTop*k/8));
+
+  // 4) flanco evolvental descendente (lado −, espelhado)
+  for (let k=N;k>=0;k--){
+    const r = rStart + (ra-rStart)*k/N;
+    const ang = Math.acos(Math.min(1, rb/r));
+    pts.push(pol(r, -(half + invA - (Math.tan(ang) - ang))));
+  }
+  // 5) arco de raiz da base do flanco até o meio-vão (lado −)
+  if (rf < rStart) pts.push(pol(rf, -thFlanco));
+  for (let k=0;k<=4;k++) pts.push(pol(rf, -thFlanco - (halfPitch-thFlanco)*k/4));
+  return pts;
+};
+
+D.roda = function(m, z, alfa, fase){
+  // Contorno completo da roda; "fase" (graus) posiciona o dente de referência
+  const dente = D.perfilDente(m, z, alfa);
+  const passo = 2*Math.PI/z;
+  const seg = [];
+  const f0 = rad(fase||0);
+  for (let j=0;j<z;j++){
+    const th = j*passo + f0;
+    const c = Math.cos(th), s = Math.sin(th);
+    seg.push(dente.map(p => [p[0]*c - p[1]*s, p[0]*s + p[1]*c]));
+  }
+  return seg;
+};
+
+/* Fase de engrenamento do par externo, em coordenadas matemáticas:
+   o pinhão posiciona um DENTE sobre a linha de centros (+X) e a coroa posiciona
+   um VÃO na mesma direção (−X), acrescida da folga de flanco j_n (ISO 1328). */
+D.faseEngrenamento = function(z1, z2, m){
+  const jn = 0.04*m;                          // folga circunferencial no primitivo (mm)
+  const folga = (jn/(m*z2/2))*180/Math.PI;    // convertida em graus na coroa
+  return { f1: -90, f2: 90 + 180/z2 + folga/2, folga: jn };
+};
+
+const P = (pts) => pts.map((p,i)=>(i?'L':'M')+p[0].toFixed(3)+' '+p[1].toFixed(3)).join(' ');
+
+/* ---------- Elementos auxiliares de desenho técnico --------------------- */
+function eixoCentro(cx,cy,r){
+  return `<path d="M${cx-r} ${cy}H${cx+r} M${cx} ${cy-r}V${cy+r}" stroke="var(--svgaux)" stroke-width="0.8"
+          stroke-dasharray="10 3 2 3" fill="none"/>`;
+}
+function cota(x1,y1,x2,y2,txt,off,vert){
+  off = off||0;
+  const mx=(x1+x2)/2, my=(y1+y2)/2;
+  const tx = vert? mx+off : mx, ty = vert? my : my+off;
+  return `<g stroke="var(--svgdim)" stroke-width="0.8" fill="none">
+    <path d="M${x1} ${y1}L${x2} ${y2}"/>
+    <path d="M${x1} ${y1}l4 -3 v6 z" fill="var(--svgdim)" stroke="none" transform="rotate(${Math.atan2(y2-y1,x2-x1)*180/Math.PI} ${x1} ${y1})"/>
+    <path d="M${x2} ${y2}l-4 -3 v6 z" fill="var(--svgdim)" stroke="none" transform="rotate(${Math.atan2(y2-y1,x2-x1)*180/Math.PI} ${x2} ${y2})"/>
+  </g><text x="${tx}" y="${ty}" fill="var(--svgdim)" font-size="11" text-anchor="middle"
+       style="paint-order:stroke;stroke:var(--svgbg);stroke-width:3px">${txt}</text>`;
+}
+function rot(txt,x,y,ang){return `<text x="${x}" y="${y}" transform="rotate(${ang} ${x} ${y})" font-size="10" fill="var(--svgaux)" text-anchor="middle">${txt}</text>`;}
+
+/* ---------- 1. VISTA FRONTAL — cilíndrica ------------------------------- */
+D.vistaFrontal = function(geo, qual){
+  const m=geo.mn, z1=geo.Z1, z2=geo.Z2, al=geo.alfat;
+  const R1=geo.da1/2, R2=geo.da2/2, a=geo.a;
+  const W = 2*R1 + 2*R2 + 90, H = Math.max(2*R2, 2*R1) + 90;
+  const s = 1;
+  const cx1 = 45+R1, cy = H/2, cx2 = cx1 + a;
+  const fa = D.faseEngrenamento(z1, z2, m);
+  const g1 = D.roda(m,z1,al,fa.f1).map(t=>`<path d="${P(t)}Z" fill="var(--svgfill)" stroke="var(--svgline)" stroke-width="${Math.max(0.6,m*0.18)}"/>`).join('');
+  const g2 = D.roda(m,z2,al,fa.f2).map(t=>`<path d="${P(t)}Z" fill="var(--svgfill)" stroke="var(--svgline)" stroke-width="${Math.max(0.6,m*0.18)}"/>`).join('');
+  const furo1 = Math.max(geo.df1*0.32, 6), furo2 = Math.max(geo.df2*0.28, 8);
+  return `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" data-w="${W}" data-h="${H}">
+  <g id="zoomlayer">
+  <g transform="translate(${cx1},${cy})"><g transform="scale(1,-1)">${g1}</g>
+    <circle r="${geo.d1/2}" fill="none" stroke="var(--svgaux)" stroke-width="0.9" stroke-dasharray="9 3 2 3"/>
+    <circle r="${geo.db1/2}" fill="none" stroke="var(--svgaux)" stroke-width="0.5" stroke-dasharray="3 2"/>
+    <circle r="${furo1}" fill="var(--svgbg)" stroke="var(--svgline)" stroke-width="1"/>
+    ${eixoCentro(0,0,R1+16)}
+    <text y="${-R1-20}" font-size="11" fill="var(--svgline)" text-anchor="middle" font-weight="bold">PINHÃO · Z₁=${z1}</text>
+  </g>
+  <g transform="translate(${cx2},${cy})"><g transform="scale(1,-1)">${g2}</g>
+    <circle r="${geo.d2/2}" fill="none" stroke="var(--svgaux)" stroke-width="0.9" stroke-dasharray="9 3 2 3"/>
+    <circle r="${geo.db2/2}" fill="none" stroke="var(--svgaux)" stroke-width="0.5" stroke-dasharray="3 2"/>
+    <circle r="${furo2}" fill="var(--svgbg)" stroke="var(--svgline)" stroke-width="1"/>
+    ${eixoCentro(0,0,R2+16)}
+    <text y="${-R2-20}" font-size="11" fill="var(--svgline)" text-anchor="middle" font-weight="bold">COROA · Z₂=${z2}</text>
+  </g>
+  <!-- ponto de contato / linha de ação -->
+  <circle cx="${cx1+geo.d1/2}" cy="${cy}" r="2.6" fill="var(--svgdim)"/>
+  <path d="M${cx1+geo.d1/2 - 34*Math.cos(rad(al))} ${cy + 34*Math.sin(rad(al))}
+           L${cx1+geo.d1/2 + 34*Math.cos(rad(al))} ${cy - 34*Math.sin(rad(al))}"
+        stroke="var(--svgdim)" stroke-width="0.9" stroke-dasharray="5 3"/>
+  <text x="${cx1+geo.d1/2+40}" y="${cy-30}" font-size="10" fill="var(--svgdim)">linha de ação α=${EC.fmt(al,2)}°</text>
+  ${cota(cx1, cy+Math.max(R1,R2)+34, cx2, cy+Math.max(R1,R2)+34, 'a = '+EC.fmt(a,2)+' mm', -6)}
+  </g></svg>`;
+};
+
+/* ---------- 2. VISTA LATERAL (corte) — cilíndrica ----------------------- */
+D.vistaLateral = function(geo){
+  const b=geo.b, R=geo.da1/2, Rp=geo.d1/2, Rf=geo.df1/2, furo=Math.max(geo.df1*0.32,6);
+  const W = b + 250, H = 2*R + 90, x0 = 70, cy = H/2;
+  const helice = geo.beta>0 ? Array.from({length:7},(_,k)=>{
+      const y = -R + (2*R)*k/6;
+      const dx = b, dy = b*Math.tan(rad(geo.beta));
+      return `<path d="M${x0} ${cy+y} L${x0+dx} ${cy+y+dy}" stroke="var(--svgline)" stroke-width="0.5" opacity=".55"/>`;
+    }).join('') : Array.from({length:7},(_,k)=>{
+      const y = -R + (2*R)*k/6;
+      return `<path d="M${x0} ${cy+y} L${x0+b} ${cy+y}" stroke="var(--svgline)" stroke-width="0.5" opacity=".4"/>`;
+    }).join('');
+  const hach = `<pattern id="hach" width="6" height="6" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+      <line x1="0" y="0" x2="0" y2="6" stroke="var(--svgline)" stroke-width="0.7" opacity=".45"/></pattern>`;
+  return `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" data-w="${W}" data-h="${H}">
+  <defs>${hach}</defs><g id="zoomlayer">
+  <rect x="${x0}" y="${cy-R}" width="${b}" height="${2*R}" fill="url(#hach)" stroke="var(--svgline)" stroke-width="1.2"/>
+  <rect x="${x0}" y="${cy-Rf}" width="${b}" height="${2*Rf}" fill="var(--svgbg)" stroke="var(--svgline)" stroke-width="1"/>
+  <rect x="${x0}" y="${cy-furo}" width="${b}" height="${2*furo}" fill="var(--svgbg)" stroke="var(--svgline)" stroke-width="1.2"/>
+  ${helice}
+  <path d="M${x0} ${cy-Rp}H${x0+b} M${x0} ${cy+Rp}H${x0+b}" stroke="var(--svgaux)" stroke-width="0.9" stroke-dasharray="9 3 2 3"/>
+  ${eixoCentro(x0+b/2, cy, Math.max(b,2*R)/2+22)}
+  ${cota(x0, cy-R-26, x0+b, cy-R-26, 'b = '+EC.fmt(b,1)+' mm', -6)}
+  ${cota(x0+b+34, cy-R, x0+b+34, cy+R, 'd_a1 = '+EC.fmt(geo.da1,2), 30, true)}
+  ${cota(x0-26, cy-Rp, x0-26, cy+Rp, 'd₁ = '+EC.fmt(geo.d1,2), -34, true)}
+  ${geo.beta>0 ? `<text x="${x0+b*0.5}" y="${cy+R+30}" font-size="11" fill="var(--svgline)" text-anchor="middle">β = ${EC.fmt(geo.beta,1)}°  ·  p_x = ${EC.fmt(geo.px,2)} mm</text>`
+               : `<text x="${x0+b*0.5}" y="${cy+R+30}" font-size="11" fill="var(--svgline)" text-anchor="middle">Dentado reto (β = 0°)</text>`}
+  </g></svg>`;
+};
+
+/* ---------- 3. DETALHE DO DENTE ----------------------------------------- */
+D.detalheDente = function(geo){
+  const m=geo.mn, z=geo.Z1, al=geo.alfat;
+  const esc = 260/(2.25*m);
+  const d = D.perfilDente(m,z,al).map(p=>[p[0]*esc, (geo.d1/2 - p[1])*esc]);
+  const xs = d.map(p=>p[0]), ys = d.map(p=>p[1]);
+  const minx=Math.min(...xs), maxx=Math.max(...xs), miny=Math.min(...ys), maxy=Math.max(...ys);
+  const W = (maxx-minx)+230, H=(maxy-miny)+120;
+  const ox = 120-minx, oy = 55-miny;
+  const yP = oy + 0, yA = oy - geo.ha*esc, yF = oy + geo.hf*esc;
+  const yTop = oy + (geo.d1/2 - geo.da1/2)*esc, yBot = oy + (geo.d1/2 - geo.df1/2)*esc;
+  return `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" data-w="${W}" data-h="${H}"><g id="zoomlayer">
+  <path d="${P(d.map(p=>[p[0]+ox,p[1]+oy]))}" fill="var(--svgfill)" stroke="var(--svgline)" stroke-width="1.6" stroke-linejoin="round"/>
+  <path d="M${ox+minx-60} ${yP}H${ox+maxx+40}" stroke="var(--svgaux)" stroke-width="1" stroke-dasharray="9 3 2 3"/>
+  <text x="${ox+maxx+44}" y="${yP+4}" font-size="10" fill="var(--svgaux)">primitivo d₁</text>
+  <path d="M${ox+minx-60} ${yTop}H${ox+maxx+40}" stroke="var(--svgaux)" stroke-width="0.7" stroke-dasharray="4 3"/>
+  <text x="${ox+maxx+44}" y="${yTop+4}" font-size="10" fill="var(--svgaux)">cabeça d_a</text>
+  <path d="M${ox+minx-60} ${yBot}H${ox+maxx+40}" stroke="var(--svgaux)" stroke-width="0.7" stroke-dasharray="4 3"/>
+  <text x="${ox+maxx+44}" y="${yBot+4}" font-size="10" fill="var(--svgaux)">raiz d_f</text>
+  ${cota(ox+minx-40, yTop, ox+minx-40, yP, 'h_a='+EC.fmt(geo.ha,2), -44, true)}
+  ${cota(ox+minx-40, yP, ox+minx-40, yBot, 'h_f='+EC.fmt(geo.hf,2), -44, true)}
+  ${cota(ox-Math.PI*geo.mn/4*esc, yP-16, ox+Math.PI*geo.mn/4*esc, yP-16, 's='+EC.fmt(geo.s,2)+' mm', -6)}
+  <text x="${W/2}" y="${H-16}" font-size="11" fill="var(--svgline)" text-anchor="middle">
+    Perfil evolvental ISO 53 — mₙ=${EC.fmt(geo.mn,2)} mm · αₙ=${EC.fmt(geo.alfan,1)}° · h=${EC.fmt(geo.h,2)} mm · ρ_f=0,38·mₙ</text>
+  </g></svg>`;
+};
+
+/* ---------- 4. PERSPECTIVA ISOMÉTRICA ----------------------------------- */
+D.isometrico = function(geo, ang){
+  ang = ang===undefined? 28 : ang;
+  const m=geo.mn, z=geo.Z1, al=geo.alfat, R=geo.da1/2, b=geo.b;
+  const k = Math.sin(rad(ang));            // achatamento vertical
+  const dx = b*0.62, dy = -b*0.34;         // deslocamento de extrusão
+  const face = (off, opa, sw) => {
+    const t = D.roda(m,z,al).map(p=>`<path d="${P(p.map(q=>[q[0]+off[0], q[1]*k+off[1]]))}Z"
+      fill="var(--svgfill)" fill-opacity="${opa}" stroke="var(--svgline)" stroke-width="${sw}"/>`).join('');
+    return t;
+  };
+  const W = 2*R + Math.abs(dx) + 120, H = 2*R*k + Math.abs(dy) + 120;
+  const cx = 60+R, cy = H/2 + Math.abs(dy)/2;
+  // lados extrudados (silhueta)
+  const sil = Array.from({length:40},(_,i)=>{
+    const th = Math.PI*i/39;
+    const x1 = cx - R*Math.cos(th), y1 = cy + R*k*Math.sin(th);
+    return `<path d="M${x1} ${y1} l${dx} ${dy}" stroke="var(--svgline)" stroke-width="0.45" opacity=".38"/>`;
+  }).join('');
+  return `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" data-w="${W}" data-h="${H}"><g id="zoomlayer">
+  <ellipse cx="${cx+dx}" cy="${cy+dy}" rx="${R}" ry="${R*k}" fill="var(--svgfill)" fill-opacity=".35" stroke="none"/>
+  ${sil}
+  ${face([cx+dx, cy+dy], 0.35, 0.6)}
+  ${face([cx, cy], 0.95, 1.1)}
+  <ellipse cx="${cx}" cy="${cy}" rx="${geo.d1/2}" ry="${geo.d1/2*k}" fill="none" stroke="var(--svgaux)" stroke-width="0.8" stroke-dasharray="8 4"/>
+  <ellipse cx="${cx}" cy="${cy}" rx="${Math.max(geo.df1*0.32,6)}" ry="${Math.max(geo.df1*0.32,6)*k}" fill="var(--svgbg)" stroke="var(--svgline)" stroke-width="1"/>
+  <path d="M${cx-R-30} ${cy} L${cx+dx+R+30} ${cy+dy}" stroke="var(--svgaux)" stroke-width="0.8" stroke-dasharray="10 3 2 3"/>
+  <text x="${W/2}" y="${H-14}" font-size="11" fill="var(--svgline)" text-anchor="middle">
+    Vista em perspectiva — arraste para girar · Z₁=${z} · mₙ=${EC.fmt(geo.mn,2)} mm · b=${EC.fmt(b,1)} mm</text>
+  </g></svg>`;
+};
+
+/* ---------- 5. CÔNICA — seção axial do par ------------------------------ */
+D.conicaSecao = function(g){
+  const esc = Math.min(1.4, 300/g.Re);
+  const Re = g.Re*esc, b = g.b*esc, ha = g.ha*esc, hf = g.hf*esc;
+  const d1 = rad(g.delta1), d2 = rad(g.delta2);
+  const W = 2*Re*Math.cos(d1) + 260, H = 2*Re*Math.cos(d2) + 220;
+  const ox = W - 130, oy = H/2;                    // ápice comum (à direita, no centro)
+  // Ponto sobre a geratriz primitiva do pinhão, a uma distância R do ápice,
+  // deslocado normalmente de "off" (positivo = para fora do cone).
+  const gp = (R, off, ang, sgn) => [
+      ox - R*Math.cos(ang) + sgn*off*Math.sin(ang),
+      oy - sgn*(R*Math.sin(ang) + off*Math.cos(ang)) ];
+  const gc = (R, off, ang, sgn) => [
+      ox - sgn*(R*Math.sin(ang) + off*Math.cos(ang)),
+      oy - R*Math.cos(ang) + sgn*off*Math.sin(ang) ];
+  const poly = (p, fill, sw, dash) => `<path d="${p.map((q,i)=>(i?'L':'M')+q[0].toFixed(2)+' '+q[1].toFixed(2)).join(' ')}Z"
+      fill="${fill}" stroke="var(--svgline)" stroke-width="${sw}" ${dash?'stroke-dasharray="'+dash+'"':''}/>`;
+  const hach = `<pattern id="hb" width="6" height="6" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+      <line x1="0" y1="0" x2="0" y2="6" stroke="var(--svgline)" stroke-width="0.7" opacity=".5"/></pattern>`;
+  let out = '';
+  // ----- dentado (faixa de altura h_a + h_f sobre a face width) — pinhão e coroa
+  [1,-1].forEach(sg=>{
+    out += poly([gp(Re,-hf,d1,sg), gp(Re,ha,d1,sg), gp(Re-b,ha,d1,sg), gp(Re-b,-hf,d1,sg)],
+                'url(#hb)', 1.2);
+    out += poly([gc(Re,-hf,d2,sg), gc(Re,ha,d2,sg), gc(Re-b,ha,d2,sg), gc(Re-b,-hf,d2,sg)],
+                'url(#hb)', 1.2);
+  });
+  // ----- corpo (cubo) do pinhão e da coroa, esquematizados
+  const cbP = [gp(Re,-hf,d1,1), gp(Re-b,-hf,d1,1)], cbPn = [gp(Re,-hf,d1,-1), gp(Re-b,-hf,d1,-1)];
+  out += poly([cbP[0], cbP[1], [cbP[1][0], oy], [cbP[0][0], oy]], 'var(--svgfill)', 0.9, '');
+  out += poly([cbPn[0], cbPn[1], [cbPn[1][0], oy], [cbPn[0][0], oy]], 'var(--svgfill)', 0.9, '');
+  const cbC = [gc(Re,-hf,d2,1), gc(Re-b,-hf,d2,1)], cbCn = [gc(Re,-hf,d2,-1), gc(Re-b,-hf,d2,-1)];
+  out += poly([cbC[0], cbC[1], [ox, cbC[1][1]], [ox, cbC[0][1]]], 'var(--svgfill)', 0.9, '');
+  out += poly([cbCn[0], cbCn[1], [ox, cbCn[1][1]], [ox, cbCn[0][1]]], 'var(--svgfill)', 0.9, '');
+  // ----- geratrizes primitivas (linha traço-ponto) — a superior é comum aos dois cones
+  [1,-1].forEach(sg=>{
+    const A = gp(0,0,d1,sg), B = gp(Re*1.02,0,d1,sg);
+    out += `<path d="M${A[0]} ${A[1]}L${B[0]} ${B[1]}" stroke="var(--svgaux)" stroke-width="1" stroke-dasharray="10 3 2 3"/>`;
+    const C = gc(Re*1.02,0,d2,sg);
+    out += `<path d="M${ox} ${oy}L${C[0]} ${C[1]}" stroke="var(--svgaux)" stroke-width="1" stroke-dasharray="10 3 2 3"/>`;
+  });
+  return `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" data-w="${W}" data-h="${H}">
+  <defs>${hach}</defs><g id="zoomlayer">
+  ${out}
+  <!-- eixos de rotação -->
+  <path d="M${ox - Re - 60} ${oy}H${ox + 46}" stroke="var(--svgaux)" stroke-width="0.9" stroke-dasharray="12 3 2 3"/>
+  <path d="M${ox} ${oy + 46}V${oy - Re - 60}" stroke="var(--svgaux)" stroke-width="0.9" stroke-dasharray="12 3 2 3"/>
+  <circle cx="${ox}" cy="${oy}" r="3" fill="var(--svgdim)"/>
+  <text x="${ox+10}" y="${oy+16}" font-size="10" fill="var(--svgdim)">ápice comum</text>
+  <text x="${ox - Re - 56}" y="${oy - 8}" font-size="10.5" fill="var(--svgaux)">eixo do pinhão</text>
+  <text x="${ox + 8}" y="${oy - Re - 48}" font-size="10.5" fill="var(--svgaux)">eixo da coroa</text>
+  <!-- ângulos primitivos -->
+  <path d="M${ox-64} ${oy} A64 64 0 0 0 ${ox-64*Math.cos(d1)} ${oy-64*Math.sin(d1)}" fill="none" stroke="var(--svgdim)" stroke-width="1"/>
+  <text x="${ox-84*Math.cos(d1/2)}" y="${oy-84*Math.sin(d1/2)+4}" font-size="11" fill="var(--svgdim)" text-anchor="middle">δ₁=${EC.fmt(g.delta1,2)}°</text>
+  <path d="M${ox} ${oy-108} A108 108 0 0 0 ${ox-108*Math.cos(d1)} ${oy-108*Math.sin(d1)}" fill="none" stroke="var(--svgdim)" stroke-width="1"/>
+  <text x="${ox-124*Math.cos(d1+ (Math.PI/2-d1)/2)}" y="${oy-124*Math.sin(d1+(Math.PI/2-d1)/2)+4}" font-size="11" fill="var(--svgdim)" text-anchor="middle">δ₂=${EC.fmt(g.delta2,2)}°</text>
+  <!-- cotas -->
+  ${cota(gp(Re,ha+26,d1,1)[0], gp(Re,ha+26,d1,1)[1], gp(Re-b,ha+26,d1,1)[0], gp(Re-b,ha+26,d1,1)[1], 'b = '+EC.fmt(g.b,1)+' mm', -8)}
+  ${cota(gp(Re,-hf-30,d1,-1)[0], gp(Re,-hf-30,d1,-1)[1], ox, oy+ (Re*Math.sin(d1)+hf+30), 'Rₑ = '+EC.fmt(g.Re,2)+' mm', 14)}
+  <text x="18" y="${H-16}" font-size="11" fill="var(--svgline)">
+    Seção axial — Σ=${EC.fmt(g.sigma,0)}° · Z₁=${g.Z1}/Z₂=${g.Z2} · mₑₜ=${EC.fmt(g.met,2)} mm · R_m=${EC.fmt(g.Rm,2)} mm · b=${EC.fmt(g.b,2)} mm</text>
+  <text x="18" y="${H-2}" font-size="10" fill="var(--svgaux)">A geratriz primitiva superior é comum aos dois cones — é a linha de contato do engrenamento.</text>
+  </g></svg>`;
+};
+
+/* ---------- 6. CÔNICA — vista frontal (equivalente de Tredgold) --------- */
+D.conicaFrontal = function(g){
+  const m = g.mmn, z1 = Math.round(g.Zv1), z2 = Math.round(g.Zv2), al = g.alfan;
+  const R1 = (m*z1)/2 + m, R2 = (m*z2)/2 + m;
+  const W = 2*R1 + 2*R2 + 130, H = Math.max(2*R2,2*R1) + 100, cy = H/2;
+  const cx1 = 40+R1, cx2 = cx1 + R1 + R2 + 40;
+  const g1 = D.roda(m,z1,al).map(t=>`<path d="${P(t)}Z" fill="var(--svgfill)" stroke="var(--svgline)" stroke-width="0.9"/>`).join('');
+  const g2 = D.roda(m,z2,al).map(t=>`<path d="${P(t)}Z" fill="var(--svgfill)" stroke="var(--svgline)" stroke-width="0.9"/>`).join('');
+  return `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" data-w="${W}" data-h="${H}"><g id="zoomlayer">
+  <g transform="translate(${cx1},${cy})">${g1}
+    <circle r="${m*z1/2}" fill="none" stroke="var(--svgaux)" stroke-width="0.9" stroke-dasharray="9 3 2 3"/>
+    ${eixoCentro(0,0,R1+14)}
+    <text y="${-R1-18}" font-size="11" fill="var(--svgline)" text-anchor="middle" font-weight="bold">PINHÃO equiv. Z_v1=${EC.fmt(g.Zv1,1)}</text></g>
+  <g transform="translate(${cx2},${cy})">${g2}
+    <circle r="${m*z2/2}" fill="none" stroke="var(--svgaux)" stroke-width="0.9" stroke-dasharray="9 3 2 3"/>
+    ${eixoCentro(0,0,R2+14)}
+    <text y="${-R2-18}" font-size="11" fill="var(--svgline)" text-anchor="middle" font-weight="bold">COROA equiv. Z_v2=${EC.fmt(g.Zv2,1)}</text></g>
+  <text x="${W/2}" y="${H-12}" font-size="11" fill="var(--svgaux)" text-anchor="middle">
+    Equivalente cilíndrico de Tredgold (seção normal média) — base do cálculo de resistência</text>
+  </g></svg>`;
+};
+
+/* ---------- 7. GRÁFICOS (SVG nativo, sem dependências) ------------------ */
+D.grafico = function(op){
+  const W=op.W||660, H=op.H||300, ml=58, mr=op.mr||24, mt=24, mb=44;
+  const pw=W-ml-mr, ph=H-mt-mb;
+  const xs = op.series.flatMap(s=>s.pts.map(p=>p[0]));
+  const ys = op.series.flatMap(s=>s.pts.map(p=>p[1])).concat(op.refs? op.refs.map(r=>r.y):[]);
+  let x0=Math.min(...xs), x1=Math.max(...xs), y0=op.y0!==undefined?op.y0:Math.min(...ys), y1=Math.max(...ys);
+  if (op.logx){ x0=Math.log10(x0); x1=Math.log10(x1); }
+  const pad=(y1-y0)*0.12; y1+=pad; y0=Math.max(0,y0-pad*0.5);
+  const X = v => ml + ((op.logx?Math.log10(v):v)-x0)/(x1-x0||1)*pw;
+  const Y = v => mt + ph - (v-y0)/(y1-y0||1)*ph;
+  let grid='';
+  for(let k=0;k<=5;k++){
+    const yv=y0+(y1-y0)*k/5, y=Y(yv);
+    grid+=`<line x1="${ml}" y1="${y}" x2="${ml+pw}" y2="${y}" stroke="var(--border)" stroke-width="0.7"/>
+           <text x="${ml-7}" y="${y+4}" font-size="10.5" fill="var(--txt2)" text-anchor="end">${EC.fmt(yv, op.dy===undefined?2:op.dy)}</text>`;
+  }
+  const nx = op.xticks || 6;
+  for(let k=0;k<=nx;k++){
+    const t = x0+(x1-x0)*k/nx, xv = op.logx?Math.pow(10,t):t, x = ml+pw*k/nx;
+    grid+=`<line x1="${x}" y1="${mt}" x2="${x}" y2="${mt+ph}" stroke="var(--border)" stroke-width="0.5" opacity=".6"/>
+           <text x="${x}" y="${mt+ph+17}" font-size="10.5" fill="var(--txt2)" text-anchor="middle">${op.fmtx?op.fmtx(xv):EC.fmt(xv,1)}</text>`;
+  }
+  let refs='';
+  (op.refs||[]).forEach(r=>{
+    refs+=`<line x1="${ml}" y1="${Y(r.y)}" x2="${ml+pw}" y2="${Y(r.y)}" stroke="${r.cor}" stroke-width="1.3" stroke-dasharray="6 4"/>
+           <text x="${ml+pw-4}" y="${Y(r.y)-5}" font-size="10.5" fill="${r.cor}" text-anchor="end">${r.txt}</text>`;
+  });
+  let lines='';
+  op.series.forEach(s=>{
+    const d = s.pts.map((p,i)=>(i?'L':'M')+X(p[0]).toFixed(2)+' '+Y(p[1]).toFixed(2)).join(' ');
+    lines+=`<path d="${d}" fill="none" stroke="${s.cor}" stroke-width="2" stroke-linejoin="round"/>`;
+    if (s.pontos) s.pts.forEach(p=>{lines+=`<circle cx="${X(p[0])}" cy="${Y(p[1])}" r="3" fill="${s.cor}"/>`;});
+    if (s.marca) lines+=`<circle cx="${X(s.marca[0])}" cy="${Y(s.marca[1])}" r="5.5" fill="none" stroke="${s.cor}" stroke-width="2.2"/>`;
+  });
+  const leg = op.series.map((s,i)=>`<g transform="translate(${ml+i*150},${14})">
+      <line x1="0" y1="0" x2="16" y2="0" stroke="${s.cor}" stroke-width="2.4"/>
+      <text x="21" y="4" font-size="11" fill="var(--txt2)">${s.nome}</text></g>`).join('');
+  return `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto">
+    <rect width="${W}" height="${H}" fill="none"/>
+    ${grid}${refs}${lines}
+    <line x1="${ml}" y1="${mt}" x2="${ml}" y2="${mt+ph}" stroke="var(--txt2)" stroke-width="1"/>
+    <line x1="${ml}" y1="${mt+ph}" x2="${ml+pw}" y2="${mt+ph}" stroke="var(--txt2)" stroke-width="1"/>
+    <text x="${ml+pw/2}" y="${H-6}" font-size="11.5" fill="var(--txt2)" text-anchor="middle">${op.xlab||''}</text>
+    <text x="14" y="${mt+ph/2}" font-size="11.5" fill="var(--txt2)" text-anchor="middle" transform="rotate(-90 14 ${mt+ph/2})">${op.ylab||''}</text>
+    ${leg}</svg>`;
+};
+
+global.DRAW = D;
+if (typeof module !== 'undefined' && module.exports) module.exports = D;
+})(typeof window !== 'undefined' ? window : globalThis);
+</script>
+<script>
+/* ==========================================================================
+   EngrenageCalc Pro — Interface, renderização e memorial descritivo
+   ========================================================================== */
+(function(){
+'use strict';
+if (typeof document === 'undefined') return;
+const $  = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const f  = EC.fmt, fH = EC.fmtH, fE = EC.fmtE;
+let TIPO='cil', ULT=null, ISO_ANG=28;
+
+/* ---------- Preenchimento de selects ------------------------------------ */
+(function initMat(){
+  const sel = $('#mat');
+  Object.keys(EC.MATERIAIS).forEach(k=>{
+    const o=document.createElement('option'); o.value=k; o.textContent=k;
+    if (k==='SAE 8620 cementado') o.selected=true;
+    sel.appendChild(o);
+  });
+})();
+
+/* ---------- Leitura de entradas ----------------------------------------- */
+function ler(){
+  const num = id => parseFloat($('#'+id).value);
+  return {
+    tipo:TIPO, T1:num('T1'), n1:num('n1'), i:num('i'), Lh:num('Lh'),
+    Ko:parseFloat($('#Ko').value), Z1:Math.round(num('Z1')),
+    alfan:parseFloat($('#alfa').value),
+    beta: TIPO==='cil' ? ($('#dentado').value==='helic' ? num('beta') : 0) : 0,
+    dentado: $('#dentado').value,
+    sigma:num('sigma'), kb:num('kbcon'),
+    modo:$('#modo').value, mn:num('mn'), bman:num('bman'), psi:num('psi'),
+    mat:$('#mat').value, grau:parseInt($('#grau').value), Qv:parseInt($('#Qv').value),
+    R:parseFloat($('#R').value), temp:num('temp'),
+    SFmin:num('SFmin'), SHmin:num('SHmin'), montagem:$('#mont').value
+  };
+}
+function aplicar(v){
+  Object.keys(v).forEach(k=>{ const el=$('#'+k); if(el) el.value = v[k]; });
+  if (v.tipo){ TIPO=v.tipo; $$('.tab').forEach(t=>t.classList.toggle('on', t.dataset.tipo===TIPO)); toggleTipo(); }
+  toggleModo();
+}
+
+/* ---------- Cálculo principal ------------------------------------------- */
+function calcular(){
+  const inp = ler();
+  const errBasico = EC.validar(inp, null).filter(a=>a.nivel==='err');
+  if (errBasico.length){ ULT=null; render({inp, av:errBasico}); return; }
+
+  let res, geo, r, m, b;
+  if (inp.modo==='manual'){
+    const Z2 = Math.round(inp.Z1*inp.i);
+    m = inp.mn;
+    if (inp.tipo==='cil'){ b=inp.bman; geo = EC.geoCilindrica({mn:m,Z1:inp.Z1,Z2,beta:inp.beta,alfan:inp.alfan,b}); }
+    else { geo = EC.geoConica({met:m,Z1:inp.Z1,Z2,sigma:inp.sigma,alfan:inp.alfan,kb:inp.kb}); b=geo.b; }
+    r = EC.resistencia({tipo:inp.tipo, geo, T1:inp.T1, n1:inp.n1, i:inp.i, Ko:inp.Ko, Qv:inp.Qv,
+                        montagem:inp.montagem, temp:inp.temp, R:inp.R, mat:inp.mat, grau:inp.grau, Lh:inp.Lh});
+    res = {escolhido:{m,geo,r,b}, Z2, varredura: EC.dimensionar(inp).varredura};
+  } else {
+    res = EC.dimensionar(inp);
+    if (res.escolhido){ geo=res.escolhido.geo; r=res.escolhido.r; m=res.escolhido.m; b=res.escolhido.b; }
+  }
+  const av = EC.validar(inp, res);
+  ULT = {inp, res, av, data:new Date()};
+  render(ULT);
+  salvarSessao(inp);
+}
+
+/* ---------- Renderização ------------------------------------------------ */
+function render(S){
+  const {inp, av} = S, res = S.res, e = res && res.escolhido;
+  $('#alerts').innerHTML = av.length
+    ? av.map(a=>`<div class="msg m-${a.nivel==='err'?'err':(a.nivel==='warn'?'warn':'ok')}">
+         <b>${a.nivel==='err'?'❌':'⚠️'} ${a.titulo}.</b> ${a.msg}</div>`).join('')
+    : '<div class="msg m-ok"><b>✅ Dimensionamento conforme.</b> Todos os critérios de flexão, contato, vida útil e coerência geométrica foram atendidos.</div>';
+  if (!e){ $('#kpis').innerHTML=''; ['pGeo','pRes','pDes','pGraf','pMem'].forEach(p=>$('#'+p).innerHTML='<div class="card"><div class="hint">Sem resultado — corrija os dados de entrada.</div></div>'); return; }
+
+  const g=e.geo, r=e.r, conica = inp.tipo==='con';
+  const cls = (v,min)=> v>=min*1.25?'ok' : (v>=min?'warn':'err');
+  $('#kpis').innerHTML = `
+    <div class="kpi"><div class="k">Módulo adotado</div><div class="v">${f(conica?g.met:g.mn,2)}<span class="u"> mm</span></div></div>
+    <div class="kpi"><div class="k">${conica?'Geratriz Rₑ':'Entre-eixos a'}</div><div class="v">${f(conica?g.Re:g.a,1)}<span class="u"> mm</span></div></div>
+    <div class="kpi ${cls(r.SFmin,inp.SFmin)}"><div class="k">S_F — flexão</div><div class="v">${f(r.SFmin,2)}<span class="u"> / ${f(inp.SFmin,2)}</span></div></div>
+    <div class="kpi ${cls(r.SHmin,inp.SHmin)}"><div class="k">S_H — contato</div><div class="v">${f(r.SHmin,2)}<span class="u"> / ${f(inp.SHmin,2)}</span></div></div>
+    <div class="kpi ${r.Lvida>=inp.Lh?'ok':'err'}"><div class="k">Vida estimada</div><div class="v">${fH(r.Lvida)}<span class="u"> h</span></div></div>
+    <div class="kpi"><div class="k">Potência transmitida</div><div class="v">${f(r.P,2)}<span class="u"> kW</span></div></div>`;
+
+  renderGeo(inp,g,r,conica);
+  renderRes(inp,g,r,conica);
+  renderDesenhos(inp,g,conica);
+  renderGraf(inp,res,g,r);
+  renderMem(S);
+}
+
+/* ---------- Aba: geometria ---------------------------------------------- */
+function linha(l,s,v,u,d){ return `<tr><td>${l}</td><td style="color:var(--txt2)">${s}</td><td class="n">${typeof v==='number'?f(v,d===undefined?3:d):v}</td><td style="color:var(--txt2)">${u||''}</td></tr>`; }
+function tabela(tit, linhas){ return `<div class="card"><h3>${tit}</h3><table><thead><tr><th>Grandeza</th><th>Símbolo</th><th class="n">Valor</th><th>Un.</th></tr></thead><tbody>${linhas}</tbody></table></div>`; }
+
+function renderGeo(inp,g,r,conica){
+  let html='';
+  if (!conica){
+    html += tabela('Parâmetros de base',
+      linha('Módulo normal','mₙ',g.mn,'mm')+
+      linha('Módulo transversal','mₜ',g.mt,'mm')+
+      linha('Ângulo de pressão normal','αₙ',g.alfan,'°',1)+
+      linha('Ângulo de pressão transversal','αₜ',g.alfat,'°')+
+      linha('Ângulo de hélice','β',g.beta,'°',2)+
+      linha('Nº de dentes do pinhão','Z₁',g.Z1,'—',0)+
+      linha('Nº de dentes da coroa','Z₂',g.Z2,'—',0)+
+      linha('Relação efetiva','u = Z₂/Z₁',g.Z2/g.Z1,'—')+
+      linha('Nº virtual de dentes — pinhão','Z_v1',g.Zv1,'—')+
+      linha('Nº virtual de dentes — coroa','Z_v2',g.Zv2,'—')+
+      linha('Nº mínimo sem interferência (para u atual)','Z_min',g.Zmin,'—',0)+
+      linha('Nº mínimo — limite pinhão-cremalheira','Z_min,∞',g.Zmin_rack,'—',0));
+    html += `<div class="dgrid">`+
+      tabela('Dimensões — pinhão',
+        linha('Diâmetro primitivo','d₁',g.d1,'mm')+linha('Diâmetro de cabeça','d_a1',g.da1,'mm')+
+        linha('Diâmetro de raiz','d_f1',g.df1,'mm')+linha('Diâmetro de base','d_b1',g.db1,'mm')+
+        linha('Largura','b',g.b,'mm',2)+linha('Relação b/d₁','—',g.b/g.d1,'—'))+
+      tabela('Dimensões — coroa',
+        linha('Diâmetro primitivo','d₂',g.d2,'mm')+linha('Diâmetro de cabeça','d_a2',g.da2,'mm')+
+        linha('Diâmetro de raiz','d_f2',g.df2,'mm')+linha('Diâmetro de base','d_b2',g.db2,'mm')+
+        linha('Largura','b',g.b,'mm',2)+linha('Distância entre centros','a',g.a,'mm'))+`</div>`;
+    html += tabela('Perfil do dente e engrenamento (ISO 53)',
+      linha('Altura de cabeça','h_a',g.ha,'mm')+linha('Altura de pé','h_f',g.hf,'mm')+
+      linha('Altura total','h',g.h,'mm')+linha('Folga de fundo','c',g.c,'mm')+
+      linha('Espessura no primitivo','s',g.s,'mm')+
+      linha('Passo normal','pₙ',g.pn,'mm')+linha('Passo transversal','pₜ',g.pt,'mm')+
+      linha('Passo axial','p_x',isFinite(g.px)?g.px:'—','mm')+
+      linha('Razão de condução transversal','ε_α',g.ea,'—')+
+      linha('Razão de recobrimento','ε_β',g.eb,'—')+
+      linha('Razão de condução total','ε_γ',g.eg,'—'));
+  } else {
+    html += tabela('Geometria cônica (ISO 23509 / ISO 10300)',
+      linha('Módulo externo transversal','mₑₜ',g.met,'mm')+
+      linha('Módulo médio normal','m_mn',g.mmn,'mm')+
+      linha('Ângulo entre eixos','Σ',g.sigma,'°',1)+
+      linha('Ângulo primitivo do pinhão','δ₁',g.delta1,'°')+
+      linha('Ângulo primitivo da coroa','δ₂',g.delta2,'°')+
+      linha('Geratriz externa','Rₑ',g.Re,'mm')+
+      linha('Geratriz média','R_m',g.Rm,'mm')+
+      linha('Largura de dente','b',g.b,'mm',2)+
+      linha('Limite normativo de largura','0,30·Rₑ',g.bmax,'mm',2)+
+      linha('Ângulo de adendo','θ_a',g.theta_a,'°')+
+      linha('Ângulo de dedendo','θ_f',g.theta_f,'°'));
+    html += `<div class="dgrid">`+
+      tabela('Pinhão',
+        linha('Diâmetro primitivo externo','d₁ₑ',g.d1e,'mm')+
+        linha('Diâmetro primitivo médio','d_m1',g.dm1,'mm')+
+        linha('Diâmetro de cabeça','d_a1',g.da1,'mm')+
+        linha('Nº de dentes','Z₁',g.Z1,'—',0)+
+        linha('Nº virtual (Tredgold)','Z_v1',g.Zv1,'—'))+
+      tabela('Coroa',
+        linha('Diâmetro primitivo externo','d₂ₑ',g.d2e,'mm')+
+        linha('Diâmetro primitivo médio','d_m2',g.dm2,'mm')+
+        linha('Diâmetro de cabeça','d_a2',g.da2,'mm')+
+        linha('Nº de dentes','Z₂',g.Z2,'—',0)+
+        linha('Nº virtual (Tredgold)','Z_v2',g.Zv2,'—'))+`</div>`;
+    html += tabela('Perfil do dente',
+      linha('Altura de cabeça','h_a',g.ha,'mm')+linha('Altura de pé','h_f',g.hf,'mm')+
+      linha('Folga de fundo','c',g.c,'mm')+linha('Ângulo de pressão','αₙ',g.alfan,'°',1));
+  }
+  html += tabela('Esforços no engrenamento',
+    linha('Velocidade tangencial','v',r.v,'m/s')+
+    linha('Força tangencial','F_t',r.Ft,'N',1)+
+    linha('Força radial','F_r',r.Fr,'N',1)+
+    linha('Força axial','F_a',r.Fa,'N',1)+
+    linha('Potência transmitida','P',r.P,'kW')+
+    linha('Torque no pinhão','T₁',inp.T1,'N·m')+
+    linha('Torque na coroa','T₂',inp.T1*inp.i,'N·m'));
+  $('#pGeo').innerHTML = html;
+}
+
+/* ---------- Aba: resistência -------------------------------------------- */
+function renderRes(inp,g,r,conica){
+  const M = EC.MATERIAIS[inp.mat];
+  const bad = (v,min)=> v>=min ? `<span class="badge b-ok">${f(v,2)} ✓</span>` : `<span class="badge b-err">${f(v,2)} ✗</span>`;
+  let h = '';
+  h += tabela('Fatores de serviço aplicados',
+    linha('Fator de aplicação (choque)','K_o',inp.Ko,'—')+
+    linha('Fator dinâmico (AGMA, Qv='+inp.Qv+')','K_v',r.Kv,'—')+
+    linha('Fator de tamanho','K_s',r.Ks,'—')+
+    linha('Fator de distribuição de carga','K_H',r.KH,'—')+
+    linha('  · componente de face','C_pf',r.khInfo.Cpf,'—')+
+    linha('  · componente de alinhamento','C_ma',r.khInfo.Cma,'—')+
+    linha('Fator de espessura de aro','K_B',r.KB,'—')+
+    linha('Fator de temperatura','K_T',r.KT,'—')+
+    linha('Fator de confiabilidade (R='+(inp.R*100).toFixed(2)+'%)','K_R',r.KR,'—')+
+    (conica?linha('Majoração para dentado cônico','K_bev',r.Kbev,'—'):''));
+
+  h += `<div class="card"><h3>Critério de Lewis — tensão de flexão no pé do dente</h3>
+    <div class="mem"><div class="form">σ_F = (F_t · K_o · K_v · K_s · K_H · K_B${conica?' · K_bev':''}) / (b · m · J)      onde  J = Y / K_f</div></div>
+    <table><thead><tr><th>Grandeza</th><th class="n">Pinhão</th><th class="n">Coroa</th><th>Un.</th></tr></thead><tbody>
+    <tr><td>Fator de forma de Lewis Y</td><td class="n">${f(r.Y1,4)}</td><td class="n">${f(r.Y2,4)}</td><td>—</td></tr>
+    <tr><td>Fator de concentração K_f</td><td class="n">${f(r.Kf1,3)}</td><td class="n">${f(r.Kf2,3)}</td><td>—</td></tr>
+    <tr><td>Fator geométrico J</td><td class="n">${f(r.J1,4)}</td><td class="n">${f(r.J2,4)}</td><td>—</td></tr>
+    <tr class="hl"><td>Tensão de flexão σ_F</td><td class="n">${f(r.sF1,1)}</td><td class="n">${f(r.sF2,1)}</td><td>MPa</td></tr>
+    <tr><td>Limite do material σ_Flim (Grau ${inp.grau})</td><td class="n">${f(r.sFlim,0)}</td><td class="n">${f(r.sFlim,0)}</td><td>MPa</td></tr>
+    <tr><td>Ciclos de carga N</td><td class="n">${fE(r.N1)}</td><td class="n">${fE(r.N2)}</td><td>ciclos</td></tr>
+    <tr><td>Fator de vida Y_N</td><td class="n">${f(r.YN1,3)}</td><td class="n">${f(r.YN2,3)}</td><td>—</td></tr>
+    <tr><td>Tensão admissível σ_FP</td><td class="n">${f(r.sFP1,1)}</td><td class="n">${f(r.sFP2,1)}</td><td>MPa</td></tr>
+    <tr class="hl"><td>Fator de segurança S_F (mín. ${f(inp.SFmin,2)})</td><td class="n">${bad(r.SF1,inp.SFmin)}</td><td class="n">${bad(r.SF2,inp.SFmin)}</td><td>—</td></tr>
+    </tbody></table></div>`;
+
+  h += `<div class="card"><h3>Critério de Hertz — tensão de contato (pitting)</h3>
+    <div class="mem"><div class="form">σ_H = Z_E · √[ (F_t · K_o · K_v · K_s · K_H${conica?' · K_bev':''}) / (b · d₁ · I) ]
+I = (cos α_t · sen α_t / 2m_N) · u/(u+1)        Z_E = √[ 1 / (π · Σ((1−ν²)/E)) ]</div></div>
+    <table><thead><tr><th>Grandeza</th><th class="n">Pinhão</th><th class="n">Coroa</th><th>Un.</th></tr></thead><tbody>
+    <tr><td>Coeficiente elástico Z_E</td><td class="n" colspan="2">${f(r.ZE,1)}</td><td>√MPa</td></tr>
+    <tr><td>Fator geométrico I</td><td class="n" colspan="2">${f(r.Ig,4)}</td><td>—</td></tr>
+    <tr><td>Razão de partilha m_N</td><td class="n" colspan="2">${f(r.mN,3)}</td><td>—</td></tr>
+    <tr class="hl"><td>Tensão de contato σ_H</td><td class="n" colspan="2">${f(r.sH,1)}</td><td>MPa</td></tr>
+    <tr><td>Limite do material σ_Hlim (Grau ${inp.grau})</td><td class="n">${f(r.sHlim,0)}</td><td class="n">${f(r.sHlim,0)}</td><td>MPa</td></tr>
+    <tr><td>Fator de vida Z_N</td><td class="n">${f(r.ZN1,3)}</td><td class="n">${f(r.ZN2,3)}</td><td>—</td></tr>
+    <tr><td>Tensão admissível σ_HP</td><td class="n">${f(r.sHP1,1)}</td><td class="n">${f(r.sHP2,1)}</td><td>MPa</td></tr>
+    <tr class="hl"><td>Fator de segurança S_H (mín. ${f(inp.SHmin,2)})</td><td class="n">${bad(r.SH1,inp.SHmin)}</td><td class="n">${bad(r.SH2,inp.SHmin)}</td><td>—</td></tr>
+    </tbody></table>
+    <div class="hint">Observação: S_H compara tensões; a margem equivalente em carga é S_H². Para S_H = ${f(r.SHmin,2)} a margem em torque é ${f(r.SHmin*r.SHmin,2)}×.</div></div>`;
+
+  h += `<div class="card"><h3>Vida útil estimada</h3>
+    <table><thead><tr><th>Modo de falha</th><th class="n">Ciclos até a falha</th><th class="n">Vida (h)</th><th>Situação</th></tr></thead><tbody>
+    <tr><td>Flexão — pinhão</td><td class="n">${fE(r.Lf1*60*inp.n1)}</td><td class="n">${fH(r.Lf1)}</td><td>${r.Lf1>=inp.Lh?'<span class="badge b-ok">ok</span>':'<span class="badge b-err">crítico</span>'}</td></tr>
+    <tr><td>Flexão — coroa</td><td class="n">${fE(r.Lf2*60*inp.n1/inp.i)}</td><td class="n">${fH(r.Lf2)}</td><td>${r.Lf2>=inp.Lh?'<span class="badge b-ok">ok</span>':'<span class="badge b-err">crítico</span>'}</td></tr>
+    <tr><td>Contato (pitting) — pinhão</td><td class="n">${fE(r.Lc1*60*inp.n1)}</td><td class="n">${fH(r.Lc1)}</td><td>${r.Lc1>=inp.Lh?'<span class="badge b-ok">ok</span>':'<span class="badge b-err">crítico</span>'}</td></tr>
+    <tr><td>Contato (pitting) — coroa</td><td class="n">${fE(r.Lc2*60*inp.n1/inp.i)}</td><td class="n">${fH(r.Lc2)}</td><td>${r.Lc2>=inp.Lh?'<span class="badge b-ok">ok</span>':'<span class="badge b-err">crítico</span>'}</td></tr>
+    <tr class="hl"><td>Vida da transmissão (governante)</td><td class="n">—</td><td class="n">${fH(r.Lvida)}</td><td>${r.Lvida>=inp.Lh?'<span class="badge b-ok">atende</span>':'<span class="badge b-err">não atende</span>'}</td></tr>
+    </tbody></table>
+    <div class="msg ${r.Lvida>=inp.Lh?'m-ok':'m-err'}"><b>Modo de falha governante:</b> ${r.modoFalha}.
+    Vida estimada ${fH(r.Lvida)} h contra ${fH(inp.Lh)} h requeridas (${f(100*r.Lvida/inp.Lh,0)} %).</div></div>`;
+
+  h += tabela('Material especificado — '+inp.mat,
+    linha('Tratamento','—',M.trat,'')+
+    linha('Dureza superficial de referência','HB',M.HB,'HB',0)+
+    linha('Módulo de elasticidade','E',M.E,'MPa',0)+
+    linha('Coeficiente de Poisson','ν',M.nu,'—')+
+    linha('Limite de flexão (Grau 1 / Grau 2)','σ_Flim',M.sFlim[0]+' / '+M.sFlim[1],'MPa')+
+    linha('Limite de contato (Grau 1 / Grau 2)','σ_Hlim',M.sHlim[0]+' / '+M.sHlim[1],'MPa')+
+    linha('Massa específica','ρ',M.dens,'kg/m³',0));
+  $('#pRes').innerHTML = h;
+}
+
+/* ---------- Aba: desenhos ----------------------------------------------- */
+function box(tit, svg, id){
+  return `<div class="card"><h3>${tit}</h3><div class="svgbox" id="${id}">
+    <div class="svgtools no-print">
+      <button class="btn sec sm" onclick="ECUI.zoom('${id}',1.25)">+</button>
+      <button class="btn sec sm" onclick="ECUI.zoom('${id}',0.8)">−</button>
+      <button class="btn sec sm" onclick="ECUI.zoom('${id}',0)">⟲</button>
+      <button class="btn sec sm" onclick="ECUI.png('${id}','${id}')">PNG</button>
+    </div>${svg}</div></div>`;
+}
+function renderDesenhos(inp,g,conica){
+  let h;
+  if (!conica){
+    h = box('Vista frontal do par engrenado — perfil evolvental real','', 'd1').replace('</div></div>','')
+      + DRAW.vistaFrontal(g) + '</div></div>';
+    h += `<div class="dgrid">`
+      + box('Vista lateral (corte) — pinhão','','d2').replace('</div></div>','') + DRAW.vistaLateral(g) + '</div></div>'
+      + box('Detalhe do dente — perfil e alturas','','d3').replace('</div></div>','') + DRAW.detalheDente(g) + '</div></div>'
+      + `</div>`;
+    h += box('Perspectiva — arraste na horizontal para girar','','d4').replace('</div></div>','') + DRAW.isometrico(g, ISO_ANG) + '</div></div>';
+  } else {
+    h = box('Seção axial do par cônico — cones primitivos e dentado','','d1').replace('</div></div>','') + DRAW.conicaSecao(g) + '</div></div>';
+    h += box('Equivalente cilíndrico de Tredgold — base do cálculo de resistência','','d2').replace('</div></div>','') + DRAW.conicaFrontal(g) + '</div></div>';
+  }
+  h += `<div class="card"><h3>Convenções do desenho</h3><div class="legend">
+    <span><i style="border-color:var(--svgline)"></i>Contorno e dentado</span>
+    <span><i style="border-color:var(--svgaux);border-top-style:dashed"></i>Circunferência primitiva / eixo</span>
+    <span><i style="border-color:var(--svgdim)"></i>Cotas e linha de ação</span></div>
+    <div class="hint">Perfil gerado pela equação paramétrica da evolvente de círculo (inv α = tg α − α), sem simplificação por arcos.
+    Desenhos em escala relativa, destinados a conferência dimensional — não substituem o desenho de fabricação com tolerâncias (ISO 1328).</div></div>`;
+  $('#pDes').innerHTML = h;
+  if (!conica) ligarRotacao('d4', g);
+}
+function ligarRotacao(id, g){
+  const bx = document.getElementById(id); if(!bx) return;
+  let arr=false, x0=0, a0=ISO_ANG;
+  const svg = bx.querySelector('svg');
+  const dn = ev => {arr=true; x0=(ev.touches?ev.touches[0].clientX:ev.clientX); a0=ISO_ANG; ev.preventDefault();};
+  const mv = ev => { if(!arr) return;
+    const x=(ev.touches?ev.touches[0].clientX:ev.clientX);
+    ISO_ANG = Math.max(8, Math.min(72, a0 + (x-x0)*0.22));
+    bx.querySelector('svg').outerHTML = DRAW.isometrico(g, ISO_ANG); ligarRotacao(id,g);
+    arr=false;
+  };
+  const up = () => arr=false;
+  svg.addEventListener('mousedown',dn); svg.addEventListener('touchstart',dn,{passive:false});
+  window.addEventListener('mousemove',mv); window.addEventListener('touchmove',mv,{passive:false});
+  window.addEventListener('mouseup',up); window.addEventListener('touchend',up);
+}
+
+/* ---------- Aba: gráficos ----------------------------------------------- */
+function renderGraf(inp,res,g,r){
+  const v = res.varredura.filter(x=>isFinite(x.SF)&&isFinite(x.SH)&&x.m<=Math.max(20, (inp.tipo==='con'?g.met:g.mn)*3));
+  const mAd = inp.tipo==='con'? g.met : g.mn;
+  const g1 = DRAW.grafico({ xlab:'Módulo normalizado mₙ (mm) — série ISO 54', ylab:'Fator de segurança', dy:2,
+    series:[{nome:'S_F (flexão)', cor:'#1565c0', pts:v.map(x=>[x.m,Math.min(x.SF,6)]), pontos:true, marca:[mAd, Math.min(r.SFmin,6)]},
+            {nome:'S_H (contato)', cor:'#e65100', pts:v.map(x=>[x.m,Math.min(x.SH,6)]), pontos:true, marca:[mAd, Math.min(r.SHmin,6)]}],
+    refs:[{y:inp.SFmin, cor:'#1565c0', txt:'S_F mín = '+f(inp.SFmin,2)},{y:inp.SHmin, cor:'#e65100', txt:'S_H mín = '+f(inp.SHmin,2)}],
+    y0:0, fmtx:x=>f(x,x<1?2:(x<10?1:0)) });
+
+  const g2 = DRAW.grafico({ xlab:'Módulo normalizado mₙ (mm)', ylab:'Tensão (MPa)', dy:0,
+    series:[{nome:'σ_F — flexão', cor:'#1565c0', pts:v.map(x=>[x.m,x.sF]), pontos:true},
+            {nome:'σ_H — contato', cor:'#c62828', pts:v.map(x=>[x.m,x.sH]), pontos:true}],
+    refs:[{y:r.sFP1, cor:'#1565c0', txt:'σ_FP = '+f(r.sFP1,0)+' MPa'},{y:r.sHP1, cor:'#c62828', txt:'σ_HP = '+f(r.sHP1,0)+' MPa'}],
+    y0:0, fmtx:x=>f(x,x<1?2:(x<10?1:0)) });
+
+  // Curva S-N do material (Wöhler AGMA)
+  const Ns = []; for(let e=3;e<=10;e+=0.25) Ns.push(Math.pow(10,e));
+  const g3 = DRAW.grafico({ logx:true, xlab:'Número de ciclos N (escala log)', ylab:'Tensão admissível (MPa)', dy:0, xticks:7,
+    series:[{nome:'σ_FP (flexão)', cor:'#1565c0', pts:Ns.map(N=>[N, r.sFlim*EC.fatorYN(N)/(r.KT*r.KR)])},
+            {nome:'σ_HP (contato)', cor:'#c62828', pts:Ns.map(N=>[N, r.sHlim*EC.fatorZN(N)/(r.KT*r.KR)])}],
+    refs:[{y:r.sF1, cor:'#1565c0', txt:'σ_F de trabalho'},{y:r.sH, cor:'#c62828', txt:'σ_H de trabalho'}],
+    fmtx:x=>'10'+String(Math.round(Math.log10(x))).replace(/[0-9]/g,c=>'⁰¹²³⁴⁵⁶⁷⁸⁹'[c]) });
+
+  const g4 = DRAW.grafico({ xlab:'Módulo normalizado mₙ (mm)', ylab:'Massa do par (kg)', dy:1,
+    series:[{nome:'Massa estimada', cor:'#2e7d32', pts:v.map(x=>[x.m,x.massa]), pontos:true, marca:[mAd, EC.massa(g,inp.mat,inp.tipo==='con')]}],
+    y0:0, fmtx:x=>f(x,x<1?2:(x<10?1:0)) });
+
+  const tabVar = `<div class="card"><h3>Varredura de módulos normalizados (ISO 54)</h3>
+    <table><thead><tr><th class="n">mₙ (mm)</th><th class="n">b (mm)</th><th class="n">${inp.tipo==='con'?'Rₑ':'a'} (mm)</th>
+    <th class="n">σ_F (MPa)</th><th class="n">σ_H (MPa)</th><th class="n">S_F</th><th class="n">S_H</th><th class="n">Vida (h)</th><th class="n">Massa (kg)</th><th>Situação</th></tr></thead><tbody>
+    ${res.varredura.filter(x=>x.m<=Math.max(20,mAd*4)).map(x=>`<tr class="${Math.abs(x.m-mAd)<1e-9?'hl':''}">
+      <td class="n">${f(x.m,2)}</td><td class="n">${f(x.b,1)}</td><td class="n">${f(x.a,1)}</td>
+      <td class="n">${f(x.sF,0)}</td><td class="n">${f(x.sH,0)}</td>
+      <td class="n">${f(x.SF,2)}</td><td class="n">${f(x.SH,2)}</td><td class="n">${fH(x.L)}</td><td class="n">${f(x.massa,2)}</td>
+      <td>${x.ok?'<span class="badge b-ok">atende</span>':'<span class="badge b-err">não atende</span>'}</td></tr>`).join('')}
+    </tbody></table>
+    <div class="hint">Linha destacada = módulo adotado. O critério de seleção automática é o menor módulo da série que satisfaz simultaneamente S_F, S_H e a vida útil requerida.</div></div>`;
+
+  $('#pGraf').innerHTML =
+    `<div class="dgrid">
+      <div class="card"><h3>Fatores de segurança × módulo</h3>${g1}</div>
+      <div class="card"><h3>Tensões de trabalho × módulo</h3>${g2}</div>
+      <div class="card"><h3>Curva S-N do material (Wöhler)</h3>${g3}</div>
+      <div class="card"><h3>Massa do par × módulo</h3>${g4}</div>
+     </div>` + tabVar;
+}
+
+/* ---------- Aba: memorial descritivo ------------------------------------ */
+function renderMem(S){
+  const {inp} = S, e = S.res.escolhido, g=e.geo, r=e.r, conica = inp.tipo==='con';
+  const M = EC.MATERIAIS[inp.mat];
+  const dt = S.data.toLocaleDateString('pt-BR')+' às '+S.data.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+  const ok = r.SFmin>=inp.SFmin && r.SHmin>=inp.SHmin && r.Lvida>=inp.Lh;
+  const t = (a,b)=>`<tr><td>${a}</td><td class="n">${b}</td></tr>`;
+  const T = rows => `<table><tbody>${rows}</tbody></table>`;
+
+  const geoRows = conica
+    ? t('Módulo externo transversal mₑₜ', f(g.met,2)+' mm')+t('Módulo médio normal m_mn', f(g.mmn,3)+' mm')
+      +t('Número de dentes Z₁ / Z₂', g.Z1+' / '+g.Z2)+t('Ângulo entre eixos Σ', f(g.sigma,1)+'°')
+      +t('Ângulos primitivos δ₁ / δ₂', f(g.delta1,2)+'° / '+f(g.delta2,2)+'°')
+      +t('Geratriz externa Rₑ', f(g.Re,2)+' mm')+t('Geratriz média R_m', f(g.Rm,2)+' mm')
+      +t('Largura de dente b', f(g.b,2)+' mm  (limite 0,30·Rₑ = '+f(g.bmax,2)+' mm)')
+      +t('Diâmetros primitivos externos d₁ₑ / d₂ₑ', f(g.d1e,2)+' / '+f(g.d2e,2)+' mm')
+      +t('Diâmetros primitivos médios d_m1 / d_m2', f(g.dm1,2)+' / '+f(g.dm2,2)+' mm')
+      +t('Diâmetros de cabeça d_a1 / d_a2', f(g.da1,2)+' / '+f(g.da2,2)+' mm')
+      +t('Números virtuais Z_v1 / Z_v2 (Tredgold)', f(g.Zv1,2)+' / '+f(g.Zv2,2))
+      +t('Altura de cabeça / pé', f(g.ha,3)+' / '+f(g.hf,3)+' mm')
+    : t('Módulo normal mₙ', f(g.mn,2)+' mm')+t('Módulo transversal mₜ', f(g.mt,3)+' mm')
+      +t('Número de dentes Z₁ / Z₂', g.Z1+' / '+g.Z2)
+      +t('Ângulo de pressão αₙ / αₜ', f(g.alfan,1)+'° / '+f(g.alfat,3)+'°')
+      +t('Ângulo de hélice β', f(g.beta,2)+'°')
+      +t('Diâmetros primitivos d₁ / d₂', f(g.d1,2)+' / '+f(g.d2,2)+' mm')
+      +t('Diâmetros de cabeça d_a1 / d_a2', f(g.da1,2)+' / '+f(g.da2,2)+' mm')
+      +t('Diâmetros de raiz d_f1 / d_f2', f(g.df1,2)+' / '+f(g.df2,2)+' mm')
+      +t('Diâmetros de base d_b1 / d_b2', f(g.db1,2)+' / '+f(g.db2,2)+' mm')
+      +t('Distância entre centros a', f(g.a,2)+' mm')
+      +t('Largura de engrenamento b', f(g.b,2)+' mm  (b/mₙ = '+f(g.b/g.mn,1)+')')
+      +t('Alturas h_a / h_f / h', f(g.ha,3)+' / '+f(g.hf,3)+' / '+f(g.h,3)+' mm')
+      +t('Passos pₙ / pₜ / p_x', f(g.pn,3)+' / '+f(g.pt,3)+' / '+(isFinite(g.px)?f(g.px,3):'—')+' mm')
+      +t('Razões de condução ε_α / ε_β / ε_γ', f(g.ea,3)+' / '+f(g.eb,3)+' / '+f(g.eg,3));
+
+  const html = `<div class="card no-print" style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn" onclick="window.print()">🖨️ Imprimir / PDF</button>
+      <button class="btn sec" onclick="ECUI.exportar('html')">⬇️ Baixar HTML</button>
+      <button class="btn sec" onclick="ECUI.exportar('md')">⬇️ Baixar Markdown</button>
+      <button class="btn sec" onclick="ECUI.exportar('json')">⬇️ Baixar dados (JSON)</button>
+    </div>
+  <div class="mem" id="memDoc">
+    <h2>Memorial Descritivo de Cálculo<br>Engrenagem ${conica?'Cônica de Dentes Retos':(g.beta>0?'Cilíndrica Helicoidal':'Cilíndrica de Dentes Retos')}</h2>
+    <div class="sub">Emitido por EngrenageCalc Pro v${EC.VERSAO} — ${dt}</div>
+
+    <h3>1. Objeto</h3>
+    <p>Este memorial apresenta o dimensionamento geométrico e a verificação de resistência de um par de engrenagens
+    ${conica?'cônicas de dentes retos':(g.beta>0?'cilíndricas helicoidais':'cilíndricas de dentes retos')},
+    destinado à transmissão de ${f(r.P,2)} kW a ${f(inp.n1,0)} rpm, com relação de transmissão i = ${f(inp.i,3)}
+    e vida útil de projeto de ${fH(inp.Lh)} horas.</p>
+
+    <h3>2. Normas e referências adotadas</h3>
+    <ul>
+      <li>ABNT NBR ISO 6336-1/2/3/5 — Cálculo da capacidade de carga de engrenagens cilíndricas;</li>
+      <li>AGMA 2001-D04 — Fundamental Rating Factors and Calculation Methods;</li>
+      <li>AGMA 908-B89 — Geometry Factors for Determining the Pitting Resistance and Bending Strength;</li>
+      <li>ISO 53 — Perfil normal de referência para engrenagens cilíndricas;</li>
+      <li>ISO 54 / ABNT NBR 8767 — Módulos normalizados;</li>
+      <li>DIN 3990 — Tragfähigkeitsberechnung von Stirnrädern;</li>
+      ${conica?'<li>ISO 10300-1/2/3 e ISO 23509 — Capacidade de carga e geometria de engrenagens cônicas;</li>':''}
+      <li>ISO 1328-1 — Sistema de precisão de engrenagens cilíndricas (classe adotada Q_v = ${inp.Qv}).</li>
+    </ul>
+
+    <h3>3. Dados de projeto</h3>
+    ${T(t('Torque no pinhão T₁', f(inp.T1,2)+' N·m')+t('Torque na coroa T₂', f(inp.T1*inp.i,2)+' N·m')
+      +t('Rotação do pinhão n₁', f(inp.n1,0)+' rpm')+t('Rotação da coroa n₂', f(inp.n1/inp.i,1)+' rpm')
+      +t('Potência transmitida P', f(r.P,3)+' kW')+t('Relação de transmissão i', f(inp.i,3))
+      +t('Vida útil requerida', fH(inp.Lh)+' h')+t('Fator de aplicação K_o', f(inp.Ko,2))
+      +t('Confiabilidade adotada R', (inp.R*100).toFixed(2)+' %')
+      +t('Temperatura de operação', f(inp.temp,0)+' °C')
+      +t('Condição de montagem', $('#mont').selectedOptions[0].textContent))}
+
+    <h3>4. Material especificado</h3>
+    ${T(t('Designação', inp.mat)+t('Tratamento', M.trat)+t('Grau de qualidade metalúrgica', 'Grau '+inp.grau+' (AGMA 2001-D04)')
+      +t('Dureza de referência', M.HB+' HB')+t('Módulo de elasticidade E', f(M.E,0)+' MPa')
+      +t('Coeficiente de Poisson ν', f(M.nu,2))
+      +t('Limite de fadiga à flexão σ_Flim', f(r.sFlim,0)+' MPa')
+      +t('Limite de fadiga ao contato σ_Hlim', f(r.sHlim,0)+' MPa'))}
+
+    <h3>5. Dimensionamento geométrico</h3>
+    <p>O módulo foi ${inp.modo==='auto'?'determinado por varredura da série normalizada ISO 54, adotando-se o menor valor que satisfaz simultaneamente os critérios de flexão, de contato e de vida útil':'imposto pelo projetista e verificado quanto aos critérios de resistência'}.</p>
+    ${T(geoRows)}
+
+    <h3>6. Esforços no engrenamento</h3>
+    <div class="form">F_t = 2·T₁·10³ / d${conica?'_m1':'₁'} = 2 · ${f(inp.T1,2)} · 10³ / ${f(r.dref,2)} = ${f(r.Ft,1)} N
+v = π · d${conica?'_m1':'₁'} · n₁ / 60000 = ${f(r.v,3)} m/s</div>
+    ${T(t('Força tangencial F_t', f(r.Ft,1)+' N')+t('Força radial F_r', f(r.Fr,1)+' N')
+      +t('Força axial F_a', f(r.Fa,1)+' N')+t('Velocidade tangencial v', f(r.v,3)+' m/s'))}
+
+    <h3>7. Fatores de serviço</h3>
+    ${T(t('K_o — aplicação (choque)', f(inp.Ko,2))+t('K_v — dinâmico (Q_v = '+inp.Qv+')', f(r.Kv,3))
+      +t('K_s — tamanho', f(r.Ks,3))+t('K_H — distribuição de carga', f(r.KH,3))
+      +t('K_B — espessura de aro', f(r.KB,2))+t('K_T — temperatura', f(r.KT,3))
+      +t('K_R — confiabilidade', f(r.KR,3))+(conica?t('K_bev — dentado cônico', f(r.Kbev,2)):''))}
+
+    <h3>8. Verificação à flexão — critério de Lewis</h3>
+    <p>A tensão no pé do dente é obtida pela equação de Lewis majorada pelos fatores de serviço da AGMA 2001-D04,
+    com fator de forma Y tabelado conforme AGMA 908-B89 e fator de concentração K_f de Dolan-Broghamer:</p>
+    <div class="form">σ_F = (F_t · K_o · K_v · K_s · K_H · K_B${conica?' · K_bev':''}) / (b · m · J),  com J = Y / K_f
+
+Pinhão: σ_F1 = (${f(r.Ft,1)} · ${f(inp.Ko,2)} · ${f(r.Kv,3)} · ${f(r.Ks,3)} · ${f(r.KH,3)}) / (${f(r.b,2)} · ${f(r.mref,3)} · ${f(r.J1,4)}) = ${f(r.sF1,1)} MPa
+σ_FP1 = σ_Flim · Y_N / (K_T · K_R) = ${f(r.sFlim,0)} · ${f(r.YN1,3)} / (${f(r.KT,2)} · ${f(r.KR,3)}) = ${f(r.sFP1,1)} MPa
+S_F1 = σ_FP1 / σ_F1 = ${f(r.SF1,3)}   ≥ ${f(inp.SFmin,2)} → ${r.SF1>=inp.SFmin?'ATENDE':'NÃO ATENDE'}</div>
+    ${T(t('σ_F1 / σ_F2 — tensão de flexão', f(r.sF1,1)+' / '+f(r.sF2,1)+' MPa')
+      +t('Y (Lewis) pinhão / coroa', f(r.Y1,4)+' / '+f(r.Y2,4))
+      +t('K_f pinhão / coroa', f(r.Kf1,3)+' / '+f(r.Kf2,3))
+      +t('J geométrico pinhão / coroa', f(r.J1,4)+' / '+f(r.J2,4))
+      +t('Ciclos N₁ / N₂', fE(r.N1)+' / '+fE(r.N2))
+      +t('Y_N pinhão / coroa', f(r.YN1,3)+' / '+f(r.YN2,3))
+      +t('σ_FP1 / σ_FP2 — admissível', f(r.sFP1,1)+' / '+f(r.sFP2,1)+' MPa')
+      +t('<b>S_F1 / S_F2 — fator de segurança</b>', '<b>'+f(r.SF1,3)+' / '+f(r.SF2,3)+'</b>'))}
+
+    <h3>9. Verificação ao contato — critério de Hertz</h3>
+    <p>A pressão de contato hertziana no ponto primitivo é avaliada conforme ISO 6336-2 / AGMA 2001-D04:</p>
+    <div class="form">σ_H = Z_E · √[ (F_t · K_o · K_v · K_s · K_H${conica?' · K_bev':''}) / (b · d${conica?'_m1':'₁'} · I) ]
+
+Z_E = ${f(r.ZE,1)} √MPa     I = ${f(r.Ig,4)}     m_N = ${f(r.mN,3)}
+σ_H = ${f(r.sH,1)} MPa
+σ_HP1 = σ_Hlim · Z_N · Z_W / (K_T · K_R) = ${f(r.sHlim,0)} · ${f(r.ZN1,3)} · ${f(r.ZW,2)} / (${f(r.KT,2)} · ${f(r.KR,3)}) = ${f(r.sHP1,1)} MPa
+S_H1 = σ_HP1 / σ_H = ${f(r.SH1,3)}   ≥ ${f(inp.SHmin,2)} → ${r.SH1>=inp.SHmin?'ATENDE':'NÃO ATENDE'}</div>
+    ${T(t('σ_H — tensão de contato', f(r.sH,1)+' MPa')
+      +t('Z_E — coeficiente elástico', f(r.ZE,1)+' √MPa')
+      +t('I — fator geométrico', f(r.Ig,4))
+      +t('Z_N pinhão / coroa', f(r.ZN1,3)+' / '+f(r.ZN2,3))
+      +t('σ_HP1 / σ_HP2 — admissível', f(r.sHP1,1)+' / '+f(r.sHP2,1)+' MPa')
+      +t('<b>S_H1 / S_H2 — fator de segurança</b>', '<b>'+f(r.SH1,3)+' / '+f(r.SH2,3)+'</b>')
+      +t('Margem equivalente em carga (S_H²)', f(r.SH1*r.SH1,2)+'×'))}
+
+    <h3>10. Vida útil estimada</h3>
+    <p>A vida é obtida invertendo-se as curvas de fadiga Y_N (flexão) e Z_N (contato) da AGMA 2001-D04 para
+    fator de segurança unitário, mantidos os demais fatores de serviço.</p>
+    ${T(t('Flexão — pinhão', fH(r.Lf1)+' h')+t('Flexão — coroa', fH(r.Lf2)+' h')
+      +t('Contato — pinhão', fH(r.Lc1)+' h')+t('Contato — coroa', fH(r.Lc2)+' h')
+      +t('<b>Vida governante da transmissão</b>', '<b>'+fH(r.Lvida)+' h</b>')
+      +t('Modo de falha governante', r.modoFalha)
+      +t('Relação vida estimada / requerida', f(r.Lvida/inp.Lh,2)+'×'))}
+
+    <h3>11. Verificações de coerência</h3>
+    <ul>
+      ${S.av.length? S.av.map(a=>`<li><b>${a.nivel==='err'?'Não conforme':'Alerta'}:</b> ${a.titulo} — ${a.msg}</li>`).join('')
+        : '<li>Todas as verificações de coerência geométrica, resistência e vida útil foram atendidas sem ressalvas.</li>'}
+    </ul>
+
+    <h3>12. Conclusão</h3>
+    <p>${ok
+      ? `O dimensionamento proposto <b>atende</b> aos critérios adotados. O par de engrenagens
+         ${conica?'cônicas':'cilíndricas'} de módulo ${f(conica?g.met:g.mn,2)} mm, com Z₁ = ${g.Z1} e Z₂ = ${g.Z2} dentes
+         e largura b = ${f(g.b,2)} mm, executado em ${inp.mat}, apresenta fatores de segurança
+         S_F = ${f(r.SFmin,2)} (mínimo requerido ${f(inp.SFmin,2)}) e S_H = ${f(r.SHmin,2)} (mínimo requerido ${f(inp.SHmin,2)}),
+         com vida útil estimada de ${fH(r.Lvida)} horas contra ${fH(inp.Lh)} horas requeridas.
+         Recomenda-se a especificação de precisão ISO 1328 classe equivalente a Q_v = ${inp.Qv} e lubrificação compatível
+         com a velocidade tangencial de ${f(r.v,2)} m/s.`
+      : `O dimensionamento proposto <b>não atende</b> integralmente aos critérios adotados. Verificar as não conformidades
+         listadas no item 11 e revisar módulo, largura, número de dentes ou classe do material.`}</p>
+
+    <div class="assin">
+      <div class="line"></div>
+      Responsável Técnico — CREA nº ____________<br>
+      <span style="color:var(--txt2);font-size:11.5px">Documento gerado por ferramenta de apoio ao pré-dimensionamento.<br>
+      Os resultados devem ser conferidos e assumidos por profissional legalmente habilitado (ART/RRT).</span>
+    </div>
+  </div>`;
+  $('#pMem').innerHTML = html;
+}
+
+/* ---------- Exportação --------------------------------------------------- */
+function baixar(nome, txt, mime){
+  const blob = new Blob([txt], {type:mime||'text/plain;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = nome; a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 4000);
+}
+const ECUI = {};
+ECUI.exportar = function(fmt){
+  if (!ULT || !ULT.res.escolhido) return;
+  const nome = 'memorial-engrenagem-'+new Date().toISOString().slice(0,10);
+  if (fmt==='json'){
+    const {inp,res} = ULT;
+    baixar(nome+'.json', JSON.stringify({versao:EC.VERSAO, entrada:inp, geometria:res.escolhido.geo,
+      resistencia:res.escolhido.r, alertas:ULT.av}, null, 2), 'application/json');
+    return;
+  }
+  const doc = document.getElementById('memDoc').cloneNode(true);
+  if (fmt==='html'){
+    const css = `body{font:14px/1.6 Georgia,serif;max-width:850px;margin:32px auto;padding:0 24px;color:#111}
+      h2{text-align:center;font-size:17px;text-transform:uppercase} h3{font-size:14px;color:#1565c0;border-bottom:1px solid #ccd;padding-bottom:3px;margin-top:22px}
+      table{width:100%;border-collapse:collapse;font-size:12.5px;margin:6px 0 12px} td{padding:4px 8px;border-bottom:1px solid #e2e6ec}
+      td.n{text-align:right} .form{background:#f2f5f9;border-left:3px solid #1565c0;padding:8px 12px;font-family:monospace;font-size:12px;white-space:pre-wrap;margin:8px 0}
+      .sub{text-align:center;color:#667;font-size:12px;margin-bottom:20px} .assin{margin-top:40px;text-align:center;font-size:12.5px}
+      .assin .line{border-top:1px solid #333;width:300px;margin:40px auto 4px}`;
+    baixar(nome+'.html', `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8">
+      <title>Memorial Descritivo — Engrenagem</title><style>${css}</style></head><body>${doc.innerHTML}</body></html>`, 'text/html;charset=utf-8');
+    return;
+  }
+  // Markdown
+  let md='';
+  doc.querySelectorAll('h2,h3,h4,p,ul,table,.form,.sub').forEach(el=>{
+    const tg = el.tagName.toLowerCase();
+    if (el.classList.contains('form')) md += '```\n'+el.textContent.trim()+'\n```\n\n';
+    else if (el.classList.contains('sub')) md += '*'+el.textContent.trim()+'*\n\n';
+    else if (tg==='h2') md += '# '+el.textContent.replace(/\s+/g,' ').trim()+'\n\n';
+    else if (tg==='h3') md += '## '+el.textContent.trim()+'\n\n';
+    else if (tg==='h4') md += '### '+el.textContent.trim()+'\n\n';
+    else if (tg==='p') md += el.textContent.replace(/\s+/g,' ').trim()+'\n\n';
+    else if (tg==='ul') md += Array.from(el.querySelectorAll('li')).map(li=>'- '+li.textContent.replace(/\s+/g,' ').trim()).join('\n')+'\n\n';
+    else if (tg==='table'){
+      const rows = Array.from(el.querySelectorAll('tr'));
+      md += '| Grandeza | Valor |\n|---|---:|\n';
+      rows.forEach(tr=>{ const c=Array.from(tr.children).map(td=>td.textContent.replace(/\s+/g,' ').trim());
+        if (c.length>=2) md += '| '+c[0]+' | '+c.slice(1).join(' · ')+' |\n'; });
+      md += '\n';
+    }
+  });
+  baixar(nome+'.md', md, 'text/markdown;charset=utf-8');
+};
+ECUI.zoom = function(id, k){
+  const bx = document.getElementById(id); if(!bx) return;
+  const svg = bx.querySelector('svg'); if(!svg) return;
+  const l = svg.querySelector('#zoomlayer'); if(!l) return;
+  let s = parseFloat(svg.dataset.z||'1');
+  const W = parseFloat(svg.dataset.w||'100'), H = parseFloat(svg.dataset.h||'100');
+  s = k===0 ? 1 : Math.max(0.4, Math.min(6, s*k));
+  svg.dataset.z = s;
+  l.setAttribute('transform', `translate(${W/2},${H/2}) scale(${s}) translate(${-W/2},${-H/2})`);
+};
+ECUI.png = function(id){
+  const bx = document.getElementById(id); const svg = bx.querySelector('svg'); if(!svg) return;
+  const cs = getComputedStyle(document.documentElement);
+  let s = new XMLSerializer().serializeToString(svg);
+  ['--svgbg','--svgline','--svgaux','--svgdim','--svgfill'].forEach(v=>{
+    s = s.split('var('+v+')').join(cs.getPropertyValue(v).trim()||'#000');
+  });
+  const W = parseFloat(svg.dataset.w||600), H = parseFloat(svg.dataset.h||400), esc = 2.5;
+  const img = new Image();
+  img.onload = function(){
+    const c = document.createElement('canvas'); c.width=W*esc; c.height=H*esc;
+    const x = c.getContext('2d');
+    x.fillStyle = cs.getPropertyValue('--svgbg').trim()||'#fff'; x.fillRect(0,0,c.width,c.height);
+    x.drawImage(img,0,0,c.width,c.height);
+    c.toBlob(b=>{const a=document.createElement('a');a.href=URL.createObjectURL(b);
+      a.download='engrenagem-'+id+'.png';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),4000);});
+  };
+  img.src = 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(s);
+};
+window.ECUI = ECUI;
+
+/* ---------- Persistência local ------------------------------------------ */
+const KEY='engrenagecalc.v1';
+function ls(k,v){ try{ if(v===undefined) return JSON.parse(localStorage.getItem(k)||'null'); localStorage.setItem(k,JSON.stringify(v)); }catch(e){ return null; } }
+function salvarSessao(inp){ ls(KEY+'.sessao', inp); }
+function salvarHist(){
+  if (!ULT||!ULT.res.escolhido) return;
+  const h = ls(KEY+'.hist')||[];
+  const e = ULT.res.escolhido;
+  h.unshift({t:Date.now(), inp:ULT.inp,
+    resumo:`${ULT.inp.tipo==='con'?'Cônica':'Cilíndrica'} m=${f(ULT.inp.tipo==='con'?e.geo.met:e.geo.mn,2)} · Z₁=${e.geo.Z1}/Z₂=${e.geo.Z2} · ${f(ULT.inp.T1,0)} N·m · S_F=${f(e.r.SFmin,2)} · S_H=${f(e.r.SHmin,2)}`});
+  ls(KEY+'.hist', h.slice(0,25)); renderHist();
+}
+function renderHist(){
+  const h = ls(KEY+'.hist')||[];
+  $('#hist').innerHTML = h.length ? h.map((x,k)=>`<div class="it" data-k="${k}">
+      <b>${new Date(x.t).toLocaleDateString('pt-BR')} ${new Date(x.t).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}</b><br>${x.resumo}</div>`).join('')
+    : '<div class="hint">Nenhum cálculo salvo ainda.</div>';
+  $$('#hist .it').forEach(el=>el.addEventListener('click',()=>{ aplicar(h[el.dataset.k].inp); calcular(); }));
+}
+
+/* ---------- Tutorial ----------------------------------------------------- */
+const PASSOS = [
+ ['Bem-vindo ao EngrenageCalc Pro','A ferramenta dimensiona pares de engrenagens cilíndricas (retas e helicoidais) e cônicas de dentes retos, verificando flexão pelo critério de Lewis e contato pelo critério de Hertz, com fatores da AGMA 2001-D04 / ABNT NBR ISO 6336.'],
+ ['Passo 1 — Dados de serviço','Informe o torque e a rotação no pinhão, a relação de transmissão e a vida útil desejada. O fator K_o traduz o nível de choque do conjunto motriz-acionado: motor elétrico com bomba centrífuga usa 1,00; britador ou laminador exige 1,75 a 2,25.'],
+ ['Passo 2 — Geometria','Escolha dentado reto ou helicoidal. Helicoidais (β = 15° a 20°) são mais silenciosas e têm maior capacidade, mas geram empuxo axial. Z₁ ≥ 17 evita interferência com α = 20°. O coeficiente ψ = b/mₙ define a largura relativa (8 a 12 é o usual).'],
+ ['Passo 3 — Material e qualidade','Aços cementados (SAE 8620, 20MnCr5) permitem os maiores carregamentos. O grau AGMA reflete o controle metalúrgico: Grau 2 exige ensaios adicionais. Q_v é a classe de precisão — quanto maior a velocidade tangencial, maior deve ser Q_v.'],
+ ['Passo 4 — Resultados','Ao calcular, a ferramenta varre a série normalizada ISO 54 e adota o menor módulo que atende S_F, S_H e a vida útil. As abas mostram geometria completa, memória de cálculo da resistência, desenhos paramétricos e o memorial descritivo exportável.'],
+ ['Interpretando os fatores','S_F compara tensões de flexão — margem em carga proporcional. S_H também compara tensões, mas a margem equivalente em torque é S_H², porque a pressão de Hertz varia com a raiz da carga. Por isso S_H mínimo (1,10) é menor que S_F mínimo (1,30).'],
+ ['Desenhos e memorial','Os desenhos usam a evolvente verdadeira do círculo, não aproximações por arcos. É possível ampliar, girar a perspectiva e exportar em PNG. O memorial sai em HTML, Markdown ou impressão em PDF, com toda a memória de cálculo e as fórmulas aplicadas.']
+];
+let ps=0;
+function tutOpen(){ ps=0; tutShow(); }
+function tutShow(){
+  let el = $('#tutBox');
+  if (!el){ el=document.createElement('div'); el.id='tutBox'; el.className='tut'; document.body.appendChild(el); }
+  el.classList.remove('hide');
+  el.innerHTML = `<div class="box"><h3>${PASSOS[ps][0]}</h3><p>${PASSOS[ps][1]}</p>
+    <div class="nav"><span class="step">${ps+1} de ${PASSOS.length}</span>
+    <button class="btn sec sm" id="tPrev" ${ps===0?'disabled':''}>← Anterior</button>
+    <button class="btn sm" id="tNext">${ps===PASSOS.length-1?'Concluir':'Próximo →'}</button></div></div>`;
+  $('#tPrev').onclick = ()=>{ if(ps>0){ps--;tutShow();} };
+  $('#tNext').onclick = ()=>{ if(ps<PASSOS.length-1){ps++;tutShow();} else el.classList.add('hide'); };
+  el.onclick = ev => { if (ev.target===el) el.classList.add('hide'); };
+}
+
+/* ---------- Eventos ------------------------------------------------------ */
+function toggleTipo(){
+  $('#boxCil').classList.toggle('hide', TIPO!=='cil');
+  $('#boxCon').classList.toggle('hide', TIPO!=='con');
+}
+function toggleModo(){
+  const man = $('#modo').value==='manual';
+  $('#boxManual').style.display = man?'grid':'none';
+  $('#boxAuto').style.display = man?'none':'block';
+  $('#boxManual').classList.toggle('hide', !man && TIPO==='con' ? false : false);
+  if (TIPO==='con' && man) $('#bman').parentElement.style.display='none';
+  else if ($('#bman')) $('#bman').parentElement.style.display='';
+}
+$$('.tab').forEach(t=>t.addEventListener('click',()=>{
+  $$('.tab').forEach(x=>x.classList.remove('on')); t.classList.add('on');
+  TIPO = t.dataset.tipo; toggleTipo(); toggleModo(); calcular();
+}));
+$$('.subtab').forEach(t=>t.addEventListener('click',()=>{
+  $$('.subtab').forEach(x=>x.classList.remove('on')); t.classList.add('on');
+  $$('.pane').forEach(p=>p.classList.add('hide')); $('#'+t.dataset.p).classList.remove('hide');
+}));
+$('#dentado').addEventListener('change', ()=>{
+  if ($('#dentado').value==='reta') $('#beta').value = 0;
+  else if (parseFloat($('#beta').value)===0) $('#beta').value = 15;
+});
+$('#modo').addEventListener('change', toggleModo);
+$('#btnCalc').addEventListener('click', calcular);
+$('#btnSave').addEventListener('click', salvarHist);
+$('#btnTut').addEventListener('click', tutOpen);
+$('#btnTheme').addEventListener('click', ()=>{
+  const d = document.documentElement.getAttribute('data-theme')==='dark';
+  document.documentElement.setAttribute('data-theme', d?'light':'dark');
+  ls(KEY+'.tema', d?'light':'dark');
+});
+$('#btnEx').addEventListener('click', ()=>{
+  aplicar({tipo:'cil', T1:250, n1:1750, i:3.5, Lh:20000, Ko:'1.25', Z1:21, alfa:'20',
+           dentado:'helic', beta:20, modo:'auto', psi:12, mat:'SAE 8620 cementado', grau:'2',
+           Qv:'8', R:'0.99', temp:70, SFmin:1.3, SHmin:1.1, mont:'precisao'});
+  $('#mat').value='SAE 8620 cementado'; $('#grau').value='2'; $('#Qv').value='8';
+  $('#R').value='0.99'; $('#mont').value='precisao'; $('#Ko').value='1.25'; $('#alfa').value='20';
+  $('#dentado').value='helic'; $('#modo').value='auto'; toggleModo(); calcular();
+});
+$('#btnClear').addEventListener('click', ()=>{
+  aplicar({tipo:'cil',T1:100,n1:1500,i:2,Lh:5000,Z1:20,beta:0,dentado:'reta',modo:'auto',psi:10,
+           sigma:90,kbcon:0.30,mn:2.5,bman:25,temp:70,SFmin:1.30,SHmin:1.10});
+  $('#Ko').value='1.25'; $('#alfa').value='20'; $('#mat').value='SAE 8620 cementado';
+  $('#grau').value='1'; $('#Qv').value='7'; $('#R').value='0.99'; $('#mont').value='comercial';
+  $('#modo').value='auto'; toggleModo(); calcular();
+});
+$$('input,select').forEach(el=>el.addEventListener('keydown', ev=>{ if(ev.key==='Enter') calcular(); }));
+
+/* ---------- Inicialização ------------------------------------------------ */
+(function init(){
+  const tema = ls(KEY+'.tema');
+  if (tema) document.documentElement.setAttribute('data-theme', tema);
+  else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)
+    document.documentElement.setAttribute('data-theme','dark');
+  const s = ls(KEY+'.sessao'); if (s) aplicar(s);
+  toggleTipo(); toggleModo(); renderHist(); calcular();
+  if (!ls(KEY+'.visto')){ ls(KEY+'.visto', true); setTimeout(tutOpen, 600); }
+})();
+})();
+</script>
+</body>
+</html>

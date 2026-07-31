@@ -117,7 +117,8 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/molapro/` | 183572 bytes | 183572 caracteres |
 | `/calculadora-eixos/` | 173241 bytes | 173241 caracteres |
 | `/mancalpro/` | 1138677 bytes | 1138677 caracteres |
-| `/engrenagecalc/` | 107761 bytes | 107761 caracteres |
+| `/engrenagecalc/` | 22861 bytes | 22861 caracteres |
+| `/engrenagecalc/EngrenageCalcPro_v1.0.html` | 107761 bytes | 107761 caracteres |
 
 ## Estrutura local principal
 
@@ -741,13 +742,14 @@ Arquivo: `engrenagecalc/index.html`
 
 Ultima inclusao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\EngrenageCalcPro_v1.0.html`
+- Fonte: `C:\Users\ACER\Documents\Downloads\EngrenageCalcPro_Site_Source.zip`
 - Data: 30/07/2026
-- Alteracao: inclusao de novo card na home e publicacao do aplicativo como HTML standalone.
+- Alteracao: atualizacao do modulo com tela de abertura animada, aviso legal com aceite obrigatorio e calculadora carregada como arquivo HTML estatico interno.
 
 Observacoes:
 
-- Aplicativo standalone empacotado em HTML unico.
+- A rota `/engrenagecalc/` abre uma tela estatica de entrada; apos o aceite, carrega `engrenagecalc/EngrenageCalcPro_v1.0.html` em iframe local.
+- O ZIP original tambem traz projeto-fonte React/Vinext; para compatibilidade com a Hostinger atual, foi criada uma versao estatica equivalente.
 - Tela inicial do site aponta para `/engrenagecalc/`.
 - O card foi classificado no filtro `Engenharia Mecanica`.
 - Validar apos futuras alteracoes se o dimensionamento de engrenagens cilindricas e conicas, verificacoes geometricas, resistencia, fatores normativos e memorial de calculo continuam carregando corretamente.
