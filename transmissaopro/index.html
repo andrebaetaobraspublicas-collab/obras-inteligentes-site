@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TransmissãoPro v4.5 — Dimensionamento de Transmissões</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config={theme:{extend:{colors:{industrial:{50:'#f0f4f8',100:'#d9e2ec',200:'#bcccdc',300:'#9fb3c8',400:'#829ab1',500:'#627d98',600:'#486581',700:'#334e68',800:'#243b53',900:'#102a43',950:'#0a1a2e'}},fontFamily:{mono:['JetBrains Mono','Consolas','monospace'],sans:['Inter','system-ui','sans-serif']}}}}
+</script>
+<style>
+  @media print {
+    body{background:#fff!important;color:#000!important;}
+    .no-print,.no-print *{display:none!important;}
+    .print-area{display:block!important;}
+  }
+  .print-only{display:none;}
+  .invalid{border-color:#ef4444!important;background:rgba(239,68,68,.08)!important;}
+  .tab-active{color:#fbbf24;border-bottom-color:#fbbf24!important;}
+  canvas{background:#0a1a2e;}
+  svg .belt{fill:none;stroke:#829ab1;stroke-width:2.5;}
+  svg .pulley{fill:#102a43;stroke:#fbbf24;stroke-width:2;}
+  svg .hub{fill:#fbbf24;}
+  svg text{font-family:monospace;font-size:11px;fill:#e5e7eb;}
+</style>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body class="bg-industrial-950 text-gray-200 font-sans min-h-screen">
+<div class="max-w-7xl mx-auto px-4 py-6">
+
+  <!-- CABEÇALHO -->
+  <header class="no-print flex flex-col sm:flex-row items-center justify-between mb-6 gap-4">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 bg-gradient-to-br from-amber-500 to-orange-600 rounded-lg flex items-center justify-center shadow-lg">
+        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+        </svg>
+      </div>
+      <div>
+        <h1 class="text-2xl font-bold text-white tracking-tight">Transmissão<span class="text-amber-400">Pro</span> <span class="text-xs text-gray-400">v4.5</span></h1>
+        <p class="text-xs text-gray-400">Dimensionamento de transmissões · método rastreável</p>
+      </div>
+    </div>
+    <div class="flex gap-2 no-print flex-wrap justify-center">
+      <button onclick="App.salvar()" class="px-3 py-2 bg-industrial-700 hover:bg-industrial-600 rounded-lg text-sm" aria-label="Salvar (Ctrl+S)" title="Salvar (Ctrl+S)">💾 Salvar</button>
+      <button onclick="App.carregar()" class="px-3 py-2 bg-industrial-700 hover:bg-industrial-600 rounded-lg text-sm" aria-label="Carregar" title="Carregar">📂 Carregar</button>
+      <button onclick="App.exportarJSON()" class="px-3 py-2 bg-blue-600 hover:bg-blue-500 rounded-lg text-sm text-white font-semibold" aria-label="Exportar JSON" title="Exportar JSON">📊 JSON</button>
+      <button onclick="window.print()" class="px-3 py-2 bg-amber-600 hover:bg-amber-500 rounded-lg text-sm text-white font-semibold" aria-label="Imprimir" title="Imprimir">🖨️</button>
+      <button onclick="App.resetar()" class="px-3 py-2 bg-red-700 hover:bg-red-600 rounded-lg text-sm" aria-label="Resetar" title="Resetar">🗑️</button>
+    </div>
+  </header>
+
+  <!-- ÁREA DE IMPRESSÃO -->
+  <div id="printArea" class="print-area print-only bg-white text-black rounded-xl p-6 mb-6">
+    <div class="text-center border-b-2 border-gray-300 pb-3 mb-4">
+      <h2 class="text-xl font-bold">Relatório — TransmissãoPro v4.5</h2>
+      <p id="printDate" class="text-sm text-gray-600"></p>
+    </div>
+    <div id="printContent"></div>
+  </div>
+
+  <!-- SELEÇÃO DE MÓDULO -->
+  <div class="no-print mb-6">
+    <div class="flex flex-wrap gap-2">
+      <button onclick="App.selecionarModulo('correiaV')" id="btn-correiaV" class="px-5 py-3 rounded-xl font-semibold text-sm transition-all bg-industrial-700 hover:bg-industrial-600 border-2 border-transparent flex-1 min-w-[160px]">🔗 Correias em V</button>
+      <button onclick="App.selecionarModulo('sincronizada')" id="btn-sincronizada" class="px-5 py-3 rounded-xl font-semibold text-sm transition-all bg-industrial-700 hover:bg-industrial-600 border-2 border-transparent flex-1 min-w-[160px]">⚙️ Sincronizadas</button>
+      <button onclick="App.selecionarModulo('corrente')" id="btn-corrente" class="px-5 py-3 rounded-xl font-semibold text-sm transition-all bg-industrial-700 hover:bg-industrial-600 border-2 border-transparent flex-1 min-w-[160px]">⛓️ Correntes</button>
+    </div>
+    <div class="mt-3 flex flex-wrap items-center gap-2 bg-industrial-900 border border-industrial-700 rounded-xl p-3">
+      <span class="text-xs text-gray-400 font-semibold">📁 Exemplos de obra:</span>
+      <select id="seletorExemplo" class="bg-industrial-800 border border-industrial-600 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 flex-1 min-w-[220px]">
+        <option value="">Selecione um exemplo pré-cadastrado…</option>
+      </select>
+      <button onclick="App.carregarExemplo()" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 rounded-lg text-sm text-white font-semibold">Carregar</button>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+    <!-- COLUNA ESQUERDA: ENTRADAS -->
+    <div class="lg:col-span-1 space-y-4 no-print">
+      <div class="bg-industrial-900 rounded-xl p-5 shadow-xl border border-industrial-700">
+        <h3 class="text-lg font-bold text-amber-400 mb-4">⚙️ Dados do acionamento</h3>
+        <div class="space-y-3">
+          <div>
+            <label for="potencia" class="block text-xs text-gray-400 mb-1">Potência do motor (kW)</label>
+            <input type="number" id="potencia" step="0.1" min="0.1" value="5.5" class="w-full bg-industrial-800 border border-industrial-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-amber-500 font-mono">
+          </div>
+          <div>
+            <label for="rpm" class="block text-xs text-gray-400 mb-1">Rotação do motor (rpm)</label>
+            <input type="number" id="rpm" step="10" min="1" value="1750" class="w-full bg-industrial-800 border border-industrial-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-amber-500 font-mono">
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label for="relacao" class="block text-xs text-gray-400 mb-1">Relação i (D/d)</label>
+              <input type="number" id="relacao" step="0.1" min="1" value="2.0" class="w-full bg-industrial-800 border border-industrial-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-amber-500 font-mono">
+            </div>
+            <div>
+              <label for="dist" class="block text-xs text-gray-400 mb-1">Entre-centros (mm)</label>
+              <input type="number" id="dist" step="10" min="1" value="500" class="w-full bg-industrial-800 border border-industrial-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-amber-500 font-mono">
+            </div>
+          </div>
+          <div id="campos-correiaV">
+          <div>
+            <label for="classe" class="block text-xs text-gray-400 mb-1">Máquina movida (classe de carga)</label>
+            <select id="classe" class="w-full bg-industrial-800 border border-industrial-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-amber-500">
+              <option value="leve">Leve — ventiladores, bombas centrífugas</option>
+              <option value="moderado" selected>Moderada — transportadores, geradores</option>
+              <option value="pesado">Pesada — britadores, compressores a pistão</option>
+              <option value="extremo">Extrema — moinhos, laminadores</option>
+            </select>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label for="horas" class="block text-xs text-gray-400 mb-1">Operação (h/dia)</label>
+              <input type="number" id="horas" step="1" min="1" max="24" value="8" class="w-full bg-industrial-800 border border-industrial-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-amber-500 font-mono">
+            </div>
+            <div>
+              <label for="perfil" class="block text-xs text-gray-400 mb-1">Perfil</label>
+              <select id="perfil" class="w-full bg-industrial-800 border border-industrial-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-amber-500">
+                <option value="">Automático</option>
+                <option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label class="flex items-center gap-2 cursor-pointer text-xs text-gray-300">
+              <input type="checkbox" id="altotorque" class="w-4 h-4">
+              Motor de alto torque de partida (monofásico, série)
+            </label>
+          </div>
+          </div>
+
+          <div id="campos-corrente" class="hidden space-y-3">
+            <div>
+              <label for="classeCorr" class="block text-xs text-gray-400 mb-1">Máquina movida (classe de carga)</label>
+              <select id="classeCorr" class="w-full bg-industrial-800 border border-industrial-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-amber-500">
+                <option value="suave">Suave — carga uniforme (motor elétrico)</option>
+                <option value="moderado" selected>Moderada — choque moderado</option>
+                <option value="pesado">Pesada — choque forte (motor combustão)</option>
+              </select>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label for="dentesPinhao" class="block text-xs text-gray-400 mb-1">Dentes do pinhão (N1)</label>
+                <input type="number" id="dentesPinhao" step="1" min="9" value="17" class="w-full bg-industrial-800 border border-industrial-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-amber-500 font-mono">
+              </div>
+              <div>
+                <label for="numFios" class="block text-xs text-gray-400 mb-1">Nº de fios</label>
+                <select id="numFios" class="w-full bg-industrial-800 border border-industrial-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-amber-500">
+                  <option value="1">1 (simplex)</option><option value="2">2 (duplex)</option><option value="3">3 (triplex)</option><option value="4">4</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <label class="flex items-center gap-2 cursor-pointer text-xs text-gray-300">
+                <input type="checkbox" id="cargaChoque" class="w-4 h-4">
+                Carga de choque (alternada, impacto)
+              </label>
+            </div>
+            <div>
+              <label for="correnteForcada" class="block text-xs text-gray-400 mb-1">Corrente (ANSI)</label>
+              <select id="correnteForcada" class="w-full bg-industrial-800 border border-industrial-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-amber-500">
+                <option value="">Automática</option>
+                <option value="25">25</option><option value="35">35</option><option value="40">40</option><option value="50">50</option><option value="60">60</option><option value="80">80</option><option value="100">100</option><option value="120">120</option><option value="140">140</option><option value="160">160</option><option value="200">200</option><option value="240">240</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="campos-sincrona" class="hidden space-y-3">
+            <div>
+              <label for="classeSinc" class="block text-xs text-gray-400 mb-1">Máquina movida (classe de carga)</label>
+              <select id="classeSinc" class="w-full bg-industrial-800 border border-industrial-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-amber-500">
+                <option value="leve">Leve — carga uniforme</option>
+                <option value="moderado" selected>Moderada — choque moderado</option>
+                <option value="pesado">Pesada — choque forte</option>
+              </select>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label for="dentesPinhaoS" class="block text-xs text-gray-400 mb-1">Dentes polia menor (z1)</label>
+                <input type="number" id="dentesPinhaoS" step="1" min="10" value="32" class="w-full bg-industrial-800 border border-industrial-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-amber-500 font-mono">
+              </div>
+              <div>
+                <label for="horasS" class="block text-xs text-gray-400 mb-1">Operação (h/dia)</label>
+                <input type="number" id="horasS" step="1" min="1" max="24" value="8" class="w-full bg-industrial-800 border border-industrial-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-amber-500 font-mono">
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label for="perfilHtd" class="block text-xs text-gray-400 mb-1">Perfil HTD</label>
+                <select id="perfilHtd" class="w-full bg-industrial-800 border border-industrial-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-amber-500">
+                  <option value="">Automático</option>
+                  <option value="3M">3M</option><option value="5M">5M</option><option value="8M">8M</option><option value="14M">14M</option><option value="20M">20M</option>
+                </select>
+              </div>
+              <div>
+                <label for="larguraHtd" class="block text-xs text-gray-400 mb-1">Largura (mm)</label>
+                <select id="larguraHtd" class="w-full bg-industrial-800 border border-industrial-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-amber-500">
+                  <option value="">Automática</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button onclick="App.calcular()" class="w-full mt-4 px-4 py-3 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 text-white font-bold rounded-lg shadow-lg">🔢 Calcular (Ctrl+Enter)</button>
+      </div>
+
+      <div class="bg-industrial-900 rounded-xl p-4 shadow-xl border border-industrial-700 text-xs text-gray-400 leading-relaxed" id="metodoNota">
+        <b class="text-gray-300">Método.</b> Capacidade por correia pela mecânica de Euler (atrito do sulco em V, força centrífuga, arco real) — formulação de domínio público (Shigley cap. 17). Tração admissível por perfil em ordem de grandeza de catálogo. <b class="text-amber-400">Pré-dimensionamento</b>: confrontar com catálogo do fabricante para especificação definitiva.
+      </div>
+    </div>
+
+    <!-- COLUNA DIREITA: RESULTADOS -->
+    <div class="lg:col-span-2 space-y-4">
+      <div id="alertasContainer" class="space-y-2">
+        <div class="bg-gray-900/50 border border-gray-600 rounded p-3 text-gray-400 text-sm">ℹ️ Preencha os dados e clique em Calcular.</div>
+      </div>
+
+      <div class="bg-industrial-900 rounded-xl shadow-xl border border-industrial-700 overflow-hidden">
+        <div class="flex flex-wrap bg-industrial-800 border-b border-industrial-700 no-print" id="tabsBar">
+          <button onclick="App.aba('resumo')" id="tab-resumo" class="flex-1 px-3 py-3 text-sm font-semibold text-gray-400 hover:text-amber-400 border-b-2 border-transparent">📋 Resumo</button>
+          <button onclick="App.aba('geometria')" id="tab-geometria" class="flex-1 px-3 py-3 text-sm font-semibold text-gray-400 hover:text-amber-400 border-b-2 border-transparent">📐 Geometria</button>
+          <button onclick="App.aba('cinematica')" id="tab-cinematica" class="flex-1 px-3 py-3 text-sm font-semibold text-gray-400 hover:text-amber-400 border-b-2 border-transparent">🔄 Cinemática</button>
+          <button onclick="App.aba('capacidade')" id="tab-capacidade" class="flex-1 px-3 py-3 text-sm font-semibold text-gray-400 hover:text-amber-400 border-b-2 border-transparent">💪 Capacidade</button>
+        </div>
+        <div class="p-5" id="tabsContent">
+          <div id="aba-resumo"></div>
+          <div id="aba-geometria" class="hidden"></div>
+          <div id="aba-cinematica" class="hidden"></div>
+          <div id="aba-capacidade" class="hidden"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+"use strict";
+/* ============================================================
+   NÚCLEO DE CÁLCULO — CORREIAS EM V (idêntico ao correiaV_core.js, 30 testes)
+   Mecânica de Euler · Shigley cap.17 · estrutura ISO 5292/NBR 6146
+   ============================================================ */
+const PERFIS={A:{lp:13,h:8,massaLinear:0.106,dMinRecom:75,Fadm:350,faixaVmax:30},B:{lp:17,h:11,massaLinear:0.189,dMinRecom:125,Fadm:600,faixaVmax:30},C:{lp:22,h:14,massaLinear:0.343,dMinRecom:200,Fadm:1200,faixaVmax:30},D:{lp:32,h:19,massaLinear:0.596,dMinRecom:355,Fadm:2400,faixaVmax:30},E:{lp:38,h:23,massaLinear:0.887,dMinRecom:500,Fadm:3600,faixaVmax:30}};
+const MU_ATRITO=0.30,BETA_SULCO_RAD=19*Math.PI/180;
+const COMPRIMENTOS_PADRAO=[620,660,710,760,810,865,920,990,1080,1145,1230,1330,1425,1550,1640,1750,1900,2050,2200,2350,2500,2700,2850,3050,3250,3500,3750,4000,4250,4500,4750,5000,5400,6000,6860,7620,8500];
+const FATOR_SERVICO={leve:{normal:1.1,pesado:1.2},moderado:{normal:1.2,pesado:1.3},pesado:{normal:1.3,pesado:1.4},extremo:{normal:1.4,pesado:1.5}};
+function fatorServico(classe,horas,alto){const c=FATOR_SERVICO[classe]||FATOR_SERVICO.moderado;let ks=horas>10?c.pesado:c.normal;if(alto)ks+=0.2;return Math.round(ks*100)/100;}
+function selecionarPerfil(P,rpm){if(rpm>=1400){if(P<=4)return'A';if(P<=15)return'B';if(P<=75)return'C';if(P<=150)return'D';return'E';}if(rpm>=900){if(P<=3)return'A';if(P<=11)return'B';if(P<=55)return'C';if(P<=120)return'D';return'E';}if(P<=2)return'A';if(P<=7)return'B';if(P<=37)return'C';if(P<=90)return'D';return'E';}
+function calcularGeometria(d,relacao,C0){const D=d*relacao;const arcoMenor=180-2*Math.asin((D-d)/(2*C0))*180/Math.PI;const arcoMaior=180+2*Math.asin((D-d)/(2*C0))*180/Math.PI;const Lteorico=2*C0+Math.PI/2*(D+d)+Math.pow(D-d,2)/(4*C0);let Lpadrao=COMPRIMENTOS_PADRAO[0],menorDif=Infinity;for(const L of COMPRIMENTOS_PADRAO){const dif=Math.abs(L-Lteorico);if(dif<menorDif){menorDif=dif;Lpadrao=L;}}const b=Lpadrao-Math.PI/2*(D+d);const Ccorr=(b+Math.sqrt(Math.max(0,b*b-2*Math.pow(D-d,2))))/4;return{dMenor:d,dMaior:D,arcoMenorGraus:arcoMenor,arcoMaiorGraus:arcoMaior,comprimentoTeorico:Lteorico,comprimentoPadrao:Lpadrao,distCentrosCorrigida:Ccorr};}
+function coefComprimento(perfil,L){const ref={A:1750,B:2500,C:3750,D:5400,E:6860}[perfil]||2500;return Math.max(0.80,Math.min(1.15,Math.pow(L/ref,0.12)));}
+function potenciaPorCorreiaEuler(perfil,d,v,arcoRad){const p=PERFIS[perfil];const mu=MU_ATRITO/Math.sin(BETA_SULCO_RAD);const Fc=p.massaLinear*v*v;const fatorEuler=1-Math.exp(-mu*arcoRad);const Futil=Math.max(0,(p.Fadm-Fc)*fatorEuler);return{potenciaKw:Futil*v/1000,Fc,Futil,fatorEuler};}
+function dimensionarCorreiaV(e){
+  const erros=[];
+  if(!(e.potenciaKw>0))erros.push('Potência deve ser > 0 kW.');
+  if(!(e.rpmMotor>0))erros.push('Rotação deve ser > 0 rpm.');
+  if(!(e.relacao>=1))erros.push('Relação deve ser ≥ 1.');
+  if(!(e.distCentrosMm>0))erros.push('Entre-centros deve ser > 0 mm.');
+  if(erros.length)return{ok:false,erros};
+  const ks=fatorServico(e.classeCarga,e.horasPorDia,e.motorAltoTorque);
+  const potProj=e.potenciaKw*ks;
+  const perfil=e.perfilForcado&&PERFIS[e.perfilForcado]?e.perfilForcado:selecionarPerfil(potProj,e.rpmMotor);
+  const pp=PERFIS[perfil];
+  const dMenor=e.dMenorMm&&e.dMenorMm>=pp.dMinRecom?e.dMenorMm:pp.dMinRecom;
+  const v=Math.PI*dMenor*e.rpmMotor/60000;
+  const geo=calcularGeometria(dMenor,e.relacao,e.distCentrosMm);
+  const arcoRad=geo.arcoMenorGraus*Math.PI/180;
+  const euler=potenciaPorCorreiaEuler(perfil,dMenor,v,arcoRad);
+  const cComp=coefComprimento(perfil,geo.comprimentoPadrao);
+  const potPorCorreia=euler.potenciaKw*cComp;
+  const nExato=potPorCorreia>0?potProj/potPorCorreia:Infinity;
+  const n=Number.isFinite(nExato)?Math.ceil(nExato):0;
+  const torqueMotor=e.potenciaKw*9549/e.rpmMotor;
+  const alertas=[];
+  if(v>pp.faixaVmax)alertas.push(`Velocidade ${v.toFixed(1)} m/s acima do usual (${pp.faixaVmax} m/s). Considere polias balanceadas ou perfil estreito.`);
+  if(geo.arcoMenorGraus<120)alertas.push(`Arco de abraçamento na polia menor (${geo.arcoMenorGraus.toFixed(0)}°) abaixo de 120°: perda relevante de capacidade. Aumente o entre-centros ou reduza a relação.`);
+  if(dMenor<pp.dMinRecom)alertas.push(`Diâmetro da polia menor (${dMenor} mm) abaixo do mínimo recomendado (${pp.dMinRecom} mm) para o perfil ${perfil}.`);
+  if(n>8)alertas.push(`Número de correias (${n}) elevado: avalie perfil maior ou correia estreita de alta capacidade.`);
+  if(potPorCorreia<=0)alertas.push('Capacidade não-positiva: velocidade excessiva anula a tração útil. Reduza diâmetro da polia menor ou rotação.');
+  return{ok:true,ks,potProj,perfil,perfilAuto:!e.perfilForcado,dMenor,v,geo,euler,cComp,potPorCorreia,nExato,n,torqueMotor,rpmSaida:e.rpmMotor/e.relacao,torqueSaida:torqueMotor*e.relacao,alertas};
+}
+
+/* ============================================================
+   NÚCLEO — CORRENTES DE ROLOS (idêntico ao corrente_core.js, 28 testes)
+   Três modos de falha · Shigley cap.17 · ISO 606:2015 (vigente)
+   ============================================================ */
+const CORRENTES={'25':{passoPol:0.250,passoMm:6.35,rupturaKN:3.5,massaLinear:0.15},'35':{passoPol:0.375,passoMm:9.525,rupturaKN:7.9,massaLinear:0.33},'40':{passoPol:0.500,passoMm:12.70,rupturaKN:14.1,massaLinear:0.62},'50':{passoPol:0.625,passoMm:15.875,rupturaKN:22.2,massaLinear:1.02},'60':{passoPol:0.750,passoMm:19.05,rupturaKN:31.8,massaLinear:1.50},'80':{passoPol:1.000,passoMm:25.40,rupturaKN:56.7,massaLinear:2.60},'100':{passoPol:1.250,passoMm:31.75,rupturaKN:88.5,massaLinear:3.91},'120':{passoPol:1.500,passoMm:38.10,rupturaKN:127.0,massaLinear:5.60},'140':{passoPol:1.750,passoMm:44.45,rupturaKN:172.4,massaLinear:7.50},'160':{passoPol:2.000,passoMm:50.80,rupturaKN:226.8,massaLinear:10.10},'200':{passoPol:2.500,passoMm:63.50,rupturaKN:353.8,massaLinear:16.10},'240':{passoPol:3.000,passoMm:76.20,rupturaKN:510.3,massaLinear:23.20}};
+const ORDEM_CORRENTES=['25','35','40','50','60','80','100','120','140','160','200','240'];
+const FATOR_FIOS={1:1.0,2:1.7,3:2.5,4:3.3};
+const HP_KW=0.7457, CALIBRACAO_CATALOGO=1.22;
+const FATOR_SERVICO_CORR={suave:{normal:1.0,choque:1.3},moderado:{normal:1.3,choque:1.5},pesado:{normal:1.5,choque:1.8}};
+function krImpacto(d){return(d==='25'||d==='35')?29:17;}
+function fatorServicoCorr(classe,choque){const c=FATOR_SERVICO_CORR[classe]||FATOR_SERVICO_CORR.moderado;return choque?c.choque:c.normal;}
+function potenciaPlacasKw(N1,n1,p){return 0.004*Math.pow(N1,1.08)*Math.pow(n1,0.9)*Math.pow(p,3-0.07*p)*HP_KW*CALIBRACAO_CATALOGO;}
+function potenciaImpactoKw(N1,n1,p,d){return krImpacto(d)*Math.pow(100*N1/n1,1.5)*Math.pow(p,0.8)*HP_KW*CALIBRACAO_CATALOGO;}
+function potenciaAdmissivelKw(N1,n1,p,d){const pr1=potenciaPlacasKw(N1,n1,p),pr2=potenciaImpactoKw(N1,n1,p,d);return{pr1,pr2,admissivel:Math.min(pr1,pr2),modo:pr1<=pr2?'fadiga das placas':'impacto rolete-bucha'};}
+function calcularGeometriaCorr(N1,N2,p,C){let L=(N1+N2)/2+2*C/p+Math.pow((N2-N1)/(2*Math.PI),2)*p/C;let Lpar=Math.round(L);if(Lpar%2!==0)Lpar+=1;const A=Lpar-(N1+N2)/2;const Ccorr=(p/4)*(A+Math.sqrt(Math.max(0,A*A-8*Math.pow((N2-N1)/(2*Math.PI),2))));const Dp1=p/Math.sin(Math.PI/N1);const Dp2=p/Math.sin(Math.PI/N2);const theta1=(Math.PI-2*Math.asin((Dp2-Dp1)/(2*Ccorr)))*180/Math.PI;return{comprimentoPassos:Lpar,comprimentoMm:Lpar*p,distCentrosCorrigidaMm:Ccorr,dPrimitivoPinhaoMm:Dp1,dPrimitivoCoroaMm:Dp2,anguloContatoPinhaoGraus:theta1};}
+function selecionarCorrente(potProj,N1,n1,numFios){for(const desig of ORDEM_CORRENTES){const c=CORRENTES[desig];const cap=potenciaAdmissivelKw(N1,n1,c.passoPol,desig);const capTotal=cap.admissivel*(FATOR_FIOS[numFios]||1);if(capTotal>=potProj)return{designacao:desig,...c,capacidadeKw:cap.admissivel,capacidadeTotalKw:capTotal,modo:cap.modo};}const desig=ORDEM_CORRENTES[ORDEM_CORRENTES.length-1];const c=CORRENTES[desig];const cap=potenciaAdmissivelKw(N1,n1,c.passoPol,desig);return{designacao:desig,...c,capacidadeKw:cap.admissivel,capacidadeTotalKw:cap.admissivel*(FATOR_FIOS[numFios]||1),modo:cap.modo,insuficiente:true};}
+function dimensionarCorrente(e){
+  const erros=[];
+  if(!(e.potenciaKw>0))erros.push('Potência deve ser > 0 kW.');
+  if(!(e.rpmMotor>0))erros.push('Rotação deve ser > 0 rpm.');
+  if(!(e.relacao>=1))erros.push('Relação deve ser ≥ 1.');
+  if(!(e.distCentrosMm>0))erros.push('Entre-centros deve ser > 0 mm.');
+  if(erros.length)return{ok:false,erros};
+  const N1=e.dentesPinhao&&e.dentesPinhao>=9?Math.round(e.dentesPinhao):17;
+  const N2=Math.round(N1*e.relacao);
+  const numFios=[1,2,3,4].includes(e.numFios)?e.numFios:1;
+  const ks=fatorServicoCorr(e.classeCarga,!!e.cargaChoque);
+  const potProj=e.potenciaKw*ks;
+  const sel=e.correnteForcada&&CORRENTES[e.correnteForcada]?(()=>{const c=CORRENTES[e.correnteForcada];const cap=potenciaAdmissivelKw(N1,e.rpmMotor,c.passoPol,e.correnteForcada);return{designacao:e.correnteForcada,...c,capacidadeKw:cap.admissivel,capacidadeTotalKw:cap.admissivel*(FATOR_FIOS[numFios]||1),modo:cap.modo};})():selecionarCorrente(potProj,N1,e.rpmMotor,numFios);
+  const geo=calcularGeometriaCorr(N1,N2,sel.passoMm,e.distCentrosMm);
+  const v=(sel.passoMm*N1*e.rpmMotor)/(60*1000);
+  const rpmSaida=e.rpmMotor/e.relacao;
+  const torqueMotor=(e.potenciaKw*9549)/e.rpmMotor;
+  const tracaoN=v>0?(e.potenciaKw*1000)/v:Infinity;
+  const fatorSeguranca=(sel.rupturaKN*1000*numFios)/tracaoN;
+  const efeitoPoligonal=(1-Math.cos(Math.PI/N1))/(1+Math.cos(Math.PI/N1))*100;
+  const alertas=[];
+  if(N1<17)alertas.push(`Pinhão com ${N1} dentes: recomenda-se ≥17 para reduzir efeito poligonal e vibração (mínimo absoluto 9).`);
+  if(v>15)alertas.push(`Velocidade da corrente ${v.toFixed(1)} m/s alta: exige lubrificação forçada (Tipo C/D, ISO 606) e reduz vida.`);
+  if(e.relacao>7)alertas.push(`Relação ${e.relacao.toFixed(1)}:1 acima de 7:1: considere acionamento em dois estágios.`);
+  if(fatorSeguranca<7)alertas.push(`Fator de segurança sobre ruptura (${fatorSeguranca.toFixed(1)}) abaixo de 7: reveja nº de fios ou passo.`);
+  if(efeitoPoligonal>3)alertas.push(`Efeito poligonal ${efeitoPoligonal.toFixed(1)}%: aumente o nº de dentes do pinhão.`);
+  if(sel.insuficiente)alertas.push(`Nenhuma corrente da série atende sozinha: adote mais fios ou reduza a rotação. Maior série (${sel.designacao}) mostrada.`);
+  return{ok:true,ks,potProj,corrente:sel.designacao,passoMm:sel.passoMm,numFios,N1,N2,capPorFio:sel.capacidadeKw,capTotal:sel.capacidadeTotalKw,modoLimitante:sel.modo,rupturaKN:sel.rupturaKN,geo,v,rpmSaida,torqueMotor,torqueSaida:torqueMotor*e.relacao,tracaoN,fatorSeguranca,efeitoPoligonal,alertas};
+}
+
+/* ============================================================
+   NÚCLEO — CORREIAS SÍNCRONAS HTD (idêntico ao sincrona_core.js, 31 testes)
+   Engrenamento (tração do cordão × largura) · ISO 13050 / ISO 5295 (vigentes)
+   ============================================================ */
+const PERFIS_HTD={'3M':{passoMm:3,larguras:[6,9,15],FespNmm:12,zMinPinhao:10,vMax:80},'5M':{passoMm:5,larguras:[9,15,25],FespNmm:22,zMinPinhao:14,vMax:80},'8M':{passoMm:8,larguras:[20,30,50,85],FespNmm:42,zMinPinhao:22,vMax:60},'14M':{passoMm:14,larguras:[40,55,85,115,170],FespNmm:78,zMinPinhao:28,vMax:50},'20M':{passoMm:20,larguras:[115,170,230,290,340],FespNmm:115,zMinPinhao:34,vMax:45}};
+const ORDEM_HTD=['3M','5M','8M','14M','20M'];
+const COMPRIMENTOS_HTD=[240,320,375,420,480,560,600,640,720,800,840,920,1000,1120,1200,1280,1400,1600,1760,1800,2000,2200,2400,2600,2800,3000,3280,3600,4000,4400,4800];
+const FATOR_SERVICO_HTD={leve:{normal:1.3,pesado:1.5},moderado:{normal:1.5,pesado:1.7},pesado:{normal:1.7,pesado:1.9}};
+function fatorServicoHtd(classe,horas){const c=FATOR_SERVICO_HTD[classe]||FATOR_SERVICO_HTD.moderado;return horas>10?c.pesado:c.normal;}
+function dentesEmContato(z1,arco){return Math.floor(z1*arco/360);}
+function fatorZe(ze){if(ze>=6)return 1.0;return Math.max(0.2,1-0.2*(6-ze));}
+function calcularGeometriaHtd(z1,z2,p,C0){const dp1=p*z1/Math.PI,dp2=p*z2/Math.PI;const arcoMenor=180-2*Math.asin((dp2-dp1)/(2*C0))*180/Math.PI;const arcoMaior=180+2*Math.asin((dp2-dp1)/(2*C0))*180/Math.PI;const Lteorico=2*C0+(Math.PI/2)*(dp1+dp2)+Math.pow(dp2-dp1,2)/(4*C0);let Lpadrao=COMPRIMENTOS_HTD[0],menorDif=Infinity;for(const L of COMPRIMENTOS_HTD){const dif=Math.abs(L-Lteorico);if(dif<menorDif){menorDif=dif;Lpadrao=L;}}const dentesCorreia=Math.round(Lpadrao/p);const b=Lpadrao-(Math.PI/2)*(dp1+dp2);const Ccorr=(b+Math.sqrt(Math.max(0,b*b-2*Math.pow(dp2-dp1,2))))/4;return{dPrimitivoPinhaoMm:dp1,dPrimitivoCoroaMm:dp2,arcoMenorGraus:arcoMenor,arcoMaiorGraus:arcoMaior,comprimentoTeoricoMm:Lteorico,comprimentoPadraoMm:Lpadrao,dentesCorreia,distCentrosCorrigidaMm:Ccorr};}
+function potenciaTransmissivelKw(perfil,larg,v,ze){const p=PERFIS_HTD[perfil];return p.FespNmm*larg*fatorZe(ze)*v/1000;}
+function selecionarPerfilHtd(P){if(P<=1.5)return'3M';if(P<=10)return'5M';if(P<=90)return'8M';if(P<=400)return'14M';return'20M';}
+function dimensionarSincrona(e){
+  const erros=[];
+  if(!(e.potenciaKw>0))erros.push('Potência deve ser > 0 kW.');
+  if(!(e.rpmMotor>0))erros.push('Rotação deve ser > 0 rpm.');
+  if(!(e.relacao>=1))erros.push('Relação de transmissão deve ser ≥ 1.');
+  if(!(e.distCentrosMm>0))erros.push('Distância entre centros deve ser > 0 mm.');
+  if(erros.length)return{ok:false,erros};
+  const ks=fatorServicoHtd(e.classeCarga,e.horasPorDia??8);
+  const potProj=e.potenciaKw*ks;
+  const perfil=e.perfilForcado&&PERFIS_HTD[e.perfilForcado]?e.perfilForcado:selecionarPerfilHtd(potProj);
+  const pp=PERFIS_HTD[perfil];
+  const z1=e.dentesPinhao&&e.dentesPinhao>=pp.zMinPinhao?Math.round(e.dentesPinhao):pp.zMinPinhao;
+  const z2=Math.round(z1*e.relacao);
+  const dp1=pp.passoMm*z1/Math.PI;
+  const v=(Math.PI*dp1*e.rpmMotor)/(60*1000);
+  const geo=calcularGeometriaHtd(z1,z2,pp.passoMm,e.distCentrosMm);
+  const ze=dentesEmContato(z1,geo.arcoMenorGraus);
+  let larguraSel=null,potSel=0;
+  const largurasTeste=e.larguraForcada&&pp.larguras.includes(e.larguraForcada)?[e.larguraForcada]:pp.larguras;
+  for(const larg of largurasTeste){const pot=potenciaTransmissivelKw(perfil,larg,v,ze);if(pot>=potProj){larguraSel=larg;potSel=pot;break;}}
+  let insuficiente=false;
+  if(larguraSel===null){larguraSel=pp.larguras[pp.larguras.length-1];potSel=potenciaTransmissivelKw(perfil,larguraSel,v,ze);insuficiente=true;}
+  const rpmSaida=e.rpmMotor/e.relacao;
+  const torqueMotor=(e.potenciaKw*9549)/e.rpmMotor;
+  const alertas=[];
+  if(z1<pp.zMinPinhao)alertas.push(`Polia menor com ${z1} dentes abaixo do mínimo recomendado (${pp.zMinPinhao}) para o perfil ${perfil}.`);
+  if(ze<6)alertas.push(`Apenas ${ze} dentes em contato na polia menor (< 6): capacidade reduzida. Aumente o nº de dentes da polia menor, o entre-centros ou reduza a relação.`);
+  if(v>pp.vMax)alertas.push(`Velocidade periférica ${v.toFixed(1)} m/s acima do usual (${pp.vMax} m/s) para o perfil ${perfil}.`);
+  if(e.relacao>8)alertas.push(`Relação ${e.relacao.toFixed(1)}:1 acima de 8:1: avalie acionamento em dois estágios.`);
+  if(insuficiente)alertas.push(`Nenhuma largura padrão do perfil ${perfil} atende sozinha (máx ${larguraSel} mm → ${potSel.toFixed(1)} kW). Considere perfil maior ou drive duplo.`);
+  return{ok:true,ks,potProj,perfil,passoMm:pp.passoMm,larguraMm:larguraSel,potTransmissivel:potSel,z1,z2,ze,insuficiente,geo,v,rpmSaida,torqueMotor,torqueSaida:torqueMotor*e.relacao,alertas};
+}
+
+/* ============================================================
+   APLICAÇÃO (estrutura v4.1: módulos, abas, gráficos, persistência)
+   ============================================================ */
+const EXEMPLOS=[{"id":"ex1","modulo":"correiaV","titulo":"Ventilador de exaustão — galeria de obra","ctx":"Ventilação forçada em túnel de obra rodoviária. Motor trifásico acionando ventilador axial. Carga uniforme, turno único.","e":{"potenciaKw":7.5,"rpmMotor":1750,"relacao":2,"distCentrosMm":600,"classeCarga":"leve","horasPorDia":8,"motorAltoTorque":false}},{"id":"ex2","modulo":"correiaV","titulo":"Britador de mandíbulas — central de britagem","ctx":"Britador em central de produção de agregados. Carga com choques severos, dois turnos.","e":{"potenciaKw":45,"rpmMotor":1180,"relacao":3,"distCentrosMm":900,"classeCarga":"extremo","horasPorDia":16,"motorAltoTorque":false}},{"id":"ex3","modulo":"corrente","titulo":"Transportador de correia — silo de agregados","ctx":"Tambor motriz de transportador em silo de agregados. Regime contínuo, carga moderadamente uniforme.","e":{"potenciaKw":22,"rpmMotor":900,"relacao":2.5,"distCentrosMm":700,"dentesPinhao":19,"numFios":1,"classeCarga":"moderado","cargaChoque":false}},{"id":"ex4","modulo":"corrente","titulo":"Elevador de canecas — usina de asfalto","ctx":"Elevador de canecas para transporte vertical em usina de asfalto. Carga alternada com impacto.","e":{"potenciaKw":37,"rpmMotor":720,"relacao":4,"distCentrosMm":1100,"dentesPinhao":21,"numFios":2,"classeCarga":"pesado","cargaChoque":true}},{"id":"ex5","modulo":"sincronizada","titulo":"Bomba dosadora — estação de tratamento","ctx":"Bomba dosadora de precisão em ETA. Exige sincronismo absoluto, sem escorregamento, operação contínua. Perfil 8M adotado para garantir capacidade.","e":{"potenciaKw":5.5,"rpmMotor":1750,"relacao":2.5,"distCentrosMm":450,"dentesPinhao":28,"classeCarga":"moderado","horasPorDia":24,"perfilForcado":"8M"}},{"id":"ex6","modulo":"sincronizada","titulo":"Mesa vibratória — pré-fabricados de concreto","ctx":"Mesa vibratória para adensamento de pré-fabricados. Alta potência, posicionamento preciso. Perfil 14M adotado para a carga pesada.","e":{"potenciaKw":30,"rpmMotor":1200,"relacao":2,"distCentrosMm":650,"dentesPinhao":36,"classeCarga":"pesado","horasPorDia":16,"perfilForcado":"14M"}}];
+const App={
+  state:{modulo:'correiaV',resultado:null,abaAtiva:'resumo'},
+  KEY:'transmissaoPro_v42',
+
+  init(){
+    // recalcula ao alterar qualquer campo relevante de qualquer módulo
+    ['potencia','rpm','relacao','dist','horas','classe','perfil','altotorque',
+     'dentesPinhao','numFios','classeCorr','cargaChoque','correnteForcada',
+     'dentesPinhaoS','horasS','classeSinc','larguraHtd'].forEach(id=>{
+      const el=document.getElementById(id);
+      if(el)el.addEventListener('change',()=>this.calcular());
+    });
+    // perfil HTD: ao mudar, repopula larguras e recalcula
+    const ph=document.getElementById('perfilHtd');
+    if(ph)ph.addEventListener('change',()=>{this.atualizarLargurasHtd();this.calcular();});
+    document.addEventListener('keydown',e=>{
+      if(e.ctrlKey&&e.key==='Enter'){e.preventDefault();this.calcular();}
+      if(e.ctrlKey&&e.key==='s'){e.preventDefault();this.salvar();}
+    });
+    this.carregar(true);
+    this.popularSeletorExemplos();
+    this.selecionarModulo(this.state.modulo);
+    this.aba('resumo');
+  },
+
+  popularSeletorExemplos(){
+    const sel=document.getElementById('seletorExemplo');
+    if(!sel)return;
+    const nomeMod={correiaV:'Correia em V',corrente:'Corrente',sincronizada:'Síncrona'};
+    sel.innerHTML='<option value="">Selecione um exemplo pré-cadastrado…</option>';
+    EXEMPLOS.forEach(x=>{
+      const o=document.createElement('option');
+      o.value=x.id;
+      o.textContent='['+nomeMod[x.modulo]+'] '+x.titulo;
+      sel.appendChild(o);
+    });
+  },
+
+  carregarExemplo(){
+    const id=document.getElementById('seletorExemplo').value;
+    if(!id){alert('Selecione um exemplo na lista.');return;}
+    const ex=EXEMPLOS.find(x=>x.id===id);
+    if(!ex)return;
+    const e=ex.e;
+    // troca para o módulo do exemplo
+    this.selecionarModulo(ex.modulo);
+    // preenche campos comuns
+    const set=(id,v)=>{const el=document.getElementById(id);if(el&&v!==undefined)el.value=v;};
+    set('potencia',e.potenciaKw);set('rpm',e.rpmMotor);set('relacao',e.relacao);set('dist',e.distCentrosMm);
+    if(ex.modulo==='correiaV'){
+      set('classe',e.classeCarga);set('horas',e.horasPorDia);set('perfil',e.perfilForcado||'');
+      document.getElementById('altotorque').checked=!!e.motorAltoTorque;
+    } else if(ex.modulo==='corrente'){
+      set('dentesPinhao',e.dentesPinhao);set('numFios',e.numFios);set('classeCorr',e.classeCarga);
+      set('correnteForcada',e.correnteForcada||'');
+      document.getElementById('cargaChoque').checked=!!e.cargaChoque;
+    } else {
+      set('classeSinc',e.classeCarga);set('dentesPinhaoS',e.dentesPinhao);set('horasS',e.horasPorDia);
+      set('perfilHtd',e.perfilForcado||'');
+      this.atualizarLargurasHtd();
+      set('larguraHtd',e.larguraForcada||'');
+    }
+    this.calcular();
+    // rola para o topo dos resultados
+    const al=document.getElementById('alertasContainer');
+    if(al)al.scrollIntoView({behavior:'smooth',block:'nearest'});
+  },
+
+  selecionarModulo(m){
+    this.state.modulo=m;
+    ['correiaV','sincronizada','corrente'].forEach(x=>{
+      const b=document.getElementById('btn-'+x);
+      b.classList.toggle('border-amber-400',x===m);
+      b.classList.toggle('bg-industrial-600',x===m);
+    });
+    // mostra/esconde campos específicos
+    document.getElementById('campos-correiaV').classList.toggle('hidden',m!=='correiaV');
+    document.getElementById('campos-corrente').classList.toggle('hidden',m!=='corrente');
+    document.getElementById('campos-sincrona').classList.toggle('hidden',m!=='sincronizada');
+    // popula larguras do perfil síncrono selecionado
+    if(m==='sincronizada'){ this.atualizarLargurasHtd(); }
+    // nota de método por módulo
+    const nota=document.getElementById('metodoNota');
+    if(nota){
+      if(m==='corrente') nota.innerHTML='<b class="text-gray-300">Método.</b> Seleção por três modos de falha — fadiga das placas (P_R1) e impacto rolete-bucha (P_R2), o menor limita — formulação de domínio público (Shigley cap. 17), estrutura ISO 606:2015 (vigente). Fórmula calibrada contra tabela de catálogo (ANSI 80). <b class="text-amber-400">Pré-dimensionamento</b>: confrontar com catálogo do fabricante.';
+      else if(m==='correiaV') nota.innerHTML='<b class="text-gray-300">Método.</b> Capacidade por correia pela mecânica de Euler (atrito do sulco em V, força centrífuga, arco real) — formulação de domínio público (Shigley cap. 17). Tração admissível por perfil em ordem de grandeza de catálogo. <b class="text-amber-400">Pré-dimensionamento</b>: confrontar com catálogo do fabricante.';
+      else if(m==='sincronizada') nota.innerHTML='<b class="text-gray-300">Método.</b> Correia dentada transmite por <b>engrenamento</b> (sem escorregamento): capacidade = tração do cordão × largura × velocidade, com penalidade se &lt;6 dentes em contato. Normas ISO 13050 e ISO 5295 (vigentes). Tração admissível por perfil em ordem de grandeza de catálogo (Gates/ContiTech). <b class="text-amber-400">Pré-dimensionamento</b>: confrontar com tabela de potência do fabricante.';
+    }
+    this.calcular();
+    this.salvarSilencioso();
+  },
+
+  atualizarLargurasHtd(){
+    const largurasPorPerfil={'3M':[6,9,15],'5M':[9,15,25],'8M':[20,30,50,85],'14M':[40,55,85,115,170],'20M':[115,170,230,290,340]};
+    const perfil=document.getElementById('perfilHtd').value;
+    const sel=document.getElementById('larguraHtd');
+    const atual=sel.value;
+    sel.innerHTML='<option value="">Automática</option>';
+    // se perfil automático, mostra todas as larguras únicas
+    const larguras=perfil?largurasPorPerfil[perfil]:[...new Set(Object.values(largurasPorPerfil).flat())].sort((a,b)=>a-b);
+    larguras.forEach(w=>{const o=document.createElement('option');o.value=w;o.textContent=w+' mm';sel.appendChild(o);});
+    if([...sel.options].some(o=>o.value===atual))sel.value=atual;
+  },
+
+  calcular(){
+    if(this.state.modulo==='correiaV'){ this.calcularCorreia(); }
+    else if(this.state.modulo==='corrente'){ this.calcularCorrente(); }
+    else if(this.state.modulo==='sincronizada'){ this.calcularSincrona(); }
+  },
+
+  calcularSincrona(){
+    ['potencia','rpm','relacao','dist','dentesPinhaoS'].forEach(id=>{
+      const v=parseFloat(document.getElementById(id).value);
+      document.getElementById(id).classList.toggle('invalid',!(isFinite(v)&&v>0));
+    });
+    const e={
+      potenciaKw:parseFloat(document.getElementById('potencia').value),
+      rpmMotor:parseFloat(document.getElementById('rpm').value),
+      relacao:parseFloat(document.getElementById('relacao').value),
+      distCentrosMm:parseFloat(document.getElementById('dist').value),
+      dentesPinhao:parseFloat(document.getElementById('dentesPinhaoS').value),
+      classeCarga:document.getElementById('classeSinc').value,
+      horasPorDia:parseFloat(document.getElementById('horasS').value),
+      perfilForcado:document.getElementById('perfilHtd').value||undefined,
+      larguraForcada:document.getElementById('larguraHtd').value?parseFloat(document.getElementById('larguraHtd').value):undefined,
+    };
+    const r=dimensionarSincrona(e);
+    this.state.resultado=r;
+    this.renderAlertas(r);
+    if(r.ok){this.renderAbasSincrona(r);this.desenharSincrona(r);this.salvarSilencioso();}
+  },
+
+  renderAbasSincrona(r){
+    document.getElementById('aba-resumo').innerHTML=`
+      <div class="flex items-baseline gap-3 mb-4 pb-3 border-b border-industrial-700">
+        <span class="text-4xl font-bold text-amber-400 font-mono">${r.perfil}</span>
+        <div><div class="text-gray-300">largura <span class="font-mono border border-gray-500 px-2 py-0.5 rounded">${r.larguraMm} mm</span></div>
+        <div class="text-xs text-gray-500 font-mono">passo ${r.passoMm} mm · z1=${r.z1} z2=${r.z2}</div></div>
+      </div>
+      ${this.linha('Fator de serviço (Ks)',r.ks.toFixed(2))}
+      ${this.linha('Potência de projeto',r.potProj.toFixed(2)+' kW')}
+      ${this.linha('Capacidade transmissível',r.potTransmissivel.toFixed(2)+' kW')}
+      ${this.linha('Dentes em contato (ze)',r.ze+(r.ze<6?' ⚠':''))}
+      <div id="canvasWrap" class="mt-4"></div>`;
+    document.getElementById('aba-geometria').innerHTML=`
+      ${this.linha('Dentes polia menor · maior',r.z1+' · '+r.z2)}
+      ${this.linha('Ø primitivo menor',r.geo.dPrimitivoPinhaoMm.toFixed(1)+' mm')}
+      ${this.linha('Ø primitivo maior',r.geo.dPrimitivoCoroaMm.toFixed(1)+' mm')}
+      ${this.linha('Arco de abraçamento (menor)',r.geo.arcoMenorGraus.toFixed(0)+'°')}
+      ${this.linha('Comprimento primitivo',r.geo.comprimentoPadraoMm+' mm ('+r.geo.dentesCorreia+' dentes)')}
+      ${this.linha('Entre-centros corrigido',r.geo.distCentrosCorrigidaMm.toFixed(0)+' mm')}`;
+    document.getElementById('aba-cinematica').innerHTML=`
+      ${this.linha('Velocidade da correia',r.v.toFixed(2)+' m/s')}
+      ${this.linha('Rotação de saída',r.rpmSaida.toFixed(0)+' rpm')}
+      ${this.linha('Torque no motor',r.torqueMotor.toFixed(1)+' N·m')}
+      ${this.linha('Torque na saída',r.torqueSaida.toFixed(1)+' N·m')}`;
+    document.getElementById('aba-capacidade').innerHTML=`
+      ${this.linha('Perfil · largura',r.perfil+' · '+r.larguraMm+' mm')}
+      ${this.linha('Dentes em contato (ze)',r.ze)}
+      ${this.linha('Fator de dentes em contato',fatorZe(r.ze).toFixed(2))}
+      ${this.linha('Capacidade transmissível',r.potTransmissivel.toFixed(2)+' kW')}
+      ${this.linha('Potência de projeto',r.potProj.toFixed(2)+' kW')}
+      ${this.linha('Margem',(r.potTransmissivel-r.potProj>=0?'+':'')+(r.potTransmissivel-r.potProj).toFixed(2)+' kW')}`;
+  },
+
+  desenharSincrona(r){
+    const wrap=document.getElementById('canvasWrap');
+    if(!wrap)return;
+    const W=520,H=190,cx1=120,cx2=400,cy=H/2;
+    const esc=Math.min(70/(r.geo.dPrimitivoCoroaMm/2),1.4);
+    const r1=Math.max(14,r.geo.dPrimitivoPinhaoMm*esc/2),r2=Math.max(20,r.geo.dPrimitivoCoroaMm*esc/2);
+    const ang=Math.asin((r2-r1)/(cx2-cx1));
+    const t1x=cx1+r1*Math.sin(ang),t1y=cy-r1*Math.cos(ang);
+    const t2x=cx2+r2*Math.sin(ang),t2y=cy-r2*Math.cos(ang);
+    const b1x=cx1-r1*Math.sin(ang),b1y=cy+r1*Math.cos(ang);
+    const b2x=cx2-r2*Math.sin(ang),b2y=cy+r2*Math.cos(ang);
+    wrap.innerHTML=`<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Esquema do acionamento síncrono">
+      <path class="belt" d="M ${t1x} ${t1y} L ${t2x} ${t2y} A ${r2} ${r2} 0 1 1 ${b2x} ${b2y} L ${b1x} ${b1y} A ${r1} ${r1} 0 1 1 ${t1x} ${t1y} Z"/>
+      <circle class="pulley" cx="${cx1}" cy="${cy}" r="${r1}"/>
+      <circle class="pulley" cx="${cx2}" cy="${cy}" r="${r2}"/>
+      <circle class="hub" cx="${cx1}" cy="${cy}" r="4"/>
+      <circle class="hub" cx="${cx2}" cy="${cy}" r="4"/>
+      <text x="${cx1}" y="${cy+r1+18}" text-anchor="middle">${r.z1}z</text>
+      <text x="${cx2}" y="${cy+r2+18}" text-anchor="middle">${r.z2}z</text>
+      <text x="${(cx1+cx2)/2}" y="16" text-anchor="middle">${r.perfil} · ${r.larguraMm}mm · ${r.geo.distCentrosCorrigidaMm.toFixed(0)}mm</text>
+    </svg>`;
+  },
+
+  calcularCorreia(){
+    ['potencia','rpm','relacao','dist','horas'].forEach(id=>{
+      const v=parseFloat(document.getElementById(id).value);
+      document.getElementById(id).classList.toggle('invalid',!(isFinite(v)&&v>0));
+    });
+    const e={
+      potenciaKw:parseFloat(document.getElementById('potencia').value),
+      rpmMotor:parseFloat(document.getElementById('rpm').value),
+      relacao:parseFloat(document.getElementById('relacao').value),
+      distCentrosMm:parseFloat(document.getElementById('dist').value),
+      classeCarga:document.getElementById('classe').value,
+      horasPorDia:parseFloat(document.getElementById('horas').value),
+      motorAltoTorque:document.getElementById('altotorque').checked,
+      perfilForcado:document.getElementById('perfil').value||undefined,
+    };
+    const r=dimensionarCorreiaV(e);
+    this.state.resultado=r;
+    this.renderAlertas(r);
+    if(r.ok){this.renderAbas(r);this.desenhar(r);this.salvarSilencioso();}
+  },
+
+  calcularCorrente(){
+    ['potencia','rpm','relacao','dist','dentesPinhao'].forEach(id=>{
+      const v=parseFloat(document.getElementById(id).value);
+      document.getElementById(id).classList.toggle('invalid',!(isFinite(v)&&v>0));
+    });
+    const e={
+      potenciaKw:parseFloat(document.getElementById('potencia').value),
+      rpmMotor:parseFloat(document.getElementById('rpm').value),
+      relacao:parseFloat(document.getElementById('relacao').value),
+      distCentrosMm:parseFloat(document.getElementById('dist').value),
+      dentesPinhao:parseFloat(document.getElementById('dentesPinhao').value),
+      numFios:parseInt(document.getElementById('numFios').value),
+      classeCarga:document.getElementById('classeCorr').value,
+      cargaChoque:document.getElementById('cargaChoque').checked,
+      correnteForcada:document.getElementById('correnteForcada').value||undefined,
+    };
+    const r=dimensionarCorrente(e);
+    this.state.resultado=r;
+    this.renderAlertas(r);
+    if(r.ok){this.renderAbasCorrente(r);this.desenharCorrente(r);this.salvarSilencioso();}
+  },
+
+  renderAbasCorrente(r){
+    document.getElementById('aba-resumo').innerHTML=`
+      <div class="flex items-baseline gap-3 mb-4 pb-3 border-b border-industrial-700">
+        <span class="text-4xl font-bold text-amber-400 font-mono">ANSI ${r.corrente}</span>
+        <div><div class="text-gray-300">${r.numFios} fio${r.numFios>1?'s':''} · pinhão <span class="font-mono border border-gray-500 px-2 py-0.5 rounded">${r.N1}z</span></div>
+        <div class="text-xs text-gray-500 font-mono">passo ${r.passoMm} mm · coroa ${r.N2}z</div></div>
+      </div>
+      ${this.linha('Fator de serviço (Ks)',r.ks.toFixed(2))}
+      ${this.linha('Potência de projeto',r.potProj.toFixed(2)+' kW')}
+      ${this.linha('Capacidade por fio',r.capPorFio.toFixed(2)+' kW')}
+      ${this.linha('Capacidade total',r.capTotal.toFixed(2)+' kW')}
+      ${this.linha('Modo limitante',r.modoLimitante)}
+      <div id="canvasWrap" class="mt-4"></div>`;
+    document.getElementById('aba-geometria').innerHTML=`
+      ${this.linha('Dentes pinhão · coroa',r.N1+' · '+r.N2)}
+      ${this.linha('Ø primitivo pinhão',r.geo.dPrimitivoPinhaoMm.toFixed(1)+' mm')}
+      ${this.linha('Ø primitivo coroa',r.geo.dPrimitivoCoroaMm.toFixed(1)+' mm')}
+      ${this.linha('Ângulo de contato (pinhão)',r.geo.anguloContatoPinhaoGraus.toFixed(0)+'°')}
+      ${this.linha('Comprimento da corrente',r.geo.comprimentoPassos+' passos ('+r.geo.comprimentoMm.toFixed(0)+' mm)')}
+      ${this.linha('Entre-centros corrigido',r.geo.distCentrosCorrigidaMm.toFixed(0)+' mm')}`;
+    document.getElementById('aba-cinematica').innerHTML=`
+      ${this.linha('Velocidade da corrente',r.v.toFixed(2)+' m/s')}
+      ${this.linha('Rotação de saída',r.rpmSaida.toFixed(0)+' rpm')}
+      ${this.linha('Torque no motor',r.torqueMotor.toFixed(1)+' N·m')}
+      ${this.linha('Torque na saída',r.torqueSaida.toFixed(1)+' N·m')}
+      ${this.linha('Efeito poligonal',r.efeitoPoligonal.toFixed(2)+' %')}`;
+    document.getElementById('aba-capacidade').innerHTML=`
+      ${this.linha('Carga de ruptura (fio)',r.rupturaKN.toFixed(1)+' kN')}
+      ${this.linha('Tração na corrente',(r.tracaoN/1000).toFixed(2)+' kN')}
+      ${this.linha('Fator de segurança',r.fatorSeguranca.toFixed(1))}
+      ${this.linha('Modo de falha limitante',r.modoLimitante)}
+      ${this.linha('Capacidade por fio',r.capPorFio.toFixed(2)+' kW')}
+      ${this.linha('Capacidade total ('+r.numFios+' fios)',r.capTotal.toFixed(2)+' kW')}`;
+  },
+
+  desenharCorrente(r){
+    const wrap=document.getElementById('canvasWrap');
+    if(!wrap)return;
+    const W=520,H=190,cx1=120,cx2=400,cy=H/2;
+    const esc=Math.min(70/(r.geo.dPrimitivoCoroaMm/2),1.4);
+    const r1=Math.max(14,r.geo.dPrimitivoPinhaoMm*esc/2),r2=Math.max(20,r.geo.dPrimitivoCoroaMm*esc/2);
+    const ang=Math.asin((r2-r1)/(cx2-cx1));
+    const t1x=cx1+r1*Math.sin(ang),t1y=cy-r1*Math.cos(ang);
+    const t2x=cx2+r2*Math.sin(ang),t2y=cy-r2*Math.cos(ang);
+    const b1x=cx1-r1*Math.sin(ang),b1y=cy+r1*Math.cos(ang);
+    const b2x=cx2-r2*Math.sin(ang),b2y=cy+r2*Math.cos(ang);
+    wrap.innerHTML=`<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Esquema do acionamento por corrente">
+      <path class="belt" d="M ${t1x} ${t1y} L ${t2x} ${t2y} A ${r2} ${r2} 0 1 1 ${b2x} ${b2y} L ${b1x} ${b1y} A ${r1} ${r1} 0 1 1 ${t1x} ${t1y} Z"/>
+      <circle class="pulley" cx="${cx1}" cy="${cy}" r="${r1}"/>
+      <circle class="pulley" cx="${cx2}" cy="${cy}" r="${r2}"/>
+      <circle class="hub" cx="${cx1}" cy="${cy}" r="4"/>
+      <circle class="hub" cx="${cx2}" cy="${cy}" r="4"/>
+      <text x="${cx1}" y="${cy+r1+18}" text-anchor="middle">${r.N1}z</text>
+      <text x="${cx2}" y="${cy+r2+18}" text-anchor="middle">${r.N2}z</text>
+      <text x="${(cx1+cx2)/2}" y="16" text-anchor="middle">ANSI ${r.corrente} · ${r.geo.distCentrosCorrigidaMm.toFixed(0)} mm</text>
+    </svg>`;
+  },
+
+  renderAlertas(r){
+    const c=document.getElementById('alertasContainer');
+    c.innerHTML='';
+    if(!r.ok){
+      r.erros.forEach(msg=>{const d=document.createElement('div');d.className='bg-red-900/50 border border-red-500 rounded p-2 text-red-300 text-sm';d.textContent='❌ '+msg;c.appendChild(d);});
+      return;
+    }
+    if(r.alertas.length===0){
+      const d=document.createElement('div');d.className='bg-green-900/30 border border-green-600 rounded p-2 text-green-300 text-sm';d.textContent='✅ Geometria e capacidade dentro das faixas usuais.';c.appendChild(d);
+    } else {
+      r.alertas.forEach(msg=>{const d=document.createElement('div');d.className='bg-yellow-900/50 border border-yellow-500 rounded p-2 text-yellow-300 text-sm';d.textContent='⚠️ '+msg;c.appendChild(d);});
+    }
+  },
+
+  linha(k,v){return `<div class="flex justify-between py-2 border-b border-industrial-800"><span class="text-gray-400 text-sm">${k}</span><span class="font-mono text-amber-400">${v}</span></div>`;},
+
+  renderAbas(r){
+    document.getElementById('aba-resumo').innerHTML=`
+      <div class="flex items-baseline gap-3 mb-4 pb-3 border-b border-industrial-700">
+        <span class="text-5xl font-bold text-amber-400 font-mono">${r.n}</span>
+        <div><div class="text-gray-300">correia${r.n>1?'s':''} · perfil <span class="font-mono border border-gray-500 px-2 py-0.5 rounded">${r.perfil}</span></div>
+        <div class="text-xs text-gray-500 font-mono">exato ${r.nExato.toFixed(2)} · ${r.perfilAuto?'perfil automático':'perfil forçado'}</div></div>
+      </div>
+      ${this.linha('Fator de serviço (Ks)',r.ks.toFixed(2))}
+      ${this.linha('Potência de projeto',r.potProj.toFixed(2)+' kW')}
+      ${this.linha('Capacidade por correia',r.potPorCorreia.toFixed(2)+' kW')}
+      ${this.linha('Comprimento primitivo',r.geo.comprimentoPadrao+' mm (padrão)')}
+      <div id="canvasWrap" class="mt-4"></div>`;
+
+    document.getElementById('aba-geometria').innerHTML=`
+      ${this.linha('Polia menor (d)',r.dMenor+' mm')}
+      ${this.linha('Polia maior (D)',r.geo.dMaior.toFixed(0)+' mm')}
+      ${this.linha('Arco de abraçamento (menor)',r.geo.arcoMenorGraus.toFixed(0)+'°')}
+      ${this.linha('Arco de abraçamento (maior)',r.geo.arcoMaiorGraus.toFixed(0)+'°')}
+      ${this.linha('Comprimento teórico',r.geo.comprimentoTeorico.toFixed(0)+' mm')}
+      ${this.linha('Comprimento padrão',r.geo.comprimentoPadrao+' mm')}
+      ${this.linha('Entre-centros corrigido',r.geo.distCentrosCorrigida.toFixed(0)+' mm')}`;
+
+    document.getElementById('aba-cinematica').innerHTML=`
+      ${this.linha('Velocidade da correia',r.v.toFixed(2)+' m/s')}
+      ${this.linha('Rotação de saída',r.rpmSaida.toFixed(0)+' rpm')}
+      ${this.linha('Torque no motor',r.torqueMotor.toFixed(1)+' N·m')}
+      ${this.linha('Torque na saída',r.torqueSaida.toFixed(1)+' N·m')}`;
+
+    document.getElementById('aba-capacidade').innerHTML=`
+      ${this.linha('Fração de Euler (arco)',(r.euler.fatorEuler).toFixed(3))}
+      ${this.linha('Força centrífuga',r.euler.Fc.toFixed(0)+' N')}
+      ${this.linha('Força útil por correia',r.euler.Futil.toFixed(0)+' N')}
+      ${this.linha('Coef. de comprimento',r.cComp.toFixed(3))}
+      ${this.linha('Capacidade por correia',r.potPorCorreia.toFixed(2)+' kW')}
+      ${this.linha('Nº de correias (exato)',r.nExato.toFixed(2))}
+      ${this.linha('Nº de correias (adotado)',r.n)}`;
+  },
+
+  desenhar(r){
+    const wrap=document.getElementById('canvasWrap');
+    if(!wrap)return;
+    const W=520,H=190,cx1=120,cx2=400,cy=H/2;
+    const esc=Math.min(70/(r.geo.dMaior/2),1.4);
+    const r1=Math.max(14,r.dMenor*esc/2),r2=Math.max(20,r.geo.dMaior*esc/2);
+    const ang=Math.asin((r2-r1)/(cx2-cx1));
+    const t1x=cx1+r1*Math.sin(ang),t1y=cy-r1*Math.cos(ang);
+    const t2x=cx2+r2*Math.sin(ang),t2y=cy-r2*Math.cos(ang);
+    const b1x=cx1-r1*Math.sin(ang),b1y=cy+r1*Math.cos(ang);
+    const b2x=cx2-r2*Math.sin(ang),b2y=cy+r2*Math.cos(ang);
+    wrap.innerHTML=`<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Esquema do acionamento por correias">
+      <path class="belt" d="M ${t1x} ${t1y} L ${t2x} ${t2y} A ${r2} ${r2} 0 1 1 ${b2x} ${b2y} L ${b1x} ${b1y} A ${r1} ${r1} 0 1 1 ${t1x} ${t1y} Z"/>
+      <circle class="pulley" cx="${cx1}" cy="${cy}" r="${r1}"/>
+      <circle class="pulley" cx="${cx2}" cy="${cy}" r="${r2}"/>
+      <circle class="hub" cx="${cx1}" cy="${cy}" r="4"/>
+      <circle class="hub" cx="${cx2}" cy="${cy}" r="4"/>
+      <text x="${cx1}" y="${cy+r1+18}" text-anchor="middle">d=${r.dMenor}</text>
+      <text x="${cx2}" y="${cy+r2+18}" text-anchor="middle">D=${r.geo.dMaior.toFixed(0)}</text>
+      <text x="${(cx1+cx2)/2}" y="16" text-anchor="middle">C=${r.geo.distCentrosCorrigida.toFixed(0)} mm</text>
+    </svg>`;
+  },
+
+  aba(nome){
+    this.state.abaAtiva=nome;
+    ['resumo','geometria','cinematica','capacidade'].forEach(a=>{
+      document.getElementById('aba-'+a).classList.toggle('hidden',a!==nome);
+      document.getElementById('tab-'+a).classList.toggle('tab-active',a===nome);
+    });
+  },
+
+  salvar(){
+    if(this.salvarSilencioso())alert('💾 Dados salvos.');
+  },
+  salvarSilencioso(){
+    try{
+      const d={
+        potencia:document.getElementById('potencia').value,rpm:document.getElementById('rpm').value,
+        relacao:document.getElementById('relacao').value,dist:document.getElementById('dist').value,
+        classe:document.getElementById('classe').value,horas:document.getElementById('horas').value,
+        perfil:document.getElementById('perfil').value,altotorque:document.getElementById('altotorque').checked,
+        modulo:this.state.modulo,
+      };
+      localStorage.setItem(this.KEY,JSON.stringify(d));
+      return true;
+    }catch(e){console.error(e);return false;}
+  },
+  carregar(silencioso){
+    try{
+      const raw=localStorage.getItem(this.KEY);
+      if(!raw){if(!silencioso)alert('Nenhum dado salvo.');return;}
+      const d=JSON.parse(raw);
+      const set=(id,v,def)=>{if(v!==undefined&&v!=='')document.getElementById(id).value=v;else if(def!==undefined)document.getElementById(id).value=def;};
+      set('potencia',d.potencia);set('rpm',d.rpm);set('relacao',d.relacao);set('dist',d.dist);
+      set('classe',d.classe);set('horas',d.horas);set('perfil',d.perfil);
+      document.getElementById('altotorque').checked=!!d.altotorque;
+      if(d.modulo)this.state.modulo=d.modulo;
+      if(!silencioso){this.selecionarModulo(this.state.modulo);alert('📂 Dados carregados.');}
+    }catch(e){console.error('Dados corrompidos:',e);localStorage.removeItem(this.KEY);}
+  },
+  exportarJSON(){
+    if(!this.state.resultado||!this.state.resultado.ok){alert('Calcule antes de exportar.');return;}
+    const r=this.state.resultado, m=this.state.modulo;
+    const entradasComuns={potencia:document.getElementById('potencia').value,rpm:document.getElementById('rpm').value,relacao:document.getElementById('relacao').value,distCentros:document.getElementById('dist').value,classe:document.getElementById('classe').value};
+    let resultado, metodo;
+    if(m==='corrente'){
+      resultado={fatorServico:r.ks,potenciaProjetoKw:r.potProj,corrente:'ANSI '+r.corrente,passoMm:r.passoMm,numFios:r.numFios,dentesPinhao:r.N1,dentesCoroa:r.N2,capacidadePorFioKw:r.capPorFio,capacidadeTotalKw:r.capTotal,modoLimitante:r.modoLimitante,fatorSeguranca:r.fatorSeguranca,geometria:r.geo,cinematica:{velocidadeMs:r.v,rpmSaida:r.rpmSaida,torqueMotorNm:r.torqueMotor,torqueSaidaNm:r.torqueSaida}};
+      metodo='Três modos de falha (Shigley cap.17), ISO 606:2015. Pré-dimensionamento — confrontar com catálogo do fabricante.';
+    } else if(m==='sincronizada'){
+      resultado={fatorServico:r.ks,potenciaProjetoKw:r.potProj,perfil:r.perfil,passoMm:r.passoMm,larguraMm:r.larguraMm,dentesPinhao:r.z1,dentesCoroa:r.z2,dentesEmContato:r.ze,capacidadeTransmissivelKw:r.potTransmissivel,geometria:r.geo,cinematica:{velocidadeMs:r.v,rpmSaida:r.rpmSaida,torqueMotorNm:r.torqueMotor,torqueSaidaNm:r.torqueSaida}};
+      metodo='Engrenamento (tração do cordão × largura), ISO 13050 / ISO 5295. Pré-dimensionamento — confrontar com tabela de potência do fabricante.';
+    } else {
+      resultado={fatorServico:r.ks,potenciaProjetoKw:r.potProj,perfil:r.perfil,numCorreias:r.n,capacidadePorCorreiaKw:r.potPorCorreia,geometria:r.geo,cinematica:{velocidadeMs:r.v,rpmSaida:r.rpmSaida,torqueMotorNm:r.torqueMotor,torqueSaidaNm:r.torqueSaida}};
+      metodo='Mecânica de Euler (Shigley cap.17), estrutura ISO 5292/NBR 6146. Pré-dimensionamento — confrontar com catálogo do fabricante.';
+    }
+    const out={versao:"4.5",modulo:m,data:new Date().toISOString(),entradas:entradasComuns,resultado,metodo};
+    const blob=new Blob([JSON.stringify(out,null,2)],{type:'application/json'});
+    const url=URL.createObjectURL(blob);const a=document.createElement('a');
+    a.href=url;a.download='TransmissaoPro_'+m+'_'+Date.now()+'.json';a.click();URL.revokeObjectURL(url);
+  },
+  resetar(){if(confirm('Limpar todos os dados?')){localStorage.removeItem(this.KEY);location.reload();}},
+};
+
+window.App=App;
+document.addEventListener('DOMContentLoaded',()=>App.init());
+</script>
+<!-- ===================== TELA DE ABERTURA (SPLASH 3D + AVISO LEGAL) ===================== -->
+<style>
+  @keyframes spRise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes spFade{from{opacity:0}to{opacity:1}}
+  @keyframes spLegal{from{opacity:0;transform:translateY(26px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
+  @keyframes spScan{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+  #splashRoot *{box-sizing:border-box}
+  body.splash-lock{overflow:hidden!important}
+  @media print{#splashRoot{display:none!important}}
+</style>
+<div id="splashRoot" style="position:fixed;inset:0;z-index:99999;font-family:Inter,system-ui,sans-serif;color:#e5e7eb;overflow:hidden;background:radial-gradient(120% 90% at 50% 30%, #12304f 0%, #0a1a2e 45%, #060d18 100%)">
+  <div id="splashStage" style="position:absolute;inset:0"></div>
+  <div style="position:absolute;inset:0;pointer-events:none;background:radial-gradient(70% 55% at 50% 45%, rgba(0,0,0,0) 40%, rgba(3,8,16,.75) 100%)"></div>
+
+  <div style="position:absolute;top:0;left:0;right:0;display:flex;justify-content:center;padding-top:clamp(36px,7vh,86px);pointer-events:none">
+    <div style="text-align:center;animation:spRise 1s cubic-bezier(.2,.8,.2,1) .35s both">
+      <div style="font-family:'JetBrains Mono',Consolas,monospace;font-size:11px;letter-spacing:.42em;text-transform:uppercase;color:#829ab1;margin-bottom:14px">Engenharia mecânica · método rastreável</div>
+      <h1 style="margin:0;font-size:clamp(38px,6.2vw,84px);font-weight:800;letter-spacing:-.03em;line-height:.95;color:#fff;text-shadow:0 18px 50px rgba(0,0,0,.55)">Transmissão<span style="color:#fbbf24">Pro</span></h1>
+      <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-top:16px;animation:spFade 1.1s ease 1.15s both">
+        <span style="height:1px;width:clamp(30px,7vw,80px);background:linear-gradient(90deg,transparent,#486581)"></span>
+        <span style="font-family:'JetBrains Mono',Consolas,monospace;font-size:12px;letter-spacing:.24em;color:#bcccdc">v4.5</span>
+        <span style="height:1px;width:clamp(30px,7vw,80px);background:linear-gradient(90deg,#486581,transparent)"></span>
+      </div>
+    </div>
+  </div>
+
+  <div id="splashFooter" style="position:absolute;bottom:0;left:0;right:0;display:flex;flex-direction:column;align-items:center;gap:18px;padding-bottom:clamp(28px,5vh,64px)">
+    <div style="font-family:'JetBrains Mono',Consolas,monospace;font-size:11px;letter-spacing:.3em;color:#627d98;animation:spFade 1s ease 1.6s both">CORREIAS EM V · SINCRONIZADAS · CORRENTES</div>
+    <div style="position:relative;width:min(360px,62vw);height:3px;border-radius:99px;background:rgba(70,101,129,.35);overflow:hidden;animation:spFade .6s ease .3s both">
+      <div id="splashBar" style="position:absolute;inset:0;transform-origin:left center;border-radius:99px;background:linear-gradient(90deg,#f59e0b,#fbbf24);transform:scaleX(0)"></div>
+      <div style="position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.5),transparent);animation:spScan 1.6s linear infinite"></div>
+    </div>
+    <button id="splashSkip" style="border:1px solid rgba(70,101,129,.55);background:rgba(10,26,46,.55);color:#9fb3c8;font-family:'JetBrains Mono',Consolas,monospace;font-size:11px;letter-spacing:.16em;padding:9px 18px;border-radius:99px;cursor:pointer;backdrop-filter:blur(6px);animation:spFade .8s ease 1.9s both">PULAR ›</button>
+  </div>
+
+  <div id="splashLegal" style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;padding:24px;background:rgba(4,10,20,.72);backdrop-filter:blur(14px) saturate(.9);overflow:auto">
+    <div style="width:min(720px,100%);background:linear-gradient(180deg,rgba(16,42,67,.96),rgba(10,26,46,.98));border:1px solid rgba(70,101,129,.6);border-radius:20px;box-shadow:0 40px 120px rgba(0,0,0,.65);padding:clamp(24px,3.4vw,44px);animation:spLegal .6s cubic-bezier(.2,.8,.2,1) both">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:22px">
+        <div style="width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#f59e0b,#d97706);box-shadow:0 8px 24px rgba(217,119,6,.35);color:#1a1005;font-weight:800;font-size:20px;font-family:'JetBrains Mono',Consolas,monospace">!</div>
+        <div>
+          <div style="font-family:'JetBrains Mono',Consolas,monospace;font-size:10px;letter-spacing:.34em;color:#829ab1;text-transform:uppercase">Termo de uso</div>
+          <h2 style="margin:2px 0 0;font-size:clamp(20px,2.4vw,28px);font-weight:800;letter-spacing:-.02em;color:#fff">Aviso legal</h2>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px;font-size:14px;line-height:1.65;color:#cbd5e1;max-height:38vh;overflow:auto;padding:18px 10px 18px 0;border-top:1px solid rgba(70,101,129,.35);border-bottom:1px solid rgba(70,101,129,.35)">
+        <p style="margin:0"><strong style="color:#fff">Ferramenta de apoio, não substitui o projeto.</strong> O TransmissãoPro v4.5 executa cálculos de dimensionamento de transmissões (correias em V, correias sincronizadas e correntes) com base nos dados informados pelo usuário e em catálogos e normas de referência. Os resultados têm caráter indicativo.</p>
+        <p style="margin:0"><strong style="color:#fff">Responsabilidade técnica.</strong> A verificação, a validação e a adoção de qualquer resultado são de responsabilidade exclusiva do profissional legalmente habilitado, que deve confrontar os valores com o catálogo do fabricante, as normas aplicáveis e as condições reais de operação.</p>
+        <p style="margin:0"><strong style="color:#fff">Sem garantias.</strong> O software é fornecido &ldquo;no estado em que se encontra&rdquo;, sem garantia de exatidão, adequação a finalidade específica ou ausência de erros. Os autores não respondem por perdas, danos materiais, falhas de equipamento, acidentes ou prejuízos decorrentes do uso ou da impossibilidade de uso desta ferramenta.</p>
+        <p style="margin:0"><strong style="color:#fff">Dados.</strong> Os dados inseridos e os projetos salvos permanecem no navegador do usuário. Nenhuma informação é transmitida a servidores externos.</p>
+      </div>
+      <label style="display:flex;align-items:flex-start;gap:12px;margin:22px 0 20px;cursor:pointer;font-size:14px;color:#e5e7eb">
+        <input type="checkbox" id="splashAgree" style="width:20px;height:20px;margin:1px 0 0;accent-color:#f59e0b;cursor:pointer;flex:none">
+        <span>Declaro que li e compreendi o aviso legal e que assumo a responsabilidade técnica pela conferência e uso dos resultados.</span>
+      </label>
+      <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between">
+        <button id="splashEnter" disabled style="flex:1;min-width:240px;padding:15px 24px;border:none;border-radius:12px;font-weight:700;font-size:15px;font-family:Inter,system-ui,sans-serif;background:rgba(70,101,129,.28);color:#64748b;cursor:not-allowed">Concordo e acessar o sistema</button>
+        <button id="splashDecline" style="padding:15px 22px;border-radius:12px;border:1px solid rgba(70,101,129,.6);background:transparent;color:#9fb3c8;font-size:14px;font-weight:600;cursor:pointer;font-family:Inter,system-ui,sans-serif">Não concordo</button>
+      </div>
+      <div id="splashNotice" style="min-height:20px;margin-top:14px;font-family:'JetBrains Mono',Consolas,monospace;font-size:11px;letter-spacing:.08em;color:#f87171"></div>
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/three@0.134.0/build/three.min.js"></script>
+<script>
+(function(){
+  var DURATION=4000, root=document.getElementById('splashRoot');
+  document.body.classList.add('splash-lock');
+  var bar=document.getElementById('splashBar'), legal=document.getElementById('splashLegal'),
+      footer=document.getElementById('splashFooter'), notice=document.getElementById('splashNotice'),
+      agree=document.getElementById('splashAgree'), enter=document.getElementById('splashEnter');
+  var t0=performance.now(), done=false;
+  function showLegal(){
+    if(done) return; done=true;
+    bar.style.transform='scaleX(1)';
+    footer.style.transition='opacity .4s ease'; footer.style.opacity='0';
+    legal.style.display='flex'; legal.style.animation='spFade .5s ease both';
+  }
+  var tick=setInterval(function(){
+    var p=Math.min(1,(performance.now()-t0)/DURATION);
+    bar.style.transform='scaleX('+p+')';
+    if(p>=1){clearInterval(tick);showLegal();}
+  },60);
+  document.getElementById('splashSkip').addEventListener('click',function(){clearInterval(tick);showLegal();});
+  agree.addEventListener('change',function(){
+    notice.textContent='';
+    if(agree.checked){
+      enter.disabled=false;
+      enter.style.background='linear-gradient(135deg,#f59e0b,#d97706)';
+      enter.style.color='#1a1005'; enter.style.cursor='pointer';
+      enter.style.boxShadow='0 14px 34px rgba(217,119,6,.34)';
+    }else{
+      enter.disabled=true;
+      enter.style.background='rgba(70,101,129,.28)'; enter.style.color='#64748b';
+      enter.style.cursor='not-allowed'; enter.style.boxShadow='none';
+    }
+  });
+  document.getElementById('splashDecline').addEventListener('click',function(){
+    notice.textContent='▲ Sem a concordância com o aviso legal o acesso ao sistema não é liberado.';
+  });
+  enter.addEventListener('click',function(){
+    if(!agree.checked){notice.textContent='▲ Marque a concordância para prosseguir.';return;}
+    root.style.transition='opacity .55s ease'; root.style.opacity='0';
+    setTimeout(function(){
+      if(SP.raf) cancelAnimationFrame(SP.raf);
+      if(SP.ro) SP.ro.disconnect();
+      root.remove(); document.body.classList.remove('splash-lock');
+    },560);
+  });
+
+  var SP={};
+  function buildPath(T,c1,r1,c2,r2){
+    var d=c2.x-c1.x, nx=(r1-r2)/d, ny=Math.sqrt(Math.max(0,1-nx*nx)), th=Math.atan2(ny,nx), pts=[];
+    function push(x,y){pts.push(new T.Vector2(x,y));}
+    function seg(ax,ay,bx,by,n){for(var i=0;i<n;i++){var t=i/n;push(ax+(bx-ax)*t,ay+(by-ay)*t);}}
+    var p1u=[c1.x+r1*nx,c1.y+r1*ny],p2u=[c2.x+r2*nx,c2.y+r2*ny],
+        p2l=[c2.x+r2*nx,c2.y-r2*ny],p1l=[c1.x+r1*nx,c1.y-r1*ny];
+    seg(p1u[0],p1u[1],p2u[0],p2u[1],90);
+    for(var i=0;i<70;i++){var a=th-(2*th)*(i/70);push(c2.x+r2*Math.cos(a),c2.y+r2*Math.sin(a));}
+    seg(p2l[0],p2l[1],p1l[0],p1l[1],90);
+    var sweep=2*Math.PI-2*th;
+    for(var j=0;j<110;j++){var b=-th-sweep*(j/110);push(c1.x+r1*Math.cos(b),c1.y+r1*Math.sin(b));}
+    var cum=[0];
+    for(var k=1;k<=pts.length;k++){cum.push(cum[k-1]+pts[k-1].distanceTo(pts[k%pts.length]));}
+    return {pts:pts,cum:cum,total:cum[cum.length-1]};
+  }
+  function at(path,s){
+    var total=path.total,cum=path.cum,pts=path.pts;
+    var u=((s%total)+total)%total, lo=0, hi=cum.length-1;
+    while(hi-lo>1){var m=(lo+hi)>>1; if(cum[m]<=u) lo=m; else hi=m;}
+    var a=pts[lo], b=pts[(lo+1)%pts.length];
+    var f=(u-cum[lo])/Math.max(1e-6,cum[lo+1]-cum[lo]);
+    return {x:a.x+(b.x-a.x)*f,y:a.y+(b.y-a.y)*f,ang:Math.atan2(b.y-a.y,b.x-a.x)};
+  }
+  function sprocket(T,r,teeth,width,steel,accent,dark){
+    var g=new T.Group(), i, a;
+    var body=new T.Mesh(new T.CylinderGeometry(r*0.84,r*0.84,width,72),steel);
+    body.rotation.x=Math.PI/2; body.castShadow=true; body.receiveShadow=true; g.add(body);
+    var rim=new T.Mesh(new T.TorusGeometry(r*0.9,width*0.16,14,96),steel); rim.castShadow=true; g.add(rim);
+    var tg=new T.BoxGeometry(r*0.2,r*0.15,width*0.78);
+    for(i=0;i<teeth;i++){a=(i/teeth)*Math.PI*2;var t=new T.Mesh(tg,steel);
+      t.position.set(Math.cos(a)*r*0.97,Math.sin(a)*r*0.97,0);t.rotation.z=a;t.castShadow=true;g.add(t);}
+    var spoke=new T.BoxGeometry(r*0.64,r*0.16,width*0.55);
+    for(i=0;i<5;i++){a=(i/5)*Math.PI*2;var s=new T.Mesh(spoke,steel);
+      s.position.set(Math.cos(a)*r*0.5,Math.sin(a)*r*0.5,0);s.rotation.z=a;s.castShadow=true;g.add(s);}
+    var holeG=new T.CylinderGeometry(r*0.2,r*0.2,width*1.05,28);
+    for(i=0;i<5;i++){a=((i+0.5)/5)*Math.PI*2;var h=new T.Mesh(holeG,dark);
+      h.rotation.x=Math.PI/2;h.position.set(Math.cos(a)*r*0.52,Math.sin(a)*r*0.52,0);g.add(h);}
+    var hub=new T.Mesh(new T.CylinderGeometry(r*0.3,r*0.3,width*1.9,40),accent);
+    hub.rotation.x=Math.PI/2;hub.castShadow=true;g.add(hub);
+    var shaft=new T.Mesh(new T.CylinderGeometry(r*0.16,r*0.16,4.6,28),steel);
+    shaft.rotation.x=Math.PI/2;g.add(shaft);
+    return g;
+  }
+  function init(T){
+    var el=document.getElementById('splashStage');
+    var scene=new T.Scene(); scene.fog=new T.Fog(0x081324,12,30);
+    var renderer=new T.WebGLRenderer({antialias:true,alpha:true});
+    renderer.setPixelRatio(Math.min(2,window.devicePixelRatio||1));
+    renderer.shadowMap.enabled=true; renderer.shadowMap.type=T.PCFSoftShadowMap;
+    renderer.outputEncoding=T.sRGBEncoding; renderer.toneMapping=T.ACESFilmicToneMapping;
+    renderer.toneMappingExposure=1.05;
+    el.appendChild(renderer.domElement);
+    var camera=new T.PerspectiveCamera(34,1,0.1,100); scene.add(camera);
+
+    var c=document.createElement('canvas'); c.width=8; c.height=256;
+    var cx=c.getContext('2d'), grd=cx.createLinearGradient(0,0,0,256);
+    grd.addColorStop(0,'#cfe0f2');grd.addColorStop(0.42,'#5b7794');
+    grd.addColorStop(0.55,'#1b3550');grd.addColorStop(1,'#060d18');
+    cx.fillStyle=grd; cx.fillRect(0,0,8,256);
+    var envTex=new T.CanvasTexture(c); envTex.mapping=T.EquirectangularReflectionMapping;
+    scene.environment=envTex;
+
+    scene.add(new T.HemisphereLight(0x9fc4ff,0x0a1a2e,0.55));
+    var key=new T.DirectionalLight(0xfff1d6,2.5); key.position.set(-5,7,8); key.castShadow=true;
+    key.shadow.mapSize.set(2048,2048); key.shadow.camera.near=1; key.shadow.camera.far=30;
+    key.shadow.camera.left=-9;key.shadow.camera.right=9;key.shadow.camera.top=9;key.shadow.camera.bottom=-9;
+    key.shadow.bias=-0.0012; scene.add(key);
+    var fill=new T.DirectionalLight(0x6ea8ff,0.9); fill.position.set(7,2,5); scene.add(fill);
+    var spot=new T.SpotLight(0xffb347,90,26,0.8,0.6); spot.position.set(3,-5,-7); scene.add(spot);
+
+    var steel=new T.MeshStandardMaterial({color:0x8fa3b8,metalness:1,roughness:0.3,envMapIntensity:1.15});
+    var chainMat=new T.MeshStandardMaterial({color:0xb8c6d4,metalness:1,roughness:0.24,envMapIntensity:1.3});
+    var pinMat=new T.MeshStandardMaterial({color:0x6a7d90,metalness:1,roughness:0.42});
+    var accent=new T.MeshStandardMaterial({color:new T.Color('#fbbf24'),metalness:0.85,roughness:0.22,envMapIntensity:1.2});
+    var dark=new T.MeshStandardMaterial({color:0x0a1626,metalness:0.4,roughness:0.8});
+
+    var rig=new T.Group(); rig.rotation.set(-0.26,-0.62,0.06); scene.add(rig);
+    var floor=new T.Mesh(new T.PlaneGeometry(60,60),new T.ShadowMaterial({opacity:0.5}));
+    floor.rotation.x=-Math.PI/2; floor.position.y=-3.6; floor.receiveShadow=true; scene.add(floor);
+
+    var c1={x:-2.5,y:0}, r1=1.6, c2={x:2.45,y:0}, r2=0.95, width=0.5;
+    var s1=sprocket(T,r1,22,width,steel,accent,dark), s2=sprocket(T,r2,13,width*0.9,steel,accent,dark);
+    s1.position.set(c1.x,c1.y,0); s2.position.set(c2.x,c2.y,0); rig.add(s1); rig.add(s2);
+
+    var path=buildPath(T,c1,r1*1.02,c2,r2*1.02);
+    var n=Math.floor(path.total/0.3), step=path.total/n;
+    var plateOuter=new T.BoxGeometry(step*1.05,0.2,0.055), plateInner=new T.BoxGeometry(step*1.05,0.16,0.055);
+    var rollerG=new T.CylinderGeometry(0.075,0.075,width*0.72,18), pinG=new T.CylinderGeometry(0.032,0.032,width*1.5,12);
+    var links=[];
+    for(var i=0;i<n;i++){
+      var g=new T.Group(), outer=(i%2===0), zo=outer?width*0.62:width*0.42;
+      [-1,1].forEach(function(sgn){
+        var p=new T.Mesh(outer?plateOuter:plateInner,chainMat);
+        p.position.set(0,0,sgn*zo*0.5); p.castShadow=true; g.add(p);
+      });
+      var roller=new T.Mesh(rollerG,pinMat); roller.rotation.x=Math.PI/2; roller.position.x=-step*0.5; roller.castShadow=true; g.add(roller);
+      var pin=new T.Mesh(pinG,chainMat); pin.rotation.x=Math.PI/2; pin.position.x=step*0.5; g.add(pin);
+      rig.add(g); links.push(g);
+    }
+
+    var W=0,H=0;
+    function resize(){
+      var r=el.getBoundingClientRect();
+      var w=Math.max(1,Math.round(el.clientWidth||r.width||window.innerWidth||1));
+      var h=Math.max(1,Math.round(el.clientHeight||r.height||window.innerHeight||1));
+      if(w===W&&h===H) return;
+      W=w;H=h; camera.aspect=w/h; camera.updateProjectionMatrix(); renderer.setSize(w,h);
+    }
+    window.addEventListener('resize',resize);
+    if(window.ResizeObserver){SP.ro=new ResizeObserver(resize);SP.ro.observe(el);}
+    resize();
+
+    function ease(t){return 1-Math.pow(1-t,3);}
+    function easeIO(t){return t<0.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;}
+    var vmax=4.2, offset=0, last=performance.now(), start=last;
+    function loop(){
+      SP.raf=requestAnimationFrame(loop);
+      var now=performance.now(), dt=Math.min(0.05,(now-last)/1000); last=now;
+      var t=(now-start)/1000; resize();
+      offset+=vmax*(0.25+0.75*ease(Math.min(1,t/2.2)))*dt;
+      for(var i=0;i<links.length;i++){
+        var p=at(path,offset+i*step);
+        links[i].position.set(p.x,p.y,0); links[i].rotation.z=p.ang;
+      }
+      s1.rotation.z=-offset/(r1*1.02); s2.rotation.z=-offset/(r2*1.02);
+      var k=easeIO(Math.min(1,t/4));
+      camera.position.set(1.9-1.5*k,2.9-1.9*k,13.4-3.9*k); camera.lookAt(0,0.05,0);
+      rig.rotation.y=-0.62+0.5*k; rig.rotation.x=-0.26+0.14*k;
+      renderer.render(scene,camera);
+    }
+    loop();
+  }
+  (function boot(tries){
+    tries=tries||0;
+    if(!window.THREE){ if(tries<150) setTimeout(function(){boot(tries+1);},60); return; }
+    init(window.THREE);
+  })();
+})();
+</script>
+<!-- =================== FIM DA TELA DE ABERTURA =================== -->
+
+</body>
+</html>
