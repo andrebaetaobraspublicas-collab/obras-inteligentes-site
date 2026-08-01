@@ -35,7 +35,7 @@ Excecoes/observacoes:
 
 ## Inventario verificado dos aplicativos
 
-Inventario originalmente verificado em 21/07/2026 e atualizado em 01/08/2026 para atualizacao do BombaPro 3.3. Todos os cards listados possuem arquivo local correspondente.
+Inventario originalmente verificado em 21/07/2026 e atualizado em 01/08/2026 para atualizacao do TuboCalc 2.0. Todos os cards listados possuem arquivo local correspondente.
 
 | Card | Aplicativo | Rota publicada | Arquivo local principal | Status local | Status site |
 |---|---|---|---|---|---|
@@ -123,7 +123,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/engrenagecalc/` | 582008 bytes | 578817 caracteres |
 | `/volantepro/` | 104335 bytes | 104335 caracteres |
 | `/transmissaopro/` | 78968 bytes | 78968 caracteres |
-| `/tubocalc/` | 140577 bytes | 140577 caracteres |
+| `/tubocalc/` | 256920 bytes | 256920 caracteres |
 
 ## Estrutura local principal
 
@@ -801,16 +801,16 @@ Arquivo: `tubocalc/index.html`
 
 Ultima inclusao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\TuboCalc.html`
+- Fonte: `C:\Users\ACER\Documents\Downloads\TuboCalc-2.0-abertura.html`
 - Data: 01/08/2026
-- Alteracao: inclusao de novo card na home e publicacao do aplicativo como HTML standalone.
+- Alteracao: substituicao integral de `tubocalc/index.html` pela versao TuboCalc 2.0, com tela de abertura e aviso legal.
 
 Observacoes:
 
-- Aplicativo standalone empacotado em HTML unico.
+- Aplicativo standalone empacotado em HTML unico, com tela de abertura e aviso legal.
 - Tela inicial do site aponta para `/tubocalc/`.
 - O card foi classificado no filtro `Engenharia Mecanica`.
-- Validar apos futuras alteracoes se dimensionamento de tubulacoes industriais, perdas de carga, espessuras, materiais, suportes, expansao termica e relatorios continuam carregando corretamente.
+- Validar apos futuras alteracoes se dimensionamento de tubulacoes industriais, perdas de carga, espessuras, materiais, suportes, expansao termica, novos modulos da versao 2.0 e relatorios continuam carregando corretamente.
 
 ## Artigos publicados na home
 
