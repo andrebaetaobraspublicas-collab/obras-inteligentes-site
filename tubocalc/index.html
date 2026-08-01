@@ -1,0 +1,3029 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TuboCalc — Dimensionamento de Tubulações Industriais</title>
+<style>
+/* ============================================================
+   TuboCalc — sistema de tokens
+   Identidade: folha de dados de tubulação.
+   O acento cromático segue a ABNT NBR 6493 (cores para
+   identificação de tubulações industriais) e muda conforme
+   o fluido selecionado.
+   ============================================================ */
+:root{
+  --bg:#E4E8EC;
+  --paper:#FFFFFF;
+  --paper-2:#F4F6F8;
+  --ink:#101820;
+  --ink-2:#4B5966;
+  --ink-3:#7F8D9A;
+  --rule:#CBD4DC;
+  --rule-2:#9DAAB6;
+  --grid:rgba(16,24,32,.045);
+  --ok:#186B45;
+  --warn:#96600A;
+  --fail:#A9261F;
+  --ok-bg:rgba(24,107,69,.10);
+  --warn-bg:rgba(150,96,10,.12);
+  --fail-bg:rgba(169,38,31,.10);
+  --accent:#1F7A4D;
+  --accent-ink:#FFFFFF;
+  --accent-soft:rgba(31,122,77,.12);
+  --shadow:0 1px 0 rgba(16,24,32,.05), 0 1px 3px rgba(16,24,32,.07);
+  --mono:ui-monospace,"SF Mono","Cascadia Mono","Roboto Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --r:3px;
+}
+html[data-theme="dark"]{
+  --bg:#0C1218;
+  --paper:#141C24;
+  --paper-2:#19222B;
+  --ink:#E4EBF1;
+  --ink-2:#9AA9B7;
+  --ink-3:#6A7A88;
+  --rule:#25313B;
+  --rule-2:#3A4A57;
+  --grid:rgba(228,235,241,.035);
+  --ok:#3FC489;
+  --warn:#E0A93E;
+  --fail:#F4695F;
+  --ok-bg:rgba(63,196,137,.12);
+  --warn-bg:rgba(224,169,62,.14);
+  --fail-bg:rgba(244,105,95,.12);
+  --accent-ink:#0C1218;
+  --shadow:0 1px 0 rgba(0,0,0,.3), 0 2px 6px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),
+                   linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:22px 22px;
+  color:var(--ink);
+  font-family:var(--sans);
+  font-size:14px;
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+button,input,select,textarea{font:inherit;color:inherit}
+
+/* ---------- tipografia utilitária ---------- */
+.eyebrow{
+  font-family:var(--mono);font-size:10px;text-transform:uppercase;
+  letter-spacing:.16em;color:var(--ink-3);font-weight:600;
+}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.unit{font-family:var(--mono);font-size:.78em;color:var(--ink-3);font-weight:500}
+
+/* ---------- barra de identificação (tag strip) ---------- */
+.tagstrip{
+  position:sticky;top:0;z-index:60;
+  display:flex;align-items:stretch;gap:0;
+  background:var(--paper);border-bottom:1px solid var(--rule-2);
+  box-shadow:var(--shadow);
+}
+.tagstrip__mark{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 16px;border-right:1px solid var(--rule);
+}
+.tagstrip__glyph{
+  width:26px;height:26px;flex:0 0 26px;border-radius:50%;
+  border:3px solid var(--accent);
+  background:
+    radial-gradient(circle at 50% 50%, var(--accent-soft) 0 55%, transparent 55%);
+  transition:border-color .3s ease;
+}
+.tagstrip__name{font-family:var(--mono);font-weight:700;font-size:14px;letter-spacing:-.02em}
+.tagstrip__name span{color:var(--accent);transition:color .3s ease}
+.tagstrip__sub{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);font-family:var(--mono)}
+.tagstrip__fluid{
+  display:flex;align-items:center;gap:8px;padding:10px 16px;
+  border-right:1px solid var(--rule);min-width:0;
+}
+.chip{
+  width:14px;height:14px;flex:0 0 14px;border-radius:2px;
+  background:var(--accent);border:1px solid rgba(0,0,0,.25);
+  transition:background .3s ease;
+}
+.tagstrip__spacer{flex:1 1 auto;min-width:8px}
+.tagstrip__tools{display:flex;align-items:center;gap:6px;padding:8px 12px}
+@media(max-width:820px){
+  .tagstrip__fluid{display:none}
+}
+
+/* ---------- botões ---------- */
+.btn{
+  border:1px solid var(--rule-2);background:var(--paper-2);color:var(--ink);
+  padding:6px 11px;border-radius:var(--r);cursor:pointer;
+  font-family:var(--mono);font-size:11px;letter-spacing:.04em;
+  text-transform:uppercase;font-weight:600;
+  transition:background .12s,border-color .12s,transform .06s;
+  white-space:nowrap;
+}
+.btn:hover{background:var(--accent-soft);border-color:var(--accent)}
+.btn:active{transform:translateY(1px)}
+.btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.btn--primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn--primary:hover{filter:brightness(1.08);background:var(--accent)}
+.btn--icon{padding:6px 9px}
+
+/* ---------- layout principal ---------- */
+.shell{display:grid;grid-template-columns:336px 1fr;gap:0;align-items:start}
+@media(max-width:1080px){.shell{grid-template-columns:1fr}}
+
+/* ---------- coluna de entradas ---------- */
+.inputs{
+  background:var(--paper);border-right:1px solid var(--rule-2);
+  min-height:calc(100vh - 47px);
+  position:sticky;top:47px;max-height:calc(100vh - 47px);overflow-y:auto;
+}
+@media(max-width:1080px){.inputs{position:static;max-height:none;min-height:0;border-right:none;border-bottom:1px solid var(--rule-2)}}
+.inputs__head{
+  padding:12px 16px 10px;border-bottom:1px solid var(--rule);
+  display:flex;justify-content:space-between;align-items:baseline;gap:8px;
+}
+fieldset.grp{border:0;border-bottom:1px solid var(--rule);margin:0;padding:12px 16px 14px}
+fieldset.grp legend{
+  font-family:var(--mono);font-size:10px;text-transform:uppercase;
+  letter-spacing:.16em;color:var(--ink-3);font-weight:700;padding:0;
+  display:flex;align-items:center;gap:7px;width:100%;
+}
+fieldset.grp legend::after{content:"";flex:1;height:1px;background:var(--rule)}
+.field{margin-top:10px}
+.field>label{display:block;font-size:11.5px;color:var(--ink-2);margin-bottom:3px}
+.field>label b{color:var(--ink);font-weight:600}
+.field input[type=text],.field input[type=number],.field select,.field textarea{
+  width:100%;padding:6px 8px;border:1px solid var(--rule-2);border-radius:var(--r);
+  background:var(--paper-2);font-family:var(--mono);font-size:13px;
+  font-variant-numeric:tabular-nums;
+}
+.field select{cursor:pointer}
+.field input:focus,.field select:focus,.field textarea:focus{
+  outline:none;border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft);
+}
+.field input[readonly]{background:transparent;color:var(--ink-2);border-style:dashed}
+.field--pair{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.field--trio{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.hint{font-size:10.5px;color:var(--ink-3);margin-top:3px;font-family:var(--mono)}
+.check{display:flex;align-items:center;gap:7px;margin-top:8px;font-size:12px;color:var(--ink-2);cursor:pointer}
+.check input{accent-color:var(--accent);width:14px;height:14px;cursor:pointer}
+.inline-err{color:var(--fail);font-size:11px;margin-top:3px;font-family:var(--mono)}
+
+/* ---------- painel de resultados ---------- */
+.main{min-width:0;padding:0 0 60px}
+
+/* faixa de KPIs */
+.kpis{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  border-bottom:1px solid var(--rule-2);background:var(--paper);
+}
+@media(max-width:900px){.kpis{grid-template-columns:repeat(2,1fr)}}
+.kpi{padding:12px 16px 13px;border-right:1px solid var(--rule);position:relative;min-width:0}
+.kpi:last-child{border-right:0}
+.kpi__v{font-family:var(--mono);font-size:26px;font-weight:700;letter-spacing:-.035em;
+  font-variant-numeric:tabular-nums;line-height:1.1;margin-top:4px;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis}
+.kpi__v .unit{font-size:12px;font-weight:500;margin-left:3px}
+.kpi__t{font-size:10.5px;color:var(--ink-3);margin-top:2px}
+.kpi--ok .kpi__v{color:var(--ok)} .kpi--warn .kpi__v{color:var(--warn)} .kpi--fail .kpi__v{color:var(--fail)}
+
+/* abas */
+.tabs{
+  display:flex;gap:0;overflow-x:auto;background:var(--paper);
+  border-bottom:1px solid var(--rule-2);scrollbar-width:thin;
+}
+.tab{
+  border:0;border-bottom:2px solid transparent;background:transparent;
+  padding:10px 15px;cursor:pointer;white-space:nowrap;
+  font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.08em;
+  color:var(--ink-3);font-weight:600;
+}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--accent);border-bottom-color:var(--accent)}
+.tab:focus-visible{outline:2px solid var(--accent);outline-offset:-3px}
+.tab .dot{display:inline-block;width:6px;height:6px;border-radius:50%;margin-left:6px;vertical-align:middle}
+.tab .dot--warn{background:var(--warn)} .tab .dot--fail{background:var(--fail)}
+
+.pane{padding:18px 20px 0;display:none}
+.pane.is-active{display:block}
+@media(max-width:600px){.pane{padding:14px 12px 0}}
+
+/* cartões */
+.card{
+  background:var(--paper);border:1px solid var(--rule);border-radius:var(--r);
+  margin-bottom:16px;box-shadow:var(--shadow);overflow:hidden;
+}
+.card__h{
+  padding:9px 14px;border-bottom:1px solid var(--rule);background:var(--paper-2);
+  display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
+}
+.card__t{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.13em;font-weight:700}
+.card__ref{font-family:var(--mono);font-size:10px;color:var(--ink-3);letter-spacing:.04em}
+.card__b{padding:14px}
+.card__b--flush{padding:0}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.cols--3{grid-template-columns:repeat(3,1fr)}
+@media(max-width:900px){.cols,.cols--3{grid-template-columns:1fr}}
+
+/* tabelas de dados */
+table.dt{width:100%;border-collapse:collapse;font-size:12.5px}
+table.dt th{
+  text-align:left;font-family:var(--mono);font-size:10px;text-transform:uppercase;
+  letter-spacing:.1em;color:var(--ink-3);font-weight:700;
+  padding:7px 12px;border-bottom:1px solid var(--rule-2);background:var(--paper-2);
+  position:sticky;top:0;
+}
+table.dt td{padding:6px 12px;border-bottom:1px solid var(--rule);vertical-align:baseline}
+table.dt tr:last-child td{border-bottom:0}
+table.dt td.n{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+table.dt th.n{text-align:right}
+table.dt td.k{color:var(--ink-2)}
+table.dt tr.hl td{background:var(--accent-soft);font-weight:600}
+table.dt tbody tr:hover td{background:var(--paper-2)}
+.scroller{max-height:420px;overflow:auto}
+
+/* selos de status */
+.st{
+  display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:20px;
+  font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.06em;
+  text-transform:uppercase;white-space:nowrap;
+}
+.st::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.st--ok{color:var(--ok);background:var(--ok-bg)}
+.st--warn{color:var(--warn);background:var(--warn-bg)}
+.st--fail{color:var(--fail);background:var(--fail-bg)}
+.st--na{color:var(--ink-3);background:var(--paper-2)}
+
+/* linha de resultado */
+.rows{display:flex;flex-direction:column}
+.row{
+  display:grid;grid-template-columns:1fr auto;gap:12px;align-items:baseline;
+  padding:7px 0;border-bottom:1px dotted var(--rule-2);
+}
+.row:last-child{border-bottom:0}
+.row__l{font-size:12.5px;color:var(--ink-2)}
+.row__l small{display:block;font-family:var(--mono);font-size:10px;color:var(--ink-3);letter-spacing:.02em}
+.row__v{font-family:var(--mono);font-variant-numeric:tabular-nums;font-weight:600;text-align:right;white-space:nowrap}
+.row--major{padding:10px 0}
+.row--major .row__l{font-weight:600;color:var(--ink);font-size:13px}
+.row--major .row__v{font-size:17px}
+
+/* fórmulas */
+.fx{
+  font-family:var(--mono);font-size:11.5px;background:var(--paper-2);
+  border-left:2px solid var(--accent);padding:8px 11px;margin:10px 0 4px;
+  color:var(--ink-2);overflow-x:auto;white-space:pre;line-height:1.65;border-radius:0 var(--r) var(--r) 0;
+}
+.note{
+  font-size:11.5px;color:var(--ink-2);background:var(--paper-2);
+  border:1px dashed var(--rule-2);padding:9px 11px;border-radius:var(--r);margin-top:12px;
+}
+.note b{color:var(--ink)}
+.note--warn{border-color:var(--warn);background:var(--warn-bg)}
+.note--fail{border-color:var(--fail);background:var(--fail-bg)}
+
+/* desenho */
+.draw{background:var(--paper);display:block;width:100%;height:auto}
+.draw text{font-family:var(--mono);fill:var(--ink-2)}
+.legend{display:flex;flex-wrap:wrap;gap:10px 18px;padding:10px 14px;border-top:1px solid var(--rule);background:var(--paper-2)}
+.legend span{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;color:var(--ink-2)}
+.legend i{width:16px;height:9px;border-radius:1px;display:inline-block}
+
+@keyframes flow{to{stroke-dashoffset:-40}}
+.flowline{animation:flow 1.6s linear infinite}
+@media(prefers-reduced-motion:reduce){.flowline{animation:none}}
+
+/* barra de faixa (velocidade) */
+.gauge{margin-top:6px}
+.gauge__track{position:relative;height:22px;border:1px solid var(--rule-2);border-radius:2px;background:var(--paper-2);overflow:hidden}
+.gauge__band{position:absolute;top:0;bottom:0;background:var(--ok-bg);border-left:1px solid var(--ok);border-right:1px solid var(--ok)}
+.gauge__mark{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--ink);z-index:2}
+.gauge__scale{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9.5px;color:var(--ink-3);margin-top:3px}
+
+/* relatório */
+pre.report{
+  font-family:var(--mono);font-size:11.5px;line-height:1.6;white-space:pre-wrap;
+  background:var(--paper-2);border:1px solid var(--rule);padding:16px;border-radius:var(--r);
+  max-height:620px;overflow:auto;margin:0;
+}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+
+/* modais / toast */
+.toast{
+  position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(16px);
+  background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:var(--r);
+  font-family:var(--mono);font-size:12px;opacity:0;pointer-events:none;
+  transition:opacity .2s,transform .2s;z-index:200;box-shadow:0 6px 22px rgba(0,0,0,.3);
+}
+.toast.is-on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+.saved{display:flex;flex-direction:column;gap:0}
+.saved__i{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;
+  padding:8px 0;border-bottom:1px dotted var(--rule-2);font-size:12px}
+.saved__i:last-child{border-bottom:0}
+.saved__n{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.saved__d{font-family:var(--mono);font-size:10px;color:var(--ink-3)}
+
+.linkish{color:var(--accent);text-decoration:underline;cursor:pointer;background:none;border:0;padding:0;font:inherit}
+
+@media print{
+  body{background:#fff}
+  .tagstrip,.inputs,.tabs,.kpis,.toolbar,.no-print{display:none!important}
+  .pane{display:none!important}
+  #p-rep{display:block!important;padding:0}
+  .card{box-shadow:none;break-inside:avoid}
+  pre.report{max-height:none;border:0;padding:0;background:#fff}
+}
+</style>
+</head>
+<body>
+<header class="tagstrip">
+  <div class="tagstrip__mark">
+    <div class="tagstrip__glyph" id="glyph"></div>
+    <div>
+      <div class="tagstrip__name">Tubo<span>Calc</span></div>
+      <div class="tagstrip__sub">Dimensionamento de tubulações</div>
+    </div>
+  </div>
+  <div class="tagstrip__fluid">
+    <span class="chip" id="fluidChip"></span>
+    <div style="min-width:0">
+      <div class="eyebrow">Cor de identificação · NBR 6493</div>
+      <div class="num" style="font-size:12px;font-weight:600" id="fluidColorName">Verde — água</div>
+    </div>
+  </div>
+  <div class="tagstrip__spacer"></div>
+  <div class="tagstrip__tools">
+    <button class="btn btn--icon" id="btnTheme" title="Alternar tema claro/escuro" aria-label="Alternar tema">◐</button>
+    <button class="btn" id="btnSave">Salvar</button>
+    <button class="btn" id="btnExport">Exportar</button>
+    <button class="btn" id="btnImport">Importar</button>
+    <input type="file" id="fileImport" accept="application/json,.json" style="display:none">
+  </div>
+</header>
+
+<div class="shell">
+
+<!-- ============ COLUNA DE ENTRADAS ============ -->
+<aside class="inputs" id="inputs">
+  <div class="inputs__head">
+    <div>
+      <div class="eyebrow">Folha de dados</div>
+      <div style="font-weight:600;font-size:13px">Entradas de projeto</div>
+    </div>
+    <button class="btn" id="btnReset">Limpar</button>
+  </div>
+
+  <fieldset class="grp">
+    <legend>Identificação</legend>
+    <div class="field">
+      <label for="projName"><b>Linha / TAG</b></label>
+      <input type="text" id="projName" value="LT-001" maxlength="60">
+    </div>
+    <div class="field">
+      <label for="projDesc">Descrição do serviço</label>
+      <input type="text" id="projDesc" value="Recalque de água industrial" maxlength="90">
+    </div>
+  </fieldset>
+
+  <fieldset class="grp">
+    <legend>Fluido e serviço</legend>
+    <div class="field">
+      <label for="fluid"><b>Fluido transportado</b></label>
+      <select id="fluid"></select>
+      <div class="hint" id="fluidHint"></div>
+    </div>
+    <div class="field field--pair">
+      <div>
+        <label for="press"><b>Pressão de projeto</b></label>
+        <input type="text" id="press" value="16" inputmode="decimal">
+        <div class="hint">bar (manométrica)</div>
+      </div>
+      <div>
+        <label for="temp"><b>Temperatura</b></label>
+        <input type="text" id="temp" value="40" inputmode="decimal">
+        <div class="hint">°C</div>
+      </div>
+    </div>
+    <div class="field field--pair">
+      <div>
+        <label for="flow"><b>Vazão</b></label>
+        <input type="text" id="flow" value="60" inputmode="decimal">
+      </div>
+      <div>
+        <label for="flowUnit">Unidade</label>
+        <select id="flowUnit">
+          <option value="m3h">m³/h</option>
+          <option value="lmin">L/min</option>
+          <option value="ls">L/s</option>
+          <option value="m3min">m³/min (ANR)</option>
+          <option value="kgh">kg/h</option>
+        </select>
+      </div>
+    </div>
+    <div class="field" id="oilGradeField" style="display:none">
+      <label for="oilGrade"><b>Grau de viscosidade ISO</b></label>
+      <select id="oilGrade">
+        <option>ISO VG 22</option><option>ISO VG 32</option>
+        <option selected>ISO VG 46</option><option>ISO VG 68</option>
+        <option>ISO VG 100</option>
+      </select>
+      <div class="hint">viscosidade interpolada pela equação de Walther (ASTM D341)</div>
+    </div>
+    <div class="field field--pair">
+      <div>
+        <label for="rho">Massa específica ρ</label>
+        <input type="text" id="rho" inputmode="decimal">
+        <div class="hint">kg/m³</div>
+      </div>
+      <div>
+        <label for="nu">Viscosidade cin. ν</label>
+        <input type="text" id="nu" inputmode="decimal">
+        <div class="hint">cSt (mm²/s)</div>
+      </div>
+    </div>
+    <label class="check"><input type="checkbox" id="autoProps" checked> Calcular ρ e ν a partir da temperatura</label>
+    <div class="inline-err" id="fluidErr"></div>
+  </fieldset>
+
+  <fieldset class="grp">
+    <legend>Tubo</legend>
+    <div class="field">
+      <label for="matFam"><b>Família de material</b></label>
+      <select id="matFam">
+        <option value="steel">Aço (carbono, liga ou inoxidável)</option>
+        <option value="plastic">Termoplástico (PVC-U, PP-R, PEAD)</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="mat"><b>Especificação do material</b></label>
+      <select id="mat"></select>
+      <div class="hint" id="matHint"></div>
+    </div>
+    <div class="field field--pair" id="steelDims">
+      <div>
+        <label for="nps"><b>Diâmetro nominal</b></label>
+        <select id="nps"></select>
+      </div>
+      <div>
+        <label for="sch"><b>Série (Schedule)</b></label>
+        <select id="sch"></select>
+      </div>
+    </div>
+    <div class="field field--pair" id="plasticDims" style="display:none">
+      <div>
+        <label for="pDn"><b>DN externo</b></label>
+        <select id="pDn"></select>
+      </div>
+      <div>
+        <label for="pSdr"><b>Série SDR</b></label>
+        <select id="pSdr"></select>
+      </div>
+    </div>
+    <div class="field field--pair">
+      <div>
+        <label for="od">Diâmetro externo De</label>
+        <input type="text" id="od" inputmode="decimal">
+        <div class="hint">mm</div>
+      </div>
+      <div>
+        <label for="th">Espessura de parede e</label>
+        <input type="text" id="th" inputmode="decimal">
+        <div class="hint">mm</div>
+      </div>
+    </div>
+    <label class="check"><input type="checkbox" id="customDim"> Informar De e espessura manualmente</label>
+    <div class="field field--pair">
+      <div>
+        <label for="len"><b>Comprimento reto</b></label>
+        <input type="text" id="len" value="120" inputmode="decimal">
+        <div class="hint">m</div>
+      </div>
+      <div>
+        <label for="qty">Nº de linhas</label>
+        <input type="text" id="qty" value="1" inputmode="decimal">
+      </div>
+    </div>
+    <div class="inline-err" id="dimErr"></div>
+  </fieldset>
+
+  <fieldset class="grp">
+    <legend>Critérios de projeto</legend>
+    <div class="field field--pair">
+      <div>
+        <label for="corr">Sobre-espessura c</label>
+        <input type="text" id="corr" value="1,0" inputmode="decimal">
+        <div class="hint">mm (corrosão/erosão)</div>
+      </div>
+      <div>
+        <label for="millTol">Tolerância de fabricação</label>
+        <input type="text" id="millTol" value="12,5" inputmode="decimal">
+        <div class="hint">% da espessura</div>
+      </div>
+    </div>
+    <div class="field field--pair">
+      <div>
+        <label for="jointE">Fator de junta E</label>
+        <select id="jointE">
+          <option value="1.00">1,00 — sem costura</option>
+          <option value="0.95">0,95 — EFW 100% radiografado</option>
+          <option value="0.85">0,85 — ERW / EFW com exame parcial</option>
+          <option value="0.80">0,80 — EFW simples sem exame</option>
+          <option value="0.60">0,60 — solda de topo em forno</option>
+        </select>
+      </div>
+      <div>
+        <label for="rough">Rugosidade ε</label>
+        <input type="text" id="rough" inputmode="decimal">
+        <div class="hint">mm</div>
+      </div>
+    </div>
+    <div class="field field--pair">
+      <div>
+        <label for="dpLimUnit">Limite de perda de carga</label>
+        <select id="dpLimUnit">
+          <option value="pct">% da pressão de entrada</option>
+          <option value="bar100">bar / 100 m</option>
+          <option value="mca100">m.c.a. / 100 m</option>
+        </select>
+      </div>
+      <div>
+        <label for="dpLim">Valor</label>
+        <input type="text" id="dpLim" value="5" inputmode="decimal">
+      </div>
+    </div>
+    <div class="field field--pair">
+      <div>
+        <label for="vMin">Velocidade mínima</label>
+        <input type="text" id="vMin" inputmode="decimal">
+        <div class="hint">m/s</div>
+      </div>
+      <div>
+        <label for="vMax">Velocidade máxima</label>
+        <input type="text" id="vMax" inputmode="decimal">
+        <div class="hint">m/s</div>
+      </div>
+    </div>
+    <label class="check"><input type="checkbox" id="autoV" checked> Usar faixa de velocidade recomendada para o fluido</label>
+  </fieldset>
+
+  <fieldset class="grp">
+    <legend>Singularidades</legend>
+    <label class="check"><input type="checkbox" id="useK" checked> Somar perdas localizadas</label>
+    <div id="kList" style="margin-top:8px"></div>
+    <div class="field">
+      <label for="kExtra">Coeficiente K adicional</label>
+      <input type="text" id="kExtra" value="0" inputmode="decimal">
+    </div>
+  </fieldset>
+
+  <fieldset class="grp">
+    <legend>Sucção e transiente</legend>
+    <div class="field field--pair">
+      <div>
+        <label for="pSurf">Pressão no reservatório</label>
+        <input type="text" id="pSurf" value="1,013" inputmode="decimal">
+        <div class="hint">bar absoluta</div>
+      </div>
+      <div>
+        <label for="zSuc">Desnível de sucção z</label>
+        <input type="text" id="zSuc" value="2,0" inputmode="decimal">
+        <div class="hint">m (+ afogada / − aspirada)</div>
+      </div>
+    </div>
+    <div class="field field--pair">
+      <div>
+        <label for="lSuc">Trecho a montante da bomba</label>
+        <input type="text" id="lSuc" value="8" inputmode="decimal">
+        <div class="hint">m · informe 0 em linha de recalque</div>
+      </div>
+      <div>
+        <label for="npshr">NPSH requerido</label>
+        <input type="text" id="npshr" value="3,0" inputmode="decimal">
+        <div class="hint">m (da bomba)</div>
+      </div>
+    </div>
+    <div class="field field--pair">
+      <div>
+        <label for="tClose">Tempo de fechamento</label>
+        <input type="text" id="tClose" value="4,0" inputmode="decimal">
+        <div class="hint">s (válvula)</div>
+      </div>
+      <div>
+        <label for="pumpEff">Rendimento do conjunto</label>
+        <input type="text" id="pumpEff" value="70" inputmode="decimal">
+        <div class="hint">%</div>
+      </div>
+    </div>
+  </fieldset>
+
+  <fieldset class="grp">
+    <legend>Instalação</legend>
+    <div class="field field--pair">
+      <div>
+        <label for="tInst">Temperatura de montagem</label>
+        <input type="text" id="tInst" value="25" inputmode="decimal">
+        <div class="hint">°C</div>
+      </div>
+      <div>
+        <label for="insulW">Peso de isolamento</label>
+        <input type="text" id="insulW" value="0" inputmode="decimal">
+        <div class="hint">kg/m</div>
+      </div>
+    </div>
+    <div class="field">
+      <label for="defLim">Flecha admissível entre apoios</label>
+      <input type="text" id="defLim" value="3,0" inputmode="decimal">
+      <div class="hint">mm</div>
+    </div>
+  </fieldset>
+
+  <fieldset class="grp">
+    <legend>Projetos salvos</legend>
+    <div class="saved" id="savedList"></div>
+  </fieldset>
+</aside>
+
+<!-- ============ PAINEL DE RESULTADOS ============ -->
+<main class="main">
+
+  <section class="kpis" id="kpis"></section>
+
+  <nav class="tabs" role="tablist" id="tabs">
+    <button class="tab" role="tab" data-p="p-sec" aria-selected="true">Seção</button>
+    <button class="tab" role="tab" data-p="p-press" aria-selected="false">Pressão</button>
+    <button class="tab" role="tab" data-p="p-hyd" aria-selected="false">Hidráulica</button>
+    <button class="tab" role="tab" data-p="p-npsh" aria-selected="false">Sucção / NPSH</button>
+    <button class="tab" role="tab" data-p="p-tran" aria-selected="false">Transiente</button>
+    <button class="tab" role="tab" data-p="p-flex" aria-selected="false">Dilatação e apoios</button>
+    <button class="tab" role="tab" data-p="p-opt" aria-selected="false">Seleção de diâmetro</button>
+    <button class="tab" role="tab" data-p="p-conf" aria-selected="false">Conformidade</button>
+    <button class="tab" role="tab" data-p="p-tab" aria-selected="false">Tabelas</button>
+    <button class="tab" role="tab" data-p="p-rep" aria-selected="false">Relatório</button>
+  </nav>
+
+  <!-- SEÇÃO -->
+  <section class="pane is-active" id="p-sec" role="tabpanel">
+    <div class="cols">
+      <div class="card">
+        <div class="card__h"><span class="card__t">Corte da parede</span><span class="card__ref">escala real · mm</span></div>
+        <div class="card__b--flush"><div id="drawWall"></div></div>
+        <div class="legend" id="wallLegend"></div>
+      </div>
+      <div>
+        <div class="card">
+          <div class="card__h"><span class="card__t">Geometria</span><span class="card__ref" id="secRef">ASME B36.10M</span></div>
+          <div class="card__b"><div class="rows" id="geomRows"></div></div>
+        </div>
+        <div class="card">
+          <div class="card__h"><span class="card__t">Massa e conteúdo</span></div>
+          <div class="card__b"><div class="rows" id="massRows"></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card__h"><span class="card__t">Vista longitudinal e escoamento</span><span class="card__ref" id="longRef"></span></div>
+      <div class="card__b--flush"><div id="drawLong"></div></div>
+    </div>
+  </section>
+
+  <!-- PRESSÃO -->
+  <section class="pane" id="p-press" role="tabpanel">
+    <div class="cols">
+      <div class="card">
+        <div class="card__h"><span class="card__t">Espessura requerida</span><span class="card__ref" id="thRef"></span></div>
+        <div class="card__b">
+          <div class="fx" id="thFx"></div>
+          <div class="rows" id="thRows"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card__h"><span class="card__t">Pressão admissível</span><span class="card__ref">verificação inversa</span></div>
+        <div class="card__b">
+          <div class="fx" id="pFx"></div>
+          <div class="rows" id="pRows"></div>
+          <div id="pNote"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card__h"><span class="card__t">Tensão admissível em função da temperatura</span><span class="card__ref" id="sRef"></span></div>
+      <div class="card__b--flush"><div id="sTable"></div></div>
+    </div>
+  </section>
+
+  <!-- HIDRÁULICA -->
+  <section class="pane" id="p-hyd" role="tabpanel">
+    <div class="cols">
+      <div class="card">
+        <div class="card__h"><span class="card__t">Escoamento</span><span class="card__ref">Darcy–Weisbach</span></div>
+        <div class="card__b">
+          <div class="rows" id="flowRows"></div>
+          <div class="gauge" id="vGauge"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card__h"><span class="card__t">Perda de carga</span><span class="card__ref" id="dpRef"></span></div>
+        <div class="card__b">
+          <div class="fx" id="dpFx"></div>
+          <div class="rows" id="dpRows"></div>
+          <div id="dpNote"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card__h"><span class="card__t">Perdas localizadas</span><span class="card__ref">método dos coeficientes K</span></div>
+      <div class="card__b--flush"><div id="kTable"></div></div>
+    </div>
+    <div class="card">
+      <div class="card__h"><span class="card__t">Potência de bombeamento</span></div>
+      <div class="card__b"><div class="rows" id="powRows"></div></div>
+    </div>
+  </section>
+
+  <!-- NPSH -->
+  <section class="pane" id="p-npsh" role="tabpanel">
+    <div class="cols">
+      <div class="card">
+        <div class="card__h"><span class="card__t">NPSH disponível</span><span class="card__ref">linha de sucção</span></div>
+        <div class="card__b">
+          <div class="fx" id="npshFx"></div>
+          <div class="rows" id="npshRows"></div>
+          <div id="npshNote"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card__h"><span class="card__t">Índice de cavitação</span><span class="card__ref">σ de Thoma</span></div>
+        <div class="card__b">
+          <div class="fx">σ = (p_abs − p_v) / (ρ · v² / 2)</div>
+          <div class="rows" id="sigRows"></div>
+          <div id="sigNote"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TRANSIENTE -->
+  <section class="pane" id="p-tran" role="tabpanel">
+    <div class="cols">
+      <div class="card">
+        <div class="card__h"><span class="card__t">Celeridade da onda</span><span class="card__ref">Korteweg</span></div>
+        <div class="card__b">
+          <div class="fx" id="celFx"></div>
+          <div class="rows" id="celRows"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card__h"><span class="card__t">Sobrepressão transitória</span><span class="card__ref">Joukowsky / Michaud</span></div>
+        <div class="card__b">
+          <div class="fx" id="hamFx"></div>
+          <div class="rows" id="hamRows"></div>
+          <div id="hamNote"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card__h"><span class="card__t">Envoltória de pressão ao longo da linha</span><span class="card__ref">regime permanente × transiente</span></div>
+      <div class="card__b--flush"><div id="drawSurge"></div></div>
+    </div>
+  </section>
+
+  <!-- DILATAÇÃO -->
+  <section class="pane" id="p-flex" role="tabpanel">
+    <div class="cols">
+      <div class="card">
+        <div class="card__h"><span class="card__t">Dilatação térmica</span><span class="card__ref">ΔL = α · L · ΔT</span></div>
+        <div class="card__b">
+          <div class="rows" id="expRows"></div>
+          <div id="expNote"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card__h"><span class="card__t">Vão entre apoios</span><span class="card__ref">viga contínua</span></div>
+        <div class="card__b">
+          <div class="fx" id="spanFx"></div>
+          <div class="rows" id="spanRows"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card__h"><span class="card__t">Lira de dilatação (perna guiada)</span><span class="card__ref">L = √(3 · E · De · Δ / σ_adm)</span></div>
+      <div class="card__b"><div class="rows" id="loopRows"></div></div>
+    </div>
+  </section>
+
+  <!-- OTIMIZADOR -->
+  <section class="pane" id="p-opt" role="tabpanel">
+    <div class="card">
+      <div class="card__h">
+        <span class="card__t">Varredura de diâmetros comerciais</span>
+        <span class="card__ref">mesma vazão, material e critérios</span>
+      </div>
+      <div class="card__b--flush"><div id="optTable"></div></div>
+    </div>
+    <div id="optNote"></div>
+  </section>
+
+  <!-- CONFORMIDADE -->
+  <section class="pane" id="p-conf" role="tabpanel">
+    <div class="card">
+      <div class="card__h"><span class="card__t">Matriz de verificação</span><span class="card__ref" id="confSummary"></span></div>
+      <div class="card__b--flush"><div id="confTable"></div></div>
+    </div>
+    <div class="card">
+      <div class="card__h"><span class="card__t">Referências normativas aplicadas</span></div>
+      <div class="card__b--flush"><div id="normTable"></div></div>
+    </div>
+  </section>
+
+  <!-- TABELAS -->
+  <section class="pane" id="p-tab" role="tabpanel">
+    <div class="card">
+      <div class="card__h"><span class="card__t">Propriedades do fluido × temperatura</span><span class="card__ref" id="fluidTabRef"></span></div>
+      <div class="card__b--flush"><div class="scroller" id="fluidTable"></div></div>
+    </div>
+    <div class="cols">
+      <div class="card">
+        <div class="card__h"><span class="card__t">Rugosidade absoluta</span><span class="card__ref">ε, mm</span></div>
+        <div class="card__b--flush"><div class="scroller" id="roughTable"></div></div>
+      </div>
+      <div class="card">
+        <div class="card__h"><span class="card__t">Coeficientes de perda localizada</span><span class="card__ref">K</span></div>
+        <div class="card__b--flush"><div class="scroller" id="kRefTable"></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card__h"><span class="card__t">Dimensões de tubos de aço</span><span class="card__ref">ASME B36.10M / B36.19M</span></div>
+      <div class="card__b--flush"><div class="scroller" id="dimTable"></div></div>
+    </div>
+  </section>
+
+  <!-- RELATÓRIO -->
+  <section class="pane" id="p-rep" role="tabpanel">
+    <div class="toolbar no-print">
+      <button class="btn btn--primary" id="btnDownloadTxt">Baixar relatório (.txt)</button>
+      <button class="btn" id="btnCopy">Copiar para a área de transferência</button>
+      <button class="btn" id="btnPrint">Imprimir / PDF</button>
+    </div>
+    <pre class="report" id="report"></pre>
+  </section>
+
+</main>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+"use strict";
+/* ============================================================
+   TuboCalc — banco de dados embarcado
+   Valores de referência. Confirmar sempre na norma vigente
+   e no catálogo do fabricante antes da emissão do projeto.
+   ============================================================ */
+var DB = {};
+
+/* ---------- Cores de identificação — ABNT NBR 6493 ---------- */
+DB.nbr6493 = {
+  verde:      {hex:"#1F7A4D", nome:"Verde — água"},
+  vermelho:   {hex:"#B8232B", nome:"Vermelho — combate a incêndio"},
+  azul:       {hex:"#1B5FA8", nome:"Azul — ar comprimido"},
+  aluminio:   {hex:"#7F8B96", nome:"Alumínio — vapor"},
+  marrom:     {hex:"#7A4A22", nome:"Marrom — óleos minerais e combustíveis"},
+  amarelo:    {hex:"#B98A00", nome:"Amarelo — gases não liquefeitos"},
+  laranja:    {hex:"#C4611A", nome:"Laranja — ácidos"},
+  lilas:      {hex:"#6F55A0", nome:"Lilás — álcalis"},
+  preto:      {hex:"#333A42", nome:"Preto — esgoto e efluentes"},
+  cinza:      {hex:"#5E6A75", nome:"Cinza-claro — vácuo"}
+};
+
+/* ---------- Fluidos ----------
+   vRec: faixa de velocidade recomendada [min, max] em m/s
+   comp: escoamento compressível
+------------------------------------------------------------ */
+DB.fluids = {
+  agua_fria: {
+    nome:"Água — fria / industrial", cor:"verde", tipo:"liquido",
+    vRec:[0.6,3.0], dpDefault:{unit:"mca100", val:8},
+    ref:"NBR 5626 · NBR 12218 · Hydraulic Institute",
+    nota:"Velocidades acima de 3 m/s aumentam ruído, erosão e risco de transiente."
+  },
+  agua_quente: {
+    nome:"Água — quente (até 90 °C)", cor:"verde", tipo:"liquido",
+    vRec:[0.6,2.0], dpDefault:{unit:"mca100", val:10},
+    ref:"NBR 7198 · NBR 15884",
+    nota:"Verificar dilatação térmica e derating do material plástico."
+  },
+  agua_incendio: {
+    nome:"Água — combate a incêndio", cor:"vermelho", tipo:"liquido",
+    vRec:[1.0,5.0], dpDefault:{unit:"mca100", val:20},
+    ref:"NBR 13714 · NBR 10897",
+    nota:"Norma brasileira limita a velocidade a 5 m/s em tubulações de hidrantes."
+  },
+  esgoto: {
+    nome:"Esgoto / efluente (conduto forçado)", cor:"preto", tipo:"liquido",
+    vRec:[0.6,3.0], dpDefault:{unit:"mca100", val:10},
+    ref:"NBR 12208",
+    nota:"Velocidade mínima de autolimpeza usual: 0,6 m/s."
+  },
+  ar: {
+    nome:"Ar comprimido", cor:"azul", tipo:"gas", comp:true,
+    vRec:[4.0,9.0], dpDefault:{unit:"bar100", val:0.15},
+    ref:"NBR ISO 4414 · ISO 8573",
+    nota:"Prática usual: 6 a 9 m/s em ramais e ΔP total inferior a 0,3 bar até o ponto de uso."
+  },
+  vapor_sat: {
+    nome:"Vapor saturado", cor:"aluminio", tipo:"vapor", comp:true,
+    vRec:[15,35], dpDefault:{unit:"bar100", val:0.5},
+    ref:"ASME B31.1",
+    nota:"Velocidades acima de 35 m/s provocam erosão por gotículas em curvas."
+  },
+  vapor_sup: {
+    nome:"Vapor superaquecido", cor:"aluminio", tipo:"vapor", comp:true,
+    vRec:[30,60], dpDefault:{unit:"bar100", val:0.5},
+    ref:"ASME B31.1",
+    nota:"Exige material com tensão admissível verificada na temperatura de operação."
+  },
+  oleo_lub: {
+    nome:"Óleo lubrificante / hidráulico", cor:"marrom", tipo:"liquido", oil:true,
+    vRec:[1.0,5.0], dpDefault:{unit:"bar100", val:2},
+    ref:"NBR ISO 4413",
+    nota:"Sucção de bomba hidráulica: manter abaixo de 1,2 m/s para evitar cavitação."
+  },
+  ar_instr: {
+    nome:"Ar de instrumentação", cor:"azul", tipo:"gas", comp:true,
+    vRec:[4.0,8.0], dpDefault:{unit:"bar100", val:0.1},
+    ref:"NBR ISO 4414 · ISA 7.0.01",
+    nota:"Requer ponto de orvalho controlado; perdas devem ser mínimas."
+  },
+  gas_inerte: {
+    nome:"Gás inerte (N₂, CO₂)", cor:"amarelo", tipo:"gas", comp:true,
+    vRec:[5.0,15.0], dpDefault:{unit:"bar100", val:0.3},
+    ref:"ASME B31.3",
+    nota:"Adotar ρ do gás na pressão e temperatura de operação."
+  }
+};
+
+/* ---------- Propriedades da água (ASTM/IAPWS simplificado) ----------
+   [T °C, ρ kg/m³, ν cSt, pv bar abs, K GPa]
+------------------------------------------------------------ */
+DB.water = [
+  [  0, 999.8, 1.792, 0.00611, 2.02],
+  [  5, 1000.0, 1.519, 0.00872, 2.06],
+  [ 10, 999.7, 1.307, 0.01228, 2.10],
+  [ 15, 999.1, 1.139, 0.01706, 2.15],
+  [ 20, 998.2, 1.004, 0.02339, 2.18],
+  [ 25, 997.0, 0.893, 0.03169, 2.22],
+  [ 30, 995.7, 0.801, 0.04246, 2.25],
+  [ 35, 994.0, 0.724, 0.05628, 2.27],
+  [ 40, 992.2, 0.658, 0.07384, 2.28],
+  [ 45, 990.2, 0.602, 0.09593, 2.29],
+  [ 50, 988.0, 0.554, 0.12350, 2.30],
+  [ 55, 985.7, 0.512, 0.15760, 2.31],
+  [ 60, 983.2, 0.475, 0.19940, 2.31],
+  [ 65, 980.5, 0.443, 0.25030, 2.30],
+  [ 70, 977.8, 0.413, 0.31200, 2.29],
+  [ 75, 974.8, 0.388, 0.38580, 2.28],
+  [ 80, 971.8, 0.365, 0.47410, 2.26],
+  [ 85, 968.6, 0.345, 0.57870, 2.25],
+  [ 90, 965.3, 0.326, 0.70180, 2.23],
+  [ 95, 961.9, 0.310, 0.84550, 2.21],
+  [100, 958.4, 0.295, 1.01330, 2.19],
+  [110, 951.0, 0.268, 1.43270, 2.14],
+  [120, 943.1, 0.246, 1.98540, 2.08],
+  [130, 934.8, 0.228, 2.70120, 2.01],
+  [140, 926.1, 0.212, 3.61380, 1.94],
+  [150, 917.0, 0.199, 4.75970, 1.86]
+];
+
+/* ---------- Vapor saturado: [p bar abs, T sat °C, ρ" kg/m³, h" kJ/kg] ---------- */
+DB.steamSat = [
+  [ 1.013, 100.0, 0.598, 2676],
+  [ 2.0,   120.2, 1.129, 2707],
+  [ 3.0,   133.5, 1.651, 2725],
+  [ 4.0,   143.6, 2.163, 2739],
+  [ 5.0,   151.8, 2.669, 2749],
+  [ 6.0,   158.8, 3.170, 2757],
+  [ 7.0,   164.9, 3.667, 2764],
+  [ 8.0,   170.4, 4.162, 2769],
+  [10.0,   179.9, 5.145, 2778],
+  [12.0,   188.0, 6.125, 2785],
+  [14.0,   195.0, 7.106, 2790],
+  [16.0,   201.4, 8.085, 2793],
+  [20.0,   212.4, 10.05, 2799],
+  [25.0,   224.0, 12.51, 2802],
+  [30.0,   233.9, 15.00, 2804],
+  [40.0,   250.4, 20.10, 2801]
+];
+
+/* ---------- Ar seco a 1 bar abs: [T °C, ρ kg/m³, μ µPa·s] ---------- */
+DB.air = [
+  [-10, 1.341, 16.7],
+  [  0, 1.292, 17.2],
+  [ 10, 1.246, 17.7],
+  [ 20, 1.204, 18.1],
+  [ 30, 1.164, 18.6],
+  [ 40, 1.127, 19.1],
+  [ 50, 1.092, 19.5],
+  [ 60, 1.059, 20.0],
+  [ 80, 0.999, 20.8],
+  [100, 0.946, 21.7],
+  [120, 0.898, 22.5],
+  [150, 0.834, 23.7]
+];
+
+/* ---------- Óleos ISO VG (ASTM D341 / Walther) ---------- */
+DB.oils = {
+  "ISO VG 22": {v40:22,  v100:4.2, rho15:857},
+  "ISO VG 32": {v40:32,  v100:5.4, rho15:865},
+  "ISO VG 46": {v40:46,  v100:6.8, rho15:872},
+  "ISO VG 68": {v40:68,  v100:8.7, rho15:880},
+  "ISO VG 100":{v40:100, v100:11.4,rho15:885}
+};
+
+/* ---------- Materiais metálicos ----------
+   S: tensão admissível básica (MPa) por temperatura (°C)
+   Referência: valores típicos de ASME B31.3 Tab. A-1 (verificar edição vigente)
+------------------------------------------------------------ */
+DB.steels = {
+  "A106-B": {
+    nome:"ASTM A106 Gr. B — aço-carbono sem costura",
+    equiv:"≈ ABNT NBR 5590",
+    rho:7850, E:203000, alpha:11.7e-6, tipo:"ferritico", smys:241, smts:414,
+    S:[[20,137.9],[100,137.9],[150,137.9],[200,137.9],[250,131.0],[300,120.7],[350,111.0],[400,82.7],[425,64.1]],
+    rough:0.045, tMax:425
+  },
+  "A53-B": {
+    nome:"ASTM A53 Gr. B — aço-carbono com ou sem costura",
+    equiv:"≈ ABNT NBR 5580 / 5590",
+    rho:7850, E:203000, alpha:11.7e-6, tipo:"ferritico", smys:241, smts:414,
+    S:[[20,137.9],[100,137.9],[150,137.9],[200,137.9],[250,131.0],[300,120.7],[350,111.0],[400,82.7],[425,64.1]],
+    rough:0.045, tMax:425
+  },
+  "A333-6": {
+    nome:"ASTM A333 Gr. 6 — aço-carbono para baixa temperatura",
+    equiv:"serviço criogênico até −45 °C",
+    rho:7850, E:203000, alpha:11.5e-6, tipo:"ferritico", smys:241, smts:414,
+    S:[[-45,137.9],[20,137.9],[100,137.9],[200,137.9],[250,131.0],[300,120.7],[350,111.0]],
+    rough:0.045, tMax:350
+  },
+  "A335-P11": {
+    nome:"ASTM A335 Gr. P11 — aço-liga 1¼Cr-½Mo",
+    equiv:"vapor de média temperatura",
+    rho:7800, E:205000, alpha:12.6e-6, tipo:"ferritico", smys:207, smts:415,
+    S:[[20,137.9],[200,137.9],[300,133.8],[400,127.0],[450,117.2],[500,89.6],[550,51.7],[580,34.5]],
+    rough:0.045, tMax:580
+  },
+  "A335-P22": {
+    nome:"ASTM A335 Gr. P22 — aço-liga 2¼Cr-1Mo",
+    equiv:"vapor superaquecido",
+    rho:7800, E:205000, alpha:12.4e-6, tipo:"ferritico", smys:207, smts:415,
+    S:[[20,137.9],[200,137.9],[300,133.8],[400,127.0],[450,120.0],[500,96.5],[550,62.7],[600,35.9]],
+    rough:0.045, tMax:600
+  },
+  "A312-TP304": {
+    nome:"ASTM A312 TP304 — aço inoxidável austenítico",
+    equiv:"≈ ABNT NBR 15921 / UNS S30400",
+    rho:8000, E:195000, alpha:16.5e-6, tipo:"austenitico", smys:207, smts:515,
+    S:[[20,137.9],[100,115.1],[150,108.2],[200,103.4],[250,98.6],[300,94.5],[350,91.0],[400,88.3],[450,84.8],[500,81.4],[550,74.5]],
+    rough:0.015, tMax:550
+  },
+  "A312-TP316L": {
+    nome:"ASTM A312 TP316L — inoxidável austenítico com Mo",
+    equiv:"≈ UNS S31603 — resistente a cloretos",
+    rho:8000, E:195000, alpha:16.0e-6, tipo:"austenitico", smys:172, smts:485,
+    S:[[20,115.1],[100,101.4],[150,95.1],[200,90.3],[250,86.9],[300,83.4],[350,80.7],[400,78.6],[450,76.5],[500,74.5]],
+    rough:0.015, tMax:500
+  },
+  "A790-2205": {
+    nome:"ASTM A790 UNS S31803 — inoxidável duplex 2205",
+    equiv:"alta resistência e resistência a pites",
+    rho:7800, E:200000, alpha:13.7e-6, tipo:"austenitico", smys:450, smts:620,
+    S:[[20,206.8],[100,193.1],[150,186.2],[200,179.3],[250,175.8],[300,172.4]],
+    rough:0.015, tMax:300
+  },
+  "API5L-X42": {
+    nome:"API 5L Gr. X42 — tubo para dutos",
+    equiv:"SMYS 290 MPa",
+    rho:7850, E:203000, alpha:11.7e-6, tipo:"ferritico", smys:290, smts:414, pipeline:true,
+    S:[[20,145.0],[100,145.0],[200,145.0],[250,138.0],[300,127.0]],
+    rough:0.045, tMax:300
+  },
+  "API5L-X52": {
+    nome:"API 5L Gr. X52 — tubo para dutos",
+    equiv:"SMYS 359 MPa",
+    rho:7850, E:203000, alpha:11.7e-6, tipo:"ferritico", smys:359, smts:455, pipeline:true,
+    S:[[20,179.5],[100,179.5],[200,179.5],[250,170.0],[300,157.0]],
+    rough:0.045, tMax:300
+  }
+};
+
+/* ---------- Termoplásticos ----------
+   sigma: tensão de projeto (MPa) a 20 °C; fT: fator de redução por temperatura
+------------------------------------------------------------ */
+DB.plastics = {
+  "PVC-U": {
+    nome:"PVC-U rígido (junta soldável ou PBA)",
+    equiv:"NBR 5648 (predial) · NBR 5647 (adução) · NBR 5680 (dimensões)",
+    rho:1400, E:2900, alpha:80e-6, sigma:12.5, K:2.0,
+    fT:[[20,1.00],[25,0.88],[30,0.78],[35,0.68],[40,0.62],[45,0.50],[50,0.40],[60,0.00]],
+    rough:0.0015, tMax:50, sdr:[41,33,26,21,17,13.6,11]
+  },
+  "PP-R": {
+    nome:"Polipropileno copolímero random (PP-R)",
+    equiv:"NBR 15884 · ISO 15874",
+    rho:905, E:800, alpha:150e-6, sigma:5.0, K:1.5,
+    fT:[[20,1.00],[30,0.87],[40,0.74],[50,0.62],[60,0.50],[70,0.37],[80,0.26],[95,0.00]],
+    rough:0.007, tMax:80, sdr:[11,7.4,6,5,3.2]
+  },
+  "PEAD PE100": {
+    nome:"Polietileno de alta densidade PE100",
+    equiv:"NBR 15561 · ISO 4427",
+    rho:960, E:1000, alpha:200e-6, sigma:8.0, K:1.25,
+    fT:[[20,1.00],[30,0.87],[40,0.74],[50,0.62],[60,0.50],[70,0.00]],
+    rough:0.007, tMax:60, sdr:[41,33,26,21,17,13.6,11,9,7.4]
+  },
+  "PVC-C": {
+    nome:"PVC clorado (CPVC) para água quente",
+    equiv:"NBR 15884 · ASTM F441",
+    rho:1550, E:2900, alpha:62e-6, sigma:12.5, K:2.0,
+    fT:[[20,1.00],[30,0.90],[40,0.80],[50,0.70],[60,0.60],[70,0.48],[80,0.38],[95,0.20]],
+    rough:0.0015, tMax:95, sdr:[17,13.5,11]
+  }
+};
+
+/* ---------- Tubos de aço — ASME B36.10M / B36.19M ----------
+   [rótulo NPS, OD mm, {schedule: espessura mm}]
+------------------------------------------------------------ */
+DB.pipes = [
+  ['1/2"',   21.3, {"10S":2.11,"40":2.77,"80":3.73,"160":4.78,"XXS":7.47}],
+  ['3/4"',   26.7, {"10S":2.11,"40":2.87,"80":3.91,"160":5.56,"XXS":7.82}],
+  ['1"',     33.4, {"10S":2.77,"40":3.38,"80":4.55,"160":6.35,"XXS":9.09}],
+  ['1 1/4"', 42.2, {"10S":2.77,"40":3.56,"80":4.85,"160":6.35,"XXS":9.70}],
+  ['1 1/2"', 48.3, {"10S":2.77,"40":3.68,"80":5.08,"160":7.14,"XXS":10.15}],
+  ['2"',     60.3, {"10S":2.77,"40":3.91,"80":5.54,"160":8.74,"XXS":11.07}],
+  ['2 1/2"', 73.0, {"10S":3.05,"40":5.16,"80":7.01,"160":9.53,"XXS":14.02}],
+  ['3"',     88.9, {"10S":3.05,"40":5.49,"80":7.62,"160":11.13,"XXS":15.24}],
+  ['4"',    114.3, {"10S":3.05,"40":6.02,"80":8.56,"120":11.13,"160":13.49,"XXS":17.12}],
+  ['5"',    141.3, {"10S":3.40,"40":6.55,"80":9.53,"120":12.70,"160":15.88,"XXS":19.05}],
+  ['6"',    168.3, {"10S":3.40,"40":7.11,"80":10.97,"120":14.27,"160":18.26,"XXS":21.95}],
+  ['8"',    219.1, {"10S":3.76,"20":6.35,"30":7.04,"40":8.18,"60":10.31,"80":12.70,"100":15.09,"120":18.26,"140":20.62,"160":23.01,"XXS":22.23}],
+  ['10"',   273.0, {"10S":4.19,"20":6.35,"30":7.80,"40":9.27,"60":12.70,"80":15.09,"100":18.26,"120":21.44,"140":25.40,"160":28.58,"XXS":25.40}],
+  ['12"',   323.8, {"10S":4.57,"20":6.35,"30":8.38,"40":10.31,"60":14.27,"80":17.48,"100":21.44,"120":25.40,"140":28.58,"160":33.32,"XXS":25.40}],
+  ['14"',   355.6, {"10":6.35,"20":7.92,"30":9.53,"40":11.13,"60":15.09,"80":19.05,"100":23.83,"120":27.79,"140":31.75,"160":35.71}],
+  ['16"',   406.4, {"10":6.35,"20":7.92,"30":9.53,"40":12.70,"60":16.66,"80":21.44,"100":26.19,"120":30.96,"140":36.53,"160":40.49}],
+  ['18"',   457.2, {"10":6.35,"20":7.92,"30":11.13,"40":14.27,"60":19.05,"80":23.83,"100":29.36,"120":34.93,"140":39.67,"160":45.24}],
+  ['20"',   508.0, {"10":6.35,"20":9.53,"30":12.70,"40":15.09,"60":20.62,"80":26.19,"100":32.54,"120":38.10,"140":44.45,"160":50.01}],
+  ['24"',   610.0, {"10":6.35,"20":9.53,"30":14.27,"40":17.48,"60":24.61,"80":30.96,"100":38.89,"120":46.02,"140":52.37,"160":59.54}]
+];
+
+/* ---------- Diâmetros externos de termoplásticos (ISO/NBR) ---------- */
+DB.plasticDN = [20,25,32,40,50,63,75,90,110,125,140,160,180,200,225,250,280,315,355,400,450,500];
+
+/* ---------- Rugosidade absoluta ε (mm) ---------- */
+DB.roughness = [
+  ["Aço inoxidável / cobre / latão estirado", 0.0015],
+  ["PVC, PVC-C, PP-R, PEAD (novos)", 0.0015],
+  ["PP-R e PEAD após envelhecimento", 0.007],
+  ["Aço-carbono novo, sem costura", 0.045],
+  ["Aço-carbono soldado, novo", 0.09],
+  ["Aço galvanizado", 0.15],
+  ["Aço-carbono com corrosão leve (5 a 10 anos)", 0.20],
+  ["Ferro fundido revestido com cimento", 0.12],
+  ["Ferro fundido novo, sem revestimento", 0.26],
+  ["Aço com incrustação moderada", 0.50],
+  ["Concreto com acabamento liso", 0.30],
+  ["Concreto com acabamento rugoso", 3.00],
+  ["Aço com incrustação severa", 3.00]
+];
+
+/* ---------- Coeficientes de perda localizada K ---------- */
+DB.kfit = [
+  {id:"cur90r",  nome:"Curva 90° raio longo (R/D = 1,5)", k:0.60, def:4},
+  {id:"cur90c",  nome:"Curva 90° raio curto (R/D = 1,0)", k:0.90, def:0},
+  {id:"coto90",  nome:"Cotovelo 90° rosqueado",           k:1.30, def:0},
+  {id:"cur45",   nome:"Curva 45°",                        k:0.40, def:2},
+  {id:"tepass",  nome:"Tê — passagem direta",             k:0.40, def:2},
+  {id:"tederiv", nome:"Tê — saída de lado",               k:1.30, def:1},
+  {id:"vgav",    nome:"Válvula gaveta aberta",            k:0.20, def:2},
+  {id:"vglob",   nome:"Válvula globo aberta",             k:10.0, def:0},
+  {id:"vesf",    nome:"Válvula esfera aberta",            k:0.05, def:1},
+  {id:"vbor",    nome:"Válvula borboleta aberta",         k:0.45, def:0},
+  {id:"vret",    nome:"Válvula de retenção de portinhola",k:2.50, def:1},
+  {id:"vpe",     nome:"Válvula de pé com crivo",          k:1.75, def:0},
+  {id:"entr",    nome:"Entrada de borda viva",            k:0.50, def:1},
+  {id:"said",    nome:"Saída de tubulação",               k:1.00, def:1},
+  {id:"amp",     nome:"Ampliação gradual",                k:0.30, def:0},
+  {id:"red",     nome:"Redução gradual",                  k:0.15, def:0},
+  {id:"medv",    nome:"Medidor tipo Venturi",             k:2.50, def:0}
+];
+
+/* ---------- Referências normativas ---------- */
+DB.norms = [
+  ["ABNT NBR 6493","Emprego de cores para identificação de tubulações industriais"],
+  ["ABNT NBR 5580","Tubos de aço-carbono para usos comuns na condução de fluidos"],
+  ["ABNT NBR 5590","Tubos de aço-carbono com requisitos de qualidade para condução de fluidos"],
+  ["ABNT NBR 5648","Tubos e conexões de PVC-U com junta soldável para água fria predial"],
+  ["ABNT NBR 5647","Sistemas para adução e distribuição de água — tubos e conexões de PVC-U"],
+  ["ABNT NBR 5680","Dimensões de tubos de PVC rígido"],
+  ["ABNT NBR 15884","Sistemas de tubulações plásticas para água quente e fria — polipropileno"],
+  ["ABNT NBR 15561","Tubos de polietileno PE 80 e PE 100 para condução de água"],
+  ["ABNT NBR 8890","Tubo de concreto de seção circular para águas pluviais e esgotos sanitários"],
+  ["ABNT NBR ISO 4413","Sistemas hidráulicos — regras gerais e requisitos de segurança"],
+  ["ABNT NBR ISO 4414","Sistemas pneumáticos — regras gerais e requisitos de segurança"],
+  ["ASME B31.1","Power Piping — tubulações de vapor e água de caldeiras"],
+  ["ASME B31.3","Process Piping — tubulações de processo"],
+  ["ASME B36.10M","Welded and Seamless Wrought Steel Pipe — dimensões"],
+  ["ASME B36.19M","Stainless Steel Pipe — dimensões"],
+  ["ASME B16.5","Pipe Flanges and Flanged Fittings — classes de pressão"],
+  ["API 5L","Specification for Line Pipe"],
+  ["ISO 4065","Thermoplastics pipes — universal wall thickness table"],
+  ["ISO 12162","Thermoplastics materials for pipes — MRS e coeficiente de projeto C"],
+  ["ISO 15874","Plastics piping systems for hot and cold water — polypropylene"]
+];
+
+/* ---------- Classes de flange ASME B16.5 — grupo 1.1 (aço-carbono) ----------
+   pressão máxima admissível (bar) por temperatura (°C)
+------------------------------------------------------------ */
+DB.flangeCS = {
+  temps:[20,100,150,200,250,300,350,400,425],
+  cls:{
+    "150":[19.6,17.7,15.8,13.8,12.1,10.2,8.4,6.5,5.5],
+    "300":[51.1,46.6,45.1,43.8,41.9,39.8,37.6,34.7,28.8],
+    "600":[102.1,93.2,90.2,87.6,83.9,79.6,75.1,69.4,57.5],
+    "900":[153.2,139.8,135.2,131.4,125.8,119.5,112.7,104.2,86.3],
+    "1500":[255.3,233.0,225.4,219.0,209.7,199.1,187.8,173.6,143.8],
+    "2500":[425.5,388.3,375.6,365.0,349.5,331.8,313.0,289.3,239.7]
+  }
+};
+</script>
+<script>
+"use strict";
+/* ============================================================
+   TuboCalc — motor de cálculo
+   Todas as funções são puras e ficam expostas em window.TC
+   para permitir verificação automatizada.
+   ============================================================ */
+var TC = {};
+
+var G = 9.80665;          // m/s²
+var PATM = 1.01325;       // bar
+
+/* ---------- utilidades numéricas ---------- */
+TC.interp = function(tabela, x, col){
+  col = col || 1;
+  var n = tabela.length;
+  if (x <= tabela[0][0]) return tabela[0][col];
+  if (x >= tabela[n-1][0]) return tabela[n-1][col];
+  for (var i=0;i<n-1;i++){
+    var a = tabela[i], b = tabela[i+1];
+    if (x >= a[0] && x <= b[0]){
+      var f = (x - a[0]) / (b[0] - a[0]);
+      return a[col] + f * (b[col] - a[col]);
+    }
+  }
+  return tabela[n-1][col];
+};
+
+/* ---------- propriedades de fluidos ---------- */
+TC.waterProps = function(T){
+  return {
+    rho: TC.interp(DB.water, T, 1),
+    nu:  TC.interp(DB.water, T, 2),
+    pv:  TC.interp(DB.water, T, 3),
+    K:   TC.interp(DB.water, T, 4) * 1e9
+  };
+};
+
+TC.airProps = function(T, pAbsBar){
+  var rho0 = TC.interp(DB.air, T, 1);          // a 1 bar abs
+  var mu   = TC.interp(DB.air, T, 2) * 1e-6;   // Pa·s
+  var rho  = rho0 * (pAbsBar / 1.0);
+  return { rho: rho, mu: mu, nu: mu / rho * 1e6, pv: 0, K: 1.4 * pAbsBar * 1e5 };
+};
+
+TC.steamProps = function(pAbsBar, superheatK){
+  var Tsat = TC.interp(DB.steamSat, pAbsBar, 1);
+  var rho  = TC.interp(DB.steamSat, pAbsBar, 2);
+  if (superheatK && superheatK > 0){
+    rho = rho * (Tsat + 273.15) / (Tsat + 273.15 + superheatK);
+  }
+  return { rho: rho, Tsat: Tsat, mu: 13e-6, nu: 13e-6 / rho * 1e6, pv: pAbsBar, K: 1.3 * pAbsBar * 1e5 };
+};
+
+/* Viscosidade de óleo pela equação de Walther (ASTM D341):
+   log10(log10(v + 0,7)) = A − B·log10(T_K)                       */
+TC.oilProps = function(grade, T){
+  var o = DB.oils[grade] || DB.oils["ISO VG 46"];
+  var T1 = 40 + 273.15, T2 = 100 + 273.15, TK = T + 273.15;
+  var Z1 = Math.log10(Math.log10(o.v40 + 0.7));
+  var Z2 = Math.log10(Math.log10(o.v100 + 0.7));
+  var B  = (Z1 - Z2) / (Math.log10(T2) - Math.log10(T1));
+  var A  = Z1 + B * Math.log10(T1);
+  var Z  = A - B * Math.log10(TK);
+  var nu = Math.pow(10, Math.pow(10, Z)) - 0.7;
+  var rho = o.rho15 - 0.63 * (T - 15);   // contração térmica aproximada
+  return { rho: rho, nu: nu, pv: 0.0001, K: 1.6e9 };
+};
+
+/* ---------- fator de atrito ---------- */
+TC.swameeJain = function(Re, relRough){
+  if (Re <= 0) return 0;
+  var d = Math.log10(relRough / 3.7 + 5.74 / Math.pow(Re, 0.9));
+  return 0.25 / (d * d);
+};
+
+/* Colebrook–White resolvida por Newton–Raphson em x = 1/√f */
+TC.colebrook = function(Re, relRough){
+  if (Re <= 0) return 0;
+  if (Re < 2300) return 64 / Re;
+  var f = TC.swameeJain(Re, relRough);
+  var x = 1 / Math.sqrt(f);
+  for (var i=0;i<40;i++){
+    var arg = relRough/3.7 + 2.51*x/Re;
+    var F   = x + 2*Math.log10(arg);
+    var dF  = 1 + 2*(2.51/Re)/(arg*Math.LN10);
+    var xn  = x - F/dF;
+    if (!isFinite(xn)) break;
+    if (Math.abs(xn - x) < 1e-12){ x = xn; break; }
+    x = xn;
+  }
+  return 1/(x*x);
+};
+
+TC.frictionFactor = function(Re, relRough){
+  if (Re <= 0) return 0;
+  if (Re < 2300) return 64 / Re;
+  if (Re < 4000){
+    // interpolação entre laminar em 2300 e turbulento em 4000
+    var fl = 64/2300, ft = TC.colebrook(4000, relRough);
+    var w = (Re - 2300) / 1700;
+    return fl + w*(ft - fl);
+  }
+  return TC.colebrook(Re, relRough);
+};
+
+TC.regime = function(Re){
+  if (Re < 2300) return "Laminar";
+  if (Re < 4000) return "Transição";
+  return "Turbulento";
+};
+
+/* ---------- espessura de parede ---------- */
+/* Coeficiente Y — ASME B31.3 Tab. 304.1.1 */
+TC.coefY = function(tipo, T){
+  if (tipo === "austenitico"){
+    if (T <= 566) return 0.4;
+    if (T <= 593) return 0.5;
+    return 0.7;
+  }
+  if (T <= 482) return 0.4;
+  if (T <= 510) return 0.5;
+  return 0.7;
+};
+
+/* ASME B31.3 §304.1.2 (a):  t = P·D / (2·(S·E·W + P·Y)) */
+TC.thicknessB313 = function(o){
+  var P = o.P, D = o.D, S = o.S, E = o.E, W = (o.W === undefined ? 1 : o.W), Y = o.Y;
+  var den = 2 * (S*E*W + P*Y);
+  if (den <= 0) return NaN;
+  return P * D / den;
+};
+
+/* Barlow simplificada: t = P·D / (2·S·E) */
+TC.thicknessBarlow = function(o){
+  return o.P * o.D / (2 * o.S * o.E);
+};
+
+/* Pressão admissível a partir da espessura efetiva */
+TC.pressureFromT = function(o){
+  var t = o.t, D = o.D, S = o.S, E = o.E, W = (o.W === undefined ? 1 : o.W), Y = o.Y;
+  var den = D - 2*Y*t;
+  if (den <= 0) return Infinity;
+  return 2 * S * E * W * t / den;
+};
+
+/* Termoplásticos — ISO 4065 / ISO 12162: P = 2·σ·f(T) / (SDR − 1) */
+TC.plasticPressure = function(o){
+  var SDR = o.D / o.t;
+  return 2 * o.sigma * o.fT / (SDR - 1);
+};
+TC.plasticThickness = function(o){
+  var s = o.sigma * o.fT;
+  return o.P * o.D / (2*s + o.P);
+};
+
+/* ---------- hidráulica ---------- */
+TC.velocity = function(Q_m3s, Di_m){
+  var A = Math.PI * Di_m * Di_m / 4;
+  return A > 0 ? Q_m3s / A : 0;
+};
+
+TC.reynolds = function(v, Di_m, nu_cSt){
+  var nu = nu_cSt * 1e-6;              // m²/s
+  return nu > 0 ? v * Di_m / nu : 0;
+};
+
+/* Perda distribuída (Pa) */
+TC.dpDistributed = function(o){
+  return o.f * (o.L / o.Di) * (o.rho * o.v * o.v / 2);
+};
+
+/* Perda localizada (Pa) */
+TC.dpLocal = function(o){
+  return o.K * (o.rho * o.v * o.v / 2);
+};
+
+/* Escoamento compressível: itera a densidade média entre entrada e saída */
+TC.dpCompressible = function(o){
+  var p1 = o.p1Abs;                    // bar abs
+  var rho1 = o.rho1, v1 = o.v1;
+  var dp = 0, rhoM = rho1, vM = v1, f = o.f;
+  for (var i=0;i<25;i++){
+    var dpPa = f * (o.L/o.Di) * (rhoM * vM * vM / 2) + o.K * (rhoM*vM*vM/2);
+    var dpBar = dpPa/1e5;
+    var p2 = p1 - dpBar;
+    if (p2 <= 0.05) return { dpBar: NaN, erro:"Perda excede a pressão disponível" };
+    var pM = (p1 + p2)/2;
+    var rhoNew = rho1 * pM / p1;
+    var vNew = v1 * rho1 / rhoNew;
+    if (Math.abs(dpBar - dp) < 1e-9) { dp = dpBar; rhoM = rhoNew; vM = vNew; break; }
+    dp = dpBar; rhoM = rhoNew; vM = vNew;
+  }
+  return { dpBar: dp, rhoMedio: rhoM, vMedio: vM, vSaida: v1*rho1/(rho1*(p1-dp)/p1) };
+};
+
+/* Potência hidráulica */
+TC.pumpPower = function(Q_m3s, dpPa, eff){
+  var Ph = Q_m3s * dpPa;               // W
+  return { hidraulica: Ph/1000, eixo: (eff>0 ? Ph/eff/1000 : NaN) };
+};
+
+/* ---------- NPSH e cavitação ---------- */
+TC.npshDisponivel = function(o){
+  // (p_surf − p_v)/(ρ·g) + z − h_f
+  var termoP = (o.pSurfBar - o.pvBar) * 1e5 / (o.rho * G);
+  return termoP + o.z - o.hf;
+};
+
+TC.sigmaThoma = function(o){
+  var din = o.rho * o.v * o.v / 2;
+  if (din <= 0) return Infinity;
+  return (o.pAbsBar - o.pvBar) * 1e5 / din;
+};
+
+/* ---------- transiente hidráulico ---------- */
+/* Celeridade de Korteweg */
+TC.celeridade = function(o){
+  var K = o.K, rho = o.rho, E = o.E_Pa, D = o.Di_m, e = o.e_m, c1 = (o.c1===undefined?1:o.c1);
+  var num = K / rho;
+  var den = 1 + (K/E) * (D/e) * c1;
+  return Math.sqrt(num/den);
+};
+
+/* Joukowsky: ΔH = a·Δv/g  ·  Michaud: ΔH = 2·L·Δv/(g·tc) */
+TC.golpeAriete = function(o){
+  var a = o.a, dv = o.dv, L = o.L, tc = o.tc;
+  var tCrit = 2*L/a;
+  var dhJouk = a*dv/G;
+  var dhMich = (tc>0) ? 2*L*dv/(G*tc) : Infinity;
+  var rapido = tc <= tCrit;
+  return {
+    tCritico: tCrit,
+    manobra: rapido ? "rápida" : "lenta",
+    dhJoukowsky: dhJouk,
+    dhMichaud: dhMich,
+    dh: rapido ? dhJouk : Math.min(dhJouk, dhMich)
+  };
+};
+
+/* ---------- dilatação e apoios ---------- */
+TC.dilatacao = function(o){
+  return o.alpha * o.L * o.dT * 1000;     // mm
+};
+
+TC.tensaoBloqueada = function(o){
+  return o.E_MPa * o.alpha * Math.abs(o.dT);   // MPa
+};
+
+/* Lira / perna guiada: L = √(3·E·D·Δ / σ_adm)  [E MPa, D mm, Δ mm → L mm] */
+TC.pernaGuiada = function(o){
+  return Math.sqrt(3 * o.E_MPa * o.D_mm * o.delta_mm / o.sigma_MPa) / 1000;  // m
+};
+
+/* Vão entre apoios — viga contínua
+   tensão:  M = w·L²/10  →  L = √(10·Z·σ/w)
+   flecha:  δ = w·L⁴/(185·E·I)  →  L = (185·E·I·δ/w)^0,25            */
+TC.vaoApoios = function(o){
+  var Lsigma = Math.sqrt(10 * o.Z_m3 * o.sigma_Pa / o.w_Nm);
+  var Ldef   = Math.pow(185 * o.E_Pa * o.I_m4 * o.delta_m / o.w_Nm, 0.25);
+  return { porTensao: Lsigma, porFlecha: Ldef, adotado: Math.min(Lsigma, Ldef) };
+};
+
+/* ---------- propriedades de seção ---------- */
+TC.secao = function(De_mm, e_mm){
+  var Di = De_mm - 2*e_mm;
+  var De = De_mm;
+  var A  = Math.PI*(De*De - Di*Di)/4;                  // mm²
+  var Af = Math.PI*Di*Di/4;                            // mm²
+  var I  = Math.PI*(Math.pow(De,4) - Math.pow(Di,4))/64;  // mm⁴
+  var Z  = I/(De/2);                                   // mm³
+  var r  = Math.sqrt(I/A);                             // mm
+  return {Di:Di, A:A, Af:Af, I:I, Z:Z, r:r, SDR: De/e_mm};
+};
+
+if (typeof window !== "undefined"){ window.TC = TC; window.DB = DB; }
+</script>
+<script>
+"use strict";
+/* ============================================================
+   TuboCalc — interface e integração
+   ============================================================ */
+var $  = function(s){ return document.getElementById(s); };
+var el = function(s){ return document.querySelector(s); };
+
+/* ---------- formatação pt-BR ---------- */
+function num(s){
+  if (typeof s === "number") return s;
+  s = String(s == null ? "" : s).trim();
+  if (!s) return NaN;
+  if (s.indexOf(",") >= 0) s = s.replace(/\./g,"").replace(",",".");
+  return parseFloat(s);
+}
+function fmt(x, d){
+  d = (d === undefined ? 2 : d);
+  if (x === null || x === undefined || !isFinite(x)) return "—";
+  return x.toLocaleString("pt-BR",{minimumFractionDigits:d, maximumFractionDigits:d});
+}
+function sig(x, n){
+  if (!isFinite(x)) return "—";
+  var a = Math.abs(x);
+  if (a === 0) return "0";
+  if (a >= 1000) return fmt(x,0);
+  if (a >= 100) return fmt(x,1);
+  if (a >= 1) return fmt(x,2);
+  if (a >= 0.01) return fmt(x,3);
+  return fmt(x,4);
+}
+function hex2rgba(h, a){
+  var r = parseInt(h.slice(1,3),16), g = parseInt(h.slice(3,5),16), b = parseInt(h.slice(5,7),16);
+  return "rgba("+r+","+g+","+b+","+a+")";
+}
+function esc(s){
+  return String(s).replace(/[&<>"]/g, function(c){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];
+  });
+}
+function toast(msg){
+  var t = $("toast"); t.textContent = msg; t.classList.add("is-on");
+  clearTimeout(toast._t); toast._t = setTimeout(function(){ t.classList.remove("is-on"); }, 2200);
+}
+
+/* ---------- linhas e selos ---------- */
+function row(label, value, sub, major){
+  return '<div class="row'+(major?" row--major":"")+'"><div class="row__l">'+label+
+         (sub?'<small>'+sub+'</small>':'')+'</div><div class="row__v">'+value+'</div></div>';
+}
+function stamp(kind, text){
+  return '<span class="st st--'+kind+'">'+text+'</span>';
+}
+function u(txt){ return '<span class="unit">'+txt+'</span>'; }
+
+/* ============================================================
+   POPULAÇÃO DE CONTROLES
+   ============================================================ */
+function fillSelect(id, items, valueKey, labelKey, selected){
+  var s = $(id), html = "";
+  for (var i=0;i<items.length;i++){
+    var it = items[i];
+    var v = (typeof it === "object") ? it[valueKey] : it;
+    var l = (typeof it === "object") ? it[labelKey] : it;
+    html += '<option value="'+esc(v)+'"'+(String(v)===String(selected)?" selected":"")+'>'+esc(l)+'</option>';
+  }
+  s.innerHTML = html;
+}
+
+function initSelects(){
+  var fl = [];
+  for (var k in DB.fluids) fl.push({v:k, l:DB.fluids[k].nome});
+  fillSelect("fluid", fl, "v", "l", "agua_fria");
+
+  var pipes = DB.pipes.map(function(p,i){ return {v:i, l:p[0]+"  ·  De "+fmt(p[1],1)+" mm"}; });
+  fillSelect("nps", pipes, "v", "l", 8);
+
+  fillSelect("pDn", DB.plasticDN.map(function(d){ return {v:d, l:"DN "+d+" mm"}; }), "v","l", 110);
+
+  refreshMaterialList();
+  refreshSchedules();
+  refreshSDR();
+  renderKList();
+}
+
+function refreshMaterialList(){
+  var fam = $("matFam").value;
+  var src = (fam === "steel") ? DB.steels : DB.plastics;
+  var items = [];
+  for (var k in src) items.push({v:k, l:src[k].nome});
+  fillSelect("mat", items, "v", "l", fam === "steel" ? "A106-B" : "PVC-U");
+  $("steelDims").style.display  = (fam === "steel") ? "" : "none";
+  $("plasticDims").style.display = (fam === "steel") ? "none" : "";
+}
+
+function refreshSchedules(){
+  var idx = parseInt($("nps").value,10);
+  var p = DB.pipes[idx];
+  if (!p) return;
+  var keys = Object.keys(p[2]);
+  var cur = $("sch").value;
+  fillSelect("sch", keys.map(function(k){
+    return {v:k, l:(k==="XXS"?"XXS":(/S$/.test(k)?"SCH "+k:"SCH "+k))+"  ·  "+fmt(p[2][k],2)+" mm"};
+  }), "v","l", keys.indexOf(cur)>=0 ? cur : (p[2]["40"] ? "40" : keys[0]));
+}
+
+function refreshSDR(){
+  var m = DB.plastics[$("mat").value];
+  if (!m) return;
+  var cur = $("pSdr").value;
+  fillSelect("pSdr", m.sdr.map(function(s){ return {v:s, l:"SDR "+String(s).replace(".",",")}; }),
+             "v","l", m.sdr.indexOf(parseFloat(cur))>=0 ? cur : m.sdr[Math.floor(m.sdr.length/2)]);
+}
+
+function renderKList(){
+  var html = "";
+  for (var i=0;i<DB.kfit.length;i++){
+    var f = DB.kfit[i];
+    html += '<div style="display:grid;grid-template-columns:1fr 62px;gap:8px;align-items:center;margin-bottom:5px">'+
+            '<label for="k_'+f.id+'" style="font-size:11.5px;color:var(--ink-2);line-height:1.25">'+esc(f.nome)+
+            ' <span class="unit">K='+String(f.k).replace(".",",")+'</span></label>'+
+            '<input type="text" id="k_'+f.id+'" value="'+f.def+'" inputmode="numeric" '+
+            'style="padding:4px 6px;text-align:center"></div>';
+  }
+  $("kList").innerHTML = html;
+  for (var j=0;j<DB.kfit.length;j++){
+    $("k_"+DB.kfit[j].id).addEventListener("input", schedule);
+  }
+}
+
+/* ============================================================
+   LEITURA DE ESTADO
+   ============================================================ */
+function readState(){
+  var s = {};
+  s.projName = $("projName").value;
+  s.projDesc = $("projDesc").value;
+  s.fluid    = $("fluid").value;
+  s.press    = num($("press").value);
+  s.temp     = num($("temp").value);
+  s.flow     = num($("flow").value);
+  s.flowUnit = $("flowUnit").value;
+  s.oilGrade = $("oilGrade") ? $("oilGrade").value : "ISO VG 46";
+  s.autoProps= $("autoProps").checked;
+  s.rho      = num($("rho").value);
+  s.nu       = num($("nu").value);
+  s.matFam   = $("matFam").value;
+  s.mat      = $("mat").value;
+  s.nps      = parseInt($("nps").value,10);
+  s.sch      = $("sch").value;
+  s.pDn      = num($("pDn").value);
+  s.pSdr     = num($("pSdr").value);
+  s.customDim= $("customDim").checked;
+  s.od       = num($("od").value);
+  s.th       = num($("th").value);
+  s.len      = num($("len").value);
+  s.qty      = num($("qty").value);
+  s.corr     = num($("corr").value);
+  s.millTol  = num($("millTol").value);
+  s.jointE   = parseFloat($("jointE").value);
+  s.rough    = num($("rough").value);
+  s.dpLimUnit= $("dpLimUnit").value;
+  s.dpLim    = num($("dpLim").value);
+  s.autoV    = $("autoV").checked;
+  s.vMin     = num($("vMin").value);
+  s.vMax     = num($("vMax").value);
+  s.useK     = $("useK").checked;
+  s.kExtra   = num($("kExtra").value);
+  s.kCount   = {};
+  for (var i=0;i<DB.kfit.length;i++){
+    var e = $("k_"+DB.kfit[i].id);
+    s.kCount[DB.kfit[i].id] = e ? (num(e.value)||0) : 0;
+  }
+  s.pSurf  = num($("pSurf").value);
+  s.zSuc   = num($("zSuc").value);
+  s.lSuc   = num($("lSuc").value);
+  s.npshr  = num($("npshr").value);
+  s.tClose = num($("tClose").value);
+  s.pumpEff= num($("pumpEff").value);
+  s.tInst  = num($("tInst").value);
+  s.insulW = num($("insulW").value);
+  s.defLim = num($("defLim").value);
+  return s;
+}
+
+function applyState(s){
+  var set = function(id,v){ var e=$(id); if(e!==null && v!==undefined && v!==null){
+    if (e.type==="checkbox") e.checked = !!v; else e.value = v; } };
+  for (var k in s){
+    if (k === "kCount"){
+      for (var f in s.kCount) set("k_"+f, s.kCount[f]);
+    } else set(k, s[k]);
+  }
+  refreshMaterialList(); $("mat").value = s.mat || $("mat").value;
+  refreshSchedules(); $("sch").value = s.sch || $("sch").value;
+  refreshSDR(); if (s.pSdr) $("pSdr").value = s.pSdr;
+  if (s.nps !== undefined) $("nps").value = s.nps;
+  recalc();
+}
+
+/* ============================================================
+   MODELO
+   ============================================================ */
+function build(){
+  var s = readState();
+  var m = {s:s, avisos:[], erros:[]};
+  var F = DB.fluids[s.fluid] || DB.fluids.agua_fria;
+  m.F = F;
+
+  /* --- material --- */
+  var isSteel = (s.matFam === "steel");
+  m.isSteel = isSteel;
+  m.mat = isSteel ? DB.steels[s.mat] : DB.plastics[s.mat];
+  if (!m.mat){ m.mat = isSteel ? DB.steels["A106-B"] : DB.plastics["PVC-U"]; }
+
+  /* --- geometria --- */
+  var De, e, origem;
+  if (s.customDim){
+    De = s.od; e = s.th; origem = "informado manualmente";
+  } else if (isSteel){
+    var p = DB.pipes[s.nps] || DB.pipes[8];
+    De = p[1]; e = p[2][s.sch] || p[2]["40"];
+    origem = "ASME B36.10M · " + p[0] + " SCH " + s.sch;
+    m.npsLabel = p[0];
+  } else {
+    De = s.pDn; e = De / s.pSdr;
+    origem = "ISO 4065 · DN " + De + " SDR " + String(s.pSdr).replace(".",",");
+    m.npsLabel = "DN "+De;
+  }
+  m.De = De; m.e = e; m.origem = origem;
+  if (!(De > 0) || !(e > 0) || e >= De/2){
+    m.erros.push("Geometria inválida: verifique diâmetro externo e espessura.");
+    return m;
+  }
+  var sec = TC.secao(De, e);
+  m.sec = sec;
+  m.Di_m = sec.Di/1000;
+
+  /* --- pressões --- */
+  m.pGauge = isFinite(s.press) ? s.press : 0;
+  m.pAbs   = m.pGauge + PATM;
+
+  /* --- propriedades do fluido --- */
+  var pr;
+  if (F.tipo === "vapor"){
+    var sh = 0;
+    var Tsat = TC.interp(DB.steamSat, m.pAbs, 1);
+    if (s.fluid === "vapor_sup") sh = Math.max(0, s.temp - Tsat);
+    pr = TC.steamProps(m.pAbs, sh);
+    m.Tsat = Tsat; m.superheat = sh;
+  } else if (F.tipo === "gas"){
+    pr = TC.airProps(s.temp, m.pAbs);
+  } else if (F.oil){
+    pr = TC.oilProps(s.oilGrade || "ISO VG 46", s.temp);
+  } else {
+    pr = TC.waterProps(s.temp);
+  }
+  if (!s.autoProps){
+    if (isFinite(s.rho) && s.rho>0) pr.rho = s.rho;
+    if (isFinite(s.nu)  && s.nu >0) pr.nu  = s.nu;
+  }
+  m.pr = pr;
+
+  /* --- vazão --- */
+  var Q; // m³/s nas condições de operação
+  var q = isFinite(s.flow) ? s.flow : 0;
+  switch(s.flowUnit){
+    case "m3h":   Q = q/3600; break;
+    case "lmin":  Q = q/60000; break;
+    case "ls":    Q = q/1000; break;
+    case "m3min": // ANR → condições de operação
+      Q = q/60 * (PATM/m.pAbs) * ((s.temp+273.15)/293.15); m.anr = true; break;
+    case "kgh":   Q = (q/3600)/pr.rho; break;
+    default:      Q = q/3600;
+  }
+  m.Q = Q;
+  m.mdot = Q * pr.rho;                       // kg/s
+
+  /* --- velocidade e Reynolds --- */
+  m.v  = TC.velocity(Q, m.Di_m);
+  m.Re = TC.reynolds(m.v, m.Di_m, pr.nu);
+  m.rough = isFinite(s.rough) && s.rough>0 ? s.rough : m.mat.rough;
+  m.relRough = m.rough / sec.Di;
+  m.f  = TC.frictionFactor(m.Re, m.relRough);
+  m.regime = TC.regime(m.Re);
+
+  /* --- singularidades --- */
+  var Ktot = 0, kitems = [];
+  if (s.useK){
+    for (var i=0;i<DB.kfit.length;i++){
+      var ft = DB.kfit[i], n = s.kCount[ft.id]||0;
+      if (n>0){ Ktot += n*ft.k; kitems.push({nome:ft.nome, k:ft.k, n:n, tot:n*ft.k}); }
+    }
+    if (isFinite(s.kExtra) && s.kExtra>0){ Ktot += s.kExtra; kitems.push({nome:"Coeficiente adicional", k:s.kExtra, n:1, tot:s.kExtra}); }
+  }
+  m.K = Ktot; m.kitems = kitems;
+
+  /* --- perda de carga --- */
+  var L = isFinite(s.len) ? s.len : 0;
+  m.L = L;
+  if (F.comp){
+    var cp = TC.dpCompressible({p1Abs:m.pAbs, rho1:pr.rho, v1:m.v, f:m.f, L:L, Di:m.Di_m, K:Ktot});
+    m.dpTotalBar = cp.dpBar;
+    m.dpDistBar  = m.dpTotalBar * (Ktot>0 ? (m.f*(L/m.Di_m))/(m.f*(L/m.Di_m)+Ktot) : 1);
+    m.dpLocalBar = m.dpTotalBar - m.dpDistBar;
+    m.vSaida = cp.vSaida;
+  } else {
+    var dpD = TC.dpDistributed({f:m.f, L:L, Di:m.Di_m, rho:pr.rho, v:m.v});
+    var dpK = TC.dpLocal({K:Ktot, rho:pr.rho, v:m.v});
+    m.dpDistBar  = dpD/1e5;
+    m.dpLocalBar = dpK/1e5;
+    m.dpTotalBar = (dpD+dpK)/1e5;
+  }
+  m.dpPa    = m.dpTotalBar*1e5;
+  m.dpMca   = m.dpPa/(pr.rho*G);
+  m.dpBar100= L>0 ? m.dpTotalBar/L*100 : 0;
+  m.dpMca100= L>0 ? m.dpMca/L*100 : 0;
+  m.Leq     = m.f>0 ? Ktot*m.Di_m/m.f : 0;
+
+  /* limite de perda */
+  var lim = isFinite(s.dpLim)? s.dpLim : 0;
+  if (s.dpLimUnit === "pct"){ m.dpLimBar = m.pAbs*lim/100; m.dpLimTxt = fmt(lim,1)+" % de "+fmt(m.pAbs,3)+" bar abs"; }
+  else if (s.dpLimUnit === "bar100"){ m.dpLimBar = lim*L/100; m.dpLimTxt = fmt(lim,3)+" bar/100 m"; }
+  else { m.dpLimBar = lim*L/100*pr.rho*G/1e5; m.dpLimTxt = fmt(lim,1)+" m.c.a./100 m"; }
+
+  /* --- faixa de velocidade --- */
+  if (s.autoV){ m.vMin = F.vRec[0]; m.vMax = F.vRec[1]; }
+  else { m.vMin = isFinite(s.vMin)?s.vMin:F.vRec[0]; m.vMax = isFinite(s.vMax)?s.vMax:F.vRec[1]; }
+
+  /* --- potência --- */
+  var pw = TC.pumpPower(Q, m.dpPa, (isFinite(s.pumpEff)?s.pumpEff:70)/100);
+  m.powH = pw.hidraulica; m.powE = pw.eixo;
+
+  /* --- espessura / pressão admissível --- */
+  var Pmpa = m.pGauge/10;                         // bar → MPa
+  m.Pmpa = Pmpa;
+  // A tolerância negativa de laminação aplica-se a tubos de aço. Em termoplásticos
+  // (ISO 11922) o desvio dimensional é positivo, logo a espessura nominal já é a mínima.
+  var tol = isSteel ? (isFinite(s.millTol)?s.millTol:0)/100 : 0;
+  m.eEfetiva = e*(1-tol);                          // espessura mínima de fabricação
+  var c = isFinite(s.corr)?s.corr:0;
+  m.c = c;
+
+  if (isSteel){
+    m.S  = TC.interp(m.mat.S, s.temp, 1);
+    m.Y  = TC.coefY(m.mat.tipo, s.temp);
+    m.tB313   = TC.thicknessB313({P:Pmpa, D:De, S:m.S, E:s.jointE, W:1, Y:m.Y});
+    m.tBarlow = TC.thicknessBarlow({P:Pmpa, D:De, S:m.S, E:s.jointE});
+    m.tm      = m.tB313 + c;
+    m.tNominal= m.tm/(1-tol);
+    m.pAdmMPa = TC.pressureFromT({t:Math.max(0,m.eEfetiva-c), D:De, S:m.S, E:s.jointE, W:1, Y:m.Y});
+    m.tMax    = m.mat.tMax;
+    if (m.tB313 >= De/6) m.avisos.push("Espessura calculada ≥ De/6: aplica-se o item 304.1.2(b) da ASME B31.3, com coeficiente Y modificado e verificação específica.");
+  } else {
+    m.fT = TC.interp(m.mat.fT, s.temp, 1);
+    m.S  = m.mat.sigma*m.fT;
+    m.tB313 = TC.plasticThickness({P:Pmpa, D:De, sigma:m.mat.sigma, fT:m.fT});
+    m.tBarlow = m.tB313;
+    m.tm = m.tB313 + c;
+    m.tNominal = m.tm;
+    m.pAdmMPa = (m.fT>0) ? TC.plasticPressure({D:De, t:Math.max(0,e-c), sigma:m.mat.sigma, fT:m.fT}) : 0;
+    m.tMax = m.mat.tMax;
+    if (m.fT <= 0) m.erros.push("Temperatura acima do limite do material: tensão de projeto nula.");
+  }
+  m.pAdmBar = m.pAdmMPa*10;
+  m.FS = m.pGauge>0 ? m.pAdmBar/m.pGauge : Infinity;
+  m.margemParede = m.tm>0 ? (m.eEfetiva-m.tm)/m.tm*100 : 0;
+
+  /* --- massa --- */
+  m.massLin  = sec.A/1e6 * m.mat.rho;              // kg/m
+  m.massFluid= sec.Af/1e6 * pr.rho;                // kg/m
+  m.massTot  = m.massLin * L * (isFinite(s.qty)?s.qty:1);
+  m.volFluid = sec.Af/1e6 * L * (isFinite(s.qty)?s.qty:1) * 1000;  // litros
+
+  /* --- NPSH e cavitação (líquidos) --- */
+  if (F.tipo === "liquido"){
+    var hfSuc = (L>0) ? m.dpMca * ((isFinite(s.lSuc)?s.lSuc:0)/L) : 0;
+    m.hfSuc = hfSuc;
+    m.npshd = TC.npshDisponivel({pSurfBar:(isFinite(s.pSurf)?s.pSurf:PATM), pvBar:pr.pv,
+                                 rho:pr.rho, z:(isFinite(s.zSuc)?s.zSuc:0), hf:hfSuc});
+    m.npshr = isFinite(s.npshr)?s.npshr:0;
+    m.margemNpsh = m.npshd - m.npshr;
+    m.sigma = TC.sigmaThoma({pAbsBar:m.pAbs, pvBar:pr.pv, rho:pr.rho, v:m.v});
+  }
+
+  /* --- transiente --- */
+  var Emat = m.isSteel ? m.mat.E*1e6 : m.mat.E*1e6;   // MPa → Pa
+  m.a = TC.celeridade({K:pr.K, rho:pr.rho, E_Pa:Emat, Di_m:m.Di_m, e_m:e/1000, c1:1});
+  m.ariete = TC.golpeAriete({a:m.a, dv:m.v, L:L, tc:(isFinite(s.tClose)?s.tClose:1)});
+  m.dpAriete = m.ariete.dh*pr.rho*G/1e5;              // bar
+  m.pMaxTrans = m.pGauge + m.dpAriete;
+
+  /* --- dilatação e apoios --- */
+  var dT = s.temp - (isFinite(s.tInst)?s.tInst:20);
+  m.dT = dT;
+  m.dL = TC.dilatacao({alpha:m.mat.alpha, L:L, dT:dT});
+  m.sigmaBloq = TC.tensaoBloqueada({E_MPa:m.mat.E, alpha:m.mat.alpha, dT:dT});
+  m.sigmaAdm  = m.isSteel ? m.S : m.mat.sigma*(m.fT||1);
+  m.perna = TC.pernaGuiada({E_MPa:m.mat.E, D_mm:De, delta_mm:Math.abs(m.dL), sigma_MPa:m.sigmaAdm});
+
+  var wNm = (m.massLin + m.massFluid + (isFinite(s.insulW)?s.insulW:0))*G;   // N/m
+  m.w = wNm;
+  m.vao = TC.vaoApoios({
+    Z_m3: sec.Z/1e9, sigma_Pa: (m.isSteel?15.9e6:3e6), w_Nm: wNm,
+    E_Pa: m.mat.E*1e6, I_m4: sec.I/1e12, delta_m: (isFinite(s.defLim)?s.defLim:3)/1000
+  });
+
+  /* --- flange (aço) --- */
+  if (m.isSteel){
+    m.flange = null;
+    var cls = ["150","300","600","900","1500","2500"];
+    for (var ci=0; ci<cls.length; ci++){
+      var tabela = DB.flangeCS.temps.map(function(t,ii){ return [t, DB.flangeCS.cls[cls[ci]][ii]]; });
+      var pmax = TC.interp(tabela, s.temp, 1);
+      if (pmax >= m.pGauge){ m.flange = {classe:cls[ci], pmax:pmax}; break; }
+    }
+  }
+  return m;
+}
+
+/* ============================================================
+   RENDERIZAÇÃO
+   ============================================================ */
+var M = null;
+
+function recalc(){
+  M = build();
+  applyAccent();
+  renderKpis();
+  renderSecao();
+  renderPressao();
+  renderHidraulica();
+  renderNpsh();
+  renderTransiente();
+  renderFlex();
+  renderOtim();
+  renderConformidade();
+  renderTabelas();
+  renderRelatorio();
+  syncDerived();
+}
+
+function syncDerived(){
+  if (!M || !M.sec) return;
+  if (!$("customDim").checked){
+    $("od").value = fmt(M.De,1);
+    $("th").value = fmt(M.e,2);
+  }
+  $("od").readOnly = !$("customDim").checked;
+  $("th").readOnly = !$("customDim").checked;
+  if ($("autoProps").checked){
+    $("rho").value = fmt(M.pr.rho, M.pr.rho<10?3:1);
+    $("nu").value  = fmt(M.pr.nu, 3);
+  }
+  $("rho").readOnly = $("autoProps").checked;
+  $("nu").readOnly  = $("autoProps").checked;
+  if ($("autoV").checked){ $("vMin").value = fmt(M.vMin,1); $("vMax").value = fmt(M.vMax,1); }
+  $("vMin").readOnly = $("autoV").checked;
+  $("vMax").readOnly = $("autoV").checked;
+  if (!$("rough").value || $("rough").dataset.auto === "1"){
+    $("rough").value = fmt(M.rough,4); $("rough").dataset.auto = "1";
+  }
+  var oil = $("oilGradeField"); if (oil) oil.style.display = M.F.oil ? "" : "none";
+  $("millTol").disabled = !M.isSteel;
+  $("millTol").title = M.isSteel ? "" : "Não aplicável a termoplásticos: o desvio dimensional da ISO 11922 é positivo.";
+  $("fluidHint").textContent = M.F.nota + "  [" + M.F.ref + "]";
+  $("matHint").textContent = (M.mat.equiv||"") + (M.isSteel ? "  ·  T máx "+M.mat.tMax+" °C" : "  ·  T máx "+M.mat.tMax+" °C");
+}
+
+function applyAccent(){
+  var c = DB.nbr6493[M.F.cor];
+  document.documentElement.style.setProperty("--accent", c.hex);
+  document.documentElement.style.setProperty("--accent-soft", hex2rgba(c.hex, 0.13));
+  $("fluidChip").style.background = c.hex;
+  $("fluidColorName").textContent = c.nome;
+}
+
+/* ---------- KPIs ---------- */
+function renderKpis(){
+  if (M.erros.length){
+    $("kpis").innerHTML = '<div class="kpi kpi--fail" style="grid-column:1/-1"><div class="eyebrow">Entrada inválida</div>'+
+      '<div class="kpi__v" style="font-size:15px">'+esc(M.erros[0])+'</div></div>';
+    return;
+  }
+  function cls(ok,warn){ return ok ? "kpi--ok" : (warn ? "kpi--warn" : "kpi--fail"); }
+  var vOk = M.v>=M.vMin && M.v<=M.vMax;
+  var vWarn = M.v<=M.vMax*1.15 && M.v>=M.vMin*0.85;
+  var dpOk = M.dpTotalBar <= M.dpLimBar;
+  var dpWarn = M.dpTotalBar <= M.dpLimBar*1.15;
+  var tOk = M.eEfetiva >= M.tm, tWarn = M.eEfetiva >= M.tm*0.98;
+  var fsOk = M.FS >= (M.isSteel?1.0:1.0);
+
+  $("kpis").innerHTML =
+    '<div class="kpi '+cls(vOk,vWarn)+'"><div class="eyebrow">Velocidade</div>'+
+      '<div class="kpi__v">'+fmt(M.v,2)+u("m/s")+'</div>'+
+      '<div class="kpi__t">faixa '+fmt(M.vMin,1)+' – '+fmt(M.vMax,1)+' m/s</div></div>'+
+    '<div class="kpi '+cls(dpOk,dpWarn)+'"><div class="eyebrow">Perda de carga total</div>'+
+      '<div class="kpi__v">'+sig(M.dpTotalBar)+u("bar")+'</div>'+
+      '<div class="kpi__t">'+fmt(M.dpMca,2)+' m.c.a. · limite '+sig(M.dpLimBar)+' bar</div></div>'+
+    '<div class="kpi '+cls(tOk,tWarn)+'"><div class="eyebrow">Margem de parede</div>'+
+      '<div class="kpi__v">'+(isFinite(M.margemParede)?fmt(M.margemParede,1):"—")+u("%")+'</div>'+
+      '<div class="kpi__t">e útil '+fmt(M.eEfetiva,2)+' mm · requerida '+fmt(M.tm,2)+' mm</div></div>'+
+    '<div class="kpi '+cls(fsOk && M.FS>=1.5, fsOk)+'"><div class="eyebrow">Pressão admissível</div>'+
+      '<div class="kpi__v">'+(isFinite(M.pAdmBar)?fmt(M.pAdmBar,1):"—")+u("bar")+'</div>'+
+      '<div class="kpi__t">projeto '+fmt(M.pGauge,1)+' bar · relação '+(isFinite(M.FS)?fmt(M.FS,2):"∞")+'</div></div>';
+}
+
+/* ---------- Aba Seção ---------- */
+function renderSecao(){
+  if (M.erros.length){ $("drawWall").innerHTML=""; return; }
+  var s = M.sec;
+  $("secRef").textContent = M.origem;
+  $("geomRows").innerHTML =
+    row("Diâmetro externo <b>De</b>", fmt(M.De,2)+u("mm")) +
+    row("Diâmetro interno <b>Di</b>", fmt(s.Di,2)+u("mm")) +
+    row("Espessura nominal <b>e</b>", fmt(M.e,2)+u("mm")) +
+    row("Espessura mínima de fabricação", fmt(M.eEfetiva,2)+u("mm"), "descontada a tolerância de "+fmt(M.s.millTol,1)+" %") +
+    row("Relação De/e (SDR)", fmt(s.SDR,1)) +
+    row("Área de parede", fmt(s.A,1)+u("mm²")) +
+    row("Área de escoamento", fmt(s.Af,1)+u("mm²")) +
+    row("Momento de inércia <b>I</b>", sig(s.I/1e4)+u("cm⁴")) +
+    row("Módulo de resistência <b>Z</b>", sig(s.Z/1e3)+u("cm³")) +
+    row("Raio de giração <b>r</b>", fmt(s.r,2)+u("mm"));
+
+  $("massRows").innerHTML =
+    row("Massa linear do tubo vazio", fmt(M.massLin,2)+u("kg/m")) +
+    row("Massa do fluido contido", fmt(M.massFluid,2)+u("kg/m")) +
+    (M.s.insulW>0 ? row("Isolamento térmico", fmt(M.s.insulW,2)+u("kg/m")) : "") +
+    row("Carga distribuída total", fmt(M.w,1)+u("N/m"), "tubo + fluido + isolamento") +
+    row("Volume de fluido na linha", fmt(M.volFluid,1)+u("L")) +
+    row("Massa total do tubo", fmt(M.massTot,1)+u("kg"), fmt(M.L,1)+" m × "+fmt(M.s.qty,0)+" linha(s)", true);
+
+  $("longRef").textContent = fmt(M.L,1)+" m · "+M.regime.toLowerCase();
+  drawWall(); drawLong();
+}
+
+function drawWall(){
+  var De = M.De, Di = M.sec.Di, e = M.e, tm = M.tm, c = M.c;
+  var cor = DB.nbr6493[M.F.cor].hex;
+  var W = 470, H = 320, cx = 158, cy = 160, Rmax = 118;
+  var k  = Rmax/(De/2);
+  var Ro = De/2*k, Ri = Di/2*k;
+  var Rreq = Math.max(0, (De/2 - tm)*k);      // circunferência de espessura requerida
+  var Rcor = Math.max(0, (De/2 - c)*k);       // limite da sobre-espessura
+  var falha = tm > M.eEfetiva;
+  var svg = [];
+  svg.push('<svg class="draw" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Corte transversal do tubo">');
+  svg.push('<defs><pattern id="hatch" width="7" height="7" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">'+
+           '<line x1="0" y1="0" x2="0" y2="7" stroke="var(--rule-2)" stroke-width="1.2"/></pattern>'+
+           '<marker id="arw" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">'+
+           '<path d="M0,0 L7,3.5 L0,7 z" fill="var(--ink-2)"/></marker>'+
+           '<marker id="arwS" markerWidth="7" markerHeight="7" refX="1" refY="3.5" orient="auto">'+
+           '<path d="M7,0 L0,3.5 L7,7 z" fill="var(--ink-2)"/></marker></defs>');
+  // parede
+  svg.push('<circle cx="'+cx+'" cy="'+cy+'" r="'+Ro+'" fill="url(#hatch)" stroke="var(--ink)" stroke-width="1.6"/>');
+  // fluido
+  svg.push('<circle cx="'+cx+'" cy="'+cy+'" r="'+Ri+'" fill="'+hex2rgba(cor,0.22)+'" stroke="var(--ink)" stroke-width="1.6"/>');
+  // sobre-espessura de corrosão
+  if (c>0 && Rcor>Ri){
+    svg.push('<circle cx="'+cx+'" cy="'+cy+'" r="'+Rcor+'" fill="none" stroke="var(--warn)" stroke-width="1" stroke-dasharray="2 3"/>');
+  }
+  // espessura requerida
+  if (Rreq>0 && Rreq<Ro){
+    svg.push('<circle cx="'+cx+'" cy="'+cy+'" r="'+Rreq+'" fill="none" stroke="'+(falha?"var(--fail)":"var(--ok)")+
+             '" stroke-width="1.8" stroke-dasharray="5 3"/>');
+  }
+  // eixos
+  svg.push('<line x1="'+(cx-Ro-16)+'" y1="'+cy+'" x2="'+(cx+Ro+16)+'" y2="'+cy+'" stroke="var(--rule-2)" stroke-width=".8" stroke-dasharray="9 3 2 3"/>');
+  svg.push('<line x1="'+cx+'" y1="'+(cy-Ro-16)+'" x2="'+cx+'" y2="'+(cy+Ro+16)+'" stroke="var(--rule-2)" stroke-width=".8" stroke-dasharray="9 3 2 3"/>');
+  // cotas
+  var yD = cy+Ro+34;
+  svg.push('<line x1="'+(cx-Ro)+'" y1="'+yD+'" x2="'+(cx+Ro)+'" y2="'+yD+'" stroke="var(--ink-2)" stroke-width="1" marker-start="url(#arwS)" marker-end="url(#arw)"/>');
+  svg.push('<line x1="'+(cx-Ro)+'" y1="'+(cy)+'" x2="'+(cx-Ro)+'" y2="'+(yD+6)+'" stroke="var(--rule-2)" stroke-width=".7"/>');
+  svg.push('<line x1="'+(cx+Ro)+'" y1="'+(cy)+'" x2="'+(cx+Ro)+'" y2="'+(yD+6)+'" stroke="var(--rule-2)" stroke-width=".7"/>');
+  svg.push('<text x="'+cx+'" y="'+(yD-6)+'" text-anchor="middle" font-size="11">De = '+fmt(De,1)+'</text>');
+  var yd = cy+Ro+58;
+  svg.push('<line x1="'+(cx-Ri)+'" y1="'+yd+'" x2="'+(cx+Ri)+'" y2="'+yd+'" stroke="var(--ink-2)" stroke-width="1" marker-start="url(#arwS)" marker-end="url(#arw)"/>');
+  svg.push('<text x="'+cx+'" y="'+(yd-6)+'" text-anchor="middle" font-size="11">Di = '+fmt(Di,1)+'</text>');
+  // painel de anotações
+  var x0 = 312, y0 = 44, dy = 26;
+  var lines = [
+    ["Espessura nominal e", fmt(e,2)+" mm", "var(--ink)"],
+    ["Tolerância −"+fmt(M.s.millTol,1)+" %", fmt(M.eEfetiva,2)+" mm", "var(--ink-2)"],
+    ["Sobre-espessura c", fmt(c,2)+" mm", "var(--warn)"],
+    ["Requerida por pressão", fmt(M.tB313,2)+" mm", "var(--ink-2)"],
+    ["Requerida total t_m", fmt(M.tm,2)+" mm", falha?"var(--fail)":"var(--ok)"],
+    ["Margem disponível", (isFinite(M.margemParede)?fmt(M.margemParede,1):"—")+" %", falha?"var(--fail)":"var(--ok)"]
+  ];
+  svg.push('<line x1="'+(x0-14)+'" y1="26" x2="'+(x0-14)+'" y2="'+(y0+dy*lines.length-8)+'" stroke="var(--rule)" stroke-width="1"/>');
+  svg.push('<text x="'+x0+'" y="30" font-size="9.5" letter-spacing="1.6" fill="var(--ink-3)">PARÂMETROS DE PAREDE</text>');
+  for (var i=0;i<lines.length;i++){
+    svg.push('<text x="'+x0+'" y="'+(y0+i*dy)+'" font-size="10" fill="var(--ink-3)">'+esc(lines[i][0])+'</text>');
+    svg.push('<text x="'+x0+'" y="'+(y0+i*dy+13)+'" font-size="13.5" font-weight="700" fill="'+lines[i][2]+'">'+lines[i][1]+'</text>');
+  }
+  svg.push('</svg>');
+  $("drawWall").innerHTML = svg.join("");
+
+  $("wallLegend").innerHTML =
+    '<span><i style="background:'+hex2rgba(cor,0.35)+';border:1px solid var(--ink)"></i>'+esc(M.F.nome)+'</span>'+
+    '<span><i style="background:var(--paper-2);border:1px solid var(--ink)"></i>Parede metálica ou plástica</span>'+
+    '<span><i style="background:transparent;border:1.5px dashed '+(M.tm>M.eEfetiva?"var(--fail)":"var(--ok)")+'"></i>Espessura requerida t_m</span>'+
+    (M.c>0?'<span><i style="background:transparent;border:1.5px dashed var(--warn)"></i>Sobre-espessura de corrosão</span>':'');
+}
+
+function drawLong(){
+  var cor = DB.nbr6493[M.F.cor].hex;
+  var W = 900, H = 168, x0 = 60, x1 = 840, yc = 78;
+  var hOut = 46, hIn = 46*(M.sec.Di/M.De);
+  var svg = [];
+  svg.push('<svg class="draw" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Vista longitudinal">');
+  svg.push('<defs><pattern id="hatch2" width="7" height="7" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">'+
+           '<line x1="0" y1="0" x2="0" y2="7" stroke="var(--rule-2)" stroke-width="1.2"/></pattern></defs>');
+  // paredes
+  svg.push('<rect x="'+x0+'" y="'+(yc-hOut)+'" width="'+(x1-x0)+'" height="'+(hOut-hIn)+'" fill="url(#hatch2)" stroke="var(--ink)" stroke-width="1.3"/>');
+  svg.push('<rect x="'+x0+'" y="'+(yc+hIn)+'" width="'+(x1-x0)+'" height="'+(hOut-hIn)+'" fill="url(#hatch2)" stroke="var(--ink)" stroke-width="1.3"/>');
+  svg.push('<rect x="'+x0+'" y="'+(yc-hIn)+'" width="'+(x1-x0)+'" height="'+(2*hIn)+'" fill="'+hex2rgba(cor,0.14)+'"/>');
+  // linhas de escoamento
+  var speedClass = (M.v>M.vMax)?"var(--fail)":(M.v<M.vMin?"var(--warn)":cor);
+  for (var i=0;i<3;i++){
+    var y = yc - hIn*0.55 + i*hIn*0.55;
+    svg.push('<line class="flowline" x1="'+(x0+14)+'" y1="'+y+'" x2="'+(x1-14)+'" y2="'+y+'" stroke="'+speedClass+
+             '" stroke-width="2" stroke-dasharray="18 22" opacity=".85"/>');
+  }
+  svg.push('<path d="M'+(x1-40)+','+(yc-9)+' L'+(x1-16)+','+yc+' L'+(x1-40)+','+(yc+9)+'" fill="none" stroke="'+speedClass+'" stroke-width="2"/>');
+  // eixo
+  svg.push('<line x1="'+(x0-14)+'" y1="'+yc+'" x2="'+(x1+14)+'" y2="'+yc+'" stroke="var(--rule-2)" stroke-width=".8" stroke-dasharray="10 3 2 3"/>');
+  // cota de comprimento
+  var yL = yc+hOut+30;
+  svg.push('<line x1="'+x0+'" y1="'+yL+'" x2="'+x1+'" y2="'+yL+'" stroke="var(--ink-2)" stroke-width="1" marker-start="url(#arwS)" marker-end="url(#arw)"/>');
+  svg.push('<text x="'+((x0+x1)/2)+'" y="'+(yL-7)+'" text-anchor="middle" font-size="11">L = '+fmt(M.L,1)+' m  ·  L equivalente das singularidades = '+fmt(M.Leq,1)+' m</text>');
+  // rótulos de entrada e saída
+  svg.push('<text x="'+x0+'" y="22" font-size="9.5" letter-spacing="1.4" fill="var(--ink-3)">ENTRADA</text>');
+  svg.push('<text x="'+x0+'" y="38" font-size="12.5" font-weight="700" fill="var(--ink)">'+fmt(M.pGauge,2)+' bar</text>');
+  svg.push('<text x="'+x1+'" y="22" text-anchor="end" font-size="9.5" letter-spacing="1.4" fill="var(--ink-3)">SAÍDA</text>');
+  svg.push('<text x="'+x1+'" y="38" text-anchor="end" font-size="12.5" font-weight="700" fill="var(--ink)">'+fmt(M.pGauge-M.dpTotalBar,2)+' bar</text>');
+  svg.push('<text x="'+((x0+x1)/2)+'" y="22" text-anchor="middle" font-size="9.5" letter-spacing="1.4" fill="var(--ink-3)">v = '+fmt(M.v,2)+' m/s   ·   Re = '+fmt(M.Re,0)+'   ·   f = '+fmt(M.f,4)+'</text>');
+  svg.push('</svg>');
+  $("drawLong").innerHTML = svg.join("");
+}
+
+/* ---------- Aba Pressão ---------- */
+function renderPressao(){
+  if (M.erros.length) return;
+  if (M.isSteel){
+    $("thRef").textContent = "ASME B31.3 §304.1.2";
+    $("thFx").textContent =
+      "t   = P · De / [ 2 · ( S · E · W + P · Y ) ]\n"+
+      "t_m = t + c\n\n"+
+      "P = "+fmt(M.Pmpa,4)+" MPa      De = "+fmt(M.De,1)+" mm\n"+
+      "S = "+fmt(M.S,1)+" MPa (a "+fmt(M.s.temp,0)+" °C)   E = "+fmt(M.s.jointE,2)+"\n"+
+      "W = 1,00                Y = "+fmt(M.Y,1);
+    $("thRows").innerHTML =
+      row("Tensão admissível <b>S</b>", fmt(M.S,1)+u("MPa"), M.mat.nome) +
+      row("Coeficiente <b>Y</b>", fmt(M.Y,2), "material "+M.mat.tipo) +
+      row("Espessura por pressão <b>t</b>", fmt(M.tB313,3)+u("mm")) +
+      row("Barlow (comparação)", fmt(M.tBarlow,3)+u("mm"), "t = P·De/(2·S·E) — sempre conservadora") +
+      row("Sobre-espessura <b>c</b>", fmt(M.c,2)+u("mm")) +
+      row("Espessura requerida <b>t_m</b>", fmt(M.tm,3)+u("mm"), null, true) +
+      row("Espessura nominal mínima", fmt(M.tNominal,3)+u("mm"), "com tolerância de fabricação de "+fmt(M.s.millTol,1)+" %") +
+      row("Espessura adotada", fmt(M.e,2)+u("mm")+"  "+stamp(M.eEfetiva>=M.tm?"ok":"fail", M.eEfetiva>=M.tm?"atende":"insuficiente"), M.origem);
+    $("pFx").textContent =
+      "P_adm = 2 · S · E · W · t / ( De − 2 · Y · t )\n"+
+      "t útil = e · (1 − tol) − c = "+fmt(Math.max(0,M.eEfetiva-M.c),3)+" mm";
+  } else {
+    $("thRef").textContent = "ISO 4065 / ISO 12162";
+    $("thFx").textContent =
+      "e = P · De / ( 2 · σ_s · f(T) + P )\n"+
+      "σ_s = MRS / C = "+fmt(M.mat.sigma,2)+" MPa      f("+fmt(M.s.temp,0)+" °C) = "+fmt(M.fT,3);
+    $("thRows").innerHTML =
+      row("Tensão de projeto a 20 °C", fmt(M.mat.sigma,2)+u("MPa"), "coeficiente de projeto C = "+fmt(M.mat.K,2)) +
+      row("Fator de temperatura <b>f(T)</b>", fmt(M.fT,3)) +
+      row("Tensão de projeto na temperatura", fmt(M.S,2)+u("MPa")) +
+      row("Espessura por pressão", fmt(M.tB313,3)+u("mm")) +
+      row("Sobre-espessura <b>c</b>", fmt(M.c,2)+u("mm")) +
+      row("Espessura requerida <b>t_m</b>", fmt(M.tm,3)+u("mm"), null, true) +
+      row("Espessura adotada", fmt(M.e,2)+u("mm")+"  "+stamp(M.e>=M.tm?"ok":"fail", M.e>=M.tm?"atende":"insuficiente"), M.origem);
+    $("pFx").textContent =
+      "P_adm = 2 · σ_s · f(T) / ( SDR − 1 )\n"+
+      "SDR = De / e = "+fmt(M.sec.SDR,2);
+  }
+
+  var fsKind = M.FS>=1.5?"ok":(M.FS>=1.0?"warn":"fail");
+  $("pRows").innerHTML =
+    row("Pressão de projeto", fmt(M.pGauge,2)+u("bar"), "manométrica · "+fmt(M.pAbs,3)+" bar absoluta") +
+    row("Pressão admissível", (isFinite(M.pAdmBar)?fmt(M.pAdmBar,2):"—")+u("bar"), "na temperatura de "+fmt(M.s.temp,0)+" °C", true) +
+    row("Relação P_adm / P_projeto", (isFinite(M.FS)?fmt(M.FS,2):"∞")+"  "+stamp(fsKind, fsKind==="ok"?"folga adequada":(fsKind==="warn"?"margem estreita":"reprovado"))) +
+    row("Margem de parede", (isFinite(M.margemParede)?fmt(M.margemParede,1):"—")+u("%"), "(e útil − t_m) / t_m") +
+    (M.isSteel && M.flange ? row("Classe de flange mínima", "Classe "+M.flange.classe, "ASME B16.5 · grupo 1.1 · limite "+fmt(M.flange.pmax,1)+" bar a "+fmt(M.s.temp,0)+" °C") : "") +
+    row("Pressão de ruptura estimada", M.isSteel ? fmt(2*M.mat.smts*Math.max(0,M.eEfetiva-M.c)/(M.De-Math.max(0,M.eEfetiva-M.c))*10,1)+u("bar") : "—",
+        M.isSteel ? "critério de tensão última — não é pressão de projeto" : "não aplicável a termoplásticos");
+
+  var notes = "";
+  if (M.s.temp > M.mat.tMax) notes += '<div class="note note--fail"><b>Temperatura acima do limite do material.</b> '+
+    esc(M.mat.nome)+' está tabelado até '+M.mat.tMax+' °C. Selecione material adequado ao serviço.</div>';
+  for (var i=0;i<M.avisos.length;i++) notes += '<div class="note note--warn">'+esc(M.avisos[i])+'</div>';
+  if (!M.isSteel && M.s.temp > 20) notes += '<div class="note">O fator f(T) reduz fortemente a pressão admissível de termoplásticos. '+
+    'Os valores tabelados correspondem a vida útil de 50 anos com água; confirme a curva de regressão do fabricante.</div>';
+  $("pNote").innerHTML = notes;
+
+  /* tabela S × T */
+  var tab = M.isSteel ? M.mat.S : M.mat.fT;
+  var head = M.isSteel ? "Tensão admissível S (MPa)" : "Fator de redução f(T)";
+  $("sRef").textContent = M.isSteel ? "ASME B31.3 Tab. A-1 (referência)" : "ISO 15874 / catálogo do fabricante";
+  var h = '<table class="dt"><thead><tr><th>Temperatura</th><th class="n">'+head+
+          '</th><th class="n">P admissível (bar)</th></tr></thead><tbody>';
+  for (var j=0;j<tab.length;j++){
+    var T = tab[j][0], val = tab[j][1];
+    var pad;
+    if (M.isSteel) pad = TC.pressureFromT({t:Math.max(0,M.eEfetiva-M.c), D:M.De, S:val, E:M.s.jointE, W:1, Y:TC.coefY(M.mat.tipo,T)})*10;
+    else pad = TC.plasticPressure({D:M.De, t:Math.max(0,M.e-M.c), sigma:M.mat.sigma, fT:val})*10;
+    var hl = (Math.abs(T-M.s.temp) < 1e-9) ? ' class="hl"' : "";
+    h += '<tr'+hl+'><td class="k">'+fmt(T,0)+' °C</td><td class="n">'+fmt(val, M.isSteel?1:3)+'</td><td class="n">'+fmt(pad,1)+'</td></tr>';
+  }
+  h += '</tbody></table>';
+  $("sTable").innerHTML = h;
+}
+
+/* ---------- Aba Hidráulica ---------- */
+function renderHidraulica(){
+  if (M.erros.length) return;
+  var vKind = (M.v>=M.vMin && M.v<=M.vMax)?"ok":((M.v>M.vMax*1.15||M.v<M.vMin*0.7)?"fail":"warn");
+  $("flowRows").innerHTML =
+    row("Vazão volumétrica", fmt(M.Q*3600,2)+u("m³/h"), fmt(M.Q*1000,3)+" L/s"+(M.anr?" — convertida das condições ANR":"")) +
+    row("Vazão mássica", fmt(M.mdot*3600,1)+u("kg/h")) +
+    row("Massa específica ρ", fmt(M.pr.rho, M.pr.rho<10?3:1)+u("kg/m³")) +
+    row("Viscosidade cinemática ν", fmt(M.pr.nu,4)+u("cSt")) +
+    row("Velocidade média", fmt(M.v,3)+u("m/s")+"  "+stamp(vKind, vKind==="ok"?"na faixa":(M.v>M.vMax?"acima":"abaixo")), null, true) +
+    (M.vSaida ? row("Velocidade na saída", fmt(M.vSaida,3)+u("m/s"), "expansão do gás pela queda de pressão") : "") +
+    row("Número de Reynolds", fmt(M.Re,0)) +
+    row("Regime de escoamento", M.regime) +
+    row("Rugosidade relativa ε/Di", sig(M.relRough), "ε = "+fmt(M.rough,4)+" mm") +
+    row("Fator de atrito f", fmt(M.f,5), M.Re<2300?"f = 64/Re (laminar)":"Colebrook–White");
+
+  var pos = Math.max(0, Math.min(1, M.v/(M.vMax*1.6)));
+  var b0 = M.vMin/(M.vMax*1.6), b1 = M.vMax/(M.vMax*1.6);
+  $("vGauge").innerHTML =
+    '<div class="eyebrow" style="margin-bottom:4px">Faixa recomendada · '+esc(M.F.ref)+'</div>'+
+    '<div class="gauge__track"><div class="gauge__band" style="left:'+(b0*100)+'%;width:'+((b1-b0)*100)+'%"></div>'+
+    '<div class="gauge__mark" style="left:'+(pos*100)+'%"></div></div>'+
+    '<div class="gauge__scale"><span>0</span><span>'+fmt(M.vMin,1)+'</span><span>'+fmt(M.vMax,1)+'</span><span>'+fmt(M.vMax*1.6,1)+' m/s</span></div>';
+
+  $("dpRef").textContent = M.F.comp ? "densidade média iterada" : "regime incompressível";
+  $("dpFx").textContent =
+    "Δp = [ f · (L/Di) + ΣK ] · ρ · v² / 2\n\n"+
+    "f = "+fmt(M.f,5)+"   L/Di = "+fmt(M.L/M.Di_m,1)+"   ΣK = "+fmt(M.K,2)+"\n"+
+    "ρ = "+fmt(M.pr.rho,2)+" kg/m³   v = "+fmt(M.v,3)+" m/s";
+
+  var dpKind = M.dpTotalBar<=M.dpLimBar?"ok":(M.dpTotalBar<=M.dpLimBar*1.15?"warn":"fail");
+  $("dpRows").innerHTML =
+    row("Perda distribuída", sig(M.dpDistBar)+u("bar"), fmt(M.dpDistBar*1e5/(M.pr.rho*G),2)+" m.c.a.") +
+    row("Perda localizada", sig(M.dpLocalBar)+u("bar"), "ΣK = "+fmt(M.K,2)+" · L equivalente "+fmt(M.Leq,1)+" m") +
+    row("Perda total", sig(M.dpTotalBar)+u("bar")+"  "+stamp(dpKind, dpKind==="ok"?"dentro do limite":"acima do limite"), fmt(M.dpMca,2)+" m.c.a.", true) +
+    row("Perda unitária", sig(M.dpBar100)+u("bar/100 m"), fmt(M.dpMca100,2)+" m.c.a./100 m") +
+    row("Limite adotado", sig(M.dpLimBar)+u("bar"), M.dpLimTxt) +
+    row("Pressão na extremidade", fmt(M.pGauge-M.dpTotalBar,3)+u("bar"), "manométrica");
+
+  var n = "";
+  if (M.F.comp && M.dpTotalBar > 0.1*M.pAbs)
+    n += '<div class="note note--warn">A perda supera 10 % da pressão absoluta de entrada. Nessa faixa a hipótese de densidade média perde precisão; recomenda-se o modelo isotérmico completo ou a divisão da linha em trechos.</div>';
+  if (M.Re > 0 && M.Re < 4000)
+    n += '<div class="note note--warn">Escoamento fora do regime plenamente turbulento (Re = '+fmt(M.Re,0)+'). O fator de atrito na zona de transição tem incerteza elevada.</div>';
+  if (M.v > M.vMax)
+    n += '<div class="note note--warn">Velocidade acima da faixa recomendada para '+esc(M.F.nome.toLowerCase())+': maior ruído, erosão e sobrepressão transiente. Avalie o diâmetro imediatamente superior na aba de seleção.</div>';
+  $("dpNote").innerHTML = n;
+
+  var kh = '<table class="dt"><thead><tr><th>Singularidade</th><th class="n">K unit.</th><th class="n">Qtd.</th>'+
+           '<th class="n">ΣK</th><th class="n">Δp (bar)</th><th class="n">L eq. (m)</th></tr></thead><tbody>';
+  if (!M.kitems.length){
+    kh += '<tr><td colspan="6" class="k">Nenhuma singularidade computada. Informe as quantidades na coluna de entradas.</td></tr>';
+  } else {
+    for (var i=0;i<M.kitems.length;i++){
+      var it = M.kitems[i];
+      var dpi = it.tot*M.pr.rho*M.v*M.v/2/1e5;
+      var lei = M.f>0 ? it.tot*M.Di_m/M.f : 0;
+      kh += '<tr><td>'+esc(it.nome)+'</td><td class="n">'+fmt(it.k,2)+'</td><td class="n">'+fmt(it.n,0)+
+            '</td><td class="n">'+fmt(it.tot,2)+'</td><td class="n">'+sig(dpi)+'</td><td class="n">'+fmt(lei,2)+'</td></tr>';
+    }
+    kh += '<tr class="hl"><td><b>Total</b></td><td class="n">—</td><td class="n">—</td><td class="n">'+fmt(M.K,2)+
+          '</td><td class="n">'+sig(M.dpLocalBar)+'</td><td class="n">'+fmt(M.Leq,2)+'</td></tr>';
+  }
+  kh += '</tbody></table>';
+  $("kTable").innerHTML = kh;
+
+  $("powRows").innerHTML =
+    row("Potência hidráulica", fmt(M.powH,3)+u("kW"), "P = Q · Δp") +
+    row("Rendimento do conjunto", fmt(M.s.pumpEff,0)+u("%")) +
+    row("Potência no eixo", fmt(M.powE,3)+u("kW"), fmt(M.powE*1.341,2)+" cv", true) +
+    row("Energia anual (24 h/dia)", fmt(M.powE*8760,0)+u("kWh/ano"), "referência para comparação entre diâmetros");
+}
+
+/* ---------- Aba NPSH ---------- */
+function renderNpsh(){
+  if (M.erros.length) return;
+  if (M.F.tipo !== "liquido"){
+    $("npshFx").textContent = "Não aplicável";
+    $("npshRows").innerHTML = row("Fluido", esc(M.F.nome));
+    $("npshNote").innerHTML = '<div class="note">A verificação de NPSH e de cavitação aplica-se a líquidos. Para gases e vapores, avalie erosão por velocidade e escoamento crítico (blocado) em restrições.</div>';
+    $("sigRows").innerHTML = ""; $("sigNote").innerHTML = "";
+    return;
+  }
+  $("npshFx").textContent =
+    "NPSH_d = ( p_res − p_v ) / ( ρ · g ) + z − h_f\n\n"+
+    "p_res = "+fmt(M.s.pSurf,3)+" bar abs    p_v = "+fmt(M.pr.pv,5)+" bar abs (a "+fmt(M.s.temp,0)+" °C)\n"+
+    "z = "+fmt(M.s.zSuc,2)+" m            h_f = "+fmt(M.hfSuc,3)+" m";
+  var termoP = (M.s.pSurf - M.pr.pv)*1e5/(M.pr.rho*G);
+  var kind = M.margemNpsh>=0.5?"ok":(M.margemNpsh>=0?"warn":"fail");
+  $("npshRows").innerHTML =
+    row("Parcela de pressão", fmt(termoP,3)+u("m")) +
+    row("Desnível geométrico z", fmt(M.s.zSuc,2)+u("m"), M.s.zSuc>=0?"sucção afogada":"sucção aspirada") +
+    row("Perda na sucção h_f", fmt(M.hfSuc,3)+u("m"), "proporcional a "+fmt(M.s.lSuc,1)+" m de "+fmt(M.L,1)+" m") +
+    row("NPSH disponível", fmt(M.npshd,2)+u("m"), null, true) +
+    row("NPSH requerido", fmt(M.npshr,2)+u("m"), "informado pelo fabricante da bomba") +
+    row("Margem", fmt(M.margemNpsh,2)+u("m")+"  "+stamp(kind, kind==="ok"?"segura":(kind==="warn"?"justa":"cavitação")), "prática usual: ≥ 0,5 m ou 10 % do NPSH_r");
+  var n2 = "";
+  if (M.margemNpsh < 0)
+    n2 = '<div class="note note--fail"><b>NPSH disponível inferior ao requerido.</b> A bomba cavitará. Alternativas: elevar o nível do reservatório, reduzir a perda na sucção com diâmetro maior, aproximar a bomba do reservatório ou reduzir a temperatura do líquido.</div>';
+  else if (M.margemNpsh < 0.5)
+    n2 = '<div class="note note--warn">Margem inferior a 0,5 m. Variações de nível, temperatura ou entupimento do crivo podem levar à cavitação.</div>';
+  n2 += '<div class="note"><b>Hipótese do modelo.</b> A perda na sucção é obtida por rateio: '+
+       'a fração do comprimento informado como anterior à bomba ('+fmt(M.s.lSuc,1)+' m de '+fmt(M.L,1)+' m) '+
+       'aplicada à perda total desta linha. Se o trecho modelado é de recalque, informe 0 no campo '+
+       '“trecho a montante da bomba” e calcule a sucção em um projeto separado.</div>';
+  $("npshNote").innerHTML = n2;
+
+  var sk = M.sigma>1.5?"ok":(M.sigma>0.5?"warn":"fail");
+  $("sigRows").innerHTML =
+    row("Pressão absoluta local", fmt(M.pAbs,3)+u("bar")) +
+    row("Pressão de vapor", fmt(M.pr.pv,5)+u("bar"), "a "+fmt(M.s.temp,0)+" °C") +
+    row("Pressão dinâmica ρv²/2", fmt(M.pr.rho*M.v*M.v/2/1e5,4)+u("bar")) +
+    row("Índice σ", (isFinite(M.sigma)?fmt(M.sigma,2):"∞")+"  "+stamp(sk, sk==="ok"?"sem risco":(sk==="warn"?"atenção":"crítico")), null, true);
+  $("sigNote").innerHTML = '<div class="note">O índice σ compara a margem até a vaporização com a energia cinética do escoamento. Valores baixos indicam risco de cavitação em restrições — válvulas de controle, placas de orifício e reduções bruscas.</div>';
+}
+
+/* ---------- Aba Transiente ---------- */
+function renderTransiente(){
+  if (M.erros.length) return;
+  $("celFx").textContent =
+    "a = √ { (K/ρ) / [ 1 + (K/E) · (Di/e) ] }\n\n"+
+    "K = "+sig(M.pr.K/1e9)+" GPa    ρ = "+fmt(M.pr.rho,1)+" kg/m³\n"+
+    "E = "+fmt(M.mat.E/1000,1)+" GPa   Di/e = "+fmt(M.sec.Di/M.e,1);
+  $("celRows").innerHTML =
+    row("Módulo de compressibilidade K", sig(M.pr.K/1e9)+u("GPa")) +
+    row("Módulo de elasticidade do tubo E", fmt(M.mat.E,0)+u("MPa")) +
+    row("Celeridade da onda a", fmt(M.a,0)+u("m/s"), null, true) +
+    row("Tempo crítico 2L/a", fmt(M.ariete.tCritico,3)+u("s"), "limite entre manobra rápida e lenta") +
+    row("Tempo de fechamento adotado", fmt(M.s.tClose,2)+u("s"), "manobra "+M.ariete.manobra);
+
+  $("hamFx").textContent =
+    (M.ariete.manobra === "rápida"
+      ? "Joukowsky:  ΔH = a · Δv / g\n            ΔH = "+fmt(M.a,0)+" · "+fmt(M.v,3)+" / 9,807"
+      : "Michaud:    ΔH = 2 · L · Δv / ( g · t_c )\n            ΔH = 2 · "+fmt(M.L,1)+" · "+fmt(M.v,3)+" / (9,807 · "+fmt(M.s.tClose,2)+")");
+  var pk = M.pMaxTrans<=M.pAdmBar?"ok":(M.pMaxTrans<=M.pAdmBar*1.33?"warn":"fail");
+  $("hamRows").innerHTML =
+    row("Sobrepressão de Joukowsky", fmt(M.ariete.dhJoukowsky,1)+u("m"), "manobra instantânea — envoltória superior") +
+    row("Sobrepressão de Michaud", (isFinite(M.ariete.dhMichaud)?fmt(M.ariete.dhMichaud,1):"—")+u("m"), "manobra lenta") +
+    row("Sobrepressão adotada", fmt(M.ariete.dh,1)+u("m")+" · "+fmt(M.dpAriete,2)+u("bar"), null, true) +
+    row("Pressão máxima transitória", fmt(M.pMaxTrans,2)+u("bar")+"  "+stamp(pk, pk==="ok"?"dentro da admissível":(pk==="warn"?"até 1,33 P_adm":"excede")), "regime permanente + sobrepressão") +
+    row("Pressão mínima transitória", fmt(M.pGauge-M.dpAriete,2)+u("bar"), (M.pGauge-M.dpAriete < -0.9 ? "risco de separação de coluna" : "sem separação de coluna"));
+
+  var hn = "";
+  if (M.pMaxTrans > M.pAdmBar*1.33)
+    hn += '<div class="note note--fail"><b>Sobrepressão excessiva.</b> Aumente o tempo de fechamento para além de '+
+          fmt(2*M.L*M.v/(G*(M.pAdmBar*1.33-M.pGauge)*1e5/(M.pr.rho*G)),2)+
+          ' s, reduza a velocidade de escoamento ou preveja dispositivo de proteção — volante de inércia, tanque hidropneumático, chaminé de equilíbrio ou válvula de alívio.</div>';
+  else if (M.pMaxTrans > M.pAdmBar)
+    hn += '<div class="note note--warn">A pressão máxima ultrapassa a admissível de regime permanente. A ASME B31.3 admite variações ocasionais de curta duração até 1,33 · P_adm, desde que atendidas as condições do item 302.2.4.</div>';
+  if (M.pGauge - M.dpAriete < -0.9)
+    hn += '<div class="note note--fail">A depressão atinge o vácuo absoluto: há risco de separação de coluna e de colapso do tubo. Verifique a pressão externa admissível e preveja ventosas.</div>';
+  $("hamNote").innerHTML = hn;
+  drawSurge();
+}
+
+function drawSurge(){
+  var W = 900, H = 260, x0 = 66, x1 = 862, y0 = 26, y1 = 208;
+  var pSteady0 = M.pGauge, pSteady1 = M.pGauge - M.dpTotalBar;
+  var dp = M.dpAriete;
+  var pmax = Math.max(pSteady0 + dp, pSteady0)*1.12;
+  var pmin = Math.min(pSteady1 - dp, -1.05);
+  var span = pmax - pmin || 1;
+  var Y = function(p){ return y1 - (p - pmin)/span*(y1-y0); };
+  var svg = [];
+  svg.push('<svg class="draw" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Envoltória de pressão">');
+  // grade
+  for (var i=0;i<=4;i++){
+    var p = pmin + span*i/4, y = Y(p);
+    svg.push('<line x1="'+x0+'" y1="'+y+'" x2="'+x1+'" y2="'+y+'" stroke="var(--rule)" stroke-width=".8"/>');
+    svg.push('<text x="'+(x0-8)+'" y="'+(y+4)+'" text-anchor="end" font-size="10">'+fmt(p,1)+'</text>');
+  }
+  // linha do vácuo
+  if (pmin < -1.0){
+    svg.push('<line x1="'+x0+'" y1="'+Y(-1.013)+'" x2="'+x1+'" y2="'+Y(-1.013)+'" stroke="var(--fail)" stroke-width="1" stroke-dasharray="4 3"/>');
+    svg.push('<text x="'+(x1)+'" y="'+(Y(-1.013)-5)+'" text-anchor="end" font-size="9.5" fill="var(--fail)">vácuo absoluto</text>');
+  }
+  // admissível
+  if (M.pAdmBar < pmax && isFinite(M.pAdmBar)){
+    svg.push('<line x1="'+x0+'" y1="'+Y(M.pAdmBar)+'" x2="'+x1+'" y2="'+Y(M.pAdmBar)+'" stroke="var(--ok)" stroke-width="1.2" stroke-dasharray="7 4"/>');
+    svg.push('<text x="'+(x0+6)+'" y="'+(Y(M.pAdmBar)-5)+'" font-size="9.5" fill="var(--ok)">P admissível = '+fmt(M.pAdmBar,1)+' bar</text>');
+  }
+  // envoltórias
+  svg.push('<polygon points="'+x0+','+Y(pSteady0+dp)+' '+x1+','+Y(pSteady1+dp)+' '+x1+','+Y(pSteady1-dp)+' '+x0+','+Y(pSteady0-dp)+
+           '" fill="var(--accent-soft)" stroke="none"/>');
+  svg.push('<line x1="'+x0+'" y1="'+Y(pSteady0+dp)+'" x2="'+x1+'" y2="'+Y(pSteady1+dp)+'" stroke="var(--fail)" stroke-width="1.6"/>');
+  svg.push('<line x1="'+x0+'" y1="'+Y(pSteady0-dp)+'" x2="'+x1+'" y2="'+Y(pSteady1-dp)+'" stroke="var(--warn)" stroke-width="1.6"/>');
+  svg.push('<line x1="'+x0+'" y1="'+Y(pSteady0)+'" x2="'+x1+'" y2="'+Y(pSteady1)+'" stroke="var(--ink)" stroke-width="2"/>');
+  // eixos
+  svg.push('<line x1="'+x0+'" y1="'+y0+'" x2="'+x0+'" y2="'+y1+'" stroke="var(--ink-2)" stroke-width="1.2"/>');
+  svg.push('<line x1="'+x0+'" y1="'+y1+'" x2="'+x1+'" y2="'+y1+'" stroke="var(--ink-2)" stroke-width="1.2"/>');
+  svg.push('<text x="'+x0+'" y="'+(y1+20)+'" font-size="10">0 m</text>');
+  svg.push('<text x="'+x1+'" y="'+(y1+20)+'" text-anchor="end" font-size="10">'+fmt(M.L,1)+' m</text>');
+  svg.push('<text x="'+(x0-8)+'" y="'+(y0-8)+'" text-anchor="end" font-size="9.5" fill="var(--ink-3)">bar</text>');
+  // legenda
+  svg.push('<g font-size="10">'+
+    '<line x1="'+(x0+10)+'" y1="'+(y1+38)+'" x2="'+(x0+40)+'" y2="'+(y1+38)+'" stroke="var(--ink)" stroke-width="2"/>'+
+    '<text x="'+(x0+46)+'" y="'+(y1+42)+'">regime permanente</text>'+
+    '<line x1="'+(x0+210)+'" y1="'+(y1+38)+'" x2="'+(x0+240)+'" y2="'+(y1+38)+'" stroke="var(--fail)" stroke-width="2"/>'+
+    '<text x="'+(x0+246)+'" y="'+(y1+42)+'">envoltória máxima</text>'+
+    '<line x1="'+(x0+410)+'" y1="'+(y1+38)+'" x2="'+(x0+440)+'" y2="'+(y1+38)+'" stroke="var(--warn)" stroke-width="2"/>'+
+    '<text x="'+(x0+446)+'" y="'+(y1+42)+'">envoltória mínima</text></g>');
+  svg.push('</svg>');
+  $("drawSurge").innerHTML = svg.join("");
+}
+
+/* ---------- Aba Dilatação ---------- */
+function renderFlex(){
+  if (M.erros.length) return;
+  var bloqKind = M.sigmaBloq <= M.sigmaAdm ? "ok" : "fail";
+  $("expRows").innerHTML =
+    row("Coeficiente de dilatação α", sig(M.mat.alpha*1e6)+u("×10⁻⁶ /°C")) +
+    row("Variação de temperatura ΔT", fmt(M.dT,1)+u("°C"), "montagem a "+fmt(M.s.tInst,0)+" °C · operação a "+fmt(M.s.temp,0)+" °C") +
+    row("Dilatação livre ΔL", fmt(M.dL,1)+u("mm"), "em "+fmt(M.L,1)+" m de linha", true) +
+    row("Dilatação por 100 m", fmt(M.L>0?M.dL/M.L*100:0,1)+u("mm")) +
+    row("Tensão se totalmente bloqueada", fmt(M.sigmaBloq,1)+u("MPa")+"  "+stamp(bloqKind, bloqKind==="ok"?"tolerável":"exige flexibilidade"), "σ = E · α · ΔT") +
+    row("Tensão admissível de referência", fmt(M.sigmaAdm,1)+u("MPa"));
+  var en = "";
+  if (M.sigmaBloq > M.sigmaAdm)
+    en = '<div class="note note--warn">A tensão de bloqueio supera a admissível. A linha exige análise de flexibilidade — liras, juntas de expansão ou mudanças de direção com pernas livres suficientes. Reveja também os esforços nos bocais dos equipamentos.</div>';
+  else if (Math.abs(M.dL) > 25)
+    en = '<div class="note">Dilatação superior a 25 mm: verifique o curso das guias e o espaçamento entre pontos fixos.</div>';
+  $("expNote").innerHTML = en;
+
+  $("spanFx").textContent =
+    "por tensão:  L = √( 10 · Z · σ_adm / w )\n"+
+    "por flecha:  L = ( 185 · E · I · δ / w )^0,25\n\n"+
+    "w = "+fmt(M.w,1)+" N/m   Z = "+sig(M.sec.Z/1e3)+" cm³   I = "+sig(M.sec.I/1e4)+" cm⁴";
+  $("spanRows").innerHTML =
+    row("Carga distribuída w", fmt(M.w,1)+u("N/m"), "tubo cheio + isolamento") +
+    row("Vão limitado pela tensão", fmt(M.vao.porTensao,2)+u("m"), "σ de flexão sustentada "+(M.isSteel?"15,9 MPa":"3,0 MPa")) +
+    row("Vão limitado pela flecha", fmt(M.vao.porFlecha,2)+u("m"), "δ ≤ "+fmt(M.s.defLim,1)+" mm") +
+    row("Vão máximo entre apoios", fmt(M.vao.adotado,2)+u("m"), null, true) +
+    row("Número de apoios na linha", fmt(Math.ceil(M.L/Math.max(0.5,M.vao.adotado))+1,0), "linha reta de "+fmt(M.L,1)+" m");
+
+  $("loopRows").innerHTML =
+    row("Deslocamento a absorver Δ", fmt(Math.abs(M.dL),1)+u("mm")) +
+    row("Perna guiada mínima", fmt(M.perna,2)+u("m"), "trecho perpendicular livre entre guias", true) +
+    row("Lira em U — largura sugerida", fmt(M.perna/2,2)+u("m"), "aproximação usual: metade da perna guiada") +
+    row("Comprimento adicional de tubo", fmt(M.perna*2.5,2)+u("m"), "estimativa para a configuração em U");
+}
+
+/* ---------- Aba seleção de diâmetro ---------- */
+function renderOtim(){
+  if (M.erros.length){ $("optTable").innerHTML=""; return; }
+  var lista = [];
+  if (M.isSteel){
+    for (var i=0;i<DB.pipes.length;i++){
+      var p = DB.pipes[i];
+      var esp = p[2][M.s.sch];
+      if (esp === undefined){
+        var ks = Object.keys(p[2]);
+        esp = p[2][ks.indexOf("40")>=0?"40":ks[0]];
+      }
+      lista.push({rot:p[0], De:p[1], e:esp, idx:i});
+    }
+  } else {
+    for (var j=0;j<DB.plasticDN.length;j++){
+      lista.push({rot:"DN "+DB.plasticDN[j], De:DB.plasticDN[j], e:DB.plasticDN[j]/M.s.pSdr, idx:j});
+    }
+  }
+  var h = '<table class="dt"><thead><tr><th>Diâmetro</th><th class="n">Di (mm)</th><th class="n">v (m/s)</th>'+
+          '<th class="n">Re</th><th class="n">Δp total (bar)</th><th class="n">Δp/100 m</th>'+
+          '<th class="n">P adm (bar)</th><th class="n">kg/m</th><th>Situação</th></tr></thead><tbody>';
+  var recomendado = null;
+  for (var n=0;n<lista.length;n++){
+    var it = lista[n];
+    var Di = it.De - 2*it.e;
+    if (Di <= 0) continue;
+    var Dim = Di/1000;
+    var v = TC.velocity(M.Q, Dim);
+    var Re = TC.reynolds(v, Dim, M.pr.nu);
+    var f = TC.frictionFactor(Re, M.rough/Di);
+    var dpD = TC.dpDistributed({f:f, L:M.L, Di:Dim, rho:M.pr.rho, v:v});
+    var dpK = TC.dpLocal({K:M.K, rho:M.pr.rho, v:v});
+    var dpT = (dpD+dpK)/1e5;
+    var eUtil = M.isSteel ? it.e*(1-(M.s.millTol||0)/100) - M.c : it.e - M.c;
+    var padm = M.isSteel
+      ? TC.pressureFromT({t:Math.max(0,eUtil), D:it.De, S:M.S, E:M.s.jointE, W:1, Y:M.Y})*10
+      : TC.plasticPressure({D:it.De, t:Math.max(0,eUtil), sigma:M.mat.sigma, fT:M.fT})*10;
+    var sec = TC.secao(it.De, it.e);
+    var kgm = sec.A/1e6*M.mat.rho;
+    var okV = v>=M.vMin && v<=M.vMax;
+    var okDp = dpT <= M.dpLimBar;
+    var okP = padm >= M.pGauge;
+    var okAll = okV && okDp && okP;
+    if (okAll && recomendado === null) recomendado = it.rot;
+    var atual = M.isSteel ? (it.idx === M.s.nps) : (Math.abs(it.De - M.De) < 0.01);
+    var st = okAll ? stamp("ok","atende")
+           : stamp(okP?"warn":"fail", !okP?"pressão":(!okDp?"perda de carga":"velocidade"));
+    h += '<tr'+(atual?' class="hl"':'')+'><td>'+esc(it.rot)+(atual?' ◄ atual':'')+'</td>'+
+         '<td class="n">'+fmt(Di,1)+'</td><td class="n">'+fmt(v,2)+'</td><td class="n">'+fmt(Re,0)+'</td>'+
+         '<td class="n">'+sig(dpT)+'</td><td class="n">'+sig(M.L>0?dpT/M.L*100:0)+'</td>'+
+         '<td class="n">'+fmt(padm,1)+'</td><td class="n">'+fmt(kgm,2)+'</td><td>'+st+'</td></tr>';
+  }
+  h += '</tbody></table>';
+  $("optTable").innerHTML = h;
+  $("optNote").innerHTML = recomendado
+    ? '<div class="note"><b>Menor diâmetro que atende a todos os critérios: '+esc(recomendado)+'.</b> '+
+      'A varredura mantém vazão, material, série de parede, rugosidade, singularidades e comprimento constantes. '+
+      'A escolha final deve confrontar custo de instalação com custo de energia ao longo da vida útil.</div>'
+    : '<div class="note note--warn">Nenhum diâmetro da tabela atende simultaneamente aos três critérios. Reveja a vazão, o limite de perda de carga, a série de parede ou o material.</div>';
+}
+
+/* ---------- Aba Conformidade ---------- */
+function buildChecks(){
+  var c = [];
+  if (M.erros.length) return c;
+  var add = function(norma, criterio, limite, valor, ok, warn){
+    c.push({norma:norma, criterio:criterio, limite:limite, valor:valor,
+            st: ok ? "ok" : (warn ? "warn" : "fail")});
+  };
+  add(M.isSteel?"ASME B31.3 §304.1.2":"ISO 4065 / ISO 12162",
+      "Espessura de parede ≥ requerida",
+      "t_m = "+fmt(M.tm,2)+" mm", fmt(M.eEfetiva,2)+" mm",
+      M.eEfetiva>=M.tm, M.eEfetiva>=M.tm*0.98);
+  add(M.isSteel?"ASME B31.3":"ISO 15874 / NBR 15884",
+      "Pressão admissível ≥ pressão de projeto",
+      fmt(M.pGauge,2)+" bar", (isFinite(M.pAdmBar)?fmt(M.pAdmBar,2):"—")+" bar",
+      M.pAdmBar>=M.pGauge, M.pAdmBar>=M.pGauge*0.98);
+  add("Especificação do material", "Temperatura de operação dentro do limite",
+      "≤ "+M.mat.tMax+" °C", fmt(M.s.temp,0)+" °C",
+      M.s.temp<=M.mat.tMax, M.s.temp<=M.mat.tMax*1.02);
+  add(M.F.ref, "Velocidade na faixa recomendada",
+      fmt(M.vMin,1)+" a "+fmt(M.vMax,1)+" m/s", fmt(M.v,2)+" m/s",
+      M.v>=M.vMin&&M.v<=M.vMax, M.v>=M.vMin*0.85&&M.v<=M.vMax*1.15);
+  add("Critério de projeto", "Perda de carga dentro do limite",
+      sig(M.dpLimBar)+" bar", sig(M.dpTotalBar)+" bar",
+      M.dpTotalBar<=M.dpLimBar, M.dpTotalBar<=M.dpLimBar*1.15);
+  if (M.F.tipo === "liquido"){
+    add("Hydraulic Institute / ANSI-HI 9.6.1", "Margem de NPSH",
+        "≥ NPSH_r + 0,5 m", fmt(M.npshd,2)+" m (req. "+fmt(M.npshr,2)+")",
+        M.margemNpsh>=0.5, M.margemNpsh>=0);
+    add("ASME B31.3 §302.2.4", "Sobrepressão transitória",
+        "≤ 1,33 · P_adm = "+fmt(M.pAdmBar*1.33,1)+" bar", fmt(M.pMaxTrans,2)+" bar",
+        M.pMaxTrans<=M.pAdmBar, M.pMaxTrans<=M.pAdmBar*1.33);
+    add("Boa prática hidráulica", "Ausência de separação de coluna",
+        "> −1,0 bar man.", fmt(M.pGauge-M.dpAriete,2)+" bar",
+        (M.pGauge-M.dpAriete)>-0.9, (M.pGauge-M.dpAriete)>-1.0);
+  }
+  if (M.F.comp){
+    add("Modelo de escoamento", "Perda ≤ 10 % da pressão absoluta",
+        fmt(0.1*M.pAbs,3)+" bar", sig(M.dpTotalBar)+" bar",
+        M.dpTotalBar<=0.1*M.pAbs, M.dpTotalBar<=0.2*M.pAbs);
+  }
+  add("ASME B31.1 App. II (analogia)", "Vão entre apoios compatível com a flecha",
+      "δ ≤ "+fmt(M.s.defLim,1)+" mm", "L máx = "+fmt(M.vao.adotado,2)+" m", true, false);
+  add("Análise de flexibilidade", "Tensão de bloqueio térmico",
+      "≤ "+fmt(M.sigmaAdm,1)+" MPa", fmt(M.sigmaBloq,1)+" MPa",
+      M.sigmaBloq<=M.sigmaAdm, M.sigmaBloq<=M.sigmaAdm*1.5);
+  if (M.isSteel && M.flange){
+    add("ASME B16.5", "Classe de flange compatível",
+        "P máx = "+fmt(M.flange.pmax,1)+" bar", "Classe "+M.flange.classe+" a "+fmt(M.s.temp,0)+" °C",
+        true, false);
+  }
+  add("Hipótese de cálculo", "Regime turbulento plenamente desenvolvido",
+      "Re > 4000", fmt(M.Re,0), M.Re>4000, M.Re>2300);
+  return c;
+}
+
+function renderConformidade(){
+  var c = buildChecks();
+  M.checks = c;
+  var nOk=0,nW=0,nF=0;
+  var h = '<table class="dt"><thead><tr><th>Referência</th><th>Critério</th><th class="n">Limite</th>'+
+          '<th class="n">Calculado</th><th>Situação</th></tr></thead><tbody>';
+  for (var i=0;i<c.length;i++){
+    var it = c[i];
+    if (it.st==="ok") nOk++; else if (it.st==="warn") nW++; else nF++;
+    h += '<tr><td class="k">'+esc(it.norma)+'</td><td>'+esc(it.criterio)+'</td>'+
+         '<td class="n">'+esc(it.limite)+'</td><td class="n">'+esc(it.valor)+'</td>'+
+         '<td>'+stamp(it.st, it.st==="ok"?"atende":(it.st==="warn"?"atenção":"não atende"))+'</td></tr>';
+  }
+  h += '</tbody></table>';
+  $("confTable").innerHTML = h;
+  $("confSummary").textContent = nOk+" atendidos · "+nW+" em atenção · "+nF+" reprovados";
+
+  var tabEl = document.querySelector('.tab[data-p="p-conf"]');
+  tabEl.innerHTML = "Conformidade" + (nF>0 ? '<span class="dot dot--fail"></span>' : (nW>0 ? '<span class="dot dot--warn"></span>' : ''));
+
+  var nh = '<table class="dt"><thead><tr><th>Documento</th><th>Título</th></tr></thead><tbody>';
+  for (var j=0;j<DB.norms.length;j++){
+    nh += '<tr><td class="k" style="white-space:nowrap"><b>'+esc(DB.norms[j][0])+'</b></td><td>'+esc(DB.norms[j][1])+'</td></tr>';
+  }
+  nh += '</tbody></table>';
+  $("normTable").innerHTML = nh;
+}
+
+/* ---------- Aba Tabelas ---------- */
+function renderTabelas(){
+  if (M.erros.length) return;
+  var h, i;
+  if (M.F.tipo === "vapor"){
+    $("fluidTabRef").textContent = "vapor saturado — tabela de saturação";
+    h = '<table class="dt"><thead><tr><th class="n">p (bar abs)</th><th class="n">T sat (°C)</th>'+
+        '<th class="n">ρ" (kg/m³)</th><th class="n">h" (kJ/kg)</th></tr></thead><tbody>';
+    for (i=0;i<DB.steamSat.length;i++){
+      var r = DB.steamSat[i];
+      var hl = Math.abs(r[0]-M.pAbs)<0.5 ? ' class="hl"':'';
+      h += '<tr'+hl+'><td class="n">'+fmt(r[0],3)+'</td><td class="n">'+fmt(r[1],1)+'</td><td class="n">'+fmt(r[2],3)+'</td><td class="n">'+fmt(r[3],0)+'</td></tr>';
+    }
+  } else if (M.F.tipo === "gas"){
+    $("fluidTabRef").textContent = "ar seco a 1 bar absoluto";
+    h = '<table class="dt"><thead><tr><th class="n">T (°C)</th><th class="n">ρ (kg/m³)</th>'+
+        '<th class="n">μ (µPa·s)</th><th class="n">ν a '+fmt(M.pAbs,2)+' bar (cSt)</th></tr></thead><tbody>';
+    for (i=0;i<DB.air.length;i++){
+      var a = DB.air[i];
+      var rhoP = a[1]*M.pAbs;
+      var hl2 = Math.abs(a[0]-M.s.temp)<3 ? ' class="hl"':'';
+      h += '<tr'+hl2+'><td class="n">'+fmt(a[0],0)+'</td><td class="n">'+fmt(a[1],3)+'</td><td class="n">'+fmt(a[2],1)+
+           '</td><td class="n">'+fmt(a[2]*1e-6/rhoP*1e6,2)+'</td></tr>';
+    }
+  } else if (M.F.oil){
+    $("fluidTabRef").textContent = "óleos ISO VG — equação de Walther (ASTM D341)";
+    h = '<table class="dt"><thead><tr><th class="n">T (°C)</th>';
+    for (var g in DB.oils) h += '<th class="n">'+esc(g)+'</th>';
+    h += '</tr></thead><tbody>';
+    for (var T=20;T<=100;T+=10){
+      var hl3 = Math.abs(T-M.s.temp)<5 ? ' class="hl"':'';
+      h += '<tr'+hl3+'><td class="n">'+T+'</td>';
+      for (var g2 in DB.oils) h += '<td class="n">'+fmt(TC.oilProps(g2,T).nu,1)+'</td>';
+      h += '</tr>';
+    }
+  } else {
+    $("fluidTabRef").textContent = "água — massa específica, viscosidade, pressão de vapor";
+    h = '<table class="dt"><thead><tr><th class="n">T (°C)</th><th class="n">ρ (kg/m³)</th><th class="n">ν (cSt)</th>'+
+        '<th class="n">p vapor (bar abs)</th><th class="n">K (GPa)</th></tr></thead><tbody>';
+    for (i=0;i<DB.water.length;i++){
+      var w = DB.water[i];
+      var hl4 = Math.abs(w[0]-M.s.temp)<2.5 ? ' class="hl"':'';
+      h += '<tr'+hl4+'><td class="n">'+fmt(w[0],0)+'</td><td class="n">'+fmt(w[1],1)+'</td><td class="n">'+fmt(w[2],3)+
+           '</td><td class="n">'+fmt(w[3],5)+'</td><td class="n">'+fmt(w[4],2)+'</td></tr>';
+    }
+  }
+  h += '</tbody></table>';
+  $("fluidTable").innerHTML = h;
+
+  var rh = '<table class="dt"><thead><tr><th>Material e condição</th><th class="n">ε (mm)</th><th class="n">ε/Di atual</th></tr></thead><tbody>';
+  for (i=0;i<DB.roughness.length;i++){
+    var rr = DB.roughness[i];
+    var hl5 = Math.abs(rr[1]-M.rough)<1e-6 ? ' class="hl"':'';
+    rh += '<tr'+hl5+'><td>'+esc(rr[0])+'</td><td class="n">'+fmt(rr[1],4)+'</td><td class="n">'+sig(rr[1]/M.sec.Di)+'</td></tr>';
+  }
+  rh += '</tbody></table>';
+  $("roughTable").innerHTML = rh;
+
+  var kh = '<table class="dt"><thead><tr><th>Singularidade</th><th class="n">K</th><th class="n">L eq. (m)</th></tr></thead><tbody>';
+  for (i=0;i<DB.kfit.length;i++){
+    var kf = DB.kfit[i];
+    kh += '<tr><td>'+esc(kf.nome)+'</td><td class="n">'+fmt(kf.k,2)+'</td><td class="n">'+
+          fmt(M.f>0?kf.k*M.Di_m/M.f:0,2)+'</td></tr>';
+  }
+  kh += '</tbody></table>';
+  $("kRefTable").innerHTML = kh;
+
+  var schKeys = ["10S","10","20","30","40","60","80","100","120","140","160","XXS"];
+  var dh = '<table class="dt"><thead><tr><th>NPS</th><th class="n">De (mm)</th>';
+  for (i=0;i<schKeys.length;i++) dh += '<th class="n">'+schKeys[i]+'</th>';
+  dh += '</tr></thead><tbody>';
+  for (i=0;i<DB.pipes.length;i++){
+    var pp = DB.pipes[i];
+    var hl6 = (M.isSteel && i===M.s.nps) ? ' class="hl"':'';
+    dh += '<tr'+hl6+'><td>'+esc(pp[0])+'</td><td class="n">'+fmt(pp[1],1)+'</td>';
+    for (var s2=0;s2<schKeys.length;s2++){
+      var vv = pp[2][schKeys[s2]];
+      dh += '<td class="n">'+(vv!==undefined?fmt(vv,2):'<span style="color:var(--ink-3)">—</span>')+'</td>';
+    }
+    dh += '</tr>';
+  }
+  dh += '</tbody></table>';
+  $("dimTable").innerHTML = dh;
+}
+
+/* ---------- Relatório ---------- */
+function line(k, v){ return "  " + (k+" ").padEnd(44,".") + " " + v; }
+function head(t){ return "\n" + t.toUpperCase() + "\n" + "-".repeat(74); }
+
+function renderRelatorio(){
+  if (M.erros.length){ $("report").textContent = "Corrija as entradas: " + M.erros.join(" "); return; }
+  var d = new Date();
+  var dt = d.toLocaleDateString("pt-BR") + " " + d.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
+  var L = [];
+  L.push("=".repeat(74));
+  L.push("MEMORIAL DE DIMENSIONAMENTO DE TUBULAÇÃO");
+  L.push("=".repeat(74));
+  L.push(line("Linha / TAG", M.s.projName));
+  L.push(line("Serviço", M.s.projDesc));
+  L.push(line("Emitido em", dt));
+  L.push(line("Cor de identificação (NBR 6493)", DB.nbr6493[M.F.cor].nome));
+
+  L.push(head("1. Condições de serviço"));
+  L.push(line("Fluido", M.F.nome));
+  L.push(line("Pressão de projeto", fmt(M.pGauge,2)+" bar man. ("+fmt(M.pAbs,3)+" bar abs)"));
+  L.push(line("Temperatura de operação", fmt(M.s.temp,1)+" °C"));
+  if (M.Tsat !== undefined) L.push(line("Temperatura de saturação", fmt(M.Tsat,1)+" °C"+(M.superheat>0?" · superaquecimento "+fmt(M.superheat,1)+" K":"")));
+  L.push(line("Vazão", fmt(M.Q*3600,2)+" m³/h  ("+fmt(M.mdot*3600,1)+" kg/h)"));
+  L.push(line("Massa específica", fmt(M.pr.rho,2)+" kg/m³"));
+  L.push(line("Viscosidade cinemática", fmt(M.pr.nu,4)+" cSt"));
+
+  L.push(head("2. Tubo adotado"));
+  L.push(line("Material", M.mat.nome));
+  L.push(line("Referência dimensional", M.origem));
+  L.push(line("Diâmetro externo De", fmt(M.De,2)+" mm"));
+  L.push(line("Espessura nominal e", fmt(M.e,2)+" mm"));
+  L.push(line("Diâmetro interno Di", fmt(M.sec.Di,2)+" mm"));
+  L.push(line("Relação De/e", fmt(M.sec.SDR,2)));
+  L.push(line("Massa linear (tubo vazio)", fmt(M.massLin,2)+" kg/m"));
+  L.push(line("Comprimento total", fmt(M.L,1)+" m × "+fmt(M.s.qty,0)+" linha(s)"));
+
+  L.push(head("3. Verificação de pressão"));
+  if (M.isSteel){
+    L.push("  Critério: ASME B31.3 §304.1.2(a)   t = P·De / [2·(S·E·W + P·Y)]");
+    L.push(line("Tensão admissível S", fmt(M.S,1)+" MPa a "+fmt(M.s.temp,0)+" °C"));
+    L.push(line("Fator de junta E", fmt(M.s.jointE,2)));
+    L.push(line("Coeficiente Y", fmt(M.Y,2)));
+  } else {
+    L.push("  Critério: ISO 4065 / ISO 12162   e = P·De / (2·σs·f(T) + P)");
+    L.push(line("Tensão de projeto a 20 °C", fmt(M.mat.sigma,2)+" MPa"));
+    L.push(line("Fator de temperatura f(T)", fmt(M.fT,3)));
+  }
+  L.push(line("Espessura por pressão", fmt(M.tB313,3)+" mm"));
+  L.push(line("Sobre-espessura de corrosão c", fmt(M.c,2)+" mm"));
+  L.push(line("Espessura requerida t_m", fmt(M.tm,3)+" mm"));
+  L.push(line("Espessura útil disponível", fmt(M.eEfetiva,3)+" mm"));
+  L.push(line("Margem de parede", fmt(M.margemParede,1)+" %"));
+  L.push(line("Pressão admissível", fmt(M.pAdmBar,2)+" bar"));
+  L.push(line("Relação P_adm / P_projeto", (isFinite(M.FS)?fmt(M.FS,2):"infinita")));
+  if (M.flange) L.push(line("Classe de flange mínima (B16.5)", "Classe "+M.flange.classe));
+
+  L.push(head("4. Verificação hidráulica"));
+  L.push(line("Velocidade média", fmt(M.v,3)+" m/s   (faixa "+fmt(M.vMin,1)+" a "+fmt(M.vMax,1)+" m/s)"));
+  L.push(line("Número de Reynolds", fmt(M.Re,0)+"   ("+M.regime+")"));
+  L.push(line("Rugosidade absoluta", fmt(M.rough,4)+" mm"));
+  L.push(line("Fator de atrito f", fmt(M.f,5)));
+  L.push(line("Perda distribuída", sig(M.dpDistBar)+" bar"));
+  L.push(line("Perda localizada (ΣK = "+fmt(M.K,2)+")", sig(M.dpLocalBar)+" bar"));
+  L.push(line("Perda total", sig(M.dpTotalBar)+" bar  ("+fmt(M.dpMca,2)+" m.c.a.)"));
+  L.push(line("Perda unitária", sig(M.dpBar100)+" bar/100 m"));
+  L.push(line("Limite adotado", sig(M.dpLimBar)+" bar  ["+M.dpLimTxt+"]"));
+  L.push(line("Potência no eixo", fmt(M.powE,3)+" kW  (rendimento "+fmt(M.s.pumpEff,0)+" %)"));
+  if (M.kitems.length){
+    L.push("");
+    L.push("  Singularidades computadas:");
+    for (var i=0;i<M.kitems.length;i++){
+      L.push("    " + (M.kitems[i].n+" × "+M.kitems[i].nome).padEnd(50,".") + " K = " + fmt(M.kitems[i].tot,2));
+    }
+  }
+
+  if (M.F.tipo === "liquido"){
+    L.push(head("5. Sucção e cavitação"));
+    L.push(line("Pressão no reservatório", fmt(M.s.pSurf,3)+" bar abs"));
+    L.push(line("Pressão de vapor a "+fmt(M.s.temp,0)+" °C", fmt(M.pr.pv,5)+" bar abs"));
+    L.push(line("Desnível de sucção", fmt(M.s.zSuc,2)+" m"));
+    L.push(line("Perda na sucção", fmt(M.hfSuc,3)+" m"));
+    L.push(line("NPSH disponível", fmt(M.npshd,2)+" m"));
+    L.push(line("NPSH requerido", fmt(M.npshr,2)+" m"));
+    L.push(line("Margem", fmt(M.margemNpsh,2)+" m"));
+    L.push(line("Índice de cavitação σ", (isFinite(M.sigma)?fmt(M.sigma,2):"infinito")));
+  }
+
+  L.push(head((M.F.tipo==="liquido"?"6":"5")+". Transiente hidráulico"));
+  L.push(line("Celeridade da onda", fmt(M.a,0)+" m/s"));
+  L.push(line("Tempo crítico 2L/a", fmt(M.ariete.tCritico,3)+" s"));
+  L.push(line("Tempo de fechamento", fmt(M.s.tClose,2)+" s   (manobra "+M.ariete.manobra+")"));
+  L.push(line("Sobrepressão adotada", fmt(M.ariete.dh,1)+" m  ("+fmt(M.dpAriete,2)+" bar)"));
+  L.push(line("Pressão máxima transitória", fmt(M.pMaxTrans,2)+" bar"));
+  L.push(line("Pressão mínima transitória", fmt(M.pGauge-M.dpAriete,2)+" bar"));
+
+  L.push(head((M.F.tipo==="liquido"?"7":"6")+". Dilatação e suportação"));
+  L.push(line("Coeficiente de dilatação", sig(M.mat.alpha*1e6)+" ×10⁻⁶ /°C"));
+  L.push(line("ΔT (operação − montagem)", fmt(M.dT,1)+" °C"));
+  L.push(line("Dilatação livre", fmt(M.dL,1)+" mm em "+fmt(M.L,1)+" m"));
+  L.push(line("Tensão de bloqueio", fmt(M.sigmaBloq,1)+" MPa"));
+  L.push(line("Perna guiada mínima", fmt(M.perna,2)+" m"));
+  L.push(line("Vão máximo entre apoios", fmt(M.vao.adotado,2)+" m"));
+  L.push(line("Número estimado de apoios", fmt(Math.ceil(M.L/Math.max(0.5,M.vao.adotado))+1,0)));
+
+  L.push(head((M.F.tipo==="liquido"?"8":"7")+". Matriz de conformidade"));
+  var c = M.checks || buildChecks();
+  var nOk=0,nW=0,nF=0;
+  for (var j=0;j<c.length;j++){
+    var mk = c[j].st==="ok"?"[ OK ]":(c[j].st==="warn"?"[ !! ]":"[ XX ]");
+    if (c[j].st==="ok") nOk++; else if (c[j].st==="warn") nW++; else nF++;
+    L.push("  "+mk+" "+c[j].criterio);
+    L.push("         limite: "+c[j].limite+"   |   calculado: "+c[j].valor+"   |   "+c[j].norma);
+  }
+  L.push("");
+  L.push("  Resultado: "+nOk+" critérios atendidos, "+nW+" em atenção, "+nF+" não atendidos.");
+
+  L.push(head("Referências normativas"));
+  for (var n=0;n<DB.norms.length;n++) L.push("  " + DB.norms[n][0].padEnd(20," ") + DB.norms[n][1]);
+
+  L.push("");
+  L.push("-".repeat(74));
+  L.push("Este memorial é um auxílio de cálculo. Os valores de tensão admissível,");
+  L.push("fatores de temperatura e dimensões são de referência e devem ser conferidos");
+  L.push("na edição vigente das normas e nos catálogos dos fabricantes. A verificação");
+  L.push("final é responsabilidade do profissional habilitado que assina o projeto.");
+  L.push("-".repeat(74));
+
+  $("report").textContent = L.join("\n");
+}
+
+/* ============================================================
+   PERSISTÊNCIA
+   ============================================================ */
+var LSK = "tubocalc.projetos.v1";
+var LSK_THEME = "tubocalc.tema";
+
+function loadSaved(){
+  try { return JSON.parse(localStorage.getItem(LSK)) || []; } catch(e){ return []; }
+}
+function renderSaved(){
+  var arr = loadSaved();
+  if (!arr.length){ $("savedList").innerHTML = '<div class="hint">Nenhum projeto salvo ainda. Use o botão “Salvar” na barra superior.</div>'; return; }
+  var h = "";
+  for (var i=0;i<arr.length;i++){
+    h += '<div class="saved__i"><div><div class="saved__n">'+esc(arr[i].nome)+'</div>'+
+         '<div class="saved__d">'+esc(arr[i].data)+'</div></div>'+
+         '<button class="btn" data-load="'+i+'">Abrir</button>'+
+         '<button class="btn" data-del="'+i+'" title="Excluir">✕</button></div>';
+  }
+  $("savedList").innerHTML = h;
+  var bl = $("savedList").querySelectorAll("[data-load]");
+  for (var a=0;a<bl.length;a++) bl[a].addEventListener("click", function(){
+    var arr2 = loadSaved(); applyState(arr2[parseInt(this.dataset.load,10)].estado); toast("Projeto carregado.");
+  });
+  var bd = $("savedList").querySelectorAll("[data-del]");
+  for (var b=0;b<bd.length;b++) bd[b].addEventListener("click", function(){
+    var arr3 = loadSaved(); arr3.splice(parseInt(this.dataset.del,10),1);
+    localStorage.setItem(LSK, JSON.stringify(arr3)); renderSaved(); toast("Projeto excluído.");
+  });
+}
+function saveProject(){
+  var arr = loadSaved();
+  var st = readState();
+  var d = new Date();
+  arr.unshift({nome: st.projName || "Sem TAG", data: d.toLocaleDateString("pt-BR")+" "+d.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"}), estado: st});
+  arr = arr.slice(0,10);
+  try { localStorage.setItem(LSK, JSON.stringify(arr)); renderSaved(); toast("Projeto salvo."); }
+  catch(e){ toast("Não foi possível salvar neste navegador."); }
+}
+function download(name, content, mime){
+  var b = new Blob([content], {type: mime || "text/plain;charset=utf-8"});
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(b); a.download = name;
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 500);
+}
+
+/* ============================================================
+   EVENTOS
+   ============================================================ */
+var _t = null;
+function schedule(){ clearTimeout(_t); _t = setTimeout(recalc, 90); }
+
+function bind(){
+  var ids = ["projName","projDesc","fluid","press","temp","flow","flowUnit","autoProps","rho","nu",
+    "oilGrade","matFam","mat","nps","sch","pDn","pSdr","customDim","od","th","len","qty","corr","millTol","jointE",
+    "rough","dpLimUnit","dpLim","autoV","vMin","vMax","useK","kExtra","pSurf","zSuc","lSuc","npshr",
+    "tClose","pumpEff","tInst","insulW","defLim"];
+  for (var i=0;i<ids.length;i++){
+    var e = $(ids[i]);
+    if (!e) continue;
+    e.addEventListener("input", schedule);
+    e.addEventListener("change", schedule);
+  }
+  $("matFam").addEventListener("change", function(){ refreshMaterialList(); refreshSDR(); autoRough(); schedule(); });
+  $("mat").addEventListener("change", function(){ refreshSDR(); autoRough(); schedule(); });
+  $("nps").addEventListener("change", function(){ refreshSchedules(); schedule(); });
+  $("fluid").addEventListener("change", function(){
+    var F = DB.fluids[$("fluid").value];
+    $("oilGradeField").style.display = F.oil ? "" : "none";
+    if ($("autoV").checked){ $("vMin").value = fmt(F.vRec[0],1); $("vMax").value = fmt(F.vRec[1],1); }
+    $("dpLimUnit").value = F.dpDefault.unit;
+    $("dpLim").value = String(F.dpDefault.val).replace(".",",");
+    if (F.tipo === "gas") $("flowUnit").value = "m3min";
+    else if (F.tipo === "vapor") $("flowUnit").value = "kgh";
+    else if ($("flowUnit").value === "m3min" || $("flowUnit").value === "kgh") $("flowUnit").value = "m3h";
+    schedule();
+  });
+  $("customDim").addEventListener("change", function(){
+    $("od").readOnly = !this.checked; $("th").readOnly = !this.checked; schedule();
+  });
+  $("rough").addEventListener("input", function(){ this.dataset.auto = "0"; });
+
+  /* abas */
+  var tabs = document.querySelectorAll(".tab");
+  for (var t=0;t<tabs.length;t++){
+    tabs[t].addEventListener("click", function(){
+      var all = document.querySelectorAll(".tab");
+      for (var k=0;k<all.length;k++) all[k].setAttribute("aria-selected","false");
+      this.setAttribute("aria-selected","true");
+      var panes = document.querySelectorAll(".pane");
+      for (var p=0;p<panes.length;p++) panes[p].classList.remove("is-active");
+      $(this.dataset.p).classList.add("is-active");
+    });
+  }
+
+  $("btnTheme").addEventListener("click", function(){
+    var cur = document.documentElement.getAttribute("data-theme");
+    var nx = cur === "dark" ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", nx);
+    try { localStorage.setItem(LSK_THEME, nx); } catch(e){}
+  });
+  $("btnSave").addEventListener("click", saveProject);
+  $("btnExport").addEventListener("click", function(){
+    var st = readState();
+    download((st.projName||"tubocalc").replace(/[^\w\-]+/g,"_")+".json",
+             JSON.stringify({app:"TuboCalc", versao:1, estado:st}, null, 2), "application/json");
+    toast("Arquivo exportado.");
+  });
+  $("btnImport").addEventListener("click", function(){ $("fileImport").click(); });
+  $("fileImport").addEventListener("change", function(ev){
+    var f = ev.target.files[0]; if (!f) return;
+    var r = new FileReader();
+    r.onload = function(){
+      try {
+        var o = JSON.parse(r.result);
+        applyState(o.estado || o);
+        toast("Projeto importado.");
+      } catch(e){ toast("Arquivo inválido."); }
+    };
+    r.readAsText(f);
+    ev.target.value = "";
+  });
+  $("btnReset").addEventListener("click", function(){ location.reload(); });
+  $("btnDownloadTxt").addEventListener("click", function(){
+    download((readState().projName||"memorial").replace(/[^\w\-]+/g,"_")+"_memorial.txt", $("report").textContent);
+    toast("Memorial baixado.");
+  });
+  $("btnCopy").addEventListener("click", function(){
+    var txt = $("report").textContent;
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(txt).then(function(){ toast("Memorial copiado."); },
+                                              function(){ toast("Não foi possível copiar."); });
+    } else {
+      var ta = document.createElement("textarea"); ta.value = txt; document.body.appendChild(ta);
+      ta.select(); try { document.execCommand("copy"); toast("Memorial copiado."); } catch(e){ toast("Não foi possível copiar."); }
+      ta.remove();
+    }
+  });
+  $("btnPrint").addEventListener("click", function(){ window.print(); });
+}
+
+function autoRough(){
+  var fam = $("matFam").value;
+  var m = (fam==="steel") ? DB.steels[$("mat").value] : DB.plastics[$("mat").value];
+  if (m){ $("rough").value = fmt(m.rough,4); $("rough").dataset.auto = "1"; }
+}
+
+/* ============================================================
+   INICIALIZAÇÃO
+   ============================================================ */
+function init(){
+  try {
+    var th = localStorage.getItem(LSK_THEME);
+    if (th) document.documentElement.setAttribute("data-theme", th);
+    else if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches)
+      document.documentElement.setAttribute("data-theme","dark");
+  } catch(e){}
+  initSelects();
+  autoRough();
+  bind();
+  renderSaved();
+  recalc();
+}
+
+if (typeof window !== "undefined"){
+  window.TuboCalcInit = init;
+  window.__build = build;
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+  else init();
+}
+</script>
+</body>
+</html>

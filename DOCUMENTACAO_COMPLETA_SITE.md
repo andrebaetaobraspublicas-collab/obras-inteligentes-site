@@ -35,7 +35,7 @@ Excecoes/observacoes:
 
 ## Inventario verificado dos aplicativos
 
-Inventario originalmente verificado em 21/07/2026 e atualizado em 01/08/2026 para inclusao do TransmissaoPro. Todos os cards listados possuem arquivo local correspondente.
+Inventario originalmente verificado em 21/07/2026 e atualizado em 01/08/2026 para inclusao do TuboCalc. Todos os cards listados possuem arquivo local correspondente.
 
 | Card | Aplicativo | Rota publicada | Arquivo local principal | Status local | Status site |
 |---|---|---|---|---|---|
@@ -77,6 +77,7 @@ Inventario originalmente verificado em 21/07/2026 e atualizado em 01/08/2026 par
 | 36 / ENGRENAGENS | Calculadora de Engrenagens | `/engrenagecalc/` | `C:\Obras Inteligentes\engrenagecalc\index.html` | existe | 200 |
 | 37 / VOLANTES | VolantePro | `/volantepro/` | `C:\Obras Inteligentes\volantepro\index.html` | existe | 200 |
 | 38 / TRANSMISSAO | TransmissaoPro | `/transmissaopro/` | `C:\Obras Inteligentes\transmissaopro\index.html` | existe | 200 |
+| 39 / TUBULACOES | TuboCalc | `/tubocalc/` | `C:\Obras Inteligentes\tubocalc\index.html` | existe | 200 |
 
 ## Tamanhos verificados
 
@@ -122,6 +123,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/engrenagecalc/` | 582008 bytes | 578817 caracteres |
 | `/volantepro/` | 104335 bytes | 104335 caracteres |
 | `/transmissaopro/` | 78968 bytes | 78968 caracteres |
+| `/tubocalc/` | 140577 bytes | 140577 caracteres |
 
 ## Estrutura local principal
 
@@ -163,7 +165,7 @@ C:\Obras Inteligentes
    └─ index.html
 ```
 
-Atualizacao posterior: tambem existem as pastas `C:\Obras Inteligentes\reservatoriopro\index.html`, correspondente ao card 13 / RESERVATORIO, `C:\Obras Inteligentes\bombapro\index.html`, correspondente ao card 14 / BOMBAS, `C:\Obras Inteligentes\paraboltpro\index.html`, correspondente ao card 15 / CHUMBADORES, `C:\Obras Inteligentes\steelpro\index.html`, correspondente ao card 16 / ACO, `C:\Obras Inteligentes\cronogramapro\index.html`, correspondente ao card 17 / CRONOGRAMA, `C:\Obras Inteligentes\drenapro\index.html`, correspondente ao card 18 / DRENAGEM, `C:\Obras Inteligentes\taludepro\index.html`, correspondente ao card 19 / TALUDES, `C:\Obras Inteligentes\solarpro\index.html`, correspondente ao card 20 / SOLAR, `C:\Obras Inteligentes\pgrcc\index.html`, correspondente ao card 21 / RESIDUOS, `C:\Obras Inteligentes\ventopro\index.html`, correspondente ao card 22 / VENTO, `C:\Obras Inteligentes\concretopro\index.html`, correspondente ao card 23 / CONCRETO, `C:\Obras Inteligentes\aterramentopro\index.html`, correspondente ao card 24 / ATERRAMENTO, `C:\Obras Inteligentes\parafusopro\index.html`, correspondente ao card 25 / PARAFUSOS, `C:\Obras Inteligentes\risco-cambial\index.html`, correspondente ao card 26 / CAMBIO, `C:\Obras Inteligentes\protendpro\index.html`, correspondente ao card 27 / PROTENSAO, `C:\Obras Inteligentes\eventogramapro\index.html`, correspondente ao card 28 / EVENTOGRAMA, `C:\Obras Inteligentes\termo-massa\index.html`, correspondente ao card 29 / TERMO MASSA, `C:\Obras Inteligentes\cabocalc\index.html`, correspondente ao card 30 / CABOS, `C:\Obras Inteligentes\subestacaopro\index.html`, correspondente ao card 31 / SUBESTACAO, `C:\Obras Inteligentes\brucknercalc\index.html`, correspondente ao card 32 / TERRAPLENAGEM, `C:\Obras Inteligentes\molapro\index.html`, correspondente ao card 33 / MOLAS, `C:\Obras Inteligentes\calculadora-eixos\index.html`, correspondente ao card 34 / EIXOS, `C:\Obras Inteligentes\mancalpro\index.html`, correspondente ao card 35 / MANCAIS, `C:\Obras Inteligentes\engrenagecalc\index.html`, correspondente ao card 36 / ENGRENAGENS, `C:\Obras Inteligentes\volantepro\index.html`, correspondente ao card 37 / VOLANTES, e `C:\Obras Inteligentes\transmissaopro\index.html`, correspondente ao card 38 / TRANSMISSAO.
+Atualizacao posterior: tambem existem as pastas `C:\Obras Inteligentes\reservatoriopro\index.html`, correspondente ao card 13 / RESERVATORIO, `C:\Obras Inteligentes\bombapro\index.html`, correspondente ao card 14 / BOMBAS, `C:\Obras Inteligentes\paraboltpro\index.html`, correspondente ao card 15 / CHUMBADORES, `C:\Obras Inteligentes\steelpro\index.html`, correspondente ao card 16 / ACO, `C:\Obras Inteligentes\cronogramapro\index.html`, correspondente ao card 17 / CRONOGRAMA, `C:\Obras Inteligentes\drenapro\index.html`, correspondente ao card 18 / DRENAGEM, `C:\Obras Inteligentes\taludepro\index.html`, correspondente ao card 19 / TALUDES, `C:\Obras Inteligentes\solarpro\index.html`, correspondente ao card 20 / SOLAR, `C:\Obras Inteligentes\pgrcc\index.html`, correspondente ao card 21 / RESIDUOS, `C:\Obras Inteligentes\ventopro\index.html`, correspondente ao card 22 / VENTO, `C:\Obras Inteligentes\concretopro\index.html`, correspondente ao card 23 / CONCRETO, `C:\Obras Inteligentes\aterramentopro\index.html`, correspondente ao card 24 / ATERRAMENTO, `C:\Obras Inteligentes\parafusopro\index.html`, correspondente ao card 25 / PARAFUSOS, `C:\Obras Inteligentes\risco-cambial\index.html`, correspondente ao card 26 / CAMBIO, `C:\Obras Inteligentes\protendpro\index.html`, correspondente ao card 27 / PROTENSAO, `C:\Obras Inteligentes\eventogramapro\index.html`, correspondente ao card 28 / EVENTOGRAMA, `C:\Obras Inteligentes\termo-massa\index.html`, correspondente ao card 29 / TERMO MASSA, `C:\Obras Inteligentes\cabocalc\index.html`, correspondente ao card 30 / CABOS, `C:\Obras Inteligentes\subestacaopro\index.html`, correspondente ao card 31 / SUBESTACAO, `C:\Obras Inteligentes\brucknercalc\index.html`, correspondente ao card 32 / TERRAPLENAGEM, `C:\Obras Inteligentes\molapro\index.html`, correspondente ao card 33 / MOLAS, `C:\Obras Inteligentes\calculadora-eixos\index.html`, correspondente ao card 34 / EIXOS, `C:\Obras Inteligentes\mancalpro\index.html`, correspondente ao card 35 / MANCAIS, `C:\Obras Inteligentes\engrenagecalc\index.html`, correspondente ao card 36 / ENGRENAGENS, `C:\Obras Inteligentes\volantepro\index.html`, correspondente ao card 37 / VOLANTES, `C:\Obras Inteligentes\transmissaopro\index.html`, correspondente ao card 38 / TRANSMISSAO, e `C:\Obras Inteligentes\tubocalc\index.html`, correspondente ao card 39 / TUBULACOES.
 
 ## Estado funcional importante por modulo
 
@@ -791,6 +793,24 @@ Observacoes:
 - Tela inicial do site aponta para `/transmissaopro/`.
 - O card foi classificado no filtro `Engenharia Mecanica`.
 - Validar apos futuras alteracoes se os calculos de transmissoes por correias em V, correias sincronizadas, correntes, geometria, capacidade transmissivel e relatorios continuam carregando corretamente.
+
+### TuboCalc
+
+Rota: `/tubocalc/`  
+Arquivo: `tubocalc/index.html`
+
+Ultima inclusao:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\TuboCalc.html`
+- Data: 01/08/2026
+- Alteracao: inclusao de novo card na home e publicacao do aplicativo como HTML standalone.
+
+Observacoes:
+
+- Aplicativo standalone empacotado em HTML unico.
+- Tela inicial do site aponta para `/tubocalc/`.
+- O card foi classificado no filtro `Engenharia Mecanica`.
+- Validar apos futuras alteracoes se dimensionamento de tubulacoes industriais, perdas de carga, espessuras, materiais, suportes, expansao termica e relatorios continuam carregando corretamente.
 
 ## Artigos publicados na home
 
