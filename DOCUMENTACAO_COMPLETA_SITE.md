@@ -35,7 +35,7 @@ Excecoes/observacoes:
 
 ## Inventario verificado dos aplicativos
 
-Inventario originalmente verificado em 21/07/2026 e atualizado em 02/08/2026 para inclusao do CompressorSelect Pro. Todos os cards listados possuem arquivo local correspondente.
+Inventario originalmente verificado em 21/07/2026 e atualizado em 02/08/2026 para atualizacao do CompressorSelect Pro e TermoPro. Todos os cards listados possuem arquivo local correspondente.
 
 | Card | Aplicativo | Rota publicada | Arquivo local principal | Status local | Status site |
 |---|---|---|---|---|---|
@@ -96,7 +96,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/sispav-reabilitacao/` | 147360 bytes | 147360 caracteres |
 | `/muros-arrimo/` | 91962 bytes | 91962 caracteres |
 | `/casa-parametrica/` | 38883 bytes | 38883 caracteres |
-| `/termopro/` | 205855 bytes | 205855 caracteres |
+| `/termopro/` | 475675 bytes | 475675 caracteres |
 | `/circuitopro/` | 236513 bytes | 236513 caracteres |
 | `/reservatoriopro/` | 161199 bytes | 161199 caracteres |
 | `/bombapro/` | 737818 bytes | 737818 caracteres |
@@ -125,7 +125,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/volantepro/` | 104335 bytes | 104335 caracteres |
 | `/transmissaopro/` | 78968 bytes | 78968 caracteres |
 | `/tubocalc/` | 256920 bytes | 256920 caracteres |
-| `/compressorselect-pro/` | 294855 bytes | 294855 caracteres |
+| `/compressorselect-pro/` | 704964 bytes | 704964 caracteres |
 
 ## Estrutura local principal
 
@@ -322,13 +322,14 @@ Arquivo: `termopro/index.html`
 
 Ultima versao publicada:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\TermoPro_3_2.html`
-- Commit: `4acef8c` - `Atualiza TermoPro para versao 3.2`
+- Fonte: `C:\Users\ACER\Documents\Downloads\TermoPro_v3.7_rede_ramificada_balanceamento.html`
+- Data: 02/08/2026
+- Alteracao: substituicao integral de `termopro/index.html` pela versao TermoPro 3.7, com rede ramificada e balanceamento.
 
 Observacoes:
 
-- O titulo interno ainda aparece como `TermoPro 3.0`, mas o arquivo publicado e o anexo mais recente `TermoPro_3_2.html`.
-- Validado com abertura, aceite, calculo e abas de dimensionamento/catalogo/documentacao.
+- Aplicativo standalone com tela de abertura e aviso legal.
+- Validar apos futuras alteracoes se abertura, aceite, calculo de carga termica, psicrometria, catalogo, documentacao, rede ramificada, balanceamento de dutos e exportacoes continuam carregando corretamente.
 
 ### CircuitoPro
 
@@ -819,11 +820,11 @@ Observacoes:
 Rota: `/compressorselect-pro/`  
 Arquivo: `compressorselect-pro/index.html`
 
-Ultima inclusao:
+Ultima atualizacao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\CompressorSelect-Pro (1).html`
+- Fonte: `C:\Users\ACER\Documents\Downloads\CompressorSelect Pro v2.2 (offline) (8).html`
 - Data: 02/08/2026
-- Alteracao: inclusao de novo card na home e publicacao do aplicativo como HTML standalone.
+- Alteracao: substituicao integral de `compressorselect-pro/index.html` pela nova versao do aplicativo.
 
 Observacoes:
 
