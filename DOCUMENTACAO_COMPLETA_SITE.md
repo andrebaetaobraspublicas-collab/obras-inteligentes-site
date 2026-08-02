@@ -125,7 +125,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/volantepro/` | 104335 bytes | 104335 caracteres |
 | `/transmissaopro/` | 78968 bytes | 78968 caracteres |
 | `/tubocalc/` | 256920 bytes | 256920 caracteres |
-| `/compressorselect-pro/` | 704964 bytes | 704964 caracteres |
+| `/compressorselect-pro/` | 791039 bytes | 791039 caracteres |
 
 ## Estrutura local principal
 
@@ -822,9 +822,9 @@ Arquivo: `compressorselect-pro/index.html`
 
 Ultima atualizacao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\CompressorSelect Pro v2.2 (offline) (8).html`
+- Fonte: `C:\Users\ACER\Documents\Downloads\CompressorSelect Pro v2.3 (offline).html`
 - Data: 02/08/2026
-- Alteracao: substituicao integral de `compressorselect-pro/index.html` pela nova versao do aplicativo.
+- Alteracao: substituicao integral de `compressorselect-pro/index.html` pela versao 2.3 do aplicativo.
 
 Observacoes:
 
