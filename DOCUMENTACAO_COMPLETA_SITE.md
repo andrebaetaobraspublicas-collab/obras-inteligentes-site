@@ -127,7 +127,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/transmissaopro/` | 78968 bytes | 78968 caracteres |
 | `/tubocalc/` | 256920 bytes | 256920 caracteres |
 | `/compressorselect-pro/` | 791039 bytes | 791039 caracteres |
-| `/ventiladorpro/` | 534369 bytes | 534369 caracteres |
+| `/ventiladorpro/` | 669301 bytes | 669301 caracteres |
 
 ## Estrutura local principal
 
@@ -840,11 +840,11 @@ Observacoes:
 Rota: `/ventiladorpro/`  
 Arquivo: `ventiladorpro/index.html`
 
-Ultima inclusao:
+Ultima atualizacao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\VentiladorPro_v3.1_abertura.html`
+- Fonte: `C:\Users\ACER\Documents\Downloads\VentiladorPro_v4.1_abertura.html`
 - Data: 02/08/2026
-- Alteracao: inclusao de novo card na home e publicacao do aplicativo como HTML standalone.
+- Alteracao: substituicao integral de `ventiladorpro/index.html` pela nova versao do aplicativo.
 
 Observacoes:
 

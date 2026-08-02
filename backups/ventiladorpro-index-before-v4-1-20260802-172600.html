@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="VentiladorPro v4.0 — dimensionamento, catálogo real governado, redes nodais complexas, múltiplos ventiladores, Monte Carlo, otimização, energia, acústica, vibração e memória profissional." />
-  <title>VentiladorPro v4.0</title>
+  <meta name="description" content="VentiladorPro v3.0 — dimensionamento, catálogo real, otimização técnico-econômica conjunta, cenários, sensibilidade, energia, acústica, vibração e memória profissional." />
+  <title>VentiladorPro v3.0</title>
   <style>
     :root{
       --bg:#f3f6fb;
@@ -238,7 +238,7 @@
       body{background:white}.topbar,.sidebar,.page-title,.no-print,footer{display:none!important}.layout,.main{display:block;padding:0}.tab{display:none!important}#tab-report{display:block!important}.report{box-shadow:none;border:0;border-radius:0;max-width:none;padding:0}.report-cover{page-break-after:always;min-height:95vh}.report h2{page-break-after:avoid}.report table{page-break-inside:auto}.report tr{page-break-inside:avoid}.report-section{page-break-inside:avoid}@page{size:A4;margin:16mm}
     }
   
-    /* VentiladorPro v4.0 — risco, redes nodais, governança e rastreabilidade */
+    /* VentiladorPro v3.0 — otimização, cenários e sensibilidade */
     .optimizer-layout{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:16px}
     .optimizer-layout>.card{grid-column:span 6}
     .optimizer-layout>.wide{grid-column:span 12}
@@ -258,26 +258,10 @@
     @media(max-width:1100px){.optimizer-layout>.card{grid-column:span 12}}
     @media(max-width:760px){.scenario-compare{grid-template-columns:1fr}.optimization-best .score{font-size:28px}}
 
-
-    /* VentiladorPro v4.0 */
-    .v4-progress{height:12px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);overflow:hidden}.v4-progress>span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--primary),var(--good));transition:width .18s ease}
-    .v4-chart{min-height:330px;border:1px solid var(--line);border-radius:12px;background:var(--surface-2);padding:8px;overflow:hidden}.v4-chart svg{display:block;width:100%;height:auto}
-    .v4-kpi{font-size:26px;font-weight:900;letter-spacing:-.035em;line-height:1.1}.v4-kpi small{font-size:11px;color:var(--muted);font-weight:700;letter-spacing:0}
-    .risk-meter{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-top:9px}.risk-meter span{height:9px;border-radius:999px;background:var(--line)}.risk-meter span.on:nth-child(-n+2){background:var(--good)}.risk-meter span.on:nth-child(3){background:var(--warning)}.risk-meter span.on:nth-child(n+4){background:var(--danger)}
-    .network-diagram{min-height:390px;border:1px solid var(--line);border-radius:13px;background:radial-gradient(circle at 10px 10px,color-mix(in srgb,var(--line) 55%,transparent) 1px,transparent 1.5px);background-size:20px 20px;overflow:hidden;padding:6px}
-    .network-diagram svg{display:block;width:100%;height:auto;min-height:370px}.node-source{fill:#0b6bcb}.node-junction{fill:#64748b}.node-terminal{fill:#00a889}.node-bad{stroke:#c2413b!important;stroke-width:4!important}
-    .governance-score{display:flex;align-items:center;gap:13px}.score-ring{width:68px;height:68px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--good) calc(var(--score,0)*1%),var(--line) 0);position:relative}.score-ring:after{content:"";position:absolute;inset:7px;border-radius:50%;background:var(--surface)}.score-ring strong{position:relative;z-index:1;font-size:17px}
-    .audit-severity{font-weight:850}.audit-severity.bad{color:var(--danger)}.audit-severity.warn{color:var(--warning)}.audit-severity.good{color:var(--good)}
-    .revision-status{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:4px 8px;font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.04em;border:1px solid var(--line)}.revision-status.approved{color:var(--good);background:color-mix(in srgb,var(--good) 9%,var(--surface))}.revision-status.review{color:var(--warning);background:color-mix(in srgb,var(--warning) 9%,var(--surface))}.revision-status.draft{color:var(--muted)}.revision-status.changed{color:var(--danger);background:color-mix(in srgb,var(--danger) 8%,var(--surface))}
-    .diff-grid{display:grid;grid-template-columns:minmax(150px,1fr) repeat(2,minmax(110px,1fr)) minmax(90px,.7fr);gap:0;border:1px solid var(--line);border-radius:11px;overflow:hidden}.diff-grid>div{padding:9px 10px;border-bottom:1px solid var(--line);background:var(--surface)}.diff-grid>div:nth-child(4n+1){font-weight:800}.diff-grid .head{background:var(--surface-2);font-size:10px;text-transform:uppercase;color:var(--muted);font-weight:850}.diff-grid .delta-pos{color:var(--danger)}.diff-grid .delta-neg{color:var(--good)}
-    .package-drop{border:1px dashed var(--primary);border-radius:12px;padding:14px;background:color-mix(in srgb,var(--primary) 5%,var(--surface));display:grid;gap:9px}
-    .monte-running{animation:pulseV4 1.2s ease-in-out infinite alternate}@keyframes pulseV4{from{opacity:.65}to{opacity:1}}
-    .mini-spark{height:44px;display:flex;align-items:end;gap:2px}.mini-spark i{display:block;flex:1;min-width:2px;background:var(--primary);border-radius:2px 2px 0 0;opacity:.72}
-    @media(max-width:900px){.diff-grid{grid-template-columns:1fr 1fr}.diff-grid>div:nth-child(4n+1){grid-column:span 2;background:var(--surface-2)}.diff-grid .head{display:none}}
-
   </style>
 </head>
 <body>
+
 <!-- ===== TELA DE ABERTURA (splash 3D + avisos legais) ===== -->
 <style id="vp-splash-style">
   #vpSplash{position:fixed;inset:0;z-index:2147483000;background:radial-gradient(1200px 800px at 50% 45%, #16202e 0%, #0a0f17 60%, #05080d 100%);
@@ -646,12 +630,11 @@
 </script>
 <!-- ===== FIM DA TELA DE ABERTURA ===== -->
 
-<div
 <div class="app-shell" id="app" data-theme="light">
   <header class="topbar">
     <div class="brand">
       <div class="brand-mark" aria-hidden="true">◉</div>
-      <div><h1>VentiladorPro <span style="color:var(--primary)">v4.0</span></h1><small>Dimensionamento e seleção de ventiladores</small></div>
+      <div><h1>VentiladorPro <span style="color:var(--primary)">v3.0</span></h1><small>Dimensionamento e seleção de ventiladores</small></div>
     </div>
     <div class="status-pill" id="autosaveStatus">Salvamento automático ativo</div>
     <div class="status-pill" id="selfTestStatus">Autotestes: executando…</div>
@@ -674,20 +657,16 @@
       <div class="nav-group-label">Equipamento</div>
       <button class="nav-btn" data-tab="fan" onclick="openTab('fan')"><span class="nav-icon">✣</span><span>Ventilador e curva</span></button>
       <button class="nav-btn" data-tab="catalog" onclick="openTab('catalog')"><span class="nav-icon">▦</span><span>Catálogo e comparação</span></button>
-      <button class="nav-btn" data-tab="catalogAdmin" onclick="openTab('catalogAdmin')"><span class="nav-icon">✓</span><span>Governança do catálogo</span></button>
       <button class="nav-btn" data-tab="analysis" onclick="openTab('analysis')"><span class="nav-icon">⇄</span><span>Leis e associações</span></button>
-      <button class="nav-btn" data-tab="advancedNetwork" onclick="openTab('advancedNetwork')"><span class="nav-icon">⌘</span><span>Rede nodal avançada</span></button>
-      <div class="nav-group-label">Otimização e risco</div>
+      <div class="nav-group-label">Otimização v3.0</div>
       <button class="nav-btn" data-tab="optimization" onclick="openTab('optimization')"><span class="nav-icon">◇</span><span>Otimização conjunta</span></button>
       <button class="nav-btn" data-tab="sensitivity" onclick="openTab('sensitivity')"><span class="nav-icon">≭</span><span>Cenários e sensibilidade</span></button>
-      <button class="nav-btn" data-tab="probabilistic" onclick="openTab('probabilistic')"><span class="nav-icon">∿</span><span>Monte Carlo</span></button>
       <div class="nav-group-label">Análise profissional</div>
       <button class="nav-btn" data-tab="energy" onclick="openTab('energy')"><span class="nav-icon">⌁</span><span>Energia e controle</span></button>
       <button class="nav-btn" data-tab="acoustics" onclick="openTab('acoustics')"><span class="nav-icon">◖</span><span>Ruído e acústica</span></button>
       <button class="nav-btn" data-tab="vibration" onclick="openTab('vibration')"><span class="nav-icon">≋</span><span>Vibração</span></button>
       <button class="nav-btn" data-tab="diagnostics" onclick="openTab('diagnostics')"><span class="nav-icon">⌕</span><span>Diagnóstico</span></button>
       <div class="nav-group-label">Entrega</div>
-      <button class="nav-btn" data-tab="history" onclick="openTab('history')"><span class="nav-icon">⟲</span><span>Histórico e auditoria</span></button>
       <button class="nav-btn" data-tab="results" onclick="openTab('results')"><span class="nav-icon">◎</span><span>Resultados</span></button>
       <button class="nav-btn" data-tab="report" onclick="openTab('report')"><span class="nav-icon">▤</span><span>Memória de cálculo</span></button>
       <div class="sidebar-note">Cálculos em unidades SI. Dados de fabricantes devem ser confirmados em curvas e catálogos oficiais.</div>
@@ -919,44 +898,6 @@
         </div>
       </section>
 
-
-      <section class="tab" id="tab-catalogAdmin">
-        <div class="page-title">
-          <div><h2>Governança e atualização do catálogo</h2><p>Audite rastreabilidade, consistência das curvas, validade das fontes e incorpore pacotes versionados sem confundir envelopes de família com curvas completas.</p></div>
-          <div class="toolbar no-print"><button class="button" onclick="runCatalogAudit(true)">Executar auditoria</button><button class="button" onclick="exportCatalogAuditCSV()">Auditoria CSV</button><button class="button primary" onclick="exportCatalogManifest()">Manifesto JSON</button></div>
-        </div>
-        <div class="grid four">
-          <div class="card metric"><div class="metric-label">Integridade documental</div><div class="metric-value" id="catalogAuditScore">—</div><div class="metric-foot" id="catalogAuditScoreFoot">—</div></div>
-          <div class="card metric"><div class="metric-label">Curvas calculáveis</div><div class="metric-value" id="catalogAuditCurves">—</div><div class="metric-foot">pontos suficientes e consistentes</div></div>
-          <div class="card metric"><div class="metric-label">Pendências</div><div class="metric-value" id="catalogAuditIssues">—</div><div class="metric-foot" id="catalogAuditIssuesFoot">—</div></div>
-          <div class="card metric"><div class="metric-label">Pacotes adicionais</div><div class="metric-value" id="catalogPackageCount">0</div><div class="metric-foot" id="catalogPackageCountFoot">base interna preservada</div></div>
-        </div>
-        <div class="grid two" style="margin-top:16px">
-          <div class="card">
-            <div class="section-head"><div><h3>Pacote de atualização versionado</h3><div class="subtitle">Importação local com validação de esquema, origem e integridade</div></div></div>
-            <div class="package-drop">
-              <div class="form-grid">
-                <div class="field span-12"><label>Endpoint JSON opcional</label><input data-bind="catalog.governance.remoteUrl" placeholder="https://servidor.exemplo/catalogo.json"/><div class="hint">A atualização remota depende de HTTPS e permissão CORS do servidor.</div></div>
-              </div>
-              <div class="toolbar"><button class="button" onclick="fetchCatalogPackageFromUrl()">Buscar endpoint</button><button class="button" onclick="document.getElementById('catalogPackageFile').click()">Importar arquivo</button><input id="catalogPackageFile" type="file" accept="application/json,.json" hidden onchange="importCatalogPackageFile(event)"/><button class="button" onclick="downloadCatalogPackageTemplate()">Baixar modelo</button><button class="button danger" onclick="resetExternalCatalogPackages()">Remover pacotes</button></div>
-            </div>
-            <div class="callout warning">Um digest confirma integridade do conteúdo recebido, não a identidade do emissor. Itens declarados como oficiais só são aceitos com fabricante, fonte, URL HTTPS e data de verificação.</div>
-          </div>
-          <div class="card">
-            <div class="section-head"><div><h3>Manifesto da base ativa</h3><div class="subtitle">Cobertura, origem e impressão digital do conjunto</div></div><span class="badge" id="catalogManifestBadge">—</span></div>
-            <div id="catalogManifestSummary" class="empty">Execute a auditoria.</div>
-          </div>
-        </div>
-        <div class="card" style="margin-top:16px">
-          <div class="section-head"><div><h3>Pendências da auditoria</h3><div class="subtitle">Erros bloqueantes, alertas e recomendações de saneamento</div></div><span class="badge" id="catalogAuditRunAt">—</span></div>
-          <div class="table-wrap"><table style="min-width:1120px"><thead><tr><th>Severidade</th><th>Equipamento</th><th>Regra</th><th>Descrição</th><th>Origem</th></tr></thead><tbody id="catalogAuditBody"></tbody></table></div>
-        </div>
-        <div class="grid two" style="margin-top:16px">
-          <div class="card"><div class="section-head"><div><h3>Histórico de pacotes</h3><div class="subtitle">Pacotes aceitos ou parcialmente aceitos</div></div></div><div class="table-wrap"><table style="min-width:820px"><thead><tr><th>Pacote</th><th>Versão</th><th>Data</th><th>Aceitos</th><th>Rejeitados</th><th>Digest</th></tr></thead><tbody id="catalogPackageHistoryBody"></tbody></table></div></div>
-          <div class="card"><div class="section-head"><div><h3>Quarentena</h3><div class="subtitle">Registros recusados permanecem rastreáveis, mas não entram na seleção</div></div><span class="badge" id="catalogQuarantineBadge">0</span></div><div class="table-wrap"><table style="min-width:780px"><thead><tr><th>Pacote</th><th>Registro</th><th>Motivo</th><th>Data</th></tr></thead><tbody id="catalogQuarantineBody"></tbody></table></div></div>
-        </div>
-      </section>
-
       <section class="tab" id="tab-analysis">
         <div class="page-title"><div><h2>Leis de semelhança e associações</h2><p>Transforme a curva por rotação, diâmetro e densidade; construa curvas de ventiladores idênticos em série ou paralelo e recalcule o ponto de operação.</p></div><div class="toolbar no-print"><button class="button" onclick="loadExample('paralelo')">Carregar exemplo paralelo</button><button class="button primary" onclick="openTab('results')">Ver resultados</button></div></div>
         <div class="grid two">
@@ -994,50 +935,6 @@
         </div>
       </section>
 
-
-
-      <section class="tab" id="tab-advancedNetwork">
-        <div class="page-title">
-          <div><h2>Rede nodal avançada e múltiplos ventiladores</h2><p>Resolva automaticamente vazões e pressões em árvores, anéis e malhas, com perdas não lineares, demandas terminais e ventiladores auxiliares distribuídos.</p></div>
-          <div class="toolbar no-print"><button class="button" onclick="loadAdvancedNetworkExample('loop')">Exemplo: anel</button><button class="button" onclick="loadAdvancedNetworkExample('multifan')">Exemplo: multifan</button><button class="button" onclick="convertSimpleNetworkToAdvanced()">Converter rede atual</button><button class="button primary" onclick="runAdvancedNetworkSolver(true)">Resolver rede</button></div>
-        </div>
-        <div class="grid four">
-          <div class="card metric"><div class="metric-label">Convergência</div><div class="metric-value compact" id="advancedConvergence">—</div><div class="metric-foot" id="advancedConvergenceFoot">—</div></div>
-          <div class="card metric"><div class="metric-label">Vazão total</div><div class="metric-value compact" id="advancedTotalFlow">—</div><div class="metric-foot">demandas terminais</div></div>
-          <div class="card metric"><div class="metric-label">Pressão central requerida</div><div class="metric-value compact" id="advancedRequiredPressure">—</div><div class="metric-foot">após ventiladores auxiliares</div></div>
-          <div class="card metric"><div class="metric-label">Potência dos boosters</div><div class="metric-value compact" id="advancedBoosterPower">—</div><div class="metric-foot" id="advancedBoosterPowerFoot">—</div></div>
-        </div>
-        <div class="grid two" style="margin-top:16px">
-          <div class="card">
-            <div class="section-head"><div><h3>Configuração numérica</h3><div class="subtitle">Método nodal com Newton amortecido e solução local das equações de cada aresta</div></div><span class="badge" id="advancedModelStatus">Modelo inativo</span></div>
-            <div class="form-grid">
-              <div class="field span-4"><label>Nó de referência</label><select id="advancedReferenceNode" onchange="updateAdvancedReference(this.value)"></select></div>
-              <div class="field span-2"><label>Tolerância</label><div class="input-group"><input type="number" min="0.001" step="0.01" data-bind="advancedNetwork.toleranceM3h"/><span class="suffix">m³/h</span></div></div>
-              <div class="field span-2"><label>Iterações</label><input type="number" min="5" max="150" step="1" data-bind="advancedNetwork.maxIterations"/></div>
-              <div class="field span-2"><label>Amortecimento</label><input type="number" min="0.05" max="1" step="0.05" data-bind="advancedNetwork.relaxation"/></div>
-              <div class="field span-2"><label>Pontos da curva</label><input type="number" min="5" max="31" step="2" data-bind="advancedNetwork.curveSteps"/></div>
-              <div class="field span-3"><label>Escala mínima</label><div class="input-group"><input type="number" min="0" max="100" step="5" data-bind="advancedNetwork.curveMinPct"/><span class="suffix">%</span></div></div>
-              <div class="field span-3"><label>Escala máxima</label><div class="input-group"><input type="number" min="100" max="250" step="5" data-bind="advancedNetwork.curveMaxPct"/><span class="suffix">%</span></div></div>
-              <div class="field span-6"><label class="inline-check"><input type="checkbox" data-bind="advancedNetwork.allowReverseFlow"/><span>Permitir e sinalizar inversão de fluxo em arestas passivas.</span></label></div>
-            </div>
-            <div class="toolbar" style="margin-top:12px"><button class="button" onclick="addAdvancedNode()">+ Nó</button><button class="button" onclick="addAdvancedEdge()">+ Aresta</button><button class="button" onclick="generateAdvancedSystemCurve()">Gerar curva equivalente</button><button class="button primary" id="advancedUseSystemButton" onclick="toggleAdvancedSystemUse()">Usar no projeto</button><button class="button" onclick="exportAdvancedNetworkJSON()">Exportar JSON</button><button class="button" onclick="document.getElementById('advancedNetworkFile').click()">Importar JSON</button><input id="advancedNetworkFile" type="file" accept="application/json,.json" hidden onchange="importAdvancedNetworkJSON(event)"/></div>
-          </div>
-          <div class="card"><div class="section-head"><div><h3>Diagrama da rede</h3><div class="subtitle">Pressões nodais, sentido de escoamento e estações de ventilação</div></div><span class="badge" id="advancedDiagramBadge">—</span></div><div id="advancedNetworkDiagram" class="network-diagram"></div></div>
-        </div>
-        <div class="card" style="margin-top:16px">
-          <div class="section-head"><div><h3>Nós</h3><div class="subtitle">Demanda positiva representa retirada de ar; o nó de referência equilibra o sistema</div></div><span class="badge" id="advancedNodeCount">0</span></div>
-          <div class="table-wrap"><table style="min-width:1060px"><thead><tr><th>ID</th><th>Nome</th><th>Tipo</th><th>Demanda</th><th>Pressão mínima</th><th>Posição X</th><th>Posição Y</th><th></th></tr></thead><tbody id="advancedNodeBody"></tbody></table></div>
-        </div>
-        <div class="card" style="margin-top:16px">
-          <div class="section-head"><div><h3>Arestas, dutos e ventiladores auxiliares</h3><div class="subtitle">A orientação “de → para” define o sentido positivo e a ação dos ventiladores</div></div><span class="badge" id="advancedEdgeCount">0</span></div>
-          <div class="table-wrap"><table style="min-width:1960px"><thead><tr><th>Nome</th><th>De</th><th>Para</th><th>Seção</th><th>Dimensões</th><th>L</th><th>ε</th><th>ΣK</th><th>Componente</th><th>Q ref.</th><th>n</th><th>Ventilador</th><th>P₀</th><th>Q livre</th><th>Associação</th><th>η</th><th></th></tr></thead><tbody id="advancedEdgeBody"></tbody></table></div>
-        </div>
-        <div class="grid two" style="margin-top:16px">
-          <div class="card"><div class="section-head"><div><h3>Resultados por nó</h3><div class="subtitle">Pressão relativa e erro de continuidade</div></div></div><div class="table-wrap"><table style="min-width:720px"><thead><tr><th>Nó</th><th>Tipo</th><th>Demanda</th><th>Pressão</th><th>Mínima</th><th>Déficit</th><th>Resíduo</th></tr></thead><tbody id="advancedNodeResultBody"></tbody></table></div></div>
-          <div class="card"><div class="section-head"><div><h3>Curva equivalente da malha</h3><div class="subtitle">Pressão central requerida para escalas simultâneas das demandas</div></div><span class="badge" id="advancedCurveBadge">—</span></div><div id="advancedSystemCurveChart" class="v4-chart"></div></div>
-        </div>
-        <div class="card" style="margin-top:16px"><div class="section-head"><div><h3>Resultados por aresta</h3><div class="subtitle">Vazão resolvida, perdas, pressão adicionada e potência</div></div></div><div class="table-wrap"><table style="min-width:1320px"><thead><tr><th>Aresta</th><th>Sentido</th><th>Vazão</th><th>Velocidade</th><th>Re</th><th>Perda</th><th>Ventilador</th><th>ΔP líquido</th><th>Potência</th><th>Situação</th></tr></thead><tbody id="advancedEdgeResultBody"></tbody></table></div></div>
-      </section>
 
       <section class="tab" id="tab-optimization">
         <div class="page-title">
@@ -1196,54 +1093,6 @@
         <div class="grid two" style="margin-top:16px">
           <div class="card"><div class="section-head"><div><h3>Resultados da varredura</h3><div class="subtitle" id="sensitivitySweepSubtitle">—</div></div></div><div class="table-wrap"><table style="min-width:760px"><thead><tr><th>Variação</th><th>Valor da métrica</th><th>Δ relativo</th><th>Q operação</th><th>Potência</th><th>Custo anual</th><th>Ações</th></tr></thead><tbody id="sensitivitySweepBody"></tbody></table></div></div>
           <div class="card"><div class="section-head"><div><h3>Ranking do tornado</h3><div class="subtitle" id="tornadoSubtitle">—</div></div></div><div class="table-wrap"><table style="min-width:820px"><thead><tr><th>Premissa</th><th>Faixa</th><th>Cenário baixo</th><th>Base</th><th>Cenário alto</th><th>Amplitude</th></tr></thead><tbody id="tornadoBody"></tbody></table></div></div>
-        </div>
-      </section>
-
-
-      <section class="tab" id="tab-probabilistic">
-        <div class="page-title">
-          <div><h2>Simulação de Monte Carlo e confiabilidade</h2><p>Propague simultaneamente incertezas de demanda, perdas, rendimento, rotação, tarifa e operação para estimar percentis e risco de não atendimento.</p></div>
-          <div class="toolbar no-print"><button class="button" onclick="resetProbabilisticDefaults()">Premissas padrão</button><button class="button" onclick="exportMonteCarloCSV()">Exportar amostras</button><button class="button danger" id="monteCarloCancelButton" onclick="cancelMonteCarlo()" disabled>Cancelar</button><button class="button primary" id="monteCarloRunButton" onclick="runMonteCarlo()">Executar simulação</button></div>
-        </div>
-        <div class="grid four">
-          <div class="card metric"><div class="metric-label">Confiabilidade</div><div class="metric-value" id="mcReliability">—</div><div class="metric-foot" id="mcReliabilityFoot">probabilidade de atendimento</div></div>
-          <div class="card metric"><div class="metric-label">P90 da métrica</div><div class="metric-value compact" id="mcP90">—</div><div class="metric-foot" id="mcP90Foot">—</div></div>
-          <div class="card metric"><div class="metric-label">Risco de vazão insuficiente</div><div class="metric-value" id="mcShortfallRisk">—</div><div class="metric-foot">critério configurável</div></div>
-          <div class="card metric"><div class="metric-label">Coeficiente de variação</div><div class="metric-value" id="mcCv">—</div><div class="metric-foot" id="mcCvFoot">dispersão relativa</div></div>
-        </div>
-        <div class="grid two" style="margin-top:16px">
-          <div class="card">
-            <div class="section-head"><div><h3>Configuração da amostragem</h3><div class="subtitle">A semente permite reproduzir exatamente a mesma simulação</div></div><span class="badge" id="monteCarloMethodBadge">—</span></div>
-            <div class="form-grid">
-              <div class="field span-3"><label>Simulações</label><input type="number" min="100" max="10000" step="100" data-bind="probabilistic.iterations"/></div>
-              <div class="field span-3"><label>Semente</label><input type="number" min="1" step="1" data-bind="probabilistic.seed"/></div>
-              <div class="field span-3"><label>Amostragem</label><select data-bind="probabilistic.sampling"><option value="lhs">Hipercubo latino</option><option value="random">Aleatória simples</option></select></div>
-              <div class="field span-3"><label>Confiança</label><div class="input-group"><input type="number" min="80" max="99.9" step="0.5" data-bind="probabilistic.confidencePct"/><span class="suffix">%</span></div></div>
-              <div class="field span-6"><label>Métrica principal</label><select data-bind="probabilistic.metric"><option value="annualCost">Custo anual</option><option value="lcc">Custo do ciclo de vida</option><option value="inputPowerKW">Potência elétrica</option><option value="operatingFlowM3h">Vazão de operação</option><option value="pressurePa">Pressão no ponto de operação</option><option value="efficiencyPct">Rendimento</option><option value="maxVelocityMS">Velocidade máxima</option></select></div>
-              <div class="field span-3"><label>Déficit máximo de vazão</label><div class="input-group"><input type="number" min="0" max="50" step="0.5" data-bind="probabilistic.failure.maxFlowShortfallPct"/><span class="suffix">%</span></div></div>
-              <div class="field span-3"><label>Velocidade máxima</label><div class="input-group"><input type="number" min="1" max="50" step="0.5" data-bind="probabilistic.failure.maxVelocityMS"/><span class="suffix">m/s</span></div></div>
-              <div class="field span-3"><label>Rendimento mínimo</label><div class="input-group"><input type="number" min="1" max="100" step="1" data-bind="probabilistic.failure.minEfficiencyPct"/><span class="suffix">%</span></div></div>
-              <div class="field span-3"><label>Carga máxima do motor</label><div class="input-group"><input type="number" min="50" max="150" step="1" data-bind="probabilistic.failure.maxMotorLoadingPct"/><span class="suffix">%</span></div></div>
-            </div>
-            <div id="monteCarloStatusBanner" class="stale-banner" style="margin-top:14px"><strong>∿</strong><span>Configure as distribuições e execute a simulação.</span></div>
-            <div class="v4-progress" style="margin-top:10px"><span id="monteCarloProgress"></span></div>
-          </div>
-          <div class="card">
-            <div class="section-head"><div><h3>Critérios probabilísticos</h3><div class="subtitle">Uma amostra falha quando qualquer critério abaixo não é atendido</div></div></div>
-            <div id="monteCarloRiskSummary" class="empty">Nenhuma simulação executada.</div>
-          </div>
-        </div>
-        <div class="card" style="margin-top:16px">
-          <div class="section-head"><div><h3>Variáveis aleatórias</h3><div class="subtitle">Valores mínimo, central e máximo representam variações em relação ao cenário-base; temperatura usa °C e margem usa pontos percentuais</div></div><span class="badge" id="probVariableCount">—</span></div>
-          <div class="table-wrap"><table style="min-width:1160px"><thead><tr><th>Ativa</th><th>Premissa</th><th>Distribuição</th><th>Mínimo</th><th>Central / média</th><th>Máximo</th><th>Unidade</th><th>Observação</th></tr></thead><tbody id="probabilityVariableBody"></tbody></table></div>
-        </div>
-        <div class="grid two" style="margin-top:16px">
-          <div class="card"><div class="section-head"><div><h3>Distribuição da métrica principal</h3><div class="subtitle">Histograma com percentis de decisão</div></div></div><div id="monteCarloHistogram" class="v4-chart"></div></div>
-          <div class="card"><div class="section-head"><div><h3>Probabilidade acumulada</h3><div class="subtitle">Curva empírica e faixa de confiança</div></div></div><div id="monteCarloCdf" class="v4-chart"></div></div>
-        </div>
-        <div class="grid two" style="margin-top:16px">
-          <div class="card"><div class="section-head"><div><h3>Estatísticas por indicador</h3><div class="subtitle">Média, desvio, percentis e extremos</div></div></div><div class="table-wrap"><table style="min-width:920px"><thead><tr><th>Indicador</th><th>Média</th><th>Desvio</th><th>P05</th><th>P50</th><th>P90</th><th>P95</th><th>Máximo</th></tr></thead><tbody id="monteCarloStatsBody"></tbody></table></div></div>
-          <div class="card"><div class="section-head"><div><h3>Influência probabilística</h3><div class="subtitle">Correlação de Pearson entre cada premissa sorteada e a métrica principal</div></div></div><div id="monteCarloCorrelations" class="v4-chart"></div></div>
         </div>
       </section>
 
@@ -1411,41 +1260,6 @@
         </div>
       </section>
 
-
-      <section class="tab" id="tab-history">
-        <div class="page-title">
-          <div><h2>Histórico, revisão e auditoria do projeto</h2><p>Crie revisões imutáveis, registre decisões, compare alterações e exporte um pacote técnico rastreável para revisão ou aprovação.</p></div>
-          <div class="toolbar no-print"><button class="button" onclick="exportAuditLogCSV()">Log CSV</button><button class="button" onclick="exportProjectAuditPackage()">Pacote de auditoria</button><button class="button primary" onclick="createProjectRevision('review')">Criar revisão</button></div>
-        </div>
-        <div class="grid four">
-          <div class="card metric"><div class="metric-label">Identificador do projeto</div><div class="metric-value compact" id="historyProjectId">—</div><div class="metric-foot">gerado localmente</div></div>
-          <div class="card metric"><div class="metric-label">Situação documental</div><div class="metric-value compact" id="historyStatus">—</div><div class="metric-foot" id="historyStatusFoot">—</div></div>
-          <div class="card metric"><div class="metric-label">Revisões armazenadas</div><div class="metric-value" id="historyRevisionCount">0</div><div class="metric-foot" id="historyApprovedCount">0 aprovadas</div></div>
-          <div class="card metric"><div class="metric-label">Eventos auditáveis</div><div class="metric-value" id="historyEventCount">0</div><div class="metric-foot">ações explícitas registradas</div></div>
-        </div>
-        <div class="grid two" style="margin-top:16px">
-          <div class="card">
-            <div class="section-head"><div><h3>Nova revisão</h3><div class="subtitle">A revisão preserva a configuração técnica e os indicadores consolidados</div></div><span class="badge" id="historyCurrentHash">—</span></div>
-            <div class="form-grid">
-              <div class="field span-6"><label>Nome da revisão</label><input data-bind="history.revisionName" placeholder="Ex.: Rev. 03 — solução otimizada"/></div>
-              <div class="field span-6"><label>Revisor / aprovador</label><input data-bind="history.reviewer" placeholder="Nome e identificação"/></div>
-              <div class="field span-12"><label>Nota da revisão</label><textarea data-bind="history.approvalNote" placeholder="Motivo, alterações relevantes, ressalvas e decisão."></textarea></div>
-            </div>
-            <div class="toolbar"><button class="button" onclick="createProjectRevision('draft')">Salvar rascunho</button><button class="button" onclick="createProjectRevision('review')">Enviar à revisão</button><button class="button primary" onclick="approveProjectRevision()">Aprovar revisão atual</button></div>
-            <div class="callout warning">A aprovação cria uma cópia imutável, mas não constitui assinatura digital qualificada. Alterações posteriores permanecem possíveis e são sinalizadas como divergentes da última revisão aprovada.</div>
-          </div>
-          <div class="card"><div class="section-head"><div><h3>Comparação com revisão</h3><div class="subtitle">Diferenças entre o cenário atual e a revisão selecionada</div></div><select id="historyCompareSelect" onchange="setHistoryCompare(this.value)" style="max-width:230px"></select></div><div id="historyDiffSummary" class="empty">Selecione uma revisão para comparar.</div></div>
-        </div>
-        <div class="card" style="margin-top:16px">
-          <div class="section-head"><div><h3>Revisões do projeto</h3><div class="subtitle">Snapshots técnicos ordenados da mais recente para a mais antiga</div></div><span class="badge" id="historyRevisionBadge">0</span></div>
-          <div class="table-wrap"><table style="min-width:1320px"><thead><tr><th>Revisão</th><th>Status</th><th>Data</th><th>Responsável</th><th>Ventilador</th><th>Q / P</th><th>Potência</th><th>Custo anual</th><th>Hash</th><th>Ações</th></tr></thead><tbody id="historyRevisionBody"></tbody></table></div>
-        </div>
-        <div class="card" style="margin-top:16px">
-          <div class="section-head"><div><h3>Registro de auditoria</h3><div class="subtitle">Ações explícitas relevantes para a rastreabilidade local</div></div><button class="button small danger" onclick="clearAuditLog()">Limpar log</button></div>
-          <div class="table-wrap"><table style="min-width:1040px"><thead><tr><th>Data e hora</th><th>Categoria</th><th>Ação</th><th>Detalhe</th><th>Hash do estado</th></tr></thead><tbody id="historyAuditBody"></tbody></table></div>
-        </div>
-      </section>
-
       <section class="tab" id="tab-results">
         <div class="page-title"><div><h2>Resultados consolidados</h2><p>Interseção entre as curvas do conjunto e do sistema, rota crítica, motores individuais, energia e verificações de adequação.</p></div><div class="toolbar no-print"><button class="button" onclick="openTab('report')">Gerar memória</button><button class="button primary" onclick="window.print()">Imprimir / PDF</button></div></div>
         <div class="result-hero">
@@ -1467,13 +1281,7 @@
           <div class="card"><h3>Controle e ciclo de vida</h3><div class="subtitle">Perfil variável e alternativa selecionada</div><div id="energyProfessionalSummary"></div></div>
           <div class="card"><h3>Acústica</h3><div class="subtitle">Estimativa no receptor</div><div id="acousticProfessionalSummary"></div></div>
           <div class="card"><h3>Vibração e diagnóstico</h3><div class="subtitle">Condição dinâmica e indícios de campo</div><div id="mechanicalProfessionalSummary"></div></div>
-          <div class="card"><h3>Otimização e cenários</h3><div class="subtitle">Ranking multicritério e sensibilidade</div><div id="optimizationProfessionalSummary"></div></div>
-        </div>
-        <div class="grid four professional-summary">
-          <div class="card"><h3>Confiabilidade</h3><div class="subtitle">Monte Carlo e risco de atendimento</div><div id="probabilisticProfessionalSummary"></div></div>
-          <div class="card"><h3>Rede nodal</h3><div class="subtitle">Malhas e ventiladores auxiliares</div><div id="advancedProfessionalSummary"></div></div>
-          <div class="card"><h3>Governança do catálogo</h3><div class="subtitle">Integridade e rastreabilidade dos dados</div><div id="catalogGovernanceProfessionalSummary"></div></div>
-          <div class="card"><h3>Histórico</h3><div class="subtitle">Revisões e situação documental</div><div id="historyProfessionalSummary"></div></div>
+          <div class="card"><h3>Otimização e cenários</h3><div class="subtitle">Ranking v3.0 e sensibilidade</div><div id="optimizationProfessionalSummary"></div></div>
         </div>
         <div class="grid two" style="margin-top:16px">
           <div class="card chart-card"><div class="section-head"><div><h3>Curvas e ponto de operação</h3><div class="subtitle">O gráfico também está disponível no painel</div></div></div><div class="chart-wrap" id="resultsChartWrap"><div id="resultsChartClone" style="width:100%;height:100%"></div></div><div class="chart-legend"><span class="legend-item"><span class="legend-line" style="background:#0b6bcb"></span>Conjunto de ventiladores</span><span class="legend-item"><span class="legend-line" style="background:#00a889"></span>Sistema</span><span class="legend-item"><span class="legend-dot" style="background:#c2413b"></span>Operação</span></div></div>
@@ -1486,7 +1294,7 @@
         <article class="report" id="reportContent"></article>
       </section>
 
-      <footer class="no-print">VentiladorPro v4.0 — ferramenta de apoio. A seleção final deve ser validada por profissional habilitado e pelas curvas oficiais do fabricante.</footer>
+      <footer class="no-print">VentiladorPro v3.0 — ferramenta de apoio. A seleção final deve ser validada por profissional habilitado e pelas curvas oficiais do fabricante.</footer>
     </main>
   </div>
 </div>
@@ -1509,9 +1317,9 @@
 <script>
 'use strict';
 
-const APP_VERSION = '4.0.0';
-const STORAGE_KEY = 'ventiladorPro_v40';
-const LEGACY_STORAGE_KEYS = ['ventiladorPro_v30','ventiladorPro_v20','ventiladorPro_v15','ventiladorPro_v1'];
+const APP_VERSION = '3.0.0';
+const STORAGE_KEY = 'ventiladorPro_v30';
+const LEGACY_STORAGE_KEYS = ['ventiladorPro_v20','ventiladorPro_v15','ventiladorPro_v1'];
 const MOTOR_SIZES_KW = [0.12,0.18,0.25,0.37,0.55,0.75,1.1,1.5,2.2,3,4,5.5,7.5,11,15,18.5,22,30,37,45,55,75,90,110,132,160,200,250,315,400,500,630,710,800];
 const ACCESSORY_LIBRARY = {
   elbow15Long:{name:'Curva 15° — raio longo',category:'Curvas e cotovelos',k:0.04},
@@ -2542,7 +2350,7 @@ function loadLocal(){
     if(!raw)return false;const parsed=JSON.parse(raw),hadAffinity=!!(parsed&&typeof parsed==='object'&&parsed.affinity);state=mergeState(defaultState(),parsed);normalizeState();if(!hadAffinity){state.affinity.targetRpm=state.fan.rpm;state.affinity.targetDiameterMm=state.fan.diameterMm;state.affinity.targetDensityKgM3=state.fan.curveDensityKgM3;}if(legacyKey)saveLocal(false);return true;
   }catch(err){storageAvailable=false;console.warn('Armazenamento local indisponível:',err?.message||err);return false;}
 }
-function exportProject(){downloadBlob(new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),`${sanitizeFilename(state.project.name)}_VentiladorPro_v40.json`);toast('Projeto exportado em JSON.');}
+function exportProject(){downloadBlob(new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),`${sanitizeFilename(state.project.name)}_VentiladorPro_v30.json`);toast('Projeto exportado em JSON.');}
 function importProject(event){
   const file=event.target.files?.[0];if(!file)return;const reader=new FileReader();reader.onload=()=>{try{const parsed=JSON.parse(reader.result),hadAffinity=!!(parsed&&typeof parsed==='object'&&parsed.affinity);state=mergeState(defaultState(),parsed);normalizeState();if(!hadAffinity){state.affinity.targetRpm=state.fan.rpm;state.affinity.targetDiameterMm=state.fan.diameterMm;state.affinity.targetDensityKgM3=state.fan.curveDensityKgM3;}initializeUI();saveLocal(false);toast('Projeto importado com sucesso.');}catch(err){toast('Arquivo JSON inválido.','bad');}};reader.readAsText(file);event.target.value='';
 }
@@ -2875,7 +2683,7 @@ importCatalogJSON = function(event){
 exportComparisonCSV = function(){
   const rows=['modelo;fabricante;tipo;configuracao;vazao_operacao_m3h;pressao_pa;rendimento_pct;desvio_vazao_pct;potencia_eletrica_kw;custo_anual_brl;indice'];
   (calculations.catalog?.comparison||[]).forEach(a=>rows.push([csvCell(a.item.model),csvCell(a.item.manufacturer),csvCell(a.item.type),csvCell(a.system?.association?.label||''),csvNumber(a.op?.qM3h||0),csvNumber(a.op?.pressurePa||0),csvNumber(a.op?.efficiencyPct||0),csvNumber(Number.isFinite(a.flowDeltaPct)?a.flowDeltaPct:0),csvNumber(a.perf.available?a.perf.inputPowerW/1000:0),csvNumber(a.perf.available?a.perf.annualCost:0),csvNumber(a.score)].join(';')));
-  downloadBlob(new Blob(['\ufeff'+rows.join('\r\n')],{type:'text/csv;charset=utf-8'}),`${sanitizeFilename(state.project.name)}_comparacao_ventiladores_v40.csv`);toast('Comparação exportada em CSV.');
+  downloadBlob(new Blob(['\ufeff'+rows.join('\r\n')],{type:'text/csv;charset=utf-8'}),`${sanitizeFilename(state.project.name)}_comparacao_ventiladores_v30.csv`);toast('Comparação exportada em CSV.');
 };
 
 /* Energia e controle */
@@ -3256,7 +3064,7 @@ function applyOptimizationResult(index,saveAsScenario=false){
 function clearOptimizationResults(){state.optimization.results=[];state.optimization.stats=null;state.optimization.lastSignature='';state.optimization.runAt='';refreshAll();debounceAutosave();toast('Resultados da otimização removidos.');}
 function exportOptimizationCSV(){
   const rows=state.optimization.results||[];if(!rows.length){toast('Execute a otimização antes de exportar.','warn');return;}const head=['rank','fabricante','modelo','origem','associacao','unidades','rotacao_rpm','rotacao_pct','escala_dutos_pct','controle','q_operacao_m3h','pressao_pa','rendimento_pct','distancia_bep_pct','velocidade_max_ms','motor_unitario_kw','potencia_instalada_kw','potencia_eletrica_kw','ruido_dba','investimento_brl','energia_anual_kwh','custo_anual_brl','lcc_brl','robustez','pareto','indice'];
-  const lines=[head.join(';')];rows.forEach((r,i)=>lines.push([i+1,csvCell(r.manufacturer),csvCell(r.fanModel),csvCell(r.sourceStatus),csvCell(r.associationMode),r.associationCount,csvNumber(r.rpm),csvNumber(r.speedPct),csvNumber(r.ductPct),csvCell(r.controlMethod),csvNumber(r.qM3h),csvNumber(r.pressurePa),csvNumber(r.efficiencyPct),csvNumber(r.bepDistancePct),csvNumber(r.maxVelocityMS),csvNumber(r.motorEachKW),csvNumber(r.totalInstalledKW),csvNumber(r.inputPowerKW),csvNumber(r.noiseDb||0),csvNumber(r.initialCost),csvNumber(r.annualKWh),csvNumber(r.annualCost),csvNumber(r.lcc),csvNumber(r.robustness),r.pareto?'sim':'nao',csvNumber(r.score)].join(';')));downloadBlob(new Blob(['\ufeff'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'}),`${sanitizeFilename(state.project.name)}_otimizacao_v40.csv`);toast('Ranking de otimização exportado.');
+  const lines=[head.join(';')];rows.forEach((r,i)=>lines.push([i+1,csvCell(r.manufacturer),csvCell(r.fanModel),csvCell(r.sourceStatus),csvCell(r.associationMode),r.associationCount,csvNumber(r.rpm),csvNumber(r.speedPct),csvNumber(r.ductPct),csvCell(r.controlMethod),csvNumber(r.qM3h),csvNumber(r.pressurePa),csvNumber(r.efficiencyPct),csvNumber(r.bepDistancePct),csvNumber(r.maxVelocityMS),csvNumber(r.motorEachKW),csvNumber(r.totalInstalledKW),csvNumber(r.inputPowerKW),csvNumber(r.noiseDb||0),csvNumber(r.initialCost),csvNumber(r.annualKWh),csvNumber(r.annualCost),csvNumber(r.lcc),csvNumber(r.robustness),r.pareto?'sim':'nao',csvNumber(r.score)].join(';')));downloadBlob(new Blob(['\ufeff'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'}),`${sanitizeFilename(state.project.name)}_otimizacao_v30.csv`);toast('Ranking de otimização exportado.');
 }
 function optimizationParetoSvg(results){
   if(!results?.length)return '<div class="empty">Execute a otimização para visualizar a fronteira.</div>';const points=results.slice(0,160),W=760,H=360,pad={l:78,r:24,t:30,b:58},pw=W-pad.l-pad.r,ph=H-pad.t-pad.b,xVals=points.map(x=>x.initialCost),yVals=points.map(x=>x.annualKWh),xMin=Math.min(...xVals),xMax=Math.max(...xVals),yMin=Math.min(...yVals),yMax=Math.max(...yVals),sx=v=>pad.l+(v-xMin)/Math.max(1,xMax-xMin)*pw,sy=v=>pad.t+ph-(v-yMin)/Math.max(1,yMax-yMin)*ph;
@@ -3290,9 +3098,9 @@ function toggleScenarioCompare(id){const ids=state.scenarios.compareIds,pos=ids.
 function loadScenario(id){
   const item=state.scenarios.items.find(x=>x.id===id);if(!item)return;const managers={scenarios:deepClone(state.scenarios),optimization:deepClone(state.optimization),sensitivity:deepClone(state.sensitivity),catalogUserItems:deepClone(state.catalog.userItems||[]),theme:state.ui.theme};state=mergeState(defaultState(),deepClone(item.snapshot));state.scenarios=managers.scenarios;state.optimization=managers.optimization;state.sensitivity=managers.sensitivity;state.catalog.userItems=managers.catalogUserItems;state.ui.theme=managers.theme;state.ui.activeTab='sensitivity';normalizeState();initializeUI();saveLocal(false);toast(`Cenário “${item.name}” carregado.`);
 }
-function exportScenariosJSON(){const payload={schema:'VentiladorProScenarios',version:APP_VERSION,exportedAt:new Date().toISOString(),items:state.scenarios.items};downloadBlob(new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}),`${sanitizeFilename(state.project.name)}_cenarios_v40.json`);toast('Cenários exportados.');}
+function exportScenariosJSON(){const payload={schema:'VentiladorProScenarios',version:APP_VERSION,exportedAt:new Date().toISOString(),items:state.scenarios.items};downloadBlob(new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}),`${sanitizeFilename(state.project.name)}_cenarios_v30.json`);toast('Cenários exportados.');}
 function importScenariosJSON(event){const file=event.target.files?.[0];if(!file)return;const reader=new FileReader();reader.onload=()=>{try{const data=JSON.parse(reader.result),items=Array.isArray(data)?data:data.items;if(!Array.isArray(items))throw new Error('Formato');const valid=items.filter(x=>x&&x.snapshot&&x.name).map((x,i)=>({...x,id:x.id||`scenario-import-${Date.now()}-${i}`}));const map=new Map(state.scenarios.items.map(x=>[x.id,x]));valid.forEach(x=>map.set(x.id,x));state.scenarios.items=[...map.values()].slice(0,30);renderSensitivity(calculations);debounceAutosave();toast(`${valid.length} cenários importados.`);}catch(e){toast('Arquivo de cenários inválido.','bad');}};reader.readAsText(file);event.target.value='';}
-function exportScenarioComparisonCSV(){const items=state.scenarios.compareIds.map(id=>state.scenarios.items.find(x=>x.id===id)).filter(Boolean);if(!items.length){toast('Selecione cenários para comparar.','warn');return;}const lines=['cenario;ventilador;controle;vazao_m3h;pressao_pa;rendimento_pct;potencia_kw;energia_kwh_ano;custo_anual_brl;lcc_brl;ruido_dba;classificacao'];items.forEach(x=>{const m=x.metrics||{};lines.push([csvCell(x.name),csvCell(m.fanLabel),csvCell(m.controlLabel),csvNumber(m.flowM3h),csvNumber(m.pressurePa),csvNumber(m.efficiencyPct),csvNumber(m.inputPowerKW),csvNumber(m.annualKWh),csvNumber(m.annualCost),csvNumber(m.lcc),csvNumber(m.noiseDbA),csvCell(m.classification)].join(';'));});downloadBlob(new Blob(['\ufeff'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'}),`${sanitizeFilename(state.project.name)}_comparacao_cenarios_v40.csv`);toast('Comparação de cenários exportada.');}
+function exportScenarioComparisonCSV(){const items=state.scenarios.compareIds.map(id=>state.scenarios.items.find(x=>x.id===id)).filter(Boolean);if(!items.length){toast('Selecione cenários para comparar.','warn');return;}const lines=['cenario;ventilador;controle;vazao_m3h;pressao_pa;rendimento_pct;potencia_kw;energia_kwh_ano;custo_anual_brl;lcc_brl;ruido_dba;classificacao'];items.forEach(x=>{const m=x.metrics||{};lines.push([csvCell(x.name),csvCell(m.fanLabel),csvCell(m.controlLabel),csvNumber(m.flowM3h),csvNumber(m.pressurePa),csvNumber(m.efficiencyPct),csvNumber(m.inputPowerKW),csvNumber(m.annualKWh),csvNumber(m.annualCost),csvNumber(m.lcc),csvNumber(m.noiseDbA),csvCell(m.classification)].join(';'));});downloadBlob(new Blob(['\ufeff'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'}),`${sanitizeFilename(state.project.name)}_comparacao_cenarios_v30.csv`);toast('Comparação de cenários exportada.');}
 function scenarioComparisonSvg(items){if(!items.length)return '<div class="empty">Marque cenários para comparar.</div>';const W=760,H=340,pad={l:72,r:25,t:25,b:75},pw=W-pad.l-pad.r,ph=H-pad.t-pad.b,max=Math.max(...items.map(x=>toNum(x.metrics?.annualCost)),1),barW=pw/items.length*.55;const bars=items.map((x,i)=>{const v=toNum(x.metrics?.annualCost),cx=pad.l+(i+.5)*pw/items.length,h=v/max*ph,y=pad.t+ph-h;return `<rect x="${cx-barW/2}" y="${y}" width="${barW}" height="${h}" rx="7" fill="${i===0?'#0b6bcb':'#94a3b8'}" opacity="${i===0?1:.78}"/><text x="${cx}" y="${Math.max(14,y-7)}" text-anchor="middle" font-size="10" fill="currentColor">R$ ${fmt(v,0)}</text><text x="${cx}" y="${H-45}" text-anchor="middle" font-size="10" fill="currentColor">${escapeHtml(x.name.slice(0,18))}</text><text x="${cx}" y="${H-29}" text-anchor="middle" font-size="9" fill="currentColor">${fmt(toNum(x.metrics?.annualKWh),0)} kWh</text>`;}).join('');return `<svg viewBox="0 0 ${W} ${H}" width="100%" style="display:block;color:var(--muted)"><line x1="${pad.l}" y1="${pad.t+ph}" x2="${pad.l+pw}" y2="${pad.t+ph}" stroke="currentColor" opacity=".3"/>${bars}<text x="18" y="${pad.t+ph/2}" transform="rotate(-90 18 ${pad.t+ph/2})" text-anchor="middle" font-size="12" fill="currentColor">Custo anual (R$)</text></svg>`;}
 
 function applySensitivityVariation(snapshot,key,delta,baseMetrics){
@@ -3341,7 +3149,7 @@ function renderSensitivity(c){
 
 function appendDashboardKv(label,value){const host=document.getElementById('dashboardSummary'),grid=host?.firstElementChild;if(!grid)return;grid.insertAdjacentHTML('beforeend',`<div style="display:flex;justify-content:space-between;gap:16px;border-bottom:1px dashed var(--line);padding-bottom:6px"><span style="color:var(--muted);font-size:12px">${escapeHtml(label)}</span><strong style="font-size:12px;text-align:right">${value}</strong></div>`);}
 calculateAll = function(){const c=v2CalculateAllV3();const optResults=state.optimization.results||[],optStale=!!(optResults.length&&state.optimization.lastSignature!==optimizationSignature()),sweep=state.sensitivity.sweep||[],tornado=state.sensitivity.tornado||[];c.optimization={results:optResults,best:optResults[0]||null,stats:state.optimization.stats,stale:optStale,lastApplied:state.optimization.lastApplied};c.scenarioSummary={count:state.scenarios.items.length,comparisonCount:state.scenarios.compareIds.length};c.sensitivitySummary={sweepCount:sweep.length,tornadoCount:tornado.length,sweepStale:!!(sweep.length&&state.sensitivity.lastSignature!==sensitivitySignature()),tornadoStale:!!(tornado.length&&state.sensitivity.tornadoSignature!==sensitivitySignature())};calculations=c;return c;};
-renderDashboard = function(c){v2RenderDashboardV3(c);appendDashboardKv('Otimização conjunta',c.optimization.best?`${fmt(c.optimization.best.score,1)}/100 • ${c.optimization.stale?'recalcular':'atualizada'}`:'não executada');appendDashboardKv('Cenários salvos',`${c.scenarioSummary.count} • ${c.scenarioSummary.comparisonCount} em comparação`);appendDashboardKv('Sensibilidade',`${c.sensitivitySummary.sweepCount} pontos • ${c.sensitivitySummary.tornadoCount} premissas`);};
+renderDashboard = function(c){v2RenderDashboardV3(c);appendDashboardKv('Otimização v3.0',c.optimization.best?`${fmt(c.optimization.best.score,1)}/100 • ${c.optimization.stale?'recalcular':'atualizada'}`:'não executada');appendDashboardKv('Cenários salvos',`${c.scenarioSummary.count} • ${c.scenarioSummary.comparisonCount} em comparação`);appendDashboardKv('Sensibilidade',`${c.sensitivitySummary.sweepCount} pontos • ${c.sensitivitySummary.tornadoCount} premissas`);};
 renderResults = function(c){v2RenderResultsV3(c);const host=document.getElementById('optimizationProfessionalSummary');if(!host)return;const b=c.optimization.best,applied=c.optimization.lastApplied;host.innerHTML=kvRows([['Melhor ranking',b?`${fmt(b.score,1)}/100${c.optimization.stale?' (recalcular)':''}`:'não executado'],['Solução',b?`${escapeHtml(b.manufacturer)} ${escapeHtml(b.fanModel)}`:'—'],['LCC otimizado',b?`R$ ${fmt(b.lcc,0)}`:'—'],['Cenários',String(c.scenarioSummary.count)],['Maior sensibilidade',state.sensitivity.tornado?.[0]?escapeHtml(state.sensitivity.tornado[0].label):'—'],['Última solução aplicada',applied?`${escapeHtml(applied.manufacturer)} ${escapeHtml(applied.fanModel)}`:'—']]);};
 function reportOptimizationRows(results){return results.slice(0,8).map((r,i)=>`<tr><td>${i+1}</td><td>${escapeHtml(r.manufacturer)} ${escapeHtml(r.fanModel)}</td><td>${escapeHtml(r.associationLabel)}</td><td>${fmt(r.speedPct,0)}%</td><td>${fmt(r.ductPct,0)}%</td><td>${escapeHtml(r.controlLabel)}</td><td style="text-align:right">${fmt(r.efficiencyPct,1)}%</td><td style="text-align:right">${fmt(r.annualKWh,0)}</td><td style="text-align:right">R$ ${fmt(r.initialCost,0)}</td><td style="text-align:right">R$ ${fmt(r.lcc,0)}</td><td style="text-align:right">${fmt(r.score,1)}</td></tr>`).join('');}
 renderReport = function(c){
@@ -3353,475 +3161,6 @@ renderReport = function(c){
 refreshAll = function(){v2RefreshAllV3();renderOptimization(calculations);renderSensitivity(calculations);};
 openTab = function(name){v2OpenTabV3(name);if(name==='optimization')renderOptimization(calculations);if(name==='sensitivity')renderSensitivity(calculations);};
 /* ====================== fim das extensões v3.0 ====================== */
-
-/* ======================== VentiladorPro v4.0 ======================== */
-const V4_PROBABILITY_METRICS = {
-  annualCost:{label:'Custo anual',unit:'R$/ano',digits:0,prefix:'R$ '},
-  lcc:{label:'Custo do ciclo de vida',unit:'R$',digits:0,prefix:'R$ '},
-  inputPowerKW:{label:'Potência elétrica',unit:'kW',digits:2},
-  operatingFlowM3h:{label:'Vazão de operação',unit:'m³/h',digits:0},
-  pressurePa:{label:'Pressão de operação',unit:'Pa',digits:0},
-  efficiencyPct:{label:'Rendimento do ventilador',unit:'%',digits:1},
-  maxVelocityMS:{label:'Velocidade máxima',unit:'m/s',digits:2}
-};
-const V4_PROBABILITY_VARIABLES = {
-  flow:{label:'Vazão requerida',unit:'%',note:'Varia simultaneamente a vazão de projeto e as vazões de referência dos trechos.'},
-  roughness:{label:'Rugosidade dos dutos',unit:'%',note:'Representa acabamento, envelhecimento e incerteza da superfície.'},
-  componentLoss:{label:'Perdas de filtros e componentes',unit:'%',note:'Pode representar sujidade, tolerância de fabricação e acessórios não modelados.'},
-  temperature:{label:'Temperatura do ar',unit:'°C',note:'Variação absoluta em relação à temperatura-base.'},
-  fanEfficiency:{label:'Rendimento da curva',unit:'%',note:'Variação relativa do rendimento aerodinâmico interpolado.'},
-  tariff:{label:'Tarifa de energia',unit:'%',note:'Variação relativa do preço da energia.'},
-  hours:{label:'Horas anuais',unit:'%',note:'Variação relativa do perfil anual e dos dias de operação.'},
-  rpm:{label:'Rotação do ventilador',unit:'%',note:'Aplica as leis de semelhança à curva do ventilador.'},
-  pressureMargin:{label:'Margem de pressão',unit:'p.p.',note:'Variação em pontos percentuais da margem adicional.'}
-};
-const V4_DEFAULT_PROB_VARIABLES = [
-  {key:'flow',enabled:true,distribution:'triangular',min:-10,mode:0,max:15},
-  {key:'roughness',enabled:true,distribution:'triangular',min:-10,mode:10,max:45},
-  {key:'componentLoss',enabled:true,distribution:'triangular',min:-15,mode:10,max:60},
-  {key:'temperature',enabled:true,distribution:'normal',min:-8,mode:0,max:10},
-  {key:'fanEfficiency',enabled:true,distribution:'triangular',min:-10,mode:-2,max:3},
-  {key:'tariff',enabled:true,distribution:'triangular',min:-5,mode:8,max:30},
-  {key:'hours',enabled:true,distribution:'triangular',min:-12,mode:0,max:20},
-  {key:'rpm',enabled:false,distribution:'normal',min:-3,mode:0,max:3},
-  {key:'pressureMargin',enabled:false,distribution:'uniform',min:-3,mode:0,max:5}
-];
-const v4DefaultState = () => ({
-  probabilistic:{
-    iterations:1500,seed:20260802,sampling:'lhs',metric:'annualCost',confidencePct:95,
-    failure:{maxFlowShortfallPct:5,maxVelocityMS:18,minEfficiencyPct:45,maxMotorLoadingPct:100},
-    variables:deepClone(V4_DEFAULT_PROB_VARIABLES),summary:null,histogram:[],cdf:[],correlations:[],lastSignature:'',runAt:''
-  },
-  advancedNetwork:{
-    referenceNodeId:'SRC',toleranceM3h:.1,maxIterations:60,relaxation:.7,curveMinPct:0,curveMaxPct:140,curveSteps:15,
-    allowReverseFlow:true,useAsSystem:false,nodes:[],edges:[],result:null,systemCurve:[],lastSignature:'',curveSignature:'',runAt:'',curveRunAt:''
-  },
-  history:{
-    projectId:'',status:'draft',revisionName:'Revisão 1',reviewer:'',approvalNote:'',compareId:'',revisions:[],auditLog:[]
-  },
-  catalogGovernance:{
-    externalItems:[],packages:[],quarantine:[],audit:null,auditSignature:'',remoteUrl:'',lastAuditAt:''
-  }
-});
-let monteCarloRuntimeTrials=[];
-let monteCarloCancelRequested=false;
-let monteCarloRunning=false;
-
-const v3NormalizeStateV4 = normalizeState;
-normalizeState = function(){
-  v3NormalizeStateV4();
-  const d=v4DefaultState();
-  state.probabilistic=mergeState(d.probabilistic,state.probabilistic||{});
-  state.advancedNetwork=mergeState(d.advancedNetwork,state.advancedNetwork||{});
-  state.history=mergeState(d.history,state.history||{});
-  state.catalog.governance=mergeState(d.catalogGovernance,state.catalog?.governance||{});
-  if(!Array.isArray(state.probabilistic.variables)||!state.probabilistic.variables.length)state.probabilistic.variables=deepClone(V4_DEFAULT_PROB_VARIABLES);
-  const pmap=new Map(state.probabilistic.variables.map(v=>[v.key,v]));
-  state.probabilistic.variables=V4_DEFAULT_PROB_VARIABLES.map(v=>mergeState(v,pmap.get(v.key)||{}));
-  state.probabilistic.iterations=clamp(Math.round(toNum(state.probabilistic.iterations,1500)),100,10000);
-  state.probabilistic.seed=Math.max(1,Math.round(toNum(state.probabilistic.seed,20260802)));
-  state.probabilistic.confidencePct=clamp(toNum(state.probabilistic.confidencePct,95),80,99.9);
-  if(!V4_PROBABILITY_METRICS[state.probabilistic.metric])state.probabilistic.metric='annualCost';
-  if(!['lhs','random'].includes(state.probabilistic.sampling))state.probabilistic.sampling='lhs';
-  if(!Array.isArray(state.advancedNetwork.nodes))state.advancedNetwork.nodes=[];
-  if(!Array.isArray(state.advancedNetwork.edges))state.advancedNetwork.edges=[];
-  if(!Array.isArray(state.advancedNetwork.systemCurve))state.advancedNetwork.systemCurve=[];
-  state.advancedNetwork.maxIterations=clamp(Math.round(toNum(state.advancedNetwork.maxIterations,60)),5,150);
-  state.advancedNetwork.relaxation=clamp(toNum(state.advancedNetwork.relaxation,.7),.05,1);
-  state.advancedNetwork.curveSteps=clamp(Math.round(toNum(state.advancedNetwork.curveSteps,15)),5,31);
-  if(state.advancedNetwork.curveSteps%2===0)state.advancedNetwork.curveSteps+=1;
-  if(!state.history.projectId)state.history.projectId=`VP-${new Date().toISOString().slice(0,10).replace(/-/g,'')}-${Math.random().toString(36).slice(2,8).toUpperCase()}`;
-  if(!Array.isArray(state.history.revisions))state.history.revisions=[];
-  if(!Array.isArray(state.history.auditLog))state.history.auditLog=[];
-  if(!Array.isArray(state.catalog.governance.externalItems))state.catalog.governance.externalItems=[];
-  if(!Array.isArray(state.catalog.governance.packages))state.catalog.governance.packages=[];
-  if(!Array.isArray(state.catalog.governance.quarantine))state.catalog.governance.quarantine=[];
-  state.meta.version=APP_VERSION;
-};
-
-function stableStringify(value){
-  if(value===null||typeof value!=='object')return JSON.stringify(value);
-  if(Array.isArray(value))return `[${value.map(stableStringify).join(',')}]`;
-  return `{${Object.keys(value).sort().map(k=>`${JSON.stringify(k)}:${stableStringify(value[k])}`).join(',')}}`;
-}
-async function sha256Text(text){
-  try{
-    if(window.crypto?.subtle&&window.TextEncoder){
-      const data=new TextEncoder().encode(text),hash=await crypto.subtle.digest('SHA-256',data);
-      return [...new Uint8Array(hash)].map(b=>b.toString(16).padStart(2,'0')).join('');
-    }
-  }catch(_){/* fallback below */}
-  return `fnv32-${simpleHash(text)}`;
-}
-function percentile(sorted,p){
-  if(!sorted?.length)return NaN;
-  const pos=clamp(p,0,1)*(sorted.length-1),lo=Math.floor(pos),hi=Math.ceil(pos),t=pos-lo;
-  return sorted[lo]+(sorted[hi]-sorted[lo])*t;
-}
-function mean(values){return values.length?values.reduce((s,v)=>s+v,0)/values.length:NaN;}
-function stdDev(values,m=mean(values)){if(values.length<2)return 0;return Math.sqrt(values.reduce((s,v)=>s+(v-m)*(v-m),0)/(values.length-1));}
-function pearson(xs,ys){
-  if(xs.length!==ys.length||xs.length<2)return 0;const mx=mean(xs),my=mean(ys);let num=0,dx=0,dy=0;
-  for(let i=0;i<xs.length;i++){const a=xs[i]-mx,b=ys[i]-my;num+=a*b;dx+=a*a;dy+=b*b;}return safeDiv(num,Math.sqrt(dx*dy),0);
-}
-function mulberry32(seed){let a=seed>>>0;return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return ((t^t>>>14)>>>0)/4294967296;};}
-function erfApprox(x){const sign=x<0?-1:1,a=Math.abs(x),t=1/(1+.3275911*a),y=1-(((((1.061405429*t-1.453152027)*t)+1.421413741)*t-.284496736)*t+.254829592)*t*Math.exp(-a*a);return sign*y;}
-function normalCdf(z){return .5*(1+erfApprox(z/Math.SQRT2));}
-function inverseNormal(p){
-  const q=clamp(p,1e-12,1-1e-12),a=[-3.969683028665376e+01,2.209460984245205e+02,-2.759285104469687e+02,1.383577518672690e+02,-3.066479806614716e+01,2.506628277459239e+00],b=[-5.447609879822406e+01,1.615858368580409e+02,-1.556989798598866e+02,6.680131188771972e+01,-1.328068155288572e+01],c=[-7.784894002430293e-03,-3.223964580411365e-01,-2.400758277161838e+00,-2.549732539343734e+00,4.374664141464968e+00,2.938163982698783e+00],d=[7.784695709041462e-03,3.224671290700398e-01,2.445134137142996e+00,3.754408661907416e+00],pl=.02425,ph=1-pl;let r;
-  if(q<pl){r=Math.sqrt(-2*Math.log(q));return (((((c[0]*r+c[1])*r+c[2])*r+c[3])*r+c[4])*r+c[5])/((((d[0]*r+d[1])*r+d[2])*r+d[3])*r+1);}
-  if(q>ph){r=Math.sqrt(-2*Math.log(1-q));return -(((((c[0]*r+c[1])*r+c[2])*r+c[3])*r+c[4])*r+c[5])/((((d[0]*r+d[1])*r+d[2])*r+d[3])*r+1);}
-  r=q-.5;const s=r*r;return (((((a[0]*s+a[1])*s+a[2])*s+a[3])*s+a[4])*s+a[5])*r/(((((b[0]*s+b[1])*s+b[2])*s+b[3])*s+b[4])*s+1);
-}
-function sampleDistribution(variable,u){
-  let lo=toNum(variable.min),mid=toNum(variable.mode),hi=toNum(variable.max);if(hi<lo)[lo,hi]=[hi,lo];mid=clamp(mid,lo,hi);u=clamp(u,1e-10,1-1e-10);
-  if(variable.distribution==='uniform')return lo+(hi-lo)*u;
-  if(variable.distribution==='normal'){
-    const sd=Math.max(1e-9,(hi-lo)/6),a=(lo-mid)/sd,b=(hi-mid)/sd,pa=normalCdf(a),pb=normalCdf(b),z=inverseNormal(pa+u*Math.max(1e-12,pb-pa));return clamp(mid+sd*z,lo,hi);
-  }
-  const c=safeDiv(mid-lo,hi-lo,.5);return u<c?lo+Math.sqrt(u*(hi-lo)*(mid-lo)):hi-Math.sqrt((1-u)*(hi-lo)*(hi-mid));
-}
-function buildSamplingMatrix(variables,n,sampling,rng){
-  const matrix={};
-  variables.forEach(v=>{
-    const arr=[];
-    if(sampling==='lhs'){
-      for(let i=0;i<n;i++)arr.push((i+rng())/n);
-      for(let i=n-1;i>0;i--){const j=Math.floor(rng()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}
-    }else for(let i=0;i<n;i++)arr.push(rng());
-    matrix[v.key]=arr;
-  });
-  return matrix;
-}
-function formatProbabilityMetric(value,key){const m=V4_PROBABILITY_METRICS[key]||{unit:'',digits:2,prefix:''};if(key==='annualCost')return `R$ ${fmt(value,m.digits)}/ano`;if(key==='lcc')return `R$ ${fmt(value,m.digits)}`;return `${m.prefix||''}${fmt(value,m.digits)}${m.unit?` ${m.unit}`:''}`;}
-
-/* ---------- Governança do catálogo ---------- */
-const v3BuiltinCatalogItemsV4=builtinCatalogItems;
-builtinCatalogItems=function(){
-  const map=new Map(v3BuiltinCatalogItemsV4().map(i=>[i.id,i]));
-  (state.catalog?.governance?.externalItems||[]).forEach((raw,i)=>{const item=normalizeCatalogItem(raw,i);if(item)map.set(item.id,item);});
-  return [...map.values()];
-};
-function catalogGovernanceSignature(){return simpleHash({external:state.catalog.governance.externalItems,user:state.catalog.userItems,packages:state.catalog.governance.packages.map(p=>({id:p.id,version:p.version,digest:p.digest}))});}
-function auditCatalogItems(items=getCatalogItems()){
-  const issues=[],now=Date.now();let scoreSum=0,curves=0,official=0,stale=0;
-  const add=(severity,item,rule,message)=>issues.push({severity,id:item?.id||'—',label:item?`${item.manufacturer} ${item.model}`:'Base',rule,message,source:item?.source||'—'});
-  const ids=new Set();
-  items.forEach(item=>{
-    let s=0,max=0;const officialItem=String(item.status||'').startsWith('official');if(officialItem)official++;
-    const checks=[['manufacturer',12],['model',12],['type',8],['application',7],['source',12],['sourceUrl',12],['verifiedAt',9]];
-    checks.forEach(([k,w])=>{max+=w;if(String(item[k]||'').trim())s+=w;});
-    if(ids.has(item.id))add('bad',item,'ID_DUPLICADO','Identificador duplicado na base efetiva.');ids.add(item.id);
-    if(officialItem){
-      if(!/^https:\/\//i.test(item.sourceUrl||''))add('bad',item,'FONTE_HTTPS','Item oficial sem URL HTTPS válida.');
-      if(!item.verifiedAt||Number.isNaN(Date.parse(item.verifiedAt)))add('bad',item,'DATA_VERIFICACAO','Data de verificação ausente ou inválida.');
-      else{const age=(now-Date.parse(item.verifiedAt))/86400000;if(age>730){stale++;add('warn',item,'FONTE_DESATUALIZADA',`Fonte verificada há ${Math.round(age)} dias.`);}}
-    }
-    const pts=item.curvePoints||[];
-    if(item.dataKind==='curve'){
-      max+=28;if(pts.length>=3){s+=28;curves++;}else add('bad',item,'CURVA_INCOMPLETA','Curva calculável requer pelo menos três pontos.');
-      for(let i=1;i<pts.length;i++){
-        if(!(toNum(pts[i].qM3h)>toNum(pts[i-1].qM3h)))add('bad',item,'VAZAO_NAO_CRESCENTE',`Pontos ${i} e ${i+1} não possuem vazão estritamente crescente.`);
-        if(toNum(pts[i].pressurePa)>toNum(pts[i-1].pressurePa)*1.15)add('warn',item,'CURVA_COM_ELEVACAO','A pressão cresce mais de 15% entre pontos consecutivos; confirme região de instabilidade ou transcrição.');
-      }
-      if(pts.some(p=>toNum(p.pressurePa)<0||toNum(p.qM3h)<0||toNum(p.efficiencyPct)<1||toNum(p.efficiencyPct)>100))add('bad',item,'VALOR_FORA_DA_FAIXA','Curva contém vazão/pressão negativa ou rendimento fora de 1–100%.');
-    }else{
-      max+=15;if(Number.isFinite(item.qMaxM3h)&&item.qMaxM3h>=0)s+=5;else add('warn',item,'FAIXA_VAZAO','Faixa de vazão não informada.');
-      if(Number.isFinite(item.pMaxPa)&&item.pMaxPa>=0)s+=5;else add('warn',item,'FAIXA_PRESSAO','Pressão máxima não informada.');
-      if(item.notes)s+=5;
-    }
-    scoreSum+=max?s/max*100:0;
-  });
-  const errors=issues.filter(x=>x.severity==='bad').length,warnings=issues.filter(x=>x.severity==='warn').length;
-  const score=items.length?clamp(scoreSum/items.length-errors*.12,0,100):0;
-  return {at:new Date().toISOString(),signature:catalogGovernanceSignature(),total:items.length,official,curves,stale,score,errors,warnings,issues,manufacturers:new Set(items.map(i=>i.manufacturer)).size,manifestHash:simpleHash(items.map(i=>({id:i.id,status:i.status,verifiedAt:i.verifiedAt,points:i.curvePoints?.length||0}))) };
-}
-function ensureCatalogAudit(force=false){
-  const g=state.catalog.governance,sig=catalogGovernanceSignature();if(force||!g.audit||g.auditSignature!==sig){g.audit=auditCatalogItems();g.auditSignature=sig;g.lastAuditAt=g.audit.at;}return g.audit;
-}
-function runCatalogAudit(notify=false){ensureCatalogAudit(true);renderCatalogGovernance(calculations);if(notify){recordAudit('catálogo','Auditoria executada',`${state.catalog.governance.audit.total} registros avaliados.`);toast('Auditoria do catálogo concluída.');}debounceAutosave();}
-function validateCatalogPackageItem(raw,index,packageId){
-  const item=normalizeCatalogItem(raw,index);const reasons=[];if(!item)reasons.push('Registro não pôde ser normalizado.');
-  if(item){
-    if(!raw.id)reasons.push('ID explícito obrigatório.');
-    if(!String(item.manufacturer||'').trim())reasons.push('Fabricante ausente.');
-    if(!String(item.model||'').trim())reasons.push('Modelo ausente.');
-    const officialItem=String(item.status||'').startsWith('official');
-    if(officialItem&&(!item.source||!/^https:\/\//i.test(item.sourceUrl||'')||!item.verifiedAt||Number.isNaN(Date.parse(item.verifiedAt))))reasons.push('Item oficial exige fonte, URL HTTPS e data de verificação.');
-    if(item.dataKind==='curve'&&(item.curvePoints||[]).length<3)reasons.push('Curva completa exige ao menos três pontos.');
-  }
-  return {item:item?{...item,packageId}:null,reasons};
-}
-async function applyCatalogPackageData(data,origin='arquivo local'){
-  const rawItems=Array.isArray(data)?data:(Array.isArray(data?.items)?data.items:null);if(!rawItems)throw new Error('O pacote não contém um vetor items.');
-  if(rawItems.length>3000)throw new Error('Pacote excede 3.000 registros.');
-  const packageId=sanitizeId(data.packageId||data.id||`package-${Date.now()}`,'package'),version=String(data.version||'1.0.0'),issuedAt=data.issuedAt||new Date().toISOString();
-  const canonical={schema:data.schema||'VentiladorProCatalogPackageV1',packageId,version,issuedAt,items:rawItems};const digest=await sha256Text(stableStringify(canonical));
-  if(data.sha256&&String(data.sha256).toLowerCase()!==digest.toLowerCase())throw new Error('O digest SHA-256 declarado não confere com o conteúdo.');
-  const accepted=[],rejected=[];const seen=new Set();rawItems.forEach((raw,i)=>{const v=validateCatalogPackageItem(raw,i,packageId);if(v.item&&seen.has(v.item.id))v.reasons.push('ID duplicado no próprio pacote.');if(v.item)seen.add(v.item.id);if(v.reasons.length)rejected.push({packageId,id:raw?.id||`linha-${i+1}`,reasons:v.reasons.join(' '),at:new Date().toISOString()});else accepted.push(v.item);});
-  const map=new Map(state.catalog.governance.externalItems.map(x=>[x.id,x]));accepted.forEach(x=>map.set(x.id,x));state.catalog.governance.externalItems=[...map.values()];
-  state.catalog.governance.quarantine=[...rejected,...state.catalog.governance.quarantine].slice(0,500);
-  state.catalog.governance.packages.unshift({id:packageId,version,issuedAt,origin,accepted:accepted.length,rejected:rejected.length,digest,importedAt:new Date().toISOString()});state.catalog.governance.packages=state.catalog.governance.packages.slice(0,50);
-  ensureCatalogAudit(true);recordAudit('catálogo','Pacote de catálogo incorporado',`${packageId} ${version}: ${accepted.length} aceitos e ${rejected.length} em quarentena.`);refreshAll();saveLocal(false);toast(`${accepted.length} registros incorporados; ${rejected.length} enviados à quarentena.`,rejected.length?'warn':'good');
-}
-function importCatalogPackageFile(event){const file=event.target.files?.[0];if(!file)return;const r=new FileReader();r.onload=async()=>{try{await applyCatalogPackageData(JSON.parse(r.result),file.name);}catch(e){toast(`Pacote inválido: ${e.message}`,'bad');}event.target.value='';};r.readAsText(file);}
-async function fetchCatalogPackageFromUrl(){const url=String(state.catalog.governance.remoteUrl||'').trim();if(!/^https:\/\//i.test(url)){toast('Informe um endpoint HTTPS.','warn');return;}try{const res=await fetch(url,{cache:'no-store',headers:{Accept:'application/json'}});if(!res.ok)throw new Error(`HTTP ${res.status}`);await applyCatalogPackageData(await res.json(),url);}catch(e){toast(`Não foi possível obter o pacote: ${e.message}. Confirme HTTPS e CORS.`,'bad');}}
-function downloadCatalogPackageTemplate(){const payload={schema:'VentiladorProCatalogPackageV1',packageId:'fabricante-linha-data',version:'1.0.0',issuedAt:new Date().toISOString(),items:[{id:'fabricante-modelo-configuracao',manufacturer:'Fabricante',model:'Modelo e configuração',series:'Linha',type:'Centrífugo – pás para trás',dataKind:'curve',status:'officialCurve',qMinM3h:1000,qMaxM3h:5000,pMaxPa:800,rpm:1450,diameterMm:500,powerKW:3,efficiencyPct:72,maxTempC:80,material:'Conforme catálogo',application:'Ventilação e exaustão',country:'Brasil',source:'Título da ficha oficial',sourceUrl:'https://fabricante.exemplo/ficha.pdf',verifiedAt:new Date().toISOString().slice(0,10),notes:'Transcrição identificada e conferida.',curveDensityKgM3:1.2,curvePoints:[{qM3h:1000,pressurePa:800,efficiencyPct:55,noiseDb:0},{qM3h:3000,pressurePa:600,efficiencyPct:72,noiseDb:0},{qM3h:5000,pressurePa:0,efficiencyPct:40,noiseDb:0}]}]};downloadBlob(new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}),'VentiladorPro_modelo_pacote_catalogo_v40.json');}
-function resetExternalCatalogPackages(){if(!state.catalog.governance.externalItems.length&&!state.catalog.governance.packages.length)return;state.catalog.governance.externalItems=[];state.catalog.governance.packages=[];state.catalog.governance.quarantine=[];ensureCatalogAudit(true);recordAudit('catálogo','Pacotes externos removidos','A base interna e os itens do usuário foram preservados.');refreshAll();saveLocal(false);toast('Pacotes externos removidos; base interna preservada.');}
-function exportCatalogAuditCSV(){const a=ensureCatalogAudit();const lines=['severidade;id;equipamento;regra;descricao;origem',...a.issues.map(x=>[x.severity,csvCell(x.id),csvCell(x.label),csvCell(x.rule),csvCell(x.message),csvCell(x.source)].join(';'))];downloadBlob(new Blob(['\ufeff'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'}),`VentiladorPro_auditoria_catalogo_${new Date().toISOString().slice(0,10)}.csv`);}
-async function exportCatalogManifest(){const a=ensureCatalogAudit();const items=getCatalogItems().map(i=>({id:i.id,manufacturer:i.manufacturer,model:i.model,status:i.status,dataKind:i.dataKind,verifiedAt:i.verifiedAt,sourceUrl:i.sourceUrl,points:i.curvePoints?.length||0}));const payload={schema:'VentiladorProCatalogManifestV1',appVersion:APP_VERSION,generatedAt:new Date().toISOString(),audit:{...a,issues:undefined},packages:state.catalog.governance.packages,items};payload.sha256=await sha256Text(stableStringify(payload));downloadBlob(new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}),`VentiladorPro_manifesto_catalogo_${new Date().toISOString().slice(0,10)}.json`);recordAudit('catálogo','Manifesto exportado',`Digest ${payload.sha256.slice(0,16)}…`);}
-
-/* ---------- Rede nodal avançada ---------- */
-function advancedNetworkSignatureFor(network=state.advancedNetwork,airState=state.air,fanState=state.fan){
-  const n=deepClone(network);['result','systemCurve','lastSignature','curveSignature','runAt','curveRunAt','useAsSystem'].forEach(k=>delete n[k]);const usesCurrent=(network.edges||[]).some(e=>e.fanMode==='current');return simpleHash({network:n,air:airState,fan:usesCurrent?{rpm:fanState.rpm,curveDensityKgM3:fanState.curveDensityKgM3,curvePoints:fanState.curvePoints}:null});
-}
-function advancedNetworkSignature(){return advancedNetworkSignatureFor();}
-function advancedGeometry(edge){return ductGeometry({shape:edge.shape,diameterMm:edge.diameterMm,widthMm:edge.widthMm,heightMm:edge.heightMm});}
-function extendedCurveValue(points,q,key){
-  if(!points?.length)return 0;const p=[...points].sort((a,b)=>a.qM3s-b.qM3s);if(p.length===1)return toNum(p[0][key]);
-  if(q<=p[0].qM3s){const a=p[0],b=p[1],v=a[key]+safeDiv(q-a.qM3s,b.qM3s-a.qM3s,0)*(b[key]-a[key]);return key==='pressurePa'?Math.max(0,v):v;}
-  if(q>=p.at(-1).qM3s){const a=p.at(-2),b=p.at(-1),v=b[key]+safeDiv(q-b.qM3s,b.qM3s-a.qM3s,0)*(b[key]-a[key]);return key==='pressurePa'?Math.max(0,v):v;}
-  return interpolateCurve(p,q,key);
-}
-function advancedEdgeFanPressure(edge,qAbs,air,fan=state.fan){
-  const mode=edge.fanMode||'none';if(mode==='none')return 0;const associationMode=edge.fanAssociationMode||'single',count=associationMode==='single'?1:clamp(Math.round(toNum(edge.fanCount,1)),1,8);
-  if(mode==='current')return Math.max(0,extendedCurveValue(sortedFanPoints(air,fan,{mode:associationMode,count}),qAbs,'pressurePa'));
-  let p0=Math.max(0,toNum(edge.fanShutoffPa)),qFree=Math.max(1e-8,toNum(edge.fanFreeFlowM3h)/3600);if(associationMode==='series')p0*=count;if(associationMode==='parallel')qFree*=count;return p0*Math.max(0,1-Math.pow(qAbs/qFree,2));
-}
-function advancedEdgeState(edge,q,air,fan=state.fan){
-  const g=advancedGeometry(edge),sign=q<0?-1:q>0?1:0,qa=Math.abs(q),velocity=safeDiv(qa,g.area),re=safeDiv(air.rho*velocity*g.dh,air.mu),f=frictionFactor(re,Math.max(0,toNum(edge.roughnessMm,.09))/1000,g.dh),dyn=air.rho*velocity*velocity/2,distributed=f*safeDiv(Math.max(0,toNum(edge.lengthM)),g.dh)*dyn,local=Math.max(0,toNum(edge.kTotal))*dyn,ref=Math.max(1e-9,toNum(edge.componentRefFlowM3h,edge.fanFreeFlowM3h||1)/3600),exponent=clamp(toNum(edge.componentExponent,2),0,4),component=Math.max(0,toNum(edge.fixedLossPa))*Math.pow(safeDiv(qa,ref,0),exponent),loss=sign*(distributed+local+component),fanPressure=advancedEdgeFanPressure(edge,qa,air,fan),net=loss-fanPressure,eta=clamp(toNum(edge.fanEfficiencyPct,70),1,100)/100,powerKW=q>0?qa*fanPressure/eta/1000:0;
-  return {geometry:g,qM3s:q,qM3h:q*3600,velocity,re,f,dynamicPressure:dyn,distributed,local,component,lossPa:loss,fanPressurePa:fanPressure,netDropPa:net,powerKW};
-}
-function advancedEdgeFlowLimit(edge,totalDemandM3s,air,fan){
-  const g=advancedGeometry(edge),byVelocity=Math.max(.2,g.area*45),byDemand=Math.max(.2,totalDemandM3s*4),byParam=Math.max(0,toNum(edge.fanFreeFlowM3h)/3600*1.6);let byCurrent=0;if(edge.fanMode==='current'){const pts=sortedFanPoints(air,fan,{mode:edge.fanAssociationMode||'single',count:edge.fanCount||1});byCurrent=(pts.at(-1)?.qM3s||0)*1.6;}return Math.max(byVelocity,byDemand,byParam,byCurrent,.5);
-}
-function solveAdvancedEdgeFlow(edge,dp,air,totalDemandM3s,fan=state.fan){
-  const F=q=>advancedEdgeState(edge,q,air,fan).netDropPa-dp;let lim=advancedEdgeFlowLimit(edge,totalDemandM3s,air,fan),lo=-lim,hi=lim,flo=F(lo),fhi=F(hi);
-  for(let k=0;k<8&&flo*fhi>0;k++){lim*=2;lo=-lim;hi=lim;flo=F(lo);fhi=F(hi);}if(!Number.isFinite(flo)||!Number.isFinite(fhi))return 0;
-  if(flo*fhi>0){const candidates=[lo,0,hi].map(q=>({q,e:Math.abs(F(q))})).sort((a,b)=>a.e-b.e);return candidates[0].q;}
-  for(let i=0;i<65;i++){const mid=(lo+hi)/2,fm=F(mid);if(Math.abs(fm)<1e-7)return mid;if(flo*fm<=0){hi=mid;fhi=fm;}else{lo=mid;flo=fm;}}return (lo+hi)/2;
-}
-function solveLinearSystem(A,b){
-  const n=b.length,M=A.map((r,i)=>[...r,b[i]]);for(let k=0;k<n;k++){let pivot=k;for(let i=k+1;i<n;i++)if(Math.abs(M[i][k])>Math.abs(M[pivot][k]))pivot=i;if(Math.abs(M[pivot][k])<1e-14)throw new Error('Matriz singular; verifique conectividade e demandas.');[M[k],M[pivot]]=[M[pivot],M[k]];const d=M[k][k];for(let j=k;j<=n;j++)M[k][j]/=d;for(let i=0;i<n;i++){if(i===k)continue;const f=M[i][k];for(let j=k;j<=n;j++)M[i][j]-=f*M[k][j];}}
-  return M.map(r=>r[n]);
-}
-function validateAdvancedNetwork(network){
-  const errors=[],ids=new Set();(network.nodes||[]).forEach(n=>{if(!n.id)errors.push('Há nó sem ID.');else if(ids.has(n.id))errors.push(`ID de nó duplicado: ${n.id}.`);ids.add(n.id);});
-  if(!ids.has(network.referenceNodeId))errors.push('Nó de referência inexistente.');(network.edges||[]).forEach((e,i)=>{if(!ids.has(e.from)||!ids.has(e.to))errors.push(`Aresta ${e.name||i+1} referencia nó inexistente.`);if(e.from===e.to)errors.push(`Aresta ${e.name||i+1} liga o nó a ele mesmo.`);if(advancedGeometry(e).area<=0)errors.push(`Aresta ${e.name||i+1} possui seção inválida.`);});if((network.nodes||[]).length<2)errors.push('Cadastre ao menos dois nós.');if(!(network.edges||[]).length)errors.push('Cadastre ao menos uma aresta.');return errors;
-}
-function evaluateAdvancedContinuity(network,pressures,air,fan){
-  const nodes=network.nodes||[],nodeIndex=new Map(nodes.map((n,i)=>[n.id,i])),totalDemandM3s=nodes.reduce((s,n)=>s+Math.max(0,toNum(n.demandM3h))/3600,0),edgeFlows=(network.edges||[]).map(e=>{const dp=pressures[nodeIndex.get(e.from)]-pressures[nodeIndex.get(e.to)],q=solveAdvancedEdgeFlow(e,dp,air,totalDemandM3s,fan);return {edge:e,q,state:advancedEdgeState(e,q,air,fan)};});
-  const residuals=nodes.map(n=>-toNum(n.demandM3h)/3600);edgeFlows.forEach(({edge,q})=>{residuals[nodeIndex.get(edge.from)]-=q;residuals[nodeIndex.get(edge.to)]+=q;});return {edgeFlows,residuals,totalDemandM3s,nodeIndex};
-}
-function solveAdvancedNetworkModel(network=state.advancedNetwork,air=calculations.air||calculateAir(),fan=state.fan,demandScale=1){
-  const config=deepClone(network);config.nodes=(config.nodes||[]).map(n=>({...n,demandM3h:toNum(n.demandM3h)*demandScale}));const errors=validateAdvancedNetwork(config);if(errors.length)return {converged:false,error:errors.join(' '),iterations:0,nodes:[],edges:[],maxResidualM3h:Infinity,requiredSourcePressurePa:0,totalDemandM3h:0};
-  const nodes=config.nodes,refIndex=nodes.findIndex(n=>n.id===config.referenceNodeId),unknown=nodes.map((_,i)=>i).filter(i=>i!==refIndex),tol=Math.max(.0001,toNum(config.toleranceM3h,.1))/3600,maxIter=clamp(Math.round(toNum(config.maxIterations,60)),5,150),relax=clamp(toNum(config.relaxation,.7),.05,1);let p=nodes.map((n,i)=>i===refIndex?0:-100*(1+toNum(n.x,50)/100));
-  const prev=network.result?.nodes;if(Array.isArray(prev)&&prev.length===nodes.length){const m=new Map(prev.map(n=>[n.id,n.pressurePa]));p=p.map((v,i)=>i===refIndex?0:toNum(m.get(nodes[i].id),v));}
-  let data=evaluateAdvancedContinuity(config,p,air,fan),converged=false,iteration=0,error='';
-  const norm=d=>Math.max(0,...unknown.map(i=>Math.abs(d.residuals[i])));
-  for(iteration=0;iteration<maxIter;iteration++){
-    const currentNorm=norm(data);if(currentNorm<=tol){converged=true;break;}const n=unknown.length,J=Array.from({length:n},()=>Array(n).fill(0)),r=unknown.map(i=>data.residuals[i]);
-    for(let j=0;j<n;j++){const idx=unknown[j],h=Math.max(.05,Math.abs(p[idx])*1e-5),pp=[...p];pp[idx]+=h;const d2=evaluateAdvancedContinuity(config,pp,air,fan);for(let i=0;i<n;i++)J[i][j]=(d2.residuals[unknown[i]]-r[i])/h;}
-    let dx;try{dx=solveLinearSystem(J,r.map(v=>-v));}catch(e){error=e.message;break;}let alpha=relax,accepted=false,bestP=p,bestData=data,bestNorm=currentNorm;
-    for(let ls=0;ls<9;ls++){const trial=[...p];unknown.forEach((idx,j)=>trial[idx]+=alpha*dx[j]);trial[refIndex]=0;const td=evaluateAdvancedContinuity(config,trial,air,fan),tn=norm(td);if(tn<bestNorm){bestP=trial;bestData=td;bestNorm=tn;accepted=true;break;}alpha*=.5;}
-    if(!accepted){unknown.forEach((idx,j)=>p[idx]+=.05*dx[j]);p[refIndex]=0;data=evaluateAdvancedContinuity(config,p,air,fan);}else{p=bestP;data=bestData;}
-  }
-  if(!converged&&norm(data)<=tol)converged=true;
-  const nodeResults=nodes.map((n,i)=>{const deficit=Math.max(0,toNum(n.minPressurePa)-p[i]);return {...n,pressurePa:p[i],residualM3h:data.residuals[i]*3600,deficitPa:deficit};});
-  const edgeResults=data.edgeFlows.map(({edge,q,state:s})=>({...edge,...s,from:edge.from,to:edge.to,reverse:q<0,status:q<0?'reverse':s.velocity>25?'highVelocity':'ok'}));const terminals=nodeResults.filter(n=>n.type==='terminal'||toNum(n.demandM3h)>0),required=Math.max(0,...terminals.map(n=>n.deficitPa)),sourceFlowM3h=-data.residuals[refIndex]*3600,totalFanPowerKW=edgeResults.reduce((sum,e)=>sum+e.powerKW,0),reverseCount=edgeResults.filter(e=>e.reverse).length,maxVelocity=Math.max(0,...edgeResults.map(e=>e.velocity));
-  return {converged,error,iterations:iteration+(converged?1:0),maxResidualM3h:norm(data)*3600,requiredSourcePressurePa:required,totalDemandM3h:data.totalDemandM3s*3600,sourceFlowM3h,totalFanPowerKW,reverseCount,maxVelocity,nodes:nodeResults,edges:edgeResults,referenceNodeId:config.referenceNodeId,scale:demandScale,solvedAt:new Date().toISOString()};
-}
-function advancedNetworkExample(kind='loop'){
-  const common={referenceNodeId:'SRC',toleranceM3h:.05,maxIterations:80,relaxation:.7,curveMinPct:0,curveMaxPct:150,curveSteps:15,allowReverseFlow:true,useAsSystem:false,result:null,systemCurve:[],lastSignature:'',curveSignature:'',runAt:'',curveRunAt:''};
-  if(kind==='multifan')return {...common,nodes:[{id:'SRC',name:'Tomada de ar',type:'source',demandM3h:0,minPressurePa:0,x:5,y:50},{id:'J1',name:'Plenum principal',type:'junction',demandM3h:0,minPressurePa:0,x:35,y:50},{id:'J2',name:'Zona remota',type:'junction',demandM3h:0,minPressurePa:0,x:65,y:50},{id:'T1',name:'Terminal A',type:'terminal',demandM3h:5000,minPressurePa:30,x:92,y:25},{id:'T2',name:'Terminal B',type:'terminal',demandM3h:4500,minPressurePa:30,x:92,y:72}],edges:[
-    {id:'E1',name:'Tronco com booster 1',from:'SRC',to:'J1',shape:'rect',widthMm:900,heightMm:550,diameterMm:700,lengthM:25,roughnessMm:.09,kTotal:1.2,fixedLossPa:120,componentRefFlowM3h:9500,componentExponent:2,fanMode:'parametric',fanShutoffPa:500,fanFreeFlowM3h:12500,fanAssociationMode:'single',fanCount:1,fanEfficiencyPct:72},
-    {id:'E2',name:'Interligação',from:'J1',to:'J2',shape:'circular',diameterMm:650,widthMm:600,heightMm:400,lengthM:32,roughnessMm:.09,kTotal:1.1,fixedLossPa:40,componentRefFlowM3h:9500,componentExponent:2,fanMode:'none',fanShutoffPa:0,fanFreeFlowM3h:0,fanAssociationMode:'single',fanCount:1,fanEfficiencyPct:70},
-    {id:'E3',name:'Booster da zona A',from:'J2',to:'T1',shape:'circular',diameterMm:450,widthMm:500,heightMm:350,lengthM:22,roughnessMm:.09,kTotal:2.5,fixedLossPa:60,componentRefFlowM3h:5000,componentExponent:2,fanMode:'parametric',fanShutoffPa:300,fanFreeFlowM3h:6500,fanAssociationMode:'single',fanCount:1,fanEfficiencyPct:68},
-    {id:'E4',name:'Ramal zona B',from:'J2',to:'T2',shape:'circular',diameterMm:425,widthMm:500,heightMm:350,lengthM:18,roughnessMm:.09,kTotal:3.2,fixedLossPa:90,componentRefFlowM3h:4500,componentExponent:2,fanMode:'none',fanShutoffPa:0,fanFreeFlowM3h:0,fanAssociationMode:'single',fanCount:1,fanEfficiencyPct:70}
-  ]};
-  return {...common,nodes:[{id:'SRC',name:'Central',type:'source',demandM3h:0,minPressurePa:0,x:5,y:50},{id:'A',name:'Nó A',type:'junction',demandM3h:0,minPressurePa:0,x:30,y:25},{id:'B',name:'Nó B',type:'junction',demandM3h:0,minPressurePa:0,x:30,y:75},{id:'C',name:'Nó C',type:'junction',demandM3h:0,minPressurePa:0,x:60,y:50},{id:'T1',name:'Zona 1',type:'terminal',demandM3h:4200,minPressurePa:25,x:92,y:20},{id:'T2',name:'Zona 2',type:'terminal',demandM3h:3600,minPressurePa:25,x:92,y:50},{id:'T3',name:'Zona 3',type:'terminal',demandM3h:3200,minPressurePa:25,x:92,y:82}],edges:[
-    {id:'E1',name:'Tronco superior',from:'SRC',to:'A',shape:'rect',widthMm:900,heightMm:500,diameterMm:650,lengthM:24,roughnessMm:.09,kTotal:1.2,fixedLossPa:100,componentRefFlowM3h:6500,componentExponent:2,fanMode:'none',fanShutoffPa:0,fanFreeFlowM3h:0,fanAssociationMode:'single',fanCount:1,fanEfficiencyPct:70},
-    {id:'E2',name:'Tronco inferior',from:'SRC',to:'B',shape:'rect',widthMm:850,heightMm:500,diameterMm:650,lengthM:28,roughnessMm:.09,kTotal:1.4,fixedLossPa:110,componentRefFlowM3h:5500,componentExponent:2,fanMode:'none',fanShutoffPa:0,fanFreeFlowM3h:0,fanAssociationMode:'single',fanCount:1,fanEfficiencyPct:70},
-    {id:'E3',name:'Anel A–C',from:'A',to:'C',shape:'circular',diameterMm:600,widthMm:600,heightMm:400,lengthM:22,roughnessMm:.09,kTotal:.8,fixedLossPa:30,componentRefFlowM3h:6000,componentExponent:2,fanMode:'none',fanShutoffPa:0,fanFreeFlowM3h:0,fanAssociationMode:'single',fanCount:1,fanEfficiencyPct:70},
-    {id:'E4',name:'Anel B–C',from:'B',to:'C',shape:'circular',diameterMm:550,widthMm:600,heightMm:400,lengthM:20,roughnessMm:.09,kTotal:1,fixedLossPa:35,componentRefFlowM3h:5000,componentExponent:2,fanMode:'none',fanShutoffPa:0,fanFreeFlowM3h:0,fanAssociationMode:'single',fanCount:1,fanEfficiencyPct:70},
-    {id:'E5',name:'Ligação de equilíbrio',from:'A',to:'B',shape:'circular',diameterMm:400,widthMm:400,heightMm:300,lengthM:16,roughnessMm:.09,kTotal:1.6,fixedLossPa:0,componentRefFlowM3h:1800,componentExponent:2,fanMode:'none',fanShutoffPa:0,fanFreeFlowM3h:0,fanAssociationMode:'single',fanCount:1,fanEfficiencyPct:70},
-    {id:'E6',name:'Ramal zona 1',from:'C',to:'T1',shape:'circular',diameterMm:450,widthMm:500,heightMm:350,lengthM:18,roughnessMm:.09,kTotal:2.2,fixedLossPa:65,componentRefFlowM3h:4200,componentExponent:2,fanMode:'none',fanShutoffPa:0,fanFreeFlowM3h:0,fanAssociationMode:'single',fanCount:1,fanEfficiencyPct:70},
-    {id:'E7',name:'Ramal zona 2',from:'C',to:'T2',shape:'circular',diameterMm:425,widthMm:500,heightMm:350,lengthM:14,roughnessMm:.09,kTotal:2.8,fixedLossPa:70,componentRefFlowM3h:3600,componentExponent:2,fanMode:'none',fanShutoffPa:0,fanFreeFlowM3h:0,fanAssociationMode:'single',fanCount:1,fanEfficiencyPct:70},
-    {id:'E8',name:'Ramal zona 3',from:'B',to:'T3',shape:'circular',diameterMm:400,widthMm:500,heightMm:350,lengthM:26,roughnessMm:.09,kTotal:3.1,fixedLossPa:80,componentRefFlowM3h:3200,componentExponent:2,fanMode:'none',fanShutoffPa:0,fanFreeFlowM3h:0,fanAssociationMode:'single',fanCount:1,fanEfficiencyPct:70}
-  ]};
-}
-function loadAdvancedNetworkExample(kind){state.advancedNetwork=advancedNetworkExample(kind);recordAudit('rede nodal','Exemplo carregado',kind==='multifan'?'Rede com ventiladores auxiliares.':'Rede em anel com três zonas.');runAdvancedNetworkSolver(false);refreshAll();debounceAutosave();toast('Exemplo de rede nodal carregado.');}
-function addAdvancedNode(){const i=state.advancedNetwork.nodes.length+1,id=`N${i}`;state.advancedNetwork.nodes.push({id,name:`Nó ${i}`,type:'junction',demandM3h:0,minPressurePa:0,x:50,y:50});if(!state.advancedNetwork.referenceNodeId)state.advancedNetwork.referenceNodeId=id;refreshAll();debounceAutosave();}
-function addAdvancedEdge(){const n=state.advancedNetwork.nodes;if(n.length<2){toast('Cadastre ao menos dois nós.','warn');return;}const i=state.advancedNetwork.edges.length+1;state.advancedNetwork.edges.push({id:`E${Date.now()}`,name:`Aresta ${i}`,from:n[0].id,to:n[1].id,shape:'circular',diameterMm:500,widthMm:600,heightMm:400,lengthM:10,roughnessMm:.09,kTotal:1,fixedLossPa:0,componentRefFlowM3h:3000,componentExponent:2,fanMode:'none',fanShutoffPa:0,fanFreeFlowM3h:0,fanAssociationMode:'single',fanCount:1,fanEfficiencyPct:70});refreshAll();debounceAutosave();}
-function updateAdvancedReference(value){state.advancedNetwork.referenceNodeId=value;refreshAll();debounceAutosave();}
-function updateAdvancedNode(i,key,value){const n=state.advancedNetwork.nodes[i];if(!n)return;const old=n.id;n[key]=['id','name','type'].includes(key)?String(value):toNum(value);if(key==='id'&&old!==n.id){state.advancedNetwork.edges.forEach(e=>{if(e.from===old)e.from=n.id;if(e.to===old)e.to=n.id;});if(state.advancedNetwork.referenceNodeId===old)state.advancedNetwork.referenceNodeId=n.id;}refreshAll();debounceAutosave();}
-function deleteAdvancedNode(i){const n=state.advancedNetwork.nodes[i];if(!n)return;state.advancedNetwork.nodes.splice(i,1);state.advancedNetwork.edges=state.advancedNetwork.edges.filter(e=>e.from!==n.id&&e.to!==n.id);if(state.advancedNetwork.referenceNodeId===n.id)state.advancedNetwork.referenceNodeId=state.advancedNetwork.nodes[0]?.id||'';refreshAll();debounceAutosave();}
-function updateAdvancedEdge(i,key,value){const e=state.advancedNetwork.edges[i];if(!e)return;e[key]=['name','from','to','shape','fanMode','fanAssociationMode'].includes(key)?String(value):toNum(value);refreshAll();debounceAutosave();}
-function deleteAdvancedEdge(i){state.advancedNetwork.edges.splice(i,1);refreshAll();debounceAutosave();}
-function runAdvancedNetworkSolver(notify=true){const result=solveAdvancedNetworkModel();state.advancedNetwork.result=result;state.advancedNetwork.lastSignature=advancedNetworkSignature();state.advancedNetwork.runAt=new Date().toISOString();if(notify){recordAudit('rede nodal','Rede resolvida',result.converged?`${result.iterations} iterações; resíduo ${fmt(result.maxResidualM3h,3)} m³/h.`:result.error||'Sem convergência.');toast(result.converged?'Rede nodal resolvida.':`A rede não convergiu: ${result.error||'revise os dados.'}`,result.converged?'good':'bad');}renderAdvancedNetwork(calculations);debounceAutosave();return result;}
-async function generateAdvancedSystemCurve(){
-  const errors=validateAdvancedNetwork(state.advancedNetwork);if(errors.length){toast(errors[0],'bad');return false;}const min=Math.max(0,toNum(state.advancedNetwork.curveMinPct,0))/100,max=Math.max(min+.05,toNum(state.advancedNetwork.curveMaxPct,140)/100),steps=clamp(Math.round(toNum(state.advancedNetwork.curveSteps,15)),5,31),points=[];
-  for(let i=0;i<steps;i++){const scale=min+(max-min)*i/(steps-1),r=solveAdvancedNetworkModel(state.advancedNetwork,calculations.air||calculateAir(),state.fan,scale);if(r.converged)points.push({scale,qM3h:r.totalDemandM3h,pressurePa:r.requiredSourcePressurePa,boosterPowerKW:r.totalFanPowerKW,maxVelocityMS:r.maxVelocity});if(i%3===2)await new Promise(resolve=>requestAnimationFrame(resolve));}
-  if(points.length<3){toast('Não foi possível formar a curva equivalente; revise a convergência da rede.','bad');return false;}state.advancedNetwork.systemCurve=points.sort((a,b)=>a.qM3h-b.qM3h);state.advancedNetwork.curveSignature=advancedNetworkSignature();state.advancedNetwork.curveRunAt=new Date().toISOString();recordAudit('rede nodal','Curva equivalente gerada',`${points.length} pontos entre ${fmt(points[0].qM3h,0)} e ${fmt(points.at(-1).qM3h,0)} m³/h.`);refreshAll();debounceAutosave();toast('Curva equivalente da rede gerada.');return true;
-}
-function advancedSystemCurveUsable(){return !!(state.advancedNetwork.useAsSystem&&state.advancedNetwork.systemCurve.length>=3&&state.advancedNetwork.curveSignature===advancedNetworkSignature());}
-async function toggleAdvancedSystemUse(){if(state.advancedNetwork.useAsSystem){state.advancedNetwork.useAsSystem=false;recordAudit('rede nodal','Curva nodal desativada','O projeto voltou ao modelo de rotas da rede principal.');refreshAll();return;}if(state.advancedNetwork.curveSignature!==advancedNetworkSignature()||state.advancedNetwork.systemCurve.length<3){const ok=await generateAdvancedSystemCurve();if(!ok)return;}state.advancedNetwork.useAsSystem=true;recordAudit('rede nodal','Curva nodal ativada','A seleção principal passou a usar a curva equivalente da malha.');refreshAll();debounceAutosave();toast('Curva nodal ativada no projeto.');}
-function advancedSystemPressureAt(curve,qM3h){
-  const pts=[...curve].sort((a,b)=>a.qM3h-b.qM3h);if(!pts.length)return 0;if(qM3h<=pts[0].qM3h){if(pts[0].qM3h<=1e-9)return pts[0].pressurePa;return pts[0].pressurePa*Math.pow(Math.max(0,qM3h)/pts[0].qM3h,2);}if(qM3h>=pts.at(-1).qM3h){const p=pts.at(-1);return p.pressurePa*Math.pow(safeDiv(qM3h,p.qM3h,1),2);}for(let i=0;i<pts.length-1;i++){const a=pts[i],b=pts[i+1];if(qM3h>=a.qM3h&&qM3h<=b.qM3h){const t=safeDiv(qM3h-a.qM3h,b.qM3h-a.qM3h);return a.pressurePa+t*(b.pressurePa-a.pressurePa);}}return 0;
-}
-function calculateFanAgainstAdvancedCurve(flow,air,fan=state.fan,associationOverride=null){
-  const points=sortedFanPoints(air,fan,associationOverride),association=associationInfo(fan,associationOverride),curve=state.advancedNetwork.systemCurve,margin=clamp(toNum(fan.pressureMarginPct),0,100)/100,staticBase=Math.max(0,toNum(fan.staticPressurePa)),systemDetails=q=>{const networkPressurePa=advancedSystemPressureAt(curve,q*3600)*(1+margin);return {pressurePa:staticBase+networkPressurePa,networkPressurePa,routeCode:'Rede nodal',routeLossPa:safeDiv(networkPressurePa,1+margin,networkPressurePa)};},systemPressure=q=>systemDetails(q).pressurePa,fanPressure=q=>interpolateCurve(points,q,'pressurePa'),diff=q=>fanPressure(q)-systemPressure(q),roots=[];
-  for(let i=0;i<points.length-1;i++){let a=points[i].qM3s,b=points[i+1].qM3s,fa=diff(a),fb=diff(b);if(!Number.isFinite(fa)||!Number.isFinite(fb))continue;if(Math.abs(fa)<1e-8)roots.push(a);if(fa*fb<0){for(let n=0;n<70;n++){const m=(a+b)/2,fm=diff(m);if(Math.abs(fm)<1e-7){a=b=m;break;}if(fa*fm<=0){b=m;fb=fm;}else{a=m;fa=fm;}}roots.push((a+b)/2);}if(i===points.length-2&&Math.abs(fb)<1e-8)roots.push(b);}
-  const unique=[...roots].sort((a,b)=>a-b).filter((r,i,a)=>i===0||Math.abs(r-a[i-1])>1e-6),rootData=unique.map(q=>{const d=systemDetails(q),eta=interpolateCurve(points,q,'efficiencyPct'),noise=interpolateCurve(points,q,'noiseDb'),dq=Math.max(1e-5,(points.at(-1)?.qM3s||1)*.001),q1=Math.max(points[0]?.qM3s||0,q-dq),q2=Math.min(points.at(-1)?.qM3s||q,q+dq),fanSlope=safeDiv(fanPressure(q2)-fanPressure(q1),q2-q1,0),systemSlope=safeDiv(systemPressure(q2)-systemPressure(q1),q2-q1,0);return {qM3s:q,qM3h:q*3600,pressurePa:d.pressurePa,efficiencyPct:eta,noiseDb:noise,fanSlope,systemSlope,stable:fanSlope-systemSlope<0,routeCode:'Rede nodal'};}),stable=rootData.filter(r=>r.stable).sort((a,b)=>Math.abs(a.qM3s-flow.qDesignM3s)-Math.abs(b.qM3s-flow.qDesignM3s)),operating=stable[0]||rootData.sort((a,b)=>Math.abs(a.qM3s-flow.qDesignM3s)-Math.abs(b.qM3s-flow.qDesignM3s))[0]||null,bep=points.length?points.reduce((best,p)=>p.efficiencyPct>best.efficiencyPct?p:best,points[0]):null,bepDistancePct=operating&&bep&&bep.qM3s>0?Math.abs(operating.qM3s-bep.qM3s)/bep.qM3s*100:NaN,design=systemDetails(flow.qDesignM3s),density=clamp(toNum(fan.curveDensityKgM3,1.2),.2,3);
-  return {points,staticBase,kSystem:flow.qDesignM3s>0?safeDiv(design.pressurePa-staticBase,flow.qDesignM3s**2,0):0,systemPressure,systemDetails,routeLossAt:(_r,q)=>systemDetails(q).routeLossPa,routes:[{code:'ADV',rowIndexes:[],designLossPa:design.routeLossPa}],referenceQ:flow.qDesignM3s,rootData,operating,bep,bepDistancePct,designPressure:design.pressurePa,designRouteCode:'Rede nodal',operatingRouteCode:'Rede nodal',modelType:'advanced-nodal',margin,curveDensityKgM3:density,densityFactor:safeDiv(air.rho,density,1),association,fanPressure};
-}
-const v3CalculateFanSystemV4=calculateFanSystem;
-calculateFanSystem=function(flow,ducts,air,fan=state.fan,associationOverride=null){return advancedSystemCurveUsable()?calculateFanAgainstAdvancedCurve(flow,air,fan,associationOverride):v3CalculateFanSystemV4(flow,ducts,air,fan,associationOverride);};
-function convertSimpleNetworkToAdvanced(){
-  if(!state.ducts.length){toast('A rede principal não possui trechos.','warn');return;}const air=calculations.air||calculateAir(),flow=calculations.flow||calculateFlow(air),ducts=calculateDuctsForDesign(air,flow,state.ducts,state.network),routes=ducts.routeSummaries.map(r=>r.code),nodes=[{id:'SRC',name:'Origem',type:'source',demandM3h:0,minPressurePa:0,x:5,y:50}],edges=[],cursor=new Map(routes.map(r=>[r,'SRC'])),nodeCounter=0;
-  state.ducts.forEach((d,idx)=>{const rc=state.network.mode==='branched'?parseRoutes(d.routes):['R1'],parents=[...new Set(rc.map(r=>cursor.get(r)||'SRC'))];if(parents.length===1){const to=`J${++nodeCounter}`,x=15+Math.min(65,idx/Math.max(1,state.ducts.length-1)*65),y=50;nodes.push({id:to,name:`Após ${d.name}`,type:'junction',demandM3h:0,minPressurePa:0,x,y});edges.push({id:`E${idx+1}`,name:d.name,from:parents[0],to,shape:d.shape,diameterMm:d.diameterMm,widthMm:d.widthMm,heightMm:d.heightMm,lengthM:d.lengthM,roughnessMm:d.roughnessMm,kTotal:(d.accessories||[]).reduce((s,a)=>s+toNum(a.qty)*toNum(a.k),0),fixedLossPa:d.fixedLossPa,componentRefFlowM3h:d.componentRefFlowM3h||d.qM3h,componentExponent:d.componentExponent,fanMode:'none',fanShutoffPa:0,fanFreeFlowM3h:0,fanAssociationMode:'single',fanCount:1,fanEfficiencyPct:70});rc.forEach(r=>cursor.set(r,to));}else rc.forEach((r,j)=>{const from=cursor.get(r)||'SRC',to=`J${++nodeCounter}`;nodes.push({id:to,name:`${d.name} — ${r}`,type:'junction',demandM3h:0,minPressurePa:0,x:45+idx*4,y:15+70*j/Math.max(1,rc.length-1)});edges.push({id:`E${idx+1}-${r}`,name:`${d.name} — ${r}`,from,to,shape:d.shape,diameterMm:d.diameterMm,widthMm:d.widthMm,heightMm:d.heightMm,lengthM:d.lengthM,roughnessMm:d.roughnessMm,kTotal:(d.accessories||[]).reduce((s,a)=>s+toNum(a.qty)*toNum(a.k),0),fixedLossPa:d.fixedLossPa,componentRefFlowM3h:d.componentRefFlowM3h||d.qM3h,componentExponent:d.componentExponent,fanMode:'none',fanShutoffPa:0,fanFreeFlowM3h:0,fanAssociationMode:'single',fanCount:1,fanEfficiencyPct:70});cursor.set(r,to);});});
-  routes.forEach((r,i)=>{const parent=cursor.get(r)||'SRC',id=`T${i+1}`,summary=ducts.routeSummaries.find(x=>x.code===r);nodes.push({id,name:`Terminal ${r}`,type:'terminal',demandM3h:summary?.terminalFlowM3h||flow.qDesignM3s*3600/routes.length,minPressurePa:0,x:95,y:10+80*(i+.5)/routes.length});edges.push({id:`ET${i+1}`,name:`Ligação terminal ${r}`,from:parent,to:id,shape:'circular',diameterMm:1000,widthMm:1000,heightMm:1000,lengthM:.01,roughnessMm:.01,kTotal:0,fixedLossPa:0,componentRefFlowM3h:summary?.terminalFlowM3h||1,componentExponent:2,fanMode:'none',fanShutoffPa:0,fanFreeFlowM3h:0,fanAssociationMode:'single',fanCount:1,fanEfficiencyPct:70});});
-  state.advancedNetwork={...v4DefaultState().advancedNetwork,nodes,edges,referenceNodeId:'SRC'};recordAudit('rede nodal','Rede principal convertida',`${nodes.length} nós e ${edges.length} arestas gerados.`);runAdvancedNetworkSolver(false);refreshAll();toast('Rede convertida para o modelo nodal.');
-}
-function exportAdvancedNetworkJSON(){const payload={schema:'VentiladorProAdvancedNetworkV1',version:APP_VERSION,exportedAt:new Date().toISOString(),network:state.advancedNetwork};downloadBlob(new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}),`${sanitizeFilename(state.project.name)}_rede_nodal_v40.json`);}
-function importAdvancedNetworkJSON(event){const file=event.target.files?.[0];if(!file)return;const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result),n=d.network||d;const merged=mergeState(v4DefaultState().advancedNetwork,n);const errors=validateAdvancedNetwork(merged);if(errors.length)throw new Error(errors[0]);state.advancedNetwork=merged;runAdvancedNetworkSolver(false);recordAudit('rede nodal','Rede importada',file.name);refreshAll();toast('Rede nodal importada.');}catch(e){toast(`Rede inválida: ${e.message}`,'bad');}event.target.value='';};r.readAsText(file);}
-
-/* ---------- Monte Carlo ---------- */
-const v3EvaluateSnapshotQuickV4=evaluateSnapshotQuick;
-evaluateSnapshotQuick=function(snapshot){
-  const saved=state,costModel=deepClone(saved.optimization);state=mergeState(defaultState(),deepClone(snapshot));state.optimization=mergeState(defaultState().optimization,costModel||{});normalizeState();
-  try{const air=calculateAir(),flow=calculateFlow(air),ducts=calculateDuctsForDesign(air,flow,state.ducts,state.network),system=calculateFanSystem(flow,ducts,air,state.fan),perf=calculatePerformance(flow,air,ducts,system,state.fan),control=evaluateControlForCandidate(perf,state.energy.selectedMethod,state),costs=estimateCandidateCosts(state.fan,perf,state.ducts,control,state),op=system.operating;return {available:!!op,stable:!!op?.stable,designFlowM3h:flow.qDesignM3s*3600,operatingFlowM3h:op?.qM3h||0,designPressurePa:system.designPressure,inputPowerKW:perf.available?perf.inputPowerW/1000:0,annualKWh:control.annualKWh,annualCost:control.annualCost,lcc:costs.lcc,efficiencyPct:op?.efficiencyPct||0,bepDistancePct:system.bepDistancePct,maxVelocityMS:ducts.maxVelocity?.velocity||0,pressurePa:op?.pressurePa||0,motorLoadingPct:perf.available?perf.loadingEachPct:0,selectedMotorEachKW:perf.available?perf.selectedMotorEachKW:0,fanLabel:`${state.fan.manufacturer} ${state.fan.model}`,controlLabel:control.label};}finally{state=saved;}
-};
-function probabilisticSignature(){const p=deepClone(state.probabilistic);['summary','histogram','cdf','correlations','lastSignature','runAt'].forEach(k=>delete p[k]);return simpleHash({snapshot:extractScenarioSnapshot(),p});}
-function applyProbabilisticVariable(snapshot,key,value,base){
-  const out=applySensitivityVariation(snapshot,key,value,base);
-  if(out.advancedNetwork?.useAsSystem&&Array.isArray(out.advancedNetwork.systemCurve)&&out.advancedNetwork.systemCurve.length){
-    if(key==='roughness'||key==='componentLoss')out.advancedNetwork.systemCurve=out.advancedNetwork.systemCurve.map(p=>({...p,pressurePa:Math.max(0,toNum(p.pressurePa)*(1+value/100))}));
-    if(key==='temperature'){const t0=273.15+toNum(snapshot.air.temperatureC,20),t1=273.15+toNum(out.air.temperatureC,20),ratio=safeDiv(t0,t1,1);out.advancedNetwork.systemCurve=out.advancedNetwork.systemCurve.map(p=>({...p,pressurePa:Math.max(0,toNum(p.pressurePa)*ratio)}));}
-    out.advancedNetwork.curveSignature=advancedNetworkSignatureFor(out.advancedNetwork,out.air,out.fan);
-  }
-  return out;
-}
-function monteCarloStat(values){const sorted=[...values].sort((a,b)=>a-b),m=mean(values),sd=stdDev(values,m);return {n:values.length,mean:m,sd,cvPct:m?Math.abs(sd/m*100):0,min:sorted[0],max:sorted.at(-1),p05:percentile(sorted,.05),p50:percentile(sorted,.5),p90:percentile(sorted,.9),p95:percentile(sorted,.95),p99:percentile(sorted,.99)};}
-function buildHistogram(values,bins=20){if(!values.length)return [];const min=Math.min(...values),max=Math.max(...values),width=Math.max(1e-12,(max-min)/bins),out=Array.from({length:bins},(_,i)=>({min:min+i*width,max:min+(i+1)*width,count:0}));values.forEach(v=>out[Math.min(bins-1,Math.floor((v-min)/width))].count++);return out;}
-function monteCarloRiskClass(pct){return pct<=2?'good':pct<=10?'warn':'bad';}
-async function runMonteCarlo(){
-  if(monteCarloRunning)return;const n=clamp(Math.round(toNum(state.probabilistic.iterations,1500)),100,10000),variables=state.probabilistic.variables.filter(v=>v.enabled);if(!variables.length){toast('Ative ao menos uma variável aleatória.','warn');return;}const baseSnapshot=extractScenarioSnapshot(),base=evaluateSnapshotQuick(baseSnapshot);if(!base.available){toast('O cenário-base não possui ponto de operação válido.','bad');return;}
-  monteCarloRunning=true;monteCarloCancelRequested=false;monteCarloRuntimeTrials=[];const rng=mulberry32(state.probabilistic.seed),matrix=buildSamplingMatrix(variables,n,state.probabilistic.sampling,rng),metric=state.probabilistic.metric,outputByMetric=Object.fromEntries(Object.keys(V4_PROBABILITY_METRICS).map(k=>[k,[]])),inputByVar=Object.fromEntries(variables.map(v=>[v.key,[]])),fail={noOperating:0,unstable:0,shortfall:0,velocity:0,efficiency:0,motor:0,any:0},runningMean=[];document.getElementById('monteCarloRunButton').disabled=true;document.getElementById('monteCarloCancelButton').disabled=false;renderProbabilistic(calculations);
-  for(let i=0;i<n;i++){
-    if(monteCarloCancelRequested)break;let snap=deepClone(baseSnapshot),samples={};variables.forEach(v=>{const value=sampleDistribution(v,matrix[v.key][i]);samples[v.key]=value;inputByVar[v.key].push(value);snap=applyProbabilisticVariable(snap,v.key,value,base);});const m=evaluateSnapshotQuick(snap),shortfall=m.designFlowM3h>0?Math.max(0,(m.designFlowM3h-m.operatingFlowM3h)/m.designFlowM3h*100):100,flags={noOperating:!m.available,unstable:m.available&&!m.stable,shortfall:shortfall>state.probabilistic.failure.maxFlowShortfallPct,velocity:m.maxVelocityMS>state.probabilistic.failure.maxVelocityMS,efficiency:m.efficiencyPct<state.probabilistic.failure.minEfficiencyPct,motor:m.motorLoadingPct>state.probabilistic.failure.maxMotorLoadingPct};Object.keys(flags).forEach(k=>{if(flags[k])fail[k]++;});const any=Object.values(flags).some(Boolean);if(any)fail.any++;Object.keys(outputByMetric).forEach(k=>outputByMetric[k].push(toNum(m[k])));const row={trial:i+1,...samples,...m,shortfallPct:shortfall,failed:any,failReasons:Object.entries(flags).filter(([,v])=>v).map(([k])=>k).join('|')};monteCarloRuntimeTrials.push(row);if((i+1)%Math.max(1,Math.floor(n/50))===0)runningMean.push({n:i+1,value:mean(outputByMetric[metric])});if(i%40===39){const pct=(i+1)/n*100,bar=document.getElementById('monteCarloProgress');if(bar)bar.style.width=`${pct}%`;const banner=document.getElementById('monteCarloStatusBanner');if(banner){banner.className='stale-banner good monte-running';banner.innerHTML=`<strong>∿</strong><span>${i+1} de ${n} amostras processadas (${fmt(pct,0)}%).</span>`;}await new Promise(resolve=>requestAnimationFrame(resolve));}
-  }
-  const done=monteCarloRuntimeTrials.length;if(done&&!monteCarloCancelRequested){const stats={};Object.entries(outputByMetric).forEach(([k,v])=>stats[k]=monteCarloStat(v));const values=outputByMetric[metric],sorted=[...values].sort((a,b)=>a-b),cdf=sorted.filter((_,i)=>i%Math.max(1,Math.floor(sorted.length/180))===0||i===sorted.length-1).map((v,i,a)=>({value:v,p:safeDiv(i,a.length-1,0)})),correlations=variables.map(v=>({key:v.key,label:V4_PROBABILITY_VARIABLES[v.key]?.label||v.key,value:pearson(inputByVar[v.key],values)})).sort((a,b)=>Math.abs(b.value)-Math.abs(a.value));state.probabilistic.summary={trials:done,metric,stats,failures:fail,reliabilityPct:(1-fail.any/done)*100,shortfallRiskPct:fail.shortfall/done*100,noOperatingRiskPct:fail.noOperating/done*100,unstableRiskPct:fail.unstable/done*100,velocityRiskPct:fail.velocity/done*100,efficiencyRiskPct:fail.efficiency/done*100,motorRiskPct:fail.motor/done*100,runningMean,base,completedAt:new Date().toISOString()};state.probabilistic.histogram=buildHistogram(values,22);state.probabilistic.cdf=cdf;state.probabilistic.correlations=correlations;state.probabilistic.lastSignature=probabilisticSignature();state.probabilistic.runAt=new Date().toISOString();recordAudit('risco','Monte Carlo executado',`${done} amostras; confiabilidade ${fmt(state.probabilistic.summary.reliabilityPct,1)}%.`);toast(`Simulação concluída com ${done} amostras.`);}else toast('Simulação cancelada; resultados parciais não foram consolidados.','warn');
-  monteCarloRunning=false;document.getElementById('monteCarloRunButton').disabled=false;document.getElementById('monteCarloCancelButton').disabled=true;refreshAll();debounceAutosave();
-}
-function cancelMonteCarlo(){monteCarloCancelRequested=true;}
-function resetProbabilisticDefaults(){const d=v4DefaultState().probabilistic;state.probabilistic={...d,iterations:state.probabilistic.iterations,seed:state.probabilistic.seed};monteCarloRuntimeTrials=[];refreshAll();debounceAutosave();toast('Premissas probabilísticas restauradas.');}
-function updateProbabilisticVariable(i,key,value){const v=state.probabilistic.variables[i];if(!v)return;v[key]=key==='enabled'?!!value:key==='distribution'?String(value):toNum(value);if(v.max<v.min)[v.min,v.max]=[v.max,v.min];v.mode=clamp(v.mode,v.min,v.max);refreshAll();debounceAutosave();}
-function exportMonteCarloCSV(){if(!monteCarloRuntimeTrials.length){toast('Execute a simulação antes de exportar as amostras.','warn');return;}const vars=state.probabilistic.variables.filter(v=>v.enabled).map(v=>v.key),head=['ensaio',...vars,'vazao_projeto_m3h','vazao_operacao_m3h','pressao_pa','rendimento_pct','potencia_kw','velocidade_max_ms','custo_anual_brl','lcc_brl','carga_motor_pct','deficit_vazao_pct','falha','motivos'];const lines=[head.join(';')];monteCarloRuntimeTrials.forEach(r=>lines.push([r.trial,...vars.map(k=>csvNumber(r[k])),csvNumber(r.designFlowM3h),csvNumber(r.operatingFlowM3h),csvNumber(r.pressurePa),csvNumber(r.efficiencyPct),csvNumber(r.inputPowerKW),csvNumber(r.maxVelocityMS),csvNumber(r.annualCost),csvNumber(r.lcc),csvNumber(r.motorLoadingPct),csvNumber(r.shortfallPct),r.failed?'sim':'nao',csvCell(r.failReasons)].join(';')));downloadBlob(new Blob(['\ufeff'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'}),`${sanitizeFilename(state.project.name)}_monte_carlo_v40.csv`);}
-
-/* ---------- Histórico e auditoria ---------- */
-const V4_REVISION_KEYS=['project','flow','air','network','ducts','fan','affinity','energy','acoustics','vibration','diagnostics','advancedNetwork'];
-const v3ExtractScenarioSnapshotV4=extractScenarioSnapshot;
-extractScenarioSnapshot=function(){const s=v3ExtractScenarioSnapshotV4();s.advancedNetwork=deepClone(state.advancedNetwork);if(s.advancedNetwork){s.advancedNetwork.result=null;s.advancedNetwork.runAt='';}return s;};
-function extractRevisionSnapshot(){const s={};V4_REVISION_KEYS.forEach(k=>s[k]=deepClone(state[k]));return s;}
-function currentRevisionHash(){return simpleHash(extractRevisionSnapshot());}
-function recordAudit(category,action,detail=''){
-  if(!state.history)return;state.history.auditLog.unshift({id:`audit-${Date.now()}-${Math.random().toString(36).slice(2,6)}`,at:new Date().toISOString(),category,action,detail,hash:currentRevisionHash()});state.history.auditLog=state.history.auditLog.slice(0,250);
-}
-function revisionMetrics(){const m=scenarioMetricsFromCalculations(calculations);return {...m,ductCount:state.ducts.length,advancedNodes:state.advancedNetwork.nodes.length,advancedEdges:state.advancedNetwork.edges.length,systemModel:calculations.system?.modelType||'—'};}
-function createProjectRevision(status='review'){
-  const name=String(state.history.revisionName||`Revisão ${state.history.revisions.length+1}`).trim(),reviewer=String(state.history.reviewer||'').trim(),snapshot=extractRevisionSnapshot(),hash=simpleHash(snapshot),item={id:`rev-${Date.now()}-${Math.random().toString(36).slice(2,6)}`,name,status,reviewer,note:String(state.history.approvalNote||''),createdAt:new Date().toISOString(),hash,catalogHash:ensureCatalogAudit().manifestHash,snapshot,metrics:revisionMetrics()};state.history.revisions.unshift(item);state.history.revisions=state.history.revisions.slice(0,30);state.history.compareId=item.id;state.history.status=status;state.history.revisionName=`Revisão ${state.history.revisions.length+1}`;recordAudit('revisão',status==='approved'?'Revisão aprovada':'Revisão criada',`${name} — ${hash}.`);refreshAll();saveLocal(false);toast(`Revisão “${name}” criada.`);return item;
-}
-function approveProjectRevision(){if(!String(state.history.reviewer||'').trim()){toast('Informe o revisor ou aprovador.','warn');return;}createProjectRevision('approved');}
-function deleteProjectRevision(id){const r=state.history.revisions.find(x=>x.id===id);if(!r)return;if(r.status==='approved'){toast('Revisões aprovadas são imutáveis e não podem ser excluídas.','warn');return;}state.history.revisions=state.history.revisions.filter(x=>x.id!==id);if(state.history.compareId===id)state.history.compareId='';recordAudit('revisão','Revisão removida',r.name);refreshAll();debounceAutosave();}
-function restoreProjectRevision(id){const r=state.history.revisions.find(x=>x.id===id);if(!r)return;const managers={history:deepClone(state.history),catalog:deepClone(state.catalog),optimization:deepClone(state.optimization),scenarios:deepClone(state.scenarios),sensitivity:deepClone(state.sensitivity),probabilistic:deepClone(state.probabilistic),theme:state.ui.theme};state=mergeState(defaultState(),deepClone(r.snapshot));state.history=managers.history;state.catalog=managers.catalog;state.optimization=managers.optimization;state.scenarios=managers.scenarios;state.sensitivity=managers.sensitivity;state.probabilistic=managers.probabilistic;state.ui.theme=managers.theme;state.ui.activeTab='history';normalizeState();recordAudit('revisão','Revisão restaurada',`${r.name} — ${r.hash}.`);initializeUI();saveLocal(false);toast(`Revisão “${r.name}” restaurada.`);}
-function setHistoryCompare(id){state.history.compareId=id;renderHistory(calculations);debounceAutosave();}
-function clearAuditLog(){state.history.auditLog=[];renderHistory(calculations);debounceAutosave();toast('Registro de auditoria limpo.');}
-function revisionDiffRows(revision){
-  if(!revision)return [];const cur=revisionMetrics(),old=revision.metrics||{};return [
-    ['Ventilador',old.fanLabel||'—',cur.fanLabel||'—',old.fanLabel===cur.fanLabel?'sem alteração':'alterado'],
-    ['Vazão de operação',old.flowM3h,cur.flowM3h,toNum(cur.flowM3h)-toNum(old.flowM3h),'m³/h',0],
-    ['Pressão',old.pressurePa,cur.pressurePa,toNum(cur.pressurePa)-toNum(old.pressurePa),'Pa',0],
-    ['Rendimento',old.efficiencyPct,cur.efficiencyPct,toNum(cur.efficiencyPct)-toNum(old.efficiencyPct),'%',1],
-    ['Potência elétrica',old.inputPowerKW,cur.inputPowerKW,toNum(cur.inputPowerKW)-toNum(old.inputPowerKW),'kW',2],
-    ['Energia anual',old.annualKWh,cur.annualKWh,toNum(cur.annualKWh)-toNum(old.annualKWh),'kWh',0],
-    ['Custo anual',old.annualCost,cur.annualCost,toNum(cur.annualCost)-toNum(old.annualCost),'R$',0],
-    ['Custo do ciclo de vida',old.lcc,cur.lcc,toNum(cur.lcc)-toNum(old.lcc),'R$',0],
-    ['Trechos da rede',old.ductCount,cur.ductCount,toNum(cur.ductCount)-toNum(old.ductCount),'',0],
-    ['Nós avançados',old.advancedNodes,cur.advancedNodes,toNum(cur.advancedNodes)-toNum(old.advancedNodes),'',0]
-  ];
-}
-function historyDocumentStatus(){const approved=state.history.revisions.find(r=>r.status==='approved');if(!approved)return {status:state.history.status||'draft',changed:false,label:state.history.status==='review'?'Em revisão':'Rascunho'};const changed=approved.hash!==currentRevisionHash();return {status:changed?'changed':'approved',changed,label:changed?'Alterado após aprovação':'Aprovado'};}
-async function exportProjectAuditPackage(){const payload={schema:'VentiladorProAuditPackageV1',appVersion:APP_VERSION,exportedAt:new Date().toISOString(),projectId:state.history.projectId,current:{snapshot:extractRevisionSnapshot(),metrics:revisionMetrics(),hash:currentRevisionHash()},revisions:state.history.revisions,auditLog:state.history.auditLog,catalog:{audit:ensureCatalogAudit(),packages:state.catalog.governance.packages}};payload.integrity={algorithm:'SHA-256',digest:await sha256Text(stableStringify(payload))};downloadBlob(new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}),`${sanitizeFilename(state.project.name)}_pacote_auditoria_v40.json`);recordAudit('entrega','Pacote de auditoria exportado',payload.integrity.digest.slice(0,20)+'…');saveLocal(false);}
-function exportAuditLogCSV(){const lines=['data_hora;categoria;acao;detalhe;hash',...state.history.auditLog.map(x=>[x.at,csvCell(x.category),csvCell(x.action),csvCell(x.detail),x.hash].join(';'))];downloadBlob(new Blob(['\ufeff'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'}),`${sanitizeFilename(state.project.name)}_log_auditoria_v40.csv`);}
-
-/* ---------- Renderização v4 ---------- */
-function probabilityHistogramSvg(hist,stat,key){if(!hist?.length)return '<div class="empty">Execute a simulação para gerar o histograma.</div>';const W=760,H=340,p={l:72,r:24,t:28,b:58},pw=W-p.l-p.r,ph=H-p.t-p.b,max=Math.max(...hist.map(b=>b.count),1),xMin=hist[0].min,xMax=hist.at(-1).max,sx=x=>p.l+(x-xMin)/Math.max(1e-12,xMax-xMin)*pw,barW=pw/hist.length*.88,bars=hist.map(b=>{const cx=sx((b.min+b.max)/2),h=b.count/max*ph;return `<rect x="${cx-barW/2}" y="${p.t+ph-h}" width="${barW}" height="${h}" rx="3" fill="#0b6bcb" opacity=".76"><title>${formatProbabilityMetric(b.min,key)} a ${formatProbabilityMetric(b.max,key)}: ${b.count}</title></rect>`;}).join(''),markers=[['P50',stat.p50,'#64748b'],['P90',stat.p90,'#b7791f'],['P95',stat.p95,'#c2413b']].map(([l,v,c])=>`<line x1="${sx(v)}" y1="${p.t}" x2="${sx(v)}" y2="${p.t+ph}" stroke="${c}" stroke-width="2" stroke-dasharray="5 4"/><text x="${sx(v)+4}" y="${p.t+12}" fill="${c}" font-size="10">${l}</text>`).join('');return `<svg viewBox="0 0 ${W} ${H}" style="color:var(--muted)"><line x1="${p.l}" y1="${p.t+ph}" x2="${p.l+pw}" y2="${p.t+ph}" stroke="currentColor" opacity=".3"/>${bars}${markers}<text x="${p.l+pw/2}" y="${H-15}" text-anchor="middle" fill="currentColor" font-size="12">${escapeHtml(V4_PROBABILITY_METRICS[key]?.label||key)}</text></svg>`;}
-function probabilityCdfSvg(cdf,stat,key){if(!cdf?.length)return '<div class="empty">Execute a simulação para gerar a distribuição acumulada.</div>';const W=760,H=340,p={l:72,r:24,t:28,b:58},pw=W-p.l-p.r,ph=H-p.t-p.b,xMin=cdf[0].value,xMax=cdf.at(-1).value,sx=x=>p.l+(x-xMin)/Math.max(1e-12,xMax-xMin)*pw,sy=y=>p.t+ph-y*ph,path=cdf.map((d,i)=>`${i?'L':'M'} ${sx(d.value)} ${sy(d.p)}`).join(' '),conf=state.probabilistic.confidencePct/100,pc=percentile(monteCarloRuntimeTrials.map(r=>toNum(r[key])).sort((a,b)=>a-b),conf);return `<svg viewBox="0 0 ${W} ${H}" style="color:var(--muted)"><line x1="${p.l}" y1="${p.t+ph}" x2="${p.l+pw}" y2="${p.t+ph}" stroke="currentColor" opacity=".3"/><line x1="${p.l}" y1="${p.t}" x2="${p.l}" y2="${p.t+ph}" stroke="currentColor" opacity=".3"/>${[.1,.5,.9,conf].map(y=>`<line x1="${p.l}" y1="${sy(y)}" x2="${p.l+pw}" y2="${sy(y)}" stroke="currentColor" opacity=".12"/><text x="${p.l-8}" y="${sy(y)+3}" text-anchor="end" fill="currentColor" font-size="10">${fmt(y*100,0)}%</text>`).join('')}<path d="${path}" fill="none" stroke="#00a889" stroke-width="3"/><line x1="${sx(pc)}" y1="${p.t}" x2="${sx(pc)}" y2="${p.t+ph}" stroke="#c2413b" stroke-width="2" stroke-dasharray="5 4"/><text x="${sx(pc)+5}" y="${p.t+14}" fill="#c2413b" font-size="10">P${fmt(conf*100,0)}</text><text x="${p.l+pw/2}" y="${H-15}" text-anchor="middle" fill="currentColor" font-size="12">${escapeHtml(V4_PROBABILITY_METRICS[key]?.label||key)}</text></svg>`;}
-function correlationSvg(rows){if(!rows?.length)return '<div class="empty">Execute a simulação para calcular as correlações.</div>';const W=760,rowH=35,H=50+rows.length*rowH,pad=205,pw=W-pad-30,sx=v=>pad+(v+1)/2*pw;return `<svg viewBox="0 0 ${W} ${H}" style="color:var(--muted)"><line x1="${sx(0)}" y1="20" x2="${sx(0)}" y2="${H-32}" stroke="currentColor" opacity=".35"/>${rows.map((r,i)=>{const y=30+i*rowH,x0=sx(0),x=sx(r.value);return `<text x="${pad-10}" y="${y+15}" text-anchor="end" font-size="11" fill="currentColor">${escapeHtml(r.label)}</text><rect x="${Math.min(x0,x)}" y="${y}" width="${Math.max(1,Math.abs(x-x0))}" height="18" rx="4" fill="${r.value>=0?'#c2413b':'#0b6bcb'}" opacity=".78"/><text x="${r.value>=0?x+5:x-5}" y="${y+14}" text-anchor="${r.value>=0?'start':'end'}" font-size="10" fill="currentColor">${fmt(r.value,2)}</text>`;}).join('')}<text x="${pad+pw/2}" y="${H-10}" text-anchor="middle" font-size="11" fill="currentColor">Correlação −1 a +1</text></svg>`;}
-function renderProbabilistic(){
-  const body=document.getElementById('probabilityVariableBody');if(!body)return;body.innerHTML=state.probabilistic.variables.map((v,i)=>{const m=V4_PROBABILITY_VARIABLES[v.key];return `<tr><td><input type="checkbox" ${v.enabled?'checked':''} onchange="updateProbabilisticVariable(${i},'enabled',this.checked)"></td><td><strong>${escapeHtml(m.label)}</strong></td><td><select onchange="updateProbabilisticVariable(${i},'distribution',this.value)"><option value="triangular" ${v.distribution==='triangular'?'selected':''}>Triangular</option><option value="normal" ${v.distribution==='normal'?'selected':''}>Normal truncada</option><option value="uniform" ${v.distribution==='uniform'?'selected':''}>Uniforme</option></select></td><td><input type="number" step="0.1" value="${v.min}" onchange="updateProbabilisticVariable(${i},'min',this.value)"></td><td><input type="number" step="0.1" value="${v.mode}" onchange="updateProbabilisticVariable(${i},'mode',this.value)"></td><td><input type="number" step="0.1" value="${v.max}" onchange="updateProbabilisticVariable(${i},'max',this.value)"></td><td>${escapeHtml(m.unit)}</td><td class="hint">${escapeHtml(m.note)}</td></tr>`;}).join('');document.getElementById('probVariableCount').textContent=`${state.probabilistic.variables.filter(v=>v.enabled).length} ativas`;document.getElementById('monteCarloMethodBadge').textContent=state.probabilistic.sampling==='lhs'?'Hipercubo latino':'Aleatória simples';
-  const s=state.probabilistic.summary,stale=!!(s&&state.probabilistic.lastSignature!==probabilisticSignature()),metric=state.probabilistic.metric,def=V4_PROBABILITY_METRICS[metric];document.getElementById('monteCarloRunButton').disabled=monteCarloRunning;document.getElementById('monteCarloCancelButton').disabled=!monteCarloRunning;
-  if(monteCarloRunning)return;
-  const banner=document.getElementById('monteCarloStatusBanner'),bar=document.getElementById('monteCarloProgress');if(bar)bar.style.width=s&&!stale?'100%':'0%';
-  if(!s){banner.className='stale-banner';banner.innerHTML='<strong>∿</strong><span>Configure as distribuições e execute a simulação.</span>';}else if(stale){banner.className='stale-banner bad';banner.innerHTML='<strong>!</strong><span>As entradas foram alteradas; reexecute o Monte Carlo.</span>';}else{banner.className='stale-banner good';banner.innerHTML=`<strong>✓</strong><span>${s.trials} amostras concluídas em ${new Date(state.probabilistic.runAt).toLocaleString('pt-BR')}.</span>`;}
-  document.getElementById('mcReliability').textContent=s?`${fmt(s.reliabilityPct,1)}%`:'—';document.getElementById('mcReliabilityFoot').textContent=s?(s.reliabilityPct>=95?'alta confiabilidade':s.reliabilityPct>=85?'atenção às margens':'risco elevado'):'probabilidade de atendimento';document.getElementById('mcP90').textContent=s?formatProbabilityMetric(s.stats[metric].p90,metric):'—';document.getElementById('mcP90Foot').textContent=def?.label||'—';document.getElementById('mcShortfallRisk').textContent=s?`${fmt(s.shortfallRiskPct,1)}%`:'—';document.getElementById('mcCv').textContent=s?`${fmt(s.stats[metric].cvPct,1)}%`:'—';document.getElementById('mcCvFoot').textContent=s?def.label:'dispersão relativa';
-  document.getElementById('monteCarloRiskSummary').innerHTML=s?kvRows([['Amostras sem ponto de operação',`${fmt(s.noOperatingRiskPct,2)}%`],['Operação instável',`${fmt(s.unstableRiskPct,2)}%`],['Déficit de vazão',`${fmt(s.shortfallRiskPct,2)}%`],['Velocidade excessiva',`${fmt(s.velocityRiskPct,2)}%`],['Rendimento abaixo do critério',`${fmt(s.efficiencyRiskPct,2)}%`],['Sobrecarga do motor',`${fmt(s.motorRiskPct,2)}%`],['Falha por qualquer critério',`<span class="badge ${monteCarloRiskClass(100-s.reliabilityPct)}">${fmt(100-s.reliabilityPct,2)}%</span>`]]):'<div class="empty">Nenhuma simulação executada.</div>';
-  document.getElementById('monteCarloHistogram').innerHTML=s?probabilityHistogramSvg(state.probabilistic.histogram,s.stats[metric],metric):'<div class="empty">Execute a simulação.</div>';document.getElementById('monteCarloCdf').innerHTML=s?probabilityCdfSvg(state.probabilistic.cdf,s.stats[metric],metric):'<div class="empty">Execute a simulação.</div>';document.getElementById('monteCarloCorrelations').innerHTML=s?correlationSvg(state.probabilistic.correlations):'<div class="empty">Execute a simulação.</div>';
-  document.getElementById('monteCarloStatsBody').innerHTML=s?Object.keys(V4_PROBABILITY_METRICS).map(k=>{const x=s.stats[k];return `<tr><td><strong>${escapeHtml(V4_PROBABILITY_METRICS[k].label)}</strong></td><td class="num">${formatProbabilityMetric(x.mean,k)}</td><td class="num">${formatProbabilityMetric(x.sd,k)}</td><td class="num">${formatProbabilityMetric(x.p05,k)}</td><td class="num">${formatProbabilityMetric(x.p50,k)}</td><td class="num">${formatProbabilityMetric(x.p90,k)}</td><td class="num">${formatProbabilityMetric(x.p95,k)}</td><td class="num">${formatProbabilityMetric(x.max,k)}</td></tr>`;}).join(''):'<tr><td colspan="8" class="empty">Sem resultados.</td></tr>';
-}
-function networkDiagramSvg(result,network){
-  const nodes=network.nodes||[],edges=network.edges||[];if(!nodes.length)return '<div class="empty">Carregue um exemplo, converta a rede principal ou cadastre nós.</div>';const W=900,H=420,nodeMap=new Map(nodes.map(n=>[n.id,n])),resMap=new Map((result?.nodes||[]).map(n=>[n.id,n])),edgeRes=new Map((result?.edges||[]).map(e=>[e.id,e]));return `<svg viewBox="0 0 ${W} ${H}" style="color:var(--text)"><defs><marker id="arrowV4" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#64748b"/></marker></defs>${edges.map(e=>{const a=nodeMap.get(e.from),b=nodeMap.get(e.to);if(!a||!b)return '';const x1=40+toNum(a.x,50)/100*(W-80),y1=35+toNum(a.y,50)/100*(H-70),x2=40+toNum(b.x,50)/100*(W-80),y2=35+toNum(b.y,50)/100*(H-70),r=edgeRes.get(e.id),rev=r?.qM3s<0,stroke=r?.reverse?'#c2413b':e.fanMode!=='none'?'#7c3aed':'#64748b',label=r?`${fmt(Math.abs(r.qM3h),0)} m³/h • ${fmt(r.netDropPa,0)} Pa`:e.name;return `<line x1="${rev?x2:x1}" y1="${rev?y2:y1}" x2="${rev?x1:x2}" y2="${rev?y1:y2}" stroke="${stroke}" stroke-width="${e.fanMode!=='none'?4:2.5}" marker-end="url(#arrowV4)" opacity=".88"/><rect x="${(x1+x2)/2-58}" y="${(y1+y2)/2-12}" width="116" height="24" rx="7" fill="var(--surface)" stroke="var(--line)"/><text x="${(x1+x2)/2}" y="${(y1+y2)/2+4}" text-anchor="middle" font-size="9" fill="currentColor">${escapeHtml(label)}</text>`;}).join('')}${nodes.map(n=>{const x=40+toNum(n.x,50)/100*(W-80),y=35+toNum(n.y,50)/100*(H-70),r=resMap.get(n.id),bad=r?.deficitPa>1,cls=n.type==='source'?'node-source':n.type==='terminal'?'node-terminal':'node-junction';return `<circle cx="${x}" cy="${y}" r="18" class="${cls} ${bad?'node-bad':''}" stroke="white" stroke-width="2"/><text x="${x}" y="${y+4}" text-anchor="middle" font-size="10" font-weight="900" fill="white">${escapeHtml(n.id)}</text><text x="${x}" y="${y+34}" text-anchor="middle" font-size="10" font-weight="800" fill="currentColor">${escapeHtml(n.name)}</text><text x="${x}" y="${y+47}" text-anchor="middle" font-size="9" fill="currentColor">${r?`${fmt(r.pressurePa,0)} Pa`:`${fmt(n.demandM3h,0)} m³/h`}</text>`;}).join('')}</svg>`;}
-function advancedSystemCurveSvg(curve){if(!curve?.length)return '<div class="empty">Gere a curva equivalente da rede.</div>';const W=760,H=340,p={l:72,r:25,t:25,b:58},pw=W-p.l-p.r,ph=H-p.t-p.b,xMax=Math.max(...curve.map(x=>x.qM3h),1),yMax=Math.max(...curve.map(x=>x.pressurePa),1),sx=x=>p.l+x/xMax*pw,sy=y=>p.t+ph-y/yMax*ph,path=curve.map((x,i)=>`${i?'L':'M'} ${sx(x.qM3h)} ${sy(x.pressurePa)}`).join(' ');return `<svg viewBox="0 0 ${W} ${H}" style="color:var(--muted)"><line x1="${p.l}" y1="${p.t+ph}" x2="${p.l+pw}" y2="${p.t+ph}" stroke="currentColor" opacity=".3"/><line x1="${p.l}" y1="${p.t}" x2="${p.l}" y2="${p.t+ph}" stroke="currentColor" opacity=".3"/><path d="${path}" fill="none" stroke="#00a889" stroke-width="3"/>${curve.map(x=>`<circle cx="${sx(x.qM3h)}" cy="${sy(x.pressurePa)}" r="4" fill="#00a889"><title>${fmt(x.qM3h,0)} m³/h • ${fmt(x.pressurePa,0)} Pa</title></circle>`).join('')}<text x="${p.l+pw/2}" y="${H-14}" text-anchor="middle" font-size="12" fill="currentColor">Vazão total (m³/h)</text><text x="18" y="${p.t+ph/2}" transform="rotate(-90 18 ${p.t+ph/2})" text-anchor="middle" font-size="12" fill="currentColor">Pressão requerida (Pa)</text></svg>`;}
-function renderAdvancedNetwork(){
-  const nodeBody=document.getElementById('advancedNodeBody');if(!nodeBody)return;const n=state.advancedNetwork.nodes,e=state.advancedNetwork.edges,r=state.advancedNetwork.result,stale=!!(r&&state.advancedNetwork.lastSignature!==advancedNetworkSignature()),nodeOpts=n.map(x=>`<option value="${escapeHtml(x.id)}">${escapeHtml(x.id)} — ${escapeHtml(x.name)}</option>`).join(''),ref=document.getElementById('advancedReferenceNode');ref.innerHTML=nodeOpts;ref.value=state.advancedNetwork.referenceNodeId;
-  nodeBody.innerHTML=n.length?n.map((x,i)=>`<tr><td><input value="${escapeHtml(x.id)}" onchange="updateAdvancedNode(${i},'id',this.value)"></td><td><input value="${escapeHtml(x.name)}" onchange="updateAdvancedNode(${i},'name',this.value)"></td><td><select onchange="updateAdvancedNode(${i},'type',this.value)"><option value="source" ${x.type==='source'?'selected':''}>Fonte</option><option value="junction" ${x.type==='junction'?'selected':''}>Junção</option><option value="terminal" ${x.type==='terminal'?'selected':''}>Terminal</option></select></td><td><div class="input-group"><input type="number" step="10" value="${toNum(x.demandM3h)}" onchange="updateAdvancedNode(${i},'demandM3h',this.value)"><span class="suffix">m³/h</span></div></td><td><div class="input-group"><input type="number" step="1" value="${toNum(x.minPressurePa)}" onchange="updateAdvancedNode(${i},'minPressurePa',this.value)"><span class="suffix">Pa</span></div></td><td><input type="number" min="0" max="100" value="${toNum(x.x,50)}" onchange="updateAdvancedNode(${i},'x',this.value)"></td><td><input type="number" min="0" max="100" value="${toNum(x.y,50)}" onchange="updateAdvancedNode(${i},'y',this.value)"></td><td><button class="button small danger" onclick="deleteAdvancedNode(${i})">×</button></td></tr>`).join(''):'<tr><td colspan="8" class="empty">Nenhum nó cadastrado.</td></tr>';
-  document.getElementById('advancedEdgeBody').innerHTML=e.length?e.map((x,i)=>{const dims=x.shape==='rect'?`<div class="compact-actions"><input type="number" style="width:85px" value="${toNum(x.widthMm)}" onchange="updateAdvancedEdge(${i},'widthMm',this.value)" title="Largura mm"><span>×</span><input type="number" style="width:85px" value="${toNum(x.heightMm)}" onchange="updateAdvancedEdge(${i},'heightMm',this.value)" title="Altura mm"></div>`:`<input type="number" value="${toNum(x.diameterMm)}" onchange="updateAdvancedEdge(${i},'diameterMm',this.value)" title="Diâmetro mm">`;return `<tr><td><input value="${escapeHtml(x.name)}" onchange="updateAdvancedEdge(${i},'name',this.value)"></td><td><select onchange="updateAdvancedEdge(${i},'from',this.value)">${n.map(y=>`<option value="${escapeHtml(y.id)}" ${x.from===y.id?'selected':''}>${escapeHtml(y.id)}</option>`).join('')}</select></td><td><select onchange="updateAdvancedEdge(${i},'to',this.value)">${n.map(y=>`<option value="${escapeHtml(y.id)}" ${x.to===y.id?'selected':''}>${escapeHtml(y.id)}</option>`).join('')}</select></td><td><select onchange="updateAdvancedEdge(${i},'shape',this.value)"><option value="circular" ${x.shape!=='rect'?'selected':''}>Circular</option><option value="rect" ${x.shape==='rect'?'selected':''}>Retangular</option></select></td><td>${dims}<div class="hint">mm</div></td><td><input type="number" style="width:80px" value="${toNum(x.lengthM)}" onchange="updateAdvancedEdge(${i},'lengthM',this.value)"></td><td><input type="number" style="width:75px" step="0.01" value="${toNum(x.roughnessMm,.09)}" onchange="updateAdvancedEdge(${i},'roughnessMm',this.value)"></td><td><input type="number" style="width:75px" step="0.1" value="${toNum(x.kTotal)}" onchange="updateAdvancedEdge(${i},'kTotal',this.value)"></td><td><input type="number" style="width:90px" value="${toNum(x.fixedLossPa)}" onchange="updateAdvancedEdge(${i},'fixedLossPa',this.value)"></td><td><input type="number" style="width:95px" value="${toNum(x.componentRefFlowM3h)}" onchange="updateAdvancedEdge(${i},'componentRefFlowM3h',this.value)"></td><td><input type="number" style="width:65px" step="0.1" value="${toNum(x.componentExponent,2)}" onchange="updateAdvancedEdge(${i},'componentExponent',this.value)"></td><td><select onchange="updateAdvancedEdge(${i},'fanMode',this.value)"><option value="none" ${x.fanMode==='none'?'selected':''}>Nenhum</option><option value="parametric" ${x.fanMode==='parametric'?'selected':''}>Paramétrico</option><option value="current" ${x.fanMode==='current'?'selected':''}>Curva atual</option></select></td><td><input type="number" style="width:90px" value="${toNum(x.fanShutoffPa)}" onchange="updateAdvancedEdge(${i},'fanShutoffPa',this.value)"></td><td><input type="number" style="width:100px" value="${toNum(x.fanFreeFlowM3h)}" onchange="updateAdvancedEdge(${i},'fanFreeFlowM3h',this.value)"></td><td><div class="compact-actions"><select style="width:105px" onchange="updateAdvancedEdge(${i},'fanAssociationMode',this.value)"><option value="single" ${x.fanAssociationMode==='single'?'selected':''}>Único</option><option value="series" ${x.fanAssociationMode==='series'?'selected':''}>Série</option><option value="parallel" ${x.fanAssociationMode==='parallel'?'selected':''}>Paralelo</option></select><input type="number" style="width:55px" min="1" max="8" value="${toNum(x.fanCount,1)}" onchange="updateAdvancedEdge(${i},'fanCount',this.value)"></div></td><td><input type="number" style="width:70px" value="${toNum(x.fanEfficiencyPct,70)}" onchange="updateAdvancedEdge(${i},'fanEfficiencyPct',this.value)"></td><td><button class="button small danger" onclick="deleteAdvancedEdge(${i})">×</button></td></tr>`;}).join(''):'<tr><td colspan="17" class="empty">Nenhuma aresta cadastrada.</td></tr>';
-  document.getElementById('advancedNodeCount').textContent=`${n.length} nós`;document.getElementById('advancedEdgeCount').textContent=`${e.length} arestas`;document.getElementById('advancedNetworkDiagram').innerHTML=networkDiagramSvg(r,state.advancedNetwork);document.getElementById('advancedDiagramBadge').textContent=r?(r.converged?'Fluxos resolvidos':'Sem convergência'):'Modelo não resolvido';document.getElementById('advancedConvergence').textContent=r?(r.converged?'Convergente':'Falhou'):'—';document.getElementById('advancedConvergenceFoot').textContent=r?(r.converged?`${r.iterations} iterações • ${fmt(r.maxResidualM3h,3)} m³/h`:r.error||'revise a rede'):'execute o solucionador';document.getElementById('advancedTotalFlow').textContent=r?`${fmt(r.totalDemandM3h,0)} m³/h`:'—';document.getElementById('advancedRequiredPressure').textContent=r?`${fmt(r.requiredSourcePressurePa,0)} Pa`:'—';document.getElementById('advancedBoosterPower').textContent=r?`${fmt(r.totalFanPowerKW,2)} kW`:'—';document.getElementById('advancedBoosterPowerFoot').textContent=r?`${r.reverseCount} inversões • v máx. ${fmt(r.maxVelocity,1)} m/s`:'—';
-  const modelBadge=document.getElementById('advancedModelStatus');modelBadge.textContent=advancedSystemCurveUsable()?'Ativo na seleção':state.advancedNetwork.useAsSystem?'Curva desatualizada':'Modelo independente';modelBadge.className=`badge ${advancedSystemCurveUsable()?'good':state.advancedNetwork.useAsSystem?'bad':''}`;const use=document.getElementById('advancedUseSystemButton');use.textContent=state.advancedNetwork.useAsSystem?'Desativar no projeto':'Usar no projeto';
-  document.getElementById('advancedNodeResultBody').innerHTML=r?.nodes?.length?r.nodes.map(x=>`<tr><td><strong>${escapeHtml(x.id)} — ${escapeHtml(x.name)}</strong></td><td>${escapeHtml(x.type)}</td><td class="num">${fmt(x.demandM3h,0)} m³/h</td><td class="num">${fmt(x.pressurePa,1)} Pa</td><td class="num">${fmt(x.minPressurePa,1)} Pa</td><td class="num">${x.deficitPa>0?`<span class="badge bad">${fmt(x.deficitPa,1)} Pa</span>`:'0'}</td><td class="num">${fmt(x.residualM3h,4)} m³/h</td></tr>`).join(''):'<tr><td colspan="7" class="empty">Resolva a rede.</td></tr>';
-  document.getElementById('advancedEdgeResultBody').innerHTML=r?.edges?.length?r.edges.map(x=>`<tr><td><strong>${escapeHtml(x.name)}</strong></td><td>${escapeHtml(x.from)} → ${escapeHtml(x.to)}</td><td class="num">${fmt(x.qM3h,1)} m³/h</td><td class="num">${fmt(x.velocity,2)} m/s</td><td class="num">${fmt(x.re,0)}</td><td class="num">${fmt(x.lossPa,1)} Pa</td><td class="num">${fmt(x.fanPressurePa,1)} Pa</td><td class="num">${fmt(x.netDropPa,1)} Pa</td><td class="num">${fmt(x.powerKW,3)} kW</td><td>${x.reverse?'<span class="badge bad">fluxo reverso</span>':x.velocity>25?'<span class="badge warn">velocidade alta</span>':'<span class="badge good">normal</span>'}</td></tr>`).join(''):'<tr><td colspan="10" class="empty">Resolva a rede.</td></tr>';
-  document.getElementById('advancedSystemCurveChart').innerHTML=advancedSystemCurveSvg(state.advancedNetwork.systemCurve);document.getElementById('advancedCurveBadge').textContent=state.advancedNetwork.systemCurve.length?`${state.advancedNetwork.systemCurve.length} pontos${state.advancedNetwork.curveSignature===advancedNetworkSignature()?'':' • desatualizada'}`:'não gerada';
-  if(stale&&r)document.getElementById('advancedConvergenceFoot').textContent+=' • entradas alteradas';
-}
-function renderCatalogGovernance(){
-  const a=ensureCatalogAudit(),g=state.catalog.governance;document.getElementById('catalogAuditScore').textContent=`${fmt(a.score,0)}/100`;document.getElementById('catalogAuditScoreFoot').textContent=`${a.official} oficiais • ${a.manufacturers} fabricantes`;document.getElementById('catalogAuditCurves').textContent=String(a.curves);document.getElementById('catalogAuditIssues').textContent=String(a.errors+a.warnings);document.getElementById('catalogAuditIssuesFoot').textContent=`${a.errors} erros • ${a.warnings} alertas`;document.getElementById('catalogPackageCount').textContent=String(g.packages.length);document.getElementById('catalogPackageCountFoot').textContent=`${g.externalItems.length} registros externos ativos`;document.getElementById('catalogManifestBadge').textContent=`#${a.manifestHash}`;document.getElementById('catalogManifestSummary').innerHTML=kvRows([['Registros ativos',String(a.total)],['Equipamentos oficiais',String(a.official)],['Curvas calculáveis',String(a.curves)],['Fontes antigas',String(a.stale)],['Pacotes importados',String(g.packages.length)],['Digest do manifesto',a.manifestHash]]);document.getElementById('catalogAuditRunAt').textContent=new Date(a.at).toLocaleString('pt-BR');
-  document.getElementById('catalogAuditBody').innerHTML=a.issues.length?a.issues.slice(0,200).map(x=>`<tr><td><span class="audit-severity ${x.severity}">${x.severity==='bad'?'Erro':'Alerta'}</span></td><td><strong>${escapeHtml(x.label)}</strong><div class="hint">${escapeHtml(x.id)}</div></td><td><code>${escapeHtml(x.rule)}</code></td><td>${escapeHtml(x.message)}</td><td>${escapeHtml(x.source)}</td></tr>`).join(''):'<tr><td colspan="5"><div class="callout good"><strong>✓</strong><span>Nenhuma pendência identificada pelas regras internas.</span></div></td></tr>';
-  document.getElementById('catalogPackageHistoryBody').innerHTML=g.packages.length?g.packages.map(p=>`<tr><td><strong>${escapeHtml(p.id)}</strong><div class="hint">${escapeHtml(p.origin)}</div></td><td>${escapeHtml(p.version)}</td><td>${new Date(p.importedAt).toLocaleString('pt-BR')}</td><td class="num">${p.accepted}</td><td class="num">${p.rejected}</td><td><code>${escapeHtml(p.digest.slice(0,16))}…</code></td></tr>`).join(''):'<tr><td colspan="6" class="empty">Nenhum pacote adicional.</td></tr>';
-  document.getElementById('catalogQuarantineBadge').textContent=String(g.quarantine.length);document.getElementById('catalogQuarantineBody').innerHTML=g.quarantine.length?g.quarantine.slice(0,100).map(q=>`<tr><td>${escapeHtml(q.packageId)}</td><td>${escapeHtml(q.id)}</td><td>${escapeHtml(q.reasons)}</td><td>${new Date(q.at).toLocaleString('pt-BR')}</td></tr>`).join(''):'<tr><td colspan="4" class="empty">Quarentena vazia.</td></tr>';
-}
-function renderHistory(){
-  const h=state.history,status=historyDocumentStatus(),approved=h.revisions.filter(r=>r.status==='approved').length;document.getElementById('historyProjectId').textContent=h.projectId;document.getElementById('historyStatus').innerHTML=`<span class="revision-status ${status.status}">${escapeHtml(status.label)}</span>`;document.getElementById('historyStatusFoot').textContent=status.changed?'o cenário atual diverge da aprovação':'situação do estado corrente';document.getElementById('historyRevisionCount').textContent=String(h.revisions.length);document.getElementById('historyApprovedCount').textContent=`${approved} aprovada${approved===1?'':'s'}`;document.getElementById('historyEventCount').textContent=String(h.auditLog.length);document.getElementById('historyCurrentHash').textContent=`#${currentRevisionHash()}`;document.getElementById('historyRevisionBadge').textContent=`${h.revisions.length} revisões`;
-  const sel=document.getElementById('historyCompareSelect');sel.innerHTML='<option value="">Selecione…</option>'+h.revisions.map(r=>`<option value="${r.id}">${escapeHtml(r.name)} — ${new Date(r.createdAt).toLocaleDateString('pt-BR')}</option>`).join('');sel.value=h.compareId||'';const compare=h.revisions.find(r=>r.id===h.compareId),diff=revisionDiffRows(compare);document.getElementById('historyDiffSummary').innerHTML=compare?`<div class="diff-grid"><div class="head">Indicador</div><div class="head">Revisão</div><div class="head">Atual</div><div class="head">Diferença</div>${diff.map(row=>{if(typeof row[1]==='string'&&!row[4])return `<div>${escapeHtml(row[0])}</div><div>${escapeHtml(row[1])}</div><div>${escapeHtml(row[2])}</div><div>${escapeHtml(row[3])}</div>`;const unit=row[4]||'',dig=row[5]??1,delta=toNum(row[3]);return `<div>${escapeHtml(row[0])}</div><div>${unit==='R$'?'R$ ':''}${fmt(toNum(row[1]),dig)}${unit&&unit!=='R$'?` ${unit}`:''}</div><div>${unit==='R$'?'R$ ':''}${fmt(toNum(row[2]),dig)}${unit&&unit!=='R$'?` ${unit}`:''}</div><div class="${delta>0?'delta-pos':delta<0?'delta-neg':''}">${delta>=0?'+':''}${fmt(delta,dig)}${unit&&unit!=='R$'?` ${unit}`:unit==='R$'?' R$':''}</div>`;}).join('')}</div>`:'<div class="empty">Selecione uma revisão para comparar.</div>';
-  document.getElementById('historyRevisionBody').innerHTML=h.revisions.length?h.revisions.map(r=>{const m=r.metrics||{};return `<tr><td><strong>${escapeHtml(r.name)}</strong><div class="hint">${escapeHtml(r.note||'Sem nota')}</div></td><td><span class="revision-status ${r.status}">${r.status==='approved'?'Aprovada':r.status==='review'?'Em revisão':'Rascunho'}</span></td><td>${new Date(r.createdAt).toLocaleString('pt-BR')}</td><td>${escapeHtml(r.reviewer||'Não informado')}</td><td>${escapeHtml(m.fanLabel||'—')}</td><td class="num">${fmt(m.flowM3h,0)} m³/h<div class="hint">${fmt(m.pressurePa,0)} Pa</div></td><td class="num">${fmt(m.inputPowerKW,2)} kW</td><td class="num">R$ ${fmt(m.annualCost,0)}</td><td><code>${escapeHtml(r.hash)}</code></td><td><div class="compact-actions"><button class="button small primary" onclick="restoreProjectRevision('${r.id}')">Restaurar</button><button class="button small" onclick="setHistoryCompare('${r.id}')">Comparar</button>${r.status!=='approved'?`<button class="button small danger" onclick="deleteProjectRevision('${r.id}')">×</button>`:''}</div></td></tr>`;}).join(''):'<tr><td colspan="10" class="empty">Nenhuma revisão criada.</td></tr>';
-  document.getElementById('historyAuditBody').innerHTML=h.auditLog.length?h.auditLog.slice(0,200).map(x=>`<tr><td>${new Date(x.at).toLocaleString('pt-BR')}</td><td><span class="badge">${escapeHtml(x.category)}</span></td><td><strong>${escapeHtml(x.action)}</strong></td><td>${escapeHtml(x.detail)}</td><td><code>${escapeHtml(x.hash)}</code></td></tr>`).join(''):'<tr><td colspan="5" class="empty">Nenhum evento registrado.</td></tr>';
-}
-
-/* ---------- Integração com os módulos existentes ---------- */
-const v3CalculateAllV4=calculateAll;
-calculateAll=function(){const c=v3CalculateAllV4();const adv=state.advancedNetwork.result,prob=state.probabilistic.summary,audit=ensureCatalogAudit();calculations={...c,advancedNetwork:{result:adv,stale:!!(adv&&state.advancedNetwork.lastSignature!==advancedNetworkSignature()),curveActive:advancedSystemCurveUsable(),curveCount:state.advancedNetwork.systemCurve.length},probabilistic:{summary:prob,stale:!!(prob&&state.probabilistic.lastSignature!==probabilisticSignature())},catalogGovernance:audit,historySummary:{...historyDocumentStatus(),revisions:state.history.revisions.length,events:state.history.auditLog.length,approved:state.history.revisions.filter(r=>r.status==='approved').length}};return calculations;};
-const v3BuildWarningsV4=buildWarnings;
-buildWarnings=function(flow,air,ducts,system,perf){const list=v3BuildWarningsV4(flow,air,ducts,system,perf),add=(severity,title,text)=>list.push({severity,title,text});if(state.advancedNetwork.useAsSystem&&!advancedSystemCurveUsable())add('warn','Curva nodal desatualizada','A rede nodal está marcada para uso, mas sua curva equivalente precisa ser regenerada; o cálculo atual voltou ao modelo convencional.');const ar=state.advancedNetwork.result;if(ar&&!ar.converged)add('bad','Rede nodal sem convergência',ar.error||'Revise conectividade, orientação e dados das arestas.');if(ar?.reverseCount&&!state.advancedNetwork.allowReverseFlow)add('bad','Fluxos reversos na malha',`${ar.reverseCount} arestas apresentam sentido inverso ao cadastrado.`);const ps=state.probabilistic.summary;if(ps&&state.probabilistic.lastSignature===probabilisticSignature()&&ps.reliabilityPct<90)add('warn','Baixa confiabilidade probabilística',`Apenas ${fmt(ps.reliabilityPct,1)}% das amostras atenderam a todos os critérios.`);const ca=ensureCatalogAudit();if(ca.errors)add('warn','Pendências no catálogo',`${ca.errors} erros de integridade foram identificados; curvas afetadas devem ser conferidas antes da seleção definitiva.`);const hs=historyDocumentStatus();if(hs.changed)add('warn','Projeto alterado após aprovação','O cenário atual diverge da última revisão aprovada; gere nova revisão antes da emissão final.');return list;};
-const v3RefreshAllV4=refreshAll;
-refreshAll=function(){v3RefreshAllV4();renderProbabilistic(calculations);renderAdvancedNetwork(calculations);renderCatalogGovernance(calculations);renderHistory(calculations);};
-const v3OpenTabV4=openTab;
-openTab=function(name){v3OpenTabV4(name);if(name==='probabilistic')renderProbabilistic(calculations);if(name==='advancedNetwork')renderAdvancedNetwork(calculations);if(name==='catalogAdmin')renderCatalogGovernance(calculations);if(name==='history')renderHistory(calculations);};
-const v3RenderDashboardV4=renderDashboard;
-renderDashboard=function(c){v3RenderDashboardV4(c);appendDashboardKv('Monte Carlo',c.probabilistic.summary?`${fmt(c.probabilistic.summary.reliabilityPct,1)}% confiabilidade${c.probabilistic.stale?' • recalcular':''}`:'não executado');appendDashboardKv('Rede nodal',c.advancedNetwork.curveActive?'ativa na seleção':c.advancedNetwork.result?.converged?'resolvida, não ativa':'não resolvida');appendDashboardKv('Catálogo governado',`${fmt(c.catalogGovernance.score,0)}/100 • ${c.catalogGovernance.curves} curvas`);appendDashboardKv('Situação documental',c.historySummary.label);};
-const v3RenderResultsV4=renderResults;
-renderResults=function(c){v3RenderResultsV4(c);const p=c.probabilistic.summary,a=c.advancedNetwork.result,g=c.catalogGovernance,h=c.historySummary;document.getElementById('probabilisticProfessionalSummary').innerHTML=kvRows([['Confiabilidade',p?`${fmt(p.reliabilityPct,1)}%${c.probabilistic.stale?' (recalcular)':''}`:'não executada'],['Risco de vazão',p?`${fmt(p.shortfallRiskPct,1)}%`:'—'],['P90 do custo anual',p?formatProbabilityMetric(p.stats.annualCost.p90,'annualCost'):'—'],['Amostras',p?String(p.trials):'—']]);document.getElementById('advancedProfessionalSummary').innerHTML=kvRows([['Situação',a?(a.converged?'convergente':'falhou'):'não resolvida'],['Nós / arestas',`${state.advancedNetwork.nodes.length} / ${state.advancedNetwork.edges.length}`],['Pressão central',a?`${fmt(a.requiredSourcePressurePa,0)} Pa`:'—'],['Curva ativa',c.advancedNetwork.curveActive?'sim':'não']]);document.getElementById('catalogGovernanceProfessionalSummary').innerHTML=kvRows([['Integridade',`${fmt(g.score,0)}/100`],['Registros',String(g.total)],['Curvas',String(g.curves)],['Pendências',`${g.errors} erros • ${g.warnings} alertas`]]);document.getElementById('historyProfessionalSummary').innerHTML=kvRows([['Situação',escapeHtml(h.label)],['Revisões',String(h.revisions)],['Aprovadas',String(h.approved)],['Eventos',String(h.events)]]);};
-const v3RenderReportV4=renderReport;
-renderReport=function(c){v3RenderReportV4(c);const host=document.getElementById('reportContent');if(!host)return;const p=state.probabilistic.summary,a=state.advancedNetwork.result,g=ensureCatalogAudit(),h=state.history,probSection=`<section><h2>15. Análise probabilística e confiabilidade</h2>${p?`<p>A simulação de Monte Carlo processou <strong>${p.trials}</strong> amostras por ${state.probabilistic.sampling==='lhs'?'hipercubo latino':'amostragem aleatória simples'}, com semente ${state.probabilistic.seed}. A confiabilidade conjunta foi de <strong>${fmt(p.reliabilityPct,2)}%</strong>; o risco de vazão insuficiente foi ${fmt(p.shortfallRiskPct,2)}% e a probabilidade de ausência de ponto de operação foi ${fmt(p.noOperatingRiskPct,2)}%.</p><table><thead><tr><th>Indicador</th><th>Média</th><th>P50</th><th>P90</th><th>P95</th><th>Máximo</th></tr></thead><tbody>${Object.keys(V4_PROBABILITY_METRICS).map(k=>{const s=p.stats[k];return `<tr><td>${escapeHtml(V4_PROBABILITY_METRICS[k].label)}</td><td style="text-align:right">${formatProbabilityMetric(s.mean,k)}</td><td style="text-align:right">${formatProbabilityMetric(s.p50,k)}</td><td style="text-align:right">${formatProbabilityMetric(s.p90,k)}</td><td style="text-align:right">${formatProbabilityMetric(s.p95,k)}</td><td style="text-align:right">${formatProbabilityMetric(s.max,k)}</td></tr>`;}).join('')}</tbody></table><p>Os critérios de falha combinaram disponibilidade do ponto de operação, estabilidade, déficit de vazão, velocidade máxima, rendimento mínimo e carregamento do motor. Correlação não implica causalidade e os resultados dependem das distribuições adotadas.</p>`:'<p>A simulação probabilística não foi executada para este cenário.</p>'}</section>`,advancedSection=`<section><h2>16. Rede nodal e ventiladores distribuídos</h2>${a?`<p>O modelo nodal contém <strong>${state.advancedNetwork.nodes.length}</strong> nós e <strong>${state.advancedNetwork.edges.length}</strong> arestas. A solução ${a.converged?'convergiu':'não convergiu'} em ${a.iterations} iterações, com resíduo máximo de ${fmt(a.maxResidualM3h,4)} m³/h. A pressão central adicional requerida é ${fmt(a.requiredSourcePressurePa,2)} Pa e a potência dos ventiladores auxiliares é ${fmt(a.totalFanPowerKW,3)} kW.</p><table><thead><tr><th>Aresta</th><th>Sentido</th><th>Vazão</th><th>Velocidade</th><th>Perda</th><th>Ventilador</th><th>Potência</th></tr></thead><tbody>${a.edges.slice(0,30).map(e=>`<tr><td>${escapeHtml(e.name)}</td><td>${escapeHtml(e.from)} → ${escapeHtml(e.to)}</td><td style="text-align:right">${fmt(e.qM3h,1)} m³/h</td><td style="text-align:right">${fmt(e.velocity,2)} m/s</td><td style="text-align:right">${fmt(e.lossPa,1)} Pa</td><td style="text-align:right">${fmt(e.fanPressurePa,1)} Pa</td><td style="text-align:right">${fmt(e.powerKW,3)} kW</td></tr>`).join('')}</tbody></table><p>${advancedSystemCurveUsable()?'A curva equivalente da malha está ativa na seleção do ventilador central.':'A curva nodal não está ativa na seleção principal ou necessita ser regenerada.'}</p>`:'<p>A rede nodal avançada não foi resolvida.</p>'}</section>`,catalogSection=`<section><h2>17. Governança do catálogo</h2><p>A base ativa contém <strong>${g.total}</strong> registros, dos quais ${g.official} são identificados como oficiais e ${g.curves} dispõem de curva calculável. O índice interno de integridade é ${fmt(g.score,1)}/100, com ${g.errors} erros e ${g.warnings} alertas. O manifesto do conjunto é <code>${g.manifestHash}</code>.</p><p>O índice avalia rastreabilidade e consistência estrutural; não substitui a confirmação da configuração, rotação, densidade, acessórios, certificação e condições de ensaio diretamente com o fabricante.</p></section>`,historySection=`<section><h2>18. Histórico e situação documental</h2><p>Identificador local: <strong>${escapeHtml(h.projectId)}</strong>. Foram armazenadas ${h.revisions.length} revisões e ${h.auditLog.length} eventos auditáveis. Situação corrente: <strong>${escapeHtml(historyDocumentStatus().label)}</strong>.</p>${h.revisions.length?`<table><thead><tr><th>Revisão</th><th>Status</th><th>Data</th><th>Responsável</th><th>Hash</th></tr></thead><tbody>${h.revisions.slice(0,12).map(r=>`<tr><td>${escapeHtml(r.name)}</td><td>${escapeHtml(r.status)}</td><td>${new Date(r.createdAt).toLocaleString('pt-BR')}</td><td>${escapeHtml(r.reviewer||'Não informado')}</td><td><code>${escapeHtml(r.hash)}</code></td></tr>`).join('')}</tbody></table>`:''}<p>Os hashes demonstram integridade comparativa dentro do arquivo, mas não equivalem a assinatura digital qualificada.</p></section>`;host.innerHTML=host.innerHTML.replace('<section><h2>15. Conclusão e verificações',probSection+advancedSection+catalogSection+historySection+'<section><h2>19. Conclusão e verificações').replace('<section><h2>16. Especificação profissional preliminar','<section><h2>20. Especificação profissional preliminar').replace('<section><h2>17. Limitações','<section><h2>21. Limitações');};
-
-const v3SaveLocalV4=saveLocal;
-saveLocal=function(notify=false){if(notify)recordAudit('projeto','Salvamento manual','Estado persistido no navegador.');return v3SaveLocalV4(notify);};
-const v3LoadExampleV4=loadExample;
-loadExample=function(name){v3LoadExampleV4(name);recordAudit('projeto','Exemplo carregado',name);saveLocal(false);};
-const v3ApplyOptimizationResultV4=applyOptimizationResult;
-applyOptimizationResult=function(index,saveAsScenario=false){const r=state.optimization.results?.[index];v3ApplyOptimizationResultV4(index,saveAsScenario);if(r){recordAudit('otimização','Alternativa aplicada',`${r.manufacturer} ${r.fanModel}; índice ${fmt(r.score,1)}.`);saveLocal(false);}};
-const v3LoadCatalogFanV4=loadCatalogFan;
-loadCatalogFan=function(id){const item=getCatalogItems().find(x=>x.id===id);v3LoadCatalogFanV4(id);if(item){recordAudit('catálogo','Equipamento carregado',`${item.manufacturer} ${item.model}.`);saveLocal(false);}};
-/* ====================== fim das extensões v4.0 ====================== */
 
 function runSelfTests(){
   const tests=[],test=(name,fn)=>{try{tests.push({name,ok:!!fn()});}catch(e){tests.push({name,ok:false,error:e.message});}};
@@ -3857,28 +3196,6 @@ function runSelfTests(){
   test('Módulos v3 integrados',()=>calculations.optimization&&calculations.scenarioSummary&&calculations.sensitivitySummary);
   const ok=tests.filter(t=>t.ok).length,el=document.getElementById('selfTestStatus');el.textContent=`Autotestes: ${ok}/${tests.length}`;el.className=`status-pill ${ok===tests.length?'ok':''}`;if(ok!==tests.length)console.warn('Falhas nos autotestes',tests);return tests;
 }
-/* ====================== autotestes adicionais v4.0 ====================== */
-const v3RunSelfTestsV4=runSelfTests;
-runSelfTests=function(){
-  const tests=v3RunSelfTestsV4(),extra=[],test=(name,fn)=>{try{extra.push({name,ok:!!fn()});}catch(e){extra.push({name,ok:false,error:e.message});}};
-  test('Gerador pseudoaleatório reproduzível',()=>{const a=mulberry32(2026),b=mulberry32(2026);return Array.from({length:8},()=>a()).every(x=>Math.abs(x-b())<1e-15);});
-  test('Normal inversa no percentil central',()=>Math.abs(inverseNormal(.5))<1e-9);
-  test('Distribuição triangular respeita limites',()=>{const v={distribution:'triangular',min:10,mode:14,max:20};return [0,.1,.5,.9,1].map(u=>sampleDistribution(v,u)).every(x=>x>=10-1e-9&&x<=20+1e-9);});
-  test('Hipercubo latino ocupa todos os estratos',()=>{const rng=mulberry32(77),m=buildSamplingMatrix([{key:'x'}],20,'lhs',rng),s=m.x.map(u=>Math.floor(u*20)).sort((a,b)=>a-b);return s.every((x,i)=>x===i);});
-  test('Sistema linear 2×2',()=>{const x=solveLinearSystem([[2,1],[1,-1]],[5,1]);return Math.abs(x[0]-2)<1e-9&&Math.abs(x[1]-1)<1e-9;});
-  test('Rede nodal de exemplo converge',()=>{const air={rho:1.2,mu:1.81e-5},r=solveAdvancedNetworkModel(advancedNetworkExample('loop'),air,defaultState().fan,1);return r.converged&&r.maxResidualM3h<.2&&r.edges.length>=4;});
-  test('Rede com múltiplos ventiladores converge',()=>{const air={rho:1.2,mu:1.81e-5},r=solveAdvancedNetworkModel(advancedNetworkExample('multifan'),air,defaultState().fan,1);return r.converged&&r.totalFanPowerKW>0&&r.maxResidualM3h<.2;});
-  test('Pressão da curva nodal cresce com a vazão',()=>{const c=[{qM3h:0,pressurePa:0},{qM3h:5000,pressurePa:120},{qM3h:10000,pressurePa:480}];return advancedSystemPressureAt(c,7500)>advancedSystemPressureAt(c,5000)&&advancedSystemPressureAt(c,12000)>advancedSystemPressureAt(c,10000);});
-  test('Auditoria do catálogo mantém rastreabilidade',()=>{const a=auditCatalogItems(getCatalogItems());return a.total>=172&&a.curves>=15&&Number.isFinite(a.score)&&a.manifestHash.length>=8;});
-  test('Snapshot de revisão exclui gerenciadores',()=>{const s=extractRevisionSnapshot();return !('history' in s)&&!('scenarios' in s)&&!('optimization' in s)&&Array.isArray(s.ducts)&&s.advancedNetwork;});
-  test('Assinatura probabilística determinística',()=>probabilisticSignature()===probabilisticSignature());
-  test('Módulos v4 integrados',()=>calculations.probabilistic&&calculations.advancedNetwork&&calculations.catalogGovernance&&calculations.historySummary);
-  const all=[...tests,...extra],ok=all.filter(t=>t.ok).length,el=document.getElementById('selfTestStatus');
-  if(el){el.textContent=`Autotestes: ${ok}/${all.length}`;el.className=`status-pill ${ok===all.length?'ok':''}`;}
-  if(ok!==all.length)console.warn('Falhas nos autotestes v4',all.filter(t=>!t.ok));
-  return all;
-};
-
 function initializeUI(){
   normalizeState();applyTheme();bindStaticInputs();renderFlowFields();calculateAll();renderDuctTable();renderFanCurve();refreshAll();openTab(state.ui.activeTab||'dashboard');
   if(!storageAvailable){const status=document.getElementById('autosaveStatus');status.textContent='Salvamento local indisponível';status.className='status-pill';}
