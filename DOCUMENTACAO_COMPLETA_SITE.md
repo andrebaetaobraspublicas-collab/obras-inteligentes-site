@@ -35,7 +35,7 @@ Excecoes/observacoes:
 
 ## Inventario verificado dos aplicativos
 
-Inventario originalmente verificado em 21/07/2026 e atualizado em 01/08/2026 para atualizacao do TuboCalc 2.0. Todos os cards listados possuem arquivo local correspondente.
+Inventario originalmente verificado em 21/07/2026 e atualizado em 02/08/2026 para atualizacao do BombaPro 3.5. Todos os cards listados possuem arquivo local correspondente.
 
 | Card | Aplicativo | Rota publicada | Arquivo local principal | Status local | Status site |
 |---|---|---|---|---|---|
@@ -98,7 +98,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/termopro/` | 205855 bytes | 205855 caracteres |
 | `/circuitopro/` | 236513 bytes | 236513 caracteres |
 | `/reservatoriopro/` | 161199 bytes | 161199 caracteres |
-| `/bombapro/` | 369436 bytes | 369436 caracteres |
+| `/bombapro/` | 737818 bytes | 737818 caracteres |
 | `/paraboltpro/` | 1147646 bytes | 1147646 caracteres |
 | `/steelpro/` | 229160 bytes | 229160 caracteres |
 | `/cronogramapro/` | 505340 bytes | 505340 caracteres |
@@ -368,16 +368,16 @@ Arquivo: `bombapro/index.html`
 
 Ultima atualizacao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\BombaPro_v3.3_catalogo_selecao.html`
-- Data: 01/08/2026
-- Alteracao: substituicao integral de `bombapro/index.html` pela versao BombaPro 3.3, com catalogo profissional e selecao inteligente.
+- Fonte: `C:\Users\ACER\Documents\Downloads\BombaPro_v3.5_otimizacao_memoria.html`
+- Data: 02/08/2026
+- Alteracao: substituicao integral de `bombapro/index.html` pela versao BombaPro 3.5, com otimizacao tecnico-economica e documentacao profissional.
 
 Observacoes:
 
 - Aplicativo standalone com tela de abertura e aviso legal.
 - Usa bibliotecas via CDN: Chart.js, xlsx e jsPDF.
 - Tela inicial do site aponta para `/bombapro/`.
-- Validar apos futuras alteracoes se graficos, catalogo de bombas, selecao inteligente, exportacao Excel e relatorios PDF continuam carregando corretamente.
+- Validar apos futuras alteracoes se graficos, catalogo de bombas, selecao inteligente, otimizacao tecnico-economica, memoria de calculo, especificacao profissional, exportacao Excel e relatorios PDF continuam carregando corretamente.
 
 ### ParaboltPro
 
