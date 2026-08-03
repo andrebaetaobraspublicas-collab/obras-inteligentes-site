@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TransmissãoPro v5.0 — Dimensionamento e Otimização de Transmissões</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config={theme:{extend:{colors:{industrial:{50:'#f0f4f8',100:'#d9e2ec',200:'#bcccdc',300:'#9fb3c8',400:'#829ab1',500:'#627d98',600:'#486581',700:'#334e68',800:'#243b53',900:'#102a43',950:'#0a1a2e'}},fontFamily:{mono:['JetBrains Mono','Consolas','monospace'],sans:['Inter','system-ui','sans-serif']}}}}
+</script>
+<style>
+  @media print {
+    body{background:#fff!important;color:#000!important;}
+    .no-print,.no-print *{display:none!important;}
+    .print-area{display:block!important;box-shadow:none!important;border:none!important;padding:0!important;}
+    .print-area svg{max-height:210px;}
+    @page{size:A4;margin:14mm;}
+  }
+  .print-only{display:none;}
+  .invalid{border-color:#ef4444!important;background:rgba(239,68,68,.08)!important;}
+  .tab-active{color:#fbbf24!important;border-bottom-color:#fbbf24!important;background:rgba(251,191,36,.06);}
+  .result-empty{min-height:220px;display:flex;align-items:center;justify-content:center;text-align:center;color:#829ab1;padding:32px;}
+  .soft-scroll{scrollbar-width:thin;scrollbar-color:#486581 #102a43;}
+  .soft-scroll::-webkit-scrollbar{height:8px;width:8px}.soft-scroll::-webkit-scrollbar-track{background:#102a43}.soft-scroll::-webkit-scrollbar-thumb{background:#486581;border-radius:99px}
+  canvas{background:#0a1a2e;}
+  svg .belt{fill:none;stroke:#829ab1;stroke-width:2.5;}
+  svg .pulley{fill:#102a43;stroke:#fbbf24;stroke-width:2;}
+  svg .hub{fill:#fbbf24;}
+  svg text{font-family:monospace;font-size:11px;fill:#e5e7eb;}
+  details > summary{list-style:none} details > summary::-webkit-details-marker{display:none}
+  button:disabled{opacity:.55;cursor:not-allowed}
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+</style>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body class="bg-industrial-950 text-gray-200 font-sans min-h-screen">
+<div class="max-w-7xl mx-auto px-4 py-6">
+
+  <header class="no-print flex flex-col sm:flex-row items-center justify-between mb-6 gap-4">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 bg-gradient-to-br from-amber-500 to-orange-600 rounded-lg flex items-center justify-center shadow-lg">
+        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+        </svg>
+      </div>
+      <div>
+        <h1 class="text-2xl font-bold text-white tracking-tight">Transmissão<span class="text-amber-400">Pro</span> <span class="text-xs text-gray-400">v5.0</span></h1>
+        <p class="text-xs text-gray-400">Dimensionamento, diagnóstico e otimização técnico-geométrica</p>
+      </div>
+    </div>
+    <div class="flex gap-2 no-print flex-wrap justify-center">
+      <button onclick="App.salvar()" class="px-3 py-2 bg-industrial-700 hover:bg-industrial-600 rounded-lg text-sm" title="Salvar no navegador (Ctrl+S)">💾 Salvar</button>
+      <button onclick="App.carregar(false)" class="px-3 py-2 bg-industrial-700 hover:bg-industrial-600 rounded-lg text-sm" title="Carregar do navegador">📂 Carregar</button>
+      <button onclick="document.getElementById('jsonImport').click()" class="px-3 py-2 bg-indigo-700 hover:bg-indigo-600 rounded-lg text-sm" title="Importar projeto JSON">📥 Importar</button>
+      <input id="jsonImport" type="file" accept="application/json,.json" class="hidden" onchange="App.importarJSON(event)">
+      <button onclick="App.exportarJSON()" class="px-3 py-2 bg-blue-600 hover:bg-blue-500 rounded-lg text-sm text-white font-semibold" title="Exportar projeto e resultado">📊 JSON</button>
+      <button onclick="App.prepararImpressao();window.print()" class="px-3 py-2 bg-amber-600 hover:bg-amber-500 rounded-lg text-sm text-white font-semibold" title="Gerar memória de cálculo">🖨️ Relatório</button>
+      <button onclick="App.resetar()" class="px-3 py-2 bg-red-700 hover:bg-red-600 rounded-lg text-sm" title="Limpar todos os dados">🗑️</button>
+    </div>
+  </header>
+
+  <div id="printArea" class="print-area print-only bg-white text-black rounded-xl p-6 mb-6">
+    <div class="text-center border-b-2 border-gray-300 pb-3 mb-4">
+      <h2 class="text-xl font-bold">Memória de cálculo — TransmissãoPro v5.0</h2>
+      <p id="printDate" class="text-sm text-gray-600"></p>
+    </div>
+    <div id="printContent"></div>
+  </div>
+
+  <div class="no-print mb-6">
+    <div class="flex flex-wrap gap-2">
+      <button onclick="App.selecionarModulo('correiaV')" id="btn-correiaV" class="px-5 py-3 rounded-xl font-semibold text-sm transition-all bg-industrial-700 hover:bg-industrial-600 border-2 border-transparent flex-1 min-w-[160px]">🔗 Correias em V</button>
+      <button onclick="App.selecionarModulo('sincronizada')" id="btn-sincronizada" class="px-5 py-3 rounded-xl font-semibold text-sm transition-all bg-industrial-700 hover:bg-industrial-600 border-2 border-transparent flex-1 min-w-[160px]">⚙️ Sincronizadas</button>
+      <button onclick="App.selecionarModulo('corrente')" id="btn-corrente" class="px-5 py-3 rounded-xl font-semibold text-sm transition-all bg-industrial-700 hover:bg-industrial-600 border-2 border-transparent flex-1 min-w-[160px]">⛓️ Correntes</button>
+    </div>
+    <div class="mt-3 flex flex-wrap items-center gap-2 bg-industrial-900 border border-industrial-700 rounded-xl p-3">
+      <span class="text-xs text-gray-400 font-semibold">📁 Exemplos de obra:</span>
+      <select id="seletorExemplo" class="bg-industrial-800 border border-industrial-600 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 flex-1 min-w-[220px]">
+        <option value="">Selecione um exemplo pré-cadastrado…</option>
+      </select>
+      <button onclick="App.carregarExemplo()" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 rounded-lg text-sm text-white font-semibold">Carregar</button>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-1 space-y-4 no-print">
+      <div class="bg-industrial-900 rounded-xl p-5 shadow-xl border border-industrial-700">
+        <h3 class="text-lg font-bold text-amber-400 mb-4">⚙️ Dados do acionamento</h3>
+        <div class="space-y-3">
+          <div>
+            <label for="potencia" class="block text-xs text-gray-400 mb-1">Potência do motor (kW)</label>
+            <input type="number" inputmode="decimal" id="potencia" step="0.1" min="0.1" value="5.5" class="w-full bg-industrial-800 border border-industrial-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-amber-500 font-mono">
+          </div>
+          <div>
+            <label for="rpm" class="block text-xs text-gray-400 mb-1">Rotação do motor (rpm)</label>
+            <input type="number" inputmode="numeric" id="rpm" step="10" min="1" value="1750" class="w-full bg-industrial-800 border border-industrial-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-amber-500 font-mono">
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label for="relacao" class="block text-xs text-gray-400 mb-1">Relação solicitada (i)</label>
+              <input type="number" inputmode="decimal" id="relacao" step="0.01" min="1" value="2.0" class="w-full bg-industrial-800 border border-industrial-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-amber-500 font-mono">
+            </div>
+            <div>
+              <label for="dist" class="block text-xs text-gray-400 mb-1">Entre-centros (mm)</label>
+              <input type="number" inputmode="decimal" id="dist" step="10" min="1" value="500" class="w-full bg-industrial-800 border border-industrial-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-amber-500 font-mono">
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label for="eficiencia" class="block text-xs text-gray-400 mb-1">Eficiência estimada (%)</label>
+              <input type="number" inputmode="decimal" id="eficiencia" step="0.1" min="50" max="100" placeholder="Automática" class="w-full bg-industrial-800 border border-industrial-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-amber-500 font-mono">
+            </div>
+            <div>
+              <label for="tolerancia" class="block text-xs text-gray-400 mb-1">Tolerância da relação (%)</label>
+              <input type="number" inputmode="decimal" id="tolerancia" step="0.1" min="0" max="20" value="1.0" class="w-full bg-industrial-800 border border-industrial-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-amber-500 font-mono">
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label for="ambiente" class="block text-xs text-gray-400 mb-1">Ambiente</label>
+              <select id="ambiente" class="w-full bg-industrial-800 border border-industrial-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-amber-500">
+                <option value="normal">Normal / limpo</option>
+                <option value="poeira">Poeira / abrasivos</option>
+                <option value="umido">Úmido / corrosivo</option>
+                <option value="temperatura">Temperatura elevada</option>
+              </select>
+            </div>
+            <div>
+              <label for="objetivo" class="block text-xs text-gray-400 mb-1">Objetivo da otimização</label>
+              <select id="objetivo" class="w-full bg-industrial-800 border border-industrial-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-amber-500">
+                <option value="equilibrado">Solução equilibrada</option>
+                <option value="compacto">Menor envelope</option>
+                <option value="massa">Menor material</option>
+                <option value="margem">Maior margem</option>
+                <option value="precisao">Maior precisão da relação</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="campos-correiaV" class="space-y-3">
+            <div>
+              <label for="classe" class="block text-xs text-gray-400 mb-1">Máquina movida (classe de carga)</label>
+              <select id="classe" class="w-full bg-industrial-800 border border-industrial-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-amber-500">
+                <option value="leve">Leve — ventiladores, bombas centrífugas</option>
+                <option value="moderado" selected>Moderada — transportadores, geradores</option>
+                <option value="pesado">Pesada — britadores, compressores a pistão</option>
+                <option value="extremo">Extrema — moinhos, laminadores</option>
+              </select>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label for="horas" class="block text-xs text-gray-400 mb-1">Operação (h/dia)</label>
+                <input type="number" id="horas" step="1" min="1" max="24" value="8" class="w-full bg-industrial-800 border border-industrial-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-amber-500 font-mono">
+              </div>
+              <div>
+                <label for="perfil" class="block text-xs text-gray-400 mb-1">Perfil</label>
+                <select id="perfil" class="w-full bg-industrial-800 border border-industrial-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-amber-500">
+                  <option value="">Automático</option>
+                  <option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <label for="dMenorV" class="block text-xs text-gray-400 mb-1">Diâmetro da polia menor (mm)</label>
+              <input type="number" inputmode="decimal" id="dMenorV" step="1" min="1" placeholder="Automático pelo perfil" class="w-full bg-industrial-800 border border-industrial-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-amber-500 font-mono">
+            </div>
+            <label class="flex items-center gap-2 cursor-pointer text-xs text-gray-300">
+              <input type="checkbox" id="altotorque" class="w-4 h-4">
+              Motor de alto torque de partida
+            </label>
+          </div>
+
+          <div id="campos-corrente" class="hidden space-y-3">
+            <div>
+              <label for="classeCorr" class="block text-xs text-gray-400 mb-1">Máquina movida (classe de carga)</label>
+              <select id="classeCorr" class="w-full bg-industrial-800 border border-industrial-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-amber-500">
+                <option value="suave">Suave — carga uniforme</option>
+                <option value="moderado" selected>Moderada — choque moderado</option>
+                <option value="pesado">Pesada — choque forte</option>
+              </select>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label for="dentesPinhao" class="block text-xs text-gray-400 mb-1">Dentes do pinhão (N1)</label>
+                <input type="number" id="dentesPinhao" step="1" min="9" value="17" class="w-full bg-industrial-800 border border-industrial-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-amber-500 font-mono">
+              </div>
+              <div>
+                <label for="numFios" class="block text-xs text-gray-400 mb-1">Nº de fios</label>
+                <select id="numFios" class="w-full bg-industrial-800 border border-industrial-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-amber-500">
+                  <option value="1">1 (simplex)</option><option value="2">2 (duplex)</option><option value="3">3 (triplex)</option><option value="4">4</option>
+                </select>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label for="horasCorr" class="block text-xs text-gray-400 mb-1">Operação (h/dia)</label>
+                <input type="number" id="horasCorr" step="1" min="1" max="24" value="8" class="w-full bg-industrial-800 border border-industrial-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-amber-500 font-mono">
+              </div>
+              <div>
+                <label for="correnteForcada" class="block text-xs text-gray-400 mb-1">Corrente ANSI</label>
+                <select id="correnteForcada" class="w-full bg-industrial-800 border border-industrial-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-amber-500">
+                  <option value="">Automática</option>
+                  <option value="25">25</option><option value="35">35</option><option value="40">40</option><option value="50">50</option><option value="60">60</option><option value="80">80</option><option value="100">100</option><option value="120">120</option><option value="140">140</option><option value="160">160</option><option value="200">200</option><option value="240">240</option>
+                </select>
+              </div>
+            </div>
+            <label class="flex items-center gap-2 cursor-pointer text-xs text-gray-300">
+              <input type="checkbox" id="cargaChoque" class="w-4 h-4">
+              Carga alternada ou de choque
+            </label>
+          </div>
+
+          <div id="campos-sincrona" class="hidden space-y-3">
+            <div>
+              <label for="classeSinc" class="block text-xs text-gray-400 mb-1">Máquina movida (classe de carga)</label>
+              <select id="classeSinc" class="w-full bg-industrial-800 border border-industrial-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-amber-500">
+                <option value="leve">Leve — carga uniforme</option>
+                <option value="moderado" selected>Moderada — choque moderado</option>
+                <option value="pesado">Pesada — choque forte</option>
+              </select>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label for="dentesPinhaoS" class="block text-xs text-gray-400 mb-1">Dentes polia menor (z1)</label>
+                <input type="number" id="dentesPinhaoS" step="1" min="10" value="32" class="w-full bg-industrial-800 border border-industrial-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-amber-500 font-mono">
+              </div>
+              <div>
+                <label for="horasS" class="block text-xs text-gray-400 mb-1">Operação (h/dia)</label>
+                <input type="number" id="horasS" step="1" min="1" max="24" value="8" class="w-full bg-industrial-800 border border-industrial-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-amber-500 font-mono">
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label for="perfilHtd" class="block text-xs text-gray-400 mb-1">Perfil HTD</label>
+                <select id="perfilHtd" class="w-full bg-industrial-800 border border-industrial-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-amber-500">
+                  <option value="">Automático</option>
+                  <option value="3M">3M</option><option value="5M">5M</option><option value="8M">8M</option><option value="14M">14M</option><option value="20M">20M</option>
+                </select>
+              </div>
+              <div>
+                <label for="larguraHtd" class="block text-xs text-gray-400 mb-1">Largura (mm)</label>
+                <select id="larguraHtd" class="w-full bg-industrial-800 border border-industrial-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-amber-500">
+                  <option value="">Automática</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button onclick="App.calcular()" class="w-full mt-4 px-4 py-3 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 text-white font-bold rounded-lg shadow-lg">🔢 Calcular (Ctrl+Enter)</button>
+        <div class="grid grid-cols-2 gap-2 mt-2">
+          <button onclick="App.otimizar()" class="px-3 py-2.5 bg-emerald-700 hover:bg-emerald-600 rounded-lg text-sm font-semibold">🔎 Otimizar</button>
+          <button onclick="App.compararTecnologias()" class="px-3 py-2.5 bg-violet-700 hover:bg-violet-600 rounded-lg text-sm font-semibold">⚖️ Comparar</button>
+        </div>
+      </div>
+
+      <details class="bg-industrial-900 rounded-xl shadow-xl border border-industrial-700 overflow-hidden">
+        <summary class="cursor-pointer px-4 py-3 text-sm font-semibold text-gray-300 flex justify-between items-center">
+          <span>🧾 Identificação do relatório</span><span class="text-gray-500">abrir</span>
+        </summary>
+        <div class="px-4 pb-4 space-y-3">
+          <div><label for="projeto" class="block text-xs text-gray-400 mb-1">Projeto / equipamento</label><input id="projeto" type="text" placeholder="Ex.: Transportador TC-02" class="w-full bg-industrial-800 border border-industrial-600 rounded-lg px-3 py-2 text-white"></div>
+          <div><label for="responsavel" class="block text-xs text-gray-400 mb-1">Responsável técnico</label><input id="responsavel" type="text" placeholder="Nome do responsável" class="w-full bg-industrial-800 border border-industrial-600 rounded-lg px-3 py-2 text-white"></div>
+          <div class="grid grid-cols-2 gap-2">
+            <div><label for="registro" class="block text-xs text-gray-400 mb-1">Registro profissional</label><input id="registro" type="text" placeholder="CREA/UF nº" class="w-full bg-industrial-800 border border-industrial-600 rounded-lg px-3 py-2 text-white"></div>
+            <div><label for="revisao" class="block text-xs text-gray-400 mb-1">Revisão</label><input id="revisao" type="text" value="00" class="w-full bg-industrial-800 border border-industrial-600 rounded-lg px-3 py-2 text-white font-mono"></div>
+          </div>
+          <div><label for="observacoes" class="block text-xs text-gray-400 mb-1">Observações</label><textarea id="observacoes" rows="3" class="w-full bg-industrial-800 border border-industrial-600 rounded-lg px-3 py-2 text-white" placeholder="Premissas específicas, limitações, localização..."></textarea></div>
+        </div>
+      </details>
+
+      <div class="bg-industrial-900 rounded-xl p-4 shadow-xl border border-industrial-700 text-xs text-gray-400 leading-relaxed" id="metodoNota"></div>
+    </div>
+
+    <div class="lg:col-span-2 space-y-4">
+      <div id="alertasContainer" class="space-y-2" aria-live="polite">
+        <div class="bg-gray-900/50 border border-gray-600 rounded p-3 text-gray-400 text-sm">ℹ️ Preencha os dados e clique em Calcular.</div>
+      </div>
+
+      <div class="bg-industrial-900 rounded-xl shadow-xl border border-industrial-700 overflow-hidden">
+        <div class="flex flex-wrap bg-industrial-800 border-b border-industrial-700 no-print" id="tabsBar">
+          <button onclick="App.aba('resumo')" id="tab-resumo" class="flex-auto min-w-[105px] px-3 py-3 text-sm font-semibold text-gray-400 hover:text-amber-400 border-b-2 border-transparent">📋 Resumo</button>
+          <button onclick="App.aba('geometria')" id="tab-geometria" class="flex-auto min-w-[105px] px-3 py-3 text-sm font-semibold text-gray-400 hover:text-amber-400 border-b-2 border-transparent">📐 Geometria</button>
+          <button onclick="App.aba('cinematica')" id="tab-cinematica" class="flex-auto min-w-[105px] px-3 py-3 text-sm font-semibold text-gray-400 hover:text-amber-400 border-b-2 border-transparent">🔄 Cinemática</button>
+          <button onclick="App.aba('capacidade')" id="tab-capacidade" class="flex-auto min-w-[105px] px-3 py-3 text-sm font-semibold text-gray-400 hover:text-amber-400 border-b-2 border-transparent">💪 Capacidade</button>
+          <button onclick="App.aba('manutencao')" id="tab-manutencao" class="flex-auto min-w-[105px] px-3 py-3 text-sm font-semibold text-gray-400 hover:text-amber-400 border-b-2 border-transparent">🛠️ Manutenção</button>
+          <button onclick="App.aba('otimizacao')" id="tab-otimizacao" class="flex-auto min-w-[105px] px-3 py-3 text-sm font-semibold text-gray-400 hover:text-amber-400 border-b-2 border-transparent">🔎 Otimização</button>
+        </div>
+        <div class="p-5" id="tabsContent">
+          <div id="aba-resumo"></div>
+          <div id="aba-geometria" class="hidden"></div>
+          <div id="aba-cinematica" class="hidden"></div>
+          <div id="aba-capacidade" class="hidden"></div>
+          <div id="aba-manutencao" class="hidden"></div>
+          <div id="aba-otimizacao" class="hidden"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="selfTestStatus" class="hidden" aria-hidden="true"></div>
+
+<script>
+"use strict";
+
+/* =============================
+   UTILITÁRIOS E PREMISSAS
+   ============================= */
+const VERSAO='5.0';
+const MODULOS=['correiaV','sincronizada','corrente'];
+const ABAS=['resumo','geometria','cinematica','capacidade','manutencao','otimizacao'];
+const EFICIENCIA_PADRAO={correiaV:0.95,sincronizada:0.98,corrente:0.97};
+const AMBIENTES={normal:'Normal / limpo',poeira:'Poeira / abrasivos',umido:'Úmido / corrosivo',temperatura:'Temperatura elevada'};
+const OBJETIVOS={equilibrado:'Solução equilibrada',compacto:'Menor envelope',massa:'Menor material',margem:'Maior margem',precisao:'Maior precisão da relação'};
+
+function parseNumero(valor){
+  if(typeof valor==='number')return valor;
+  const s=String(valor??'').trim().replace(/\s+/g,'').replace(',','.');
+  return s===''?NaN:Number(s);
+}
+function clamp(v,min,max){return Math.min(max,Math.max(min,v));}
+function arred(v,casas=2){const p=10**casas;return Math.round((v+Number.EPSILON)*p)/p;}
+function fmt(v,casas=2){return Number.isFinite(v)?v.toLocaleString('pt-BR',{minimumFractionDigits:casas,maximumFractionDigits:casas}):'—';}
+function fmtFlex(v,max=2){return Number.isFinite(v)?v.toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:max}):'—';}
+function pct(v,casas=1){return Number.isFinite(v)?fmt(v,casas)+'%':'—';}
+function erroRelacao(real,solicitada){return solicitada>0?Math.abs(real-solicitada)/solicitada*100:Infinity;}
+function margemPct(capacidade,demanda){return demanda>0?(capacidade/demanda-1)*100:Infinity;}
+function escapeHtml(s){return String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
+function debounce(fn,ms){let t;return(...args)=>{clearTimeout(t);t=setTimeout(()=>fn(...args),ms);};}
+function eficienciaAplicada(modulo,valor){const n=parseNumero(valor);return Number.isFinite(n)&&n>=50&&n<=100?n/100:EFICIENCIA_PADRAO[modulo];}
+function classeCorMargem(m){if(m>=20)return'text-green-300';if(m>=0)return'text-amber-300';return'text-red-300';}
+function normalizarScore(v,min,max){return max>min?(v-min)/(max-min):0;}
+
+/* =============================
+   CORREIAS EM V
+   ============================= */
+const PERFIS={
+  A:{lp:13,h:8,massaLinear:0.106,dMinRecom:75,Fadm:350,faixaVmax:30},
+  B:{lp:17,h:11,massaLinear:0.189,dMinRecom:125,Fadm:600,faixaVmax:30},
+  C:{lp:22,h:14,massaLinear:0.343,dMinRecom:200,Fadm:1200,faixaVmax:30},
+  D:{lp:32,h:19,massaLinear:0.596,dMinRecom:355,Fadm:2400,faixaVmax:30},
+  E:{lp:38,h:23,massaLinear:0.887,dMinRecom:500,Fadm:3600,faixaVmax:30}
+};
+const ORDEM_PERFIS=['A','B','C','D','E'];
+const MU_ATRITO=0.30,BETA_SULCO_RAD=19*Math.PI/180;
+const COMPRIMENTOS_PADRAO=[620,660,710,760,810,865,920,990,1080,1145,1230,1330,1425,1550,1640,1750,1900,2050,2200,2350,2500,2700,2850,3050,3250,3500,3750,4000,4250,4500,4750,5000,5400,6000,6860,7620,8500,9000,9500,10000];
+const DIAMETROS_POLIA_PADRAO=[63,71,75,80,90,100,112,125,132,140,150,160,180,200,224,250,280,315,355,400,450,500,560,630,710,800,900,1000,1120,1250,1400,1600,1800,2000];
+const FATOR_SERVICO={leve:{normal:1.1,pesado:1.2},moderado:{normal:1.2,pesado:1.3},pesado:{normal:1.3,pesado:1.4},extremo:{normal:1.4,pesado:1.5}};
+function fatorServico(classe,horas,alto){const c=FATOR_SERVICO[classe]||FATOR_SERVICO.moderado;let ks=horas>10?c.pesado:c.normal;if(alto)ks+=0.2;return arred(ks,2);}
+function selecionarPerfil(P,rpm){if(rpm>=1400){if(P<=4)return'A';if(P<=15)return'B';if(P<=75)return'C';if(P<=150)return'D';return'E';}if(rpm>=900){if(P<=3)return'A';if(P<=11)return'B';if(P<=55)return'C';if(P<=120)return'D';return'E';}if(P<=2)return'A';if(P<=7)return'B';if(P<=37)return'C';if(P<=90)return'D';return'E';}
+function resolverCentroPorComprimento(L,d,D){
+  const b=L-Math.PI/2*(D+d),delta=D-d,disc=b*b-2*delta*delta;
+  if(!(disc>0))return null;
+  const C=(b+Math.sqrt(disc))/4;
+  if(!(C>Math.abs(delta)/2))return null;
+  return C;
+}
+function calcularGeometriaCorreia(d,D,C0){
+  if(!(d>0&&D>=d&&C0>0))throw new Error('Geometria inválida: verifique diâmetros e entre-centros.');
+  if(!(C0>Math.abs(D-d)/2))throw new Error('Geometria inviável: o entre-centros deve superar metade da diferença entre os diâmetros.');
+  const Lteorico=2*C0+Math.PI/2*(D+d)+Math.pow(D-d,2)/(4*C0);
+  const candidatos=[...COMPRIMENTOS_PADRAO].sort((a,b)=>Math.abs(a-Lteorico)-Math.abs(b-Lteorico));
+  let Lpadrao=null,Ccorr=null;
+  for(const L of candidatos){const C=resolverCentroPorComprimento(L,d,D);if(C){Lpadrao=L;Ccorr=C;break;}}
+  if(!Ccorr)throw new Error('Nenhum comprimento padrão produz geometria viável para os diâmetros informados.');
+  const arg=clamp((D-d)/(2*Ccorr),-0.999999,0.999999);
+  const arcoMenor=180-2*Math.asin(arg)*180/Math.PI;
+  const arcoMaior=360-arcoMenor;
+  return{dMenor:d,dMaior:D,arcoMenorGraus:arcoMenor,arcoMaiorGraus:arcoMaior,comprimentoTeorico:Lteorico,comprimentoPadrao:Lpadrao,distCentrosSolicitada:C0,distCentrosCorrigida:Ccorr,desvioCentroPct:(Ccorr/C0-1)*100};
+}
+function coefComprimento(perfil,L){const ref={A:1750,B:2500,C:3750,D:5400,E:6860}[perfil]||2500;return clamp(Math.pow(L/ref,0.12),0.80,1.15);}
+function potenciaPorCorreiaEuler(perfil,v,arcoRad){
+  const p=PERFIS[perfil],muEf=MU_ATRITO/Math.sin(BETA_SULCO_RAD),Fc=p.massaLinear*v*v;
+  const razao=Math.exp(muEf*arcoRad),T1Util=Math.max(0,p.Fadm-Fc),T2Util=razao>1?T1Util/razao:T1Util;
+  const Futil=Math.max(0,T1Util-T2Util),cargaRadial=T1Util+T2Util+2*Fc;
+  return{potenciaKw:Futil*v/1000,Fc,Futil,fatorEuler:1-1/razao,razaoTensoes:razao,T1Util,T2Util,cargaRadial};
+}
+function recomendacoesCorreiaV(r,e){
+  const rec=['Usar correias do mesmo fabricante, perfil e lote quando houver múltiplos canais.','Verificar alinhamento angular e paralelo das polias antes do tensionamento final.','Reavaliar a tensão após o período inicial de assentamento e manter proteção física sobre o acionamento.'];
+  if(r.n>4)rec.push('O conjunto possui muitas correias; considerar perfil de maior capacidade ou transmissão em outro estágio.');
+  if(r.geo.arcoMenorGraus<140)rec.push('O arco de abraçamento é reduzido; avaliar polia tensora ou maior entre-centros.');
+  if(e.ambiente==='poeira')rec.push('Prever carenagem ventilada e rotina de limpeza para evitar abrasão e perda de aderência.');
+  if(e.ambiente==='umido')rec.push('Selecionar materiais resistentes à umidade e proteger polias, buchas e eixos contra corrosão.');
+  if(e.ambiente==='temperatura')rec.push('Confirmar a faixa térmica do composto elastomérico no catálogo do fabricante.');
+  return rec;
+}
+function dimensionarCorreiaV(e){
+  const erros=[];
+  if(!(e.potenciaKw>0))erros.push('Potência deve ser maior que zero.');
+  if(!(e.rpmMotor>0))erros.push('Rotação deve ser maior que zero.');
+  if(!(e.relacao>=1))erros.push('Relação de transmissão deve ser maior ou igual a 1.');
+  if(!(e.distCentrosMm>0))erros.push('Entre-centros deve ser maior que zero.');
+  if(!(e.horasPorDia>=1&&e.horasPorDia<=24))erros.push('Operação diária deve estar entre 1 e 24 horas.');
+  if(erros.length)return{ok:false,erros};
+  const ks=fatorServico(e.classeCarga,e.horasPorDia,e.motorAltoTorque),potProj=e.potenciaKw*ks;
+  const perfil=e.perfilForcado&&PERFIS[e.perfilForcado]?e.perfilForcado:selecionarPerfil(potProj,e.rpmMotor),pp=PERFIS[perfil];
+  const dMenor=e.dMenorMm>0?e.dMenorMm:pp.dMinRecom,D=dMenor*e.relacao,relacaoReal=D/dMenor;
+  let geo;try{geo=calcularGeometriaCorreia(dMenor,D,e.distCentrosMm);}catch(err){return{ok:false,erros:[err.message]};}
+  const v=Math.PI*dMenor*e.rpmMotor/60000,arcoRad=geo.arcoMenorGraus*Math.PI/180;
+  const euler=potenciaPorCorreiaEuler(perfil,v,arcoRad),cComp=coefComprimento(perfil,geo.comprimentoPadrao);
+  const potPorCorreia=euler.potenciaKw*cComp,nExato=potPorCorreia>0?potProj/potPorCorreia:Infinity,n=Number.isFinite(nExato)?Math.max(1,Math.ceil(nExato)):0;
+  const capTotal=n*potPorCorreia,margem=margemPct(capTotal,potProj),eta=e.eficiencia;
+  const potenciaSaida=e.potenciaKw*eta,perdasKw=e.potenciaKw-potenciaSaida,torqueMotor=e.potenciaKw*9549/e.rpmMotor;
+  const rpmSaida=e.rpmMotor/relacaoReal,torqueSaida=torqueMotor*relacaoReal*eta,erroRelacaoPct=erroRelacao(relacaoReal,e.relacao);
+  const frequenciaCicloHz=v/(geo.comprimentoPadrao/1000),cargaRadialTotal=euler.cargaRadial*n;
+  const alertas=[];
+  if(dMenor<pp.dMinRecom)alertas.push(`Polia menor de ${fmtFlex(dMenor,0)} mm abaixo do mínimo referencial de ${pp.dMinRecom} mm para o perfil ${perfil}.`);
+  if(v>pp.faixaVmax)alertas.push(`Velocidade de ${fmt(v,1)} m/s acima da faixa usual de ${pp.faixaVmax} m/s.`);
+  if(geo.arcoMenorGraus<120)alertas.push(`Arco de abraçamento de ${fmt(geo.arcoMenorGraus,0)}° abaixo de 120°.`);
+  if(Math.abs(geo.desvioCentroPct)>10)alertas.push(`O comprimento comercial altera o entre-centros em ${pct(geo.desvioCentroPct,1)}; verificar possibilidade de ajuste da base.`);
+  if(n>8)alertas.push(`Número de correias elevado (${n}); avaliar perfil maior ou outro arranjo.`);
+  if(!(potPorCorreia>0))alertas.push('Capacidade não positiva: reduza a velocidade ou revise o perfil.');
+  const r={ok:true,modulo:'correiaV',ks,potProj,perfil,perfilAuto:!e.perfilForcado,dMenor,v,geo,euler,cComp,potPorCorreia,nExato,n,capTotal,margemPct:margem,relacaoSolicitada:e.relacao,relacaoReal,erroRelacaoPct,eta,potenciaSaida,perdasKw,torqueMotor,rpmSaida,torqueSaida,frequenciaCicloHz,cargaRadialTotal,ambiente:e.ambiente,alertas};
+  r.recomendacoes=recomendacoesCorreiaV(r,e);return r;
+}
+
+/* =============================
+   CORRENTES DE ROLOS
+   ============================= */
+const CORRENTES={
+  '25':{passoPol:0.250,passoMm:6.35,rupturaKN:3.5,massaLinear:0.15},'35':{passoPol:0.375,passoMm:9.525,rupturaKN:7.9,massaLinear:0.33},
+  '40':{passoPol:0.500,passoMm:12.70,rupturaKN:14.1,massaLinear:0.62},'50':{passoPol:0.625,passoMm:15.875,rupturaKN:22.2,massaLinear:1.02},
+  '60':{passoPol:0.750,passoMm:19.05,rupturaKN:31.8,massaLinear:1.50},'80':{passoPol:1.000,passoMm:25.40,rupturaKN:56.7,massaLinear:2.60},
+  '100':{passoPol:1.250,passoMm:31.75,rupturaKN:88.5,massaLinear:3.91},'120':{passoPol:1.500,passoMm:38.10,rupturaKN:127.0,massaLinear:5.60},
+  '140':{passoPol:1.750,passoMm:44.45,rupturaKN:172.4,massaLinear:7.50},'160':{passoPol:2.000,passoMm:50.80,rupturaKN:226.8,massaLinear:10.10},
+  '200':{passoPol:2.500,passoMm:63.50,rupturaKN:353.8,massaLinear:16.10},'240':{passoPol:3.000,passoMm:76.20,rupturaKN:510.3,massaLinear:23.20}
+};
+const ORDEM_CORRENTES=Object.keys(CORRENTES),FATOR_FIOS={1:1.0,2:1.7,3:2.5,4:3.3},HP_KW=0.7457,CALIBRACAO_CATALOGO=1.22;
+const FATOR_SERVICO_CORR={suave:{normal:1.0,choque:1.3},moderado:{normal:1.3,choque:1.5},pesado:{normal:1.5,choque:1.8}};
+function krImpacto(d){return(d==='25'||d==='35')?29:17;}
+function fatorServicoCorr(classe,choque,horas){const c=FATOR_SERVICO_CORR[classe]||FATOR_SERVICO_CORR.moderado;let k=choque?c.choque:c.normal;if(horas>10)k+=0.1;if(horas>20)k+=0.1;return arred(k,2);}
+function potenciaPlacasKw(N1,n1,p){return 0.004*Math.pow(N1,1.08)*Math.pow(n1,0.9)*Math.pow(p,3-0.07*p)*HP_KW*CALIBRACAO_CATALOGO;}
+function potenciaImpactoKw(N1,n1,p,d){return krImpacto(d)*Math.pow(100*N1/n1,1.5)*Math.pow(p,0.8)*HP_KW*CALIBRACAO_CATALOGO;}
+function potenciaAdmissivelKw(N1,n1,p,d){const pr1=potenciaPlacasKw(N1,n1,p),pr2=potenciaImpactoKw(N1,n1,p,d);return{pr1,pr2,admissivel:Math.min(pr1,pr2),modo:pr1<=pr2?'fadiga das placas':'impacto rolete-bucha'};}
+function centroCorrentePorPassos(Lp,N1,N2,p){
+  const A=Lp-(N1+N2)/2,k=Math.pow((N2-N1)/(2*Math.PI),2),disc=A*A-8*k;
+  if(!(disc>0))return null;
+  const C=(p/4)*(A+Math.sqrt(disc));return C>0?C:null;
+}
+function calcularGeometriaCorr(N1,N2,p,C0){
+  const Dp1=p/Math.sin(Math.PI/N1),Dp2=p/Math.sin(Math.PI/N2);
+  if(!(C0>Math.abs(Dp2-Dp1)/2))throw new Error('Geometria inviável: aumente o entre-centros ou reduza a relação.');
+  const Lteor=(N1+N2)/2+2*C0/p+Math.pow((N2-N1)/(2*Math.PI),2)*p/C0;
+  const base=Math.round(Lteor/2)*2,cands=[base-4,base-2,base,base+2,base+4].filter(x=>x>Math.max(N1,N2));
+  let Lpar=null,Ccorr=null,melhor=Infinity;
+  for(const L of cands){const C=centroCorrentePorPassos(L,N1,N2,p);if(C&&Math.abs(C-C0)<melhor){melhor=Math.abs(C-C0);Lpar=L;Ccorr=C;}}
+  if(!Ccorr)throw new Error('Não foi possível obter comprimento par de corrente com geometria viável.');
+  const arg=clamp((Dp2-Dp1)/(2*Ccorr),-0.999999,0.999999),theta1=(Math.PI-2*Math.asin(arg))*180/Math.PI;
+  return{comprimentoTeoricoPassos:Lteor,comprimentoPassos:Lpar,comprimentoMm:Lpar*p,distCentrosSolicitadaMm:C0,distCentrosCorrigidaMm:Ccorr,desvioCentroPct:(Ccorr/C0-1)*100,dPrimitivoPinhaoMm:Dp1,dPrimitivoCoroaMm:Dp2,anguloContatoPinhaoGraus:theta1};
+}
+function selecionarCorrente(potProj,N1,n1,numFios){
+  for(const desig of ORDEM_CORRENTES){const c=CORRENTES[desig],cap=potenciaAdmissivelKw(N1,n1,c.passoPol,desig),capTotal=cap.admissivel*(FATOR_FIOS[numFios]||1);if(capTotal>=potProj)return{designacao:desig,...c,capacidadeKw:cap.admissivel,capacidadeTotalKw:capTotal,modo:cap.modo,insuficiente:false};}
+  const desig=ORDEM_CORRENTES.at(-1),c=CORRENTES[desig],cap=potenciaAdmissivelKw(N1,n1,c.passoPol,desig);return{designacao:desig,...c,capacidadeKw:cap.admissivel,capacidadeTotalKw:cap.admissivel*(FATOR_FIOS[numFios]||1),modo:cap.modo,insuficiente:true};
+}
+function recomendarLubrificacao(v,ambiente){
+  let tipo,descricao;
+  if(v<0.5){tipo='Manual / pincel';descricao='Aplicação periódica diretamente nas articulações, compatível apenas com baixa velocidade.';}
+  else if(v<1.5){tipo='Gotejamento';descricao='Alimentação contínua e regulada na região de entrada do pinhão.';}
+  else if(v<8){tipo='Banho ou disco salpicador';descricao='Cárter fechado com nível controlado ou disco para lançar óleo sobre a corrente.';}
+  else{tipo='Circulação forçada';descricao='Fluxo contínuo dirigido às articulações, com controle de temperatura e contaminação.';}
+  if(ambiente==='poeira')descricao+=' Em ambiente abrasivo, priorizar proteção fechada e impedir formação de pasta de óleo com partículas.';
+  if(ambiente==='umido')descricao+=' Selecionar proteção anticorrosiva e lubrificante compatível com presença de água.';
+  if(ambiente==='temperatura')descricao+=' Confirmar viscosidade e estabilidade térmica do lubrificante na temperatura de serviço.';
+  return{tipo,descricao};
+}
+function recomendacoesCorrente(r,e){
+  const rec=[`Lubrificação recomendada: ${r.lubrificacao.tipo}.`,'Alinhar pinhão e coroa e verificar o desgaste conjunto de corrente e rodas dentadas.','Controlar flecha do ramo frouxo e evitar tensionamento excessivo.','Prever proteção física que permita inspeção e relubrificação segura.'];
+  if(r.N1<17)rec.push('Aumentar o número de dentes do pinhão reduz o efeito poligonal e a vibração.');
+  if(r.fatorSeguranca<10)rec.push('A margem sobre ruptura é moderada; verificar choques reais, partidas e bloqueios.');
+  return rec;
+}
+function dimensionarCorrente(e){
+  const erros=[];
+  if(!(e.potenciaKw>0))erros.push('Potência deve ser maior que zero.');if(!(e.rpmMotor>0))erros.push('Rotação deve ser maior que zero.');
+  if(!(e.relacao>=1))erros.push('Relação deve ser maior ou igual a 1.');if(!(e.distCentrosMm>0))erros.push('Entre-centros deve ser maior que zero.');
+  if(!(e.horasPorDia>=1&&e.horasPorDia<=24))erros.push('Operação diária deve estar entre 1 e 24 horas.');if(erros.length)return{ok:false,erros};
+  const N1=e.dentesPinhao>=9?Math.round(e.dentesPinhao):17,N2=Math.max(N1,Math.round(N1*e.relacao)),numFios=[1,2,3,4].includes(e.numFios)?e.numFios:1;
+  const ks=fatorServicoCorr(e.classeCarga,!!e.cargaChoque,e.horasPorDia),potProj=e.potenciaKw*ks;
+  let sel;
+  if(e.correnteForcada&&CORRENTES[e.correnteForcada]){const c=CORRENTES[e.correnteForcada],cap=potenciaAdmissivelKw(N1,e.rpmMotor,c.passoPol,e.correnteForcada),capTotal=cap.admissivel*(FATOR_FIOS[numFios]||1);sel={designacao:e.correnteForcada,...c,capacidadeKw:cap.admissivel,capacidadeTotalKw:capTotal,modo:cap.modo,insuficiente:capTotal<potProj};}
+  else sel=selecionarCorrente(potProj,N1,e.rpmMotor,numFios);
+  let geo;try{geo=calcularGeometriaCorr(N1,N2,sel.passoMm,e.distCentrosMm);}catch(err){return{ok:false,erros:[err.message]};}
+  const v=sel.passoMm*N1*e.rpmMotor/60000,relacaoReal=N2/N1,erroRelacaoPct=erroRelacao(relacaoReal,e.relacao),rpmSaida=e.rpmMotor/relacaoReal;
+  const eta=e.eficiencia,potenciaSaida=e.potenciaKw*eta,perdasKw=e.potenciaKw-potenciaSaida,torqueMotor=e.potenciaKw*9549/e.rpmMotor,torqueSaida=torqueMotor*relacaoReal*eta;
+  const tracaoN=v>0?potProj*1000/v:Infinity,fatorSeguranca=tracaoN>0?(sel.rupturaKN*1000*numFios)/tracaoN:Infinity,efeitoPoligonal=(1-Math.cos(Math.PI/N1))/(1+Math.cos(Math.PI/N1))*100;
+  const margem=margemPct(sel.capacidadeTotalKw,potProj),frequenciaEngrenamentoHz=N1*e.rpmMotor/60,massaCorrenteKg=sel.massaLinear*(geo.comprimentoMm/1000)*numFios,lubrificacao=recomendarLubrificacao(v,e.ambiente);
+  const alertas=[];
+  if(N1<17)alertas.push(`Pinhão com ${N1} dentes; recomenda-se aumentar para reduzir o efeito poligonal.`);
+  if(v>15)alertas.push(`Velocidade de ${fmt(v,1)} m/s elevada; exige lubrificação e proteção compatíveis.`);
+  if(e.relacao>7)alertas.push(`Relação solicitada de ${fmt(e.relacao,2)}:1 elevada para estágio único.`);
+  if(erroRelacaoPct>e.toleranciaPct)alertas.push(`Erro de relação de ${pct(erroRelacaoPct,2)} supera a tolerância de ${pct(e.toleranciaPct,2)}.`);
+  if(fatorSeguranca<7)alertas.push(`Fator de segurança sobre ruptura de ${fmt(fatorSeguranca,1)} abaixo de 7.`);
+  if(efeitoPoligonal>3)alertas.push(`Efeito poligonal estimado em ${pct(efeitoPoligonal,2)}.`);
+  if(Math.abs(geo.desvioCentroPct)>10)alertas.push(`Comprimento par altera o entre-centros em ${pct(geo.desvioCentroPct,1)}.`);
+  if(sel.insuficiente)alertas.push(`A corrente ANSI ${sel.designacao} com ${numFios} fio(s) não atende à potência de projeto.`);
+  const r={ok:true,modulo:'corrente',ks,potProj,relacaoSolicitada:e.relacao,relacaoReal,erroRelacaoPct,corrente:sel.designacao,passoMm:sel.passoMm,numFios,N1,N2,capPorFio:sel.capacidadeKw,capTotal:sel.capacidadeTotalKw,margemPct:margem,modoLimitante:sel.modo,rupturaKN:sel.rupturaKN,geo,v,rpmSaida,eta,potenciaSaida,perdasKw,torqueMotor,torqueSaida,tracaoN,fatorSeguranca,efeitoPoligonal,frequenciaEngrenamentoHz,massaCorrenteKg,lubrificacao,ambiente:e.ambiente,alertas};
+  r.recomendacoes=recomendacoesCorrente(r,e);return r;
+}
+
+/* =============================
+   CORREIAS SÍNCRONAS HTD
+   ============================= */
+const PERFIS_HTD={
+  '3M':{passoMm:3,larguras:[6,9,15],FespNmm:12,zMinPinhao:10,vMax:80},'5M':{passoMm:5,larguras:[9,15,25],FespNmm:22,zMinPinhao:14,vMax:80},
+  '8M':{passoMm:8,larguras:[20,30,50,85],FespNmm:42,zMinPinhao:22,vMax:60},'14M':{passoMm:14,larguras:[40,55,85,115,170],FespNmm:78,zMinPinhao:28,vMax:50},
+  '20M':{passoMm:20,larguras:[115,170,230,290,340],FespNmm:115,zMinPinhao:34,vMax:45}
+};
+const ORDEM_HTD=Object.keys(PERFIS_HTD),COMPRIMENTOS_HTD=[240,270,300,320,330,360,375,390,420,450,480,510,540,560,600,630,640,660,690,720,750,800,810,840,900,920,960,1000,1050,1080,1120,1200,1260,1280,1320,1400,1440,1500,1600,1680,1760,1800,1890,1960,2000,2100,2200,2240,2400,2520,2600,2800,3000,3200,3280,3360,3600,4000,4200,4400,4800,5600,6000];
+const FATOR_SERVICO_HTD={leve:{normal:1.3,pesado:1.5},moderado:{normal:1.5,pesado:1.7},pesado:{normal:1.7,pesado:1.9}};
+function fatorServicoHtd(classe,horas){const c=FATOR_SERVICO_HTD[classe]||FATOR_SERVICO_HTD.moderado;return horas>10?c.pesado:c.normal;}
+function dentesEmContato(z1,arco){return Math.floor(z1*arco/360);}
+function fatorZe(ze){return ze>=6?1:Math.max(0.2,1-0.2*(6-ze));}
+function comprimentosValidosHtd(p){const filtrados=COMPRIMENTOS_HTD.filter(L=>Math.abs(L/p-Math.round(L/p))<1e-9);return filtrados.length?filtrados:COMPRIMENTOS_HTD.map(L=>Math.round(L/p)*p);}
+function calcularGeometriaHtd(z1,z2,p,C0){
+  const dp1=p*z1/Math.PI,dp2=p*z2/Math.PI;
+  if(!(C0>Math.abs(dp2-dp1)/2))throw new Error('Geometria inviável: aumente o entre-centros ou reduza a relação.');
+  const Lteorico=2*C0+Math.PI/2*(dp1+dp2)+Math.pow(dp2-dp1,2)/(4*C0),cands=[...new Set(comprimentosValidosHtd(p))].sort((a,b)=>Math.abs(a-Lteorico)-Math.abs(b-Lteorico));
+  let Lpadrao=null,Ccorr=null;
+  for(const L of cands){const C=resolverCentroPorComprimento(L,dp1,dp2);if(C){Lpadrao=L;Ccorr=C;break;}}
+  if(!Ccorr)throw new Error('Nenhum comprimento HTD disponível produz geometria viável.');
+  const arg=clamp((dp2-dp1)/(2*Ccorr),-0.999999,0.999999),arcoMenor=180-2*Math.asin(arg)*180/Math.PI,arcoMaior=360-arcoMenor;
+  return{dPrimitivoPinhaoMm:dp1,dPrimitivoCoroaMm:dp2,arcoMenorGraus:arcoMenor,arcoMaiorGraus:arcoMaior,comprimentoTeoricoMm:Lteorico,comprimentoPadraoMm:Lpadrao,dentesCorreia:Math.round(Lpadrao/p),distCentrosSolicitadaMm:C0,distCentrosCorrigidaMm:Ccorr,desvioCentroPct:(Ccorr/C0-1)*100};
+}
+function potenciaTransmissivelKw(perfil,larg,v,ze){const p=PERFIS_HTD[perfil];return p.FespNmm*larg*fatorZe(ze)*v/1000;}
+function selecionarPerfilHtd(P){if(P<=1.5)return'3M';if(P<=10)return'5M';if(P<=90)return'8M';if(P<=400)return'14M';return'20M';}
+function recomendacoesSincrona(r,e){
+  const rec=['Aplicar a tensão inicial conforme o procedimento do fabricante e evitar sobretensionamento.','Verificar alinhamento das polias, flanges e largura útil antes da partida.','Não lubrificar a correia dentada; impedir contato com óleo, solventes e partículas agressivas.','Inspecionar desgaste dos dentes, trincas no dorso e deslocamento lateral.'];
+  if(r.ze<6)rec.push('Aumentar o número de dentes em contato para reduzir a carga específica nos dentes.');
+  if(e.ambiente==='poeira')rec.push('Usar proteção fechada com solução que evite acúmulo de partículas entre dentes e polias.');
+  if(e.ambiente==='umido')rec.push('Confirmar compatibilidade do composto e proteção anticorrosiva das polias.');
+  if(e.ambiente==='temperatura')rec.push('Verificar a faixa térmica da correia e do cordonel no catálogo selecionado.');
+  return rec;
+}
+function dimensionarSincrona(e){
+  const erros=[];
+  if(!(e.potenciaKw>0))erros.push('Potência deve ser maior que zero.');if(!(e.rpmMotor>0))erros.push('Rotação deve ser maior que zero.');
+  if(!(e.relacao>=1))erros.push('Relação deve ser maior ou igual a 1.');if(!(e.distCentrosMm>0))erros.push('Entre-centros deve ser maior que zero.');
+  if(!(e.horasPorDia>=1&&e.horasPorDia<=24))erros.push('Operação diária deve estar entre 1 e 24 horas.');if(erros.length)return{ok:false,erros};
+  const ks=fatorServicoHtd(e.classeCarga,e.horasPorDia),potProj=e.potenciaKw*ks,perfil=e.perfilForcado&&PERFIS_HTD[e.perfilForcado]?e.perfilForcado:selecionarPerfilHtd(potProj),pp=PERFIS_HTD[perfil];
+  const z1=Math.max(10,Math.round(e.dentesPinhao||pp.zMinPinhao)),z2=Math.max(z1,Math.round(z1*e.relacao)),relacaoReal=z2/z1,erroRelacaoPct=erroRelacao(relacaoReal,e.relacao);
+  const dp1=pp.passoMm*z1/Math.PI,v=Math.PI*dp1*e.rpmMotor/60000;
+  let geo;try{geo=calcularGeometriaHtd(z1,z2,pp.passoMm,e.distCentrosMm);}catch(err){return{ok:false,erros:[err.message]};}
+  const ze=dentesEmContato(z1,geo.arcoMenorGraus),largurasTeste=e.larguraForcada&&pp.larguras.includes(e.larguraForcada)?[e.larguraForcada]:pp.larguras;
+  let larguraSel=null,potSel=0;
+  for(const larg of largurasTeste){const pot=potenciaTransmissivelKw(perfil,larg,v,ze);if(pot>=potProj){larguraSel=larg;potSel=pot;break;}}
+  let insuficiente=false;if(larguraSel===null){larguraSel=largurasTeste.at(-1);potSel=potenciaTransmissivelKw(perfil,larguraSel,v,ze);insuficiente=true;}
+  const margem=margemPct(potSel,potProj),eta=e.eficiencia,potenciaSaida=e.potenciaKw*eta,perdasKw=e.potenciaKw-potenciaSaida,rpmSaida=e.rpmMotor/relacaoReal;
+  const torqueMotor=e.potenciaKw*9549/e.rpmMotor,torqueSaida=torqueMotor*relacaoReal*eta,frequenciaEngrenamentoHz=z1*e.rpmMotor/60,indiceMaterial=(geo.comprimentoPadraoMm/1000)*larguraSel*(pp.passoMm/5);
+  const alertas=[];
+  if(z1<pp.zMinPinhao)alertas.push(`Polia menor com ${z1} dentes abaixo do mínimo referencial de ${pp.zMinPinhao} para ${perfil}.`);
+  if(ze<6)alertas.push(`Apenas ${ze} dentes em contato na polia menor.`);
+  if(v>pp.vMax)alertas.push(`Velocidade periférica de ${fmt(v,1)} m/s acima da faixa usual do perfil.`);
+  if(e.relacao>8)alertas.push(`Relação solicitada de ${fmt(e.relacao,2)}:1 elevada para um estágio.`);
+  if(erroRelacaoPct>e.toleranciaPct)alertas.push(`Erro de relação de ${pct(erroRelacaoPct,2)} supera a tolerância de ${pct(e.toleranciaPct,2)}.`);
+  if(Math.abs(geo.desvioCentroPct)>10)alertas.push(`Comprimento comercial altera o entre-centros em ${pct(geo.desvioCentroPct,1)}.`);
+  if(insuficiente)alertas.push(`A maior largura testada (${larguraSel} mm) não atende à potência de projeto.`);
+  const r={ok:true,modulo:'sincronizada',ks,potProj,relacaoSolicitada:e.relacao,relacaoReal,erroRelacaoPct,perfil,passoMm:pp.passoMm,larguraMm:larguraSel,potTransmissivel:potSel,margemPct:margem,z1,z2,ze,insuficiente,geo,v,rpmSaida,eta,potenciaSaida,perdasKw,torqueMotor,torqueSaida,frequenciaEngrenamentoHz,indiceMaterial,ambiente:e.ambiente,alertas};
+  r.recomendacoes=recomendacoesSincrona(r,e);return r;
+}
+
+/* =============================
+   OTIMIZAÇÃO
+   ============================= */
+function scoreAlternativa(a,objetivo){
+  if(objetivo==='precisao')return a.erroRelacaoPct*1000+a.indiceEnvelope*0.001+a.indiceMaterial*0.05;
+  if(objetivo==='compacto')return a.indiceEnvelope+a.erroRelacaoPct*100;
+  if(objetivo==='massa')return a.indiceMaterial*100+a.erroRelacaoPct*80+a.indiceEnvelope*0.02;
+  if(objetivo==='margem')return -a.margemPct+a.indiceMaterial*0.5+a.erroRelacaoPct*30;
+  const penalMargem=a.margemPct<10?(10-a.margemPct)*20:Math.max(0,a.margemPct-80)*0.5;
+  return a.erroRelacaoPct*120+penalMargem+a.indiceMaterial*8+a.indiceEnvelope*0.03;
+}
+function ordenarAlternativas(arr,objetivo,limite=8){arr.forEach(a=>a.score=scoreAlternativa(a,objetivo));return arr.sort((a,b)=>a.score-b.score).slice(0,limite);}
+function gerarAlternativasCorreiaV(e,objetivo){
+  const ks=fatorServico(e.classeCarga,e.horasPorDia,e.motorAltoTorque),potProj=e.potenciaKw*ks,arr=[];
+  for(const perfil of ORDEM_PERFIS){const pp=PERFIS[perfil];for(const d of DIAMETROS_POLIA_PADRAO){if(d<pp.dMinRecom)continue;for(const D of DIAMETROS_POLIA_PADRAO){if(D<d)continue;const rel=D/d,err=erroRelacao(rel,e.relacao);if(err>Math.max(8,e.toleranciaPct*5))continue;let geo;try{geo=calcularGeometriaCorreia(d,D,e.distCentrosMm);}catch(_){continue;}const v=Math.PI*d*e.rpmMotor/60000;if(v>pp.faixaVmax*1.15)continue;const eu=potenciaPorCorreiaEuler(perfil,v,geo.arcoMenorGraus*Math.PI/180),pc=eu.potenciaKw*coefComprimento(perfil,geo.comprimentoPadrao);if(!(pc>0))continue;const n=Math.ceil(potProj/pc);if(n<1||n>12)continue;const cap=n*pc,marg=margemPct(cap,potProj);if(marg<0||geo.arcoMenorGraus<100)continue;const massa=pp.massaLinear*(geo.comprimentoPadrao/1000)*n,larguraPacote=n*pp.lp+(n-1)*4,envelope=2*geo.distCentrosCorrigida+D+larguraPacote*2;arr.push({modulo:'correiaV',titulo:`${n} × perfil ${perfil}`,subtitulo:`Polias ${d}/${D} mm · L ${geo.comprimentoPadrao} mm`,relacaoReal:rel,erroRelacaoPct:err,margemPct:marg,indiceMaterial:massa,indiceEnvelope:envelope,detalheMaterial:`massa estimada das correias ${fmt(massa,2)} kg`,dados:{perfil,dMenor:d,relacao:rel,dist:geo.distCentrosCorrigida}});}}}
+  return ordenarAlternativas(arr,objetivo);
+}
+function gerarAlternativasCorrente(e,objetivo){
+  const ks=fatorServicoCorr(e.classeCarga,e.cargaChoque,e.horasPorDia),potProj=e.potenciaKw*ks,arr=[],seen=new Set();
+  for(let N1=15;N1<=40;N1++){const centro=N1*e.relacao,cands=[Math.floor(centro),Math.round(centro),Math.ceil(centro),Math.round(centro)-1,Math.round(centro)+1];for(const N2raw of cands){const N2=Math.max(N1,N2raw),key0=`${N1}-${N2}`;if(seen.has(key0))continue;seen.add(key0);const rel=N2/N1,err=erroRelacao(rel,e.relacao);if(err>Math.max(6,e.toleranciaPct*5))continue;for(let fios=1;fios<=4;fios++){for(const desig of ORDEM_CORRENTES){const c=CORRENTES[desig],cap=potenciaAdmissivelKw(N1,e.rpmMotor,c.passoPol,desig),capTotal=cap.admissivel*(FATOR_FIOS[fios]||1);if(capTotal<potProj)continue;let geo;try{geo=calcularGeometriaCorr(N1,N2,c.passoMm,e.distCentrosMm);}catch(_){continue;}const v=c.passoMm*N1*e.rpmMotor/60000;if(v>20)continue;const tracao=potProj*1000/v,fs=c.rupturaKN*1000*fios/tracao;if(fs<7||geo.anguloContatoPinhaoGraus<110)continue;const massa=c.massaLinear*(geo.comprimentoMm/1000)*fios,marg=margemPct(capTotal,potProj),envelope=2*geo.distCentrosCorrigidaMm+geo.dPrimitivoCoroaMm+c.passoMm*fios*3;arr.push({modulo:'corrente',titulo:`ANSI ${desig} · ${fios} fio${fios>1?'s':''}`,subtitulo:`${N1}/${N2} dentes · ${geo.comprimentoPassos} passos`,relacaoReal:rel,erroRelacaoPct:err,margemPct:marg,indiceMaterial:massa,indiceEnvelope:envelope,detalheMaterial:`massa estimada ${fmt(massa,2)} kg · FS ${fmt(fs,1)}`,dados:{corrente:desig,numFios:fios,N1,relacao:rel,dist:geo.distCentrosCorrigidaMm}});}}}}
+  return ordenarAlternativas(arr,objetivo);
+}
+function gerarAlternativasSincrona(e,objetivo){
+  const ks=fatorServicoHtd(e.classeCarga,e.horasPorDia),potProj=e.potenciaKw*ks,arr=[];
+  for(const perfil of ORDEM_HTD){const pp=PERFIS_HTD[perfil];for(let z1=pp.zMinPinhao;z1<=80;z1++){const centro=z1*e.relacao,cands=[Math.floor(centro),Math.round(centro),Math.ceil(centro)];for(const z2raw of cands){const z2=Math.max(z1,z2raw),rel=z2/z1,err=erroRelacao(rel,e.relacao);if(err>Math.max(6,e.toleranciaPct*5))continue;let geo;try{geo=calcularGeometriaHtd(z1,z2,pp.passoMm,e.distCentrosMm);}catch(_){continue;}const dp1=pp.passoMm*z1/Math.PI,v=Math.PI*dp1*e.rpmMotor/60000;if(v>pp.vMax)continue;const ze=dentesEmContato(z1,geo.arcoMenorGraus);if(ze<6)continue;for(const largura of pp.larguras){const cap=potenciaTransmissivelKw(perfil,largura,v,ze);if(cap<potProj)continue;const marg=margemPct(cap,potProj),material=(geo.comprimentoPadraoMm/1000)*largura*(pp.passoMm/5),envelope=2*geo.distCentrosCorrigidaMm+geo.dPrimitivoCoroaMm+largura*2;arr.push({modulo:'sincronizada',titulo:`${perfil} · ${largura} mm`,subtitulo:`${z1}/${z2} dentes · ${geo.comprimentoPadraoMm} mm`,relacaoReal:rel,erroRelacaoPct:err,margemPct:marg,indiceMaterial:material,indiceEnvelope:envelope,detalheMaterial:`índice de material ${fmt(material,2)}`,dados:{perfil,largura,z1,relacao:rel,dist:geo.distCentrosCorrigidaMm}});}}}}
+  return ordenarAlternativas(arr,objetivo);
+}
+
+/* =============================
+   EXEMPLOS
+   ============================= */
+const EXEMPLOS=[
+  {id:'ex1',modulo:'correiaV',titulo:'Ventilador de exaustão — galeria de obra',ctx:'Ventilação forçada em túnel rodoviário. Motor trifásico acionando ventilador axial, carga uniforme e turno único.',e:{potenciaKw:7.5,rpmMotor:1750,relacao:2,distCentrosMm:600,classeCarga:'leve',horasPorDia:8,motorAltoTorque:false,ambiente:'poeira'}},
+  {id:'ex2',modulo:'correiaV',titulo:'Britador de mandíbulas — central de britagem',ctx:'Britador sujeito a choques severos e dois turnos. O exemplo evidencia a necessidade de margem e proteção contra poeira.',e:{potenciaKw:45,rpmMotor:1180,relacao:3,distCentrosMm:900,classeCarga:'extremo',horasPorDia:16,motorAltoTorque:false,ambiente:'poeira'}},
+  {id:'ex3',modulo:'corrente',titulo:'Transportador — silo de agregados',ctx:'Tambor motriz de transportador em regime contínuo e carga moderadamente uniforme.',e:{potenciaKw:22,rpmMotor:900,relacao:2.5,distCentrosMm:700,dentesPinhao:19,numFios:1,classeCarga:'moderado',cargaChoque:false,horasPorDia:16,ambiente:'poeira'}},
+  {id:'ex4',modulo:'corrente',titulo:'Elevador de canecas — usina de asfalto',ctx:'Transporte vertical com carga alternada e impacto, exigindo verificação de ruptura e lubrificação.',e:{potenciaKw:37,rpmMotor:720,relacao:4,distCentrosMm:1100,dentesPinhao:21,numFios:2,classeCarga:'pesado',cargaChoque:true,horasPorDia:16,ambiente:'poeira'}},
+  {id:'ex5',modulo:'sincronizada',titulo:'Bomba dosadora — estação de tratamento',ctx:'Aplicação com sincronismo absoluto, sem escorregamento e operação contínua.',e:{potenciaKw:5.5,rpmMotor:1750,relacao:2.5,distCentrosMm:450,dentesPinhao:28,classeCarga:'moderado',horasPorDia:24,perfilForcado:'8M',ambiente:'umido'}},
+  {id:'ex6',modulo:'sincronizada',titulo:'Mesa vibratória — pré-fabricados',ctx:'Mesa vibratória de potência elevada e carga dinâmica, com exigência de posicionamento preciso.',e:{potenciaKw:30,rpmMotor:1200,relacao:2,distCentrosMm:650,dentesPinhao:36,classeCarga:'pesado',horasPorDia:16,perfilForcado:'14M',ambiente:'normal'}}
+];
+
+/* =============================
+   APLICAÇÃO
+   ============================= */
+const App={
+  state:{modulo:'correiaV',resultado:null,abaAtiva:'resumo',otimizacoes:[],comparacao:[],contextoExemplo:'',mensagemTemporaria:''},
+  KEY:'transmissaoPro_v50',LEGACY_KEYS:['transmissaoPro_v45','transmissaoPro_v42'],
+
+  init(){
+    const ids=['potencia','rpm','relacao','dist','eficiencia','tolerancia','ambiente','objetivo','classe','horas','perfil','dMenorV','altotorque','dentesPinhao','numFios','horasCorr','classeCorr','cargaChoque','correnteForcada','dentesPinhaoS','horasS','classeSinc','larguraHtd'];
+    const recalculo=debounce(()=>this.calcular(),220);
+    ids.forEach(id=>{const el=document.getElementById(id);if(!el)return;const evento=el.matches('input[type="number"]')?'input':'change';el.addEventListener(evento,recalculo);});
+    document.getElementById('perfilHtd').addEventListener('change',()=>{this.atualizarLargurasHtd();this.calcular();});
+    ['projeto','responsavel','registro','revisao','observacoes'].forEach(id=>document.getElementById(id).addEventListener('change',()=>this.salvarSilencioso()));
+    document.addEventListener('keydown',ev=>{if(ev.ctrlKey&&ev.key==='Enter'){ev.preventDefault();this.calcular();}if(ev.ctrlKey&&ev.key.toLowerCase()==='s'){ev.preventDefault();this.salvar();}});
+    this.popularSeletorExemplos();this.carregar(true);this.selecionarModulo(this.state.modulo,{naoSalvar:true});this.aba('resumo');
+    const testes=this.executarAutotestes(),status=document.getElementById('selfTestStatus');status.textContent=`${testes.aprovados}/${testes.total}`;document.documentElement.dataset.selftests=status.textContent;
+    if(testes.falhas.length)console.error('Autotestes TransmissãoPro:',testes.falhas);else console.info(`TransmissãoPro v${VERSAO}: ${testes.aprovados} autotestes aprovados.`);
+  },
+
+  popularSeletorExemplos(){const sel=document.getElementById('seletorExemplo'),nome={correiaV:'Correia em V',corrente:'Corrente',sincronizada:'Síncrona'};sel.innerHTML='<option value="">Selecione um exemplo pré-cadastrado…</option>';EXEMPLOS.forEach(x=>{const o=document.createElement('option');o.value=x.id;o.textContent=`[${nome[x.modulo]}] ${x.titulo}`;sel.appendChild(o);});},
+
+  carregarExemplo(){
+    const id=document.getElementById('seletorExemplo').value;if(!id){alert('Selecione um exemplo na lista.');return;}const ex=EXEMPLOS.find(x=>x.id===id);if(!ex)return;
+    this.selecionarModulo(ex.modulo,{naoCalcular:true});const e=ex.e;this.set('potencia',e.potenciaKw);this.set('rpm',e.rpmMotor);this.set('relacao',e.relacao);this.set('dist',e.distCentrosMm);this.set('ambiente',e.ambiente||'normal');
+    if(ex.modulo==='correiaV'){this.set('classe',e.classeCarga);this.set('horas',e.horasPorDia);this.set('perfil',e.perfilForcado||'');this.set('dMenorV',e.dMenorMm||'');document.getElementById('altotorque').checked=!!e.motorAltoTorque;}
+    else if(ex.modulo==='corrente'){this.set('dentesPinhao',e.dentesPinhao);this.set('numFios',e.numFios);this.set('horasCorr',e.horasPorDia||8);this.set('classeCorr',e.classeCarga);this.set('correnteForcada',e.correnteForcada||'');document.getElementById('cargaChoque').checked=!!e.cargaChoque;}
+    else{this.set('classeSinc',e.classeCarga);this.set('dentesPinhaoS',e.dentesPinhao);this.set('horasS',e.horasPorDia);this.set('perfilHtd',e.perfilForcado||'');this.atualizarLargurasHtd();this.set('larguraHtd',e.larguraForcada||'');}
+    this.state.contextoExemplo=ex.ctx;this.state.mensagemTemporaria='Exemplo carregado com sucesso.';this.calcular();document.getElementById('alertasContainer').scrollIntoView({behavior:'smooth',block:'nearest'});
+  },
+
+  set(id,v){const el=document.getElementById(id);if(el&&v!==undefined&&v!==null)el.value=v;},
+  getNum(id){return parseNumero(document.getElementById(id)?.value);},
+
+  selecionarModulo(m,op={}){
+    if(!MODULOS.includes(m))m='correiaV';this.state.modulo=m;this.state.otimizacoes=[];this.state.comparacao=[];this.state.abaAtiva='resumo';
+    MODULOS.forEach(x=>{const b=document.getElementById('btn-'+x);b.classList.toggle('border-amber-400',x===m);b.classList.toggle('bg-industrial-600',x===m);b.setAttribute('aria-pressed',String(x===m));});
+    document.getElementById('campos-correiaV').classList.toggle('hidden',m!=='correiaV');document.getElementById('campos-corrente').classList.toggle('hidden',m!=='corrente');document.getElementById('campos-sincrona').classList.toggle('hidden',m!=='sincronizada');
+    if(m==='sincronizada')this.atualizarLargurasHtd();
+    const eff=(EFICIENCIA_PADRAO[m]*100).toFixed(0),ef=document.getElementById('eficiencia');ef.placeholder=`Automática (${eff}%)`;
+    const nota=document.getElementById('metodoNota');
+    if(m==='correiaV')nota.innerHTML='<b class="text-gray-300">Método.</b> Pré-dimensionamento por equilíbrio de tensões de Euler no sulco em V, força centrífuga, arco real e comprimento comercial. A v5.0 acrescenta perdas, carga radial estimada, diagnóstico e otimização de polias. <b class="text-amber-400">Confirmar no catálogo do fabricante.</b>';
+    if(m==='corrente')nota.innerHTML='<b class="text-gray-300">Método.</b> Seleção por capacidade de placas e impacto rolete-bucha, verificação de ruptura, efeito poligonal, comprimento par e regime de lubrificação. <b class="text-amber-400">Confirmar no catálogo do fabricante.</b>';
+    if(m==='sincronizada')nota.innerHTML='<b class="text-gray-300">Método.</b> Capacidade por tração específica do cordonel, largura, velocidade e dentes em contato, com comprimento compatível com o passo. <b class="text-amber-400">Confirmar em tabela de potência do fabricante.</b>';
+    this.aba('resumo');if(!op.naoCalcular)this.calcular();if(!op.naoSalvar)this.salvarSilencioso();
+  },
+
+  atualizarLargurasHtd(){const perfil=document.getElementById('perfilHtd').value,sel=document.getElementById('larguraHtd'),atual=sel.value;sel.innerHTML='<option value="">Automática</option>';const larguras=perfil?PERFIS_HTD[perfil].larguras:[...new Set(Object.values(PERFIS_HTD).flatMap(x=>x.larguras))].sort((a,b)=>a-b);larguras.forEach(w=>{const o=document.createElement('option');o.value=w;o.textContent=w+' mm';sel.appendChild(o);});if([...sel.options].some(o=>o.value===atual))sel.value=atual;},
+
+  entradasComuns(){const eficiencia=eficienciaAplicada(this.state.modulo,document.getElementById('eficiencia').value),tolerancia=this.getNum('tolerancia');return{potenciaKw:this.getNum('potencia'),rpmMotor:this.getNum('rpm'),relacao:this.getNum('relacao'),distCentrosMm:this.getNum('dist'),eficiencia,toleranciaPct:Number.isFinite(tolerancia)?tolerancia:1,ambiente:document.getElementById('ambiente').value};},
+  entradasModulo(m=this.state.modulo){const e=this.entradasComuns();if(m==='correiaV')Object.assign(e,{classeCarga:document.getElementById('classe').value,horasPorDia:this.getNum('horas'),motorAltoTorque:document.getElementById('altotorque').checked,perfilForcado:document.getElementById('perfil').value||undefined,dMenorMm:this.getNum('dMenorV')});else if(m==='corrente')Object.assign(e,{dentesPinhao:this.getNum('dentesPinhao'),numFios:parseInt(document.getElementById('numFios').value),horasPorDia:this.getNum('horasCorr'),classeCarga:document.getElementById('classeCorr').value,cargaChoque:document.getElementById('cargaChoque').checked,correnteForcada:document.getElementById('correnteForcada').value||undefined});else Object.assign(e,{dentesPinhao:this.getNum('dentesPinhaoS'),horasPorDia:this.getNum('horasS'),classeCarga:document.getElementById('classeSinc').value,perfilForcado:document.getElementById('perfilHtd').value||undefined,larguraForcada:this.getNum('larguraHtd')});return e;},
+
+  validarCampos(){const ids=['potencia','rpm','relacao','dist'],erros=[];ids.forEach(id=>{const v=this.getNum(id),ok=Number.isFinite(v)&&v>0&&(id!=='relacao'||v>=1);document.getElementById(id).classList.toggle('invalid',!ok);if(!ok)erros.push(id);});const ef=this.getNum('eficiencia'),efOk=!document.getElementById('eficiencia').value||(ef>=50&&ef<=100);document.getElementById('eficiencia').classList.toggle('invalid',!efOk);const tol=this.getNum('tolerancia'),tolOk=Number.isFinite(tol)&&tol>=0;document.getElementById('tolerancia').classList.toggle('invalid',!tolOk);return erros.length===0&&efOk&&tolOk;},
+
+  calcular(){
+    this.validarCampos();const e=this.entradasModulo();let r;
+    try{r=this.state.modulo==='correiaV'?dimensionarCorreiaV(e):this.state.modulo==='corrente'?dimensionarCorrente(e):dimensionarSincrona(e);}catch(err){console.error(err);r={ok:false,erros:['Erro interno de cálculo: '+err.message]};}
+    this.aplicarResultado(r);return r;
+  },
+
+  aplicarResultado(r){
+    this.state.otimizacoes=[];this.state.comparacao=[];
+    if(!r||!r.ok){this.state.resultado=null;this.renderAlertas(r||{ok:false,erros:['Resultado indisponível.']});this.limparResultados();this.aba('resumo');return;}
+    this.state.resultado=r;this.renderAlertas(r);if(r.modulo==='correiaV')this.renderCorreiaV(r);else if(r.modulo==='corrente')this.renderCorrente(r);else this.renderSincrona(r);this.renderManutencao(r);this.renderOtimizacao();this.desenhar(r);if(!ABAS.includes(this.state.abaAtiva)||this.state.abaAtiva==='otimizacao')this.state.abaAtiva='resumo';this.aba(this.state.abaAtiva);this.salvarSilencioso();
+  },
+
+  limparResultados(){ABAS.forEach(a=>{const el=document.getElementById('aba-'+a);el.innerHTML=a==='resumo'?'<div class="result-empty"><div><div class="text-4xl mb-3">⚠️</div><div class="font-semibold text-gray-300">Cálculo não concluído</div><div class="text-sm mt-1">Corrija os dados destacados. Resultados anteriores foram removidos para evitar interpretação indevida.</div></div></div>':'<div class="result-empty">Sem resultados válidos para esta seção.</div>';});},
+
+  renderAlertas(r){
+    const c=document.getElementById('alertasContainer');c.innerHTML='';
+    if(this.state.contextoExemplo){const d=document.createElement('div');d.className='bg-blue-900/30 border border-blue-600 rounded p-3 text-blue-200 text-sm';d.textContent='📌 '+this.state.contextoExemplo;c.appendChild(d);}
+    if(this.state.mensagemTemporaria){const d=document.createElement('div');d.className='bg-emerald-900/35 border border-emerald-600 rounded p-3 text-emerald-200 text-sm';d.textContent='✅ '+this.state.mensagemTemporaria;c.appendChild(d);this.state.mensagemTemporaria='';}
+    if(!r.ok){(r.erros||['Erro não identificado.']).forEach(msg=>{const d=document.createElement('div');d.className='bg-red-900/50 border border-red-500 rounded p-3 text-red-300 text-sm';d.textContent='❌ '+msg;c.appendChild(d);});return;}
+    if(!r.alertas.length){const d=document.createElement('div');d.className='bg-green-900/30 border border-green-600 rounded p-3 text-green-300 text-sm';d.textContent='✅ Geometria, relação e capacidade dentro dos critérios adotados.';c.appendChild(d);}else r.alertas.forEach(msg=>{const d=document.createElement('div');d.className='bg-yellow-900/50 border border-yellow-500 rounded p-3 text-yellow-300 text-sm';d.textContent='⚠️ '+msg;c.appendChild(d);});
+  },
+
+  linha(k,v,classe='text-amber-400'){return `<div class="flex justify-between gap-4 py-2 border-b border-industrial-800"><span class="text-gray-400 text-sm">${escapeHtml(k)}</span><span class="font-mono text-right ${classe}">${v}</span></div>`;},
+  cabecalhoResultado(titulo,subtitulo,meta){return `<div class="flex flex-wrap items-baseline gap-3 mb-4 pb-3 border-b border-industrial-700"><span class="text-4xl font-bold text-amber-400 font-mono">${titulo}</span><div><div class="text-gray-300">${subtitulo}</div><div class="text-xs text-gray-500 font-mono">${meta}</div></div></div>`;},
+
+  renderCorreiaV(r){
+    document.getElementById('aba-resumo').innerHTML=this.cabecalhoResultado(String(r.n),`correia${r.n!==1?'s':''} · perfil <span class="font-mono border border-gray-500 px-2 py-0.5 rounded">${r.perfil}</span>`,`polias ${fmtFlex(r.dMenor,0)} / ${fmtFlex(r.geo.dMaior,0)} mm · ${r.perfilAuto?'perfil automático':'perfil fixado'}`)+this.linha('Fator de serviço (Ks)',fmt(r.ks,2))+this.linha('Potência de projeto',fmt(r.potProj,2)+' kW')+this.linha('Capacidade total',fmt(r.capTotal,2)+' kW')+this.linha('Margem de capacidade',pct(r.margemPct,1),classeCorMargem(r.margemPct))+this.linha('Eficiência aplicada',pct(r.eta*100,1))+this.linha('Potência útil estimada',fmt(r.potenciaSaida,2)+' kW')+'<div id="canvasWrap" class="mt-4"></div>';
+    document.getElementById('aba-geometria').innerHTML=this.linha('Polia menor (d)',fmtFlex(r.dMenor,1)+' mm')+this.linha('Polia maior (D)',fmtFlex(r.geo.dMaior,1)+' mm')+this.linha('Arco de abraçamento — menor',fmt(r.geo.arcoMenorGraus,1)+'°')+this.linha('Comprimento teórico',fmt(r.geo.comprimentoTeorico,0)+' mm')+this.linha('Comprimento comercial',fmtFlex(r.geo.comprimentoPadrao,0)+' mm')+this.linha('Entre-centros solicitado',fmt(r.geo.distCentrosSolicitada,1)+' mm')+this.linha('Entre-centros corrigido',fmt(r.geo.distCentrosCorrigida,1)+' mm')+this.linha('Desvio do entre-centros',pct(r.geo.desvioCentroPct,1));
+    document.getElementById('aba-cinematica').innerHTML=this.linha('Relação real',fmt(r.relacaoReal,4)+':1')+this.linha('Erro da relação',pct(r.erroRelacaoPct,3))+this.linha('Velocidade da correia',fmt(r.v,2)+' m/s')+this.linha('Rotação de saída',fmt(r.rpmSaida,0)+' rpm')+this.linha('Torque no motor',fmt(r.torqueMotor,1)+' N·m')+this.linha('Torque útil na saída',fmt(r.torqueSaida,1)+' N·m')+this.linha('Perdas estimadas',fmt(r.perdasKw,2)+' kW')+this.linha('Frequência de ciclo da correia',fmt(r.frequenciaCicloHz,2)+' Hz');
+    document.getElementById('aba-capacidade').innerHTML=this.linha('Fração de Euler',fmt(r.euler.fatorEuler,3))+this.linha('Razão de tensões',fmt(r.euler.razaoTensoes,2))+this.linha('Força centrífuga',fmt(r.euler.Fc,0)+' N')+this.linha('Força útil por correia',fmt(r.euler.Futil,0)+' N')+this.linha('Coeficiente de comprimento',fmt(r.cComp,3))+this.linha('Capacidade por correia',fmt(r.potPorCorreia,2)+' kW')+this.linha('Nº exato de correias',fmt(r.nExato,2))+this.linha('Nº adotado',String(r.n))+this.linha('Carga radial estimada no conjunto',fmt(r.cargaRadialTotal/1000,2)+' kN');
+  },
+
+  renderCorrente(r){
+    document.getElementById('aba-resumo').innerHTML=this.cabecalhoResultado('ANSI '+r.corrente,`${r.numFios} fio${r.numFios>1?'s':''} · pinhão <span class="font-mono border border-gray-500 px-2 py-0.5 rounded">${r.N1}z</span>`,`passo ${fmtFlex(r.passoMm,3)} mm · coroa ${r.N2}z`)+this.linha('Fator de serviço (Ks)',fmt(r.ks,2))+this.linha('Potência de projeto',fmt(r.potProj,2)+' kW')+this.linha('Capacidade total',fmt(r.capTotal,2)+' kW')+this.linha('Margem de capacidade',pct(r.margemPct,1),classeCorMargem(r.margemPct))+this.linha('Fator de segurança',fmt(r.fatorSeguranca,1))+this.linha('Lubrificação',escapeHtml(r.lubrificacao.tipo))+'<div id="canvasWrap" class="mt-4"></div>';
+    document.getElementById('aba-geometria').innerHTML=this.linha('Dentes pinhão · coroa',r.N1+' · '+r.N2)+this.linha('Ø primitivo do pinhão',fmt(r.geo.dPrimitivoPinhaoMm,1)+' mm')+this.linha('Ø primitivo da coroa',fmt(r.geo.dPrimitivoCoroaMm,1)+' mm')+this.linha('Ângulo de contato',fmt(r.geo.anguloContatoPinhaoGraus,1)+'°')+this.linha('Comprimento teórico',fmt(r.geo.comprimentoTeoricoPassos,2)+' passos')+this.linha('Comprimento adotado',r.geo.comprimentoPassos+' passos · '+fmt(r.geo.comprimentoMm,0)+' mm')+this.linha('Entre-centros corrigido',fmt(r.geo.distCentrosCorrigidaMm,1)+' mm')+this.linha('Desvio do entre-centros',pct(r.geo.desvioCentroPct,1));
+    document.getElementById('aba-cinematica').innerHTML=this.linha('Relação real',fmt(r.relacaoReal,4)+':1')+this.linha('Erro da relação',pct(r.erroRelacaoPct,3),r.erroRelacaoPct<=this.getNum('tolerancia')?'text-green-300':'text-red-300')+this.linha('Velocidade da corrente',fmt(r.v,2)+' m/s')+this.linha('Rotação de saída',fmt(r.rpmSaida,0)+' rpm')+this.linha('Torque no motor',fmt(r.torqueMotor,1)+' N·m')+this.linha('Torque útil na saída',fmt(r.torqueSaida,1)+' N·m')+this.linha('Perdas estimadas',fmt(r.perdasKw,2)+' kW')+this.linha('Frequência de engrenamento',fmt(r.frequenciaEngrenamentoHz,1)+' Hz')+this.linha('Efeito poligonal',pct(r.efeitoPoligonal,2));
+    document.getElementById('aba-capacidade').innerHTML=this.linha('Carga de ruptura por fio',fmt(r.rupturaKN,1)+' kN')+this.linha('Tração de projeto',fmt(r.tracaoN/1000,2)+' kN')+this.linha('Fator de segurança',fmt(r.fatorSeguranca,1))+this.linha('Modo limitante',escapeHtml(r.modoLimitante))+this.linha('Capacidade por fio',fmt(r.capPorFio,2)+' kW')+this.linha('Capacidade total',fmt(r.capTotal,2)+' kW')+this.linha('Massa estimada da corrente',fmt(r.massaCorrenteKg,2)+' kg')+this.linha('Eficiência aplicada',pct(r.eta*100,1));
+  },
+
+  renderSincrona(r){
+    document.getElementById('aba-resumo').innerHTML=this.cabecalhoResultado(r.perfil,`largura <span class="font-mono border border-gray-500 px-2 py-0.5 rounded">${r.larguraMm} mm</span>`,`passo ${r.passoMm} mm · z1=${r.z1} · z2=${r.z2}`)+this.linha('Fator de serviço (Ks)',fmt(r.ks,2))+this.linha('Potência de projeto',fmt(r.potProj,2)+' kW')+this.linha('Capacidade transmissível',fmt(r.potTransmissivel,2)+' kW')+this.linha('Margem de capacidade',pct(r.margemPct,1),classeCorMargem(r.margemPct))+this.linha('Dentes em contato',r.ze+(r.ze<6?' ⚠':'') )+this.linha('Eficiência aplicada',pct(r.eta*100,1))+'<div id="canvasWrap" class="mt-4"></div>';
+    document.getElementById('aba-geometria').innerHTML=this.linha('Dentes polia menor · maior',r.z1+' · '+r.z2)+this.linha('Ø primitivo menor',fmt(r.geo.dPrimitivoPinhaoMm,1)+' mm')+this.linha('Ø primitivo maior',fmt(r.geo.dPrimitivoCoroaMm,1)+' mm')+this.linha('Arco de abraçamento',fmt(r.geo.arcoMenorGraus,1)+'°')+this.linha('Comprimento teórico',fmt(r.geo.comprimentoTeoricoMm,0)+' mm')+this.linha('Comprimento adotado',fmtFlex(r.geo.comprimentoPadraoMm,0)+' mm · '+r.geo.dentesCorreia+' dentes')+this.linha('Entre-centros corrigido',fmt(r.geo.distCentrosCorrigidaMm,1)+' mm')+this.linha('Desvio do entre-centros',pct(r.geo.desvioCentroPct,1));
+    document.getElementById('aba-cinematica').innerHTML=this.linha('Relação real',fmt(r.relacaoReal,4)+':1')+this.linha('Erro da relação',pct(r.erroRelacaoPct,3),r.erroRelacaoPct<=this.getNum('tolerancia')?'text-green-300':'text-red-300')+this.linha('Velocidade da correia',fmt(r.v,2)+' m/s')+this.linha('Rotação de saída',fmt(r.rpmSaida,0)+' rpm')+this.linha('Torque no motor',fmt(r.torqueMotor,1)+' N·m')+this.linha('Torque útil na saída',fmt(r.torqueSaida,1)+' N·m')+this.linha('Perdas estimadas',fmt(r.perdasKw,2)+' kW')+this.linha('Frequência de engrenamento',fmt(r.frequenciaEngrenamentoHz,1)+' Hz');
+    document.getElementById('aba-capacidade').innerHTML=this.linha('Perfil · largura',r.perfil+' · '+r.larguraMm+' mm')+this.linha('Dentes em contato',String(r.ze))+this.linha('Fator de contato',fmt(fatorZe(r.ze),2))+this.linha('Capacidade transmissível',fmt(r.potTransmissivel,2)+' kW')+this.linha('Potência de projeto',fmt(r.potProj,2)+' kW')+this.linha('Margem',pct(r.margemPct,1),classeCorMargem(r.margemPct))+this.linha('Índice de material',fmt(r.indiceMaterial,2));
+  },
+
+  renderManutencao(r){const cards=r.recomendacoes.map((x,i)=>`<div class="flex gap-3 p-3 rounded-lg border border-industrial-700 bg-industrial-800/50"><span class="w-6 h-6 flex-none rounded-full bg-amber-500/20 text-amber-300 flex items-center justify-center font-mono text-xs">${i+1}</span><span class="text-sm text-gray-300 leading-relaxed">${escapeHtml(x)}</span></div>`).join('');let extra='';if(r.modulo==='corrente')extra=`<div class="mb-4 p-4 rounded-lg bg-blue-900/25 border border-blue-600"><div class="font-semibold text-blue-200">Regime de lubrificação: ${escapeHtml(r.lubrificacao.tipo)}</div><div class="text-sm text-blue-100/80 mt-1">${escapeHtml(r.lubrificacao.descricao)}</div></div>`;document.getElementById('aba-manutencao').innerHTML=`<div class="mb-4"><div class="text-xs uppercase tracking-widest text-gray-500">Ambiente considerado</div><div class="font-semibold text-gray-200 mt-1">${escapeHtml(AMBIENTES[r.ambiente]||r.ambiente)}</div></div>${extra}<div class="space-y-2">${cards}</div><div class="mt-4 text-xs text-gray-500">As recomendações são orientativas; intervalos e produtos devem seguir o fabricante e o plano de manutenção do equipamento.</div>`;},
+
+  renderOtimizacao(){
+    const box=document.getElementById('aba-otimizacao'),alts=this.state.otimizacoes,comp=this.state.comparacao;let html='<div class="flex flex-wrap gap-2 mb-4"><button onclick="App.otimizar()" class="px-3 py-2 rounded-lg bg-emerald-700 hover:bg-emerald-600 text-sm font-semibold">🔎 Pesquisar alternativas</button><button onclick="App.compararTecnologias()" class="px-3 py-2 rounded-lg bg-violet-700 hover:bg-violet-600 text-sm font-semibold">⚖️ Comparar tecnologias</button></div>';
+    if(alts.length){html+=`<div class="mb-5"><h4 class="font-bold text-amber-300 mb-2">Alternativas para ${escapeHtml(OBJETIVOS[document.getElementById('objetivo').value])}</h4>${this.tabelaAlternativas(alts)}</div>`;}
+    if(comp.length){html+=`<div class="mt-6"><h4 class="font-bold text-violet-300 mb-2">Comparação entre tecnologias</h4>${this.tabelaComparacao(comp)}<p class="text-xs text-gray-500 mt-2">Os índices de material e envelope são comparativos internos, não constituem orçamento ou massa certificada do conjunto completo.</p></div>`;}
+    if(!alts.length&&!comp.length)html+='<div class="result-empty"><div><div class="text-4xl mb-3">🔎</div><div class="font-semibold text-gray-300">Otimização ainda não executada</div><div class="text-sm mt-1 max-w-lg">O sistema pesquisará combinações comerciais de perfis, diâmetros, dentes, larguras e número de fios, respeitando capacidade, geometria e tolerância da relação.</div></div></div>';
+    box.innerHTML=html;
+  },
+
+  tabelaAlternativas(alts){return `<div class="overflow-x-auto soft-scroll"><table class="w-full text-sm min-w-[760px]"><thead class="text-gray-400 bg-industrial-800"><tr><th class="text-left p-2">#</th><th class="text-left p-2">Solução</th><th class="text-right p-2">Relação</th><th class="text-right p-2">Erro</th><th class="text-right p-2">Margem</th><th class="text-right p-2">Material</th><th class="p-2"></th></tr></thead><tbody>${alts.map((a,i)=>`<tr class="border-t border-industrial-800"><td class="p-2 font-mono text-gray-500">${i+1}</td><td class="p-2"><div class="font-semibold text-gray-200">${escapeHtml(a.titulo)}</div><div class="text-xs text-gray-500">${escapeHtml(a.subtitulo)} · ${escapeHtml(a.detalheMaterial)}</div></td><td class="p-2 text-right font-mono text-amber-300">${fmt(a.relacaoReal,4)}</td><td class="p-2 text-right font-mono ${a.erroRelacaoPct<=this.getNum('tolerancia')?'text-green-300':'text-yellow-300'}">${pct(a.erroRelacaoPct,2)}</td><td class="p-2 text-right font-mono ${classeCorMargem(a.margemPct)}">${pct(a.margemPct,1)}</td><td class="p-2 text-right font-mono text-gray-300">${fmt(a.indiceMaterial,2)}</td><td class="p-2 text-right"><button onclick="App.aplicarAlternativa(${i})" class="px-3 py-1.5 bg-amber-600 hover:bg-amber-500 rounded text-white text-xs font-semibold">Aplicar</button></td></tr>`).join('')}</tbody></table></div>`;},
+
+  tabelaComparacao(comp){return `<div class="overflow-x-auto soft-scroll"><table class="w-full text-sm min-w-[760px]"><thead class="text-gray-400 bg-industrial-800"><tr><th class="text-left p-2">Tecnologia</th><th class="text-left p-2">Melhor alternativa</th><th class="text-right p-2">Eficiência</th><th class="text-right p-2">Erro</th><th class="text-right p-2">Margem</th><th class="p-2"></th></tr></thead><tbody>${comp.map((a,i)=>`<tr class="border-t border-industrial-800"><td class="p-2 font-semibold text-violet-300">${escapeHtml(a.nomeModulo)}</td><td class="p-2"><div class="text-gray-200">${escapeHtml(a.titulo)}</div><div class="text-xs text-gray-500">${escapeHtml(a.subtitulo)}</div></td><td class="p-2 text-right font-mono">${pct(a.eficiencia*100,1)}</td><td class="p-2 text-right font-mono">${pct(a.erroRelacaoPct,2)}</td><td class="p-2 text-right font-mono ${classeCorMargem(a.margemPct)}">${pct(a.margemPct,1)}</td><td class="p-2 text-right"><button onclick="App.aplicarComparacao(${i})" class="px-3 py-1.5 bg-violet-700 hover:bg-violet-600 rounded text-white text-xs font-semibold">Aplicar</button></td></tr>`).join('')}</tbody></table></div>`;},
+
+  otimizar(){
+    const r=this.calcular();if(!r||!r.ok)return;const e=this.entradasModulo(),obj=document.getElementById('objetivo').value;let alts=this.state.modulo==='correiaV'?gerarAlternativasCorreiaV(e,obj):this.state.modulo==='corrente'?gerarAlternativasCorrente(e,obj):gerarAlternativasSincrona(e,obj);this.state.otimizacoes=alts;this.state.comparacao=[];if(!alts.length){this.state.mensagemTemporaria='Nenhuma alternativa viável foi encontrada dentro dos limites de pesquisa.';this.renderAlertas({...r,alertas:[...r.alertas,'Amplie a tolerância da relação, altere o entre-centros ou reveja a potência.']});}this.renderOtimizacao();this.aba('otimizacao');
+  },
+
+  compararTecnologias(){
+    const comum=this.entradasComuns(),obj=document.getElementById('objetivo').value;
+    if(!(comum.potenciaKw>0&&comum.rpmMotor>0&&comum.relacao>=1&&comum.distCentrosMm>0)){this.calcular();return;}
+    const eV={...comum,eficiencia:EFICIENCIA_PADRAO.correiaV,classeCarga:document.getElementById('classe').value,horasPorDia:this.getNum('horas'),motorAltoTorque:document.getElementById('altotorque').checked};
+    const eC={...comum,eficiencia:EFICIENCIA_PADRAO.corrente,classeCarga:document.getElementById('classeCorr').value,horasPorDia:this.getNum('horasCorr'),cargaChoque:document.getElementById('cargaChoque').checked};
+    const eS={...comum,eficiencia:EFICIENCIA_PADRAO.sincronizada,classeCarga:document.getElementById('classeSinc').value,horasPorDia:this.getNum('horasS')};
+    const grupos=[['correiaV','Correias em V',gerarAlternativasCorreiaV(eV,obj)[0],EFICIENCIA_PADRAO.correiaV],['sincronizada','Correia sincronizada',gerarAlternativasSincrona(eS,obj)[0],EFICIENCIA_PADRAO.sincronizada],['corrente','Corrente de rolos',gerarAlternativasCorrente(eC,obj)[0],EFICIENCIA_PADRAO.corrente]];
+    this.state.comparacao=grupos.filter(x=>x[2]).map(([modulo,nome,a,ef])=>({...a,modulo,nomeModulo:nome,eficiencia:ef}));this.state.otimizacoes=[];this.renderOtimizacao();this.aba('otimizacao');
+  },
+
+  aplicarAlternativa(i){const a=this.state.otimizacoes[i];if(a)this.aplicarDadosAlternativa(a);},
+  aplicarComparacao(i){const a=this.state.comparacao[i];if(a)this.aplicarDadosAlternativa(a);},
+  aplicarDadosAlternativa(a){
+    this.selecionarModulo(a.modulo,{naoCalcular:true});
+    if(a.modulo==='correiaV'){this.set('perfil',a.dados.perfil);this.set('dMenorV',a.dados.dMenor);this.set('relacao',a.dados.relacao);this.set('dist',Math.round(a.dados.dist));}
+    else if(a.modulo==='corrente'){this.set('correnteForcada',a.dados.corrente);this.set('numFios',a.dados.numFios);this.set('dentesPinhao',a.dados.N1);this.set('relacao',a.dados.relacao);this.set('dist',Math.round(a.dados.dist));}
+    else{this.set('perfilHtd',a.dados.perfil);this.atualizarLargurasHtd();this.set('larguraHtd',a.dados.largura);this.set('dentesPinhaoS',a.dados.z1);this.set('relacao',a.dados.relacao);this.set('dist',Math.round(a.dados.dist));}
+    this.state.mensagemTemporaria='Alternativa aplicada aos campos de entrada.';this.state.contextoExemplo='';this.calcular();this.aba('resumo');
+  },
+
+  desenhar(r){
+    const wrap=document.getElementById('canvasWrap');if(!wrap)return;const W=520,H=190,cx1=120,cx2=400,cy=H/2;
+    let d1,d2,label1,label2,top;
+    if(r.modulo==='correiaV'){d1=r.dMenor;d2=r.geo.dMaior;label1='d='+fmtFlex(d1,0);label2='D='+fmtFlex(d2,0);top=`${r.perfil} · C=${fmtFlex(r.geo.distCentrosCorrigida,0)} mm`;}
+    else if(r.modulo==='corrente'){d1=r.geo.dPrimitivoPinhaoMm;d2=r.geo.dPrimitivoCoroaMm;label1=r.N1+'z';label2=r.N2+'z';top=`ANSI ${r.corrente} · C=${fmtFlex(r.geo.distCentrosCorrigidaMm,0)} mm`;}
+    else{d1=r.geo.dPrimitivoPinhaoMm;d2=r.geo.dPrimitivoCoroaMm;label1=r.z1+'z';label2=r.z2+'z';top=`${r.perfil} · ${r.larguraMm} mm · C=${fmtFlex(r.geo.distCentrosCorrigidaMm,0)} mm`;}
+    const esc=Math.min(70/(d2/2),1.4),r1=Math.max(14,d1*esc/2),r2=Math.max(20,d2*esc/2),ang=Math.asin(clamp((r2-r1)/(cx2-cx1),-0.95,0.95));
+    const t1x=cx1+r1*Math.sin(ang),t1y=cy-r1*Math.cos(ang),t2x=cx2+r2*Math.sin(ang),t2y=cy-r2*Math.cos(ang),b1x=cx1-r1*Math.sin(ang),b1y=cy+r1*Math.cos(ang),b2x=cx2-r2*Math.sin(ang),b2y=cy+r2*Math.cos(ang);
+    wrap.innerHTML=`<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Esquema geométrico da transmissão"><path class="belt" d="M ${t1x} ${t1y} L ${t2x} ${t2y} A ${r2} ${r2} 0 1 1 ${b2x} ${b2y} L ${b1x} ${b1y} A ${r1} ${r1} 0 1 1 ${t1x} ${t1y} Z"/><circle class="pulley" cx="${cx1}" cy="${cy}" r="${r1}"/><circle class="pulley" cx="${cx2}" cy="${cy}" r="${r2}"/><circle class="hub" cx="${cx1}" cy="${cy}" r="4"/><circle class="hub" cx="${cx2}" cy="${cy}" r="4"/><text x="${cx1}" y="${cy+r1+18}" text-anchor="middle">${label1}</text><text x="${cx2}" y="${cy+r2+18}" text-anchor="middle">${label2}</text><text x="${(cx1+cx2)/2}" y="16" text-anchor="middle">${top}</text></svg>`;
+  },
+
+  aba(nome){if(!ABAS.includes(nome))nome='resumo';this.state.abaAtiva=nome;ABAS.forEach(a=>{document.getElementById('aba-'+a).classList.toggle('hidden',a!==nome);document.getElementById('tab-'+a).classList.toggle('tab-active',a===nome);});},
+
+  snapshot(){const ids=['potencia','rpm','relacao','dist','eficiencia','tolerancia','ambiente','objetivo','classe','horas','perfil','dMenorV','dentesPinhao','numFios','horasCorr','classeCorr','correnteForcada','dentesPinhaoS','horasS','classeSinc','perfilHtd','larguraHtd','projeto','responsavel','registro','revisao','observacoes'];const d={versao:VERSAO,modulo:this.state.modulo,altotorque:document.getElementById('altotorque').checked,cargaChoque:document.getElementById('cargaChoque').checked};ids.forEach(id=>{const el=document.getElementById(id);if(el)d[id]=el.value;});return d;},
+  aplicarSnapshot(d){if(!d||typeof d!=='object')return false;Object.entries(d).forEach(([id,v])=>{const el=document.getElementById(id);if(el&&id!=='larguraHtd'&&id!=='altotorque'&&id!=='cargaChoque')el.value=v??'';});document.getElementById('altotorque').checked=!!d.altotorque;document.getElementById('cargaChoque').checked=!!d.cargaChoque;this.atualizarLargurasHtd();if(d.larguraHtd!==undefined)this.set('larguraHtd',d.larguraHtd);if(MODULOS.includes(d.modulo))this.state.modulo=d.modulo;return true;},
+
+  salvar(){if(this.salvarSilencioso())alert('💾 Projeto salvo no navegador.');},
+  salvarSilencioso(){try{localStorage.setItem(this.KEY,JSON.stringify(this.snapshot()));return true;}catch(err){console.error(err);return false;}},
+  carregar(silencioso=false){
+    try{let raw=localStorage.getItem(this.KEY),origem=this.KEY;if(!raw){for(const k of this.LEGACY_KEYS){raw=localStorage.getItem(k);if(raw){origem=k;break;}}}if(!raw){if(!silencioso)alert('Nenhum projeto salvo foi encontrado.');return false;}const d=JSON.parse(raw);this.aplicarSnapshot(d);if(origem!==this.KEY)this.salvarSilencioso();if(!silencioso){this.selecionarModulo(this.state.modulo,{naoSalvar:true});this.state.mensagemTemporaria='Projeto carregado do navegador.';this.calcular();}return true;}catch(err){console.error('Dados salvos corrompidos:',err);if(!silencioso)alert('Não foi possível carregar os dados salvos.');return false;}
+  },
+
+  exportarJSON(){
+    const r=this.calcular();if(!r||!r.ok){alert('Corrija os dados antes de exportar.');return;}const out={aplicativo:'TransmissãoPro',versao:VERSAO,data:new Date().toISOString(),modulo:this.state.modulo,snapshot:this.snapshot(),entradas:this.entradasModulo(),resultado:r,otimizacoes:this.state.otimizacoes,comparacao:this.state.comparacao,metadados:{projeto:document.getElementById('projeto').value,responsavel:document.getElementById('responsavel').value,registro:document.getElementById('registro').value,revisao:document.getElementById('revisao').value,observacoes:document.getElementById('observacoes').value}};const blob=new Blob([JSON.stringify(out,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`TransmissaoPro_v${VERSAO}_${this.state.modulo}_${Date.now()}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),0);
+  },
+
+  importarJSON(event){const file=event.target.files?.[0];event.target.value='';if(!file)return;const rd=new FileReader();rd.onload=()=>{try{const obj=JSON.parse(rd.result);if(obj.snapshot)this.aplicarSnapshot(obj.snapshot);else if(obj.modulo&&obj.entradas){const s={modulo:obj.modulo,potencia:obj.entradas.potenciaKw,rpm:obj.entradas.rpmMotor,relacao:obj.entradas.relacao||obj.entradas.relacaoSolicitada,dist:obj.entradas.distCentrosMm};this.aplicarSnapshot(s);}else throw new Error('Estrutura de arquivo não reconhecida.');this.selecionarModulo(this.state.modulo,{naoCalcular:true});this.state.mensagemTemporaria='Projeto importado do arquivo JSON.';this.calcular();}catch(err){alert('Falha ao importar JSON: '+err.message);}};rd.onerror=()=>alert('Não foi possível ler o arquivo.');rd.readAsText(file,'utf-8');},
+
+  dadosRelatorio(r){
+    const comum=[['Módulo',r.modulo],['Potência do motor',fmt(this.getNum('potencia'),2)+' kW'],['Rotação do motor',fmt(this.getNum('rpm'),0)+' rpm'],['Relação solicitada',fmt(this.getNum('relacao'),4)+':1'],['Entre-centros solicitado',fmt(this.getNum('dist'),1)+' mm'],['Eficiência aplicada',pct(r.eta*100,1)],['Ambiente',AMBIENTES[r.ambiente]||r.ambiente]];
+    let res=[];if(r.modulo==='correiaV')res=[['Seleção',`${r.n} correia(s), perfil ${r.perfil}`],['Polias',`${fmtFlex(r.dMenor,0)} / ${fmtFlex(r.geo.dMaior,0)} mm`],['Comprimento',r.geo.comprimentoPadrao+' mm'],['Potência de projeto',fmt(r.potProj,2)+' kW'],['Capacidade total',fmt(r.capTotal,2)+' kW'],['Margem',pct(r.margemPct,1)],['Rotação de saída',fmt(r.rpmSaida,0)+' rpm'],['Torque útil de saída',fmt(r.torqueSaida,1)+' N·m']];else if(r.modulo==='corrente')res=[['Seleção',`ANSI ${r.corrente}, ${r.numFios} fio(s)`],['Rodas',`${r.N1}/${r.N2} dentes`],['Comprimento',`${r.geo.comprimentoPassos} passos`],['Potência de projeto',fmt(r.potProj,2)+' kW'],['Capacidade total',fmt(r.capTotal,2)+' kW'],['Fator de segurança',fmt(r.fatorSeguranca,1)],['Lubrificação',r.lubrificacao.tipo],['Torque útil de saída',fmt(r.torqueSaida,1)+' N·m']];else res=[['Seleção',`${r.perfil}, largura ${r.larguraMm} mm`],['Polias',`${r.z1}/${r.z2} dentes`],['Comprimento',`${r.geo.comprimentoPadraoMm} mm`],['Potência de projeto',fmt(r.potProj,2)+' kW'],['Capacidade',fmt(r.potTransmissivel,2)+' kW'],['Dentes em contato',String(r.ze)],['Margem',pct(r.margemPct,1)],['Torque útil de saída',fmt(r.torqueSaida,1)+' N·m']];return{comum,res};
+  },
+  tabelaPrint(rows){return `<table style="width:100%;border-collapse:collapse;font-size:12px">${rows.map(([k,v])=>`<tr><td style="border-bottom:1px solid #ddd;padding:6px 8px;color:#444">${escapeHtml(k)}</td><td style="border-bottom:1px solid #ddd;padding:6px 8px;text-align:right;font-family:monospace">${escapeHtml(v)}</td></tr>`).join('')}</table>`;},
+  prepararImpressao(){
+    const r=this.calcular();const date=document.getElementById('printDate'),content=document.getElementById('printContent');date.textContent=new Date().toLocaleString('pt-BR');if(!r||!r.ok){content.innerHTML='<p>Não há cálculo válido para emissão do relatório.</p>';return;}
+    const d=this.dadosRelatorio(r),meta=[['Projeto / equipamento',document.getElementById('projeto').value||'Não informado'],['Responsável técnico',document.getElementById('responsavel').value||'Não informado'],['Registro profissional',document.getElementById('registro').value||'Não informado'],['Revisão',document.getElementById('revisao').value||'00']];
+    const formula=r.modulo==='correiaV'?'Pproj = Pmotor × Ks; v = π·d·n/60000; ΔT = (Fadm − Fc)·(1 − e^(−μef·θ)); Pcorreia = ΔT·v·cL/1000.':r.modulo==='corrente'?'Pproj = Pmotor × Ks; a capacidade é limitada pelo menor valor entre fadiga das placas e impacto rolete-bucha; a geometria adota número par de passos.':'Pproj = Pmotor × Ks; Pcap = Fesp × largura × fator de dentes em contato × velocidade / 1000.';
+    const alerts=r.alertas.length?r.alertas:['Nenhum alerta para os critérios adotados.'],recs=r.recomendacoes;
+    let opt='';if(this.state.otimizacoes.length)opt=`<h3 style="margin-top:18px;border-bottom:1px solid #aaa;padding-bottom:4px">Alternativas otimizadas</h3>${this.tabelaPrint(this.state.otimizacoes.slice(0,5).map((a,i)=>[`${i+1}. ${a.titulo}`,`${a.subtitulo}; erro ${pct(a.erroRelacaoPct,2)}; margem ${pct(a.margemPct,1)}`]))}`;
+    content.innerHTML=`<h3 style="border-bottom:1px solid #aaa;padding-bottom:4px">Identificação</h3>${this.tabelaPrint(meta)}<h3 style="margin-top:18px;border-bottom:1px solid #aaa;padding-bottom:4px">Entradas e premissas</h3>${this.tabelaPrint(d.comum)}<h3 style="margin-top:18px;border-bottom:1px solid #aaa;padding-bottom:4px">Resultado</h3>${this.tabelaPrint(d.res)}<h3 style="margin-top:18px;border-bottom:1px solid #aaa;padding-bottom:4px">Formulação resumida</h3><p style="font-size:12px;line-height:1.55">${escapeHtml(formula)}</p><h3 style="margin-top:18px;border-bottom:1px solid #aaa;padding-bottom:4px">Alertas</h3><ul style="font-size:12px;line-height:1.55">${alerts.map(x=>`<li>${escapeHtml(x)}</li>`).join('')}</ul><h3 style="margin-top:18px;border-bottom:1px solid #aaa;padding-bottom:4px">Recomendações de instalação e manutenção</h3><ol style="font-size:12px;line-height:1.55">${recs.map(x=>`<li>${escapeHtml(x)}</li>`).join('')}</ol>${opt}<h3 style="margin-top:18px;border-bottom:1px solid #aaa;padding-bottom:4px">Observações</h3><p style="font-size:12px;white-space:pre-wrap">${escapeHtml(document.getElementById('observacoes').value||'Sem observações adicionais.')}</p><p style="margin-top:22px;font-size:10px;color:#555">Pré-dimensionamento gerado pelo TransmissãoPro v${VERSAO}. A seleção definitiva requer conferência das condições reais, normas aplicáveis e catálogo do fabricante.</p>`;
+  },
+
+  executarAutotestes(){
+    const testes=[];const t=(nome,fn)=>{try{const ok=!!fn();testes.push({nome,ok,erro:ok?'':'retorno falso'});}catch(err){testes.push({nome,ok:false,erro:err.message});}};
+    t('Correia V básica',()=>{const r=dimensionarCorreiaV({potenciaKw:5.5,rpmMotor:1750,relacao:1.8,distCentrosMm:500,classeCarga:'moderado',horasPorDia:8,motorAltoTorque:false,eficiencia:.95,toleranciaPct:1,ambiente:'normal'});return r.ok&&Number.isFinite(r.torqueSaida)&&r.relacaoReal===1.8;});
+    t('Erro de geometria controlado',()=>!dimensionarCorreiaV({potenciaKw:5,rpmMotor:1750,relacao:10,distCentrosMm:20,classeCarga:'leve',horasPorDia:8,eficiencia:.95,toleranciaPct:1,ambiente:'normal'}).ok);
+    t('Corrente básica',()=>{const r=dimensionarCorrente({potenciaKw:5.5,rpmMotor:1750,relacao:1.8,distCentrosMm:500,dentesPinhao:17,numFios:1,horasPorDia:8,classeCarga:'moderado',cargaChoque:false,eficiencia:.97,toleranciaPct:1,ambiente:'normal'});return r.ok&&Number.isFinite(r.relacaoReal)&&Number.isFinite(r.fatorSeguranca);});
+    t('Corrente forçada insuficiente sinalizada',()=>{const r=dimensionarCorrente({potenciaKw:200,rpmMotor:1200,relacao:2,distCentrosMm:900,dentesPinhao:17,numFios:1,horasPorDia:16,classeCarga:'pesado',cargaChoque:true,correnteForcada:'25',eficiencia:.97,toleranciaPct:1,ambiente:'normal'});return r.ok&&r.alertas.some(x=>x.includes('não atende'));});
+    t('Síncrona básica',()=>{const r=dimensionarSincrona({potenciaKw:5.5,rpmMotor:1750,relacao:2.5,distCentrosMm:450,dentesPinhao:28,horasPorDia:8,classeCarga:'moderado',perfilForcado:'8M',eficiencia:.98,toleranciaPct:1,ambiente:'normal'});return r.ok&&Number.isFinite(r.relacaoReal)&&r.geo.dentesCorreia>0;});
+    t('Otimização correia V',()=>gerarAlternativasCorreiaV({potenciaKw:5.5,rpmMotor:1750,relacao:1.8,distCentrosMm:500,classeCarga:'moderado',horasPorDia:8,motorAltoTorque:false,toleranciaPct:1},'equilibrado').length>0);
+    t('Otimização corrente',()=>gerarAlternativasCorrente({potenciaKw:5.5,rpmMotor:900,relacao:2,distCentrosMm:600,classeCarga:'moderado',horasPorDia:8,cargaChoque:false,toleranciaPct:1},'equilibrado').length>0);
+    t('Otimização síncrona',()=>gerarAlternativasSincrona({potenciaKw:5.5,rpmMotor:1200,relacao:2,distCentrosMm:500,classeCarga:'moderado',horasPorDia:8,toleranciaPct:1},'equilibrado').length>0);
+    return{total:testes.length,aprovados:testes.filter(x=>x.ok).length,falhas:testes.filter(x=>!x.ok)};
+  },
+
+  resetar(){if(confirm('Limpar todos os dados e reiniciar o sistema?')){localStorage.removeItem(this.KEY);location.reload();}}
+};
+
+window.App=App;
+document.addEventListener('DOMContentLoaded',()=>App.init());
+window.addEventListener('beforeprint',()=>App.prepararImpressao());
+</script>
+<!-- ===================== TELA DE ABERTURA (SPLASH 3D + AVISO LEGAL) ===================== -->
+<style>
+  @keyframes spRise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes spFade{from{opacity:0}to{opacity:1}}
+  @keyframes spLegal{from{opacity:0;transform:translateY(26px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
+  @keyframes spScan{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+  #splashRoot *{box-sizing:border-box}
+  body.splash-lock{overflow:hidden!important}
+  @media print{#splashRoot{display:none!important}}
+</style>
+<div id="splashRoot" style="position:fixed;inset:0;z-index:99999;font-family:Inter,system-ui,sans-serif;color:#e5e7eb;overflow:hidden;background:radial-gradient(120% 90% at 50% 30%, #12304f 0%, #0a1a2e 45%, #060d18 100%)">
+  <div id="splashStage" style="position:absolute;inset:0"></div>
+  <div style="position:absolute;inset:0;pointer-events:none;background:radial-gradient(70% 55% at 50% 45%, rgba(0,0,0,0) 40%, rgba(3,8,16,.75) 100%)"></div>
+
+  <div style="position:absolute;top:0;left:0;right:0;display:flex;justify-content:center;padding-top:clamp(36px,7vh,86px);pointer-events:none">
+    <div style="text-align:center;animation:spRise 1s cubic-bezier(.2,.8,.2,1) .35s both">
+      <div style="font-family:'JetBrains Mono',Consolas,monospace;font-size:11px;letter-spacing:.42em;text-transform:uppercase;color:#829ab1;margin-bottom:14px">Engenharia mecânica · método rastreável</div>
+      <h1 style="margin:0;font-size:clamp(38px,6.2vw,84px);font-weight:800;letter-spacing:-.03em;line-height:.95;color:#fff;text-shadow:0 18px 50px rgba(0,0,0,.55)">Transmissão<span style="color:#fbbf24">Pro</span></h1>
+      <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-top:16px;animation:spFade 1.1s ease 1.15s both">
+        <span style="height:1px;width:clamp(30px,7vw,80px);background:linear-gradient(90deg,transparent,#486581)"></span>
+        <span style="font-family:'JetBrains Mono',Consolas,monospace;font-size:12px;letter-spacing:.24em;color:#bcccdc">v5.0</span>
+        <span style="height:1px;width:clamp(30px,7vw,80px);background:linear-gradient(90deg,#486581,transparent)"></span>
+      </div>
+    </div>
+  </div>
+
+  <div id="splashFooter" style="position:absolute;bottom:0;left:0;right:0;display:flex;flex-direction:column;align-items:center;gap:18px;padding-bottom:clamp(28px,5vh,64px)">
+    <div style="font-family:'JetBrains Mono',Consolas,monospace;font-size:11px;letter-spacing:.3em;color:#627d98;animation:spFade 1s ease 1.6s both">CORREIAS EM V · SINCRONIZADAS · CORRENTES</div>
+    <div style="position:relative;width:min(360px,62vw);height:3px;border-radius:99px;background:rgba(70,101,129,.35);overflow:hidden;animation:spFade .6s ease .3s both">
+      <div id="splashBar" style="position:absolute;inset:0;transform-origin:left center;border-radius:99px;background:linear-gradient(90deg,#f59e0b,#fbbf24);transform:scaleX(0)"></div>
+      <div style="position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.5),transparent);animation:spScan 1.6s linear infinite"></div>
+    </div>
+    <button id="splashSkip" style="border:1px solid rgba(70,101,129,.55);background:rgba(10,26,46,.55);color:#9fb3c8;font-family:'JetBrains Mono',Consolas,monospace;font-size:11px;letter-spacing:.16em;padding:9px 18px;border-radius:99px;cursor:pointer;backdrop-filter:blur(6px);animation:spFade .8s ease 1.9s both">PULAR ›</button>
+  </div>
+
+  <div id="splashLegal" style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;padding:24px;background:rgba(4,10,20,.72);backdrop-filter:blur(14px) saturate(.9);overflow:auto">
+    <div style="width:min(720px,100%);background:linear-gradient(180deg,rgba(16,42,67,.96),rgba(10,26,46,.98));border:1px solid rgba(70,101,129,.6);border-radius:20px;box-shadow:0 40px 120px rgba(0,0,0,.65);padding:clamp(24px,3.4vw,44px);animation:spLegal .6s cubic-bezier(.2,.8,.2,1) both">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:22px">
+        <div style="width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#f59e0b,#d97706);box-shadow:0 8px 24px rgba(217,119,6,.35);color:#1a1005;font-weight:800;font-size:20px;font-family:'JetBrains Mono',Consolas,monospace">!</div>
+        <div>
+          <div style="font-family:'JetBrains Mono',Consolas,monospace;font-size:10px;letter-spacing:.34em;color:#829ab1;text-transform:uppercase">Termo de uso</div>
+          <h2 style="margin:2px 0 0;font-size:clamp(20px,2.4vw,28px);font-weight:800;letter-spacing:-.02em;color:#fff">Aviso legal</h2>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px;font-size:14px;line-height:1.65;color:#cbd5e1;max-height:38vh;overflow:auto;padding:18px 10px 18px 0;border-top:1px solid rgba(70,101,129,.35);border-bottom:1px solid rgba(70,101,129,.35)">
+        <p style="margin:0"><strong style="color:#fff">Ferramenta de apoio, não substitui o projeto.</strong> O TransmissãoPro v5.0 executa cálculos de dimensionamento de transmissões (correias em V, correias sincronizadas e correntes) com base nos dados informados pelo usuário e em catálogos e normas de referência. Os resultados têm caráter indicativo.</p>
+        <p style="margin:0"><strong style="color:#fff">Responsabilidade técnica.</strong> A verificação, a validação e a adoção de qualquer resultado são de responsabilidade exclusiva do profissional legalmente habilitado, que deve confrontar os valores com o catálogo do fabricante, as normas aplicáveis e as condições reais de operação.</p>
+        <p style="margin:0"><strong style="color:#fff">Sem garantias.</strong> O software é fornecido &ldquo;no estado em que se encontra&rdquo;, sem garantia de exatidão, adequação a finalidade específica ou ausência de erros. Os autores não respondem por perdas, danos materiais, falhas de equipamento, acidentes ou prejuízos decorrentes do uso ou da impossibilidade de uso desta ferramenta.</p>
+        <p style="margin:0"><strong style="color:#fff">Dados.</strong> Os dados inseridos e os projetos salvos permanecem no navegador do usuário. Os dados de cálculo não são enviados pelo aplicativo. Entretanto, bibliotecas visuais e fontes são carregadas de serviços externos quando houver conexão com a internet.</p>
+      </div>
+      <label style="display:flex;align-items:flex-start;gap:12px;margin:22px 0 20px;cursor:pointer;font-size:14px;color:#e5e7eb">
+        <input type="checkbox" id="splashAgree" style="width:20px;height:20px;margin:1px 0 0;accent-color:#f59e0b;cursor:pointer;flex:none">
+        <span>Declaro que li e compreendi o aviso legal e que assumo a responsabilidade técnica pela conferência e uso dos resultados.</span>
+      </label>
+      <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between">
+        <button id="splashEnter" disabled style="flex:1;min-width:240px;padding:15px 24px;border:none;border-radius:12px;font-weight:700;font-size:15px;font-family:Inter,system-ui,sans-serif;background:rgba(70,101,129,.28);color:#64748b;cursor:not-allowed">Concordo e acessar o sistema</button>
+        <button id="splashDecline" style="padding:15px 22px;border-radius:12px;border:1px solid rgba(70,101,129,.6);background:transparent;color:#9fb3c8;font-size:14px;font-weight:600;cursor:pointer;font-family:Inter,system-ui,sans-serif">Não concordo</button>
+      </div>
+      <div id="splashNotice" style="min-height:20px;margin-top:14px;font-family:'JetBrains Mono',Consolas,monospace;font-size:11px;letter-spacing:.08em;color:#f87171"></div>
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/three@0.134.0/build/three.min.js"></script>
+<script>
+(function(){
+  var DURATION=(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)?600:4000, root=document.getElementById('splashRoot');
+  document.body.classList.add('splash-lock');
+  var bar=document.getElementById('splashBar'), legal=document.getElementById('splashLegal'),
+      footer=document.getElementById('splashFooter'), notice=document.getElementById('splashNotice'),
+      agree=document.getElementById('splashAgree'), enter=document.getElementById('splashEnter');
+  var t0=performance.now(), done=false;
+  function showLegal(){
+    if(done) return; done=true;
+    bar.style.transform='scaleX(1)';
+    footer.style.transition='opacity .4s ease'; footer.style.opacity='0';
+    legal.style.display='flex'; legal.style.animation='spFade .5s ease both';
+  }
+  var tick=setInterval(function(){
+    var p=Math.min(1,(performance.now()-t0)/DURATION);
+    bar.style.transform='scaleX('+p+')';
+    if(p>=1){clearInterval(tick);showLegal();}
+  },60);
+  document.getElementById('splashSkip').addEventListener('click',function(){clearInterval(tick);showLegal();});
+  agree.addEventListener('change',function(){
+    notice.textContent='';
+    if(agree.checked){
+      enter.disabled=false;
+      enter.style.background='linear-gradient(135deg,#f59e0b,#d97706)';
+      enter.style.color='#1a1005'; enter.style.cursor='pointer';
+      enter.style.boxShadow='0 14px 34px rgba(217,119,6,.34)';
+    }else{
+      enter.disabled=true;
+      enter.style.background='rgba(70,101,129,.28)'; enter.style.color='#64748b';
+      enter.style.cursor='not-allowed'; enter.style.boxShadow='none';
+    }
+  });
+  document.getElementById('splashDecline').addEventListener('click',function(){
+    notice.textContent='▲ Sem a concordância com o aviso legal o acesso ao sistema não é liberado.';
+  });
+  enter.addEventListener('click',function(){
+    if(!agree.checked){notice.textContent='▲ Marque a concordância para prosseguir.';return;}
+    root.style.transition='opacity .55s ease'; root.style.opacity='0';
+    setTimeout(function(){
+      if(SP.raf) cancelAnimationFrame(SP.raf);
+      if(SP.ro) SP.ro.disconnect();
+      root.remove(); document.body.classList.remove('splash-lock');
+    },560);
+  });
+
+  var SP={};
+  function buildPath(T,c1,r1,c2,r2){
+    var d=c2.x-c1.x, nx=(r1-r2)/d, ny=Math.sqrt(Math.max(0,1-nx*nx)), th=Math.atan2(ny,nx), pts=[];
+    function push(x,y){pts.push(new T.Vector2(x,y));}
+    function seg(ax,ay,bx,by,n){for(var i=0;i<n;i++){var t=i/n;push(ax+(bx-ax)*t,ay+(by-ay)*t);}}
+    var p1u=[c1.x+r1*nx,c1.y+r1*ny],p2u=[c2.x+r2*nx,c2.y+r2*ny],
+        p2l=[c2.x+r2*nx,c2.y-r2*ny],p1l=[c1.x+r1*nx,c1.y-r1*ny];
+    seg(p1u[0],p1u[1],p2u[0],p2u[1],90);
+    for(var i=0;i<70;i++){var a=th-(2*th)*(i/70);push(c2.x+r2*Math.cos(a),c2.y+r2*Math.sin(a));}
+    seg(p2l[0],p2l[1],p1l[0],p1l[1],90);
+    var sweep=2*Math.PI-2*th;
+    for(var j=0;j<110;j++){var b=-th-sweep*(j/110);push(c1.x+r1*Math.cos(b),c1.y+r1*Math.sin(b));}
+    var cum=[0];
+    for(var k=1;k<=pts.length;k++){cum.push(cum[k-1]+pts[k-1].distanceTo(pts[k%pts.length]));}
+    return {pts:pts,cum:cum,total:cum[cum.length-1]};
+  }
+  function at(path,s){
+    var total=path.total,cum=path.cum,pts=path.pts;
+    var u=((s%total)+total)%total, lo=0, hi=cum.length-1;
+    while(hi-lo>1){var m=(lo+hi)>>1; if(cum[m]<=u) lo=m; else hi=m;}
+    var a=pts[lo], b=pts[(lo+1)%pts.length];
+    var f=(u-cum[lo])/Math.max(1e-6,cum[lo+1]-cum[lo]);
+    return {x:a.x+(b.x-a.x)*f,y:a.y+(b.y-a.y)*f,ang:Math.atan2(b.y-a.y,b.x-a.x)};
+  }
+  function sprocket(T,r,teeth,width,steel,accent,dark){
+    var g=new T.Group(), i, a;
+    var body=new T.Mesh(new T.CylinderGeometry(r*0.84,r*0.84,width,72),steel);
+    body.rotation.x=Math.PI/2; body.castShadow=true; body.receiveShadow=true; g.add(body);
+    var rim=new T.Mesh(new T.TorusGeometry(r*0.9,width*0.16,14,96),steel); rim.castShadow=true; g.add(rim);
+    var tg=new T.BoxGeometry(r*0.2,r*0.15,width*0.78);
+    for(i=0;i<teeth;i++){a=(i/teeth)*Math.PI*2;var t=new T.Mesh(tg,steel);
+      t.position.set(Math.cos(a)*r*0.97,Math.sin(a)*r*0.97,0);t.rotation.z=a;t.castShadow=true;g.add(t);}
+    var spoke=new T.BoxGeometry(r*0.64,r*0.16,width*0.55);
+    for(i=0;i<5;i++){a=(i/5)*Math.PI*2;var s=new T.Mesh(spoke,steel);
+      s.position.set(Math.cos(a)*r*0.5,Math.sin(a)*r*0.5,0);s.rotation.z=a;s.castShadow=true;g.add(s);}
+    var holeG=new T.CylinderGeometry(r*0.2,r*0.2,width*1.05,28);
+    for(i=0;i<5;i++){a=((i+0.5)/5)*Math.PI*2;var h=new T.Mesh(holeG,dark);
+      h.rotation.x=Math.PI/2;h.position.set(Math.cos(a)*r*0.52,Math.sin(a)*r*0.52,0);g.add(h);}
+    var hub=new T.Mesh(new T.CylinderGeometry(r*0.3,r*0.3,width*1.9,40),accent);
+    hub.rotation.x=Math.PI/2;hub.castShadow=true;g.add(hub);
+    var shaft=new T.Mesh(new T.CylinderGeometry(r*0.16,r*0.16,4.6,28),steel);
+    shaft.rotation.x=Math.PI/2;g.add(shaft);
+    return g;
+  }
+  function init(T){
+    var el=document.getElementById('splashStage');
+    var scene=new T.Scene(); scene.fog=new T.Fog(0x081324,12,30);
+    var renderer=new T.WebGLRenderer({antialias:true,alpha:true});
+    renderer.setPixelRatio(Math.min(2,window.devicePixelRatio||1));
+    renderer.shadowMap.enabled=true; renderer.shadowMap.type=T.PCFSoftShadowMap;
+    renderer.outputEncoding=T.sRGBEncoding; renderer.toneMapping=T.ACESFilmicToneMapping;
+    renderer.toneMappingExposure=1.05;
+    el.appendChild(renderer.domElement);
+    var camera=new T.PerspectiveCamera(34,1,0.1,100); scene.add(camera);
+
+    var c=document.createElement('canvas'); c.width=8; c.height=256;
+    var cx=c.getContext('2d'), grd=cx.createLinearGradient(0,0,0,256);
+    grd.addColorStop(0,'#cfe0f2');grd.addColorStop(0.42,'#5b7794');
+    grd.addColorStop(0.55,'#1b3550');grd.addColorStop(1,'#060d18');
+    cx.fillStyle=grd; cx.fillRect(0,0,8,256);
+    var envTex=new T.CanvasTexture(c); envTex.mapping=T.EquirectangularReflectionMapping;
+    scene.environment=envTex;
+
+    scene.add(new T.HemisphereLight(0x9fc4ff,0x0a1a2e,0.55));
+    var key=new T.DirectionalLight(0xfff1d6,2.5); key.position.set(-5,7,8); key.castShadow=true;
+    key.shadow.mapSize.set(2048,2048); key.shadow.camera.near=1; key.shadow.camera.far=30;
+    key.shadow.camera.left=-9;key.shadow.camera.right=9;key.shadow.camera.top=9;key.shadow.camera.bottom=-9;
+    key.shadow.bias=-0.0012; scene.add(key);
+    var fill=new T.DirectionalLight(0x6ea8ff,0.9); fill.position.set(7,2,5); scene.add(fill);
+    var spot=new T.SpotLight(0xffb347,90,26,0.8,0.6); spot.position.set(3,-5,-7); scene.add(spot);
+
+    var steel=new T.MeshStandardMaterial({color:0x8fa3b8,metalness:1,roughness:0.3,envMapIntensity:1.15});
+    var chainMat=new T.MeshStandardMaterial({color:0xb8c6d4,metalness:1,roughness:0.24,envMapIntensity:1.3});
+    var pinMat=new T.MeshStandardMaterial({color:0x6a7d90,metalness:1,roughness:0.42});
+    var accent=new T.MeshStandardMaterial({color:new T.Color('#fbbf24'),metalness:0.85,roughness:0.22,envMapIntensity:1.2});
+    var dark=new T.MeshStandardMaterial({color:0x0a1626,metalness:0.4,roughness:0.8});
+
+    var rig=new T.Group(); rig.rotation.set(-0.26,-0.62,0.06); scene.add(rig);
+    var floor=new T.Mesh(new T.PlaneGeometry(60,60),new T.ShadowMaterial({opacity:0.5}));
+    floor.rotation.x=-Math.PI/2; floor.position.y=-3.6; floor.receiveShadow=true; scene.add(floor);
+
+    var c1={x:-2.5,y:0}, r1=1.6, c2={x:2.45,y:0}, r2=0.95, width=0.5;
+    var s1=sprocket(T,r1,22,width,steel,accent,dark), s2=sprocket(T,r2,13,width*0.9,steel,accent,dark);
+    s1.position.set(c1.x,c1.y,0); s2.position.set(c2.x,c2.y,0); rig.add(s1); rig.add(s2);
+
+    var path=buildPath(T,c1,r1*1.02,c2,r2*1.02);
+    var n=Math.floor(path.total/0.3), step=path.total/n;
+    var plateOuter=new T.BoxGeometry(step*1.05,0.2,0.055), plateInner=new T.BoxGeometry(step*1.05,0.16,0.055);
+    var rollerG=new T.CylinderGeometry(0.075,0.075,width*0.72,18), pinG=new T.CylinderGeometry(0.032,0.032,width*1.5,12);
+    var links=[];
+    for(var i=0;i<n;i++){
+      var g=new T.Group(), outer=(i%2===0), zo=outer?width*0.62:width*0.42;
+      [-1,1].forEach(function(sgn){
+        var p=new T.Mesh(outer?plateOuter:plateInner,chainMat);
+        p.position.set(0,0,sgn*zo*0.5); p.castShadow=true; g.add(p);
+      });
+      var roller=new T.Mesh(rollerG,pinMat); roller.rotation.x=Math.PI/2; roller.position.x=-step*0.5; roller.castShadow=true; g.add(roller);
+      var pin=new T.Mesh(pinG,chainMat); pin.rotation.x=Math.PI/2; pin.position.x=step*0.5; g.add(pin);
+      rig.add(g); links.push(g);
+    }
+
+    var W=0,H=0;
+    function resize(){
+      var r=el.getBoundingClientRect();
+      var w=Math.max(1,Math.round(el.clientWidth||r.width||window.innerWidth||1));
+      var h=Math.max(1,Math.round(el.clientHeight||r.height||window.innerHeight||1));
+      if(w===W&&h===H) return;
+      W=w;H=h; camera.aspect=w/h; camera.updateProjectionMatrix(); renderer.setSize(w,h);
+    }
+    window.addEventListener('resize',resize);
+    if(window.ResizeObserver){SP.ro=new ResizeObserver(resize);SP.ro.observe(el);}
+    resize();
+
+    function ease(t){return 1-Math.pow(1-t,3);}
+    function easeIO(t){return t<0.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;}
+    var vmax=4.2, offset=0, last=performance.now(), start=last;
+    function loop(){
+      SP.raf=requestAnimationFrame(loop);
+      var now=performance.now(), dt=Math.min(0.05,(now-last)/1000); last=now;
+      var t=(now-start)/1000; resize();
+      offset+=vmax*(0.25+0.75*ease(Math.min(1,t/2.2)))*dt;
+      for(var i=0;i<links.length;i++){
+        var p=at(path,offset+i*step);
+        links[i].position.set(p.x,p.y,0); links[i].rotation.z=p.ang;
+      }
+      s1.rotation.z=-offset/(r1*1.02); s2.rotation.z=-offset/(r2*1.02);
+      var k=easeIO(Math.min(1,t/4));
+      camera.position.set(1.9-1.5*k,2.9-1.9*k,13.4-3.9*k); camera.lookAt(0,0.05,0);
+      rig.rotation.y=-0.62+0.5*k; rig.rotation.x=-0.26+0.14*k;
+      renderer.render(scene,camera);
+    }
+    loop();
+  }
+  (function boot(tries){
+    tries=tries||0;
+    if(!window.THREE){ if(tries<150){setTimeout(function(){boot(tries+1);},60);return;} var st=document.getElementById('splashStage');if(st)st.innerHTML='<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#486581;font-family:monospace;letter-spacing:.2em">MODO GRÁFICO SIMPLIFICADO</div>';return;}
+    init(window.THREE);
+  })();
+})();
+</script>
+<!-- =================== FIM DA TELA DE ABERTURA =================== -->
+
+</body>
+</html>
