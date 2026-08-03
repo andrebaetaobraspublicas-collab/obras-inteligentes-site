@@ -35,7 +35,7 @@ Excecoes/observacoes:
 
 ## Inventario verificado dos aplicativos
 
-Inventario originalmente verificado em 21/07/2026 e atualizado em 02/08/2026 para inclusao do VentiladorPro e atualizacoes do CompressorSelect Pro e TermoPro. Todos os cards listados possuem arquivo local correspondente.
+Inventario originalmente verificado em 21/07/2026 e atualizado em 03/08/2026 para inclusao do HidroCalc, renomeacao do filtro Pavimentacao e Infraestrutura e remanejamento do DrenaPro para essa categoria. Todos os cards listados possuem arquivo local correspondente.
 
 | Card | Aplicativo | Rota publicada | Arquivo local principal | Status local | Status site |
 |---|---|---|---|---|---|
@@ -80,6 +80,7 @@ Inventario originalmente verificado em 21/07/2026 e atualizado em 02/08/2026 par
 | 39 / TUBULACOES | TuboCalc | `/tubocalc/` | `C:\Obras Inteligentes\tubocalc\index.html` | existe | 200 |
 | 40 / COMPRESSORES | CompressorSelect Pro | `/compressorselect-pro/` | `C:\Obras Inteligentes\compressorselect-pro\index.html` | existe | 200 |
 | 41 / VENTILADORES | VentiladorPro | `/ventiladorpro/` | `C:\Obras Inteligentes\ventiladorpro\index.html` | existe | 200 |
+| 42 / HIDROLOGIA | HidroCalc | `/hidrocalc/` | `C:\Obras Inteligentes\hidrocalc\index.html` | existe | 200 |
 
 ## Tamanhos verificados
 
@@ -128,6 +129,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/tubocalc/` | 256920 bytes | 256920 caracteres |
 | `/compressorselect-pro/` | 791039 bytes | 791039 caracteres |
 | `/ventiladorpro/` | 669301 bytes | 669301 caracteres |
+| `/hidrocalc/` | 488029 bytes | 488029 caracteres |
 
 ## Estrutura local principal
 
@@ -169,7 +171,7 @@ C:\Obras Inteligentes
    └─ index.html
 ```
 
-Atualizacao posterior: tambem existem as pastas `C:\Obras Inteligentes\reservatoriopro\index.html`, correspondente ao card 13 / RESERVATORIO, `C:\Obras Inteligentes\bombapro\index.html`, correspondente ao card 14 / BOMBAS, `C:\Obras Inteligentes\paraboltpro\index.html`, correspondente ao card 15 / CHUMBADORES, `C:\Obras Inteligentes\steelpro\index.html`, correspondente ao card 16 / ACO, `C:\Obras Inteligentes\cronogramapro\index.html`, correspondente ao card 17 / CRONOGRAMA, `C:\Obras Inteligentes\drenapro\index.html`, correspondente ao card 18 / DRENAGEM, `C:\Obras Inteligentes\taludepro\index.html`, correspondente ao card 19 / TALUDES, `C:\Obras Inteligentes\solarpro\index.html`, correspondente ao card 20 / SOLAR, `C:\Obras Inteligentes\pgrcc\index.html`, correspondente ao card 21 / RESIDUOS, `C:\Obras Inteligentes\ventopro\index.html`, correspondente ao card 22 / VENTO, `C:\Obras Inteligentes\concretopro\index.html`, correspondente ao card 23 / CONCRETO, `C:\Obras Inteligentes\aterramentopro\index.html`, correspondente ao card 24 / ATERRAMENTO, `C:\Obras Inteligentes\parafusopro\index.html`, correspondente ao card 25 / PARAFUSOS, `C:\Obras Inteligentes\risco-cambial\index.html`, correspondente ao card 26 / CAMBIO, `C:\Obras Inteligentes\protendpro\index.html`, correspondente ao card 27 / PROTENSAO, `C:\Obras Inteligentes\eventogramapro\index.html`, correspondente ao card 28 / EVENTOGRAMA, `C:\Obras Inteligentes\termo-massa\index.html`, correspondente ao card 29 / TERMO MASSA, `C:\Obras Inteligentes\cabocalc\index.html`, correspondente ao card 30 / CABOS, `C:\Obras Inteligentes\subestacaopro\index.html`, correspondente ao card 31 / SUBESTACAO, `C:\Obras Inteligentes\brucknercalc\index.html`, correspondente ao card 32 / TERRAPLENAGEM, `C:\Obras Inteligentes\molapro\index.html`, correspondente ao card 33 / MOLAS, `C:\Obras Inteligentes\calculadora-eixos\index.html`, correspondente ao card 34 / EIXOS, `C:\Obras Inteligentes\mancalpro\index.html`, correspondente ao card 35 / MANCAIS, `C:\Obras Inteligentes\engrenagecalc\index.html`, correspondente ao card 36 / ENGRENAGENS, `C:\Obras Inteligentes\volantepro\index.html`, correspondente ao card 37 / VOLANTES, `C:\Obras Inteligentes\transmissaopro\index.html`, correspondente ao card 38 / TRANSMISSAO, `C:\Obras Inteligentes\tubocalc\index.html`, correspondente ao card 39 / TUBULACOES, `C:\Obras Inteligentes\compressorselect-pro\index.html`, correspondente ao card 40 / COMPRESSORES, e `C:\Obras Inteligentes\ventiladorpro\index.html`, correspondente ao card 41 / VENTILADORES.
+Atualizacao posterior: tambem existem as pastas `C:\Obras Inteligentes\reservatoriopro\index.html`, correspondente ao card 13 / RESERVATORIO, `C:\Obras Inteligentes\bombapro\index.html`, correspondente ao card 14 / BOMBAS, `C:\Obras Inteligentes\paraboltpro\index.html`, correspondente ao card 15 / CHUMBADORES, `C:\Obras Inteligentes\steelpro\index.html`, correspondente ao card 16 / ACO, `C:\Obras Inteligentes\cronogramapro\index.html`, correspondente ao card 17 / CRONOGRAMA, `C:\Obras Inteligentes\drenapro\index.html`, correspondente ao card 18 / DRENAGEM, `C:\Obras Inteligentes\taludepro\index.html`, correspondente ao card 19 / TALUDES, `C:\Obras Inteligentes\solarpro\index.html`, correspondente ao card 20 / SOLAR, `C:\Obras Inteligentes\pgrcc\index.html`, correspondente ao card 21 / RESIDUOS, `C:\Obras Inteligentes\ventopro\index.html`, correspondente ao card 22 / VENTO, `C:\Obras Inteligentes\concretopro\index.html`, correspondente ao card 23 / CONCRETO, `C:\Obras Inteligentes\aterramentopro\index.html`, correspondente ao card 24 / ATERRAMENTO, `C:\Obras Inteligentes\parafusopro\index.html`, correspondente ao card 25 / PARAFUSOS, `C:\Obras Inteligentes\risco-cambial\index.html`, correspondente ao card 26 / CAMBIO, `C:\Obras Inteligentes\protendpro\index.html`, correspondente ao card 27 / PROTENSAO, `C:\Obras Inteligentes\eventogramapro\index.html`, correspondente ao card 28 / EVENTOGRAMA, `C:\Obras Inteligentes\termo-massa\index.html`, correspondente ao card 29 / TERMO MASSA, `C:\Obras Inteligentes\cabocalc\index.html`, correspondente ao card 30 / CABOS, `C:\Obras Inteligentes\subestacaopro\index.html`, correspondente ao card 31 / SUBESTACAO, `C:\Obras Inteligentes\brucknercalc\index.html`, correspondente ao card 32 / TERRAPLENAGEM, `C:\Obras Inteligentes\molapro\index.html`, correspondente ao card 33 / MOLAS, `C:\Obras Inteligentes\calculadora-eixos\index.html`, correspondente ao card 34 / EIXOS, `C:\Obras Inteligentes\mancalpro\index.html`, correspondente ao card 35 / MANCAIS, `C:\Obras Inteligentes\engrenagecalc\index.html`, correspondente ao card 36 / ENGRENAGENS, `C:\Obras Inteligentes\volantepro\index.html`, correspondente ao card 37 / VOLANTES, `C:\Obras Inteligentes\transmissaopro\index.html`, correspondente ao card 38 / TRANSMISSAO, `C:\Obras Inteligentes\tubocalc\index.html`, correspondente ao card 39 / TUBULACOES, `C:\Obras Inteligentes\compressorselect-pro\index.html`, correspondente ao card 40 / COMPRESSORES, `C:\Obras Inteligentes\ventiladorpro\index.html`, correspondente ao card 41 / VENTILADORES, e `C:\Obras Inteligentes\hidrocalc\index.html`, correspondente ao card 42 / HIDROLOGIA.
 
 ## Estado funcional importante por modulo
 
@@ -450,6 +452,7 @@ Observacoes:
 
 - Aplicativo standalone empacotado em HTML unico.
 - Tela inicial do site aponta para `/drenapro/`.
+- O card foi remanejado do filtro `Instalacoes` para `Pavimentacao e Infraestrutura` em 03/08/2026.
 - Validar apos futuras alteracoes se a abertura, os calculos hidrologicos/hidraulicos, as exportacoes e os relatorios continuam carregando corretamente.
 
 ### TaludePro
@@ -688,7 +691,7 @@ Observacoes:
 
 - Aplicativo standalone empacotado em HTML unico.
 - Tela inicial do site aponta para `/brucknercalc/`.
-- O card foi classificado no filtro `Pavimentacao`, conforme pedido do usuario.
+- O card foi classificado no filtro `Pavimentacao e Infraestrutura`.
 - Validar apos futuras alteracoes se o otimizador de terraplenagem por curva de massas, cortes, aterros, volumes, distancias de transporte, orcamento e dados SICRO continuam carregando corretamente.
 
 ### MolaPro
@@ -852,6 +855,24 @@ Observacoes:
 - Tela inicial do site aponta para `/ventiladorpro/`.
 - O card foi classificado no filtro `Engenharia Mecanica`.
 - Validar apos futuras alteracoes se dimensionamento, selecao e otimizacao tecnico-economica de ventiladores, cenarios, sensibilidade, energia, acustica, vibracao e memoria tecnica continuam carregando corretamente.
+
+### HidroCalc
+
+Rota: `/hidrocalc/`  
+Arquivo: `hidrocalc/index.html`
+
+Ultima inclusao:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\HidroCalc v2.0 - standalone.html`
+- Data: 03/08/2026
+- Alteracao: inclusao de novo card na home e publicacao do aplicativo como HTML standalone.
+
+Observacoes:
+
+- Aplicativo standalone empacotado em HTML unico, com tela de abertura.
+- Tela inicial do site aponta para `/hidrocalc/`.
+- O card foi classificado no filtro `Pavimentacao e Infraestrutura`.
+- Validar apos futuras alteracoes se delimitacao de bacias, morfometria, tempo de concentracao, IDF, vazoes de projeto, mapas e memoria de calculo continuam carregando corretamente.
 
 ## Artigos publicados na home
 
@@ -1031,7 +1052,18 @@ $headers=@{ 'User-Agent'='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
   '/eventogramapro/',
   '/termo-massa/',
   '/cabocalc/',
-  '/subestacaopro/'
+  '/subestacaopro/',
+  '/brucknercalc/',
+  '/molapro/',
+  '/calculadora-eixos/',
+  '/mancalpro/',
+  '/engrenagecalc/',
+  '/volantepro/',
+  '/transmissaopro/',
+  '/tubocalc/',
+  '/compressorselect-pro/',
+  '/ventiladorpro/',
+  '/hidrocalc/'
 ) | ForEach-Object {
   $url = "https://www.obrasinteligentes.ia.br$_?v=check"
   $r = Invoke-WebRequest -UseBasicParsing -Headers $headers -Uri $url -TimeoutSec 30
