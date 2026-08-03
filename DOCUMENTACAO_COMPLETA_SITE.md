@@ -35,7 +35,7 @@ Excecoes/observacoes:
 
 ## Inventario verificado dos aplicativos
 
-Inventario originalmente verificado em 21/07/2026 e atualizado em 03/08/2026 para inclusao do HidroCalc, renomeacao do filtro Pavimentacao e Infraestrutura e remanejamento do DrenaPro para essa categoria. Todos os cards listados possuem arquivo local correspondente.
+Inventario originalmente verificado em 21/07/2026 e atualizado em 03/08/2026 para atualizacao do TransmissaoPro e remanejamento do TaludePro para o filtro Pavimentacao e Infraestrutura. Todos os cards listados possuem arquivo local correspondente.
 
 | Card | Aplicativo | Rota publicada | Arquivo local principal | Status local | Status site |
 |---|---|---|---|---|---|
@@ -125,7 +125,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/mancalpro/` | 1138677 bytes | 1138677 caracteres |
 | `/engrenagecalc/` | 582008 bytes | 578817 caracteres |
 | `/volantepro/` | 104335 bytes | 104335 caracteres |
-| `/transmissaopro/` | 78968 bytes | 78968 caracteres |
+| `/transmissaopro/` | 115917 bytes | 115917 caracteres |
 | `/tubocalc/` | 256920 bytes | 256920 caracteres |
 | `/compressorselect-pro/` | 791039 bytes | 791039 caracteres |
 | `/ventiladorpro/` | 669301 bytes | 669301 caracteres |
@@ -470,6 +470,7 @@ Observacoes:
 
 - Aplicativo standalone empacotado em HTML unico.
 - Tela inicial do site aponta para `/taludepro/`.
+- O card foi remanejado do filtro `Estruturas` para `Pavimentacao e Infraestrutura` em 03/08/2026.
 - Validar apos futuras alteracoes se a abertura, os calculos geotecnicos, as verificacoes de estabilidade e os relatorios continuam carregando corretamente.
 
 ### SolarPro
@@ -789,11 +790,11 @@ Observacoes:
 Rota: `/transmissaopro/`  
 Arquivo: `transmissaopro/index.html`
 
-Ultima inclusao:
+Ultima atualizacao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\TransmissaoPro_v4.5_com_abertura.html`
-- Data: 01/08/2026
-- Alteracao: inclusao de novo card na home e publicacao do aplicativo como HTML standalone.
+- Fonte: `C:\Users\ACER\Documents\Downloads\TransmissaoPro_v5.0_corrigido_otimizado.html`
+- Data: 03/08/2026
+- Alteracao: substituicao integral de `transmissaopro/index.html` pela versao 5.0 corrigida e otimizada.
 
 Observacoes:
 
