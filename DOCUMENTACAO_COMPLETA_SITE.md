@@ -35,7 +35,7 @@ Excecoes/observacoes:
 
 ## Inventario verificado dos aplicativos
 
-Inventario originalmente verificado em 21/07/2026 e atualizado em 04/08/2026 para inclusao do Comparador de Honorarios de Projetos. Todos os cards listados possuem arquivo local correspondente.
+Inventario originalmente verificado em 21/07/2026 e atualizado em 04/08/2026 para atualizacao do ThermoX Pro e do Comparador de Honorarios de Projetos. Todos os cards listados possuem arquivo local correspondente.
 
 | Card | Aplicativo | Rota publicada | Arquivo local principal | Status local | Status site |
 |---|---|---|---|---|---|
@@ -134,8 +134,8 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/ventiladorpro/` | 669301 bytes | 669301 caracteres |
 | `/hidrocalc/` | 488029 bytes | 488029 caracteres |
 | `/elevadorcalc/` | 259316 bytes | 259316 caracteres |
-| `/thermox-pro/` | 222501 bytes | 222501 caracteres |
-| `/comparador-honorarios-projetos/` | 134066 bytes | 134066 caracteres |
+| `/thermox-pro/` | 428015 bytes | 428015 caracteres |
+| `/comparador-honorarios-projetos/` | 167925 bytes | 167925 caracteres |
 
 ## Estrutura local principal
 
@@ -904,29 +904,29 @@ Observacoes:
 Rota: `/thermox-pro/`  
 Arquivo: `thermox-pro/index.html`
 
-Ultima inclusao:
+Ultima atualizacao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\ThermoX_Pro_v3.0.html`
+- Fonte: `C:\Users\ACER\Documents\Downloads\ThermoX_Pro_v5.0_Abertura_3D.html`
 - Data: 04/08/2026
-- Alteracao: inclusao de novo card na home e publicacao do aplicativo como HTML standalone.
+- Alteracao: substituicao integral de `thermox-pro/index.html` pela versao 5.0, com abertura 3D e recursos ampliados.
 
 Observacoes:
 
-- Aplicativo standalone empacotado em HTML unico.
+- Aplicativo standalone empacotado em HTML unico, com tela de abertura 3D.
 - Tela inicial do site aponta para `/thermox-pro/`.
 - O card foi classificado no filtro `Engenharia Mecanica`.
-- Validar apos futuras alteracoes se dimensionamento e verificacao de trocadores de calor, balanco termico, LMTD, epsilon-NTU, perdas hidraulicas, custos e otimizacao continuam carregando corretamente.
+- Validar apos futuras alteracoes se dimensionamento e verificacao de trocadores de calor, balanco termico, LMTD, epsilon-NTU, perdas hidraulicas, custos, catalogo comercial, RFQ, mudanca de fase, otimizacao e abertura 3D continuam carregando corretamente.
 
 ### Comparador de Honorarios de Projetos
 
 Rota: `/comparador-honorarios-projetos/`  
 Arquivo: `comparador-honorarios-projetos/index.html`
 
-Ultima inclusao:
+Ultima atualizacao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\comparador-honorarios-projetos (1).html`
+- Fonte: `C:\Users\ACER\Documents\Downloads\comparador-honorarios-projetos (2).html`
 - Data: 04/08/2026
-- Alteracao: inclusao de novo card na home e publicacao do aplicativo como HTML standalone.
+- Alteracao: substituicao integral de `comparador-honorarios-projetos/index.html` pela nova versao do aplicativo.
 
 Observacoes:
 

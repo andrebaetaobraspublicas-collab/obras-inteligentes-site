@@ -18,8 +18,7 @@
   --senge:#a8531f;
   --cehop:#3c5a99;
   --caixa:#7d1f3f;
-  --cau:#1c6b4a;
-  --custom:#52606d;
+  --custom:#6b5b95;
   --baixo:#2f6b3d;
   --alto:#9b2c2c;
   --destaque:#1d3f46;
@@ -199,7 +198,6 @@ input.pers{width:104px;text-align:right;font-size:12.5px;padding:4px 6px}
         <span class="selo" style="border-left-color:#e2a06a"><b>SENGE-BA</b> jun/2024</span>
         <span class="selo" style="border-left-color:#9db2dd"><b>CEHOP/SE</b> 2026</span>
         <span class="selo" style="border-left-color:#d99bb0"><b>CAIXA</b> Apêndice C</span>
-        <span class="selo" style="border-left-color:#8ec4a9"><b>CAU/BR</b> Res. 76/2014</span>
       </div>
     </div>
     <nav class="abas" role="tablist" aria-label="Seções">
@@ -207,7 +205,6 @@ input.pers{width:104px;text-align:right;font-size:12.5px;padding:4px 6px}
       <button role="tab" id="t-comp" aria-controls="p-comp" aria-selected="false">Comparativo gráfico</button>
       <button role="tab" id="t-infra" aria-controls="p-infra" aria-selected="false">Infraestrutura e vias</button>
       <button role="tab" id="t-caixa" aria-controls="p-caixa" aria-selected="false">Metodologia CAIXA</button>
-      <button role="tab" id="t-cau" aria-controls="p-cau" aria-selected="false">Metodologia CAU/BR</button>
       <button role="tab" id="t-base" aria-controls="p-base" aria-selected="false">Base de dados</button>
       <button role="tab" id="t-fontes" aria-controls="p-fontes" aria-selected="false">Fontes e limitações</button>
     </nav>
@@ -291,19 +288,6 @@ input.pers{width:104px;text-align:right;font-size:12.5px;padding:4px 6px}
               </select>
             </label>
           </div>
-          <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--cau);margin:14px 0 6px">CAU/BR — Módulo II</div>
-          <div class="grade" style="grid-template-columns:repeat(auto-fit,minmax(115px,1fr))">
-            <label class="campo">BH (R$/m²)
-              <input type="number" id="u-bh" step="0.01" min="0" value="0">
-            </label>
-            <label class="campo">fp base (%)
-              <input type="number" id="u-fp" step="0.01" min="0" value="0">
-            </label>
-            <label class="campo">CUB-R8N (R$/m²)
-              <input type="number" id="u-cub" step="0.01" min="0" value="0">
-            </label>
-          </div>
-          <p class="mini" style="margin-top:6px">A Base de Honorários e o fator percentual base vêm do <b>Módulo I</b> (Anexo I e Tabela 5), que não integra este documento — sem eles a coluna CAU/BR fica vazia. O CUB-R8N alimenta as fórmulas próprias de paisagismo e urbanismo do Módulo II. Repetições, interpolação de fp e demais itens na aba <b>Metodologia CAU/BR</b>.</p>
           <p class="mini" style="margin-top:6px">A ht1 é proposta pela empresa na licitação — não há preço publicado, logo a CAIXA não tem fator de atualização: a indexação ocorre pela própria hora técnica. Decomposição da área equivalente (A<sub>e</sub>) e escolha dos sistemas na aba <b>Metodologia CAIXA</b>.</p>
           <p class="mini" style="margin-top:7px">Padrão 1,0000 = preços exatamente como publicados. A SENGE-BA é indexada ao CUB médio de jun/2024 (i₀ = 1.929,04): o fator equivale a CUB&nbsp;atual&nbsp;÷&nbsp;1.929,04. Para o IOPES/ES (2018) use o índice setorial adotado no seu processo (INCC-DI ou IPCA acumulado). Consulte a aba "Fontes e limitações".</p>
         </div>
@@ -324,7 +308,6 @@ input.pers{width:104px;text-align:right;font-size:12.5px;padding:4px 6px}
             <th class="n ref" style="color:var(--senge)">SENGE-BA</th>
             <th class="n ref" style="color:var(--cehop)">CEHOP/SE</th>
             <th class="n ref" style="color:var(--caixa)">CAIXA<br><span style="font-weight:400;text-transform:none;letter-spacing:0">Apêndice C</span></th>
-            <th class="n ref" style="color:var(--cau)">CAU/BR<br><span style="font-weight:400;text-transform:none;letter-spacing:0">Módulo II</span></th>
             <th class="n ref" style="color:var(--custom)">Personalizada<br><span style="font-weight:400;text-transform:none;letter-spacing:0">R$/un.</span></th>
             <th class="n">Disp.</th>
           </tr>
@@ -593,102 +576,6 @@ input.pers{width:104px;text-align:right;font-size:12.5px;padding:4px 6px}
   </div>
 </section>
 
-<!-- ============ ABA CAU/BR ============ -->
-<section role="tabpanel" id="p-cau" aria-labelledby="t-cau" hidden>
-  <div class="painel">
-    <h2>Parâmetros da fórmula PV = Sc × BH × (fp × R)</h2>
-    <div class="corpo">
-      <div id="cau-alerta"></div>
-      <div class="grade g-param">
-        <label class="campo">BH — Base de Honorários (R$/m²)
-          <input type="number" id="cu-bh" step="0.01" min="0">
-          <span class="dica">Módulo I, Anexo I — tabela de cálculo do valor do custo de construção. Varia por estado e tipologia.</span>
-        </label>
-        <label class="campo">fp base (%) — Tabela 5 do Módulo I
-          <input type="number" id="cu-fp" step="0.01" min="0">
-          <span class="dica">Fator percentual do projeto arquitetônico completo, por tipologia e área.</span>
-        </label>
-        <label class="campo">CUB-R8N (R$/m²)
-          <input type="number" id="cu-cub" step="0.01" min="0">
-          <span class="dica">Usado só nas fórmulas próprias de paisagismo e urbanismo do Módulo II.</span>
-        </label>
-        <label class="campo">S<sub>r</sub> — área construída repetida (m²)
-          <input type="number" id="cu-sr" step="1" min="0">
-          <span class="dica">O restante da área construída é tratado como S<sub>nr</sub>, não repetida.</span>
-        </label>
-        <label class="campo">r — redutor das áreas repetidas (%)
-          <input type="number" id="cu-r" step="1" min="0" max="100">
-          <span class="dica">Tabela 4 do Módulo I, em função da quantidade de repetições.</span>
-        </label>
-        <label class="campo">Orçamento adotado
-          <select id="cu-orc">
-            <option value="analitico">Analítico — 15% do fp base</option>
-            <option value="sintetico">Sintético — 10% do fp base</option>
-          </select>
-        </label>
-      </div>
-
-      <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--tinta-2);margin:16px 0 6px">Interpolação do fp para áreas intermediárias</div>
-      <div class="linha-check"><input type="checkbox" id="cu-interp"><label for="cu-interp">Calcular o fp por interpolação entre duas faixas da Tabela 5, pela fórmula fp = fp1 − {(fp1 − fp2) × [(Sc − Sc1) ÷ (Sc2 − Sc1)]}.</label></div>
-      <div class="grade" style="grid-template-columns:repeat(auto-fit,minmax(120px,1fr));margin-top:8px">
-        <label class="campo">Sc1 (m²)<input type="number" id="cu-sc1" step="1" min="0"></label>
-        <label class="campo">fp1 (%)<input type="number" id="cu-fp1" step="0.01" min="0"></label>
-        <label class="campo">Sc2 (m²)<input type="number" id="cu-sc2" step="1" min="0"></label>
-        <label class="campo">fp2 (%)<input type="number" id="cu-fp2" step="0.01" min="0"></label>
-      </div>
-
-      <div class="cartoes" style="margin-top:16px" id="cu-cartoes"></div>
-      <p class="nota" style="margin-top:12px">Para áreas descobertas projetadas, o Módulo II manda considerar 25% da área descoberta na mesma tipologia da obra — ajuste a área construída na calculadora para incorporá-las. O preço de venda já inclui os serviços de coordenação e compatibilização dos projetos complementares, os encargos sociais e o BDI (despesas indiretas, despesas legais e lucro).</p>
-    </div>
-  </div>
-
-  <div class="painel">
-    <h2>Tabela 1 — projetos e serviços de edificações <span class="aux">percentuais aplicados sobre o fp base</span></h2>
-    <div class="corpo sem rolagem">
-      <table>
-        <thead><tr>
-          <th>Item</th><th>Projeto / serviço</th><th class="n">% do fp base</th>
-          <th class="n">fp resultante</th><th class="n">R$/m²</th><th class="n">PV</th><th>Parcelamento</th>
-        </tr></thead>
-        <tbody id="cu-corpo"></tbody>
-      </table>
-    </div>
-  </div>
-
-  <div class="painel">
-    <h2>Arquitetura paisagística <span class="aux">item 6.3.3 · fórmula própria, função da raiz quadrada da área</span></h2>
-    <div class="corpo">
-      <p class="nota" style="margin-top:0">PV = 2,21 × [(255,33% × CUB) + (25,53% × CUB) × √S], onde S é a área a receber tratamento paisagístico. A calculadora usa a área externa do terreno informada na aba principal.</p>
-      <div class="rolagem" style="margin-top:10px">
-        <table>
-          <thead><tr><th>Serviço</th><th class="n">% do projeto paisagístico</th><th class="n">PV</th></tr></thead>
-          <tbody id="cu-pais"></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <div class="painel">
-    <h2>Tabela 2 — urbanismo e desenho urbano <span class="aux">fator percentual sobre o CUB-R8N, por hectare</span></h2>
-    <div class="corpo">
-      <div class="rolagem">
-        <table>
-          <thead><tr>
-            <th>Área de intervenção</th><th class="n">hectares</th><th class="n">fp sobre o CUB</th><th class="n">Valor unitário (R$/ha)</th>
-          </tr></thead>
-          <tbody id="cu-tab2"></tbody>
-        </table>
-      </div>
-      <div class="rolagem" style="margin-top:14px">
-        <table>
-          <thead><tr><th>Item</th><th>Projeto / serviço urbanístico</th><th class="n">% da Tabela 2</th><th class="n">PV</th></tr></thead>
-          <tbody id="cu-urb"></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- ============ ABA 4: BASE DE DADOS ============ -->
 <section role="tabpanel" id="p-base" aria-labelledby="t-base" hidden>
   <div class="painel">
@@ -722,15 +609,6 @@ input.pers{width:104px;text-align:right;font-size:12.5px;padding:4px 6px}
       <p class="nota">Vistorias, levantamentos e deslocamentos estão inclusos na remuneração dos projetos (item 1.4) — por isso o levantamento cadastral aparece como "incluso", e não como lacuna. As Built e Revisão de projeto valem 10% do respectivo projeto executivo (Tabelas C3 e C4).</p>
       <p class="nota" style="margin-top:10px">Nenhuma divergência de leitura foi encontrada nesta fonte: as tabelas C1 a C10 vieram com estrutura de colunas íntegra.</p>
 
-      <h3 class="sub">CAU/BR — Tabelas de Honorários de Serviços de Arquitetura e Urbanismo do Brasil, Módulo II</h3>
-      <p class="nota">Aprovado pela Resolução CAU/BR nº 76, de 10 de abril de 2014, com fundamento no art. 28, XIV, da Lei nº 12.378/2010, que atribui ao CAU/BR aprovar e divulgar tabelas indicativas de honorários. Elaborado pelo CEAU a partir do Manual de Procedimentos e Contratação do IAB, cobre 101 atividades previstas na Resolução CAU/BR nº 21/2012. O Módulo II é o volume de <b>projetos e serviços diversos</b>; o projeto arquitetônico completo está no Módulo I e a execução de obras no Módulo III.</p>
-      <p class="nota">A modalidade de remuneração 01 — percentual sobre o custo da obra — usa PV = S<sub>c</sub> × BH × (fp × R), em que S<sub>c</sub> é a área construída estimada (áreas descobertas projetadas entram por 25%), BH é a Base de Honorários por m², fp é o fator percentual da tipologia e da área, e R = S<sub>p</sub>/S<sub>c</sub> é o redutor por repetição, com S<sub>p</sub> = S<sub>nr</sub> + (S<sub>r</sub> × r). Cada serviço da Tabela 1 é um percentual do fp do projeto arquitetônico: estrutura 30%, elétrica 20%, hidráulica e sanitária 10% cada, SPDA 7%, interiores 150%. O preço de venda já contempla coordenação e compatibilização dos projetos complementares, encargos sociais e BDI.</p>
-      <p class="nota">Duas famílias de serviços fogem dessa fórmula e são autossuficientes no Módulo II: a <b>arquitetura paisagística</b>, com PV = 2,21 × [(255,33% × CUB) + (25,53% × CUB) × √S], e o <b>projeto urbanístico</b>, com valor unitário por hectare dado por um fator percentual sobre o CUB-R8N que decresce de 2.400,04% (até 2 ha) a 49,71% (acima de 1.024 ha). Ambas dependem apenas do CUB, que a calculadora recebe como parâmetro.</p>
-
-      <div class="aviso critico" style="margin-top:14px">
-        <b>Dependência externa do CAU/BR.</b> O Módulo II não publica a Base de Honorários nem a Tabela 5 de fatores percentuais — apenas remete ao <b>Módulo I</b>, que não integra o arquivo enviado e cujo download no sítio do CAU/BR é bloqueado a acesso automatizado. Esses dois números variam por unidade da federação, tipologia e faixa de área, e não foram estimados nem arbitrados: sem eles a coluna CAU/BR permanece vazia, com a lacuna explicada em cada célula. Informe-os nos parâmetros da calculadora ou na aba Metodologia CAU/BR — a interpolação para áreas intermediárias, a fórmula oficial fp = fp1 − {(fp1 − fp2) × [(S<sub>c</sub> − S<sub>c1</sub>) ÷ (S<sub>c2</sub> − S<sub>c1</sub>)]}, já está implementada.
-      </div>
-
       <div class="aviso" style="margin-top:14px">
         <b>Divergências de leitura declaradas.</b> Três blocos das tabelas do SENGE-BA têm colunas sobrepostas no PDF de origem, o que impede reconstruir com segurança a correspondência linha × coluna:
         <ul class="lista">
@@ -738,7 +616,6 @@ input.pers{width:104px;text-align:right;font-size:12.5px;padding:4px 6px}
           <li><b>Tabela 6 — Cálculo Estrutural</b>: as colunas "convencional", "com previsão para ar condicionado" e "sob ação de vento" foram conferidas por consistência (as linhas de galpões trazem traço nessas colunas, o que confirma o alinhamento). As colunas de estruturas pré-moldadas, protendidas e com lajes de transição/cogumelo foram importadas com alinhamento aritmeticamente consistente, mas a célula "Shopping Center × pré-moldada" (R$ 43,13/m²) rompe o padrão das demais linhas e está marcada com <span class="tag conf">conferir</span>.</li>
           <li><b>Tabela 1 — Serviços de Consultoria</b>: os dois primeiros valores da série (255,04 e 255,60) não formam a progressão decrescente esperada; a atribuição às faixas "até 20 h" e "até 30 h" está marcada com <span class="tag conf">conferir</span>.</li>
         </ul>
-        No <b>CAU/BR</b>, a única leitura que não se pode reconstruir com segurança é a correspondência entre os percentuais de parcelamento e as etapas (LV, PN, EV, EP, AP, PE, AS, AE, AB): o cabeçalho da Tabela 1 ocupa várias linhas sobrepostas no PDF. Os percentuais foram importados na sequência publicada e são exibidos como sequência (por exemplo, "20 / 20 / 60"), sem atribuição de etapa.
         A <b>Tabela 9 — Saneamento</b> teve a ordem das faixas validada pelo exemplo numérico do próprio documento (terreno de 12 ha resultando em R$ 29.033,82), o que confirma até 2 ha = R$ 5.567,59/ha.
       </div>
     </div>
@@ -755,8 +632,7 @@ input.pers{width:104px;text-align:right;font-size:12.5px;padding:4px 6px}
         <li><b>Faixas de área.</b> Os projetos civis do SENGE-BA e os itens de urbanização e paisagismo da CEHOP são escalonados por área; a faixa é selecionada automaticamente pela área informada e exibida na coluna de quantidade.</li>
         <li><b>Bases de medição divergentes.</b> A drenagem pluvial da CEHOP mede a área de cobertura; a do IOPES integra os implementos externos e mede a área do terreno. A quantidade é única na calculadora — ajuste-a conforme a referência que estiver defendendo.</li>
         <li><b>Correspondências da CAIXA.</b> O item elétrico usa apenas a rede de energia comum (ERC), com opção de somar entrada de energia e luminotécnico; CFTV e alarme somam CFT + ALM; o item de automação usa o controle de acesso (CTA), já que a automação e inteligência predial (AIP) tem escopo muito mais amplo; telefonia usa a entrada de telecomunicações (TLC), de escopo mais restrito que o projeto telefônico do IOPES; drenagem pluvial e rede lógica aparecem como <span class="tag incluso">incluso</span> porque integram o HIA e o CAE.</li>
-        <li><b>Correspondências do CAU/BR.</b> Fundações integram o projeto de estrutura (item 1.2); lógica e automação integram o cabeamento estruturado (item 1.5.12); a coordenação e compatibilização já está no preço de venda — todos aparecem como <span class="tag incluso">incluso</span>. O hidrossanitário soma os itens 1.5.1 e 1.5.2 (10% + 10%); CFTV e alarme correspondem à rede de segurança eletrônica (1.5.15); o orçamento usa o analítico (15%) ou o sintético (10%), à escolha. Comunicação visual e maquetaria existem na tabela, mas pela modalidade MR 02 — cálculo pelo custo do serviço —, fora do alcance de uma comparação por área.</li>
-        <li><b>Natureza jurídica dos preços.</b> A CEHOP fixa <b>máximos</b> contratáveis, o SENGE-BA declara <b>mínimos</b> profissionais, o IOPES é um <b>referencial</b> administrativo, a CAU/BR é uma tabela <b>indicativa</b> de conselho profissional com poder normativo federal, e a CAIXA define uma <b>estrutura paramétrica</b> cujo nível de preço só se fecha com a hora técnica proposta na licitação. Convergência numérica entre elas não significa equivalência de significado, e a comparação direta deve vir acompanhada dessa ressalva em qualquer peça técnica.</li>
+        <li><b>Natureza jurídica dos preços.</b> A CEHOP fixa <b>máximos</b> contratáveis, o SENGE-BA declara <b>mínimos</b> profissionais, o IOPES é um <b>referencial</b> administrativo e a CAIXA define uma <b>estrutura paramétrica</b> cujo nível de preço só se fecha com a hora técnica proposta na licitação. Convergência numérica entre elas não significa equivalência de significado, e a comparação direta deve vir acompanhada dessa ressalva em qualquer peça técnica.</li>
       </ul>
       <p class="nota" style="margin-top:12px">O campo <b>base comum</b> soma apenas os serviços com preço disponível em todas as referências ativas. É o único total efetivamente comparável entre tabelas; o total cheio de cada referência mede escopos diferentes e serve para dimensionar a contratação, não para confrontar tabelas.</p>
     </div>
@@ -768,7 +644,6 @@ input.pers{width:104px;text-align:right;font-size:12.5px;padding:4px 6px}
       <p class="nota">A calculadora não embute índices: o fator padrão é 1,0000 e os preços saem exatamente como publicados. Isso é deliberado — índices variam mensalmente e a escolha do indexador (INCC-DI, IPCA, CUB estadual) é decisão do processo, não do software.</p>
       <p class="nota">Para o <b>SENGE-BA</b>, o próprio documento dá a regra: fator = CUB médio atual ÷ 1.929,04 (jun/2024), com o CUB divulgado mensalmente pelo SINDUSCON-BA. Note que as publicações de mercado divergem sobre o valor corrente do CUB baiano conforme o padrão adotado (R8-N, R1-N, com ou sem desoneração), então tome o valor diretamente da publicação oficial e registre no processo qual padrão foi usado.</p>
       <p class="nota">Para a <b>CAIXA</b> não existe fator: o Apêndice C não publica preços, apenas índices adimensionais. Todo o nível de preço vem da hora técnica ht1 proposta pela licitante, e a atualização contratual segue o reajuste previsto no edital, não uma data-base de tabela. Ao comparar com as demais referências, tenha claro que o valor da CAIXA depende de uma variável de mercado que você está arbitrando.</p>
-      <p class="nota">Para o <b>CAU/BR</b> também não há fator: a Resolução 76/2014 fixa percentuais, e a atualização se dá pela Base de Honorários e pelo CUB vigentes no momento da proposta. Registre no processo a data-base do CUB e a fonte da BH adotada.</p>
       <p class="nota">Para o <b>IOPES/ES</b>, entre a edição 2018 e hoje há um intervalo longo o bastante para que a escolha do índice altere materialmente o resultado. Registre a série, o mês-base e o mês de referência na memória de cálculo — a calculadora exporta o fator aplicado no CSV.</p>
     </div>
   </div>
@@ -789,8 +664,7 @@ const REFS = [
   {id:"senge", nome:"SENGE-BA", ano:"jun/2024", cor:"#a8531f", natureza:"mínimos"},
   {id:"cehop", nome:"CEHOP/SE", ano:"2026", cor:"#3c5a99", natureza:"máximos"},
   {id:"caixa", nome:"CAIXA", ano:"Apêndice C", cor:"#7d1f3f", natureza:"paramétrica"},
-  {id:"cau", nome:"CAU/BR", ano:"Res. 76/2014", cor:"#1c6b4a", natureza:"indicativa"},
-  {id:"custom", nome:"Personalizada", ano:"—", cor:"#52606d", natureza:"informada"}
+  {id:"custom", nome:"Personalizada", ano:"—", cor:"#6b5b95", natureza:"informada"}
 ];
 
 /* ---- IOPES/ES 2018 — R$/m² por tipologia ---- */
@@ -1005,88 +879,6 @@ const CAIXA_C9 = [
   [Infinity,"Ar > 5.000",30,40,20,14]
 ];
 
-/* ---- CAU/BR — Tabelas de Honorários, Módulo II (Resolução CAU/BR nº 76/2014) ----
-   Os percentuais da Tabela 1 incidem sobre o fp do projeto arquitetônico completo
-   (Tabela 5 do Módulo I). PV = Sc x BH x (fp x R). */
-const CAU_TAB1 = [
- {id:"1.1.1", g:"Arquitetura das edificações", nome:"Levantamento arquitetônico", pct:0.15, parc:"100%"},
- {id:"1.1.2", g:"Arquitetura das edificações", nome:"Projeto arquitetônico de reforma", pct:1.25, parc:"10 / 30 / 50 / 10"},
- {id:"1.1.5", g:"Arquitetura das edificações", nome:"Projeto de adequação de acessibilidade", pct:0.20, parc:"10 / 30 / 50 / 10"},
- {id:"1.2.1", g:"Sistemas construtivos e estruturais", nome:"Projeto de estrutura de madeira", pct:0.30, parc:"20 / 20 / 60"},
- {id:"1.2.2", g:"Sistemas construtivos e estruturais", nome:"Projeto de estrutura de concreto", pct:0.30, parc:"20 / 20 / 60"},
- {id:"1.2.3", g:"Sistemas construtivos e estruturais", nome:"Projeto de estrutura pré-fabricada", pct:0.30, parc:"20 / 20 / 60"},
- {id:"1.2.4", g:"Sistemas construtivos e estruturais", nome:"Projeto de estrutura metálica", pct:0.30, parc:"20 / 20 / 60"},
- {id:"1.2.5", g:"Sistemas construtivos e estruturais", nome:"Projeto de estruturas mistas", pct:0.30, parc:"20 / 20 / 60"},
- {id:"1.3.1", g:"Conforto ambiental", nome:"Projeto de adequação ergonômica", pct:0.15, parc:"20 / 20 / 60"},
- {id:"1.3.2", g:"Conforto ambiental", nome:"Projeto de luminotecnia", pct:0.15, parc:"20 / 20 / 60"},
- {id:"1.3.3", g:"Conforto ambiental", nome:"Projeto de condicionamento acústico", pct:0.20, parc:"20 / 20 / 60"},
- {id:"1.3.4", g:"Conforto ambiental", nome:"Projeto de sonorização", pct:0.20, parc:"20 / 20 / 60"},
- {id:"1.3.5", g:"Conforto ambiental", nome:"Projeto de ventilação, exaustão e climatização", pct:0.25, parc:"20 / 20 / 60"},
- {id:"1.3.6", g:"Conforto ambiental", nome:"Projeto de certificado ambiental", pct:0.20, parc:"20 / 20 / 60"},
- {id:"1.4.1", g:"Arquitetura de interiores", nome:"Projeto de arquitetura de interiores", pct:1.50, parc:"40 / 60"},
- {id:"1.4.2", g:"Arquitetura de interiores", nome:"Projeto de reforma de interiores", pct:1.50, parc:"40 / 60"},
- {id:"1.5.1", g:"Instalações e equipamentos", nome:"Instalações hidráulicas prediais", pct:0.10, parc:"20 / 20 / 60"},
- {id:"1.5.2", g:"Instalações e equipamentos", nome:"Instalações sanitárias prediais", pct:0.10, parc:"20 / 20 / 60"},
- {id:"1.5.3", g:"Instalações e equipamentos", nome:"Instalações prediais de águas pluviais", pct:0.07, parc:"20 / 20 / 60"},
- {id:"1.5.4", g:"Instalações e equipamentos", nome:"Instalações prediais de gás canalizado", pct:0.07, parc:"20 / 20 / 60"},
- {id:"1.5.5", g:"Instalações e equipamentos", nome:"Instalações prediais de gases medicinais", pct:0.10, parc:"20 / 20 / 60"},
- {id:"1.5.6", g:"Instalações e equipamentos", nome:"Prevenção e combate a incêndio", pct:0.10, parc:"20 / 20 / 60"},
- {id:"1.5.7", g:"Instalações e equipamentos", nome:"Proteção contra incêndios e catástrofes", pct:0.10, parc:"20 / 20 / 60"},
- {id:"1.5.8", g:"Instalações e equipamentos", nome:"Instalações elétricas prediais de baixa tensão", pct:0.20, parc:"20 / 20 / 60"},
- {id:"1.5.9", g:"Instalações e equipamentos", nome:"Instalações telefônicas prediais", pct:0.07, parc:"20 / 20 / 60"},
- {id:"1.5.10", g:"Instalações e equipamentos", nome:"Instalações prediais de TV", pct:0.07, parc:"20 / 20 / 60"},
- {id:"1.5.12", g:"Instalações e equipamentos", nome:"Cabeamento estruturado, automação e lógica", pct:0.15, parc:"20 / 20 / 60"},
- {id:"1.5.13", g:"Instalações e equipamentos", nome:"Proteção contra descargas atmosféricas (SPDA)", pct:0.07, parc:"20 / 20 / 60"},
- {id:"1.5.14", g:"Instalações e equipamentos", nome:"Gerenciamento de resíduos sólidos", pct:0.05, parc:"20 / 20 / 60"},
- {id:"1.5.15", g:"Instalações e equipamentos", nome:"Rede de segurança eletrônica", pct:0.10, parc:"20 / 20 / 60"},
- {id:"1.5.16", g:"Instalações e equipamentos", nome:"Instalações mecânicas: elevadores, rampas, esteiras", pct:0.15, parc:"20 / 20 / 60"},
- {id:"1.5.17", g:"Instalações e equipamentos", nome:"Instalações especiais: equipamento, água gelada e outros", pct:0.15, parc:"20 / 20 / 60"},
- {id:"1.5.18", g:"Instalações e equipamentos", nome:"Estacionamento e tráfego de veículos", pct:0.10, parc:"20 / 20 / 60"},
- {id:"1.5.19", g:"Instalações e equipamentos", nome:"Planos de manutenção e reparos em edificações", pct:0.10, parc:"20 / 20 / 60"},
- {id:"1.7.1", g:"Relatórios técnicos", nome:"Memorial descritivo", pct:0.10, parc:"15 / 85"},
- {id:"1.7.2", g:"Relatórios técnicos", nome:"Caderno de especificações ou de encargos", pct:0.10, parc:"15 / 85"},
- {id:"1.7.3", g:"Relatórios técnicos", nome:"Orçamento sintético", pct:0.10, parc:"15 / 85"},
- {id:"1.7.4", g:"Relatórios técnicos", nome:"Orçamento analítico", pct:0.15, parc:"15 / 85"},
- {id:"1.7.5", g:"Relatórios técnicos", nome:"Cronograma de obra", pct:0.10, parc:"15 / 85"},
- {id:"1.7.6", g:"Relatórios técnicos", nome:"Estudo de viabilidade econômico-financeira", pct:0.20, parc:"10 / 30 / 60"},
- {id:"1.7.7", g:"Relatórios técnicos", nome:"Avaliação pós-ocupação", pct:0.15, parc:"10 / 30 / 60"}
-];
-const CAU_TAB1_PCT = {}; CAU_TAB1.forEach(x=>{ CAU_TAB1_PCT[x.id]=x.pct; });
-/* Paisagismo: percentuais sobre o projeto de arquitetura paisagística (item 6.3.3) */
-const CAU_PAIS = [
- {id:"1.6.1", nome:"Levantamento paisagístico", pct:0.15},
- {id:"1.6.2", nome:"Prospecção e inventário paisagístico", pct:0.30},
- {id:"1.6.3", nome:"Projeto de arquitetura paisagística", pct:1.00},
- {id:"1.6.4", nome:"Projeto de recuperação paisagística", pct:0.50},
- {id:"1.6.5", nome:"Plano de manejo e conservação paisagística", pct:0.30}
-];
-/* Tabela 2 do Módulo II: [limite de área em m², hectares, fp como múltiplo do CUB-R8N] */
-const CAU_TAB2 = [
- [20000,2.00,24.0004],[40000,4.00,15.6003],[80000,8.00,10.1402],[160000,16.00,6.5911],
- [320000,32.00,4.2842],[640000,64.00,2.7847],[1280000,128.00,1.8101],[2560000,256.00,1.1766],
- [5120000,512.00,0.7648],[Infinity,1024.00,0.4971]
-];
-const CAU_URB = [
- {id:"1.8.1", nome:"Levantamento cadastral", pct:0.15},
- {id:"1.8.2", nome:"Inventário urbano", pct:0.30},
- {id:"1.8.3", nome:"Projeto urbanístico", pct:1.00},
- {id:"1.8.4", nome:"Parcelamento do solo mediante loteamento", pct:0.70},
- {id:"1.8.5", nome:"Parcelamento mediante desmembramento ou remembramento", pct:0.50},
- {id:"1.9.1", nome:"Movimentação de terra, drenagem e pavimentação", pct:0.30},
- {id:"1.9.2", nome:"Sistema de iluminação pública", pct:0.20},
- {id:"1.9.5", nome:"Sistema de coleta de resíduos sólidos", pct:0.15},
- {id:"1.9.6", nome:"Rede de tratamento e abastecimento de água", pct:0.20},
- {id:"1.9.7", nome:"Rede de coleta e tratamento de esgotos", pct:0.20},
- {id:"1.9.8", nome:"Rede de energia elétrica", pct:0.30},
- {id:"1.9.9", nome:"Rede de comunicações (telefone, internet, TV)", pct:0.20},
- {id:"1.10.1", nome:"Memorial descritivo urbanístico", pct:0.10},
- {id:"1.10.2", nome:"Caderno de especificações ou de encargos", pct:0.10},
- {id:"1.10.3", nome:"Orçamento sintético", pct:0.10},
- {id:"1.10.4", nome:"Orçamento analítico", pct:0.15},
- {id:"1.10.5", nome:"Cronograma", pct:0.15},
- {id:"1.10.6", nome:"Viabilidade econômico-financeira", pct:0.20}
-];
-
 /* ---- Tipologias normalizadas e correspondência entre tabelas ---- */
 const TIPOLOGIAS = [
   {id:"educacional", nome:"Escola / edifício educacional", iopes:"educacionais", cehop:"educacionais", cehopGr:"geral", senge:"escolas", sengeEstr:"escolas"},
@@ -1161,7 +953,6 @@ const estado = {
     arqTipo:"ARQ", incendio:"HEX", clima:"SCR", eletricaComp:false, maquete:0,
     vo:500000, apav:1200, selC1:{}
   },
-  cau:{ bh:0, fp:0, cub:0, sr:0, r:100, orc:"analitico", interp:false, sc1:0, fp1:0, sc2:0, fp2:0 },
   infra:{area:20000, km:2, classe:0, desnivel:4, areaCont:0}
 };
 SERVICOS.forEach(s=>{ estado.sel[s.id] = !!s.pad; });
@@ -1182,11 +973,6 @@ function carregar(){
     if(d.custom) Object.keys(d.custom).forEach(k=>{ const v=Number(d.custom[k]); if(isFinite(v)&&v>=0) estado.custom[k]=v; });
     if(d.qtd) Object.keys(d.qtd).forEach(k=>{ const v=Number(d.qtd[k]); if(isFinite(v)&&v>=0) estado.qtd[k]=v; });
     if(d.infra) Object.keys(estado.infra).forEach(k=>{ const v=Number(d.infra[k]); if(isFinite(v)&&v>=0) estado.infra[k]=v; });
-    if(d.cau){
-      ["bh","fp","cub","sr","r","sc1","fp1","sc2","fp2"].forEach(k=>{ const v=Number(d.cau[k]); if(isFinite(v)&&v>=0) estado.cau[k]=v; });
-      if(typeof d.cau.orc==="string") estado.cau.orc=d.cau.orc;
-      if(typeof d.cau.interp==="boolean") estado.cau.interp=d.cau.interp;
-    }
     if(d.caixa){
       ["ht1","apd","apt","age","vo","apav","maquete"].forEach(k=>{ const v=Number(d.caixa[k]); if(isFinite(v)&&v>=0) estado.caixa[k]=v; });
       ["modalidade","arqTipo","incendio","clima"].forEach(k=>{ if(typeof d.caixa[k]==="string") estado.caixa[k]=d.caixa[k]; });
@@ -1250,47 +1036,6 @@ function caixaPrazo(){
   const ae = caixaAe();
   for(const f of CAIXA_C9){ if(ae<=f[0]) return f; }
   return CAIXA_C9[CAIXA_C9.length-1];
-}
-
-/* --- CAU/BR: fator percentual, redutor de repetições e fórmulas próprias --- */
-function cauFp(){
-  const C = estado.cau;
-  if(C.interp && C.sc2>C.sc1 && C.fp1>0 && C.fp2>0){
-    const Sc = estado.area;
-    return C.fp1 - (C.fp1 - C.fp2) * ((Sc - C.sc1)/(C.sc2 - C.sc1));
-  }
-  return C.fp;
-}
-/* R = Sp/Sc, com Sp = Snr + (Sr x r) */
-function cauR(){
-  const Sc = estado.area, C = estado.cau;
-  if(!(Sc>0)) return 1;
-  const Sr = Math.min(C.sr||0, Sc), Snr = Sc - Sr;
-  const Sp = Snr + Sr * ((C.r||0)/100);
-  return Sp / Sc;
-}
-/* PV = Sc x BH x (fp x R) -> preço unitário = BH x fp x R */
-function cauUnit(pct){
-  const C = estado.cau, fp = cauFp();
-  if(!(C.bh>0) || !(fp>0) || !(pct>0)) return null;
-  return C.bh * (pct * fp/100) * cauR();
-}
-/* Item 6.3.3: PV = 2,21 x [(255,33% x CUB) + (25,53% x CUB) x raiz(S)] */
-function cauPaisagismo(S){
-  const cub = estado.cau.cub;
-  if(!(cub>0) || !(S>0)) return null;
-  return 2.21 * ((2.5533*cub) + (0.2553*cub)*Math.sqrt(S));
-}
-function cauFaixaUrb(areaM2){
-  for(const f of CAU_TAB2){ if(areaM2<=f[0]) return f; }
-  return CAU_TAB2[CAU_TAB2.length-1];
-}
-/* Tabela 2: valor unitário por hectare = fp x CUB */
-function cauUrbano(areaM2, pct){
-  const cub = estado.cau.cub;
-  if(!(cub>0) || !(areaM2>0)) return null;
-  const f = cauFaixaUrb(areaM2);
-  return (areaM2/10000) * f[2] * cub * pct;
 }
 
 /* --- escalonamento por hectare (SENGE, Tabela 9) --- */
@@ -1502,74 +1247,6 @@ function precoCaixa(sv, T){
   return NA("Serviço fora do escopo desta referência.");
 }
 
-function precoCau(sv, T){
-  const C = estado.cau;
-  const semBase = () => NA("Informe a Base de Honorários e o fp base da Tabela 5 do Módulo I para ativar esta referência.");
-  const item = (id, obs) => {
-    const it = CAU_TAB1.find(x=>x.id===id);
-    if(!it) return NA("Item não previsto na Tabela 1 do Módulo II.");
-    const u = cauUnit(it.pct);
-    if(u===null) return semBase();
-    const rot = "Item " + it.id + " · " + fmt0.format(it.pct*100) + "% do fp base · fp = " +
-                fmt3.format(it.pct*cauFp()) + "% · R = " + fmt3.format(cauR());
-    return {v:u, st:"ok", qtd:estado.area, obs:[obs,rot].filter(Boolean).join(" ")};
-  };
-  const soma = (ids, obs) => {
-    let pct = 0;
-    for(const id of ids){ const it = CAU_TAB1.find(x=>x.id===id); if(!it) return NA(); pct += it.pct; }
-    const u = cauUnit(pct);
-    if(u===null) return semBase();
-    return {v:u, st:"ok", qtd:estado.area,
-      obs:[obs, "Itens " + ids.join(" + ") + " · " + fmt0.format(pct*100) + "% do fp base"].filter(Boolean).join(" ")};
-  };
-  switch(sv.id){
-    case "arquitetura": {
-      if(estado.intervencao==="cadastro") return item("1.1.1");
-      if(estado.intervencao==="reforma") return item("1.1.2");
-      const u = cauUnit(1.00);
-      if(u===null) return semBase();
-      return {v:u, st:"ok", qtd:estado.area,
-        obs:"Projeto arquitetônico completo do Módulo I: 100% do fp base · fp = " + fmt3.format(cauFp()) + "% · R = " + fmt3.format(cauR())};
-    }
-    case "cadastro_arq": return item("1.1.1");
-    case "fundacoes": return INC("A Tabela 1 não segrega fundações: integram o projeto de estrutura (item 1.2).");
-    case "estrutura": return item("1.2.2");
-    case "estrutura_met": return item("1.2.4");
-    case "hidrossanitario": return soma(["1.5.1","1.5.2"], "Soma das instalações hidráulicas e sanitárias prediais.");
-    case "drenagem": return item("1.5.3", "Instalações prediais de águas pluviais.");
-    case "eletrico": return item("1.5.8");
-    case "spda": return item("1.5.13");
-    case "incendio": return item("1.5.6", "Item 1.5.7, de proteção contra incêndios e catástrofes, é autônomo e soma outros 10%.");
-    case "cabeamento": return item("1.5.12", "Item único de cabeamento estruturado, automação e lógica.");
-    case "telefonia": return item("1.5.9");
-    case "logica": return INC("Integra o item 1.5.12 — cabeamento estruturado, automação e lógica.");
-    case "cftv": return item("1.5.15", "Projeto de instalações de rede de segurança eletrônica.");
-    case "sonorizacao": return item("1.3.4");
-    case "climatizacao": return item("1.3.5", "Item único de ventilação, exaustão e climatização.");
-    case "gases": return item("1.5.5");
-    case "enfermagem": return NA("Chamada de enfermagem não consta da Tabela 1.");
-    case "automacao": return INC("Integra o item 1.5.12 — cabeamento estruturado, automação e lógica.");
-    case "com_visual": return NA("Comunicação visual para edificações (item 1.5.11) é remunerada por imagem, pela modalidade MR 02 — cálculo pelo custo do serviço.");
-    case "maquete": return NA("Maquetaria (item 1.1.9) é remunerada por verba, pela modalidade MR 02.");
-    case "impermeabilizacao": return NA("Não consta como item autônomo da Tabela 1.");
-    case "pgrscc": return item("1.5.14", "Projeto de gerenciamento de resíduos sólidos.");
-    case "orcamento": return item(C.orc==="sintetico" ? "1.7.3" : "1.7.4");
-    case "coordenacao": return INC("O preço de venda já inclui a coordenação e compatibilização dos projetos complementares.");
-    case "paisagismo": {
-      const v = cauPaisagismo(estado.terreno);
-      if(v===null) return NA("Informe o CUB-R8N e a área externa do terreno para aplicar a fórmula do item 6.3.3.");
-      return {v:v, st:"ok", fixo:true, obs:"Item 6.3.3: PV = 2,21 × [(255,33% × CUB) + (25,53% × CUB) × √S], com S = " + fmt0.format(estado.terreno) + " m²."};
-    }
-    case "urbanizacao": {
-      const v = cauUrbano(estado.terreno, 1.00);
-      if(v===null) return NA("Informe o CUB-R8N e a área externa do terreno para aplicar a Tabela 2 do Módulo II.");
-      const f = cauFaixaUrb(estado.terreno);
-      return {v:v, st:"ok", fixo:true, obs:"Item 1.8.3, Tabela 2: faixa de " + fmt0.format(f[1]) + " ha, fp = " + fmt2.format(f[2]*100) + "% do CUB-R8N por hectare."};
-    }
-  }
-  return NA("Serviço fora do escopo desta referência.");
-}
-
 function precoCustom(sv){
   const v = estado.custom[sv.id];
   return (v===undefined || v===null || v==="" || !isFinite(v)) ? NA("") : OK(Number(v), "Valor informado pelo usuário.");
@@ -1593,7 +1270,7 @@ function calcular(){
     const q = baseQtd(sv);
     const brutos = {
       iopes: precoIopes(sv,T), senge: precoSenge(sv,T), cehop: precoCehop(sv,T),
-      caixa: precoCaixa(sv,T), cau: precoCau(sv,T), custom: precoCustom(sv)
+      caixa: precoCaixa(sv,T), custom: precoCustom(sv)
     };
     const cel = {};
     REFS.forEach(r=>{
@@ -1611,14 +1288,9 @@ function calcular(){
                    min:minAplicado, fixo:!!p.fixo, qtd:qUsada};
     });
     const valores = REFS.map(r=>cel[r.id]).filter(c=>c.st==="ok").map(c=>c.unit);
-    linhas.push({sv:sv, q:q, cel:cel, valores:valores, comum:false});
+    const cobertoTodos = REFS.filter(r=>r.id!=="custom").every(r=>cel[r.id].st!=="na");
+    linhas.push({sv:sv, q:q, cel:cel, valores:valores, comum:cobertoTodos});
   });
-
-  /* Uma referência só é considerada ativa se produziu ao menos um preço. Referências
-     que dependem de parâmetros ainda não informados (caso do CAU/BR sem a Base de
-     Honorários) não anulam a base comum das demais. */
-  const ativos = REFS.filter(r=> r.id!=="custom" && linhas.some(L=>L.cel[r.id].st==="ok"));
-  linhas.forEach(L=>{ L.comum = ativos.length>0 && ativos.every(r=>L.cel[r.id].st!=="na"); });
 
   const totais = {};
   REFS.forEach(r=>{
@@ -1633,7 +1305,7 @@ function calcular(){
     });
     totais[r.id] = {total:t, itens:n, lacunas:lac, comum:tc};
   });
-  return {linhas:linhas, totais:totais, T:T, ativos:ativos};
+  return {linhas:linhas, totais:totais, T:T};
 }
 
 function estatistica(vals){
@@ -1668,7 +1340,6 @@ function initAbas(){
       if(b.id==="t-comp") renderComparativo();
       if(b.id==="t-infra") renderInfra();
       if(b.id==="t-caixa") renderCaixa();
-      if(b.id==="t-cau") renderCau();
       if(b.id==="t-base") renderBase();
     });
   });
@@ -1731,28 +1402,6 @@ function initParametros(){
       if(abaCx && abaCx.getAttribute("aria-selected")==="true") renderCaixa();
     });
   };
-  const ligaCau = (id, campo, tipo)=>{
-    const el = $(id); if(!el) return;
-    if(tipo==="bool") el.checked = estado.cau[campo];
-    else el.value = String(estado.cau[campo]);
-    el.addEventListener(tipo==="bool"?"change":"input", ()=>{
-      if(tipo==="num"){ const v=Number(el.value); estado.cau[campo] = isFinite(v)&&v>=0 ? v : 0; }
-      else if(tipo==="bool") estado.cau[campo] = el.checked;
-      else estado.cau[campo] = el.value;
-      sincronizaCau();
-      atualizar();
-      const abaCu = document.querySelector('button[aria-controls="p-cau"]');
-      if(abaCu && abaCu.getAttribute("aria-selected")==="true") renderCau();
-    });
-  };
-  ligaCau("u-bh","bh","num"); ligaCau("u-fp","fp","num"); ligaCau("u-cub","cub","num");
-  ligaCau("cu-bh","bh","num"); ligaCau("cu-fp","fp","num"); ligaCau("cu-cub","cub","num");
-  ligaCau("cu-sr","sr","num"); ligaCau("cu-r","r","num"); ligaCau("cu-orc","orc","txt");
-  ligaCau("cu-interp","interp","bool");
-  ligaCau("cu-sc1","sc1","num"); ligaCau("cu-fp1","fp1","num");
-  ligaCau("cu-sc2","sc2","num"); ligaCau("cu-fp2","fp2","num");
-  sincronizaCau();
-
   ligaCaixa("c-ht1","ht1","num");
   ligaCaixa("c-modalidade","modalidade","txt");
   ligaCaixa("cx-ht1","ht1","num");
@@ -1800,25 +1449,6 @@ function sincronizaCaixa(){
   }
 }
 
-/* mantém em sincronia os campos do CAU/BR que aparecem em duas abas */
-function sincronizaCau(){
-  const pares = [["u-bh","bh"],["cu-bh","bh"],["u-fp","fp"],["cu-fp","fp"],["u-cub","cub"],["cu-cub","cub"],
-                 ["cu-sr","sr"],["cu-r","r"],["cu-orc","orc"],["cu-sc1","sc1"],["cu-fp1","fp1"],
-                 ["cu-sc2","sc2"],["cu-fp2","fp2"]];
-  pares.forEach(([id,campo])=>{
-    const el = $(id);
-    if(el && document.activeElement!==el) el.value = String(estado.cau[campo]);
-  });
-  const ip = $("cu-interp"); if(ip) ip.checked = estado.cau.interp;
-  const fpEl = $("cu-fp"), fpEl2 = $("u-fp");
-  const usandoInterp = estado.cau.interp && estado.cau.sc2>estado.cau.sc1 && estado.cau.fp1>0 && estado.cau.fp2>0;
-  [fpEl,fpEl2].forEach(el=>{ if(el) el.disabled = usandoInterp; });
-  if(usandoInterp){
-    const v = fmt4.format(cauFp());
-    [fpEl,fpEl2].forEach(el=>{ if(el && document.activeElement!==el) el.value = v.replace(",","."); });
-  }
-}
-
 /* ---------- tabela principal ---------- */
 function celulaHTML(c, refId){
   if(!c || c.st==="na"){
@@ -1844,7 +1474,7 @@ function renderCalc(){
   GRUPOS.forEach(g=>{
     const doGrupo = res.linhas.filter(L=>L.sv.grupo===g.id);
     if(!doGrupo.length) return;
-    html += '<tr class="grupo"><td colspan="10" style="border-left:4px solid '+g.cor+'">'+esc(g.nome)+'</td></tr>';
+    html += '<tr class="grupo"><td colspan="9" style="border-left:4px solid '+g.cor+'">'+esc(g.nome)+'</td></tr>';
     doGrupo.forEach(L=>{
       const sv = L.sv;
       const marcado = estado.sel[sv.id];
@@ -1859,7 +1489,6 @@ function renderCalc(){
         celulaHTML(L.cel.senge,"senge")+
         celulaHTML(L.cel.cehop,"cehop")+
         celulaHTML(L.cel.caixa,"caixa")+
-        celulaHTML(L.cel.cau,"cau")+
         '<td class="n"><input class="pers num" type="number" step="0.01" min="0" data-cu="'+sv.id+'" value="'+
           (estado.custom[sv.id]!==undefined?estado.custom[sv.id]:"")+'" placeholder="—" aria-label="Preço personalizado de '+esc(sv.nome)+'">'+
           (L.cel.custom.st==="ok"?'<span class="mini">'+R$(L.cel.custom.total)+'</span>':'')+'</td>'+
@@ -1900,14 +1529,13 @@ function correspondencias(T){
   partes.push('SENGE: '+ (T.senge ? esc(SENGE_CIVIS_ROT[T.senge]) : "sem correspondência"));
   partes.push('CEHOP: '+ (T.cehop ? esc(CEHOP_ARQ_ROT[T.cehop]) : "sem correspondência"));
   partes.push('CAIXA: índices independentes da tipologia');
-  partes.push('CAU/BR: tipologia entra pelo fp base do Módulo I');
   return partes.join(" &middot; ");
 }
 
 /* ---------- cartões ---------- */
 function renderCartoes(){
   const res = ULTIMO;
-  const ativos = REFS.filter(r=> res.ativos.indexOf(r)>=0 || (r.id==="custom" && res.totais.custom.itens>0));
+  const ativos = REFS.filter(r=> r.id!=="custom" || res.totais.custom.itens>0);
   const totais = ativos.map(r=>res.totais[r.id].total).filter(v=>v>0);
   const menor = totais.length?Math.min.apply(null,totais):0;
   const maior = totais.length?Math.max.apply(null,totais):0;
@@ -1953,7 +1581,7 @@ function svgTexto(x,y,txt,opc){
 
 function renderGraficoTotal(){
   const res = ULTIMO;
-  const refs = REFS.filter(r=> res.ativos.indexOf(r)>=0 || (r.id==="custom" && res.totais.custom.itens>0));
+  const refs = REFS.filter(r=> r.id!=="custom" || res.totais.custom.itens>0);
   const W=900, H=300, ml=70, mr=20, mt=26, mb=54;
   const maxV = Math.max.apply(null, refs.map(r=>res.totais[r.id].total).concat([1]));
   const larg = (W-ml-mr)/refs.length;
@@ -1999,7 +1627,7 @@ function renderGraficoTotal(){
 
 function renderGraficoDisciplinas(){
   const res = ULTIMO;
-  const refs = REFS.filter(r=> res.ativos.indexOf(r)>=0 || (r.id==="custom" && res.totais.custom.itens>0));
+  const refs = REFS.filter(r=> r.id!=="custom" || res.totais.custom.itens>0);
   const linhas = res.linhas.filter(L=> estado.sel[L.sv.id] && L.valores.length>0 && !(estado.comum && !L.comum));
   const W=900, ml=250, mr=70, mt=14, hLinha=Math.max(34, 14+refs.length*9);
   const H = mt + linhas.length*hLinha + 24;
@@ -2027,7 +1655,7 @@ function renderGraficoDisciplinas(){
 
 function renderGraficoDispersao(){
   const res = ULTIMO;
-  const refs = REFS.filter(r=> res.ativos.indexOf(r)>=0 || (r.id==="custom" && res.totais.custom.itens>0));
+  const refs = REFS.filter(r=> r.id!=="custom" || res.totais.custom.itens>0);
   const linhas = res.linhas.filter(L=> estado.sel[L.sv.id] && L.valores.length>1 && !(estado.comum && !L.comum));
   const W=900, ml=250, mr=110, mt=16, hLinha=26;
   const H = mt + linhas.length*hLinha + 20;
@@ -2057,7 +1685,7 @@ function renderGraficoDispersao(){
 
 function renderEstatistica(){
   const res = ULTIMO;
-  const refs = REFS.filter(r=> res.ativos.indexOf(r)>=0 || (r.id==="custom" && res.totais.custom.itens>0));
+  const refs = REFS.filter(r=> r.id!=="custom" || res.totais.custom.itens>0);
   let html = "";
   res.linhas.forEach(L=>{
     if(!estado.sel[L.sv.id]) return;
@@ -2314,71 +1942,6 @@ function renderCaixa(){
 }
 
 /* =========================================================
-   8-C. METODOLOGIA CAU/BR — MÓDULO II
-   ========================================================= */
-function renderCau(){
-  sincronizaCau();
-  const C = estado.cau, Sc = estado.area, fp = cauFp(), R = cauR();
-  const pronto = C.bh>0 && fp>0;
-
-  $("cau-alerta").innerHTML = pronto ? "" :
-    '<div class="aviso critico" style="margin-bottom:14px"><b>Faltam dois parâmetros do Módulo I.</b> ' +
-    'A Base de Honorários (BH) e o fator percentual base (Tabela 5) não integram o Módulo II — este documento apenas remete a eles. ' +
-    'Enquanto não forem informados, a coluna CAU/BR fica vazia na calculadora. Consulte o Módulo I das Tabelas de Honorários no sítio do CAU/BR ' +
-    'e lance aqui os valores correspondentes à tipologia e à área do seu empreendimento.</div>';
-
-  const pvArq = pronto ? cauUnit(1.00)*Sc : 0;
-  $("cu-cartoes").innerHTML =
-    '<div class="cartao" style="border-top-color:var(--cau)"><div class="rot" style="color:var(--cau)">fp aplicado</div>'+
-      '<div class="val">'+(fp>0?fmt3.format(fp)+"%":"—")+'</div><div class="sub">'+
-      (C.interp && C.sc2>C.sc1 && C.fp1>0 && C.fp2>0 ? "Interpolado entre "+fmt0.format(C.sc1)+" e "+fmt0.format(C.sc2)+" m²" : "Informado diretamente")+'</div></div>'+
-    '<div class="cartao" style="border-top-color:var(--cau)"><div class="rot" style="color:var(--cau)">R — redutor de repetições</div>'+
-      '<div class="val">'+fmt4.format(R)+'</div><div class="sub">S<sub>p</sub> = '+fmt0.format(Sc - Math.min(C.sr,Sc) + Math.min(C.sr,Sc)*(C.r/100))+
-      ' m² sobre S<sub>c</sub> = '+fmt0.format(Sc)+' m²</div></div>'+
-    '<div class="cartao" style="border-top-color:var(--cau)"><div class="rot" style="color:var(--cau)">PV do projeto arquitetônico</div>'+
-      '<div class="val">'+(pronto?R$(pvArq):"—")+'</div><div class="sub">'+
-      (pronto?fmt2.format(pvArq/Sc)+' R$/m² · 100% do fp base':'aguardando BH e fp')+'</div></div>'+
-    '<div class="cartao" style="border-top-color:var(--cau)"><div class="rot" style="color:var(--cau)">Base de honorários</div>'+
-      '<div class="val">'+(C.bh>0?R$(C.bh):"—")+'</div><div class="sub">por m² de área construída<br>CUB-R8N: '+(C.cub>0?R$(C.cub):"não informado")+'</div></div>';
-
-  let h = "", g = "";
-  CAU_TAB1.forEach(it=>{
-    if(it.g!==g){ g = it.g; h += '<tr class="grupo"><td colspan="7">'+esc(g)+'</td></tr>'; }
-    const u = cauUnit(it.pct);
-    h += '<tr><td class="num" style="font-size:11.5px">'+it.id+'</td>'+
-      '<td class="serv">'+esc(it.nome)+'</td>'+
-      '<td class="n">'+fmt0.format(it.pct*100)+'%</td>'+
-      '<td class="n">'+(fp>0?fmt3.format(it.pct*fp)+"%":'<span class="na">—</span>')+'</td>'+
-      '<td class="n">'+(u===null?'<span class="na">—</span>':fmt2.format(u))+'</td>'+
-      '<td class="n">'+(u===null?'<span class="na">—</span>':'<b>'+R$(u*Sc)+'</b>')+'</td>'+
-      '<td style="font-size:11.5px;color:var(--tinta-3)">'+esc(it.parc)+'</td></tr>';
-  });
-  $("cu-corpo").innerHTML = h;
-
-  const pvPais = cauPaisagismo(estado.terreno);
-  $("cu-pais").innerHTML = CAU_PAIS.map(it=>
-    '<tr><td class="serv">'+esc(it.id+" — "+it.nome)+'</td>'+
-    '<td class="n">'+fmt0.format(it.pct*100)+'%</td>'+
-    '<td class="n">'+(pvPais===null?'<span class="na">informe o CUB-R8N</span>':'<b>'+R$(pvPais*it.pct)+'</b>')+'</td></tr>').join("");
-
-  const faixa = cauFaixaUrb(estado.terreno);
-  $("cu-tab2").innerHTML = CAU_TAB2.map(f=>{
-    const ativa = (f===faixa);
-    const rot = f[0]===Infinity ? "A partir de 10.240.000 m²" : (f===CAU_TAB2[0]?"Até ":"")+fmt0.format(f[0])+" m²";
-    return '<tr'+(ativa?' class="subtotal"':'')+'><td class="serv">'+esc(rot)+(ativa?' <span class="tag incluso">faixa atual</span>':'')+'</td>'+
-      '<td class="n">'+fmt2.format(f[1])+'</td><td class="n">'+fmt2.format(f[2]*100)+'%</td>'+
-      '<td class="n">'+(C.cub>0?R$(f[2]*C.cub):'<span class="na">—</span>')+'</td></tr>';
-  }).join("");
-
-  $("cu-urb").innerHTML = CAU_URB.map(it=>{
-    const v = cauUrbano(estado.terreno, it.pct);
-    return '<tr><td class="num" style="font-size:11.5px">'+it.id+'</td><td class="serv">'+esc(it.nome)+'</td>'+
-      '<td class="n">'+fmt0.format(it.pct*100)+'%</td>'+
-      '<td class="n">'+(v===null?'<span class="na">informe o CUB-R8N</span>':'<b>'+R$(v)+'</b>')+'</td></tr>';
-  }).join("");
-}
-
-/* =========================================================
    9. BASE DE DADOS
    ========================================================= */
 function tabelaHTML(titulo, cabecalhos, linhas, nota){
@@ -2524,28 +2087,6 @@ function renderBase(){
     CAIXA_C9.map(f=>[f[1], f[2], f[3], f[4], f[5]]),
     'Ar = área equivalente de remuneração nas edificações novas, reformas e ampliações; área efetiva da intervenção nas pequenas intervenções remuneradas pelo valor da obra.');
 
-  h += tabelaHTML("CAU/BR — Módulo II, Tabela 1: percentuais sobre o fp do projeto arquitetônico",
-    ["Item","Projeto / serviço","Grupo","% do fp base","Parcelamento"],
-    CAU_TAB1.map(x=>[x.id, x.nome, x.g, fmt0.format(x.pct*100)+"%", x.parc]),
-    'PV = S<sub>c</sub> × BH × (fp × R). Os percentuais incidem sobre o fator percentual do projeto arquitetônico completo, definido na Tabela 5 do Módulo I. O parcelamento reproduz a sequência de etapas publicada na tabela.');
-
-  h += tabelaHTML("CAU/BR — Módulo II, item 1.6: arquitetura paisagística",
-    ["Item","Serviço","% do projeto paisagístico"],
-    CAU_PAIS.map(x=>[x.id, x.nome, fmt0.format(x.pct*100)+"%"]),
-    'O projeto de arquitetura paisagística (item 6.3.3) tem fórmula própria: PV = 2,21 × [(255,33% × CUB) + (25,53% × CUB) × √S].');
-
-  h += tabelaHTML("CAU/BR — Módulo II, Tabela 2: projeto urbanístico",
-    ["Área de intervenção (m²)","Hectares","fp sobre o CUB-R8N"],
-    CAU_TAB2.map(f=>[
-      f[0]===Infinity ? "A partir de 10.240.000" : (f===CAU_TAB2[0]?"Até ":"")+fmt0.format(f[0]),
-      f[1], fmt2.format(f[2]*100)+"%"
-    ]),
-    'Valor unitário por hectare de área de intervenção.');
-
-  h += tabelaHTML("CAU/BR — Módulo II, itens 1.8 a 1.10: urbanismo e relatórios urbanísticos",
-    ["Item","Projeto / serviço","% da Tabela 2"],
-    CAU_URB.map(x=>[x.id, x.nome, fmt0.format(x.pct*100)+"%"]));
-
   alvo.innerHTML = h;
   alvo.dataset.pronto = "1";
 }
@@ -2570,14 +2111,10 @@ function baixarCSV(){
   L.push(["CAIXA — hora técnica ht1 (R$)", fmt2.format(estado.caixa.ht1)]);
   L.push(["CAIXA — área equivalente Ae (m²)", fmt2.format(caixaAe())]);
   L.push(["CAIXA — modalidade", estado.caixa.modalidade]);
-  L.push(["CAU/BR — Base de Honorários BH (R$/m²)", fmt2.format(estado.cau.bh)]);
-  L.push(["CAU/BR — fp base aplicado (%)", fmt3.format(cauFp())]);
-  L.push(["CAU/BR — redutor R", fmt4.format(cauR())]);
-  L.push(["CAU/BR — CUB-R8N (R$/m²)", fmt2.format(estado.cau.cub)]);
   L.push([]);
   L.push(["Serviço","Unidade","Quantidade",
     "IOPES unit.","IOPES total","SENGE unit.","SENGE total","CEHOP unit.","CEHOP total",
-    "CAIXA unit.","CAIXA total","CAU/BR unit.","CAU/BR total","Personalizada unit.","Personalizada total","Observações"]);
+    "CAIXA unit.","CAIXA total","Personalizada unit.","Personalizada total","Observações"]);
   res.linhas.forEach(li=>{
     if(!estado.sel[li.sv.id]) return;
     if(estado.comum && !li.comum) return;
@@ -2589,15 +2126,15 @@ function baixarCSV(){
     }).filter(Boolean).join(" | ");
     const cu = id => { const c=li.cel[id]; return c.st==="ok" ? [n(c.unit), n(c.total)] : (c.st==="incluso"?["incluso","0,00"]:["",""]); };
     L.push([li.sv.nome, li.sv.un, fmt2.format(li.q)]
-      .concat(cu("iopes"), cu("senge"), cu("cehop"), cu("caixa"), cu("cau"), cu("custom"), [obs]));
+      .concat(cu("iopes"), cu("senge"), cu("cehop"), cu("caixa"), cu("custom"), [obs]));
   });
   L.push([]);
   L.push(["TOTAIS","","",
     "", n(res.totais.iopes.total), "", n(res.totais.senge.total), "", n(res.totais.cehop.total),
-    "", n(res.totais.caixa.total), "", n(res.totais.cau.total), "", n(res.totais.custom.total), ""]);
+    "", n(res.totais.caixa.total), "", n(res.totais.custom.total), ""]);
   L.push(["BASE COMUM","","",
     "", n(res.totais.iopes.comum), "", n(res.totais.senge.comum), "", n(res.totais.cehop.comum),
-    "", n(res.totais.caixa.comum), "", n(res.totais.cau.comum), "", n(res.totais.custom.comum), ""]);
+    "", n(res.totais.caixa.comum), "", n(res.totais.custom.comum), ""]);
 
   const csv = "\uFEFF" + L.map(l=>l.map(c=>'"'+String(c===undefined?"":c).replace(/"/g,'""')+'"').join(";")).join("\r\n");
   const blob = new Blob([csv], {type:"text/csv;charset=utf-8;"});
@@ -2626,9 +2163,7 @@ function atualizar(preservaFoco){
   if(abaComp && abaComp.getAttribute("aria-selected")==="true") renderComparativo();
   const abaCaixa = document.querySelector('button[aria-controls="p-caixa"]');
   if(abaCaixa && abaCaixa.getAttribute("aria-selected")==="true") renderCaixa();
-  const abaCau = document.querySelector('button[aria-controls="p-cau"]');
-  if(abaCau && abaCau.getAttribute("aria-selected")==="true") renderCau();
-  sincronizaCaixa(); sincronizaCau();
+  sincronizaCaixa();
   salvar();
 }
 
@@ -2661,9 +2196,6 @@ window.APP = {
   CAIXA_C1:CAIXA_C1, CAIXA_C1_IR:CAIXA_C1_IR, CAIXA_C2:CAIXA_C2, CAIXA_C5:CAIXA_C5,
   CAIXA_C6:CAIXA_C6, CAIXA_C7:CAIXA_C7, CAIXA_C8:CAIXA_C8, CAIXA_C9:CAIXA_C9,
   caixaAe:caixaAe, caixaUnit:caixaUnit, caixaIR:caixaIR, caixaPrazo:caixaPrazo,
-  CAU_TAB1:CAU_TAB1, CAU_TAB2:CAU_TAB2, CAU_PAIS:CAU_PAIS, CAU_URB:CAU_URB,
-  cauFp:cauFp, cauR:cauR, cauUnit:cauUnit, cauPaisagismo:cauPaisagismo,
-  cauUrbano:cauUrbano, cauFaixaUrb:cauFaixaUrb,
   estado:estado, calcular:calcular, estatistica:estatistica,
   sengeHa:sengeHa, faixaValor:faixaValor, faixaCivis:faixaCivis, CHAVE:CHAVE
 };
