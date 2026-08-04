@@ -1,0 +1,2204 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comparador de Honorários de Projetos — IOPES / SENGE-BA / CEHOP</title>
+<style>
+:root{
+  --tinta:#16202b;
+  --tinta-2:#48545f;
+  --tinta-3:#78848d;
+  --papel:#f6f7f4;
+  --papel-2:#ffffff;
+  --papel-3:#eceee8;
+  --regua:#d5d9d0;
+  --regua-forte:#b9c0b4;
+  --iopes:#2e6f73;
+  --senge:#a8531f;
+  --cehop:#3c5a99;
+  --caixa:#7d1f3f;
+  --custom:#6b5b95;
+  --baixo:#2f6b3d;
+  --alto:#9b2c2c;
+  --destaque:#1d3f46;
+  --sombra:0 1px 0 rgba(22,32,43,.06), 0 2px 8px rgba(22,32,43,.05);
+  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--papel);
+  color:var(--tinta);
+  font-family:var(--sans);
+  font-size:15px;
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
+
+/* ---------- cabeçalho ---------- */
+header.topo{
+  background:var(--destaque);
+  color:#eef2ef;
+  padding:22px 0 0;
+  border-bottom:3px solid var(--tinta);
+}
+.wrap{max-width:1240px;margin:0 auto;padding:0 20px}
+.marca{display:flex;flex-wrap:wrap;align-items:flex-end;gap:14px;justify-content:space-between}
+h1{
+  font-family:var(--serif);
+  font-size:clamp(22px,3vw,31px);
+  font-weight:600;
+  letter-spacing:-.015em;
+  margin:0;
+  line-height:1.15;
+}
+h1 small{display:block;font-family:var(--sans);font-size:12px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#8fb3ae;margin-bottom:6px}
+.selos{display:flex;flex-wrap:wrap;gap:6px;padding-bottom:4px}
+.selo{
+  font-size:11px;letter-spacing:.04em;padding:4px 9px;border-radius:2px;
+  background:rgba(255,255,255,.10);border-left:3px solid;white-space:nowrap;
+}
+.selo b{font-weight:600}
+nav.abas{display:flex;gap:2px;margin-top:20px;overflow-x:auto;scrollbar-width:thin}
+nav.abas button{
+  appearance:none;border:0;background:rgba(255,255,255,.07);color:#cfdcd8;
+  font-family:var(--sans);font-size:13px;font-weight:500;letter-spacing:.01em;
+  padding:11px 16px;cursor:pointer;white-space:nowrap;border-radius:3px 3px 0 0;
+  border-bottom:3px solid transparent;transition:background .12s,color .12s;
+}
+nav.abas button:hover{background:rgba(255,255,255,.14);color:#fff}
+nav.abas button[aria-selected="true"]{background:var(--papel);color:var(--tinta);border-bottom-color:var(--papel);font-weight:600}
+nav.abas button:focus-visible{outline:2px solid #8fb3ae;outline-offset:-2px}
+
+main{padding:24px 0 64px}
+section[role="tabpanel"][hidden]{display:none}
+
+/* ---------- blocos ---------- */
+.painel{
+  background:var(--papel-2);border:1px solid var(--regua);border-radius:4px;
+  box-shadow:var(--sombra);margin-bottom:18px;
+}
+.painel > h2{
+  font-family:var(--sans);font-size:11px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--tinta-2);margin:0;padding:13px 18px;border-bottom:1px solid var(--regua);background:var(--papel-3);
+  display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;border-radius:4px 4px 0 0;
+}
+.painel > h2 .aux{font-weight:500;letter-spacing:.02em;text-transform:none;font-size:12px;color:var(--tinta-3)}
+.corpo{padding:18px}
+.corpo.sem{padding:0}
+
+.grade{display:grid;gap:14px}
+.g-param{grid-template-columns:repeat(auto-fit,minmax(190px,1fr))}
+.g-2{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+label.campo{display:block;font-size:12px;font-weight:600;color:var(--tinta-2);letter-spacing:.02em}
+label.campo span.dica{display:block;font-weight:400;color:var(--tinta-3);font-size:11px;margin-top:2px;line-height:1.35}
+input[type="number"],input[type="text"],select{
+  width:100%;margin-top:5px;padding:8px 9px;font-size:14px;font-family:var(--mono);
+  border:1px solid var(--regua-forte);border-radius:3px;background:#fff;color:var(--tinta);
+}
+select{font-family:var(--sans)}
+input:focus,select:focus{outline:2px solid var(--destaque);outline-offset:-1px;border-color:var(--destaque)}
+.linha-check{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--tinta-2);margin-top:9px;line-height:1.35}
+.linha-check input{margin-top:2px;accent-color:var(--destaque)}
+
+/* ---------- tabelas ---------- */
+.rolagem{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{padding:7px 10px;text-align:left;border-bottom:1px solid var(--regua)}
+thead th{
+  font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--tinta-2);
+  background:var(--papel-3);font-weight:700;border-bottom:2px solid var(--regua-forte);white-space:nowrap;vertical-align:bottom;
+}
+thead th.ref{text-align:right;border-bottom-width:3px}
+td.n,th.n{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+tbody tr:hover{background:#fbfcfa}
+tr.grupo td{
+  background:var(--papel-3);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+  font-weight:700;color:var(--tinta-2);padding:6px 10px;border-bottom:1px solid var(--regua-forte);
+}
+tr.total td{font-weight:700;background:#f2f4ef;border-top:2px solid var(--regua-forte);border-bottom:1px solid var(--regua-forte)}
+tr.subtotal td{font-weight:600;background:#f8f9f6}
+td.na{color:var(--tinta-3);font-style:italic;font-family:var(--sans);font-size:12px}
+.mini{font-size:11px;color:var(--tinta-3);font-family:var(--sans);font-style:normal;display:block;line-height:1.3}
+.tag{display:inline-block;font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;padding:1px 5px;border-radius:2px;vertical-align:middle}
+.tag.aprox{background:#fdf0e3;color:#8a4d12;border:1px solid #edd0ab}
+.tag.incluso{background:#e8f0e9;color:#2f6b3d;border:1px solid #c3ddc8}
+.tag.conf{background:#fdeaea;color:#8f2a2a;border:1px solid #eec4c4}
+.marca-baixo{color:var(--baixo);font-weight:700}
+.marca-alto{color:var(--alto);font-weight:700}
+.serv{font-weight:500}
+.serv small{display:block;font-weight:400;color:var(--tinta-3);font-size:11px;line-height:1.35;margin-top:1px}
+
+/* ---------- cartões de resultado ---------- */
+.cartoes{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:12px}
+.cartao{border:1px solid var(--regua);border-top:4px solid;border-radius:4px;padding:13px 14px;background:#fff}
+.cartao .rot{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--tinta-2)}
+.cartao .val{font-family:var(--mono);font-size:23px;font-weight:600;letter-spacing:-.02em;margin:4px 0 2px;font-variant-numeric:tabular-nums}
+.cartao .sub{font-size:11.5px;color:var(--tinta-3);line-height:1.4}
+.cartao .sub b{color:var(--tinta-2);font-weight:600}
+
+/* ---------- gráficos ---------- */
+.svgbox{width:100%;overflow-x:auto}
+svg.chart{display:block;min-width:520px;width:100%;height:auto;font-family:var(--sans)}
+svg text{font-family:var(--sans)}
+.legenda{display:flex;flex-wrap:wrap;gap:14px;margin-top:10px;font-size:11.5px;color:var(--tinta-2)}
+.legenda i{display:inline-block;width:11px;height:11px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+
+/* ---------- botões e notas ---------- */
+.acoes{display:flex;flex-wrap:wrap;gap:8px}
+button.btn{
+  appearance:none;font-family:var(--sans);font-size:12.5px;font-weight:600;letter-spacing:.01em;
+  padding:8px 13px;border-radius:3px;border:1px solid var(--regua-forte);background:#fff;color:var(--tinta);cursor:pointer;
+}
+button.btn:hover{background:var(--papel-3)}
+button.btn.forte{background:var(--destaque);border-color:var(--destaque);color:#fff}
+button.btn.forte:hover{background:#265057}
+button.btn:focus-visible{outline:2px solid var(--destaque);outline-offset:2px}
+.nota{font-size:12.5px;color:var(--tinta-2);line-height:1.55}
+.nota + .nota{margin-top:9px}
+.aviso{border-left:3px solid #c9922f;background:#fdf8ec;padding:11px 13px;font-size:12.5px;line-height:1.5;border-radius:0 3px 3px 0}
+.aviso.critico{border-left-color:#9b2c2c;background:#fdf1f1}
+.aviso b{font-weight:700}
+ul.lista{margin:8px 0 0;padding-left:19px;font-size:12.5px;line-height:1.6;color:var(--tinta-2)}
+ul.lista li{margin-bottom:5px}
+code{font-family:var(--mono);font-size:12px;background:var(--papel-3);padding:1px 4px;border-radius:2px}
+h3.sub{font-family:var(--serif);font-size:17px;font-weight:600;margin:22px 0 8px;letter-spacing:-.01em}
+h3.sub:first-child{margin-top:0}
+.rodape{font-size:11.5px;color:var(--tinta-3);text-align:center;padding:26px 20px;line-height:1.6}
+input.pers{width:104px;text-align:right;font-size:12.5px;padding:4px 6px}
+
+@media (max-width:640px){
+  .corpo{padding:14px}
+  .wrap{padding:0 12px}
+  th,td{padding:6px 7px;font-size:12px}
+}
+@media print{
+  header.topo{background:#fff;color:#000;border-bottom:2px solid #000}
+  nav.abas,.acoes,button{display:none!important}
+  .painel{break-inside:avoid;box-shadow:none}
+  section[role="tabpanel"][hidden]{display:block!important}
+  h1 small{color:#555}
+  .selo{border-left-color:#000!important;background:#eee}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<header class="topo">
+  <div class="wrap">
+    <div class="marca">
+      <h1><small>Engenharia consultiva &middot; orçamentação de projetos</small>Comparador de honorários de projetos</h1>
+      <div class="selos">
+        <span class="selo" style="border-left-color:#7fb3b8"><b>IOPES/ES</b> 2018</span>
+        <span class="selo" style="border-left-color:#e2a06a"><b>SENGE-BA</b> jun/2024</span>
+        <span class="selo" style="border-left-color:#9db2dd"><b>CEHOP/SE</b> 2026</span>
+        <span class="selo" style="border-left-color:#d99bb0"><b>CAIXA</b> Apêndice C</span>
+      </div>
+    </div>
+    <nav class="abas" role="tablist" aria-label="Seções">
+      <button role="tab" id="t-calc" aria-controls="p-calc" aria-selected="true">Calculadora de edificações</button>
+      <button role="tab" id="t-comp" aria-controls="p-comp" aria-selected="false">Comparativo gráfico</button>
+      <button role="tab" id="t-infra" aria-controls="p-infra" aria-selected="false">Infraestrutura e vias</button>
+      <button role="tab" id="t-caixa" aria-controls="p-caixa" aria-selected="false">Metodologia CAIXA</button>
+      <button role="tab" id="t-base" aria-controls="p-base" aria-selected="false">Base de dados</button>
+      <button role="tab" id="t-fontes" aria-controls="p-fontes" aria-selected="false">Fontes e limitações</button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- ============ ABA 1: CALCULADORA ============ -->
+<section role="tabpanel" id="p-calc" aria-labelledby="t-calc">
+
+  <div class="painel">
+    <h2>Parâmetros do empreendimento <span class="aux" id="resumo-param"></span></h2>
+    <div class="corpo">
+      <div class="grade g-param">
+        <label class="campo">Tipologia da edificação
+          <select id="in-tipologia"></select>
+          <span class="dica" id="dica-tipologia"></span>
+        </label>
+        <label class="campo">Área construída (m²)
+          <input type="number" id="in-area" min="0" step="1" value="1200">
+          <span class="dica">Base de medição da maior parte dos serviços.</span>
+        </label>
+        <label class="campo">Área de projeção / cobertura (m²)
+          <input type="number" id="in-projecao" min="0" step="1" value="400">
+          <span class="dica">Fundações, estrutura metálica, SPDA e drenagem pluvial.</span>
+        </label>
+        <label class="campo">Área externa do terreno (m²)
+          <input type="number" id="in-terreno" min="0" step="1" value="800">
+          <span class="dica">Urbanização, paisagismo e redes externas.</span>
+        </label>
+        <label class="campo">Natureza da intervenção
+          <select id="in-intervencao">
+            <option value="novo">Edificação nova</option>
+            <option value="reforma">Reforma / ampliação</option>
+            <option value="cadastro">Levantamento cadastral</option>
+          </select>
+          <span class="dica">Diferencia preços na CEHOP/SE.</span>
+        </label>
+        <label class="campo">Tipo de fundação (CEHOP)
+          <select id="in-fundacao">
+            <option value="superficial">Superficial</option>
+            <option value="profunda">Profunda</option>
+          </select>
+          <span class="dica">3,70 vs. 10,40 R$/m² de projeção.</span>
+        </label>
+      </div>
+
+      <div class="grade g-2" style="margin-top:16px">
+        <div>
+          <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--tinta-2);margin-bottom:6px">Ajustes específicos</div>
+          <div class="linha-check"><input type="checkbox" id="ck-minimos" checked><label for="ck-minimos">Aplicar valores mínimos por projeto da CEHOP (R$&nbsp;1.950,00 por especialidade; R$&nbsp;3.116,00 para orçamento de edificações).</label></div>
+          <div class="linha-check"><input type="checkbox" id="ck-senge-orc"><label for="ck-senge-orc">SENGE-BA: majorar projetos civis em 30% por fornecimento do orçamento das obras (nota 4 da Tabela 4).</label></div>
+          <div class="linha-check"><input type="checkbox" id="ck-senge-mem"><label for="ck-senge-mem">SENGE-BA: acrescer 20% ao cálculo estrutural pela entrega da memória de cálculo (nota 3 da Tabela 6).</label></div>
+          <div class="linha-check"><input type="checkbox" id="ck-comum"><label for="ck-comum">Comparar apenas serviços presentes em todas as referências (base comum).</label></div>
+        </div>
+        <div>
+          <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--tinta-2);margin-bottom:6px">Fatores de atualização monetária</div>
+          <div class="grade" style="grid-template-columns:repeat(auto-fit,minmax(120px,1fr))">
+            <label class="campo" style="color:var(--iopes)">IOPES/ES
+              <input type="number" id="f-iopes" step="0.0001" min="0" value="1.0000">
+            </label>
+            <label class="campo" style="color:var(--senge)">SENGE-BA
+              <input type="number" id="f-senge" step="0.0001" min="0" value="1.0000">
+            </label>
+            <label class="campo" style="color:var(--cehop)">CEHOP/SE
+              <input type="number" id="f-cehop" step="0.0001" min="0" value="1.0000">
+            </label>
+          </div>
+          <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--caixa);margin:14px 0 6px">CAIXA — Apêndice C</div>
+          <div class="grade" style="grid-template-columns:repeat(auto-fit,minmax(130px,1fr))">
+            <label class="campo">Hora técnica ht1 (R$)
+              <input type="number" id="c-ht1" step="1" min="0" value="150">
+            </label>
+            <label class="campo">Modalidade
+              <select id="c-modalidade">
+                <option value="executivo">Projeto executivo (C1)</option>
+                <option value="anteprojeto">Anteprojeto (C2)</option>
+                <option value="asbuilt">As built (10%)</option>
+                <option value="revisao">Revisão de projeto (10%)</option>
+              </select>
+            </label>
+          </div>
+          <p class="mini" style="margin-top:6px">A ht1 é proposta pela empresa na licitação — não há preço publicado, logo a CAIXA não tem fator de atualização: a indexação ocorre pela própria hora técnica. Decomposição da área equivalente (A<sub>e</sub>) e escolha dos sistemas na aba <b>Metodologia CAIXA</b>.</p>
+          <p class="mini" style="margin-top:7px">Padrão 1,0000 = preços exatamente como publicados. A SENGE-BA é indexada ao CUB médio de jun/2024 (i₀ = 1.929,04): o fator equivale a CUB&nbsp;atual&nbsp;÷&nbsp;1.929,04. Para o IOPES/ES (2018) use o índice setorial adotado no seu processo (INCC-DI ou IPCA acumulado). Consulte a aba "Fontes e limitações".</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="painel">
+    <h2>Serviços e preços unitários <span class="aux">clique nas caixas para compor o escopo &middot; a coluna "Personalizada" é editável</span></h2>
+    <div class="corpo sem rolagem">
+      <table id="tab-calc">
+        <thead>
+          <tr>
+            <th style="width:32px"></th>
+            <th>Serviço</th>
+            <th class="n">Quantidade</th>
+            <th class="n ref" style="color:var(--iopes)">IOPES/ES</th>
+            <th class="n ref" style="color:var(--senge)">SENGE-BA</th>
+            <th class="n ref" style="color:var(--cehop)">CEHOP/SE</th>
+            <th class="n ref" style="color:var(--caixa)">CAIXA<br><span style="font-weight:400;text-transform:none;letter-spacing:0">Apêndice C</span></th>
+            <th class="n ref" style="color:var(--custom)">Personalizada<br><span style="font-weight:400;text-transform:none;letter-spacing:0">R$/un.</span></th>
+            <th class="n">Disp.</th>
+          </tr>
+        </thead>
+        <tbody id="corpo-calc"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="painel">
+    <h2>Resultado da orçamentação</h2>
+    <div class="corpo">
+      <div class="cartoes" id="cartoes"></div>
+      <div class="acoes" style="margin-top:16px">
+        <button class="btn forte" id="bt-csv">Baixar memória de cálculo (CSV)</button>
+        <button class="btn" id="bt-print">Imprimir / salvar em PDF</button>
+        <button class="btn" id="bt-limpar">Restaurar padrões</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ABA 2: COMPARATIVO ============ -->
+<section role="tabpanel" id="p-comp" aria-labelledby="t-comp" hidden>
+  <div class="painel">
+    <h2>Total por referência <span class="aux" id="cap-total"></span></h2>
+    <div class="corpo">
+      <div class="svgbox"><svg class="chart" id="ch-total" viewBox="0 0 900 300" role="img" aria-label="Gráfico de barras do total por referência"></svg></div>
+      <div class="legenda" id="leg-grupos"></div>
+    </div>
+  </div>
+
+  <div class="painel">
+    <h2>Preço unitário por especialidade <span class="aux">R$ por unidade de medida, já atualizados pelos fatores</span></h2>
+    <div class="corpo">
+      <div class="svgbox"><svg class="chart" id="ch-disc" viewBox="0 0 900 600" role="img" aria-label="Gráfico comparativo por especialidade"></svg></div>
+    </div>
+  </div>
+
+  <div class="painel">
+    <h2>Faixa de dispersão entre referências <span class="aux">cada linha é normalizada pelo maior valor da própria linha</span></h2>
+    <div class="corpo">
+      <p class="nota" style="margin-top:0">Quanto mais longa a barra, maior a divergência entre as tabelas para o mesmo serviço. O coeficiente de variação (CV) mede a dispersão relativa; valores acima de 30% indicam que a escolha da referência define o resultado da estimativa.</p>
+      <div class="svgbox"><svg class="chart" id="ch-disp" viewBox="0 0 900 600" role="img" aria-label="Faixa de dispersão por especialidade"></svg></div>
+    </div>
+  </div>
+
+  <div class="painel">
+    <h2>Estatística por serviço</h2>
+    <div class="corpo sem rolagem">
+      <table>
+        <thead><tr>
+          <th>Serviço</th><th class="n">Mínimo</th><th class="n">Mediana</th><th class="n">Máximo</th>
+          <th class="n">Amplitude</th><th class="n">CV</th><th>Menor / maior</th>
+        </tr></thead>
+        <tbody id="corpo-est"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ABA 3: INFRAESTRUTURA ============ -->
+<section role="tabpanel" id="p-infra" aria-labelledby="t-infra" hidden>
+  <div class="painel">
+    <h2>Parâmetros de infraestrutura</h2>
+    <div class="corpo">
+      <div class="grade g-param">
+        <label class="campo">Área do terreno / intervenção (m²)
+          <input type="number" id="i-area" min="0" step="100" value="20000">
+          <span class="dica">Base das faixas de preço da CEHOP e do escalonamento por hectare da SENGE.</span>
+        </label>
+        <label class="campo">Extensão de vias (km)
+          <input type="number" id="i-km" min="0" step="0.1" value="2">
+        </label>
+        <label class="campo">Classe da via (SENGE)
+          <select id="i-classe">
+            <option value="0">Vias urbanas</option>
+            <option value="1">Estradas menores que 7 km</option>
+            <option value="2">Estradas maiores que 7 km</option>
+          </select>
+        </label>
+        <label class="campo">Desnível médio das contenções (m)
+          <input type="number" id="i-desnivel" min="0" step="0.5" value="4">
+        </label>
+        <label class="campo">Área de contenção (m²)
+          <input type="number" id="i-areacont" min="0" step="10" value="0">
+          <span class="dica">Desnível × comprimento longitudinal.</span>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <div class="painel">
+    <h2>Redes e obras em área <span class="aux">preços aplicados sobre a área informada</span></h2>
+    <div class="corpo sem rolagem">
+      <table>
+        <thead><tr>
+          <th>Serviço</th><th class="n">Quantidade</th>
+          <th class="n ref" style="color:var(--iopes)">IOPES/ES</th>
+          <th class="n ref" style="color:var(--senge)">SENGE-BA</th>
+          <th class="n ref" style="color:var(--cehop)">CEHOP/SE</th>
+        </tr></thead>
+        <tbody id="corpo-infra"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="painel">
+    <h2>Projetos lineares de vias <span class="aux">R$ por quilômetro</span></h2>
+    <div class="corpo sem rolagem">
+      <table>
+        <thead><tr>
+          <th>Serviço</th>
+          <th class="n ref" style="color:var(--senge)">SENGE-BA (R$/km)</th>
+          <th class="n ref" style="color:var(--cehop)">CEHOP/SE (R$/km)</th>
+          <th class="n">SENGE total</th>
+          <th class="n">CEHOP total</th>
+        </tr></thead>
+        <tbody id="corpo-vias"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="painel">
+    <h2>Comparativo de infraestrutura</h2>
+    <div class="corpo">
+      <div class="svgbox"><svg class="chart" id="ch-infra" viewBox="0 0 900 260" role="img" aria-label="Gráfico comparativo de infraestrutura"></svg></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ABA CAIXA ============ -->
+<section role="tabpanel" id="p-caixa" aria-labelledby="t-caixa" hidden>
+  <div class="painel">
+    <h2>Área equivalente de remuneração e hora técnica</h2>
+    <div class="corpo">
+      <div class="grade g-param">
+        <label class="campo">Hora técnica ht1 (R$)
+          <input type="number" id="cx-ht1" step="1" min="0">
+          <span class="dica">Valor unitário proposto pela empresa.</span>
+        </label>
+        <label class="campo">&Sigma; A<sub>pd</sub> — pavimento diferenciado (m²)
+          <input type="number" id="cx-apd" step="1" min="0">
+          <span class="dica">Coeficiente a = 1,00.</span>
+        </label>
+        <label class="campo">&Sigma; A<sub>pt</sub> — pavimento tipo (m²)
+          <input type="number" id="cx-apt" step="1" min="0">
+          <span class="dica">Coeficiente b = 0,50.</span>
+        </label>
+        <label class="campo">&Sigma; A<sub>ge</sub> — garagem / estacionamento (m²)
+          <input type="number" id="cx-age" step="1" min="0">
+          <span class="dica">Coeficiente c = 0,25. Só entra em arquitetura, estrutura e fundações, elétrica, hidrossanitário, anti-incêndio, orçamento, cronograma e coordenação.</span>
+        </label>
+        <label class="campo">Modalidade
+          <select id="cx-modalidade">
+            <option value="executivo">Projeto executivo (Tabela C1)</option>
+            <option value="anteprojeto">Anteprojeto (Tabela C2)</option>
+            <option value="asbuilt">As built — 10% do executivo (C3)</option>
+            <option value="revisao">Revisão de projeto — 10% (C4)</option>
+          </select>
+        </label>
+      </div>
+      <div class="linha-check"><input type="checkbox" id="cx-sync"><label for="cx-sync">Usar a área construída informada na calculadora como &Sigma;A<sub>pd</sub>.</label></div>
+      <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--tinta-2);margin:16px 0 6px">Escolha das soluções — define quais índices entram na coluna CAIXA da calculadora</div>
+      <div class="grade g-param">
+        <label class="campo">Projeto de arquitetura
+          <select id="cx-arq">
+            <option value="ARQ">Executivo (ARQ) — IR 0,800</option>
+            <option value="AMB">Ambiência (AMB) — IR 0,520</option>
+            <option value="LAY">Layout (LAY) — IR 0,200</option>
+            <option value="EPR">Estudo preliminar (EPR) — IR 0,100</option>
+          </select>
+        </label>
+        <label class="campo">Solução anti-incêndio
+          <select id="cx-inc">
+            <option value="EXT">Extintores (EXT) — IR 0,090</option>
+            <option value="HEX">Hidrantes e extintores (HEX) — IR 0,170</option>
+            <option value="SPR">Incluso sprinklers (SPR) — IR 0,330</option>
+          </select>
+        </label>
+        <label class="campo">Sistema de climatização
+          <select id="cx-clima">
+            <option value="VSD">Ventilação sem dutos (VSD) — 0,080</option>
+            <option value="VCD">Ventilação com dutos (VCD) — 0,120</option>
+            <option value="COJ">Condicionador de janela (COJ) — 0,200</option>
+            <option value="MNS">Mini-split até 5 TR (MNS) — 0,280</option>
+            <option value="SCA">Self-contained a ar / roof-top (SCA) — 0,360</option>
+            <option value="SCR">Condensador remoto, VRF ou VRV (SCR) — 0,400</option>
+            <option value="CAG">Central de água gelada (CAG) — 0,640</option>
+          </select>
+        </label>
+        <label class="campo">Maquete eletrônica
+          <select id="cx-maquete">
+            <option value="0">Complexidade nível 1 (MQ1) — 8 × ht1</option>
+            <option value="1">Complexidade nível 2 (MQ2) — 16 × ht1</option>
+            <option value="2">Complexidade nível 3 (MQ3) — 24 × ht1</option>
+          </select>
+        </label>
+      </div>
+      <div class="linha-check"><input type="checkbox" id="cx-eletcomp"><label for="cx-eletcomp">Somar entrada de energia (EEN) e luminotécnico (LMT) ao projeto elétrico, elevando o IR de 0,170 para 0,540 — aproxima o escopo do projeto elétrico das demais tabelas.</label></div>
+      <div class="cartoes" style="margin-top:14px" id="cx-cartoes"></div>
+      <p class="nota" style="margin-top:12px"><b>Fórmula do item 2.1:</b> VR = (IR × ht1) × (8 ÷ A<sub>e</sub>)<sup>0,4</sup> × A<sub>e</sub>, com A<sub>e</sub> = 1,00·&Sigma;A<sub>pd</sub> + 0,50·&Sigma;A<sub>pt</sub> + 0,25·&Sigma;A<sub>ge</sub>. O expoente 0,4 torna o preço por metro quadrado <b>regressivo</b>: quanto maior a área, menor o valor unitário. É a diferença estrutural em relação às outras três tabelas, que são lineares por faixa.</p>
+    </div>
+  </div>
+
+  <div class="painel">
+    <h2>Remuneração em função da área <span class="aux">Tabelas C1 e C2 · marque os projetos da OES</span></h2>
+    <div class="corpo sem rolagem">
+      <table>
+        <thead><tr>
+          <th style="width:32px"></th><th>Projeto / serviço técnico</th><th>Cód.</th>
+          <th class="n">IR</th><th class="n">R$/m² equivalente</th><th class="n">VR</th>
+        </tr></thead>
+        <tbody id="cx-corpo"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="painel">
+    <h2>Pequenas intervenções em função do valor da obra <span class="aux">Tabela C5 · item 3</span></h2>
+    <div class="corpo">
+      <div class="grade g-param">
+        <label class="campo">Valor total da obra V<sub>o</sub> (R$)
+          <input type="number" id="cx-vo" step="1000" min="0">
+        </label>
+        <label class="campo">Área do pavimento da intervenção (m²)
+          <input type="number" id="cx-apav" step="10" min="0">
+          <span class="dica">Base do teto previsto no item 3.1.1.</span>
+        </label>
+      </div>
+      <p class="nota" style="margin-top:10px"><b>Fórmula do item 3.1:</b> VR = IR × V<sub>o</sub> × (ht1 ÷ V<sub>o</sub>)<sup>0,5</sup>, aplicável quando a área de intervenção representa menos de 40% da área construída e não há desenvolvimento completo dos projetos. O item 3.1.1 limita o valor ao que resultaria da fórmula por área — o teto é calculado e aplicado abaixo.</p>
+      <div class="rolagem" style="margin-top:12px">
+        <table>
+          <thead><tr>
+            <th>Projeto / serviço técnico</th><th>Cód.</th><th class="n">IR (C5)</th>
+            <th class="n">VR por valor da obra</th><th class="n">Teto do item 3.1.1</th><th class="n">VR aplicável</th>
+          </tr></thead>
+          <tbody id="cx-c5"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="painel">
+    <h2>Serviços remunerados por múltiplo da hora técnica <span class="aux">Tabelas C6, C7 e C8</span></h2>
+    <div class="corpo sem rolagem">
+      <table>
+        <thead><tr><th>Serviço</th><th>Tipo</th><th class="n">Múltiplo de ht1</th><th class="n">VR</th><th class="n">Prazo</th></tr></thead>
+        <tbody id="cx-fixos"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="painel">
+    <h2>Prazos <span class="aux">Tabela C9 · dias corridos · a faixa aplicável aparece destacada</span></h2>
+    <div class="corpo sem rolagem">
+      <table>
+        <thead><tr>
+          <th>Área equivalente (m²)</th><th class="n">Layout</th>
+          <th class="n">Projetos executivos e demais serviços</th>
+          <th class="n">Anteprojeto e revisão</th><th class="n">As built</th>
+        </tr></thead>
+        <tbody id="cx-prazos"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ABA 4: BASE DE DADOS ============ -->
+<section role="tabpanel" id="p-base" aria-labelledby="t-base" hidden>
+  <div class="painel">
+    <h2>Coeficientes importados <span class="aux">valores como publicados, sem atualização monetária</span></h2>
+    <div class="corpo" id="area-base"></div>
+  </div>
+</section>
+
+<!-- ============ ABA 5: FONTES ============ -->
+<section role="tabpanel" id="p-fontes" aria-labelledby="t-fontes" hidden>
+  <div class="painel">
+    <h2>Referências utilizadas</h2>
+    <div class="corpo">
+      <h3 class="sub">IOPES/ES — Tabela Referencial de Preços de Projetos, edição 2018, revisão R0</h3>
+      <p class="nota">Instituto de Obras Públicas do Espírito Santo, Secretaria de Estado dos Transportes e Obras Públicas. Preços em R$/m² por tipologia (educacional, esportiva, quadras, administrativa, militar, hospitalar, delegacias, penitenciária e restauro) mais um bloco de projetos diversos (implementos externos, paisagismo, sinalização e maquete eletrônica). O projeto estrutural já inclui a fundação. As diretrizes de orçamento estão no portal do IOPES, seção "Faça Certo".</p>
+
+      <h3 class="sub">SENGE-BA — Tabela de Honorários Profissionais 2024</h3>
+      <p class="nota">Sindicato dos Engenheiros da Bahia. Todos os preços são referidos ao CUB médio de jun/2024 (i₀ = 1.929,04), calculado pelo SINDUSCON-BA nos parâmetros da Lei 4.591/64 e da NBR 12.721. A tabela declara-se referencial de <b>preços mínimos</b>, cabendo ao profissional fixar seus preços. As Tabelas 7 e 8 baseiam-se nos honorários de referência da ABECE.</p>
+
+      <h3 class="sub">CEHOP/SE — Tabela de Honorários de Projetos / Consultorias / Serviços de Engenharia, referência 2026</h3>
+      <p class="nota">Companhia Estadual de Habitação e Obras Públicas de Sergipe, assinada em Aracaju em 14/07/2026. Fixa os <b>valores máximos</b> que o profissional pode cobrar da CEHOP, com projetos obrigatoriamente elaborados em BIM. Os preços incluem lucro, impostos, encargos, plotagem e encadernação. Contém ainda módulos de topografia, sondagens, ensaios e avaliação de imóveis não incorporados a esta calculadora.</p>
+
+      <h3 class="sub">CAIXA — Anexo I, Apêndice C: Remuneração e Prazos para Projetos</h3>
+      <p class="nota">Documento da GILOG/CT da CAIXA Econômica Federal, anexo de pregão eletrônico para serviços técnicos de engenharia. Adota a metodologia paramétrica de hora técnica difundida no setor de engenharia consultiva: em vez de preço por metro quadrado, define índices de remuneração (IR) por especialidade, aplicados sobre a fórmula VR = (IR × ht1) × (8 ÷ A<sub>e</sub>)<sup>0,4</sup> × A<sub>e</sub>. A hora técnica ht1 é <b>proposta pela licitante</b>, e não publicada — o documento fixa a estrutura de cálculo, não o nível de preço.</p>
+      <p class="nota">Três consequências práticas dessa diferença estrutural, que a calculadora explicita:</p>
+      <ul class="lista">
+        <li><b>Preço unitário regressivo.</b> O expoente 0,4 faz o R$/m² cair conforme a área cresce. As outras três tabelas ou são lineares (IOPES e CEHOP) ou escalonadas em degraus (SENGE-BA e faixas da CEHOP). Em áreas pequenas a CAIXA tende a superar as demais; em áreas grandes, a ficar abaixo.</li>
+        <li><b>Área equivalente, não área construída.</b> A base é A<sub>e</sub> = 1,00·&Sigma;A<sub>pd</sub> + 0,50·&Sigma;A<sub>pt</sub> + 0,25·&Sigma;A<sub>ge</sub>. Pavimento tipo entra pela metade e garagem por um quarto — e a garagem só nas especialidades listadas no item 2.1. Por padrão a calculadora iguala &Sigma;A<sub>pd</sub> à área construída informada; a decomposição fica na aba Metodologia CAIXA.</li>
+        <li><b>Índices independentes da tipologia.</b> Não há distinção entre escola, hospital ou penitenciária: a variação de complexidade é absorvida pela escolha dos projetos da OES e pelo sistema adotado (por exemplo, o índice de climatização vai de 0,080 para ventilação simples a 0,640 para central de água gelada). Comparar a CAIXA com as demais em tipologias muito especializadas exige essa ressalva.</li>
+      </ul>
+      <p class="nota">Vistorias, levantamentos e deslocamentos estão inclusos na remuneração dos projetos (item 1.4) — por isso o levantamento cadastral aparece como "incluso", e não como lacuna. As Built e Revisão de projeto valem 10% do respectivo projeto executivo (Tabelas C3 e C4).</p>
+      <p class="nota" style="margin-top:10px">Nenhuma divergência de leitura foi encontrada nesta fonte: as tabelas C1 a C10 vieram com estrutura de colunas íntegra.</p>
+
+      <div class="aviso" style="margin-top:14px">
+        <b>Divergências de leitura declaradas.</b> Três blocos das tabelas do SENGE-BA têm colunas sobrepostas no PDF de origem, o que impede reconstruir com segurança a correspondência linha × coluna:
+        <ul class="lista">
+          <li><b>Tabela 10 — Instalações Hidráulicas e Mecânicas</b> e <b>Tabela 11 — Instalações Elétricas e de Comunicações</b>: não foram importadas. Por isso o SENGE-BA aparece como "não previsto" nos itens de instalações. Confira no documento original antes de usá-las.</li>
+          <li><b>Tabela 6 — Cálculo Estrutural</b>: as colunas "convencional", "com previsão para ar condicionado" e "sob ação de vento" foram conferidas por consistência (as linhas de galpões trazem traço nessas colunas, o que confirma o alinhamento). As colunas de estruturas pré-moldadas, protendidas e com lajes de transição/cogumelo foram importadas com alinhamento aritmeticamente consistente, mas a célula "Shopping Center × pré-moldada" (R$ 43,13/m²) rompe o padrão das demais linhas e está marcada com <span class="tag conf">conferir</span>.</li>
+          <li><b>Tabela 1 — Serviços de Consultoria</b>: os dois primeiros valores da série (255,04 e 255,60) não formam a progressão decrescente esperada; a atribuição às faixas "até 20 h" e "até 30 h" está marcada com <span class="tag conf">conferir</span>.</li>
+        </ul>
+        A <b>Tabela 9 — Saneamento</b> teve a ordem das faixas validada pelo exemplo numérico do próprio documento (terreno de 12 ha resultando em R$ 29.033,82), o que confirma até 2 ha = R$ 5.567,59/ha.
+      </div>
+    </div>
+  </div>
+
+  <div class="painel">
+    <h2>Método de comparação</h2>
+    <div class="corpo">
+      <p class="nota">As três tabelas não são diretamente somáveis. A calculadora normaliza os escopos antes de comparar, e cada equivalência aproximada é sinalizada com <span class="tag aprox">aprox.</span> na linha correspondente:</p>
+      <ul class="lista">
+        <li><b>Fundações.</b> A CEHOP precifica fundação e estrutura separadamente; o IOPES inclui a fundação no projeto estrutural. Nessas linhas o IOPES aparece como <span class="tag incluso">incluso</span> e contribui com R$ 0,00 sem ser contado como lacuna.</li>
+        <li><b>Hidrossanitário.</b> O IOPES tem um item único; na CEHOP o valor é a soma de "hidráulico" e "esgoto sanitário".</li>
+        <li><b>Tipologias.</b> O SENGE-BA não tem "edifício administrativo" nem "delegacia": aplica-se "prédios comerciais" e "penitenciárias e quartéis", respectivamente. O SENGE-BA também não tem tipologia de restauro.</li>
+        <li><b>Faixas de área.</b> Os projetos civis do SENGE-BA e os itens de urbanização e paisagismo da CEHOP são escalonados por área; a faixa é selecionada automaticamente pela área informada e exibida na coluna de quantidade.</li>
+        <li><b>Bases de medição divergentes.</b> A drenagem pluvial da CEHOP mede a área de cobertura; a do IOPES integra os implementos externos e mede a área do terreno. A quantidade é única na calculadora — ajuste-a conforme a referência que estiver defendendo.</li>
+        <li><b>Correspondências da CAIXA.</b> O item elétrico usa apenas a rede de energia comum (ERC), com opção de somar entrada de energia e luminotécnico; CFTV e alarme somam CFT + ALM; o item de automação usa o controle de acesso (CTA), já que a automação e inteligência predial (AIP) tem escopo muito mais amplo; telefonia usa a entrada de telecomunicações (TLC), de escopo mais restrito que o projeto telefônico do IOPES; drenagem pluvial e rede lógica aparecem como <span class="tag incluso">incluso</span> porque integram o HIA e o CAE.</li>
+        <li><b>Natureza jurídica dos preços.</b> A CEHOP fixa <b>máximos</b> contratáveis, o SENGE-BA declara <b>mínimos</b> profissionais, o IOPES é um <b>referencial</b> administrativo e a CAIXA define uma <b>estrutura paramétrica</b> cujo nível de preço só se fecha com a hora técnica proposta na licitação. Convergência numérica entre elas não significa equivalência de significado, e a comparação direta deve vir acompanhada dessa ressalva em qualquer peça técnica.</li>
+      </ul>
+      <p class="nota" style="margin-top:12px">O campo <b>base comum</b> soma apenas os serviços com preço disponível em todas as referências ativas. É o único total efetivamente comparável entre tabelas; o total cheio de cada referência mede escopos diferentes e serve para dimensionar a contratação, não para confrontar tabelas.</p>
+    </div>
+  </div>
+
+  <div class="painel">
+    <h2>Atualização monetária</h2>
+    <div class="corpo">
+      <p class="nota">A calculadora não embute índices: o fator padrão é 1,0000 e os preços saem exatamente como publicados. Isso é deliberado — índices variam mensalmente e a escolha do indexador (INCC-DI, IPCA, CUB estadual) é decisão do processo, não do software.</p>
+      <p class="nota">Para o <b>SENGE-BA</b>, o próprio documento dá a regra: fator = CUB médio atual ÷ 1.929,04 (jun/2024), com o CUB divulgado mensalmente pelo SINDUSCON-BA. Note que as publicações de mercado divergem sobre o valor corrente do CUB baiano conforme o padrão adotado (R8-N, R1-N, com ou sem desoneração), então tome o valor diretamente da publicação oficial e registre no processo qual padrão foi usado.</p>
+      <p class="nota">Para a <b>CAIXA</b> não existe fator: o Apêndice C não publica preços, apenas índices adimensionais. Todo o nível de preço vem da hora técnica ht1 proposta pela licitante, e a atualização contratual segue o reajuste previsto no edital, não uma data-base de tabela. Ao comparar com as demais referências, tenha claro que o valor da CAIXA depende de uma variável de mercado que você está arbitrando.</p>
+      <p class="nota">Para o <b>IOPES/ES</b>, entre a edição 2018 e hoje há um intervalo longo o bastante para que a escolha do índice altere materialmente o resultado. Registre a série, o mês-base e o mês de referência na memória de cálculo — a calculadora exporta o fator aplicado no CSV.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<p class="rodape">Ferramenta de apoio à estimativa de honorários de projetos. Os valores calculados são referenciais e não substituem a análise técnica do escopo, do grau de dificuldade e das condições locais de cada contratação.</p>
+
+<script>
+"use strict";
+/* =========================================================
+   1. DADOS — coeficientes transcritos das tabelas de origem
+   ========================================================= */
+
+const REFS = [
+  {id:"iopes", nome:"IOPES/ES", ano:"2018 R0", cor:"#2e6f73", natureza:"referencial"},
+  {id:"senge", nome:"SENGE-BA", ano:"jun/2024", cor:"#a8531f", natureza:"mínimos"},
+  {id:"cehop", nome:"CEHOP/SE", ano:"2026", cor:"#3c5a99", natureza:"máximos"},
+  {id:"caixa", nome:"CAIXA", ano:"Apêndice C", cor:"#7d1f3f", natureza:"paramétrica"},
+  {id:"custom", nome:"Personalizada", ano:"—", cor:"#6b5b95", natureza:"informada"}
+];
+
+/* ---- IOPES/ES 2018 — R$/m² por tipologia ---- */
+const IOPES = {
+  educacionais:{arq:22.92,cadArq:4.61,estr:13.82,estrMet:11.53,hidro:8.63,cadHidro:1.85,eletr:10.63,cadEletr:2.25,tel:3.20,logica:3.12,cab:5.30,inc:2.69,som:1.03,cftv:2.56,spda:2.37,orc:4.73},
+  esportivos:{arq:19.79,cadArq:3.98,estr:13.82,estrMet:11.53,hidro:4.67,cadHidro:1.03,eletr:8.52,cadEletr:1.73,tel:1.41,logica:1.41,cab:4.29,inc:1.41,som:1.03,spda:2.37,orc:4.09},
+  quadras:{arq:16.77,cadArq:3.45,estr:6.91,estrMet:11.53,eletr:7.82,cadEletr:1.61,spda:2.37,orc:3.45},
+  administrativos:{arq:22.92,cadArq:4.61,estr:13.82,estrMet:11.53,hidro:8.63,cadHidro:1.85,eletr:9.33,cadEletr:2.04,tel:3.01,logica:2.37,cab:4.67,inc:2.37,som:1.28,clima:3.77,cftv:2.31,spda:2.37,orc:4.73},
+  militares:{arq:22.92,cadArq:4.42,estr:13.45,estrMet:11.53,hidro:8.63,cadHidro:1.85,eletr:9.33,cadEletr:1.99,tel:3.01,logica:2.37,cab:4.67,inc:2.37,som:1.28,clima:3.77,cftv:2.31,spda:2.37,orc:4.73},
+  hospitalares:{arq:33.36,cadArq:6.86,estr:13.95,estrMet:11.53,hidro:10.31,cadHidro:2.25,eletr:16.01,cadEletr:3.20,tel:4.22,logica:4.22,cab:7.94,inc:4.22,som:2.96,clima:7.42,cftv:4.87,spda:2.37,enf:1.03,gases:0.77,orc:6.14},
+  delegacias:{arq:22.92,cadArq:4.55,estr:13.95,estrMet:11.53,hidro:8.63,cadHidro:1.99,eletr:9.33,cadEletr:1.99,tel:3.01,logica:2.37,cab:4.67,inc:2.37,som:1.28,clima:3.77,cftv:2.31,spda:2.37,orc:4.73},
+  penitenciarias:{arq:25.86,cadArq:5.24,estr:13.89,estrMet:11.53,hidro:9.54,cadHidro:2.04,eletr:14.40,cadEletr:1.99,tel:3.84,logica:3.84,cab:7.23,inc:4.49,som:1.28,cftv:4.29,spda:2.37,autom:4.43,orc:5.44},
+  restauro:{arq:45.58,cadArq:8.77,estr:27.71,estrMet:22.92,hidro:17.16,cadHidro:3.58,eletr:18.63,cadEletr:3.84,tel:5.97,logica:4.61,cab:9.27,inc:4.61,som:2.50,clima:7.23,cftv:3.77,spda:4.61,orc:9.33}
+};
+const IOPES_ROT = {educacionais:"Edifícios educacionais",esportivos:"Edifícios esportivos",quadras:"Quadras esportivas",administrativos:"Edifícios administrativos",militares:"Edifícios militares",hospitalares:"Edifícios hospitalares e de saúde",delegacias:"Delegacias de polícia",penitenciarias:"Penitenciárias",restauro:"Restauro de edifício histórico"};
+const IOPES_DIV = {eletrico:2.75,cadCargas:1.99,telecom:0.83,hidro:2.04,cadHidro:1.41,terrapl:2.11,dren:2.37,inc:0.83,urb:3.66,pais:2.31,sinal:3.58,maquete:3.66};
+
+/* ---- CEHOP/SE 2026 ---- */
+const CEHOP_ARQ = { /* [cadastro, novo, reforma] */
+  administrativos:[7.80,26.00,28.60], educacionais:[7.20,24.00,26.40], esportivos:[9.50,31.50,34.70],
+  quadras:[5.90,19.50,21.50], saude:[10.90,36.40,40.00], industriais:[3.80,12.50,13.80],
+  seguranca:[7.80,26.00,28.60], penitenciarias:[9.50,31.50,34.70], teatros:[9.80,32.50,35.80],
+  convencoes:[7.80,26.00,28.60], parques:[0.80,2.50,2.80], tombadas:[11.70,null,39.00],
+  residencial:[null,22.00,22.00]
+};
+const CEHOP_ARQ_ROT = {administrativos:"Edifícios administrativos",educacionais:"Edifícios educacionais",esportivos:"Edifícios esportivos",quadras:"Quadras de esporte",saude:"Edifícios hospitalares e de saúde",industriais:"Prédios industriais e galpões",seguranca:"Edifícios da segurança pública",penitenciarias:"Penitenciárias e presídios",teatros:"Teatros e auditórios",convencoes:"Centros de convenções",parques:"Parques e praças",tombadas:"Restaurações de edif. tombadas",residencial:"Unidades residenciais"};
+const CEHOP = {
+  fund:{superficial:3.70,profunda:10.40},
+  estr:{geral:13.50,saude:16.60,penit:16.60,teatro:16.60},
+  estrMet:{simples:8.20,completa:13.50,espacial:10.70},
+  recup:15.60,
+  hidr:{geral:3.70,saude:5.20,penit:4.70,teatro:3.70},
+  esg:{geral:3.70,saude:5.20,penit:4.70,teatro:3.70},
+  dren:{simples:2.10,reuso:3.10},
+  irrig:{verde:1.70,cbf:1.90,fifa:2.30},
+  inc:{extintor:2.90,hidrante:5.70,saude:6.20},
+  glp:{unidade:1714.00,ate10:2285.00,de11a30:3012.00,acima31:3739.00},
+  pda:{relatorio:1950.00,spda:2.10},
+  eletr:{geral:8.80,saude:12.50,ilumExt:1.15,ilumArt:27.00,alarme:2.30,gerador:4548.60,subestacao:7477.00},
+  cab:{geral:3.60,saude:4.70,teatro:3.60},
+  cftv:2.00, som:2.00,
+  clima:{geral:5.20,saude:7.30,teatro:6.20},
+  gases:2.00, acustico:74.80, comVisual:2.10,
+  pgrscc:{ate1500:1950.00,acima:2600.00},
+  orc:{geralNovo:5.70,geralRef:6.80,saudeNovo:8.00,saudeRef:9.60,tombadaRef:10.00,acessNovo:1.70,acessRef:2.00},
+  minProjeto:1950.00, minProjetoMax:3900.00, minOrc:3116.00, minQuant:1579.00, minOrcInfra:1246.00,
+  urbFaixas:[[2000,2.40],[5000,2.00],[10000,1.80],[20000,1.40],[30000,1.30],[40000,1.20],[Infinity,1.10]],
+  paisFaixas:[[2000,3.60],[5000,2.90],[10000,2.60],[20000,2.00],[30000,1.40],[40000,0.90],[Infinity,0.70]],
+  infra:{
+    terrapl:[[14000,1.00],[70000,0.90],[200000,0.80],[Infinity,0.70]],
+    pavim:[[2500,1.60],[12000,1.40],[35000,1.20],[Infinity,1.10]],
+    drenS:[[10000,0.70],[50000,0.60],[150000,0.60],[Infinity,0.50]],
+    drenC:[[10000,1.10],[50000,1.00],[150000,0.90],[Infinity,0.80]],
+    agua:[[15000,0.80],[40000,0.70],[125000,0.60],[Infinity,0.50]],
+    esgR:[[15000,0.70],[165000,0.60],[Infinity,0.60]],
+    esgT:[[15000,1.40],[40000,1.30],[125000,1.10],[Infinity,1.00]],
+    eletr:[[13750,0.80],[41250,0.70],[123750,0.60],[Infinity,0.60]],
+    contencao:[[3.00,18.20],[6.00,21.30],[Infinity,25.40]]
+  },
+  vias:{terrapl:10593.00,pavim:6314.00,drenS:6314.00,drenC:11777.00,agua:6314.00,esgoto:11777.00,eletr:5400.00,alimentador:6314.00,sinal:3116.00,cadastro:5400.00,canal:15.60},
+  quant:{fund:0.47,estr:0.68,eletr:0.99,hidr:0.36,demais:0.26},
+  orcInfra:[[10000,0.85],[30000,0.75],[Infinity,0.65]],
+  laser:{cad2d:10.10,bim:13.70,bimQuant:21.60,cad2dInst:14.40,bimInst:18.00,bimInstQuant:28.80}
+};
+
+/* ---- SENGE-BA 2024 (CUB médio jun/2024 = 1.929,04) ---- */
+const SENGE_CUB_BASE = 1929.04;
+const SENGE_FAIXAS = ["até 120 m²","121 a 300 m²","301 a 1.000 m²","1.000 a 5.000 m²","5.000 a 10.000 m²","acima de 10.000 m²"];
+const SENGE_CIVIS = {
+  auditorios:[70.57,78.42,74.25,68.62,58.81,null],
+  convencoes:[58.81,62.74,54.88,50.96,45.09,null],
+  conjHab:[39.20,43.13,39.20,35.28,29.41,null],
+  escolas:[49.02,54.88,47.05,39.20,35.28,null],
+  hospitaisHoteis:[70.57,66.66,58.81,52.93,50.96,null],
+  parques:[37.25,33.34,25.49,21.57,19.60,null],
+  penitenciarias:[78.42,74.51,58.81,52.93,50.96,null],
+  comerciais:[43.13,39.20,35.28,29.41,27.45,null],
+  industriais:[null,52.93,49.02,43.13,39.20,null],
+  residenciais:[49.02,45.09,39.20,35.28,31.36,29.41],
+  residencias:[70.57,88.22,98.02,null,null,null],
+  shopping:[78.42,68.62,58.81,52.93,50.96,null]
+};
+const SENGE_CIVIS_ROT = {auditorios:"Auditórios e teatros",convencoes:"Centros de convenções",conjHab:"Conjuntos habitacionais",escolas:"Escolas e colégios",hospitaisHoteis:"Hospitais e hotéis",parques:"Parques, praças e quadras",penitenciarias:"Penitenciárias e quartéis",comerciais:"Prédios comerciais",industriais:"Prédios industriais e galpões",residenciais:"Prédios residenciais",residencias:"Residências",shopping:"Shopping center"};
+const SENGE_ESTR_COLS = ["Convencional","Prev. ar condicionado","Sob ação de vento","Pré-moldada","Protendida","Lajes de transição","Lajes cogumelo"];
+const SENGE_ESTR = {
+  auditorios:[31.36,32.35,32.35,35.28,47.05,34.31,34.31],
+  escolas:[30.39,31.36,31.36,35.28,39.20,32.35,32.35],
+  galpaoSC:[11.76,null,null,15.68,17.65,null,null],
+  galpaoCC:[17.65,null,null,21.57,24.50,null,null],
+  galpaoSCP:[16.67,null,null,19.60,22.54,null,null],
+  galpaoCCP:[29.41,null,null,33.34,45.09,null,null],
+  hospitais:[29.41,30.39,30.39,33.34,35.28,31.36,31.36],
+  penitenciarias:[30.39,31.36,31.36,33.34,37.25,31.36,31.36],
+  comerciais:[29.41,30.39,30.39,33.34,35.28,31.36,31.36],
+  industriais:[29.41,30.39,30.39,33.34,34.31,31.36,31.36],
+  shopping:[30.39,31.36,31.36,43.13,34.31,31.36,31.36]
+};
+const SENGE_ESTR_ROT = {auditorios:"Auditórios, teatros e centros de convenções",escolas:"Escolas e colégios",galpaoSC:"Galpões sem cobertura",galpaoCC:"Galpões com cobertura",galpaoSCP:"Galpões s/ cobertura c/ ponte rolante",galpaoCCP:"Galpões c/ cobertura c/ ponte rolante",hospitais:"Hospitais e hotéis",penitenciarias:"Penitenciárias e quartéis",comerciais:"Prédios comerciais",industriais:"Prédios industriais",shopping:"Shopping center"};
+const SENGE_SANEAMENTO = { /* R$/ha escalonado: até 2 ha, 2–5 ha, 5–25 ha, acima de 25 ha */
+  drenagem:[5567.59,3724.81,960.60,646.94],
+  agua:[5567.59,3724.81,960.60,646.94],
+  esgoto:[6528.21,4293.31,1117.43,1117.43]
+};
+const SENGE_ESTRADAS = { /* [vias urbanas, estradas < 7 km, estradas > 7 km] */
+  coordenacao:[10135.36,7802.47,6508.61], trafego:[548.92,411.69,352.87],
+  geologicos:[1068.43,823.38,686.15], hidrologicos:[2136.86,1646.75,1372.29],
+  topograficos:[2803.40,2156.46,1764.39], geotecnicos:[2195.67,1666.37,1431.11],
+  geometrico:[2940.63,2274.10,1881.99], terraplenagem:[1911.40,1450.71,1195.86],
+  drenagem:[3215.09,2470.12,2058.44], pavimentacao:[666.54,509.71,431.30],
+  intersecoes:[666.54,509.71,431.30], protecao:[2685.78,2058.44,1725.16],
+  sinalizacao:[1333.09,1039.03,862.58], cadastro:[1666.37,1274.27,1039.03],
+  orcamento:[784.16,627.33,509.71]
+};
+const SENGE_ESTRADAS_ROT = {coordenacao:"Serviços de coordenação",trafego:"Estudos de tráfego",geologicos:"Estudos geológicos",hidrologicos:"Estudos hidrológicos",topograficos:"Estudos topográficos",geotecnicos:"Estudos geotécnicos",geometrico:"Projeto geométrico",terraplenagem:"Projeto de terraplenagem",drenagem:"Projeto de drenagem e O.A.C.",pavimentacao:"Projeto de pavimentação",intersecoes:"Projeto de interseções",protecao:"Obras de construção e proteção",sinalizacao:"Sinalização, cercas e defensas",cadastro:"Cadastro",orcamento:"Orçamento e plano de execução"};
+const SENGE_FISC_COLS=["Estrutura","Obras civis","Elétricas","Comunicações","Hidrossanitárias","Gases","Ar condicionado","Urbanização"];
+const SENGE_FISC_ROWS=["Comerciais","Conjuntos habitacionais","Construções populares","Escolares","Especiais","Hospitalares","Hotelarias","Industriais","Prediais"];
+const SENGE_FISC=[
+ [5.10,5.10,3.92,3.73,2.93,null,3.82,null],
+ [5.10,5.10,3.92,3.34,3.34,1.28,null,1.28],
+ [3.82,3.82,2.55,2.55,1.97,null,null,1.28],
+ [3.82,3.82,2.55,2.55,1.97,null,null,1.28],
+ [6.86,7.65,6.86,5.89,5.89,2.55,3.82,1.28],
+ [6.37,7.65,5.89,5.49,5.89,2.55,3.82,1.28],
+ [6.37,6.37,5.89,5.10,5.89,1.28,3.82,1.28],
+ [5.10,3.92,3.92,3.92,3.52,3.17,2.55,1.28],
+ [3.82,3.82,3.52,2.55,3.52,1.28,2.55,null]
+];
+const SENGE_DIR_ROWS=["Comerciais","Conjuntos habitacionais","Construções populares","Escolares","Especiais","Hospitalares","Hotelarias","Industriais","Prediais","Residenciais"];
+const SENGE_DIR=[
+ [9.81,13.72,15.68],[5.89,6.86,9.81],[6.86,7.83,9.41],[6.86,7.83,10.78],[11.76,14.70,21.57],
+ [9.81,11.76,21.57],[8.82,10.19,15.68],[7.83,9.81,15.29],[5.89,7.83,11.76],[9.81,13.72,19.60]
+];
+const SENGE_CONSULT=[["até 20 horas",255.04],["até 30 horas",255.60],["até 40 horas",196.20],["até 80 horas",156.94],["acima de 80 horas",127.53]];
+const SENGE_EDIF_RES=[
+ ["Edifício de 8 pav., baixo padrão, sobre pilotis, 2 eixos de simetria",0.90,17.34],
+ ["Edifício de 12 pav., baixo padrão, térreo e 1 subsolo, 2 eixos de simetria",1.05,20.25],
+ ["Edifício de médio padrão, térreo e 2 subsolos, 1 eixo de simetria",1.25,24.09],
+ ["Edifício de alto padrão, térreo e 3 subsolos, sem eixo de simetria",1.60,30.84]
+];
+
+/* ---- CAIXA — Anexo I, Apêndice C (GILOG/CT) ---- */
+const CAIXA_C1 = [
+ {cod:"EPR", esp:"Arquitetura", nome:"Estudo preliminar", ir:0.100},
+ {cod:"ARQ", esp:"Arquitetura", nome:"Projeto de arquitetura — executivo", ir:0.800},
+ {cod:"AMB", esp:"Arquitetura", nome:"Projeto de arquitetura — ambiência", ir:0.520},
+ {cod:"LAY", esp:"Arquitetura", nome:"Projeto de arquitetura — layout", ir:0.200},
+ {cod:"SII", esp:"Arquitetura", nome:"Projeto de sinalização interna", ir:0.130},
+ {cod:"EXT", esp:"Civil", nome:"Anti-incêndio com extintores", ir:0.090},
+ {cod:"HEX", esp:"Civil", nome:"Anti-incêndio com hidrantes e extintores", ir:0.170},
+ {cod:"SPR", esp:"Civil", nome:"Anti-incêndio incluso sprinklers", ir:0.330},
+ {cod:"HIA", esp:"Civil", nome:"Hidrossanitário e/ou de águas pluviais", ir:0.120},
+ {cod:"APL", esp:"Civil", nome:"Aproveitamento de águas pluviais", ir:0.100},
+ {cod:"FUD", esp:"Civil", nome:"Projeto de fundações", ir:0.200},
+ {cod:"EMA", esp:"Civil", nome:"Estrutural para muro de arrimo", ir:0.150},
+ {cod:"ECA", esp:"Civil", nome:"Estrutural em concreto armado", ir:0.450},
+ {cod:"EAM", esp:"Civil", nome:"Estrutural em aço ou madeira", ir:0.470},
+ {cod:"IMP", esp:"Civil", nome:"Projeto de impermeabilização", ir:0.140},
+ {cod:"EEN", esp:"Elétrica", nome:"Entrada de energia", ir:0.200},
+ {cod:"SPD", esp:"Elétrica", nome:"SPDA", ir:0.090},
+ {cod:"LMT", esp:"Elétrica", nome:"Elétrico — luminotécnico", ir:0.170},
+ {cod:"ERC", esp:"Elétrica", nome:"Elétrico — rede de energia comum", ir:0.170},
+ {cod:"EEE", esp:"Elétrica", nome:"Elétrico — rede de energia estabilizada", ir:0.170},
+ {cod:"GMG", esp:"Elétrica", nome:"Elétrico — rede de energia ininterrupta", ir:0.170},
+ {cod:"EEF", esp:"Elétrica", nome:"Elétrico — usina de descentralização fotovoltaica", ir:0.300},
+ {cod:"CAE", esp:"Elétrica", nome:"Cabeamento estruturado — rede lógica", ir:0.170},
+ {cod:"ALM", esp:"Elétrica", nome:"Segurança — alarmes", ir:0.060},
+ {cod:"CFT", esp:"Elétrica", nome:"Segurança — CFTV", ir:0.060},
+ {cod:"CTA", esp:"Elétrica", nome:"Segurança — controle de acesso", ir:0.060},
+ {cod:"TLC", esp:"Elétrica", nome:"Entrada de telecomunicações", ir:0.060},
+ {cod:"AIP", esp:"Elétrica", nome:"Automação e inteligência predial", ir:0.390},
+ {cod:"AAC", esp:"Elétrica", nome:"Automação — subsistema de ar condicionado", ir:0.160},
+ {cod:"AEE", esp:"Elétrica", nome:"Automação — subsistema de energia elétrica", ir:0.160},
+ {cod:"SOM", esp:"Elétrica", nome:"Sonorização de ambiente", ir:0.050},
+ {cod:"VSD", esp:"Mecânica", nome:"Ventilação sem rede de dutos e acessórios", ir:0.080},
+ {cod:"VCD", esp:"Mecânica", nome:"Ventilação com rede de dutos e acessórios", ir:0.120},
+ {cod:"COJ", esp:"Mecânica", nome:"Condicionador de janela", ir:0.200},
+ {cod:"MNS", esp:"Mecânica", nome:"Mini-split unitário de até 5 TR", ir:0.280},
+ {cod:"SCA", esp:"Mecânica", nome:"Self-contained com condensação a ar ou roof-top", ir:0.360},
+ {cod:"SCR", esp:"Mecânica", nome:"Self-contained com condensador remoto, split/splitão acima de 5 TR, VRF ou VRV", ir:0.400},
+ {cod:"CAG", esp:"Mecânica", nome:"Central de água gelada com chillers", ir:0.640},
+ {cod:"ODT", esp:"Geral", nome:"Orçamento detalhado por itens", ir:0.280},
+ {cod:"COO", esp:"Geral", nome:"Coordenação e compatibilização de projetos", ir:0.070}
+];
+const CAIXA_C1_IR = {}; CAIXA_C1.forEach(x=>{ CAIXA_C1_IR[x.cod]=x.ir; });
+const CAIXA_C1_NOME = {}; CAIXA_C1.forEach(x=>{ CAIXA_C1_NOME[x.cod]=x.nome; });
+/* Tabela C2 — anteprojeto. "inc" indica item absorvido por outro código. */
+const CAIXA_C2 = {
+  ARQ:{ir:0.240}, SPR:{ir:0.099}, HIA:{ir:0.036},
+  ECA:{ir:0.135}, FUD:{inc:"ECA", obs:"Anteprojeto estrutural e de fundações em concreto armado é item único."},
+  EAM:{ir:0.141}, EEN:{ir:0.060},
+  ERC:{ir:0.204, obs:"Item único de anteprojeto de instalação elétrica: luminotécnico, rede comum, estabilizada e emergência."},
+  LMT:{inc:"ERC"}, EEE:{inc:"ERC"}, GMG:{inc:"ERC"},
+  EEF:{ir:0.090}, CAE:{ir:0.051},
+  CFT:{ir:0.054, obs:"Item único de anteprojeto de segurança: alarme contra roubo e intrusão, CFTV e controle de acesso."},
+  ALM:{inc:"CFT"}, CTA:{inc:"CFT"},
+  COJ:{ir:0.108}, MNS:{ir:0.108}, SCA:{ir:0.108}, SCR:{ir:0.108}, CAG:{ir:0.192}
+};
+const CAIXA_C5 = {
+  EPR:0.10, AMB:0.71, SII:0.15, HIA:0.17, FUD:0.65, APL:0.13, EMA:0.20, ECA:0.60, EAM:0.62, IMP:0.18,
+  EEN:0.28, SPD:0.13, LMT:0.23, ERC:0.23, EEE:0.23, GMG:0.23, EEF:0.40, CAE:0.23, ALM:0.09, CFT:0.09,
+  CTA:0.09, TLC:0.09, AIP:0.55, AAC:0.22, AEE:0.22, SOM:0.07, VSD:0.12, VCD:0.18, COJ:0.30, MNS:0.42,
+  SCA:0.54, SCR:0.60, CAG:0.96, ODT:0.37, COO:0.09
+};
+const CAIXA_C6 = [["Sinalização externa simplificada (SES)",5],["Sinalização externa padrão sem totem (SEP)",8],["Sinalização externa padrão com totem (SET)",13]];
+const CAIXA_C7 = [["Maquete eletrônica — complexidade nível 1 (MQ1)",8,3],["Maquete eletrônica — complexidade nível 2 (MQ2)",16,5],["Maquete eletrônica — complexidade nível 3 (MQ3)",24,7]];
+const CAIXA_C8 = [["Elevador (TVE)",50],["Plataforma elevatória (TVP)",30]];
+/* Tabela C9 — [limite superior de Ae, layout, projetos executivos, anteprojeto/revisão, as built] */
+const CAIXA_C9 = [
+  [50,"Ar ≤ 50",4,8,4,3],[300,"50 < Ar ≤ 300",4,12,6,4],[500,"300 < Ar ≤ 500",5,20,10,6],
+  [800,"500 < Ar ≤ 800",6,24,12,8],[1500,"800 < Ar ≤ 1.500",10,30,15,10],
+  [2500,"1.500 < Ar ≤ 2.500",12,33,17,12],[5000,"2.500 < Ar ≤ 5.000",20,36,19,13],
+  [Infinity,"Ar > 5.000",30,40,20,14]
+];
+
+/* ---- Tipologias normalizadas e correspondência entre tabelas ---- */
+const TIPOLOGIAS = [
+  {id:"educacional", nome:"Escola / edifício educacional", iopes:"educacionais", cehop:"educacionais", cehopGr:"geral", senge:"escolas", sengeEstr:"escolas"},
+  {id:"saude", nome:"Hospital / unidade de saúde", iopes:"hospitalares", cehop:"saude", cehopGr:"saude", senge:"hospitaisHoteis", sengeEstr:"hospitais"},
+  {id:"administrativo", nome:"Edifício administrativo", iopes:"administrativos", cehop:"administrativos", cehopGr:"geral", senge:"comerciais", sengeEstr:"comerciais", sengeAprox:"Aplicada a linha \"prédios comerciais\" — o SENGE-BA não tem tipologia administrativa."},
+  {id:"comercial", nome:"Prédio comercial", iopes:"administrativos", cehop:"administrativos", cehopGr:"geral", senge:"comerciais", sengeEstr:"comerciais", iopesAprox:"Aplicada a tipologia \"administrativos\".", cehopAprox:"Aplicada a tipologia \"edifícios administrativos\"."},
+  {id:"esportivo", nome:"Ginásio / edifício esportivo", iopes:"esportivos", cehop:"esportivos", cehopGr:"geral", senge:"parques", sengeEstr:"comerciais", sengeAprox:"Aplicada a linha \"parques, praças e quadras\"."},
+  {id:"quadra", nome:"Quadra esportiva", iopes:"quadras", cehop:"quadras", cehopGr:"geral", senge:"parques", sengeEstr:"comerciais", sengeAprox:"Aplicada a linha \"parques, praças e quadras\"."},
+  {id:"seguranca", nome:"Delegacia / segurança pública", iopes:"delegacias", cehop:"seguranca", cehopGr:"geral", senge:"penitenciarias", sengeEstr:"penitenciarias", sengeAprox:"Aplicada a linha \"penitenciárias e quartéis\"."},
+  {id:"militar", nome:"Edifício militar / quartel", iopes:"militares", cehop:"seguranca", cehopGr:"geral", senge:"penitenciarias", sengeEstr:"penitenciarias", cehopAprox:"Aplicada a tipologia \"edifícios da segurança pública\"."},
+  {id:"penitenciaria", nome:"Penitenciária / presídio", iopes:"penitenciarias", cehop:"penitenciarias", cehopGr:"penit", senge:"penitenciarias", sengeEstr:"penitenciarias"},
+  {id:"teatro", nome:"Teatro / auditório", iopes:null, cehop:"teatros", cehopGr:"teatro", senge:"auditorios", sengeEstr:"auditorios"},
+  {id:"convencoes", nome:"Centro de convenções", iopes:null, cehop:"convencoes", cehopGr:"teatro", senge:"convencoes", sengeEstr:"auditorios"},
+  {id:"industrial", nome:"Galpão / prédio industrial", iopes:null, cehop:"industriais", cehopGr:"geral", senge:"industriais", sengeEstr:"galpaoCC"},
+  {id:"residencial", nome:"Prédio residencial", iopes:null, cehop:"residencial", cehopGr:"geral", senge:"residenciais", sengeEstr:"comerciais", sengeEstrAprox:true},
+  {id:"residencia", nome:"Residência unifamiliar", iopes:null, cehop:"residencial", cehopGr:"geral", senge:"residencias", sengeEstr:"comerciais", sengeEstrAprox:true},
+  {id:"habitacional", nome:"Conjunto habitacional", iopes:null, cehop:"residencial", cehopGr:"geral", senge:"conjHab", sengeEstr:"comerciais", sengeEstrAprox:true},
+  {id:"restauro", nome:"Restauro de edifício tombado", iopes:"restauro", cehop:"tombadas", cehopGr:"geral", senge:null, sengeEstr:null},
+  {id:"parques", nome:"Parque / praça", iopes:null, cehop:"parques", cehopGr:"geral", senge:"parques", sengeEstr:null}
+];
+
+/* ---- Serviços normalizados ---- */
+const GRUPOS = [
+  {id:"arq", nome:"Arquitetura e cadastro", cor:"#2e6f73"},
+  {id:"estr", nome:"Estrutura e fundações", cor:"#6b7b45"},
+  {id:"inst", nome:"Instalações prediais", cor:"#a8531f"},
+  {id:"comp", nome:"Complementares", cor:"#7b5ea7"},
+  {id:"orc", nome:"Orçamento e planilhas", cor:"#3c5a99"}
+];
+const SERVICOS = [
+  {id:"arquitetura", nome:"Projeto de arquitetura", grupo:"arq", base:"area", un:"m²", pad:true},
+  {id:"cadastro_arq", nome:"Levantamento cadastral arquitetônico", grupo:"arq", base:"area", un:"m²", pad:false},
+  {id:"fundacoes", nome:"Projeto de fundações", grupo:"estr", base:"projecao", un:"m²", pad:true, obs:"CEHOP mede a projeção da construção; IOPES e SENGE incluem a fundação no projeto estrutural."},
+  {id:"estrutura", nome:"Projeto estrutural de concreto armado", grupo:"estr", base:"area", un:"m²", pad:true},
+  {id:"estrutura_met", nome:"Projeto de estrutura metálica ou de madeira", grupo:"estr", base:"projecao", un:"m²", pad:false, obs:"CEHOP: adotada a modalidade \"completa\" (R$ 13,50/m²)."},
+  {id:"hidrossanitario", nome:"Projeto hidrossanitário", grupo:"inst", base:"area", un:"m²", pad:true, obs:"CEHOP: soma dos itens \"hidráulico\" e \"esgoto sanitário\"."},
+  {id:"drenagem", nome:"Projeto de drenagem pluvial", grupo:"inst", base:"projecao", un:"m²", pad:true, obs:"CEHOP mede a área de cobertura; IOPES traz o item entre os implementos externos."},
+  {id:"eletrico", nome:"Projeto de instalações elétricas", grupo:"inst", base:"area", un:"m²", pad:true},
+  {id:"spda", nome:"Projeto de SPDA", grupo:"inst", base:"projecao", un:"m²", pad:true},
+  {id:"incendio", nome:"Prevenção e combate a incêndio", grupo:"inst", base:"area", un:"m²", pad:true, obs:"CEHOP: adotada a solução \"extintor + hidrante\"."},
+  {id:"cabeamento", nome:"Cabeamento estruturado (voz e dados)", grupo:"inst", base:"area", un:"m²", pad:true},
+  {id:"telefonia", nome:"Projeto telefônico", grupo:"inst", base:"area", un:"m²", pad:false, obs:"Item autônomo apenas no IOPES; na CEHOP integra o cabeamento estruturado."},
+  {id:"logica", nome:"Projeto de lógica", grupo:"inst", base:"area", un:"m²", pad:false, obs:"Item autônomo apenas no IOPES."},
+  {id:"cftv", nome:"CFTV e alarme", grupo:"inst", base:"area", un:"m²", pad:true},
+  {id:"sonorizacao", nome:"Sonorização", grupo:"inst", base:"area", un:"m²", pad:false},
+  {id:"climatizacao", nome:"Climatização e conforto ambiental", grupo:"inst", base:"area", un:"m²", pad:true},
+  {id:"gases", nome:"Gases medicinais", grupo:"inst", base:"area", un:"m²", pad:false},
+  {id:"enfermagem", nome:"Chamada de enfermagem", grupo:"inst", base:"area", un:"m²", pad:false},
+  {id:"automacao", nome:"Automação, controle de acesso e intrusão", grupo:"inst", base:"area", un:"m²", pad:false},
+  {id:"com_visual", nome:"Comunicação visual e sinalização", grupo:"comp", base:"area", un:"m²", pad:false},
+  {id:"urbanizacao", nome:"Urbanização e implantação externa", grupo:"comp", base:"terreno", un:"m²", pad:false},
+  {id:"paisagismo", nome:"Paisagismo", grupo:"comp", base:"terreno", un:"m²", pad:false},
+  {id:"maquete", nome:"Maquete eletrônica (3D)", grupo:"comp", base:"area", un:"m²", pad:false},
+  {id:"pgrscc", nome:"PGRSCC — resíduos da construção civil", grupo:"comp", base:"un", un:"un", pad:false},
+  {id:"impermeabilizacao", nome:"Projeto de impermeabilização", grupo:"comp", base:"projecao", un:"m²", pad:false, obs:"Item autônomo apenas na metodologia CAIXA (IMP)."},
+  {id:"orcamento", nome:"Orçamento, planilhas e cronograma", grupo:"orc", base:"area", un:"m²", pad:true},
+  {id:"coordenacao", nome:"Coordenação e compatibilização de projetos", grupo:"orc", base:"area", un:"m²", pad:false, obs:"Item autônomo apenas na metodologia CAIXA (COO)."}
+];
+
+/* =========================================================
+   2. ESTADO
+   ========================================================= */
+const CHAVE = "comparador_honorarios_projetos_v1";
+const estado = {
+  tipologia:"educacional", area:1200, projecao:400, terreno:800,
+  intervencao:"novo", fundacao:"superficial",
+  minimos:true, sengeOrc:false, sengeMem:false, comum:false,
+  fatores:{iopes:1, senge:1, cehop:1},
+  sel:{}, custom:{}, qtd:{},
+  caixa:{
+    ht1:150, apd:1200, apt:0, age:0, sync:true, modalidade:"executivo",
+    arqTipo:"ARQ", incendio:"HEX", clima:"SCR", eletricaComp:false, maquete:0,
+    vo:500000, apav:1200, selC1:{}
+  },
+  infra:{area:20000, km:2, classe:0, desnivel:4, areaCont:0}
+};
+SERVICOS.forEach(s=>{ estado.sel[s.id] = !!s.pad; });
+["ARQ","ECA","FUD","HIA","HEX","ERC","CAE","SPD","ODT","COO"].forEach(c=>{ estado.caixa.selC1[c]=true; });
+
+function salvar(){ try{ localStorage.setItem(CHAVE, JSON.stringify(estado)); }catch(e){} }
+function carregar(){
+  try{
+    const bruto = localStorage.getItem(CHAVE);
+    if(!bruto) return;
+    const d = JSON.parse(bruto);
+    if(!d || typeof d !== "object") return;
+    ["tipologia","intervencao","fundacao"].forEach(k=>{ if(typeof d[k]==="string") estado[k]=d[k]; });
+    ["area","projecao","terreno"].forEach(k=>{ if(typeof d[k]==="number" && isFinite(d[k])) estado[k]=d[k]; });
+    ["minimos","sengeOrc","sengeMem","comum"].forEach(k=>{ if(typeof d[k]==="boolean") estado[k]=d[k]; });
+    if(d.fatores) ["iopes","senge","cehop"].forEach(k=>{ const v=Number(d.fatores[k]); if(isFinite(v)&&v>0) estado.fatores[k]=v; });
+    if(d.sel) SERVICOS.forEach(s=>{ if(typeof d.sel[s.id]==="boolean") estado.sel[s.id]=d.sel[s.id]; });
+    if(d.custom) Object.keys(d.custom).forEach(k=>{ const v=Number(d.custom[k]); if(isFinite(v)&&v>=0) estado.custom[k]=v; });
+    if(d.qtd) Object.keys(d.qtd).forEach(k=>{ const v=Number(d.qtd[k]); if(isFinite(v)&&v>=0) estado.qtd[k]=v; });
+    if(d.infra) Object.keys(estado.infra).forEach(k=>{ const v=Number(d.infra[k]); if(isFinite(v)&&v>=0) estado.infra[k]=v; });
+    if(d.caixa){
+      ["ht1","apd","apt","age","vo","apav","maquete"].forEach(k=>{ const v=Number(d.caixa[k]); if(isFinite(v)&&v>=0) estado.caixa[k]=v; });
+      ["modalidade","arqTipo","incendio","clima"].forEach(k=>{ if(typeof d.caixa[k]==="string") estado.caixa[k]=d.caixa[k]; });
+      ["sync","eletricaComp"].forEach(k=>{ if(typeof d.caixa[k]==="boolean") estado.caixa[k]=d.caixa[k]; });
+      if(d.caixa.selC1 && typeof d.caixa.selC1==="object"){
+        estado.caixa.selC1 = {};
+        CAIXA_C1.forEach(x=>{ if(d.caixa.selC1[x.cod]===true) estado.caixa.selC1[x.cod]=true; });
+      }
+    }
+  }catch(e){}
+}
+
+/* =========================================================
+   3. FUNÇÕES DE APOIO
+   ========================================================= */
+const fmt2 = new Intl.NumberFormat("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2});
+const fmt0 = new Intl.NumberFormat("pt-BR",{maximumFractionDigits:0});
+const fmt3 = new Intl.NumberFormat("pt-BR",{minimumFractionDigits:3,maximumFractionDigits:3});
+const fmt4 = new Intl.NumberFormat("pt-BR",{minimumFractionDigits:4,maximumFractionDigits:4});
+const R$ = v => "R$ " + fmt2.format(v);
+function esc(s){ return String(s).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function faixaValor(faixas, x){ for(const [lim,v] of faixas){ if(x<=lim) return v; } return faixas[faixas.length-1][1]; }
+function faixaCivis(area){
+  if(area<=120) return 0; if(area<=300) return 1; if(area<=1000) return 2;
+  if(area<=5000) return 3; if(area<=10000) return 4; return 5;
+}
+function tipologiaAtual(){ return TIPOLOGIAS.find(t=>t.id===estado.tipologia) || TIPOLOGIAS[0]; }
+function baseQtd(sv){
+  if(estado.qtd[sv.id]!==undefined) return estado.qtd[sv.id];
+  if(sv.base==="area") return estado.area;
+  if(sv.base==="projecao") return estado.projecao;
+  if(sv.base==="terreno") return estado.terreno;
+  return 1;
+}
+
+/* --- CAIXA: área equivalente e resolução do índice de remuneração --- */
+function caixaApd(){ return estado.caixa.sync ? estado.area : estado.caixa.apd; }
+function caixaAe(){
+  return 1.00*(caixaApd()||0) + 0.50*(estado.caixa.apt||0) + 0.25*(estado.caixa.age||0);
+}
+function caixaIR(cod){
+  const m = estado.caixa.modalidade;
+  if(m==="anteprojeto"){
+    const e = CAIXA_C2[cod];
+    if(!e) return null;
+    if(e.inc) return {inc:e.inc, obs:CAIXA_C2[e.inc] && CAIXA_C2[e.inc].obs};
+    return {ir:e.ir, obs:e.obs};
+  }
+  const ir = CAIXA_C1_IR[cod];
+  if(ir===undefined) return null;
+  if(m==="asbuilt") return {ir:ir*0.10, obs:"As built: 10% do projeto executivo da mesma especialidade (Tabela C3)."};
+  if(m==="revisao") return {ir:ir*0.10, obs:"Revisão: 10% do projeto executivo da mesma especialidade (Tabela C4)."};
+  return {ir:ir};
+}
+/* VR = (IR x ht1) x (8/Ae)^0,4 x Ae  ->  preço unitário = IR x ht1 x (8/Ae)^0,4 */
+function caixaUnit(ir, A){
+  if(!(A>0) || !(ir>0) || !(estado.caixa.ht1>0)) return null;
+  return ir * estado.caixa.ht1 * Math.pow(8/A, 0.4);
+}
+function caixaPrazo(){
+  const ae = caixaAe();
+  for(const f of CAIXA_C9){ if(ae<=f[0]) return f; }
+  return CAIXA_C9[CAIXA_C9.length-1];
+}
+
+/* --- escalonamento por hectare (SENGE, Tabela 9) --- */
+function sengeHa(tarifas, areaM2){
+  const ha = areaM2/10000; if(ha<=0) return 0;
+  const f1=Math.min(ha,2), f2=Math.min(Math.max(ha-2,0),3), f3=Math.min(Math.max(ha-5,0),20), f4=Math.max(ha-25,0);
+  return f1*tarifas[0] + f2*tarifas[1] + f3*tarifas[2] + f4*tarifas[3];
+}
+
+/* =========================================================
+   4. PREÇOS UNITÁRIOS POR REFERÊNCIA
+   Retorna {v:number|null, st:"ok"|"incluso"|"na", obs:string, conf:bool}
+   ========================================================= */
+const NA  = obs => ({v:null, st:"na", obs:obs||""});
+const INC = obs => ({v:0, st:"incluso", obs:obs||""});
+const OK  = (v,obs,aprox,conf) => ({v:v, st:"ok", obs:obs||"", aprox:!!aprox, conf:!!conf});
+
+function precoIopes(sv, T){
+  if(!T.iopes) return NA("Tipologia não prevista no IOPES/ES.");
+  const d = IOPES[T.iopes]; const ap = T.iopesAprox;
+  const g = (k, obs) => (d[k]===undefined ? NA(obs||"Serviço não previsto para esta tipologia.") : OK(d[k], ap, !!ap));
+  switch(sv.id){
+    case "arquitetura": return estado.intervencao==="cadastro" ? g("cadArq") : g("arq");
+    case "cadastro_arq": return g("cadArq");
+    case "fundacoes": return d.estr===undefined ? NA("Sem projeto estrutural previsto para esta tipologia.") : INC("Incluída no projeto estrutural (\"inclusive fundação\").");
+    case "estrutura": return g("estr");
+    case "estrutura_met": return g("estrMet");
+    case "hidrossanitario": return g("hidro");
+    case "drenagem": return OK(IOPES_DIV.dren, "Item de implementos externos; base de medição é a área do terreno.", true);
+    case "eletrico": return g("eletr");
+    case "spda": return g("spda");
+    case "incendio": return g("inc");
+    case "cabeamento": return g("cab");
+    case "telefonia": return g("tel");
+    case "logica": return g("logica");
+    case "cftv": return g("cftv");
+    case "sonorizacao": return g("som");
+    case "climatizacao": return g("clima");
+    case "gases": return g("gases");
+    case "enfermagem": return g("enf");
+    case "automacao": return g("autom");
+    case "com_visual": return OK(IOPES_DIV.sinal);
+    case "urbanizacao": return OK(IOPES_DIV.urb);
+    case "paisagismo": return OK(IOPES_DIV.pais);
+    case "maquete": return OK(IOPES_DIV.maquete);
+    case "pgrscc": return NA("Não previsto no IOPES/ES.");
+    case "orcamento": return g("orc");
+  }
+  return NA("Serviço fora do escopo desta referência.");
+}
+
+function precoSenge(sv, T){
+  const ap = T.sengeAprox;
+  const civis = T.senge ? SENGE_CIVIS[T.senge] : null;
+  const iF = faixaCivis(estado.area);
+  switch(sv.id){
+    case "arquitetura": {
+      if(!civis) return NA("Tipologia não prevista na Tabela 4 do SENGE-BA.");
+      let v = civis[iF];
+      if(v===null){
+        for(let k=iF;k>=0;k--){ if(civis[k]!==null){ v=civis[k]; break; } }
+        if(v===null) return NA("Faixa de área sem preço publicado.");
+        return OK(v, "Faixa de área sem valor publicado; adotada a última faixa disponível.", true);
+      }
+      if(estado.sengeOrc) return OK(v*1.30, "Majoração de 30% pelo fornecimento do orçamento (nota 4).", !!ap);
+      return OK(v, ap, !!ap);
+    }
+    case "cadastro_arq": return NA("Sem item específico de cadastro na Tabela 4.");
+    case "fundacoes": return T.sengeEstr ? INC("Incluída no cálculo estrutural (Tabela 6).") : NA("Tipologia sem linha correspondente na Tabela 6.");
+    case "estrutura": {
+      if(!T.sengeEstr) return NA("Tipologia não prevista na Tabela 6 do SENGE-BA.");
+      const linha = SENGE_ESTR[T.sengeEstr]; if(!linha || linha[0]===null) return NA("Sem preço publicado para estrutura convencional nesta linha.");
+      let v = linha[0];
+      if(estado.sengeMem) v *= 1.20;
+      return OK(v, T.sengeEstrAprox ? "Linha estrutural aproximada: adotada \"prédios comerciais\"." : "", !!T.sengeEstrAprox);
+    }
+    case "estrutura_met": return NA("A Tabela 6 não segrega estrutura metálica.");
+    case "hidrossanitario":
+    case "drenagem":
+    case "incendio":
+    case "climatizacao":
+    case "gases":
+      return NA("Tabela 10 (instalações hidráulicas e mecânicas) não importada — colunas sobrepostas no PDF de origem.");
+    case "eletrico":
+    case "cabeamento":
+    case "telefonia":
+    case "logica":
+    case "cftv":
+    case "sonorizacao":
+    case "com_visual":
+      return NA("Tabela 11 (instalações elétricas e de comunicações) não importada — colunas sobrepostas no PDF de origem.");
+    case "spda": return NA("Não previsto em tabela específica do SENGE-BA.");
+    case "enfermagem": case "automacao": case "maquete": case "pgrscc":
+      return NA("Não previsto no SENGE-BA.");
+    case "urbanizacao": case "paisagismo":
+      return NA("Tratado por hectare na Tabela 9 (saneamento) — ver a aba de infraestrutura.");
+    case "orcamento":
+      return estado.sengeOrc
+        ? INC("Contemplado pela majoração de 30% aplicada aos projetos civis.")
+        : NA("Cobrado como majoração de 30% sobre os projetos civis; marque a opção nos ajustes específicos.");
+  }
+  return NA("Serviço fora do escopo desta referência.");
+}
+
+function precoCehop(sv, T){
+  if(!T.cehop) return NA("Tipologia não prevista na CEHOP/SE.");
+  const gr = T.cehopGr || "geral";
+  const arqLinha = CEHOP_ARQ[T.cehop];
+  const ap = T.cehopAprox;
+  const porGrupo = (obj) => obj[gr]!==undefined ? obj[gr] : obj.geral;
+  switch(sv.id){
+    case "arquitetura": {
+      const i = estado.intervencao==="cadastro" ? 0 : (estado.intervencao==="reforma" ? 2 : 1);
+      const v = arqLinha[i];
+      if(v===null || v===undefined) return NA("Modalidade não prevista para esta tipologia.");
+      return OK(v, ap, !!ap);
+    }
+    case "cadastro_arq": return arqLinha[0]==null ? NA("Cadastro não tarifado para esta tipologia na CEHOP/SE.") : OK(arqLinha[0], ap, !!ap);
+    case "fundacoes": return OK(CEHOP.fund[estado.fundacao]);
+    case "estrutura": return OK(porGrupo(CEHOP.estr));
+    case "estrutura_met": return OK(CEHOP.estrMet.completa, "Modalidade \"completa\"; simples 8,20 e espacial 10,70 R$/m².");
+    case "hidrossanitario": return OK(porGrupo(CEHOP.hidr) + porGrupo(CEHOP.esg), "Soma de hidráulico e esgoto sanitário.");
+    case "drenagem": return OK(CEHOP.dren.simples, "Modalidade simples; com reúso, 3,10 R$/m².");
+    case "eletrico": return OK(gr==="saude" ? CEHOP.eletr.saude : CEHOP.eletr.geral, "Inclui iluminação externa da área urbanizada, detecção de alarme de incêndio, gerador, subestação abrigada e proteção contra surtos.");
+    case "spda": return OK(CEHOP.pda.spda, "Executado apenas se o relatório de análise de risco (R$ 1.950,00/un.) indicar necessidade.");
+    case "incendio": return OK(gr==="saude" ? CEHOP.inc.saude : CEHOP.inc.hidrante, "Solução extintor + hidrante; só extintor, 2,90 R$/m².");
+    case "cabeamento": return OK(gr==="saude"?CEHOP.cab.saude:(gr==="teatro"?CEHOP.cab.teatro:CEHOP.cab.geral));
+    case "telefonia": return INC("Integra o cabeamento estruturado (voz, dados e antena coletiva).");
+    case "logica": return INC("Integra o cabeamento estruturado.");
+    case "cftv": return OK(CEHOP.cftv);
+    case "sonorizacao": return OK(CEHOP.som);
+    case "climatizacao": return OK(gr==="saude"?CEHOP.clima.saude:(gr==="teatro"?CEHOP.clima.teatro:CEHOP.clima.geral));
+    case "gases": return OK(CEHOP.gases, "Pacote de vácuo, ar comprimido, oxigênio e óxido nitroso.");
+    case "enfermagem": return NA("Não previsto na CEHOP/SE.");
+    case "automacao": return NA("Não previsto na CEHOP/SE.");
+    case "com_visual": return OK(CEHOP.comVisual, "Inclui a arte.");
+    case "urbanizacao": return OK(faixaValor(CEHOP.urbFaixas, estado.terreno), "Faixa selecionada pela área externa informada.");
+    case "paisagismo": return OK(faixaValor(CEHOP.paisFaixas, estado.terreno), "Cobrado pela área de intervenção botânica.");
+    case "maquete": return INC("Mínimo de 4 maquetes eletrônicas exigidas no escopo do projeto de arquitetura.");
+    case "pgrscc": return OK(estado.area<=1500 ? CEHOP.pgrscc.ate1500 : CEHOP.pgrscc.acima, "Preço por unidade.");
+    case "orcamento": {
+      const ref = estado.intervencao==="reforma";
+      let v;
+      if(T.cehop==="tombadas") v = CEHOP.orc.tombadaRef;
+      else if(gr==="saude") v = ref?CEHOP.orc.saudeRef:CEHOP.orc.saudeNovo;
+      else v = ref?CEHOP.orc.geralRef:CEHOP.orc.geralNovo;
+      return OK(v);
+    }
+  }
+  return NA("Serviço fora do escopo desta referência.");
+}
+
+function precoCaixa(sv, T){
+  const C = estado.caixa, Ae = caixaAe();
+  /* aplica um ou mais códigos da tabela, somando os IR */
+  const porCodigo = (cods, obs, area) => {
+    const lista = [].concat(cods);
+    let soma = 0, notas = [];
+    for(const cod of lista){
+      const r = caixaIR(cod);
+      if(!r) return NA("Código " + cod + " sem índice na modalidade selecionada (" + C.modalidade + ").");
+      if(r.inc) return INC("Absorvido pelo item " + r.inc + " (" + (CAIXA_C1_NOME[r.inc]||r.inc) + ") nesta modalidade." + (r.obs?" "+r.obs:""));
+      soma += r.ir;
+      if(r.obs) notas.push(r.obs);
+    }
+    const A = (area!=null && area>0) ? area : Ae;
+    const unit = caixaUnit(soma, A);
+    if(unit===null) return NA("Informe a hora técnica e as áreas para aplicar a fórmula do item 2.1.");
+    const rot = lista.join(" + ") + " · IR " + fmt3.format(soma) + " · A = " + fmt0.format(A) + " m²";
+    return {v:unit, st:"ok", qtd:A, obs:[obs, rot].concat(notas).filter(Boolean).join(" ")};
+  };
+  const areaIncidencia = baseQtd(sv); /* observação (b): estrutura usa a área efetiva de incidência */
+  switch(sv.id){
+    case "arquitetura":
+      if(estado.intervencao==="cadastro") return NA("A CAIXA não remunera cadastro isolado; vistorias e levantamentos são inclusos nos projetos (item 1.4).");
+      return porCodigo(C.arqTipo, "");
+    case "cadastro_arq": return INC("Vistorias e levantamentos necessários à execução do projeto estão inclusos na remuneração dos projetos, assim como os deslocamentos (item 1.4).");
+    case "fundacoes": return porCodigo("FUD", "", areaIncidencia);
+    case "estrutura": return porCodigo("ECA", "", areaIncidencia);
+    case "estrutura_met": return porCodigo("EAM", "", areaIncidencia);
+    case "hidrossanitario": return porCodigo("HIA", "");
+    case "drenagem": return INC("Águas pluviais integram o item HIA — hidrossanitário e/ou de águas pluviais.");
+    case "eletrico": return porCodigo(C.eletricaComp?["ERC","EEN","LMT"]:"ERC",
+      C.eletricaComp?"Composição ampliada: rede comum, entrada de energia e luminotécnico.":"Somente rede de energia comum; entrada de energia (EEN), luminotécnico (LMT), estabilizada (EEE), ininterrupta (GMG) e fotovoltaica (EEF) são itens autônomos.");
+    case "spda": return porCodigo("SPD", "", areaIncidencia);
+    case "incendio": return porCodigo(C.incendio, "");
+    case "cabeamento": return porCodigo("CAE", "");
+    case "telefonia": return porCodigo("TLC", "Item de entrada de telecomunicações — escopo mais restrito que o projeto telefônico do IOPES.");
+    case "logica": return INC("Rede lógica integra o projeto de cabeamento estruturado (CAE).");
+    case "cftv": return porCodigo(["CFT","ALM"], "Soma dos itens de CFTV e de alarmes.");
+    case "sonorizacao": return porCodigo("SOM", "");
+    case "climatizacao": return porCodigo(C.clima, "");
+    case "gases": return NA("Gases medicinais não constam do Apêndice C.");
+    case "enfermagem": return NA("Chamada de enfermagem não consta do Apêndice C.");
+    case "automacao": return porCodigo("CTA", "Item de controle de acesso; a automação e inteligência predial (AIP, IR 0,390) é item autônomo de escopo bem mais amplo.");
+    case "com_visual": return porCodigo("SII", "Sinalização interna. A sinalização externa é remunerada por múltiplo de hora técnica (Tabela C6).");
+    case "urbanizacao": case "paisagismo": return NA("Urbanização e paisagismo não constam do Apêndice C.");
+    case "impermeabilizacao": return porCodigo("IMP", "", areaIncidencia);
+    case "maquete": {
+      const m = CAIXA_C7[C.maquete] || CAIXA_C7[0];
+      if(!(estado.caixa.ht1>0)) return NA("Informe a hora técnica.");
+      return {v:m[1]*estado.caixa.ht1, st:"ok", fixo:true,
+        obs:"Tabela C7 — " + m[0] + ": VR = " + m[1] + " x ht1. Valor fixo, não proporcional à área."};
+    }
+    case "pgrscc": return NA("PGRSCC não consta do Apêndice C.");
+    case "orcamento": return porCodigo("ODT", "");
+    case "coordenacao": return porCodigo("COO", "");
+  }
+  return NA("Serviço fora do escopo desta referência.");
+}
+
+function precoCustom(sv){
+  const v = estado.custom[sv.id];
+  return (v===undefined || v===null || v==="" || !isFinite(v)) ? NA("") : OK(Number(v), "Valor informado pelo usuário.");
+}
+
+/* --- mínimos da CEHOP --- */
+function aplicaMinimoCehop(sv, total){
+  if(!estado.minimos || total<=0) return {total:total, min:false};
+  if(sv.id==="pgrscc") return {total:total, min:false};
+  const piso = sv.id==="orcamento" ? CEHOP.minOrc : CEHOP.minProjeto;
+  return total < piso ? {total:piso, min:true} : {total:total, min:false};
+}
+
+/* =========================================================
+   5. CÁLCULO
+   ========================================================= */
+function calcular(){
+  const T = tipologiaAtual();
+  const linhas = [];
+  SERVICOS.forEach(sv=>{
+    const q = baseQtd(sv);
+    const brutos = {
+      iopes: precoIopes(sv,T), senge: precoSenge(sv,T), cehop: precoCehop(sv,T),
+      caixa: precoCaixa(sv,T), custom: precoCustom(sv)
+    };
+    const cel = {};
+    REFS.forEach(r=>{
+      const p = brutos[r.id];
+      const f = estado.fatores[r.id]!==undefined ? estado.fatores[r.id] : 1;
+      if(p.st==="na"){ cel[r.id] = {st:"na", obs:p.obs}; return; }
+      if(p.st==="incluso"){ cel[r.id] = {st:"incluso", obs:p.obs, unit:0, total:0}; return; }
+      const qUsada = (p.qtd!=null && p.qtd>0) ? p.qtd : q;
+      let unit, total;
+      if(p.fixo){ total = p.v * f; unit = qUsada>0 ? total/qUsada : 0; }
+      else { unit = p.v * f; total = unit * qUsada; }
+      let minAplicado = false;
+      if(r.id==="cehop"){ const m = aplicaMinimoCehop(sv,total); total=m.total; minAplicado=m.min; }
+      cel[r.id] = {st:"ok", unit:unit, total:total, obs:p.obs, aprox:p.aprox, conf:p.conf,
+                   min:minAplicado, fixo:!!p.fixo, qtd:qUsada};
+    });
+    const valores = REFS.map(r=>cel[r.id]).filter(c=>c.st==="ok").map(c=>c.unit);
+    const cobertoTodos = REFS.filter(r=>r.id!=="custom").every(r=>cel[r.id].st!=="na");
+    linhas.push({sv:sv, q:q, cel:cel, valores:valores, comum:cobertoTodos});
+  });
+
+  const totais = {};
+  REFS.forEach(r=>{
+    let t=0, n=0, lac=0, tc=0;
+    linhas.forEach(L=>{
+      if(!estado.sel[L.sv.id]) return;
+      if(estado.comum && !L.comum) return;
+      const c = L.cel[r.id];
+      if(c.st==="na"){ lac++; return; }
+      t += c.total||0; n++;
+      if(L.comum) tc += c.total||0;
+    });
+    totais[r.id] = {total:t, itens:n, lacunas:lac, comum:tc};
+  });
+  return {linhas:linhas, totais:totais, T:T};
+}
+
+function estatistica(vals){
+  if(!vals.length) return null;
+  const ord = vals.slice().sort((a,b)=>a-b);
+  const min = ord[0], max = ord[ord.length-1];
+  const med = ord.length%2 ? ord[(ord.length-1)/2] : (ord[ord.length/2-1]+ord[ord.length/2])/2;
+  const media = vals.reduce((a,b)=>a+b,0)/vals.length;
+  const dp = Math.sqrt(vals.reduce((a,b)=>a+Math.pow(b-media,2),0)/vals.length);
+  return {min:min, max:max, mediana:med, media:media, dp:dp, cv: media>0 ? dp/media : 0, amp: max-min};
+}
+</script>
+<script>
+"use strict";
+/* =========================================================
+   6. INTERFACE
+   ========================================================= */
+const $ = id => document.getElementById(id);
+let ULTIMO = null;
+
+/* ---------- abas ---------- */
+function initAbas(){
+  const botoes = Array.from(document.querySelectorAll('nav.abas button'));
+  botoes.forEach(b=>{
+    b.addEventListener("click", ()=>{
+      botoes.forEach(o=>{
+        const painel = $(o.getAttribute("aria-controls"));
+        const ativo = (o===b);
+        o.setAttribute("aria-selected", ativo ? "true":"false");
+        if(painel) painel.hidden = !ativo;
+      });
+      if(b.id==="t-comp") renderComparativo();
+      if(b.id==="t-infra") renderInfra();
+      if(b.id==="t-caixa") renderCaixa();
+      if(b.id==="t-base") renderBase();
+    });
+  });
+}
+
+/* ---------- parâmetros ---------- */
+function initParametros(){
+  const sel = $("in-tipologia");
+  TIPOLOGIAS.forEach(t=>{
+    const o = document.createElement("option");
+    o.value = t.id; o.textContent = t.nome;
+    sel.appendChild(o);
+  });
+  sel.value = estado.tipologia;
+
+  const liga = (id, campo, tipo)=>{
+    const el = $(id); if(!el) return;
+    if(tipo==="num") el.value = String(estado[campo]);
+    else if(tipo==="bool") el.checked = estado[campo];
+    else el.value = estado[campo];
+    el.addEventListener(tipo==="bool"?"change":"input", ()=>{
+      if(tipo==="num"){ const v = Number(el.value); estado[campo] = isFinite(v)&&v>=0 ? v : 0; }
+      else if(tipo==="bool") estado[campo] = el.checked;
+      else estado[campo] = el.value;
+      atualizar();
+    });
+  };
+  liga("in-tipologia","tipologia","txt");
+  liga("in-area","area","num");
+  liga("in-projecao","projecao","num");
+  liga("in-terreno","terreno","num");
+  liga("in-intervencao","intervencao","txt");
+  liga("in-fundacao","fundacao","txt");
+  liga("ck-minimos","minimos","bool");
+  liga("ck-senge-orc","sengeOrc","bool");
+  liga("ck-senge-mem","sengeMem","bool");
+  liga("ck-comum","comum","bool");
+
+  ["iopes","senge","cehop"].forEach(r=>{
+    const el = $("f-"+r);
+    el.value = fmt4.format(estado.fatores[r]).replace(",",".");
+    el.addEventListener("input", ()=>{
+      const v = Number(el.value);
+      estado.fatores[r] = (isFinite(v)&&v>0) ? v : 1;
+      atualizar();
+    });
+  });
+
+  const ligaCaixa = (id, campo, tipo)=>{
+    const el = $(id); if(!el) return;
+    if(tipo==="bool") el.checked = estado.caixa[campo];
+    else el.value = String(estado.caixa[campo]);
+    el.addEventListener(tipo==="bool"?"change":"input", ()=>{
+      if(tipo==="num"){ const v=Number(el.value); estado.caixa[campo] = isFinite(v)&&v>=0 ? v : 0; }
+      else if(tipo==="bool") estado.caixa[campo] = el.checked;
+      else estado.caixa[campo] = el.value;
+      sincronizaCaixa();
+      atualizar();
+      const abaCx = document.querySelector('button[aria-controls="p-caixa"]');
+      if(abaCx && abaCx.getAttribute("aria-selected")==="true") renderCaixa();
+    });
+  };
+  ligaCaixa("c-ht1","ht1","num");
+  ligaCaixa("c-modalidade","modalidade","txt");
+  ligaCaixa("cx-ht1","ht1","num");
+  ligaCaixa("cx-apd","apd","num");
+  ligaCaixa("cx-apt","apt","num");
+  ligaCaixa("cx-age","age","num");
+  ligaCaixa("cx-modalidade","modalidade","txt");
+  ligaCaixa("cx-sync","sync","bool");
+  ligaCaixa("cx-arq","arqTipo","txt");
+  ligaCaixa("cx-inc","incendio","txt");
+  ligaCaixa("cx-clima","clima","txt");
+  ligaCaixa("cx-maquete","maquete","num");
+  ligaCaixa("cx-eletcomp","eletricaComp","bool");
+  ligaCaixa("cx-vo","vo","num");
+  ligaCaixa("cx-apav","apav","num");
+  sincronizaCaixa();
+
+  const infraCampos = [["i-area","area"],["i-km","km"],["i-classe","classe"],["i-desnivel","desnivel"],["i-areacont","areaCont"]];
+  infraCampos.forEach(([id,campo])=>{
+    const el = $(id); if(!el) return;
+    el.value = String(estado.infra[campo]);
+    el.addEventListener("input", ()=>{
+      const v = Number(el.value);
+      estado.infra[campo] = isFinite(v)&&v>=0 ? v : 0;
+      salvar(); renderInfra();
+    });
+  });
+}
+
+/* mantém em sincronia os campos da CAIXA que aparecem em duas abas */
+function sincronizaCaixa(){
+  const pares = [["c-ht1","ht1"],["cx-ht1","ht1"],["c-modalidade","modalidade"],["cx-modalidade","modalidade"],
+                 ["cx-apt","apt"],["cx-age","age"],["cx-vo","vo"],["cx-apav","apav"],
+                 ["cx-arq","arqTipo"],["cx-inc","incendio"],["cx-clima","clima"],["cx-maquete","maquete"]];
+  pares.forEach(([id,campo])=>{
+    const el = $(id);
+    if(el && document.activeElement!==el) el.value = String(estado.caixa[campo]);
+  });
+  const apd = $("cx-apd"), sync = $("cx-sync");
+  if(sync) sync.checked = estado.caixa.sync;
+  const ec = $("cx-eletcomp"); if(ec) ec.checked = estado.caixa.eletricaComp;
+  if(apd){
+    apd.disabled = estado.caixa.sync;
+    if(document.activeElement!==apd) apd.value = String(caixaApd());
+  }
+}
+
+/* ---------- tabela principal ---------- */
+function celulaHTML(c, refId){
+  if(!c || c.st==="na"){
+    return '<td class="n na" title="'+esc(c&&c.obs?c.obs:"Sem preço nesta referência.")+'">—</td>';
+  }
+  if(c.st==="incluso"){
+    return '<td class="n" title="'+esc(c.obs)+'"><span class="tag incluso">incluso</span></td>';
+  }
+  let marcas = "";
+  if(c.aprox) marcas += ' <span class="tag aprox" title="Equivalência aproximada de tipologia ou escopo">aprox.</span>';
+  if(c.conf)  marcas += ' <span class="tag conf" title="Valor com divergência de leitura na fonte">conferir</span>';
+  if(c.min)   marcas += ' <span class="tag aprox" title="Valor mínimo de projeto da CEHOP aplicado">mínimo</span>';
+  if(c.fixo)  marcas += ' <span class="tag aprox" title="Valor fixo, múltiplo da hora técnica">fixo</span>';
+  const tit = c.obs ? ' title="'+esc(c.obs)+'"' : "";
+  return '<td class="n"'+tit+'><b>'+R$(c.total)+'</b>'+marcas+
+         '<span class="mini">'+fmt2.format(c.unit)+' /un.</span></td>';
+}
+
+function renderCalc(){
+  const res = ULTIMO;
+  const tb = $("corpo-calc");
+  let html = "";
+  GRUPOS.forEach(g=>{
+    const doGrupo = res.linhas.filter(L=>L.sv.grupo===g.id);
+    if(!doGrupo.length) return;
+    html += '<tr class="grupo"><td colspan="9" style="border-left:4px solid '+g.cor+'">'+esc(g.nome)+'</td></tr>';
+    doGrupo.forEach(L=>{
+      const sv = L.sv;
+      const marcado = estado.sel[sv.id];
+      const oculto = estado.comum && !L.comum;
+      const est = estatistica(L.valores);
+      const cv = est && est.media>0 ? (est.cv*100) : null;
+      html += '<tr'+(oculto?' style="opacity:.42"':'')+'>'+
+        '<td><input type="checkbox" data-sv="'+sv.id+'" '+(marcado?"checked":"")+' aria-label="Incluir '+esc(sv.nome)+'"></td>'+
+        '<td class="serv">'+esc(sv.nome)+(sv.obs?'<small>'+esc(sv.obs)+'</small>':'')+'</td>'+
+        '<td class="n">'+fmt0.format(L.q)+' '+sv.un+'<span class="mini">'+rotuloBase(sv)+'</span></td>'+
+        celulaHTML(L.cel.iopes,"iopes")+
+        celulaHTML(L.cel.senge,"senge")+
+        celulaHTML(L.cel.cehop,"cehop")+
+        celulaHTML(L.cel.caixa,"caixa")+
+        '<td class="n"><input class="pers num" type="number" step="0.01" min="0" data-cu="'+sv.id+'" value="'+
+          (estado.custom[sv.id]!==undefined?estado.custom[sv.id]:"")+'" placeholder="—" aria-label="Preço personalizado de '+esc(sv.nome)+'">'+
+          (L.cel.custom.st==="ok"?'<span class="mini">'+R$(L.cel.custom.total)+'</span>':'')+'</td>'+
+        '<td class="n">'+(cv===null?'<span class="na">—</span>':'<span class="'+(cv>30?'marca-alto':'')+'">'+fmt0.format(cv)+'%</span>')+'</td>'+
+      '</tr>';
+    });
+  });
+  tb.innerHTML = html;
+
+  tb.querySelectorAll('input[data-sv]').forEach(el=>{
+    el.addEventListener("change", ()=>{ estado.sel[el.dataset.sv] = el.checked; atualizar(); });
+  });
+  tb.querySelectorAll('input[data-cu]').forEach(el=>{
+    el.addEventListener("input", ()=>{
+      const k = el.dataset.cu, v = el.value.trim();
+      if(v==="") delete estado.custom[k];
+      else { const n = Number(v); if(isFinite(n)&&n>=0) estado.custom[k]=n; }
+      atualizar(true);
+    });
+  });
+
+  const T = res.T;
+  $("resumo-param").textContent = T.nome + " · " + fmt0.format(estado.area) + " m² · " +
+    ({novo:"edificação nova",reforma:"reforma",cadastro:"cadastro"})[estado.intervencao];
+  $("dica-tipologia").innerHTML = correspondencias(T);
+}
+
+function rotuloBase(sv){
+  if(sv.base==="area") return "área construída";
+  if(sv.base==="projecao") return "projeção / cobertura";
+  if(sv.base==="terreno") return "área externa";
+  return "unidade";
+}
+
+function correspondencias(T){
+  const partes = [];
+  partes.push('IOPES: '+ (T.iopes ? esc(IOPES_ROT[T.iopes]) : "sem correspondência"));
+  partes.push('SENGE: '+ (T.senge ? esc(SENGE_CIVIS_ROT[T.senge]) : "sem correspondência"));
+  partes.push('CEHOP: '+ (T.cehop ? esc(CEHOP_ARQ_ROT[T.cehop]) : "sem correspondência"));
+  partes.push('CAIXA: índices independentes da tipologia');
+  return partes.join(" &middot; ");
+}
+
+/* ---------- cartões ---------- */
+function renderCartoes(){
+  const res = ULTIMO;
+  const ativos = REFS.filter(r=> r.id!=="custom" || res.totais.custom.itens>0);
+  const totais = ativos.map(r=>res.totais[r.id].total).filter(v=>v>0);
+  const menor = totais.length?Math.min.apply(null,totais):0;
+  const maior = totais.length?Math.max.apply(null,totais):0;
+  let html = "";
+  ativos.forEach(r=>{
+    const t = res.totais[r.id];
+    const un = estado.area>0 ? t.total/estado.area : 0;
+    let flag = "";
+    if(t.total>0 && totais.length>1){
+      if(t.total===menor) flag = ' <span class="marca-baixo">menor</span>';
+      else if(t.total===maior) flag = ' <span class="marca-alto">maior</span>';
+    }
+    html += '<div class="cartao" style="border-top-color:'+r.cor+'">'+
+      '<div class="rot" style="color:'+r.cor+'">'+esc(r.nome)+' <span style="color:var(--tinta-3);font-weight:500">'+esc(r.ano)+'</span></div>'+
+      '<div class="val">'+R$(t.total)+'</div>'+
+      '<div class="sub">'+fmt2.format(un)+' R$/m² de área construída'+flag+'<br>'+
+      '<b>'+t.itens+'</b> serviços precificados'+(t.lacunas?' · <b>'+t.lacunas+'</b> sem preço':'')+'<br>'+
+      'Base comum: <b>'+R$(t.comum)+'</b></div></div>';
+  });
+  const disp = estatistica(totais);
+  if(disp && totais.length>1){
+    html += '<div class="cartao" style="border-top-color:var(--tinta-2)">'+
+      '<div class="rot">Dispersão entre tabelas</div>'+
+      '<div class="val">'+fmt0.format(disp.cv*100)+'%</div>'+
+      '<div class="sub">Coeficiente de variação dos totais<br>Amplitude: <b>'+R$(disp.amp)+'</b><br>Mediana: <b>'+R$(disp.mediana)+'</b></div></div>';
+  }
+  $("cartoes").innerHTML = html;
+}
+
+/* =========================================================
+   7. GRÁFICOS (SVG gerado em tempo de execução)
+   ========================================================= */
+function svgTexto(x,y,txt,opc){
+  opc = opc||{};
+  return '<text x="'+x+'" y="'+y+'"'+
+    ' font-size="'+(opc.size||12)+'"'+
+    ' fill="'+(opc.cor||"#48545f")+'"'+
+    ' text-anchor="'+(opc.anchor||"start")+'"'+
+    (opc.peso?' font-weight="'+opc.peso+'"':'')+
+    (opc.mono?' font-family="ui-monospace,Menlo,Consolas,monospace"':'')+
+    '>'+esc(txt)+'</text>';
+}
+
+function renderGraficoTotal(){
+  const res = ULTIMO;
+  const refs = REFS.filter(r=> r.id!=="custom" || res.totais.custom.itens>0);
+  const W=900, H=300, ml=70, mr=20, mt=26, mb=54;
+  const maxV = Math.max.apply(null, refs.map(r=>res.totais[r.id].total).concat([1]));
+  const larg = (W-ml-mr)/refs.length;
+  const barW = Math.min(120, larg*0.5);
+  const esc0 = v => (H-mb) - (v/maxV)*(H-mb-mt);
+  let s = "";
+  for(let i=0;i<=4;i++){
+    const v = maxV*i/4, y = esc0(v);
+    s += '<line x1="'+ml+'" y1="'+y+'" x2="'+(W-mr)+'" y2="'+y+'" stroke="#e3e6e0" stroke-width="1"/>';
+    s += svgTexto(ml-8, y+4, fmt0.format(v), {size:10, anchor:"end", mono:true, cor:"#8a959d"});
+  }
+  refs.forEach((r,i)=>{
+    const cx = ml + larg*i + larg/2;
+    const x = cx - barW/2;
+    let acumulado = 0;
+    GRUPOS.forEach(g=>{
+      let soma = 0;
+      res.linhas.forEach(L=>{
+        if(L.sv.grupo!==g.id) return;
+        if(!estado.sel[L.sv.id]) return;
+        if(estado.comum && !L.comum) return;
+        const c = L.cel[r.id];
+        if(c.st==="ok") soma += c.total;
+      });
+      if(soma<=0) return;
+      const y0 = esc0(acumulado+soma), y1 = esc0(acumulado);
+      s += '<rect x="'+x+'" y="'+y0+'" width="'+barW+'" height="'+Math.max(0,y1-y0)+'" fill="'+g.cor+'" opacity="'+(r.id==="custom"?0.55:0.9)+'"><title>'+esc(r.nome+" · "+g.nome+": "+R$(soma))+'</title></rect>';
+      acumulado += soma;
+    });
+    const topo = esc0(acumulado);
+    s += '<rect x="'+x+'" y="'+topo+'" width="'+barW+'" height="'+Math.max(0,(H-mb)-topo)+'" fill="none" stroke="'+r.cor+'" stroke-width="1.5"/>';
+    s += svgTexto(cx, topo-8, R$(acumulado), {size:12, anchor:"middle", peso:600, mono:true, cor:r.cor});
+    s += svgTexto(cx, H-mb+18, r.nome, {size:12, anchor:"middle", peso:600, cor:"#16202b"});
+    s += svgTexto(cx, H-mb+33, r.ano+" · "+r.natureza, {size:10, anchor:"middle", cor:"#8a959d"});
+  });
+  s += '<line x1="'+ml+'" y1="'+(H-mb)+'" x2="'+(W-mr)+'" y2="'+(H-mb)+'" stroke="#16202b" stroke-width="1.5"/>';
+  const el = $("ch-total");
+  el.setAttribute("viewBox","0 0 "+W+" "+H);
+  el.innerHTML = s;
+  $("leg-grupos").innerHTML = GRUPOS.map(g=>'<span><i style="background:'+g.cor+'"></i>'+esc(g.nome)+'</span>').join("");
+  $("cap-total").textContent = "escopo com " + res.linhas.filter(L=>estado.sel[L.sv.id]).length + " serviços selecionados";
+}
+
+function renderGraficoDisciplinas(){
+  const res = ULTIMO;
+  const refs = REFS.filter(r=> r.id!=="custom" || res.totais.custom.itens>0);
+  const linhas = res.linhas.filter(L=> estado.sel[L.sv.id] && L.valores.length>0 && !(estado.comum && !L.comum));
+  const W=900, ml=250, mr=70, mt=14, hLinha=Math.max(34, 14+refs.length*9);
+  const H = mt + linhas.length*hLinha + 24;
+  const maxV = Math.max.apply(null, linhas.map(L=>Math.max.apply(null,L.valores)).concat([1]));
+  let s = "";
+  linhas.forEach((L,i)=>{
+    const y0 = mt + i*hLinha;
+    s += '<line x1="'+ml+'" y1="'+(y0+hLinha-3)+'" x2="'+(W-mr)+'" y2="'+(y0+hLinha-3)+'" stroke="#eef0ec"/>';
+    s += svgTexto(ml-10, y0+14, L.sv.nome.length>34?L.sv.nome.slice(0,33)+"…":L.sv.nome, {size:11.5, anchor:"end", cor:"#16202b"});
+    let k=0;
+    refs.forEach(r=>{
+      const c = L.cel[r.id];
+      if(c.st!=="ok") return;
+      const h = 7, y = y0 + 4 + k*(h+2);
+      const w = (c.unit/maxV)*(W-ml-mr);
+      s += '<rect x="'+ml+'" y="'+y+'" width="'+Math.max(1,w)+'" height="'+h+'" fill="'+r.cor+'" rx="1"><title>'+esc(r.nome+": "+fmt2.format(c.unit)+" R$/"+L.sv.un)+'</title></rect>';
+      s += svgTexto(ml+w+5, y+h-0.5, fmt2.format(c.unit), {size:9.5, mono:true, cor:r.cor});
+      k++;
+    });
+  });
+  const el = $("ch-disc");
+  el.setAttribute("viewBox","0 0 "+W+" "+Math.max(H,80));
+  el.innerHTML = s || svgTexto(20,40,"Selecione ao menos um serviço com preço disponível.",{size:13});
+}
+
+function renderGraficoDispersao(){
+  const res = ULTIMO;
+  const refs = REFS.filter(r=> r.id!=="custom" || res.totais.custom.itens>0);
+  const linhas = res.linhas.filter(L=> estado.sel[L.sv.id] && L.valores.length>1 && !(estado.comum && !L.comum));
+  const W=900, ml=250, mr=110, mt=16, hLinha=26;
+  const H = mt + linhas.length*hLinha + 20;
+  let s = "";
+  linhas.forEach((L,i)=>{
+    const y = mt + i*hLinha + 10;
+    const est = estatistica(L.valores);
+    const larg = W-ml-mr;
+    const x0 = ml + (est.min/est.max)*larg;
+    const x1 = ml + larg;
+    s += svgTexto(ml-10, y+4, L.sv.nome.length>34?L.sv.nome.slice(0,33)+"…":L.sv.nome, {size:11.5, anchor:"end", cor:"#16202b"});
+    s += '<line x1="'+ml+'" y1="'+y+'" x2="'+x1+'" y2="'+y+'" stroke="#eef0ec" stroke-width="6" stroke-linecap="round"/>';
+    s += '<line x1="'+x0+'" y1="'+y+'" x2="'+x1+'" y2="'+y+'" stroke="#c9cfc5" stroke-width="6" stroke-linecap="round"/>';
+    refs.forEach(r=>{
+      const c = L.cel[r.id];
+      if(c.st!=="ok") return;
+      const x = ml + (c.unit/est.max)*larg;
+      s += '<circle cx="'+x+'" cy="'+y+'" r="5.2" fill="'+r.cor+'" stroke="#fff" stroke-width="1.5"><title>'+esc(r.nome+": "+fmt2.format(c.unit))+'</title></circle>';
+    });
+    const cv = est.cv*100;
+    s += svgTexto(x1+10, y+4, fmt0.format(cv)+"%", {size:11, mono:true, peso:600, cor: cv>30?"#9b2c2c":"#48545f"});
+  });
+  const el = $("ch-disp");
+  el.setAttribute("viewBox","0 0 "+W+" "+Math.max(H,80));
+  el.innerHTML = s || svgTexto(20,40,"São necessários ao menos dois preços por serviço para medir dispersão.",{size:13});
+}
+
+function renderEstatistica(){
+  const res = ULTIMO;
+  const refs = REFS.filter(r=> r.id!=="custom" || res.totais.custom.itens>0);
+  let html = "";
+  res.linhas.forEach(L=>{
+    if(!estado.sel[L.sv.id]) return;
+    if(estado.comum && !L.comum) return;
+    const est = estatistica(L.valores);
+    if(!est){ html += '<tr><td class="serv">'+esc(L.sv.nome)+'</td><td class="n na" colspan="6">sem preço em nenhuma referência</td></tr>'; return; }
+    let quemMin="", quemMax="";
+    refs.forEach(r=>{
+      const c = L.cel[r.id]; if(c.st!=="ok") return;
+      if(Math.abs(c.unit-est.min)<1e-9 && !quemMin) quemMin = r.nome;
+      if(Math.abs(c.unit-est.max)<1e-9) quemMax = r.nome;
+    });
+    const cv = est.cv*100;
+    html += '<tr><td class="serv">'+esc(L.sv.nome)+'</td>'+
+      '<td class="n">'+fmt2.format(est.min)+'</td>'+
+      '<td class="n">'+fmt2.format(est.mediana)+'</td>'+
+      '<td class="n">'+fmt2.format(est.max)+'</td>'+
+      '<td class="n">'+fmt2.format(est.amp)+'</td>'+
+      '<td class="n '+(cv>30?"marca-alto":"")+'">'+fmt0.format(cv)+'%</td>'+
+      '<td style="font-size:12px">'+(L.valores.length>1?'<span class="marca-baixo">'+esc(quemMin)+'</span> / <span class="marca-alto">'+esc(quemMax)+'</span>':'referência única')+'</td></tr>';
+  });
+  $("corpo-est").innerHTML = html || '<tr><td colspan="7" class="na">Nenhum serviço selecionado.</td></tr>';
+}
+
+function renderComparativo(){
+  if(!ULTIMO) ULTIMO = calcular();
+  renderGraficoTotal(); renderGraficoDisciplinas(); renderGraficoDispersao(); renderEstatistica();
+}
+
+/* =========================================================
+   8. INFRAESTRUTURA
+   ========================================================= */
+function renderInfra(){
+  const A = estado.infra.area, km = estado.infra.km, cl = estado.infra.classe;
+  const ha = A/10000;
+  const itens = [
+    {nome:"Terraplenagem e geométrico", q:A, un:"m²",
+      iopes:IOPES_DIV.terrapl, senge:null, cehop:faixaValor(CEHOP.infra.terrapl,A),
+      obs:"CEHOP considera a área do terreno, com indicação de jazida."},
+    {nome:"Pavimentação", q:A*0.20, un:"m²",
+      iopes:null, senge:null, cehop:faixaValor(CEHOP.infra.pavim,A*0.20),
+      obs:"CEHOP: para ruas, 20% da área do terreno; para praças e equipamentos, 15%."},
+    {nome:"Drenagem pluvial (micro e macro)", q:A, un:"m²",
+      iopes:IOPES_DIV.dren, sengeTotal:sengeHa(SENGE_SANEAMENTO.drenagem,A), cehop:faixaValor(CEHOP.infra.drenS,A),
+      obs:"SENGE: escalonado por hectare (Tabela 9). CEHOP: modalidade simples."},
+    {nome:"Abastecimento e distribuição de água", q:A, un:"m²",
+      iopes:IOPES_DIV.hidro, sengeTotal:sengeHa(SENGE_SANEAMENTO.agua,A), cehop:faixaValor(CEHOP.infra.agua,A),
+      obs:"SENGE: escalonado por hectare."},
+    {nome:"Esgotamento sanitário", q:A, un:"m²",
+      iopes:null, sengeTotal:sengeHa(SENGE_SANEAMENTO.esgoto,A), cehop:faixaValor(CEHOP.infra.esgR,A),
+      obs:"CEHOP: rede condominial com fossa e filtro; tratamento de maior complexidade custa mais."},
+    {nome:"Rede elétrica externa", q:A, un:"m²",
+      iopes:IOPES_DIV.eletrico, senge:null, cehop:faixaValor(CEHOP.infra.eletr,A),
+      obs:"CEHOP: para ruas, 15% da área do terreno; para praças e equipamentos, 20%."},
+    {nome:"Urbanização", q:A, un:"m²",
+      iopes:IOPES_DIV.urb, senge:null, cehop:faixaValor(CEHOP.urbFaixas,A)},
+    {nome:"Paisagismo", q:A, un:"m²",
+      iopes:IOPES_DIV.pais, senge:null, cehop:faixaValor(CEHOP.paisFaixas,A),
+      obs:"Cobrado pela área de intervenção botânica."},
+    {nome:"Contenção / estabilidade de taludes", q:estado.infra.areaCont, un:"m²",
+      iopes:null, senge:null, cehop:faixaValor(CEHOP.infra.contencao,estado.infra.desnivel),
+      obs:"Área = desnível × comprimento longitudinal; faixa pelo desnível informado."},
+    {nome:"Orçamento de infraestrutura e urbanização", q:A, un:"m²",
+      iopes:null, senge:null, cehop:faixaValor(CEHOP.orcInfra,A), min:CEHOP.minOrcInfra,
+      obs:"CEHOP: valor mínimo de R$ 1.246,00."}
+  ];
+  let html = "", somaI=0, somaS=0, somaC=0;
+  itens.forEach(it=>{
+    const f = estado.fatores;
+    const ti = it.iopes!=null ? it.iopes*f.iopes*it.q : null;
+    let ts = it.sengeTotal!=null ? it.sengeTotal*f.senge : (it.senge!=null ? it.senge*f.senge*it.q : null);
+    let tc = it.cehop!=null ? it.cehop*f.cehop*it.q : null;
+    if(tc!=null && it.min && estado.minimos && tc>0 && tc<it.min) tc = it.min;
+    if(ti) somaI+=ti; if(ts) somaS+=ts; if(tc) somaC+=tc;
+    const cel = (t,u)=> t==null ? '<td class="n na">—</td>' :
+      '<td class="n"><b>'+R$(t)+'</b>'+(u!=null?'<span class="mini">'+fmt2.format(u)+' /'+it.un+'</span>':'<span class="mini">escalonado por ha</span>')+'</td>';
+    html += '<tr><td class="serv">'+esc(it.nome)+(it.obs?'<small>'+esc(it.obs)+'</small>':'')+'</td>'+
+      '<td class="n">'+fmt0.format(it.q)+' '+it.un+(it.sengeTotal!=null?'<span class="mini">'+fmt2.format(ha)+' ha</span>':'')+'</td>'+
+      cel(ti, it.iopes!=null?it.iopes*f.iopes:null)+
+      cel(ts, it.senge!=null?it.senge*f.senge:null)+
+      cel(tc, it.cehop!=null?it.cehop*f.cehop:null)+'</tr>';
+  });
+  html += '<tr class="total"><td>Total das redes e obras em área</td><td></td>'+
+    '<td class="n">'+R$(somaI)+'</td><td class="n">'+R$(somaS)+'</td><td class="n">'+R$(somaC)+'</td></tr>';
+  $("corpo-infra").innerHTML = html;
+
+  const mapaVias = [
+    ["Terraplenagem e geométrico de vias","terraplenagem","terrapl"],
+    ["Pavimentação","pavimentacao","pavim"],
+    ["Drenagem pluvial (micro)","drenagem","drenS"],
+    ["Drenagem complexa / macrodrenagem",null,"drenC"],
+    ["Alimentação de água",null,"agua"],
+    ["Esgotos sanitários — elevatória",null,"esgoto"],
+    ["Rede elétrica",null,"eletr"],
+    ["Sinalização vertical e horizontal","sinalizacao","sinal"],
+    ["Cadastramento de infraestrutura","cadastro","cadastro"],
+    ["Projeto geométrico","geometrico",null],
+    ["Estudos topográficos","topograficos",null],
+    ["Estudos geotécnicos","geotecnicos",null],
+    ["Estudos hidrológicos","hidrologicos",null],
+    ["Orçamento e plano de execução","orcamento",null],
+    ["Serviços de coordenação","coordenacao",null]
+  ];
+  let hv = "", sv1=0, sv2=0;
+  mapaVias.forEach(([nome,ks,kc])=>{
+    const us = ks && SENGE_ESTRADAS[ks] ? SENGE_ESTRADAS[ks][cl]*estado.fatores.senge : null;
+    const uc = kc && CEHOP.vias[kc]!=null ? CEHOP.vias[kc]*estado.fatores.cehop : null;
+    const ts = us!=null ? us*km : null, tc = uc!=null ? uc*km : null;
+    if(ts) sv1+=ts; if(tc) sv2+=tc;
+    hv += '<tr><td class="serv">'+esc(nome)+'</td>'+
+      (us!=null?'<td class="n">'+fmt2.format(us)+'</td>':'<td class="n na">—</td>')+
+      (uc!=null?'<td class="n">'+fmt2.format(uc)+'</td>':'<td class="n na">—</td>')+
+      (ts!=null?'<td class="n">'+R$(ts)+'</td>':'<td class="n na">—</td>')+
+      (tc!=null?'<td class="n">'+R$(tc)+'</td>':'<td class="n na">—</td>')+'</tr>';
+  });
+  hv += '<tr class="total"><td>Total dos projetos lineares ('+fmt2.format(km)+' km)</td><td></td><td></td>'+
+    '<td class="n">'+R$(sv1)+'</td><td class="n">'+R$(sv2)+'</td></tr>';
+  $("corpo-vias").innerHTML = hv;
+
+  const dados = [
+    {nome:"IOPES/ES", cor:"#2e6f73", area:somaI, vias:0},
+    {nome:"SENGE-BA", cor:"#a8531f", area:somaS, vias:sv1},
+    {nome:"CEHOP/SE", cor:"#3c5a99", area:somaC, vias:sv2}
+  ];
+  const W=900,H=260,ml=90,mr=20,mt=24,mb=52;
+  const maxV = Math.max.apply(null, dados.map(d=>d.area+d.vias).concat([1]));
+  const larg=(W-ml-mr)/dados.length, barW=Math.min(130,larg*0.5);
+  const y0 = v => (H-mb)-(v/maxV)*(H-mb-mt);
+  let s="";
+  for(let i=0;i<=4;i++){
+    const v=maxV*i/4, y=y0(v);
+    s+='<line x1="'+ml+'" y1="'+y+'" x2="'+(W-mr)+'" y2="'+y+'" stroke="#e3e6e0"/>';
+    s+=svgTexto(ml-8,y+4,fmt0.format(v),{size:10,anchor:"end",mono:true,cor:"#8a959d"});
+  }
+  dados.forEach((d,i)=>{
+    const cx=ml+larg*i+larg/2, x=cx-barW/2, tot=d.area+d.vias;
+    if(d.area>0) s+='<rect x="'+x+'" y="'+y0(d.area)+'" width="'+barW+'" height="'+((H-mb)-y0(d.area))+'" fill="'+d.cor+'" opacity=".85"><title>'+esc("Área: "+R$(d.area))+'</title></rect>';
+    if(d.vias>0) s+='<rect x="'+x+'" y="'+y0(tot)+'" width="'+barW+'" height="'+(y0(d.area)-y0(tot))+'" fill="'+d.cor+'" opacity=".45"><title>'+esc("Vias: "+R$(d.vias))+'</title></rect>';
+    s+=svgTexto(cx,y0(tot)-8,R$(tot),{size:12,anchor:"middle",peso:600,mono:true,cor:d.cor});
+    s+=svgTexto(cx,H-mb+18,d.nome,{size:12,anchor:"middle",peso:600,cor:"#16202b"});
+  });
+  s+='<line x1="'+ml+'" y1="'+(H-mb)+'" x2="'+(W-mr)+'" y2="'+(H-mb)+'" stroke="#16202b" stroke-width="1.5"/>';
+  s+=svgTexto(ml,H-10,"Tom cheio: redes e obras em área · Tom claro: projetos lineares de vias",{size:10.5,cor:"#8a959d"});
+  const el=$("ch-infra"); el.setAttribute("viewBox","0 0 "+W+" "+H); el.innerHTML=s;
+}
+
+/* =========================================================
+   8-B. METODOLOGIA CAIXA — APÊNDICE C
+   ========================================================= */
+function renderCaixa(){
+  sincronizaCaixa();
+  const C = estado.caixa, Ae = caixaAe(), ht1 = C.ht1;
+  const prazo = caixaPrazo();
+  const rotuloModalidade = {executivo:"Projeto executivo (C1)",anteprojeto:"Anteprojeto (C2)",asbuilt:"As built (C3)",revisao:"Revisão de projeto (C4)"}[C.modalidade];
+
+  /* --- cartões de contexto --- */
+  let total = 0, contados = 0;
+  CAIXA_C1.forEach(it=>{
+    if(!C.selC1[it.cod]) return;
+    const r = caixaIR(it.cod);
+    if(!r || r.inc) return;
+    const u = caixaUnit(r.ir, Ae);
+    if(u!==null){ total += u*Ae; contados++; }
+  });
+  const colPrazo = C.modalidade==="asbuilt" ? 5 : (C.modalidade==="anteprojeto"||C.modalidade==="revisao" ? 4 : 3);
+  $("cx-cartoes").innerHTML =
+    '<div class="cartao" style="border-top-color:var(--caixa)"><div class="rot" style="color:var(--caixa)">Área equivalente A<sub>e</sub></div>'+
+      '<div class="val">'+fmt2.format(Ae)+' m²</div><div class="sub">1,00 × '+fmt0.format(caixaApd())+
+      ' + 0,50 × '+fmt0.format(C.apt)+' + 0,25 × '+fmt0.format(C.age)+'</div></div>'+
+    '<div class="cartao" style="border-top-color:var(--caixa)"><div class="rot" style="color:var(--caixa)">Fator de escala (8 ÷ A<sub>e</sub>)<sup>0,4</sup></div>'+
+      '<div class="val">'+(Ae>0?fmt4.format(Math.pow(8/Ae,0.4)):"—")+'</div>'+
+      '<div class="sub">Multiplica IR × ht1 para chegar ao R$/m² equivalente</div></div>'+
+    '<div class="cartao" style="border-top-color:var(--caixa)"><div class="rot" style="color:var(--caixa)">'+esc(rotuloModalidade)+'</div>'+
+      '<div class="val">'+R$(total)+'</div><div class="sub"><b>'+contados+'</b> projetos marcados<br>'+
+      (Ae>0?fmt2.format(total/Ae)+' R$/m² equivalente':'')+'</div></div>'+
+    '<div class="cartao" style="border-top-color:var(--caixa)"><div class="rot" style="color:var(--caixa)">Prazo aplicável</div>'+
+      '<div class="val">'+prazo[colPrazo]+' dias</div><div class="sub">Faixa '+esc(prazo[1])+'<br>Dias corridos, Tabela C9</div></div>';
+
+  /* --- Tabela C1 / C2 --- */
+  let h = "", esp = "";
+  CAIXA_C1.forEach(it=>{
+    if(it.esp!==esp){ esp = it.esp; h += '<tr class="grupo"><td colspan="6">'+esc(esp)+'</td></tr>'; }
+    const r = caixaIR(it.cod);
+    const marcado = !!C.selC1[it.cod];
+    let cIR, cUn, cVR;
+    if(!r){ cIR='<td class="n na">—</td>'; cUn='<td class="n na">não previsto nesta modalidade</td>'; cVR='<td class="n na">—</td>'; }
+    else if(r.inc){ cIR='<td class="n na">—</td>'; cUn='<td class="n"><span class="tag incluso">em '+esc(r.inc)+'</span></td>'; cVR='<td class="n na">—</td>'; }
+    else {
+      const u = caixaUnit(r.ir, Ae);
+      cIR = '<td class="n">'+fmt3.format(r.ir)+'</td>';
+      cUn = '<td class="n">'+(u===null?"—":fmt2.format(u))+'</td>';
+      cVR = '<td class="n"><b>'+(u===null?"—":R$(u*Ae))+'</b></td>';
+    }
+    h += '<tr'+(marcado?'':' style="opacity:.5"')+'>'+
+      '<td><input type="checkbox" data-cx="'+it.cod+'" '+(marcado?"checked":"")+' aria-label="Incluir '+esc(it.nome)+'"></td>'+
+      '<td class="serv">'+esc(it.nome)+(r&&r.obs?'<small>'+esc(r.obs)+'</small>':'')+'</td>'+
+      '<td class="num" style="font-size:11.5px">'+it.cod+'</td>'+cIR+cUn+cVR+'</tr>';
+  });
+  h += '<tr class="total"><td></td><td>Total dos projetos marcados</td><td></td><td></td>'+
+       '<td class="n">'+(Ae>0?fmt2.format(total/Ae):"—")+'</td><td class="n">'+R$(total)+'</td></tr>';
+  $("cx-corpo").innerHTML = h;
+  document.querySelectorAll('#cx-corpo input[data-cx]').forEach(el=>{
+    el.addEventListener("change", ()=>{
+      if(el.checked) estado.caixa.selC1[el.dataset.cx] = true;
+      else delete estado.caixa.selC1[el.dataset.cx];
+      salvar(); renderCaixa();
+    });
+  });
+
+  /* --- Tabela C5: pequenas intervenções --- */
+  const Vo = C.vo, Apav = C.apav;
+  let h5 = "";
+  Object.keys(CAIXA_C5).forEach(cod=>{
+    if(!C.selC1[cod]) return;
+    const ir5 = CAIXA_C5[cod];
+    const vr = (Vo>0 && ht1>0) ? ir5 * Vo * Math.sqrt(ht1/Vo) : 0;
+    const irArea = CAIXA_C1_IR[cod];
+    const uTeto = (irArea!==undefined && Apav>0) ? caixaUnit(irArea, Apav) : null;
+    const teto = uTeto===null ? null : uTeto*Apav;
+    const aplic = teto===null ? vr : Math.min(vr, teto);
+    h5 += '<tr><td class="serv">'+esc(CAIXA_C1_NOME[cod]||cod)+'</td>'+
+      '<td class="num" style="font-size:11.5px">'+cod+'</td>'+
+      '<td class="n">'+fmt2.format(ir5)+'</td>'+
+      '<td class="n">'+R$(vr)+'</td>'+
+      '<td class="n">'+(teto===null?'<span class="na">—</span>':R$(teto))+'</td>'+
+      '<td class="n"><b>'+R$(aplic)+'</b>'+((teto!==null && vr>teto)?' <span class="tag aprox" title="Limitado pelo item 3.1.1">teto</span>':'')+'</td></tr>';
+  });
+  $("cx-c5").innerHTML = h5 || '<tr><td colspan="6" class="na">Marque projetos na tabela acima para ver a remuneração equivalente por valor da obra.</td></tr>';
+
+  /* --- C6, C7, C8 --- */
+  let hf = "";
+  CAIXA_C6.forEach(([nome,mult])=>{
+    hf += '<tr><td class="serv">Sinalização externa</td><td>'+esc(nome)+'</td><td class="n">'+mult+' × ht1</td>'+
+      '<td class="n"><b>'+R$(mult*ht1)+'</b></td><td class="n na">—</td></tr>';
+  });
+  CAIXA_C7.forEach(([nome,mult,dias])=>{
+    hf += '<tr><td class="serv">Maquete eletrônica</td><td>'+esc(nome)+'</td><td class="n">'+mult+' × ht1</td>'+
+      '<td class="n"><b>'+R$(mult*ht1)+'</b></td><td class="n">'+dias+' dias</td></tr>';
+  });
+  CAIXA_C8.forEach(([nome,mult])=>{
+    hf += '<tr><td class="serv">Transporte vertical</td><td>'+esc(nome)+'</td><td class="n">'+mult+' × ht1</td>'+
+      '<td class="n"><b>'+R$(mult*ht1)+'</b></td><td class="n na">—</td></tr>';
+  });
+  $("cx-fixos").innerHTML = hf;
+
+  /* --- C9 --- */
+  let hp = "";
+  CAIXA_C9.forEach(f=>{
+    const ativa = (f===prazo);
+    hp += '<tr'+(ativa?' class="subtotal"':'')+'><td class="serv">'+esc(f[1])+(ativa?' <span class="tag incluso">faixa atual</span>':'')+'</td>'+
+      '<td class="n">'+f[2]+'</td><td class="n">'+f[3]+'</td><td class="n">'+f[4]+'</td><td class="n">'+f[5]+'</td></tr>';
+  });
+  $("cx-prazos").innerHTML = hp;
+}
+
+/* =========================================================
+   9. BASE DE DADOS
+   ========================================================= */
+function tabelaHTML(titulo, cabecalhos, linhas, nota){
+  let h = '<h3 class="sub">'+esc(titulo)+'</h3>';
+  if(nota) h += '<p class="nota" style="margin:0 0 8px">'+nota+'</p>';
+  h += '<div class="rolagem"><table><thead><tr>'+
+    cabecalhos.map((c,i)=>'<th'+(i?' class="n"':'')+'>'+esc(c)+'</th>').join("")+
+    '</tr></thead><tbody>';
+  linhas.forEach(l=>{
+    h += '<tr>'+l.map((c,i)=>{
+      if(i===0) return '<td class="serv">'+esc(c)+'</td>';
+      if(c===null||c===undefined) return '<td class="n na">—</td>';
+      return '<td class="n">'+(typeof c==="number"?fmt2.format(c):esc(c))+'</td>';
+    }).join("")+'</tr>';
+  });
+  return h+'</tbody></table></div>';
+}
+
+function renderBase(){
+  const alvo = $("area-base");
+  if(alvo.dataset.pronto==="1") return;
+  let h = "";
+
+  const chavesIopes = [["arq","Arquitetura"],["cadArq","Levant. arquitetônico"],["estr","Estrutural c/ fundação"],["estrMet","Estrutura metálica"],["hidro","Hidrossanitário"],["cadHidro","Levant. redes hidro."],["eletr","Redes elétricas"],["cadEletr","Levant. cargas e redes"],["tel","Telefônico"],["logica","Lógica"],["cab","Cabeamento estruturado"],["inc","Incêndio"],["som","Sonorização"],["clima","Climatização"],["cftv","Alarme e CFTV"],["spda","SPDA"],["enf","Chamada de enfermeira"],["gases","Gases medicinais"],["autom","Automação"],["orc","Planilha orçamentária"]];
+  const tiposI = Object.keys(IOPES);
+  h += tabelaHTML("IOPES/ES 2018 — projetos de edificações (R$/m²)",
+    ["Serviço"].concat(tiposI.map(k=>IOPES_ROT[k])),
+    chavesIopes.map(([k,rot])=> [rot].concat(tiposI.map(t=> IOPES[t][k]!==undefined ? IOPES[t][k] : null))),
+    'Edição 2018, revisão R0. O projeto estrutural já inclui a fundação.');
+
+  h += tabelaHTML("IOPES/ES 2018 — projetos diversos (R$/m²)",
+    ["Serviço","R$/m²"],
+    [["Projeto elétrico externo",IOPES_DIV.eletrico],["Levant. cargas e redes externas",IOPES_DIV.cadCargas],
+     ["Telecomunicações",IOPES_DIV.telecom],["Hidrossanitário externo",IOPES_DIV.hidro],
+     ["Levant. redes hidrossanitárias externas",IOPES_DIV.cadHidro],["Terraplenagem",IOPES_DIV.terrapl],
+     ["Drenagem",IOPES_DIV.dren],["Prevenção e combate a incêndio",IOPES_DIV.inc],
+     ["Urbanismo (muros, calçadas, pavimentações)",IOPES_DIV.urb],["Paisagismo",IOPES_DIV.pais],
+     ["Sinalização interna e externa",IOPES_DIV.sinal],["Maquete eletrônica 3D",IOPES_DIV.maquete]]);
+
+  h += tabelaHTML("CEHOP/SE 2026 — arquitetura (R$/m²)",
+    ["Tipologia","Cadastro","Novo","Reforma"],
+    Object.keys(CEHOP_ARQ).map(k=>[CEHOP_ARQ_ROT[k]].concat(CEHOP_ARQ[k])),
+    'Valor mínimo de projeto: R$ 1.950,00 a R$ 3.900,00 conforme o grau de dificuldade. Projetos obrigatoriamente em BIM.');
+
+  h += tabelaHTML("CEHOP/SE 2026 — engenharia por grupo de edificação (R$/m²)",
+    ["Serviço","Edificações em geral","Hospitalares e de saúde","Penitenciárias e presídios","Teatros, auditórios e centros de convenções"],
+    [
+      ["Estrutura de concreto armado",CEHOP.estr.geral,CEHOP.estr.saude,CEHOP.estr.penit,CEHOP.estr.teatro],
+      ["Hidráulico",CEHOP.hidr.geral,CEHOP.hidr.saude,CEHOP.hidr.penit,CEHOP.hidr.teatro],
+      ["Esgoto sanitário",CEHOP.esg.geral,CEHOP.esg.saude,CEHOP.esg.penit,CEHOP.esg.teatro],
+      ["Elétrico",CEHOP.eletr.geral,CEHOP.eletr.saude,CEHOP.eletr.geral,CEHOP.eletr.geral],
+      ["Cabeamento estruturado",CEHOP.cab.geral,CEHOP.cab.saude,CEHOP.cab.geral,CEHOP.cab.teatro],
+      ["Climatização",CEHOP.clima.geral,CEHOP.clima.saude,CEHOP.clima.geral,CEHOP.clima.teatro],
+      ["Incêndio (extintor + hidrante)",CEHOP.inc.hidrante,CEHOP.inc.saude,CEHOP.inc.hidrante,CEHOP.inc.hidrante],
+      ["CFTV",CEHOP.cftv,CEHOP.cftv,CEHOP.cftv,CEHOP.cftv],
+      ["Sonorização",CEHOP.som,CEHOP.som,CEHOP.som,CEHOP.som],
+      ["Gases medicinais",null,CEHOP.gases,null,null],
+      ["SPDA",CEHOP.pda.spda,CEHOP.pda.spda,CEHOP.pda.spda,CEHOP.pda.spda],
+      ["Comunicação visual",CEHOP.comVisual,CEHOP.comVisual,CEHOP.comVisual,CEHOP.comVisual],
+      ["Fundação superficial",CEHOP.fund.superficial,CEHOP.fund.superficial,CEHOP.fund.superficial,CEHOP.fund.superficial],
+      ["Fundação profunda",CEHOP.fund.profunda,CEHOP.fund.profunda,CEHOP.fund.profunda,CEHOP.fund.profunda],
+      ["Estrutura metálica completa",CEHOP.estrMet.completa,CEHOP.estrMet.completa,CEHOP.estrMet.completa,CEHOP.estrMet.completa],
+      ["Recuperação estrutural com reforço",CEHOP.recup,CEHOP.recup,CEHOP.recup,CEHOP.recup],
+      ["Drenagem pluvial simples",CEHOP.dren.simples,CEHOP.dren.simples,CEHOP.dren.simples,CEHOP.dren.simples],
+      ["Tratamento acústico",CEHOP.acustico,CEHOP.acustico,CEHOP.acustico,CEHOP.acustico]
+    ]);
+
+  h += tabelaHTML("CEHOP/SE 2026 — itens por unidade (R$/un.)",
+    ["Item","R$/un."],
+    [["GLP ou GN — por unidade",CEHOP.glp.unidade],["GLP ou GN — até 10 pontos",CEHOP.glp.ate10],
+     ["GLP ou GN — de 11 a 30 pontos",CEHOP.glp.de11a30],["GLP ou GN — acima de 31 pontos",CEHOP.glp.acima31],
+     ["Relatório de análise de risco (PDA)",CEHOP.pda.relatorio],["Gerador",CEHOP.eletr.gerador],
+     ["Subestação",CEHOP.eletr.subestacao],["PGRSCC até 1.500 m²",CEHOP.pgrscc.ate1500],
+     ["PGRSCC acima de 1.501 m²",CEHOP.pgrscc.acima]]);
+
+  h += tabelaHTML("SENGE-BA 2024 — Tabela 4, projetos civis (R$/m²)",
+    ["Tipologia"].concat(SENGE_FAIXAS),
+    Object.keys(SENGE_CIVIS).map(k=>[SENGE_CIVIS_ROT[k]].concat(SENGE_CIVIS[k])),
+    'Preços referidos ao CUB médio de jun/2024 (i₀ = 1.929,04). Majoração de 30% quando o contrato inclui o orçamento das obras projetadas.');
+
+  h += tabelaHTML("SENGE-BA 2024 — Tabela 6, cálculo estrutural (R$/m²)",
+    ["Tipologia"].concat(SENGE_ESTR_COLS),
+    Object.keys(SENGE_ESTR).map(k=>[SENGE_ESTR_ROT[k]].concat(SENGE_ESTR[k])),
+    'As três primeiras colunas foram conferidas por consistência de alinhamento. As demais têm alinhamento aritmeticamente consistente, mas a célula "Shopping center × pré-moldada" rompe o padrão das demais linhas — confira na fonte. Memória de cálculo: +20%.');
+
+  h += tabelaHTML("SENGE-BA 2024 — Tabela 9, saneamento (R$/ha, escalonado)",
+    ["Rede","Até 2 ha","Excedente de 2 a 5 ha","Excedente de 5 a 25 ha","Excedente acima de 25 ha"],
+    [["Drenagem de terrenos"].concat(SENGE_SANEAMENTO.drenagem),
+     ["Distribuição de água"].concat(SENGE_SANEAMENTO.agua),
+     ["Esgoto sanitário"].concat(SENGE_SANEAMENTO.esgoto)],
+    'Ordem das faixas validada pelo exemplo de cálculo do próprio documento (12 ha = R$ 29.033,82 para drenagem).');
+
+  h += tabelaHTML("SENGE-BA 2024 — Tabela 5, estradas e ruas (R$/km)",
+    ["Serviço","Vias urbanas","Estradas < 7 km","Estradas > 7 km"],
+    Object.keys(SENGE_ESTRADAS).map(k=>[SENGE_ESTRADAS_ROT[k]].concat(SENGE_ESTRADAS[k])));
+
+  h += tabelaHTML("SENGE-BA 2024 — Tabela 3, fiscalização de obras (R$/m² por mês)",
+    ["Natureza da obra"].concat(SENGE_FISC_COLS),
+    SENGE_FISC.map((l,i)=>[SENGE_FISC_ROWS[i]].concat(l)),
+    'Redução de 5% a cada 1.000 m² de área construída, limitada a 30%.');
+
+  h += tabelaHTML("SENGE-BA 2024 — Tabela 2, direção e administração de construções (R$/m² por mês)",
+    ["Natureza da obra","Construções simples","Construções correntes","Execução não usual"],
+    SENGE_DIR.map((l,i)=>[SENGE_DIR_ROWS[i]].concat(l)),
+    'Em contratos por administração, recomenda-se 15% sobre o valor total da obra. Redução de 5% a cada 1.000 m², limitada a 30%.');
+
+  h += tabelaHTML("SENGE-BA 2024 — Tabela 1, serviços de consultoria (R$/hora)",
+    ["Faixa","R$/hora"], SENGE_CONSULT.map(l=>[l[0],l[1]]),
+    'Deslocamento e horas à disposição a R$ 84,00/hora; veículo próprio a R$ 4,90/km. <b>Os dois primeiros valores não formam a progressão decrescente esperada — confira na fonte.</b>');
+
+  h += tabelaHTML("SENGE-BA 2024 — Tabela 8, cálculo estrutural de edifícios residenciais",
+    ["Tipo de edificação","% CUB/m²","R$/m²"],
+    SENGE_EDIF_RES.map(l=>[l[0],l[1],l[2]]),
+    'Cálculo estrutural de residências (Tabela 7): 1,9% CUB/m² = R$ 36,62/m². Memória de cálculo: +25% na Tabela 8 e +20% na Tabela 7.');
+
+  h += tabelaHTML("CAIXA — Apêndice C, Tabela C1: índices de remuneração em função da área",
+    ["Projeto / serviço técnico","Cód.","Especialidade","IR"],
+    CAIXA_C1.map(x=>[x.nome, x.cod, x.esp, x.ir]),
+    'VR = (IR × ht1) × (8 ÷ A<sub>e</sub>)<sup>0,4</sup> × A<sub>e</sub>. A hora técnica ht1 é proposta pela licitante, de modo que a tabela não tem data-base de preços.');
+
+  h += tabelaHTML("CAIXA — Apêndice C, Tabela C2: índices para anteprojeto",
+    ["Código do projeto executivo correspondente","IR do anteprojeto","Observação"],
+    Object.keys(CAIXA_C2).map(k=>[
+      (CAIXA_C1_NOME[k]||k)+" ("+k+")",
+      CAIXA_C2[k].inc ? null : CAIXA_C2[k].ir,
+      CAIXA_C2[k].inc ? "Absorvido pelo item "+CAIXA_C2[k].inc : (CAIXA_C2[k].obs || "")
+    ]),
+    'As Built e Revisão de projeto correspondem a 10% do respectivo projeto executivo da mesma especialidade (Tabelas C3 e C4).');
+
+  h += tabelaHTML("CAIXA — Apêndice C, Tabela C5: índices em função do valor da obra (pequenas intervenções)",
+    ["Projeto / serviço técnico","Cód.","IR"],
+    Object.keys(CAIXA_C5).map(k=>[CAIXA_C1_NOME[k]||k, k, CAIXA_C5[k]]),
+    'VR = IR × V<sub>o</sub> × (ht1 ÷ V<sub>o</sub>)<sup>0,5</sup>. Aplicável quando a área de intervenção é inferior a 40% da área construída e não há desenvolvimento completo dos projetos; limitado ao valor da fórmula por área (item 3.1.1).');
+
+  h += tabelaHTML("CAIXA — Apêndice C, Tabelas C6, C7 e C8: serviços por múltiplo da hora técnica",
+    ["Serviço","Múltiplo de ht1","Prazo (dias)"],
+    CAIXA_C6.map(x=>[x[0], x[1], null])
+      .concat(CAIXA_C7.map(x=>[x[0], x[1], x[2]]))
+      .concat(CAIXA_C8.map(x=>[x[0], x[1], null])));
+
+  h += tabelaHTML("CAIXA — Apêndice C, Tabela C9: prazos por área equivalente (dias corridos)",
+    ["Faixa de área","Layout","Projetos executivos e demais serviços","Anteprojeto e revisão","As built"],
+    CAIXA_C9.map(f=>[f[1], f[2], f[3], f[4], f[5]]),
+    'Ar = área equivalente de remuneração nas edificações novas, reformas e ampliações; área efetiva da intervenção nas pequenas intervenções remuneradas pelo valor da obra.');
+
+  alvo.innerHTML = h;
+  alvo.dataset.pronto = "1";
+}
+
+/* =========================================================
+   10. EXPORTAÇÃO
+   ========================================================= */
+function baixarCSV(){
+  const res = ULTIMO, T = res.T;
+  const n = v => (v==null? "" : fmt2.format(v));
+  const L = [];
+  L.push(["Comparador de honorários de projetos"]);
+  L.push(["Tipologia", T.nome]);
+  L.push(["Área construída (m²)", fmt2.format(estado.area)]);
+  L.push(["Área de projeção/cobertura (m²)", fmt2.format(estado.projecao)]);
+  L.push(["Área externa do terreno (m²)", fmt2.format(estado.terreno)]);
+  L.push(["Natureza da intervenção", estado.intervencao]);
+  L.push(["Valores mínimos CEHOP aplicados", estado.minimos?"sim":"não"]);
+  L.push(["Fator IOPES/ES", fmt4.format(estado.fatores.iopes)]);
+  L.push(["Fator SENGE-BA", fmt4.format(estado.fatores.senge)]);
+  L.push(["Fator CEHOP/SE", fmt4.format(estado.fatores.cehop)]);
+  L.push(["CAIXA — hora técnica ht1 (R$)", fmt2.format(estado.caixa.ht1)]);
+  L.push(["CAIXA — área equivalente Ae (m²)", fmt2.format(caixaAe())]);
+  L.push(["CAIXA — modalidade", estado.caixa.modalidade]);
+  L.push([]);
+  L.push(["Serviço","Unidade","Quantidade",
+    "IOPES unit.","IOPES total","SENGE unit.","SENGE total","CEHOP unit.","CEHOP total",
+    "CAIXA unit.","CAIXA total","Personalizada unit.","Personalizada total","Observações"]);
+  res.linhas.forEach(li=>{
+    if(!estado.sel[li.sv.id]) return;
+    if(estado.comum && !li.comum) return;
+    const obs = REFS.map(r=>{
+      const c = li.cel[r.id];
+      if(c.st==="na") return r.nome+": não previsto";
+      if(c.st==="incluso") return r.nome+": incluso";
+      return c.obs ? r.nome+": "+c.obs : "";
+    }).filter(Boolean).join(" | ");
+    const cu = id => { const c=li.cel[id]; return c.st==="ok" ? [n(c.unit), n(c.total)] : (c.st==="incluso"?["incluso","0,00"]:["",""]); };
+    L.push([li.sv.nome, li.sv.un, fmt2.format(li.q)]
+      .concat(cu("iopes"), cu("senge"), cu("cehop"), cu("caixa"), cu("custom"), [obs]));
+  });
+  L.push([]);
+  L.push(["TOTAIS","","",
+    "", n(res.totais.iopes.total), "", n(res.totais.senge.total), "", n(res.totais.cehop.total),
+    "", n(res.totais.caixa.total), "", n(res.totais.custom.total), ""]);
+  L.push(["BASE COMUM","","",
+    "", n(res.totais.iopes.comum), "", n(res.totais.senge.comum), "", n(res.totais.cehop.comum),
+    "", n(res.totais.caixa.comum), "", n(res.totais.custom.comum), ""]);
+
+  const csv = "\uFEFF" + L.map(l=>l.map(c=>'"'+String(c===undefined?"":c).replace(/"/g,'""')+'"').join(";")).join("\r\n");
+  const blob = new Blob([csv], {type:"text/csv;charset=utf-8;"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "memoria-honorarios-projetos.csv";
+  document.body.appendChild(a); a.click();
+  setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 500);
+}
+
+/* =========================================================
+   11. CICLO
+   ========================================================= */
+function atualizar(preservaFoco){
+  ULTIMO = calcular();
+  const ativo = document.activeElement;
+  const chave = preservaFoco && ativo && ativo.dataset ? ativo.dataset.cu : null;
+  const pos = chave ? ativo.selectionStart : null;
+  renderCalc();
+  renderCartoes();
+  if(chave){
+    const novo = document.querySelector('input[data-cu="'+chave+'"]');
+    if(novo){ novo.focus(); try{ novo.setSelectionRange(pos,pos); }catch(e){} }
+  }
+  const abaComp = document.querySelector('button[aria-controls="p-comp"]');
+  if(abaComp && abaComp.getAttribute("aria-selected")==="true") renderComparativo();
+  const abaCaixa = document.querySelector('button[aria-controls="p-caixa"]');
+  if(abaCaixa && abaCaixa.getAttribute("aria-selected")==="true") renderCaixa();
+  sincronizaCaixa();
+  salvar();
+}
+
+function iniciar(){
+  carregar();
+  initAbas();
+  initParametros();
+  $("bt-csv").addEventListener("click", baixarCSV);
+  $("bt-print").addEventListener("click", ()=>window.print());
+  $("bt-limpar").addEventListener("click", ()=>{
+    try{ localStorage.removeItem(CHAVE); }catch(e){}
+    location.reload();
+  });
+  atualizar();
+}
+if(document.readyState==="loading") document.addEventListener("DOMContentLoaded", iniciar);
+else iniciar();
+
+/* Namespace de inspeção: permite auditar coeficientes e refazer cálculos no console
+   do navegador (window.APP) e alimenta a suíte de testes automatizados. */
+window.APP = {
+  REFS:REFS, GRUPOS:GRUPOS, SERVICOS:SERVICOS, TIPOLOGIAS:TIPOLOGIAS,
+  IOPES:IOPES, IOPES_ROT:IOPES_ROT, IOPES_DIV:IOPES_DIV,
+  CEHOP:CEHOP, CEHOP_ARQ:CEHOP_ARQ, CEHOP_ARQ_ROT:CEHOP_ARQ_ROT,
+  SENGE_CUB_BASE:SENGE_CUB_BASE, SENGE_FAIXAS:SENGE_FAIXAS,
+  SENGE_CIVIS:SENGE_CIVIS, SENGE_CIVIS_ROT:SENGE_CIVIS_ROT,
+  SENGE_ESTR:SENGE_ESTR, SENGE_ESTR_ROT:SENGE_ESTR_ROT, SENGE_ESTR_COLS:SENGE_ESTR_COLS,
+  SENGE_SANEAMENTO:SENGE_SANEAMENTO, SENGE_ESTRADAS:SENGE_ESTRADAS,
+  SENGE_FISC:SENGE_FISC, SENGE_DIR:SENGE_DIR, SENGE_CONSULT:SENGE_CONSULT, SENGE_EDIF_RES:SENGE_EDIF_RES,
+  CAIXA_C1:CAIXA_C1, CAIXA_C1_IR:CAIXA_C1_IR, CAIXA_C2:CAIXA_C2, CAIXA_C5:CAIXA_C5,
+  CAIXA_C6:CAIXA_C6, CAIXA_C7:CAIXA_C7, CAIXA_C8:CAIXA_C8, CAIXA_C9:CAIXA_C9,
+  caixaAe:caixaAe, caixaUnit:caixaUnit, caixaIR:caixaIR, caixaPrazo:caixaPrazo,
+  estado:estado, calcular:calcular, estatistica:estatistica,
+  sengeHa:sengeHa, faixaValor:faixaValor, faixaCivis:faixaCivis, CHAVE:CHAVE
+};
+</script>
+</body>
+</html>
