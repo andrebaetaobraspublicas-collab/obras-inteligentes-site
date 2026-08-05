@@ -43,7 +43,7 @@ Excecoes/observacoes:
 
 ## Inventario verificado dos aplicativos
 
-Inventario originalmente verificado em 21/07/2026 e atualizado em 05/08/2026 para inclusao do ConsultoriaPro e do link de contato para Instagram. Todos os cards listados possuem arquivo local correspondente.
+Inventario originalmente verificado em 21/07/2026 e atualizado em 05/08/2026 para inclusao do ConsultoriaPro, link de contato para Instagram e atualizacao do ConsultoriaPro para v5.1.2 com relatorio profissional corrigido. Todos os cards listados possuem arquivo local correspondente.
 
 | Card | Aplicativo | Rota publicada | Arquivo local principal | Status local | Status site |
 |---|---|---|---|---|---|
@@ -145,7 +145,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/elevadorcalc/` | 259316 bytes | 259316 caracteres |
 | `/thermox-pro/` | 428015 bytes | 428015 caracteres |
 | `/comparador-honorarios-projetos/` | 289138 bytes | 289138 caracteres |
-| `/consultoriapro-rodoviario/` | 247336 bytes | 247336 caracteres |
+| `/consultoriapro-rodoviario/` | 284681 bytes | 284681 caracteres |
 
 ## Estrutura local principal
 
@@ -950,17 +950,18 @@ Observacoes:
 Rota: `/consultoriapro-rodoviario/`  
 Arquivo: `consultoriapro-rodoviario/index.html`
 
-Ultima inclusao:
+Ultima atualizacao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\consultoria_pro_engenharia_consultiva_rodoviaria_v5_ajustado.html`
+- Fonte: `C:\Users\ACER\Documents\Downloads\consultoria_pro_engenharia_consultiva_rodoviaria_v5_1_2_relatorio_corrigido.html`
 - Data: 05/08/2026
-- Alteracao: inclusao de novo card na home e publicacao do aplicativo como HTML standalone.
+- Alteracao: substituicao integral de `consultoriapro-rodoviario/index.html` pela versao 5.1.2, com relatorio profissional corrigido.
 
 Observacoes:
 
 - Aplicativo standalone empacotado em HTML unico.
 - Tela inicial do site aponta para `/consultoriapro-rodoviario/`.
 - O card foi classificado no filtro `Orcamento`.
+- A versao publicada inclui abertura, governanca, rastreabilidade, cronogramas e aba de relatorio profissional.
 - Validar apos futuras alteracoes se orcamento parametrico de engenharia consultiva rodoviaria, supervisao, equipes, custos, desapropriacao, reassentamento, gestao ambiental, gerenciamento e BDI continuam carregando corretamente.
 
 ## Artigos publicados na home
