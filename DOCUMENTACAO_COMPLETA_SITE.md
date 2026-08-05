@@ -1,6 +1,6 @@
 # Documentacao completa do site Obras Inteligentes
 
-Atualizado em: 04/08/2026  
+Atualizado em: 05/08/2026  
 Dominio publicado: https://www.obrasinteligentes.ia.br/  
 Diretorio local principal: `C:\Obras Inteligentes`  
 Repositorio GitHub: `https://github.com/andrebaetaobraspublicas-collab/obras-inteligentes-site.git`  
@@ -24,6 +24,12 @@ A tela inicial possui atualmente 45 cards de aplicativos. Cada card aponta para 
 ```text
 https://www.obrasinteligentes.ia.br/nome-da-rota/
 C:\Obras Inteligentes\nome-da-rota\index.html
+```
+
+Em 05/08/2026, a tela inicial recebeu novo hero visual com imagem 3D de obra em execucao e camada de inteligencia artificial, animacoes leves em CSS e preservacao integral dos cards, artigos, textos e rotas existentes. O asset principal da home e:
+
+```text
+C:\Obras Inteligentes\assets\hero-obras-ai-3d.png
 ```
 
 Excecoes/observacoes:

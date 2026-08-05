@@ -236,206 +236,11 @@ body.modal-open{overflow:hidden}
 }
 @media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto}}
 :focus-visible{outline:2px solid var(--amber);outline-offset:3px}
-
-/* ---------- HERO 3D OBRAS + IA ---------- */
-.hero{
-  min-height:min(860px,100vh);
-  isolation:isolate;
-  background:#051424;
-  border-bottom:0;
-}
-.hero::before{
-  z-index:0;
-  background:
-    linear-gradient(90deg,rgba(5,20,36,.98) 0%,rgba(5,20,36,.76) 34%,rgba(5,20,36,.32) 68%,rgba(5,20,36,.18) 100%),
-    url("assets/hero-obras-ai-3d.png") center/cover no-repeat;
-  transform:scale(1.035);
-  animation:heroImageDrift 24s ease-in-out infinite alternate;
-}
-.hero::after{
-  content:"";
-  position:absolute;
-  inset:0;
-  z-index:0;
-  pointer-events:none;
-  background:
-    radial-gradient(circle at 20% 24%,rgba(21,184,166,.22),transparent 30%),
-    linear-gradient(rgba(255,255,255,.06) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(255,255,255,.055) 1px,transparent 1px),
-    linear-gradient(110deg,transparent 0 44%,rgba(21,184,166,.16) 49%,transparent 54% 100%);
-  background-size:auto,34px 34px,34px 34px,100% 100%;
-  mix-blend-mode:screen;
-  opacity:.7;
-}
-.nav{
-  background:linear-gradient(180deg,rgba(6,26,46,.88),rgba(6,26,46,.42));
-  backdrop-filter:blur(16px);
-}
-.hero-grid{
-  min-height:calc(min(860px,100vh) - 76px);
-  grid-template-columns:minmax(0,1fr) minmax(320px,.62fr);
-  padding-top:clamp(48px,7vw,86px);
-  padding-bottom:clamp(58px,8vw,104px);
-}
-.hero-grid h1{
-  max-width:860px;
-  text-shadow:0 6px 34px rgba(0,0,0,.46);
-}
-.lede{
-  color:#d5e5ef;
-  text-shadow:0 4px 22px rgba(0,0,0,.42);
-}
-.eyebrow{
-  color:#84f3e4;
-  text-shadow:0 0 20px rgba(21,184,166,.36);
-}
-.eyebrow::before{background:#84f3e4}
-.btn-primary{
-  box-shadow:0 14px 36px rgba(21,184,166,.28);
-}
-.btn-ghost{
-  background:rgba(6,26,46,.28);
-  backdrop-filter:blur(12px);
-}
-.hero-art{
-  align-self:center;
-  border-color:rgba(175,221,235,.24);
-  background:linear-gradient(145deg,rgba(7,27,45,.74),rgba(7,31,48,.22));
-  box-shadow:0 28px 80px rgba(0,0,0,.32),inset 0 1px rgba(255,255,255,.13);
-  backdrop-filter:blur(10px);
-  overflow:hidden;
-  transform:translateY(0);
-  animation:heroPanelFloat 7s ease-in-out infinite;
-}
-.hero-art::before{
-  content:"";
-  position:absolute;
-  inset:-20%;
-  background:linear-gradient(120deg,transparent 0 42%,rgba(21,184,166,.22) 50%,transparent 58% 100%);
-  transform:translateX(-34%);
-  animation:heroScan 5.8s ease-in-out infinite;
-}
-.hero-art::after{
-  content:"IA + BIM + CAMPO";
-  position:absolute;
-  left:22px;
-  bottom:20px;
-  font-family:var(--mono);
-  font-size:11px;
-  letter-spacing:.12em;
-  color:#eafcff;
-  padding:6px 9px;
-  border:1px solid rgba(132,243,228,.32);
-  background:rgba(6,26,46,.52);
-}
-.hero-art svg{
-  position:relative;
-  z-index:1;
-  opacity:.92;
-  filter:drop-shadow(0 0 14px rgba(21,184,166,.22));
-}
-.hero-motion{
-  position:absolute;
-  inset:0;
-  z-index:1;
-  pointer-events:none;
-  overflow:hidden;
-}
-.hero-motion::before,
-.hero-motion::after{
-  content:"";
-  position:absolute;
-  border:1px solid rgba(132,243,228,.18);
-  border-radius:50%;
-  width:420px;
-  height:420px;
-  right:10%;
-  top:18%;
-  animation:heroOrbit 18s linear infinite;
-}
-.hero-motion::after{
-  width:640px;
-  height:640px;
-  right:-4%;
-  top:4%;
-  border-color:rgba(245,165,36,.14);
-  animation-duration:28s;
-  animation-direction:reverse;
-}
-.hero-motion span{
-  position:absolute;
-  left:var(--x);
-  top:var(--y);
-  width:7px;
-  height:7px;
-  border-radius:50%;
-  background:#87f7ff;
-  box-shadow:0 0 18px #38d5ff,0 0 48px rgba(56,213,255,.42);
-  animation:heroNodePulse 3.4s ease-in-out infinite;
-  animation-delay:var(--d);
-}
-.strip{
-  position:relative;
-  overflow:hidden;
-  box-shadow:0 -1px rgba(255,255,255,.08) inset;
-}
-.strip::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:linear-gradient(90deg,transparent,rgba(21,184,166,.12),transparent);
-  transform:translateX(-100%);
-  animation:stripSweep 8s ease-in-out infinite;
-}
-@keyframes heroImageDrift{
-  from{transform:scale(1.035) translate3d(-8px,-4px,0)}
-  to{transform:scale(1.085) translate3d(12px,6px,0)}
-}
-@keyframes heroPanelFloat{
-  0%,100%{transform:translateY(0)}
-  50%{transform:translateY(-10px)}
-}
-@keyframes heroScan{
-  0%,42%{transform:translateX(-60%)}
-  78%,100%{transform:translateX(60%)}
-}
-@keyframes heroOrbit{
-  to{transform:rotate(360deg)}
-}
-@keyframes heroNodePulse{
-  0%,100%{opacity:.28;transform:scale(.72)}
-  50%{opacity:1;transform:scale(1.32)}
-}
-@keyframes stripSweep{
-  0%,28%{transform:translateX(-100%)}
-  62%,100%{transform:translateX(100%)}
-}
-@media(max-width:880px){
-  .hero{min-height:auto}
-  .hero-grid{min-height:auto;grid-template-columns:1fr}
-  .hero-art{max-width:420px;width:100%;justify-self:center}
-  .hero::before{
-    background:
-      linear-gradient(180deg,rgba(5,20,36,.94) 0%,rgba(5,20,36,.78) 52%,rgba(5,20,36,.48) 100%),
-      url("assets/hero-obras-ai-3d.png") center/cover no-repeat;
-  }
-}
-@media(prefers-reduced-motion:reduce){
-  .hero::before,.hero-art,.hero-art::before,.hero-motion::before,.hero-motion::after,.hero-motion span,.strip::before{animation:none!important}
-}
 </style>
 </head>
 <body>
 
 <header class="hero">
-  <div class="hero-motion" aria-hidden="true">
-    <span style="--x:9%;--y:24%;--d:0s"></span>
-    <span style="--x:18%;--y:72%;--d:1.7s"></span>
-    <span style="--x:42%;--y:18%;--d:.9s"></span>
-    <span style="--x:55%;--y:60%;--d:2.4s"></span>
-    <span style="--x:74%;--y:28%;--d:1.1s"></span>
-    <span style="--x:88%;--y:64%;--d:3.2s"></span>
-  </div>
   <nav class="nav">
     <div class="brand"><span class="mark"></span>Obras Inteligentes</div>
     <div class="nav-links">
@@ -494,7 +299,7 @@ body.modal-open{overflow:hidden}
 <div class="strip">
   <span><b>V&aacute;rios</b> aplicativos prontos para uso</span>
   <span>Conformidade com a <b>Lei 14.133/2021</b></span>
-  <span>O uso da <b>inteligência artificial</b> em sua plenitude</span>
+  <span>Referência em jurisprudência do <b>TCU</b></span>
   <span>Sem instalação · roda no navegador</span>
 </div>
 
@@ -1131,8 +936,6 @@ body.modal-open{overflow:hidden}
         <a href="#conteudo">Licitação</a>
         <a href="#conteudo">Fiscalização</a>
         <a href="#conteudo">Estruturas</a>
-        <a href="#conteudo">Orçamentação</a>
-        <a href="#conteudo">Engenharia</a>
       </div>
       <div class="foot-col">
         <h4>Sobre</h4>
