@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Comparador de Honorários de Projetos — v5 · CAU/BR Módulos I e II</title>
+<title>Comparador de Honorários de Projetos — IOPES / SENGE-BA / CEHOP</title>
 <style>
 :root{
   --tinta:#16202b;
@@ -19,8 +19,6 @@
   --cehop:#3c5a99;
   --caixa:#7d1f3f;
   --cau:#1c6b4a;
-  --sudecap:#6b4c9a;
-  --daer:#8a6d1f;
   --custom:#52606d;
   --baixo:#2f6b3d;
   --alto:#9b2c2c;
@@ -131,7 +129,6 @@ td.na{color:var(--tinta-3);font-style:italic;font-family:var(--sans);font-size:1
 .tag.aprox{background:#fdf0e3;color:#8a4d12;border:1px solid #edd0ab}
 .tag.incluso{background:#e8f0e9;color:#2f6b3d;border:1px solid #c3ddc8}
 .tag.conf{background:#fdeaea;color:#8f2a2a;border:1px solid #eec4c4}
-.tag.est{background:#efeaf7;color:#4f3b78;border:1px solid #d3c8e6}
 .marca-baixo{color:var(--baixo);font-weight:700}
 .marca-alto{color:var(--alto);font-weight:700}
 .serv{font-weight:500}
@@ -202,9 +199,7 @@ input.pers{width:104px;text-align:right;font-size:12.5px;padding:4px 6px}
         <span class="selo" style="border-left-color:#e2a06a"><b>SENGE-BA</b> jun/2024</span>
         <span class="selo" style="border-left-color:#9db2dd"><b>CEHOP/SE</b> 2026</span>
         <span class="selo" style="border-left-color:#d99bb0"><b>CAIXA</b> Apêndice C</span>
-        <span class="selo" style="border-left-color:#8ec4a9"><b>CAU/BR</b> Módulos I e II</span>
-        <span class="selo" style="border-left-color:#b3a3cf"><b>SUDECAP</b> 04/2026</span>
-        <span class="selo" style="border-left-color:#d6c48c"><b>DAER/RS</b> jan/2021</span>
+        <span class="selo" style="border-left-color:#8ec4a9"><b>CAU/BR</b> Res. 76/2014</span>
       </div>
     </div>
     <nav class="abas" role="tablist" aria-label="Seções">
@@ -212,9 +207,7 @@ input.pers{width:104px;text-align:right;font-size:12.5px;padding:4px 6px}
       <button role="tab" id="t-comp" aria-controls="p-comp" aria-selected="false">Comparativo gráfico</button>
       <button role="tab" id="t-infra" aria-controls="p-infra" aria-selected="false">Infraestrutura e vias</button>
       <button role="tab" id="t-caixa" aria-controls="p-caixa" aria-selected="false">Metodologia CAIXA</button>
-      <button role="tab" id="t-cau" aria-controls="p-cau" aria-selected="false">CAU/BR — Módulos I e II</button>
-      <button role="tab" id="t-sud" aria-controls="p-sud" aria-selected="false">Metodologia SUDECAP</button>
-      <button role="tab" id="t-daer" aria-controls="p-daer" aria-selected="false">Metodologia DAER/RS</button>
+      <button role="tab" id="t-cau" aria-controls="p-cau" aria-selected="false">Metodologia CAU/BR</button>
       <button role="tab" id="t-base" aria-controls="p-base" aria-selected="false">Base de dados</button>
       <button role="tab" id="t-fontes" aria-controls="p-fontes" aria-selected="false">Fontes e limitações</button>
     </nav>
@@ -298,59 +291,23 @@ input.pers{width:104px;text-align:right;font-size:12.5px;padding:4px 6px}
               </select>
             </label>
           </div>
-          <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--cau);margin:14px 0 6px">CAU/BR — Módulos I e II</div>
+          <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--cau);margin:14px 0 6px">CAU/BR — Módulo II</div>
           <div class="grade" style="grid-template-columns:repeat(auto-fit,minmax(115px,1fr))">
-            <label class="campo">CUB atual da tipologia (R$/m²)
-              <input type="number" id="u-cub-tip" step="0.01" min="0" value="0">
-              <span class="dica">Calcula BH = CUB correspondente × fator de adequação da Tabela 8.</span>
-            </label>
-            <label class="campo">BH efetiva (R$/m²)
+            <label class="campo">BH (R$/m²)
               <input type="number" id="u-bh" step="0.01" min="0" value="0">
             </label>
-            <label class="campo">fp aplicado (%)
+            <label class="campo">fp base (%)
               <input type="number" id="u-fp" step="0.01" min="0" value="0">
             </label>
             <label class="campo">CUB-R8N (R$/m²)
               <input type="number" id="u-cub" step="0.01" min="0" value="0">
-              <span class="dica">Somente paisagismo e urbanismo do Módulo II.</span>
             </label>
           </div>
-          <p class="mini" id="u-cau-resumo" style="margin-top:6px"></p>
-          <p class="mini" style="margin-top:6px">A tipologia, a categoria e o fp passam a ser obtidos automaticamente pelas Tabelas 3 e 5 do Módulo I. A BH pode ser calculada com o CUB atual correspondente, informada manualmente ou, apenas para conferência histórica, tomada da Tabela 8 (jun/2013). Repetições e ajustes detalhados ficam na aba <b>CAU/BR — Módulos I e II</b>.</p>
+          <p class="mini" style="margin-top:6px">A Base de Honorários e o fator percentual base vêm do <b>Módulo I</b> (Anexo I e Tabela 5), que não integra este documento — sem eles a coluna CAU/BR fica vazia. O CUB-R8N alimenta as fórmulas próprias de paisagismo e urbanismo do Módulo II. Repetições, interpolação de fp e demais itens na aba <b>Metodologia CAU/BR</b>.</p>
           <p class="mini" style="margin-top:6px">A ht1 é proposta pela empresa na licitação — não há preço publicado, logo a CAIXA não tem fator de atualização: a indexação ocorre pela própria hora técnica. Decomposição da área equivalente (A<sub>e</sub>) e escolha dos sistemas na aba <b>Metodologia CAIXA</b>.</p>
           <p class="mini" style="margin-top:7px">Padrão 1,0000 = preços exatamente como publicados. A SENGE-BA é indexada ao CUB médio de jun/2024 (i₀ = 1.929,04): o fator equivale a CUB&nbsp;atual&nbsp;÷&nbsp;1.929,04. Para o IOPES/ES (2018) use o índice setorial adotado no seu processo (INCC-DI ou IPCA acumulado). Consulte a aba "Fontes e limitações".</p>
         </div>
       </div>
-    </div>
-  </div>
-
-  <div class="painel">
-    <h2>Referências de mercado <span class="aux" id="ref-data"></span></h2>
-    <div class="corpo">
-      <p class="nota" style="margin-top:0">Três parâmetros que as fontes não publicam vêm pré-preenchidos com valores de mercado coletados na data indicada. Servem para poupar digitação — <b>não dispensam a conferência</b>: em peça técnica, reproduza o valor direto da publicação oficial vigente.</p>
-      <div class="rolagem" style="margin-top:12px">
-        <table>
-          <thead><tr><th>Parâmetro</th><th>Valor sugerido</th><th>Origem</th><th class="n">Situação</th></tr></thead>
-          <tbody id="ref-corpo"></tbody>
-        </table>
-      </div>
-      <div class="grade" style="grid-template-columns:repeat(auto-fit,minmax(190px,1fr));margin-top:12px">
-        <label class="campo">Estado do CUB adotado
-          <select id="ref-uf"></select>
-          <span class="dica">Série R8-N. Alimenta o CUB-R8N do CAU/BR e, na falta de valor específico, o CUB tipológico do Módulo I.</span>
-        </label>
-        <label class="campo">Hora técnica de referência
-          <select id="ref-ht"></select>
-          <span class="dica">Preço de venda da hora de projeto na tabela SUDECAP 04/2026, usado como âncora da ht1 da CAIXA.</span>
-        </label>
-      </div>
-      <div class="acoes" style="margin-top:12px">
-        <button class="btn forte" id="ref-aplicar">Aplicar referências de mercado</button>
-        <button class="btn" id="ref-proxy-iopes">Atualizar IOPES por proxy do CUB</button>
-        <button class="btn" id="ref-proxy-daer">Atualizar DAER por proxy do CUB</button>
-        <button class="btn" id="ref-neutro">Zerar atualizações</button>
-      </div>
-      <p class="mini" style="margin-top:8px" id="ref-aviso"></p>
     </div>
   </div>
 
@@ -367,8 +324,7 @@ input.pers{width:104px;text-align:right;font-size:12.5px;padding:4px 6px}
             <th class="n ref" style="color:var(--senge)">SENGE-BA</th>
             <th class="n ref" style="color:var(--cehop)">CEHOP/SE</th>
             <th class="n ref" style="color:var(--caixa)">CAIXA<br><span style="font-weight:400;text-transform:none;letter-spacing:0">Apêndice C</span></th>
-            <th class="n ref" style="color:var(--cau)">CAU/BR<br><span style="font-weight:400;text-transform:none;letter-spacing:0">Módulos I e II</span></th>
-            <th class="n ref" style="color:var(--sudecap)">SUDECAP<br><span style="font-weight:400;text-transform:none;letter-spacing:0">R$/prancha A1</span></th>
+            <th class="n ref" style="color:var(--cau)">CAU/BR<br><span style="font-weight:400;text-transform:none;letter-spacing:0">Módulo II</span></th>
             <th class="n ref" style="color:var(--custom)">Personalizada<br><span style="font-weight:400;text-transform:none;letter-spacing:0">R$/un.</span></th>
             <th class="n">Disp.</th>
           </tr>
@@ -404,7 +360,6 @@ input.pers{width:104px;text-align:right;font-size:12.5px;padding:4px 6px}
   <div class="painel">
     <h2>Preço unitário por especialidade <span class="aux">R$ por unidade de medida, já atualizados pelos fatores</span></h2>
     <div class="corpo">
-      <p class="nota" style="margin-top:0">A SUDECAP não aparece aqui: seus preços são por prancha A1, quilômetro ou unidade, e não por metro quadrado. Comparar R$/prancha com R$/m² produziria um número sem significado. Ela entra no gráfico de totais, onde a unidade é o real.</p>
       <div class="svgbox"><svg class="chart" id="ch-disc" viewBox="0 0 900 600" role="img" aria-label="Gráfico comparativo por especialidade"></svg></div>
     </div>
   </div>
@@ -478,15 +433,15 @@ input.pers{width:104px;text-align:right;font-size:12.5px;padding:4px 6px}
   </div>
 
   <div class="painel">
-    <h2>Projetos lineares de vias <span class="aux">preços em R$ por quilômetro · a última linha traz o total para a extensão informada</span></h2>
+    <h2>Projetos lineares de vias <span class="aux">R$ por quilômetro</span></h2>
     <div class="corpo sem rolagem">
       <table>
         <thead><tr>
           <th>Serviço</th>
-          <th class="n ref" style="color:var(--senge)">SENGE-BA</th>
-          <th class="n ref" style="color:var(--cehop)">CEHOP/SE</th>
-          <th class="n ref" style="color:var(--sudecap)">SUDECAP</th>
-          <th class="n ref" style="color:var(--daer)">DAER/RS</th>
+          <th class="n ref" style="color:var(--senge)">SENGE-BA (R$/km)</th>
+          <th class="n ref" style="color:var(--cehop)">CEHOP/SE (R$/km)</th>
+          <th class="n">SENGE total</th>
+          <th class="n">CEHOP total</th>
         </tr></thead>
         <tbody id="corpo-vias"></tbody>
       </table>
@@ -641,74 +596,29 @@ input.pers{width:104px;text-align:right;font-size:12.5px;padding:4px 6px}
 <!-- ============ ABA CAU/BR ============ -->
 <section role="tabpanel" id="p-cau" aria-labelledby="t-cau" hidden>
   <div class="painel">
-    <h2>Módulo I — tipologia, Base de Honorários, fator percentual e repetições</h2>
+    <h2>Parâmetros da fórmula PV = Sc × BH × (fp × R)</h2>
     <div class="corpo">
       <div id="cau-alerta"></div>
-      <div class="linha-check"><input type="checkbox" id="cu-sync-tipo"><label for="cu-sync-tipo">Sincronizar automaticamente a tipologia CAU/BR com a tipologia geral da calculadora. Correspondências aproximadas são identificadas no resumo.</label></div>
-      <div class="grade g-param" style="margin-top:12px">
-        <label class="campo">Tipologia CAU/BR — Tabelas 3 e 8
-          <select id="cu-tipo-mod1"></select>
-          <span class="dica">Define a categoria I a IV, o CUB correspondente e o fator de adequação.</span>
-        </label>
-        <label class="campo">Origem da Base de Honorários (BH)
-          <select id="cu-bh-modo">
-            <option value="cub">CUB atual da tipologia × fator de adequação</option>
-            <option value="tabela">BH histórica da Tabela 8 — jun/2013</option>
-            <option value="manual">BH informada manualmente</option>
-          </select>
-          <span class="dica">A opção histórica serve para reprodução e conferência, não para preço corrente.</span>
-        </label>
-        <label class="campo">CUB atual correspondente (R$/m²)
-          <input type="number" id="cu-cub-tip" step="0.01" min="0">
-          <span class="dica" id="cu-cub-tip-dica"></span>
-        </label>
-        <label class="campo">BH de mercado da categoria IV (R$/m²)
-          <input type="number" id="cu-bh-mercado" step="0.01" min="0">
-          <span class="dica">Na categoria IV, a nota 5 da Tabela 8 manda adotar o maior entre a BH tabelada e o valor de mercado apurado.</span>
-        </label>
-        <label class="campo">BH efetiva (R$/m²)
+      <div class="grade g-param">
+        <label class="campo">BH — Base de Honorários (R$/m²)
           <input type="number" id="cu-bh" step="0.01" min="0">
-          <span class="dica">Editável apenas no modo manual.</span>
+          <span class="dica">Módulo I, Anexo I — tabela de cálculo do valor do custo de construção. Varia por estado e tipologia.</span>
         </label>
-        <label class="campo">Origem do fp
-          <select id="cu-fp-modo">
-            <option value="auto">Automático — Tabela 5, com interpolação</option>
-            <option value="manual">Manual / interpolação personalizada</option>
-          </select>
-        </label>
-        <label class="campo">Coluna da Tabela 5
-          <select id="cu-cat-override">
-            <option value="auto">Automática pela tipologia</option>
-            <option value="1">I — baixo</option>
-            <option value="2">II — médio</option>
-            <option value="3">III — alto</option>
-            <option value="4">IV — especial</option>
-          </select>
-          <span class="dica">Permite adequação acordada pelo índice de complexidade do Anexo II.</span>
-        </label>
-        <label class="campo">fp aplicado (%)
+        <label class="campo">fp base (%) — Tabela 5 do Módulo I
           <input type="number" id="cu-fp" step="0.01" min="0">
-          <span class="dica">Editável apenas no modo manual.</span>
-        </label>
-        <label class="campo">Área descoberta projetada (m²)
-          <input type="number" id="cu-area-desc" step="1" min="0">
-          <span class="dica">Entra em Sc por 25%, conforme nota 3 das Tabelas 3 e 8.</span>
-        </label>
-        <label class="campo">S<sub>r</sub> — área construída repetida (m²)
-          <input type="number" id="cu-sr" step="1" min="0">
-          <span class="dica">O restante de Sc é tratado como área não repetida.</span>
-        </label>
-        <label class="campo">Quantidade de repetições (q)
-          <input type="number" id="cu-q-rep" step="1" min="0">
-          <span class="dica">Determina automaticamente r pela Tabela 4; valores intermediários são interpolados.</span>
-        </label>
-        <label class="campo">r — redutor das áreas repetidas (%)
-          <input type="number" id="cu-r" step="0.01" min="0" max="100">
-          <span class="dica">Editável apenas quando o cálculo automático da Tabela 4 estiver desativado.</span>
+          <span class="dica">Fator percentual do projeto arquitetônico completo, por tipologia e área.</span>
         </label>
         <label class="campo">CUB-R8N (R$/m²)
           <input type="number" id="cu-cub" step="0.01" min="0">
-          <span class="dica">Usado somente nas fórmulas próprias de paisagismo e urbanismo do Módulo II.</span>
+          <span class="dica">Usado só nas fórmulas próprias de paisagismo e urbanismo do Módulo II.</span>
+        </label>
+        <label class="campo">S<sub>r</sub> — área construída repetida (m²)
+          <input type="number" id="cu-sr" step="1" min="0">
+          <span class="dica">O restante da área construída é tratado como S<sub>nr</sub>, não repetida.</span>
+        </label>
+        <label class="campo">r — redutor das áreas repetidas (%)
+          <input type="number" id="cu-r" step="1" min="0" max="100">
+          <span class="dica">Tabela 4 do Módulo I, em função da quantidade de repetições.</span>
         </label>
         <label class="campo">Orçamento adotado
           <select id="cu-orc">
@@ -717,10 +627,9 @@ input.pers{width:104px;text-align:right;font-size:12.5px;padding:4px 6px}
           </select>
         </label>
       </div>
-      <div class="linha-check"><input type="checkbox" id="cu-r-auto"><label for="cu-r-auto">Calcular r automaticamente pela Tabela 4 do Módulo I.</label></div>
 
-      <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--tinta-2);margin:16px 0 6px">Interpolação manual do fp</div>
-      <div class="linha-check"><input type="checkbox" id="cu-interp"><label for="cu-interp">No modo manual, calcular o fp entre duas faixas pela fórmula fp = fp1 − {(fp1 − fp2) × [(Sc − Sc1) ÷ (Sc2 − Sc1)]}. A interpolação fica limitada ao intervalo informado, evitando extrapolação acidental.</label></div>
+      <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--tinta-2);margin:16px 0 6px">Interpolação do fp para áreas intermediárias</div>
+      <div class="linha-check"><input type="checkbox" id="cu-interp"><label for="cu-interp">Calcular o fp por interpolação entre duas faixas da Tabela 5, pela fórmula fp = fp1 − {(fp1 − fp2) × [(Sc − Sc1) ÷ (Sc2 − Sc1)]}.</label></div>
       <div class="grade" style="grid-template-columns:repeat(auto-fit,minmax(120px,1fr));margin-top:8px">
         <label class="campo">Sc1 (m²)<input type="number" id="cu-sc1" step="1" min="0"></label>
         <label class="campo">fp1 (%)<input type="number" id="cu-fp1" step="0.01" min="0"></label>
@@ -729,7 +638,7 @@ input.pers{width:104px;text-align:right;font-size:12.5px;padding:4px 6px}
       </div>
 
       <div class="cartoes" style="margin-top:16px" id="cu-cartoes"></div>
-      <p class="nota" style="margin-top:12px">A fórmula aplicada permanece <b>PV = Sc × BH × (fp × R)</b>. Nesta versão, Sc incorpora 25% da área descoberta informada; BH vem da Tabela 8 ou do CUB atual correspondente; fp vem automaticamente da Tabela 5; e o redutor r pode vir da Tabela 4. Para conjuntos com tipologias diferentes, o documento recomenda calcular cada tipologia separadamente e somar os resultados — esta versão ainda trabalha com uma tipologia por cenário.</p>
+      <p class="nota" style="margin-top:12px">Para áreas descobertas projetadas, o Módulo II manda considerar 25% da área descoberta na mesma tipologia da obra — ajuste a área construída na calculadora para incorporá-las. O preço de venda já inclui os serviços de coordenação e compatibilização dos projetos complementares, os encargos sociais e o BDI (despesas indiretas, despesas legais e lucro).</p>
     </div>
   </div>
 
@@ -780,150 +689,6 @@ input.pers{width:104px;text-align:right;font-size:12.5px;padding:4px 6px}
   </div>
 </section>
 
-<!-- ============ ABA SUDECAP ============ -->
-<section role="tabpanel" id="p-sud" aria-labelledby="t-sud" hidden>
-  <div class="painel">
-    <h2>Multiplicador K e taxa de ressarcimento</h2>
-    <div class="corpo">
-      <p class="nota" style="margin-top:0">A SUDECAP não precifica por metro quadrado: publica preços unitários de serviços de consultoria, medidos em <b>prancha A1</b>, quilômetro, unidade, dia ou hora. O preço de venda vem de PV = CD<sub>sal</sub> × K + CD<sub>outros</sub> × TRDE, com K = [(1 + K1 + K2) × (1 + K3)] ÷ (1 − K4) e TRDE = (1 + K3) ÷ (1 − K4). A memória de cálculo da planilha remete às <b>Orientações para Elaboração de Planilhas Orçamentárias de Obras Públicas</b> do TCU.</p>
-      <div class="grade g-param" style="margin-top:14px">
-        <label class="campo">K1 — encargos sociais básicos (%)
-          <input type="number" id="sd-k1" step="0.01" min="0">
-        </label>
-        <label class="campo">K2 — administração central (%)
-          <input type="number" id="sd-k2" step="0.01" min="0">
-        </label>
-        <label class="campo">K3 — margem de lucro (%)
-          <input type="number" id="sd-k3" step="0.01" min="0">
-        </label>
-        <label class="campo">ISS (%)
-          <input type="number" id="sd-iss" step="0.01" min="0">
-        </label>
-        <label class="campo">PIS (%)
-          <input type="number" id="sd-pis" step="0.01" min="0">
-        </label>
-        <label class="campo">COFINS (%)
-          <input type="number" id="sd-cofins" step="0.01" min="0">
-        </label>
-      </div>
-      <div class="acoes" style="margin-top:12px">
-        <button class="btn" id="sd-reset">Restaurar os parâmetros publicados</button>
-      </div>
-      <div class="cartoes" style="margin-top:16px" id="sd-cartoes"></div>
-      <p class="nota" style="margin-top:12px">Alterar qualquer parâmetro <b>recalcula toda a tabela</b>. A planilha publica o custo e o preço de venda de cada item, mas não a decomposição entre mão de obra e insumo — ela é deduzida da razão entre os dois valores, comparada aos multiplicadores teóricos de mão de obra (K ÷ (1 + K1)) e de insumo (TRDE). É essa participação que permite reaplicar o K com outros parâmetros, item a item.</p>
-    </div>
-  </div>
-
-  <div class="painel">
-    <h2>Quantidades adotadas na calculadora <span class="aux">a SUDECAP mede projeto por prancha, não por área</span></h2>
-    <div class="corpo">
-      <div class="linha-check"><input type="checkbox" id="sd-auto"><label for="sd-auto"><b>Estimar automaticamente o número de pranchas</b> pela área construída e pela tipologia. Ao digitar uma quantidade, aquela linha passa a ser tratada como informada pelo usuário.</label></div>
-      <div class="acoes" style="margin:10px 0"><button class="btn" id="sd-restaurar">Restaurar todas as estimativas</button></div>
-      <div class="aviso"><b>Este é o parâmetro que decide o resultado.</b> O número de pranchas A1 de cada projeto é característica do empreendimento, não da tabela — nenhuma das fontes permite estimá-lo. O padrão é 1 prancha por especialidade, o que subestima deliberadamente o total: ajuste abaixo conforme o escopo real antes de comparar com as demais referências.</div>
-      <div class="rolagem" style="margin-top:12px">
-        <table>
-          <thead><tr><th>Serviço</th><th>Item SUDECAP</th><th class="n">Unid.</th><th class="n">Preço de venda</th><th class="n">Estimativa</th><th class="n">Quantidade</th><th class="n">Total</th></tr></thead>
-          <tbody id="sd-qtd"></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <div class="painel">
-    <h2>Tabela de preços unitários <span class="aux">referência 04/2026 · onerada · sem BDI</span></h2>
-    <div class="corpo">
-      <div class="grade" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr))">
-        <label class="campo">Filtrar por descrição ou código
-          <input type="text" id="sd-busca" placeholder="ex.: sondagem, 62.01, topografia">
-        </label>
-        <label class="campo">Unidade
-          <select id="sd-und">
-            <option value="">Todas</option>
-            <option value="A1">A1 — prancha</option>
-            <option value="UN">UN — unidade</option>
-            <option value="KM">KM — quilômetro</option>
-            <option value="H">H — hora</option>
-            <option value="M">M — metro</option>
-            <option value="M2">M2 — metro quadrado</option>
-            <option value="DIA">DIA — diária</option>
-          </select>
-        </label>
-      </div>
-      <div class="rolagem" style="margin-top:12px;max-height:640px;overflow-y:auto">
-        <table>
-          <thead><tr>
-            <th>Código</th><th>Descrição</th><th class="n">Unid.</th><th class="n">Custo</th>
-            <th class="n">Mão de obra</th><th class="n">Preço de venda</th><th class="n">Fator</th>
-          </tr></thead>
-          <tbody id="sd-corpo"></tbody>
-        </table>
-      </div>
-      <p class="mini" id="sd-contagem" style="margin-top:8px"></p>
-    </div>
-  </div>
-</section>
-
-<!-- ============ ABA DAER ============ -->
-<section role="tabpanel" id="p-daer" aria-labelledby="t-daer" hidden>
-  <div class="painel">
-    <h2>Parâmetros do trecho rodoviário</h2>
-    <div class="corpo">
-      <p class="nota" style="margin-top:0">Referencial de preços unitários de projetos rodoviários do DAER/RS, data-base <b>janeiro de 2021</b>. Não há um único item de edificação: por isso a DAER não figura na calculadora de edificações, e sim aqui e na aba de infraestrutura e vias. Parte dos preços é modulada por dois fatores próprios — a <b>kapa de zona</b> (Kz), que responde pela dificuldade regional, e a <b>kapa de extensão</b> (Kext), que responde pelo ganho de escala do trecho. Outra parte é dada por fórmulas lineares em função da extensão.</p>
-      <div class="grade g-param" style="margin-top:14px">
-        <label class="campo">Extensão do trecho — ext (km)
-          <input type="number" id="da-ext" step="0.1" min="0">
-          <span class="dica">Compartilhada com a aba de infraestrutura e vias.</span>
-        </label>
-        <label class="campo">Kz — kapa de zona
-          <input type="number" id="da-kz" step="0.01" min="0">
-          <span class="dica">Fator regional definido pelo órgão; 1,00 desativa a modulação.</span>
-        </label>
-        <label class="campo">Kext — kapa de extensão
-          <input type="number" id="da-kext" step="0.01" min="0">
-        </label>
-        <label class="campo">Número de faixas
-          <input type="number" id="da-faixas" step="1" min="0">
-          <span class="dica">Base dos itens medidos em km.faixa.</span>
-        </label>
-        <label class="campo">Número de pistas
-          <input type="number" id="da-pistas" step="1" min="0">
-          <span class="dica">Base dos itens medidos em km.pista.</span>
-        </label>
-        <label class="campo">Fator de atualização
-          <input type="number" id="da-fator" step="0.0001" min="0">
-          <span class="dica">Padrão 1,0000 = preços de janeiro de 2021.</span>
-        </label>
-      </div>
-      <div class="cartoes" style="margin-top:16px" id="da-cartoes"></div>
-      <p class="nota" style="margin-top:12px">Composição declarada no cabeçalho da tabela: encargos sociais 91,54%, custos administrativos 30,00%, remuneração da empresa 12,00% e despesas fiscais 12,68%. Diferentemente da SUDECAP, o documento não publica os custos diretos, apenas os preços já compostos — não é possível recompor a tabela com outros parâmetros sem a memória de cálculo do órgão.</p>
-    </div>
-  </div>
-
-  <div class="painel">
-    <h2>Composição do escopo <span class="aux">marque os serviços e ajuste as quantidades</span></h2>
-    <div class="corpo">
-      <div class="grade" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr))">
-        <label class="campo">Filtrar por descrição ou item
-          <input type="text" id="da-busca" placeholder="ex.: sondagem, 4.1, pavimento">
-        </label>
-        <label class="campo">Grupo
-          <select id="da-grupo"><option value="">Todos</option></select>
-        </label>
-      </div>
-      <div class="rolagem" style="margin-top:12px;max-height:660px;overflow-y:auto">
-        <table>
-          <thead><tr>
-            <th style="width:32px"></th><th>Item</th><th>Descrição</th><th class="n">Unid.</th>
-            <th class="n">Preço unitário</th><th class="n">Fatores</th><th class="n">Quantidade</th><th class="n">Total</th>
-          </tr></thead>
-          <tbody id="da-corpo"></tbody>
-        </table>
-      </div>
-      <p class="mini" id="da-contagem" style="margin-top:8px"></p>
-    </div>
-  </div>
-</section>
-
 <!-- ============ ABA 4: BASE DE DADOS ============ -->
 <section role="tabpanel" id="p-base" aria-labelledby="t-base" hidden>
   <div class="painel">
@@ -957,40 +722,13 @@ input.pers{width:104px;text-align:right;font-size:12.5px;padding:4px 6px}
       <p class="nota">Vistorias, levantamentos e deslocamentos estão inclusos na remuneração dos projetos (item 1.4) — por isso o levantamento cadastral aparece como "incluso", e não como lacuna. As Built e Revisão de projeto valem 10% do respectivo projeto executivo (Tabelas C3 e C4).</p>
       <p class="nota" style="margin-top:10px">Nenhuma divergência de leitura foi encontrada nesta fonte: as tabelas C1 a C10 vieram com estrutura de colunas íntegra.</p>
 
-      <h3 class="sub">CAU/BR — Tabelas de Honorários, Módulos I e II</h3>
-      <p class="nota">Aprovado pela Resolução CAU/BR nº 76, de 10 de abril de 2014. Esta versão incorpora do Módulo I as tipologias e categorias da Tabela 3, os redutores de repetição da Tabela 4, os fatores percentuais por área da Tabela 5 e a estrutura da Base de Honorários da Tabela 8. O Módulo II continua fornecendo os percentuais dos projetos complementares e as fórmulas próprias de paisagismo e urbanismo.</p>
-      <p class="nota">A modalidade de remuneração 01 usa PV = S<sub>c</sub> × BH × (fp × R). A área descoberta informada entra em S<sub>c</sub> por 25%; a BH pode ser obtida do CUB atual correspondente multiplicado pelo fator de adequação; o fp é interpolado automaticamente na Tabela 5; e R = S<sub>p</sub>/S<sub>c</sub>, com o redutor r calculado pela Tabela 4. Para categoria IV, a nota 5 da Tabela 8 permite adotar o maior entre a BH calculada e o valor de mercado efetivamente apurado.</p>
-      <p class="nota"><b>Atenção à data-base:</b> os valores nominais de CUB e BH impressos na Tabela 8 são exemplos com referência de jun/2013. O modo histórico foi mantido para reprodução da fonte, mas a estimativa corrente deve usar o CUB atual da tipologia e registrar sua fonte e data-base.</p>
+      <h3 class="sub">CAU/BR — Tabelas de Honorários de Serviços de Arquitetura e Urbanismo do Brasil, Módulo II</h3>
+      <p class="nota">Aprovado pela Resolução CAU/BR nº 76, de 10 de abril de 2014, com fundamento no art. 28, XIV, da Lei nº 12.378/2010, que atribui ao CAU/BR aprovar e divulgar tabelas indicativas de honorários. Elaborado pelo CEAU a partir do Manual de Procedimentos e Contratação do IAB, cobre 101 atividades previstas na Resolução CAU/BR nº 21/2012. O Módulo II é o volume de <b>projetos e serviços diversos</b>; o projeto arquitetônico completo está no Módulo I e a execução de obras no Módulo III.</p>
+      <p class="nota">A modalidade de remuneração 01 — percentual sobre o custo da obra — usa PV = S<sub>c</sub> × BH × (fp × R), em que S<sub>c</sub> é a área construída estimada (áreas descobertas projetadas entram por 25%), BH é a Base de Honorários por m², fp é o fator percentual da tipologia e da área, e R = S<sub>p</sub>/S<sub>c</sub> é o redutor por repetição, com S<sub>p</sub> = S<sub>nr</sub> + (S<sub>r</sub> × r). Cada serviço da Tabela 1 é um percentual do fp do projeto arquitetônico: estrutura 30%, elétrica 20%, hidráulica e sanitária 10% cada, SPDA 7%, interiores 150%. O preço de venda já contempla coordenação e compatibilização dos projetos complementares, encargos sociais e BDI.</p>
       <p class="nota">Duas famílias de serviços fogem dessa fórmula e são autossuficientes no Módulo II: a <b>arquitetura paisagística</b>, com PV = 2,21 × [(255,33% × CUB) + (25,53% × CUB) × √S], e o <b>projeto urbanístico</b>, com valor unitário por hectare dado por um fator percentual sobre o CUB-R8N que decresce de 2.400,04% (até 2 ha) a 49,71% (acima de 1.024 ha). Ambas dependem apenas do CUB, que a calculadora recebe como parâmetro.</p>
 
-      <h3 class="sub">SUDECAP/BH — Tabela de Consultoria Onerada, Preço de Venda, referência 04/2026</h3>
-      <p class="nota">Superintendência de Desenvolvimento da Capital, Prefeitura de Belo Horizonte. É a única das seis fontes que não é uma tabela de honorários por área ou por percentual: é uma <b>tabela de preços unitários de serviços de consultoria</b>, na mesma lógica do SINAPI e do SICRO. Traz 251 itens medidos em prancha A1, quilômetro, unidade, hora, metro, metro quadrado e diária, cobrindo pessoal, projetos de edificação e de infraestrutura urbana, laudos, topografia, cadastro, serviços de gráfica, investigações geotécnicas e ensaios de solo e agregado.</p>
-      <p class="nota">O preço de venda decorre de PV = CD<sub>sal</sub> × K + CD<sub>outros</sub> × TRDE, com K = [(1 + K1 + K2) × (1 + K3)] ÷ (1 − K4) = 2,7620 e TRDE = (1 + K3) ÷ (1 − K4) = 1,2209, para K1 = 116,23%, K2 = 10%, K3 = 10% e K4 = 9,90% (ISS 2,50%, PIS 1,32%, COFINS 6,08%). A própria planilha declara seguir as <b>Orientações para Elaboração de Planilhas Orçamentárias de Obras Públicas do TCU</b>. Os valores são onerados e sem BDI — o K já incorpora administração central, lucro e tributos.</p>
-      <p class="nota">A aba Metodologia SUDECAP permite <b>alterar K1 a K4 e recompor toda a tabela</b>. Como a planilha publica custo e preço de venda mas não a decomposição entre mão de obra e insumo, a participação de mão de obra de cada item é deduzida da razão entre os dois valores, interpolada entre os multiplicadores teóricos de mão de obra pura (K ÷ (1 + K1) = 1,2773) e de insumo puro (TRDE = 1,2209). Essa dedução é exata para itens puros e é a melhor estimativa disponível para composições — o item 62.05.30 é o único cuja razão publicada cai fora do intervalo teórico, por arredondamento do custo exibido a dois decimais, e foi limitado a zero por cento de mão de obra.</p>
-
-      <h3 class="sub">DAER/RS — Referencial de Preços Unitários de Projetos, data-base janeiro/2021</h3>
-      <p class="nota">Departamento Autônomo de Estradas de Rodagem do Rio Grande do Sul, Diretoria de Gestão e Projetos, Superintendência de Programação Rodoviária, Equipe de Economia Rodoviária. É a única fonte exclusivamente <b>rodoviária</b> do conjunto: 142 itens de estudos de tráfego, topografia, sondagens, projetos de linha geral, ensaios de solo, agregados, materiais betuminosos e pista, dosagens, avaliação de pavimentos, estudos hidrológicos e geotécnicos, estabilidade de taludes, meio ambiente, orçamentação e planos funcionais. Composição declarada: encargos sociais 91,54%, custos administrativos 30,00%, remuneração da empresa 12,00% e despesas fiscais 12,68%.</p>
-      <p class="nota"><b>Por que ela não aparece na calculadora de edificações.</b> A tabela não tem um único item de edificação — nem arquitetura, nem estrutura predial, nem instalações. Incluí-la como coluna produziria uma coluna inteira de lacunas, o que degrada a leitura sem acrescentar informação. Ela está onde é comparável: na aba de infraestrutura e vias, confrontada com o SENGE-BA (Tabela 5), a CEHOP/SE (vias de acesso) e a SUDECAP (infraestrutura urbana), e numa aba própria de metodologia com o referencial completo.</p>
-      <p class="nota">Três particularidades foram implementadas por serem exclusivas desta fonte:</p>
-      <ul class="lista">
-        <li><b>Kapa de zona (Kz) e kapa de extensão (Kext).</b> Parte dos preços é modulada por esses dois fatores — a tabela indica item a item se incide PU × Kz, PU × Kz × Kext ou apenas PU. Os valores de Kz e Kext são definidos pelo órgão em cada contratação e entram como parâmetro; 1,00 desativa a modulação e devolve o preço publicado.</li>
-        <li><b>Itens em verba com fórmula linear.</b> Pavimentação, restauração de pavimento, estabilização de aterros em solos moles, estudos geológico e geotécnico, serviços gráficos de linha geral e o estudo ambiental LPIA não têm preço unitário: são calculados por a + b × extensão. Na tabela comparativa de vias esses itens aparecem com o equivalente por quilômetro derivado da verba, sinalizado como tal — a parcela fixa faz esse equivalente cair conforme o trecho cresce, e ele não deve ser extrapolado para outra extensão.</li>
-        <li><b>Unidades compostas km.faixa e km.pista.</b> Os itens de avaliação de pavimento multiplicam a extensão pelo número de faixas ou de pistas. Ambos entram como parâmetro na aba de metodologia.</li>
-      </ul>
-      <p class="nota">Dez itens não têm preço publicado e ficam marcados como tal: os seis de orçamentação e o estudo topográfico para pontes acima de 351 m são declarados "a calcular" pela SPR e pela SEP/EOA; a instalação de flutuante no furo, a sondagem CPTU e o ensaio de dissipação aparecem sem valor no documento. Diferentemente da SUDECAP, o DAER publica apenas os preços já compostos, sem os custos diretos — não é possível recompor a tabela com outros parâmetros de encargos sem a memória de cálculo do órgão. E a data-base de janeiro de 2021 é a mais antiga do conjunto: o fator de atualização, aqui, não é detalhe.</p>
-
-      <div class="aviso" style="margin-top:14px">
-        <b>Estimativa do número de pranchas.</b> Para tornar a SUDECAP utilizável sem levantamento prévio de escopo, a calculadora estima quantas pranchas A1 cada especialidade consumiria, por
-        N = [pranchas fixas + densidade por área] × fator da tipologia. As pranchas fixas cobrem o que não escala com o tamanho — situação, implantação, cobertura, cortes, fachadas e detalhes. A densidade adota uma prancha a cada tantos metros quadrados, com <b>metade do detalhamento acima de 2.000 m²</b>, para refletir a repetição de pavimentos-tipo. O fator da tipologia vai de 0,50 em quadras e parques a 1,50 em restauro, passando por 1,40 em saúde e 0,60 em galpões.
-        <ul class="lista">
-          <li>Arquitetura: 4 fixas + 1 a cada 250 m². Cadastro arquitetônico: 2 + 1/350. Estrutura: 3 + 1/220. Hidrossanitário: 2 + 1/300. Elétrico: 2 + 1/280. Incêndio: 2 + 1/400. Climatização: 1 + 1/400. Cabeamento e CFTV: 1 + 1/500. SPDA: 1 + 1/800, sobre a projeção. Paisagismo: 1 + 1/1.200, sobre o terreno.</li>
-          <li>Toda linha estimada aparece com a etiqueta <span class="tag est">estimado</span> na calculadora e na aba de metodologia, e a fórmula aplicada fica no título da célula. Ao digitar uma quantidade, aquela linha passa a ser tratada como informada e perde a etiqueta.</li>
-        </ul>
-        <b>Estes parâmetros não vêm de nenhuma das sete fontes.</b> São uma regra de densidade de desenho construída para dar ordem de grandeza — em contratação ou auditoria, o número de pranchas tem de sair do escopo real, da relação de desenhos exigida no termo de referência. A estimativa serve para comparar, não para contratar.
-      </div>
-
       <div class="aviso critico" style="margin-top:14px">
-        <b>A SUDECAP não é comparável por metro quadrado.</b> Seus projetos de edificação são medidos em <b>prancha A1</b>. O número de pranchas é característica do empreendimento, não da tabela, e nenhuma das seis fontes permite estimá-lo: o padrão adotado é uma prancha por especialidade, o que subestima o total de forma deliberada e visível. Ajuste as quantidades na aba Metodologia SUDECAP antes de usar o total em qualquer peça. Pela mesma razão, a SUDECAP fica fora dos gráficos de preço unitário e da estatística de dispersão — misturar R$/prancha com R$/m² produziria um coeficiente de variação sem significado — e entra apenas no gráfico de totais, onde a unidade comum é o real.
+        <b>Dependência externa do CAU/BR.</b> O Módulo II não publica a Base de Honorários nem a Tabela 5 de fatores percentuais — apenas remete ao <b>Módulo I</b>, que não integra o arquivo enviado e cujo download no sítio do CAU/BR é bloqueado a acesso automatizado. Esses dois números variam por unidade da federação, tipologia e faixa de área, e não foram estimados nem arbitrados: sem eles a coluna CAU/BR permanece vazia, com a lacuna explicada em cada célula. Informe-os nos parâmetros da calculadora ou na aba Metodologia CAU/BR — a interpolação para áreas intermediárias, a fórmula oficial fp = fp1 − {(fp1 − fp2) × [(S<sub>c</sub> − S<sub>c1</sub>) ÷ (S<sub>c2</sub> − S<sub>c1</sub>)]}, já está implementada.
       </div>
 
       <div class="aviso" style="margin-top:14px">
@@ -1018,8 +756,6 @@ input.pers{width:104px;text-align:right;font-size:12.5px;padding:4px 6px}
         <li><b>Bases de medição divergentes.</b> A drenagem pluvial da CEHOP mede a área de cobertura; a do IOPES integra os implementos externos e mede a área do terreno. A quantidade é única na calculadora — ajuste-a conforme a referência que estiver defendendo.</li>
         <li><b>Correspondências da CAIXA.</b> O item elétrico usa apenas a rede de energia comum (ERC), com opção de somar entrada de energia e luminotécnico; CFTV e alarme somam CFT + ALM; o item de automação usa o controle de acesso (CTA), já que a automação e inteligência predial (AIP) tem escopo muito mais amplo; telefonia usa a entrada de telecomunicações (TLC), de escopo mais restrito que o projeto telefônico do IOPES; drenagem pluvial e rede lógica aparecem como <span class="tag incluso">incluso</span> porque integram o HIA e o CAE.</li>
         <li><b>Correspondências do CAU/BR.</b> Fundações integram o projeto de estrutura (item 1.2); lógica e automação integram o cabeamento estruturado (item 1.5.12); a coordenação e compatibilização já está no preço de venda — todos aparecem como <span class="tag incluso">incluso</span>. O hidrossanitário soma os itens 1.5.1 e 1.5.2 (10% + 10%); CFTV e alarme correspondem à rede de segurança eletrônica (1.5.15); o orçamento usa o analítico (15%) ou o sintético (10%), à escolha. Comunicação visual e maquetaria existem na tabela, mas pela modalidade MR 02 — cálculo pelo custo do serviço —, fora do alcance de uma comparação por área.</li>
-        <li><b>Correspondências da DAER/RS.</b> Na tabela de vias, terraplenagem, projeto geométrico, drenagem, sinalização, obras complementares, desapropriação e hidrologia entram pelos itens por quilômetro, com as kapas aplicadas conforme a própria tabela indica. Pavimentação, restauração de pavimento, estabilização de aterros e estudos geotécnicos entram pelo equivalente por quilômetro derivado das fórmulas em verba. Iluminação pública e os planos funcionais não têm correspondente nas demais fontes.</li>
-        <li><b>Correspondências da SUDECAP.</b> Não há item autônomo de fundações nem de orçamento — esta é a própria base de preços. Telefonia e lógica integram o cabeamento estruturado (62.01.20); sonorização integra o item único de sonorização, alarme e CFTV (62.01.34), mapeado uma só vez para evitar dupla contagem. Paisagismo usa o item de áreas livres de obras de edificação (62.01.14); para praça, parque e área de lazer o item é o 62.01.13, de valor bem superior. Urbanização é tratada por quilômetro na aba de infraestrutura.</li>
         <li><b>Natureza jurídica dos preços.</b> A CEHOP fixa <b>máximos</b> contratáveis, o SENGE-BA declara <b>mínimos</b> profissionais, o IOPES é um <b>referencial</b> administrativo, a CAU/BR é uma tabela <b>indicativa</b> de conselho profissional com poder normativo federal, e a CAIXA define uma <b>estrutura paramétrica</b> cujo nível de preço só se fecha com a hora técnica proposta na licitação. Convergência numérica entre elas não significa equivalência de significado, e a comparação direta deve vir acompanhada dessa ressalva em qualquer peça técnica.</li>
       </ul>
       <p class="nota" style="margin-top:12px">O campo <b>base comum</b> soma apenas os serviços com preço disponível em todas as referências ativas. É o único total efetivamente comparável entre tabelas; o total cheio de cada referência mede escopos diferentes e serve para dimensionar a contratação, não para confrontar tabelas.</p>
@@ -1032,18 +768,6 @@ input.pers{width:104px;text-align:right;font-size:12.5px;padding:4px 6px}
       <p class="nota">A calculadora não embute índices: o fator padrão é 1,0000 e os preços saem exatamente como publicados. Isso é deliberado — índices variam mensalmente e a escolha do indexador (INCC-DI, IPCA, CUB estadual) é decisão do processo, não do software.</p>
       <p class="nota">Para o <b>SENGE-BA</b>, o próprio documento dá a regra: fator = CUB médio atual ÷ 1.929,04 (jun/2024), com o CUB divulgado mensalmente pelo SINDUSCON-BA. Note que as publicações de mercado divergem sobre o valor corrente do CUB baiano conforme o padrão adotado (R8-N, R1-N, com ou sem desoneração), então tome o valor diretamente da publicação oficial e registre no processo qual padrão foi usado.</p>
       <p class="nota">Para a <b>CAIXA</b> não existe fator: o Apêndice C não publica preços, apenas índices adimensionais. Todo o nível de preço vem da hora técnica ht1 proposta pela licitante, e a atualização contratual segue o reajuste previsto no edital, não uma data-base de tabela. Ao comparar com as demais referências, tenha claro que o valor da CAIXA depende de uma variável de mercado que você está arbitrando.</p>
-      <p class="nota">A <b>DAER/RS</b> tem data-base de janeiro de 2021, a mais antiga das sete fontes — o intervalo até hoje é longo o bastante para que a escolha do índice altere materialmente qualquer comparação. O campo de fator fica na aba de metodologia, com padrão 1,0000, e o valor adotado deve ser registrado no processo junto com a série e o mês de referência.</p>
-      <p class="nota">A <b>SUDECAP</b> é atualizada mensalmente pela própria superintendência — a referência aqui é 04/2026. Não faz sentido aplicar índice sobre ela: substitua a planilha pela edição vigente. O que a calculadora permite é o inverso, mais útil em auditoria: manter os custos e recompor os preços de venda com outros parâmetros de encargos, administração central, lucro ou tributos, para testar a aderência do K adotado.</p>
-      <h3 class="sub">Referências de mercado pré-preenchidas</h3>
-      <p class="nota">Três parâmetros que nenhuma das sete fontes publica vêm pré-preenchidos com valores coletados em <b>04/08/2026</b>, cada um com origem e data visíveis no painel da calculadora:</p>
-      <ul class="lista">
-        <li><b>CUB-R8N e CUB tipológico</b> — série R8-N do Sinduscon do estado escolhido, referência jun/2026: Pará R$ 2.337,43, Bahia R$ 2.176,85, Rio de Janeiro R$ 2.463,94. O padrão é o Pará. Atenção: o Módulo I do CAU/BR pede o CUB da <b>categoria</b> da tipologia (R8-N, CAL-8, CSL-8, GI e outras); onde a categoria não for R8-N, substitua pela série correspondente.</li>
-        <li><b>Hora técnica ht1 da CAIXA</b> — o Apêndice C não publica valor algum, porque a ht1 é proposta pela licitante. A âncora adotada é interna ao próprio sistema: o preço de venda da hora de projeto na tabela SUDECAP 04/2026, por padrão o engenheiro sênior. Um seletor permite trocar por qualquer nível, de trainee a consultor especial. A vantagem dessa escolha é ser auditável — o número vem de uma tabela pública já carregada, não de arbitramento.</li>
-        <li><b>Fator de atualização do SENGE-BA</b> — este é <b>exato</b>, não uma aproximação. A tabela declara que seus preços se referem ao CUB de jun/2024 igual a R$ 1.929,04, valor que a série do CUB-BA R8-N confirma. O fator é simplesmente o CUB-BA vigente dividido por essa base.</li>
-      </ul>
-      <p class="nota">Os fatores do <b>IOPES/ES</b> e do <b>DAER/RS</b> ficam deliberadamente fora do preenchimento automático. As sugestões oferecidas aplicam a variação do CUB do Pará a tabelas do Espírito Santo e do Rio Grande do Sul — servem para dimensionar a ordem de grandeza da defasagem, e é isso que o painel diz. Para instruir processo, use a série do próprio estado ou o INCC, e registre a escolha na memória de cálculo. O INCC-DI acumulava 6,78% em doze meses até jun/2026.</p>
-      <p class="nota">Todos os valores pré-preenchidos são editáveis e o botão "Zerar atualizações" devolve todos os fatores a 1,0000, restaurando os preços exatamente como publicados.</p>
-
       <p class="nota">Para o <b>CAU/BR</b> também não há fator: a Resolução 76/2014 fixa percentuais, e a atualização se dá pela Base de Honorários e pelo CUB vigentes no momento da proposta. Registre no processo a data-base do CUB e a fonte da BH adotada.</p>
       <p class="nota">Para o <b>IOPES/ES</b>, entre a edição 2018 e hoje há um intervalo longo o bastante para que a escolha do índice altere materialmente o resultado. Registre a série, o mês-base e o mês de referência na memória de cálculo — a calculadora exporta o fator aplicado no CSV.</p>
     </div>
@@ -1052,7 +776,7 @@ input.pers{width:104px;text-align:right;font-size:12.5px;padding:4px 6px}
 
 </main>
 
-<p class="rodape"><b>Versão 5 — integração CAU/BR Módulos I e II.</b><br>Ferramenta de apoio à estimativa de honorários de projetos. Os valores calculados são referenciais e não substituem a análise técnica do escopo, do grau de dificuldade e das condições locais de cada contratação.</p>
+<p class="rodape">Ferramenta de apoio à estimativa de honorários de projetos. Os valores calculados são referenciais e não substituem a análise técnica do escopo, do grau de dificuldade e das condições locais de cada contratação.</p>
 
 <script>
 "use strict";
@@ -1066,7 +790,6 @@ const REFS = [
   {id:"cehop", nome:"CEHOP/SE", ano:"2026", cor:"#3c5a99", natureza:"máximos"},
   {id:"caixa", nome:"CAIXA", ano:"Apêndice C", cor:"#7d1f3f", natureza:"paramétrica"},
   {id:"cau", nome:"CAU/BR", ano:"Res. 76/2014", cor:"#1c6b4a", natureza:"indicativa"},
-  {id:"sudecap", nome:"SUDECAP", ano:"04/2026", cor:"#6b4c9a", natureza:"preço unitário", unidadePropria:true},
   {id:"custom", nome:"Personalizada", ano:"—", cor:"#52606d", natureza:"informada"}
 ];
 
@@ -1282,79 +1005,6 @@ const CAIXA_C9 = [
   [Infinity,"Ar > 5.000",30,40,20,14]
 ];
 
-/* ---- CAU/BR — Módulo I: projeto arquitetônico de edificações ----
-   Tabelas 3, 4, 5 e 8 do arquivo fornecido. Os valores nominais de CUB e BH da
-   Tabela 8 têm referência jun/2013; para cálculo corrente, informe o CUB atual
-   correspondente e preserve o fator de adequação publicado. */
-const CAU_MOD1_TIPOLOGIAS = [
-  {id:"1.1.1",grupo:"Habitacional — residencial",nome:"Projeto de habitação de interesse social",cat:1,cub:"PIS",cub2013:621.58,fator:1.00,bh2013:621.58},
-  {id:"1.1.2",grupo:"Habitacional — residencial",nome:"Apartamentos, conjuntos habitacionais, condomínios e vilas — padrão normal",cat:1,cub:"R-8-N",cub2013:866.84,fator:1.50,bh2013:1300.26},
-  {id:"1.1.3",grupo:"Habitacional — residencial",nome:"Apartamentos, conjuntos habitacionais, condomínios e vilas — padrão alto",cat:2,cub:"R-16-A",cub2013:1100.70,fator:1.50,bh2013:1651.05},
-  {id:"1.1.4",grupo:"Habitacional — residencial",nome:"Residências — padrão baixo",cat:2,cub:"R-1-B",cub2013:937.73,fator:1.00,bh2013:937.73},
-  {id:"1.1.5",grupo:"Habitacional — residencial",nome:"Residências — padrão médio",cat:3,cub:"R-1-N",cub2013:1076.82,fator:1.50,bh2013:1615.23},
-  {id:"1.1.6",grupo:"Habitacional — residencial",nome:"Residências — padrão elevado",cat:4,cub:"R-1-A",cub2013:1335.84,fator:2.00,bh2013:2671.68},
-  {id:"1.2.1",grupo:"Habitacional — hospedagem",nome:"Albergues, pousadas, hotéis simples e motéis",cat:2,cub:"R-8-N",cub2013:866.84,fator:1.50,bh2013:1300.26},
-  {id:"1.2.2",grupo:"Habitacional — hospedagem",nome:"Hotéis de luxo",cat:4,cub:"R-16-A",cub2013:1100.70,fator:3.00,bh2013:3302.10},
-  {id:"1.3.1",grupo:"Habitacional — coletiva",nome:"Alojamentos, asilos, orfanatos, internatos, conventos e mosteiros",cat:2,cub:"R-8-N",cub2013:866.84,fator:1.50,bh2013:1300.26},
-  {id:"1.3.2",grupo:"Habitacional — coletiva",nome:"Quartéis",cat:3,cub:"R-8-N",cub2013:866.84,fator:1.50,bh2013:1300.26},
-  {id:"1.3.3",grupo:"Habitacional — coletiva",nome:"Presídios e penitenciárias",cat:4,cub:"R-8-N",cub2013:866.84,fator:1.50,bh2013:1300.26},
-  {id:"2.1.1",grupo:"Comércio",nome:"Armazéns e depósitos",cat:1,cub:"GI",cub2013:516.78,fator:1.50,bh2013:775.17},
-  {id:"2.1.2",grupo:"Comércio",nome:"Supermercados, hortomercados e pavilhões para feiras e exposições",cat:2,cub:"CAL-8-N",cub2013:996.45,fator:1.30,bh2013:1295.39},
-  {id:"2.1.3",grupo:"Comércio",nome:"Lojas de departamentos, magazines, centros comerciais e shopping centers",cat:3,cub:"CSL-16-N",cub2013:1147.90,fator:1.50,bh2013:1721.85},
-  {id:"2.1.4",grupo:"Comércio",nome:"Lojas, boutiques, stands e show-rooms",cat:4,cub:"CSL-16-A",cub2013:1253.85,fator:1.50,bh2013:1880.78},
-  {id:"2.2.1",grupo:"Serviços",nome:"Edificações com desenho de ocupação (leiaute interno) fornecido",cat:1,cub:"CSL-8-N",cub2013:862.09,fator:1.00,bh2013:862.09},
-  {id:"2.2.2",grupo:"Serviços",nome:"Edifícios de escritórios e administrativos com andar de salas / conjuntos",cat:3,cub:"CSL-8-N",cub2013:862.09,fator:1.50,bh2013:1293.15},
-  {id:"2.2.3",grupo:"Serviços",nome:"Edifícios de escritórios e administrativos de andar corrido",cat:4,cub:"CAL-8-N",cub2013:996.45,fator:2.50,bh2013:2491.13},
-  {id:"2.2.4",grupo:"Serviços",nome:"Bancos, sedes de empresas, instituições e órgãos públicos",cat:4,cub:"CSL-16-N",cub2013:1147.90,fator:2.25,bh2013:2582.78},
-  {id:"2.2.5",grupo:"Serviços",nome:"Centro de processamento de dados",cat:4,cub:"CSL-16-N",cub2013:1147.90,fator:2.50,bh2013:2869.75},
-  {id:"3.1",grupo:"Educação",nome:"Creches, escolas primárias e secundárias",cat:2,cub:"CAL-8-N",cub2013:996.45,fator:1.50,bh2013:1494.68},
-  {id:"3.2",grupo:"Educação",nome:"Escolas técnicas, especializadas, superiores e universidades",cat:4,cub:"CSL-16-N",cub2013:1147.90,fator:2.00,bh2013:2295.80},
-  {id:"4.1",grupo:"Saúde",nome:"Ambulatórios e postos de saúde",cat:2,cub:"CSL-8-N",cub2013:862.09,fator:1.50,bh2013:1293.14},
-  {id:"4.2",grupo:"Saúde",nome:"Clínicas e consultórios",cat:3,cub:"CSL-16-N",cub2013:1147.90,fator:1.50,bh2013:1721.85},
-  {id:"4.3",grupo:"Saúde",nome:"Hospitais",cat:4,cub:"CSL-16-A",cub2013:1253.85,fator:2.50,bh2013:3134.63},
-  {id:"5.1",grupo:"Esportes",nome:"Quadras cobertas e galpões para barcos",cat:1,cub:"GI",cub2013:516.78,fator:1.30,bh2013:671.81},
-  {id:"5.2",grupo:"Esportes",nome:"Clube e ginásios esportivos simples",cat:3,cub:"CSL-8-N",cub2013:862.09,fator:1.50,bh2013:1293.14},
-  {id:"5.3-inst",item:"5.3",grupo:"Esportes",nome:"Instalações esportivas descobertas",cat:2,cub:"CAL-8-N",cub2013:996.45,fator:1.00,bh2013:996.45},
-  {id:"5.3-pisc",item:"5.3",grupo:"Esportes",nome:"Piscinas descobertas",cat:3,cub:"CSL-8-N",cub2013:862.09,fator:1.50,bh2013:1293.14},
-  {id:"5.4",grupo:"Esportes",nome:"Estádio e instalações esportivas especializadas",cat:4,cub:"CSL-16-N",cub2013:1147.90,fator:3.00,bh2013:3443.70},
-  {id:"6.1.1",grupo:"Cultura e lazer — entretenimento",nome:"Restaurantes, boates, casas de espetáculo, cinema e teatro simples",cat:4,cub:"CSL-16-N",cub2013:1147.90,fator:2.00,bh2013:2295.80},
-  {id:"6.1.2",grupo:"Cultura e lazer — entretenimento",nome:"Planetários e teatros especializados",cat:4,cub:"CSL-16-A",cub2013:1253.85,fator:2.50,bh2013:3134.63},
-  {id:"6.2.1",grupo:"Cultura e lazer — acervos",nome:"Galerias de arte, salas de exposição, arquivos, bibliotecas e museus simples",cat:4,cub:"CSL-16-N",cub2013:1147.90,fator:2.00,bh2013:2295.80},
-  {id:"6.2.2",grupo:"Cultura e lazer — acervos",nome:"Arquivos, bibliotecas e museus especializados",cat:4,cub:"CSL-16-A",cub2013:1253.85,fator:3.00,bh2013:3761.55},
-  {id:"7.1",grupo:"Diversos",nome:"Galpões para máquinas, armazéns, estábulos, cocheiras, pocilgas, aviários e instalações rurais simples",cat:1,cub:"GI",cub2013:516.78,fator:1.00,bh2013:516.78},
-  {id:"7.2",grupo:"Diversos",nome:"Galpões, oficinas e depósitos",cat:1,cub:"GI",cub2013:516.78,fator:1.00,bh2013:516.78},
-  {id:"7.3",grupo:"Diversos",nome:"Garagens simples",cat:1,cub:"GI",cub2013:516.78,fator:1.00,bh2013:516.78},
-  {id:"7.4",grupo:"Diversos",nome:"Outras áreas descobertas",cat:1,cub:"GI",cub2013:516.78,fator:0.25,bh2013:129.20},
-  {id:"7.5",grupo:"Diversos",nome:"Matadouros e instalações rurais especializadas",cat:2,cub:"CSL-8-N",cub2013:862.09,fator:1.00,bh2013:862.09},
-  {id:"7.6",grupo:"Diversos",nome:"Edifícios-garagem, pedágios e postos de serviços",cat:2,cub:"CSL-8-N",cub2013:862.09,fator:1.00,bh2013:862.09},
-  {id:"7.7",grupo:"Diversos",nome:"Fábricas e laboratórios simples",cat:2,cub:"CSL-8-N",cub2013:862.09,fator:1.00,bh2013:862.09},
-  {id:"7.8",grupo:"Diversos",nome:"Templos religiosos, capelas mortuárias e cemitérios",cat:3,cub:"CSL-16-N",cub2013:1147.90,fator:1.00,bh2013:1147.90},
-  {id:"7.9",grupo:"Diversos",nome:"Terminais e estações rodoviárias e ferroviárias",cat:3,cub:"CSL-16-N",cub2013:1147.90,fator:1.00,bh2013:1147.90},
-  {id:"7.10",grupo:"Diversos",nome:"Projeto de monumentos e pavilhões de exposições",cat:3,cub:"CSL-16-N",cub2013:1147.90,fator:1.00,bh2013:1147.90},
-  {id:"7.11",grupo:"Diversos",nome:"Agências e centrais telegráficas e telefônicas",cat:3,cub:"CSL-16-N",cub2013:1147.90,fator:1.00,bh2013:1147.90},
-  {id:"7.12",grupo:"Diversos",nome:"Auditórios, salas de conferências e pavilhões para congressos",cat:4,cub:"CSL-16-N",cub2013:1147.90,fator:2.00,bh2013:2295.80},
-  {id:"7.13",grupo:"Diversos",nome:"Aeroportos",cat:4,cub:"CSL-16-A",cub2013:1253.85,fator:2.60,bh2013:3260.01},
-  {id:"7.14",grupo:"Diversos",nome:"Estúdios e estações de gravação, rádio e televisão",cat:4,cub:"CSL-16-A",cub2013:1253.85,fator:1.50,bh2013:1880.78},
-  {id:"7.15",grupo:"Diversos",nome:"Usinas, fábricas e laboratórios especializados",cat:4,cub:"CSL-16-A",cub2013:1253.85,fator:1.50,bh2013:1880.78}
-];
-const CAU_MOD1_IDX = {}; CAU_MOD1_TIPOLOGIAS.forEach(x=>{ CAU_MOD1_IDX[x.id]=x; });
-const CAU_FP_FAIXAS = [
-  {sc:250,fp:[7.33,8.39,9.61,11.00]}, {sc:500,fp:[6.44,7.37,8.44,9.66]},
-  {sc:1000,fp:[5.66,6.47,7.41,8.48]}, {sc:2000,fp:[4.97,5.68,6.51,7.45]},
-  {sc:4000,fp:[4.36,4.99,5.71,6.54]}, {sc:8000,fp:[3.83,4.38,5.02,5.74]},
-  {sc:16000,fp:[3.36,3.85,4.41,5.04]}, {sc:32000,fp:[2.95,3.38,3.87,4.43]},
-  {sc:64000,fp:[2.59,2.97,3.40,3.89]}, {sc:128000,fp:[2.28,2.61,2.98,3.42]},
-  {sc:256000,fp:[2.00,2.29,2.62,3.00]}, {sc:Infinity,fp:[2.00,2.29,2.62,3.00]}
-];
-const CAU_REPETICOES = [[0,1.00],[1,0.98],[2,0.94],[4,0.84],[8,0.76],[16,0.64],[32,0.50],[64,0.25],[128,0.125]];
-const CAU_MAPA_TIPOLOGIA = {
-  educacional:"3.1", saude:"4.3", administrativo:"2.2.4", comercial:"2.2.2",
-  esportivo:"5.2", quadra:"5.1", seguranca:"1.3.2", militar:"1.3.2",
-  penitenciaria:"1.3.3", teatro:"6.1.1", convencoes:"7.12", industrial:"7.7",
-  residencial:"1.1.2", residencia:"1.1.5", habitacional:"1.1.1"
-};
-const CAU_CAT_ROT = {1:"I — baixo",2:"II — médio",3:"III — alto",4:"IV — especial"};
-
 /* ---- CAU/BR — Tabelas de Honorários, Módulo II (Resolução CAU/BR nº 76/2014) ----
    Os percentuais da Tabela 1 incidem sobre o fp do projeto arquitetônico completo
    (Tabela 5 do Módulo I). PV = Sc x BH x (fp x R). */
@@ -1437,479 +1087,6 @@ const CAU_URB = [
  {id:"1.10.6", nome:"Viabilidade econômico-financeira", pct:0.20}
 ];
 
-/* Tabela SUDECAP/BH — Preço de Venda, referência 04/2026, onerada, sem BDI.
-   c: código  d: descrição  u: unidade  v: custo (R$)  p: preço de venda (R$)
-   a: participação de mão de obra no custo, deduzida da razão p/v entre os
-      multiplicadores teóricos de mão de obra e de insumo. */
-const SUDECAP_GRUPOS = {"61": "PESSOAL", "61.11": "ENGENHEIRO/ARQUITETO PARA ELABORACAO DE PROJETOS", "61.12": "AUXILIAR DE ENGENHARIA/ARQUITETURA", "61.13": "PROJETISTA PARA ELABORACAO DE PROJETOS", "61.14": "TECNICO PARA ELABORACAO DE PROJETOS", "61.15": "DESENHISTA PARA ELABORACAO DE PROJETOS", "61.16": "SERVICOS ADMINISTRATIVOS", "61.21": "ENGENHEIRO/ARQUITETO PARA SUPERVISAO DE OBRAS", "61.22": "AUXILIAR DE ENGENHARIA/ARQUITETURA", "61.23": "TECNICO PARA SUPERVISAO DE OBRAS", "61.24": "DESENHISTA PARA SUPERVISAO DE OBRAS", "61.31": "TOPOGRAFIA", "61.32": "LABORATORIO", "61.34": "AUXILIARES DE APOIO", "62": "PROJETOS", "62.01": "PROJETOS DE EDIFICACOES", "62.02": "ESTUDO PRELIMINAR", "62.03": "PROJETOS DE INFRA ESTRUTURA URBANA", "62.04": "LAUDOS TECNICOS", "62.05": "SERVICOS DE TOPOGRAFIA", "62.06": "SPDA - GERENCIAMENTO DE RISCOS E ENSAIOS", "62.11": "CADASTRO", "62.20": "PROJETOS DE EDIFICACAO POR M2", "62.24": "PLANILHAS E RELATÓRIOS TÉCNICOS - EDIFICAÇÕES", "64": "SERVICOS DE GRAFICA", "64.01": "COPIA XEROGRAFICA SULFITE", "64.07": "XEROX SIMPLES OPACO", "64.09": "XEROX COLORIDO SULFITE", "64.11": "ENCADERNACAO", "64.12": "PLOTAGEM PRETO E BRANCO SULFITE", "64.15": "PLOTAGEM COLORIDA SULFITE", "64.18": "DIGITALIZAÇÃO DE FORMATOS", "65": "INVESTIGACOES GEOTECNICAS", "65.01": "SONDAGEM A PERCUSSAO D= 2 1/2\" (SPT)", "65.02": "SONDAGEM A TRADO D= 20 CM", "65.03": "SONDAGEM (OUTRAS)", "65.06": "SONDAGEM ROTATIVA D= NW", "65.08": "RETIRADA DE AMOSTRA INDEFORMADA", "67": "ENSAIOS DE SOLO E AGREGADO", "67.01": "ENSAIOS DE SOLO", "67.02": "ENSAIOS DE AGREGADO"};
-const SUDECAP_ITENS = [
- {c:"61.11.01",d:"ENGENHEIRO CONSULTOR ESPECIAL",u:"H",v:239.36,p:305.72,a:0.9988},
- {c:"61.11.02",d:"ENGENHEIRO CONSULTOR",u:"H",v:218.88,p:279.56,a:0.998},
- {c:"61.11.03",d:"ENGENHEIRO COORDENADOR",u:"H",v:198.39,p:253.39,a:0.9983},
- {c:"61.11.04",d:"ENGENHEIRO SENIOR",u:"H",v:177.9,p:227.22,a:0.9986},
- {c:"61.11.05",d:"ENGENHEIRO INTERMEDIARIO",u:"H",v:157.42,p:201.06,a:0.9976},
- {c:"61.11.06",d:"ENGENHEIRO JUNIOR",u:"H",v:139.68,p:178.24,a:0.9774},
- {c:"61.11.07",d:"ENGENHEIRO TRAINEE",u:"H",v:99.35,p:126.72,a:0.9682},
- {c:"61.11.08",d:"ARQUITETO CONSULTOR ESPECIAL",u:"H",v:239.36,p:305.72,a:0.9988},
- {c:"61.11.09",d:"ARQUITETO CONSULTOR",u:"H",v:218.88,p:279.56,a:0.998},
- {c:"61.11.10",d:"ARQUITETO COORDENADOR",u:"H",v:198.39,p:253.39,a:0.9983},
- {c:"61.11.11",d:"ARQUITETO SÊNIOR",u:"H",v:177.9,p:227.22,a:0.9986},
- {c:"61.11.12",d:"ARQUITETO INTERMEDIÁRIO",u:"H",v:157.42,p:201.06,a:0.9976},
- {c:"61.11.13",d:"ARQUITETO JÚNIOR",u:"H",v:139.68,p:178.24,a:0.9774},
- {c:"61.11.14",d:"ARQUITETO TRAINEE",u:"H",v:99.35,p:126.72,a:0.9682},
- {c:"61.11.15",d:"BIÓLOGO ATÉ 5 ANOS DE EXPERIÊNCIA",u:"H",v:38.62,p:49.11,a:0.8979},
- {c:"61.11.16",d:"BIÓLOGO ACIMA DE 5 ANOS DE EXPERIÊNCIA",u:"H",v:49.87,p:63.49,a:0.9264},
- {c:"61.11.17",d:"ESTAGIÁRIO DE NÍVEL SUPERIOR - 04 HORAS",u:"H",v:14.03,p:17.66,a:0.6734},
- {c:"61.12.01",d:"AUXILIAR DE ENGENHARIA PARA PROJETOS",u:"H",v:27.89,p:35.38,a:0.847},
- {c:"61.12.02",d:"AUXILIAR DE ARQUITETURA PARA PROJETOS",u:"H",v:27.89,p:35.38,a:0.847},
- {c:"61.13.01",d:"PROJETISTA SENIOR",u:"H",v:40.68,p:51.74,a:0.9043},
- {c:"61.13.02",d:"PROJETISTA INTERMEDIARIO",u:"H",v:36.32,p:46.17,a:0.8929},
- {c:"61.13.03",d:"PROJETISTA JUNIOR",u:"H",v:32.42,p:41.17,a:0.8709},
- {c:"61.13.04",d:"PROJETISTA CADISTA",u:"H",v:40.68,p:51.74,a:0.9043},
- {c:"61.14.01",d:"TECNICO SENIOR",u:"H",v:40.68,p:51.74,a:0.9043},
- {c:"61.14.02",d:"TECNICO INTERMEDIARIO",u:"H",v:36.32,p:46.17,a:0.8929},
- {c:"61.14.03",d:"TECNICO JUNIOR",u:"H",v:32.42,p:41.17,a:0.8709},
- {c:"61.15.01",d:"DESENHISTA PROJETISTA",u:"H",v:36.32,p:46.17,a:0.8929},
- {c:"61.15.02",d:"DESENHISTA TECNICO / CADISTA",u:"H",v:32.42,p:41.17,a:0.8709},
- {c:"61.15.03",d:"DESENHISTA COPISTA",u:"H",v:22.58,p:28.59,a:0.8035},
- {c:"61.16.01",d:"AUXILIAR ADMINISTRATIVO SENIOR",u:"H",v:32.61,p:41.42,a:0.8721},
- {c:"61.16.02",d:"AUXILIAR ADMINISTRATIVO INTERMEDIARIO",u:"H",v:29.41,p:37.33,a:0.8554},
- {c:"61.16.03",d:"AUXILIAR ADMINISTRATIVO JUNIOR",u:"H",v:26.21,p:33.23,a:0.8343},
- {c:"61.21.01",d:"ENGENHEIRO CONSULTOR",u:"H",v:198.98,p:254.14,a:0.9982},
- {c:"61.21.02",d:"ENGENHEIRO COORDENADOR",u:"H",v:180.36,p:230.35,a:0.9976},
- {c:"61.21.03",d:"ENGENHEIRO SENIOR",u:"H",v:161.73,p:206.57,a:0.9982},
- {c:"61.21.04",d:"ENGENHEIRO INTERMEDIARIO",u:"H",v:143.11,p:182.78,a:0.9974},
- {c:"61.21.05",d:"ENGENHEIRO JUNIOR",u:"H",v:126.98,p:162.04,a:0.9778},
- {c:"61.21.06",d:"ENGENHEIRO TRAINEE",u:"H",v:90.32,p:115.2,a:0.9678},
- {c:"61.21.07",d:"ARQUITETO CONSULTOR",u:"H",v:198.98,p:254.14,a:0.9982},
- {c:"61.21.08",d:"ARQUITETO COORDENADOR",u:"H",v:180.36,p:230.35,a:0.9976},
- {c:"61.21.09",d:"ARQUITETO SÊNIOR",u:"H",v:161.73,p:206.57,a:0.9982},
- {c:"61.21.10",d:"ARQUITETO INTERMEDIÁRIO",u:"H",v:143.11,p:182.78,a:0.9974},
- {c:"61.21.11",d:"ARQUITETO JÚNIOR",u:"H",v:126.98,p:162.04,a:0.9778},
- {c:"61.21.12",d:"ARQUITETO TRAINEE",u:"H",v:90.32,p:115.2,a:0.9678},
- {c:"61.22.01",d:"AUXILIAR DE ENGENHARIA PARA OBRAS",u:"H",v:25.35,p:32.17,a:0.851},
- {c:"61.22.02",d:"AUXILIAR DE ARQUITETURA PARA OBRAS",u:"H",v:25.35,p:32.17,a:0.851},
- {c:"61.23.01",d:"TECNICO SENIOR",u:"H",v:36.98,p:47.04,a:0.9053},
- {c:"61.23.02",d:"TECNICO INTERMEDIARIO",u:"H",v:33.02,p:41.98,a:0.8917},
- {c:"61.23.03",d:"TECNICO JUNIOR",u:"H",v:29.47,p:37.43,a:0.8729},
- {c:"61.24.01",d:"DESENHISTA PROJETISTA",u:"H",v:33.02,p:41.98,a:0.8917},
- {c:"61.24.02",d:"DESENHISTA TECNICO / CADISTA",u:"H",v:29.47,p:37.43,a:0.8729},
- {c:"61.24.03",d:"DESENHISTA COPISTA",u:"H",v:20.52,p:25.99,a:0.8115},
- {c:"61.31.01",d:"TOPOGRAFO SENIOR",u:"H",v:36.98,p:47.04,a:0.9053},
- {c:"61.31.02",d:"TOPOGRAFO INTERMEDIARIO",u:"H",v:33.22,p:42.23,a:0.8944},
- {c:"61.31.03",d:"TOPOGRAFO JUNIOR",u:"H",v:29.47,p:37.43,a:0.8729},
- {c:"61.31.04",d:"NIVELADOR",u:"H",v:29.47,p:37.43,a:0.8729},
- {c:"61.31.05",d:"BALIZA",u:"H",v:19.92,p:25.22,a:0.8016},
- {c:"61.31.06",d:"AJUDANTE DE TOPOGRAFIA",u:"H",v:19.92,p:25.22,a:0.8016},
- {c:"61.32.01",d:"LABORATORISTA SENIOR",u:"H",v:41.6,p:52.95,a:0.9183},
- {c:"61.32.02",d:"LABORATORISTA JUNIOR",u:"H",v:33.02,p:41.98,a:0.8917},
- {c:"61.32.03",d:"AUXILIAR DE LABORATORIO",u:"H",v:20.52,p:25.99,a:0.8115},
- {c:"61.34.01",d:"MOTORISTA",u:"H",v:29.63,p:37.64,a:0.8732},
- {c:"61.34.02",d:"APONTADOR",u:"H",v:19.92,p:25.22,a:0.8016},
- {c:"61.34.03",d:"SERVENTE",u:"H",v:21.31,p:27.0,a:0.8178},
- {c:"62.01.04",d:"PROJETO ARQUITETONICO - EXECUTIVO",u:"A1",v:2321.9,p:2958.61,a:0.9449},
- {c:"62.01.10",d:"PROJETO DE TERRAPLENAGEM (PLANTA)",u:"A1",v:1252.52,p:1597.99,a:0.9733},
- {c:"62.01.11",d:"PROJETO DE TERRAPLENAGEM (SEÇOES)",u:"A1",v:825.34,p:1048.98,a:0.8873},
- {c:"62.01.12",d:"PROJETO DE DRENAGEM PLUVIAL",u:"A1",v:1640.86,p:2089.83,a:0.9344},
- {c:"62.01.13",d:"PROJETO PAISAGISTICO PRAÇA, PARQUE E AREA DE LAZER",u:"A1",v:4595.68,p:5862.5,a:0.9704},
- {c:"62.01.14",d:"PROJETO PAISAGISTICO AREAS LIVRES OBRAS EDIFICAÇAO",u:"A1",v:2097.44,p:2672.72,a:0.946},
- {c:"62.01.15",d:"PROJETO GEOMETRICO DE CONTENÇAO",u:"A1",v:1798.96,p:2292.88,a:0.951},
- {c:"62.01.16",d:"PROJETO DE ESTRUTURA DE CONCRETO",u:"A1",v:1639.81,p:2088.8,a:0.9376},
- {c:"62.01.17",d:"PROJETO ESTRUTURAL DE CONTENÇAO / CANAL",u:"A1",v:1639.81,p:2088.8,a:0.9376},
- {c:"62.01.19",d:"PROJETO ELETRICO",u:"A1",v:1970.02,p:2509.66,a:0.9397},
- {c:"62.01.20",d:"PROJETO DE CABEAMENTO ESTRUTURADO",u:"A1",v:2428.64,p:3097.11,a:0.9631},
- {c:"62.01.21",d:"PROJETO DE ESTRUTURA METALICA",u:"A1",v:2497.26,p:3182.21,a:0.946},
- {c:"62.01.22",d:"PROJETO HIDRAULICO / SANITARIO",u:"A1",v:1897.38,p:2417.31,a:0.9415},
- {c:"62.01.23",d:"PROJETO DE PREVENÇAO E COMBATE A INCENDIO",u:"A1",v:1831.3,p:2332.77,a:0.9381},
- {c:"62.01.24",d:"PROJETO DE COMUNICAÇAO VISUAL",u:"A1",v:1529.16,p:1948.08,a:0.9403},
- {c:"62.01.25",d:"PROJETO DE PROTEÇAO CONTRA DESCARGAS ATMOSFERICAS",u:"A1",v:1428.54,p:1819.37,a:0.9338},
- {c:"62.01.26",d:"PROJETO DE IRRIGAÇAO",u:"A1",v:1824.74,p:2324.96,a:0.9434},
- {c:"62.01.28",d:"PROJETO DE AR CONDICIONADO",u:"A1",v:1970.02,p:2509.66,a:0.9397},
- {c:"62.01.29",d:"DESENVOLVIMENTO E DETALH. PROJ. ARQUIT. E ESTRURAL",u:"A1",v:716.43,p:908.74,a:0.8423},
- {c:"62.01.30",d:"DESENVOLVIMENTO E DETALH.DE PROJETO COMPLEMENTARES",u:"A1",v:690.17,p:875.62,a:0.8473},
- {c:"62.01.31",d:"DESENHO E COPIA - ARQUITETURA/ESTRUTURAL/METALICA",u:"A1",v:569.8,p:720.89,a:0.7847},
- {c:"62.01.32",d:"DESENHO E COPIA - PROJETOS COMPLEMENTARES",u:"A1",v:491.99,p:622.08,a:0.7712},
- {c:"62.01.33",d:"PROJETO ELETRICO/TV A CABO/ANTENA EXTERNA",u:"A1",v:1970.02,p:2509.66,a:0.9397},
- {c:"62.01.34",d:"PROJETO DE SONORIZACAO/ALARME/CFTV",u:"A1",v:1492.84,p:1901.91,a:0.9415},
- {c:"62.01.35",d:"PROJETO DE AR CONDICIONADO MECANICO/ELETRICO",u:"A1",v:1970.02,p:2509.66,a:0.9397},
- {c:"62.01.38",d:"PROJETO LUMINOTECNICO",u:"A1",v:857.86,p:1091.78,a:0.9176},
- {c:"62.01.40",d:"COMPATIBILIZACAO DE PROJETOS DE EDIFICACAO",u:"A1",v:1611.1,p:2049.18,a:0.9041},
- {c:"62.01.42",d:"PERSPECTIVA COLORIDA 50X70 CM",u:"UN",v:2321.9,p:2958.61,a:0.9449},
- {c:"62.01.43",d:"VISTA COLORIDA 50X70 CM",u:"A1",v:1160.95,p:1479.3,a:0.9449},
- {c:"62.01.44",d:"PLANTA HUMANIZADA COLORIDA 50X70 CM",u:"A1",v:1160.95,p:1479.3,a:0.9449},
- {c:"62.01.45",d:"PROJETO DE IMPERMEABILIZACAO",u:"A1",v:1970.02,p:2509.66,a:0.9397},
- {c:"62.01.46",d:"PROJETO DE ENGRADAMENTO METALICO",u:"A1",v:1492.84,p:1901.91,a:0.9415},
- {c:"62.01.47",d:"LEVANTAMENTO CADASTRAL DE EDIFICAÇÃO",u:"A1",v:1188.69,p:1511.9,a:0.904},
- {c:"62.02.01",d:"DE EDIFICACAO - AREA <= 600M2",u:"UN",v:5228.1,p:6669.95,a:0.9727},
- {c:"62.02.02",d:"DE EDIFICACAO - 600 M2 < AREA <= 1.500 M2",u:"UN",v:10456.2,p:13339.9,a:0.9727},
- {c:"62.02.03",d:"DE EDIFICACAO - AREA > 1500 M2",u:"UN",v:15680.8,p:20005.57,a:0.973},
- {c:"62.02.04",d:"DE IMPLANT. DE EDIFICACAO PADRAO COM AREA <= 600M2",u:"UN",v:3354.06,p:4276.75,a:0.9605},
- {c:"62.02.05",d:"DE IMPLAN. EDIFIC. PADRAO C/ AREA 600<AREA<=1500M2",u:"UN",v:5102.74,p:6509.3,a:0.9703},
- {c:"62.02.06",d:"DE IMPLANTACAO EDIFICACAO PADRAO C/ AREA > 1500M2",u:"UN",v:10131.98,p:12928.87,a:0.9773},
- {c:"62.02.07",d:"DE IMPLAN. PRACA,PARQUE,AREA LAZER AREA<=10.000M2",u:"UN",v:5102.74,p:6509.3,a:0.9703},
- {c:"62.02.08",d:"DE IMPLAN. PRACA,PARQUE,AREA LAZER AREA > 10.000M2",u:"UN",v:10131.98,p:12928.87,a:0.9773},
- {c:"62.02.09",d:"ESTUDO PRELIMINAR DE URBANISMO",u:"KM",v:9477.88,p:12086.35,a:0.9626},
- {c:"62.03.01",d:"PROJETO GEOMETRICO",u:"KM",v:8371.34,p:10667.34,a:0.9458},
- {c:"62.03.02",d:"PROJETO DE TERRAPLENAGEM",u:"KM",v:2964.26,p:3775.53,a:0.9355},
- {c:"62.03.03",d:"PROJETO DE CANALIZAÇAO",u:"KM",v:14595.74,p:18604.54,a:0.9527},
- {c:"62.03.04",d:"PROJETO DE DRENAGEM",u:"KM",v:9498.7,p:12100.32,a:0.9392},
- {c:"62.03.06",d:"PROJETO GEOMETRICO DE CONTENÇAO",u:"A1",v:1798.96,p:2292.88,a:0.951},
- {c:"62.03.07",d:"PROJETO ESTRUTURAL DE CONTENCAO / CANAL",u:"A1",v:1639.81,p:2088.8,a:0.9376},
- {c:"62.03.08",d:"PROJETO DE PAVIMENTAÇAO - VIA LOCAL",u:"KM",v:2548.1,p:3248.14,a:0.954},
- {c:"62.03.09",d:"PROJETO DE PAVIMENTAÇAO - VIA COLETORA E PRIMARIA",u:"KM",v:3971.3,p:5065.92,a:0.97},
- {c:"62.03.11",d:"PROJETO DE SINALIZAÇAO / DESVIO",u:"KM",v:3090.08,p:3936.42,a:0.9391},
- {c:"62.03.12",d:"PROJETO PAISAGISTICO",u:"KM",v:2097.44,p:2672.72,a:0.946},
- {c:"62.03.13",d:"PROJETO DE IRRIGAÇAO",u:"A1",v:1824.74,p:2324.96,a:0.9434},
- {c:"62.03.14",d:"PROJETO OBRAS ARTES ESPECIAIS-PONTES,VIADUTOS,ETC",u:"A1",v:3387.18,p:4319.65,a:0.964},
- {c:"62.03.15",d:"PROJETO DE ESTRUTURA METALICA",u:"A1",v:2497.26,p:3182.21,a:0.946},
- {c:"62.03.16",d:"PROJETO ELETRICO / TELEFONIA / LOGICA",u:"A1",v:1947.67,p:2480.04,a:0.9293},
- {c:"62.03.17",d:"PROJETO DE INTERSEÇAO - SIMPLIFICADO",u:"A1",v:2339.54,p:2980.49,a:0.9404},
- {c:"62.03.18",d:"PROJETO DE INTERSEÇAO - ESPECIAL",u:"A1",v:4635.94,p:5911.76,a:0.9624},
- {c:"62.03.19",d:"COMPATIBILIZACAO DE PROJETOS DE INFRA ESTRUTURA",u:"A1",v:1296.26,p:1647.07,a:0.8814},
- {c:"62.03.20",d:"ESTUDO HIDRAULICO DE CANAL EXISTENTE",u:"KM",v:7949.6,p:10148.15,a:0.9864},
- {c:"62.04.01",d:"LAUDO GEOTECNICO PARA FINS DE LICENCIAMENTO",u:"UN",v:7035.51,p:8965.84,a:0.9476},
- {c:"62.04.02",d:"PARECER GEOTÉCNICO - NÍVEL 1",u:"UN",v:12201.31,p:15556.75,a:0.9589},
- {c:"62.04.03",d:"PARECER GEOTÉCNICO - NÍVEL 2",u:"UN",v:16610.03,p:21186.68,a:0.9683},
- {c:"62.04.04",d:"PARECER GEOTÉCNICO - NÍVEL 3",u:"UN",v:21342.79,p:27234.33,a:0.9773},
- {c:"62.05.14",d:"EQUIPE TOPOGRÁFICA P/ APOIO A PROJETOS",u:"DIA",v:1512.29,p:1903.58,a:0.6708},
- {c:"62.05.15",d:"EQUIPE TOPOGRÁFICA P/ APOIO A OBRAS",u:"DIA",v:1060.47,p:1332.29,a:0.628},
- {c:"62.05.20",d:"TRANSPORTE DE COORDENADAS E ALTITUDE - ESTAÇÃO TOTAL",u:"KM",v:594.29,p:742.92,a:0.5178},
- {c:"62.05.21",d:"TRANSPORTE DE COORDENADAS E ALTITUDE - RECEPTOR GNSS",u:"DIA",v:1596.98,p:1994.68,a:0.4988},
- {c:"62.05.30",d:"LEVANTAMENTO PLANIMÉTRICO CADASTRAL <= 10.000 M2- INCLUSIVE DESENHO",u:"M2",v:0.45,p:0.54,a:0.0},
- {c:"62.05.31",d:"LEVANTAMENTO PLANIMÉTRICO CADASTRAL > 10.000 M2- INCLUSIVE DESENHO",u:"M2",v:0.36,p:0.46,a:0.8241},
- {c:"62.05.32",d:"LEVANTAMENTO PLANIMÉTRICO - INCLUSIVE DESENHO",u:"M2",v:0.22,p:0.28,a:0.9155},
- {c:"62.05.33",d:"LEVANTAMENTO PLANIALTIMÉTRICO PARA ESTUDO E CADASTRO DE REDES SUBTERRÂNEAS - INCLUSIVE DESENHO",u:"KM",v:679.35,p:851.08,a:0.5654},
- {c:"62.05.36",d:"DESENHO DE SEÇÕES TRANSVERSAIS E PERFIS",u:"A1",v:362.63,p:459.09,a:0.7994},
- {c:"62.05.37",d:"DESENHO DE LEVANTAMENTO TOPOGRÁFICO",u:"A1",v:746.88,p:948.03,a:0.8581},
- {c:"62.05.38",d:"RECONSTRUÇÃO DIGITAL DE CP PARA LANÇAMENTO E AMARRAÇÃO AO LEVANTAMENTO",u:"A1",v:448.6,p:567.36,a:0.777},
- {c:"62.05.39",d:"PLANTA DE ISODECLIVIDADE",u:"A1",v:562.21,p:711.22,a:0.7823},
- {c:"62.05.46",d:"MEMORIAL DESCRITIVO DO LIMITE DO IMÓVEL DE 01 A 50 VÉRTICES",u:"UN",v:503.09,p:640.87,a:0.9387},
- {c:"62.05.47",d:"MEMORIAL DESCRITIVO DO LIMITE DO IMÓVEL DE 51 A 100 VÉRTICES",u:"UN",v:662.84,p:844.0,a:0.9288},
- {c:"62.05.48",d:"MEMORIAL DESCRITIVO DO LIMITE DO IMÓVEL DE 101 A 200 VÉRTICES",u:"UN",v:822.59,p:1047.13,a:0.9227},
- {c:"62.06.01",d:"MEDIÇÃO DE RESISTIVIDADE DO SOLO (NBR 7117-1:2020 E NBR 5419-3:2015) ÁREA DO TERRENO S <= 1000 M2",u:"UN",v:1278.47,p:1625.54,a:0.8964},
- {c:"62.06.02",d:"MEDIÇÃO DE RESISTIVIDADE DO SOLO (NBR 7117-1:2020 E NBR 5419-3:2015) ÁREA DO TERRENO 1000 M2 < S <= 2500 M2",u:"UN",v:1553.61,p:1972.98,a:0.869},
- {c:"62.06.03",d:"MEDIÇÃO DE RESISTIVIDADE DO SOLO (NBR 7117-1:2020 E NBR 5419-3:2015) ÁREA DO TERRENO 2500 M2 < S <= 10000 M2",u:"UN",v:2750.77,p:3495.27,a:0.8817},
- {c:"62.06.04",d:"MEDIÇÃO DE RESISTIVIDADE DO SOLO (NBR 7117-1:2020 E NBR 5419-3:2015) ÁREA DO TERRENO 10000 M2 < S = 20000 M2",u:"UN",v:4882.68,p:6206.01,a:0.8884},
- {c:"62.06.05",d:"ANÁLISE DE GERENCIAMENTO DE RISCOS (SPDA) - (ABNT NBR 5419-2:2015)",u:"UN",v:1302.59,p:1661.22,a:0.9645},
- {c:"62.11.06",d:"CADASTRO TÉCNICO PARA REMOÇÃO",u:"UN",v:618.27,p:781.33,a:0.7594},
- {c:"62.11.07",d:"CADASTRO TÉCNICO PARA DESAPROPRIAÇÃO - LOTE",u:"UN",v:1097.47,p:1383.43,a:0.7031},
- {c:"62.11.08",d:"CADASTRO TÉCNICO PARA DESAPROPRIAÇÃO - 1 A 10 BENFEITORIAS",u:"UN",v:1564.29,p:1975.76,a:0.7469},
- {c:"62.11.09",d:"CADASTRO TÉCNICO PARA DESAPROPRIAÇÃO - 11 A 50 BENFEITORIAS",u:"UN",v:2591.17,p:3276.92,a:0.7754},
- {c:"62.11.10",d:"CADASTRO TÉCNICO PARA DESAPROPRIAÇÃO - 51 A 100 BENFEITORIAS",u:"UN",v:3701.3,p:4680.92,a:0.7758},
- {c:"62.11.11",d:"CADASTRO TÉCNICO PARA DESAPROPRIAÇÃO - 101 A 200 BENFEITORIAS",u:"UN",v:4896.29,p:6194.45,a:0.784},
- {c:"62.11.12",d:"CADASTRO TÉCNICO PARA DESAPROPRIAÇÃO - ACIMA DE 200 BENFEITORIAS",u:"UN",v:5790.0,p:7327.15,a:0.7902},
- {c:"62.11.13",d:"REVISÃO DE CADASTRO TÉCNICO PARA DESAPROPRIAÇÃO - SEM CAMPO",u:"UN",v:854.64,p:1074.32,a:0.6407},
- {c:"62.11.14",d:"REVISÃO DE CADASTRO TÉCNICO PARA DESAPROPRIAÇÃO - COM CAMPO",u:"UN",v:1271.59,p:1600.31,a:0.6667},
- {c:"62.11.15",d:"BUSCA DE CERTIDÃO DE REGISTRO",u:"UN",v:367.04,p:456.63,a:0.4113},
- {c:"62.11.16",d:"BUSCA DE CERTIDÃO NEGATIVA REGISTRO",u:"UN",v:383.26,p:476.43,a:0.3939},
- {c:"62.11.17",d:"DESPESAS COM CARTÓRIO - CERTIDÃO EM RELATÓRIO",u:"UN",v:45.18,p:55.16,a:0.0},
- {c:"62.11.18",d:"DESPESAS COM CARTÓRIO - CERTIDÃO",u:"UN",v:28.96,p:35.36,a:0.0},
- {c:"62.11.19",d:"BUSCA CARTORIAL",u:"UN",v:173.78,p:217.35,a:0.529},
- {c:"62.20.03",d:"IMAGEM FOTOREALISTICA",u:"UN",v:1160.95,p:1479.3,a:0.9449},
- {c:"62.20.09",d:"PROJETO DE EXAUSTAO MECANICA",u:"UN",v:4375.41,p:5574.17,a:0.9407},
- {c:"62.20.10",d:"PROJETO DE GASES MEDICINAIS",u:"UN",v:4375.41,p:5574.17,a:0.9407},
- {c:"62.20.11",d:"PROJETO DE GLP",u:"UN",v:1471.91,p:1874.6,a:0.9337},
- {c:"62.20.20",d:"CARACTERIZAÇÃO DE EDIFICAÇÕES E ÁREAS COBERTAS",u:"M2",v:13.97,p:17.74,a:0.8634},
- {c:"62.24.01",d:"MEMORIAL DESCRITIVO - CARACTERIZAÇÃO DAS APPS, RECURSOS HÍDRICOS, PERFIS TOPOGRÁFICOS.",u:"UN",v:732.05,p:932.59,a:0.9402},
- {c:"62.24.02",d:"CONFECÇÃO DE ARQUIVO NO FORMATO \".KMZ\" PARA AUTORIZAÇÃO SMMA",u:"UN",v:291.19,p:370.89,a:0.9357},
- {c:"62.24.03",d:"IDENTIFICAÇÃO DE ESPÉCIMES ARBÓREOS - DE 01 ATÉ 20 EXEMPLARES",u:"UN",v:537.17,p:670.49,a:0.4838},
- {c:"62.24.04",d:"IDENTIFICAÇÃO DE ESPÉCIMES ARBÓREOS - A PARTIR DE 21 EXEMPLARES (PREÇO POR ESPÉCIME IDENTIFICADO - A PARTIR DO 21º EXEMPLAR)",u:"UN",v:6.97,p:8.71,a:0.5037},
- {c:"62.24.05",d:"ELABORAÇÃO DE DOCUMENTAÇÃO TÉCNICA, INCLUSIVE PROJETO ARQUITETÔNICO OU PROJETO BÁSICO DE RESTAURAÇÃO, PARA LICENCIAMENTO JUNTO AOS ÓRGÃOS DE PATRIMÔNIO",u:"UN",v:7694.11,p:9799.89,a:0.9355},
- {c:"62.24.06",d:"ELABORAÇÃO DE DOCUMENTAÇÃO TÉCNICA PARA LICENCIAMENTO JUNTO À SUREG (APROVAÇÃO DE EDIFICAÇÃO E/OU ALVARÁ DE OBRAS EM LOGRADOURO PÚBLICO) E JUNTO AO CINDACTA, INCLUSIVE PROJETOS, MEMORIAIS DESCRITIVOS E DE CÁLCULO",u:"UN",v:8347.97,p:10633.92,a:0.9381},
- {c:"64.01.03",d:"FORMATO A2",u:"UN",v:10.0,p:12.21,a:0.0},
- {c:"64.01.04",d:"FORMATO A1",u:"UN",v:8.5,p:10.38,a:0.0},
- {c:"64.01.05",d:"FORMATO A0",u:"UN",v:10.5,p:12.82,a:0.0},
- {c:"64.07.01",d:"FORMATO A4",u:"UN",v:0.5,p:0.61,a:0.0},
- {c:"64.07.02",d:"FORMATO A3",u:"UN",v:2.0,p:2.44,a:0.0},
- {c:"64.09.01",d:"FORMATO A4",u:"UN",v:2.5,p:3.05,a:0.0},
- {c:"64.09.02",d:"FORMATO A3",u:"UN",v:5.0,p:6.1,a:0.0},
- {c:"64.11.01",d:"EM CAPA A4 DE ACETATO, PVC/CROMICOTE, C/ ESPIRAL",u:"UN",v:7.0,p:8.55,a:0.0},
- {c:"64.12.02",d:"FORMATO A3",u:"UN",v:5.0,p:6.1,a:0.0},
- {c:"64.12.03",d:"FORMATO A2",u:"UN",v:10.0,p:12.21,a:0.0},
- {c:"64.12.04",d:"FORMATO A1",u:"UN",v:12.0,p:14.65,a:0.0},
- {c:"64.12.05",d:"FORMATO A0",u:"UN",v:24.0,p:29.3,a:0.0},
- {c:"64.12.07",d:"FORMATO A1 EXTENDIDO",u:"UN",v:8.0,p:9.77,a:0.0},
- {c:"64.12.08",d:"FORMATO A0 EXTENDIDO",u:"UN",v:30.0,p:36.63,a:0.0},
- {c:"64.15.01",d:"FORMATO A4",u:"UN",v:2.0,p:2.44,a:0.0},
- {c:"64.15.02",d:"FORMATO A3",u:"UN",v:4.0,p:4.88,a:0.0},
- {c:"64.15.03",d:"FORMATO A2",u:"UN",v:9.5,p:11.6,a:0.0},
- {c:"64.15.04",d:"FORMATO A1",u:"UN",v:12.0,p:14.65,a:0.0},
- {c:"64.15.05",d:"FORMATO A0",u:"UN",v:25.8,p:31.5,a:0.0},
- {c:"64.15.07",d:"FORMATO A1 EXTENDIDO",u:"UN",v:15.0,p:18.31,a:0.0},
- {c:"64.15.08",d:"FORMATO A0 EXTENDIDO",u:"UN",v:18.0,p:21.98,a:0.0},
- {c:"64.18.01",d:"DIGITALIZAÇÃO DE FORMATOS A0 (PDF OU EQUIVALENTE)",u:"UN",v:25.45,p:31.08,a:0.0075},
- {c:"64.18.02",d:"DIGITALIZAÇÃO DE FORMATOS A1 (PDF OU EQUIVALENTE)",u:"UN",v:25.45,p:31.08,a:0.0075},
- {c:"64.18.03",d:"DIGITALIZAÇÃO DE FORMATOS A2 (PDF OU EQUIVALENTE)",u:"UN",v:25.22,p:30.8,a:0.0081},
- {c:"64.18.04",d:"DIGITALIZAÇÃO DE FORMATOS A3 (PDF OU EQUIVALENTE)",u:"UN",v:1.61,p:1.97,a:0.0806},
- {c:"64.18.05",d:"DIGITALIZAÇÃO DE FORMATOS A4 (PDF OU EQUIVALENTE)",u:"UN",v:1.11,p:1.36,a:0.1169},
- {c:"65.01.01",d:"MOBILIZAÇÃO, INST. E DESMOBILIZAÇÃO P/EXECUÇÃO DE SONDAGEM À PERCUSSÃO (NBR 6484:2020)",u:"UN",v:1500.0,p:1831.3,a:0.0},
- {c:"65.01.02",d:"PERFURAÇÃO DE SOLO SONDAGEM À PERCUSSÃO (NBR 6484:2020)",u:"M",v:190.0,p:231.96,a:0.0},
- {c:"65.01.03",d:"DESMONTAGEM, TRANSPORTE E MONTAGEM DE EQUIPAMENTOS DE SONDAGEM A PERCUSSÃO POR FURO",u:"UN",v:250.0,p:305.22,a:0.0},
- {c:"65.02.01",d:"MOBILIZAÇÃO DE EQUIPAMENTOS DE SONDAGEM A TRADO (NBR 9603:2015) DN 20CM",u:"UN",v:1050.0,p:1281.91,a:0.0},
- {c:"65.02.02",d:"PERFURAÇÃO DE SOLO SONDAGEM A TRADO (NBR 9603:2015) DN 20CM",u:"M",v:85.0,p:103.77,a:0.0},
- {c:"65.03.02",d:"SONDAGEM DE SOLO COM UTILIZAÇÃO DE PA E PICARETA",u:"M",v:750.0,p:915.65,a:0.0},
- {c:"65.06.01",d:"MOBILIZACAO E DESMOBILIZACAO - SONDAGEM ROTATIVA NW",u:"UN",v:3399.05,p:4149.78,a:0.0},
- {c:"65.06.02",d:"INSTALACAO DE SONDAGEM ROTATIVA NW POR FURO",u:"UN",v:850.0,p:1037.74,a:0.0},
- {c:"65.06.03",d:"PERFURACAO EM SOLO COM SONDAGEM ROTATIVA NW",u:"M",v:450.0,p:549.39,a:0.0},
- {c:"65.06.04",d:"PERFURACAO COM COROA DE WIDIA SONDAGEM ROTATIVA NW",u:"M",v:945.04,p:1153.77,a:0.0},
- {c:"65.06.05",d:"PERFURACAO COM COROA DIAMANTADA SONDAGEM ROTATIVA NW",u:"M",v:1000.0,p:1220.87,a:0.0},
- {c:"65.08.21",d:"RETIRADA DE AMOSTRA INDEFORMADA EM BLOCOS 30X30X30CM (NBR 9604:2016), PROF = 2 A 3 M",u:"UN",v:3575.0,p:4364.59,a:0.0},
- {c:"65.08.22",d:"RETIRADA DE AMOSTRA INDEFORMADA EM BLOCOS 30X30X30CM (NBR 9604:2016), PROF = 1 A 2 M",u:"UN",v:2500.0,p:3052.16,a:0.0},
- {c:"65.08.23",d:"RETIRADA DE AMOSTRA INDEFORMADA EM BLOCOS 30X30X30CM (NBR 9604:2016), PROF ATÉ 1 M",u:"UN",v:1500.0,p:1831.3,a:0.0},
- {c:"67.01.01",d:"DETERMINAÇÃO DO TEOR DE UMIDADE DE SOLOS EM LABORATORIO (NBR 6457:2016 ANEXO A)",u:"UN",v:41.58,p:50.76,a:0.0},
- {c:"67.01.03",d:"MASSA ESPECÍFICA, MASSA ESPECÍFICA APARENTE E ABSORÇÃO DE ÁGUA (NBR 6458:2016)",u:"UN",v:150.0,p:183.13,a:0.0},
- {c:"67.01.04",d:"ANÁLISE GRANULOMETRICA DE SOLOS POR PENEIRAMENTO (NBR 7181:2016)",u:"UN",v:172.0,p:209.99,a:0.0},
- {c:"67.01.05",d:"ANÁLISE GRANULOMETRICA DE SOLOS POR PENEIRAMENTO E SEDIMENTAÇÃO (NBR 7181:2016)",u:"UN",v:240.0,p:293.01,a:0.0},
- {c:"67.01.06",d:"DETERMINAÇÃO DO LIMITE DE LIQUIDEZ DE SOLOS (NBR 6459:2017)",u:"UN",v:90.0,p:109.88,a:0.0},
- {c:"67.01.07",d:"DETERMINAÇÃO DO LIMITE DE PLASTICIDADE DE SOLOS (NBR 7180:2016)",u:"UN",v:90.0,p:109.88,a:0.0},
- {c:"67.01.08",d:"DETERMINAÇÃO DOS FATORES DE CONTRAÇÃO DE SOLOS (DNER-ME 087/94)",u:"UN",v:301.0,p:367.48,a:0.0},
- {c:"67.01.09",d:"COMPACTAÇÃO DO SOLO ENERGIA PROCTOR NORMAL (NBR 7182:2020) COM 05 CORPOS DE PROVA",u:"UN",v:140.0,p:170.92,a:0.0},
- {c:"67.01.10",d:"COMPACTAÇÃO DO SOLO ENERGIA PROCTOR INTERMEDIÁRIO (NBR 7182:2020) COM 05 CORPOS DE PROVA",u:"UN",v:160.0,p:195.34,a:0.0},
- {c:"67.01.11",d:"COMPACTAÇÃO DO SOLO ENERGIA PROCTOR MODIFICADO (NBR 7182:2020) COM 05 CORPOS DE PROVA",u:"UN",v:180.0,p:219.76,a:0.0},
- {c:"67.01.12",d:"ÍNDICE DE SUPORTE CALIFÓRNIA DE SOLOS (ISC/CBR) C/1 CP (DNIT 172/016-ME / NBR 9895:2017)",u:"UN",v:200.0,p:244.17,a:0.0},
- {c:"67.01.13",d:"ÍNDICE DE SUPORTE CALIFÓRNIA DE SOLOS (ISC/CBR) C/3 CP (DNIT 172/016-ME / NBR 9895:2017)",u:"UN",v:150.0,p:183.13,a:0.0},
- {c:"67.01.14",d:"ÍNDICE DE SUPORTE CALIFÓRNIA DE SOLOS (ISC/CBR) C/5 CP (DNIT 172/016-ME / NBR 9895:2017)",u:"UN",v:412.25,p:503.3,a:0.0},
- {c:"67.01.15",d:"DETERMINAÇÃO DO EQUIVALENTE DE AREIA EM SOLO (DNER-ME 054/97 / NBR 12052:92)",u:"UN",v:155.0,p:189.23,a:0.0},
- {c:"67.01.17",d:"DETERMINAÇÃO COLORIMÉTRICA DE IMPUREZAS ORGÂNICAS EM SOLOS (NBR NM 49:2001)",u:"UN",v:132.0,p:161.15,a:0.0},
- {c:"67.01.18",d:"ENSAIO DE ADENSAMENTO DE SOLOS (DNER-IE 005/94 - NBR 16853:2020)",u:"UN",v:2295.0,p:2801.89,a:0.0},
- {c:"67.01.20",d:"COEFICIENTE DE PERMEABILIDADE DE SOLOS ARGILOSOS À CARGA VARIÁVEL (NBR 14545:2021)",u:"UN",v:550.0,p:671.48,a:0.0},
- {c:"67.01.21",d:"COEFICIENTE DE PERMEABILIDADE DE SOLOS GRANULARES À CARGA CONSTANTE (NBR 13292:2021)",u:"UN",v:590.0,p:720.31,a:0.0},
- {c:"67.01.22",d:"RESISTÊNCIA À COMPRESSÃO NÃO CONFINADA - SOLOS COESIVOS (NBR 12770:1992)",u:"UN",v:735.0,p:897.34,a:0.0},
- {c:"67.01.23",d:"COMPRESSAO TRIAXIAL RAPIDO NÃO ADENSADO E NÃO DRENADO (Q/UU) MÍNIMO 3 CORPOS DE PROVA",u:"UN",v:2933.21,p:3581.06,a:0.0},
- {c:"67.01.24",d:"COMPRESSAO TRIAXIAL RAPIDO NÃO ADENSADO E NÃO DRENADO (Q/UU) C/MEDIDAS DE PRESSAO NEUTRA MÍNIMO 3 CORPOS DE PROVA",u:"UN",v:3502.25,p:4275.78,a:0.0},
- {c:"67.01.25",d:"COMPRESSAO TRIAXIAL RAPIDO PRE-ADENSADO E NÃO DRENADO (R/CIU) MÍNIMO 3 CORPOS DE PROVA",u:"UN",v:4055.33,p:4951.01,a:0.0},
- {c:"67.01.26",d:"COMPRESSAO TRIAXIAL RAPIDO PRE-ADENSADO (R/CIU) C/MEDIDAS DE PRESSÃO NEUTRA MÍNIMO 3 CORPOS DE PROVA",u:"UN",v:4422.19,p:5398.9,a:0.0},
- {c:"67.01.27",d:"COMPRESSAO TRIAXIAL RAPIDO PRE-ADENSADO SATURADO (R-SAT/CIU-SAT) MÍNIMO 3 CORPOS DE PROVA",u:"UN",v:4055.33,p:4951.01,a:0.0},
- {c:"67.01.28",d:"COMPRESSAO TRIAXIAL RAPIDO PRE-ADENSADO SATURADO (R-SAT/CIU-SAT) C/MEDIDAS PRESSÃO NEUTRA MÍNIMO 3 CORPOS DE PROVA",u:"UN",v:4557.18,p:5563.7,a:0.0},
- {c:"67.01.30",d:"COMPRESSAO TRIAXIAL LENTO SATURADO (CD) MÍNIMO 3 CORPOS DE PROVA",u:"UN",v:3855.71,p:4707.3,a:0.0},
- {c:"67.01.31",d:"ENSAIO DE CISALHAMENTO DIRETO RAPIDO EM SOLOS (NBR ISO 12957-1:2013) MÍNIMO 3 CORPOS DE PROVA",u:"UN",v:2550.0,p:3113.21,a:0.0},
- {c:"67.01.32",d:"ENSAIO DE SOLO - CISALHAMENTO DIRETO RAPIDO SATURADO MÍNIMO 3 CORPOS DE PROVA",u:"UN",v:1800.0,p:2197.56,a:0.0},
- {c:"67.01.33",d:"ENSAIO DE SOLO - CISALHAMENTO DIRETO RAPIDO PRE-ADENSADO MÍNIMO 3 CORPOS DE PROVA",u:"UN",v:1800.0,p:2197.56,a:0.0},
- {c:"67.01.34",d:"ENSAIOD E SOLO - CISALHAMENTO DIRETO RAPIDO SATURADO PRE-ADENSADO MÍNIMO 3 CORPOS DE PROVA",u:"UN",v:1800.0,p:2197.56,a:0.0},
- {c:"67.01.35",d:"ENSAIO DE SOLO - CISALHAMENTO DIRETO LENTO MÍNIMO 3 CORPOS DE PROVA",u:"UN",v:1800.0,p:2197.56,a:0.0},
- {c:"67.01.36",d:"ENSAIO DE SOLO - CISALHAMENTO DIRETO LENTO SATURADO MÍNIMO 3 CORPOS DE PROVA",u:"UN",v:1800.0,p:2197.56,a:0.0},
- {c:"67.02.01",d:"DETERMINAÇÃO DA COMPOSIÇÃO GRANULOMÉTRICA - AGREGADOS (NBR NM 248:2003)",u:"UN",v:260.0,p:317.43,a:0.0},
- {c:"67.02.02",d:"DETERMINAÇÃO DO TEOR DE ARGILA EM TORRÕES - AGREGADOS (NBR 7218:2010)",u:"UN",v:150.0,p:183.13,a:0.0},
- {c:"67.02.03",d:"DETERMINAÇÃO DO MATERIAL FINO QUE PASSA PELA PENEIRA 75 µm POR LAVAGEM (NBR 16973:2021)",u:"UN",v:200.0,p:244.17,a:0.0},
- {c:"67.02.04",d:"DETERMINAÇÃO COLORIMÉTRICA DE IMPUREZAS ORGÂNICAS EM AGREGADO MIÚDO (NBR NM 49:2001)",u:"UN",v:130.0,p:158.71,a:0.0},
- {c:"67.02.05",d:"DETERMINAÇÃO DA MASSA UNITÁRIA E DO VOLUME DE VAZIOS - AGREGADOS (NBR 16972:2021)",u:"UN",v:200.0,p:244.17,a:0.0},
- {c:"67.02.06",d:"DETERMINAÇÃO MASSA ESPECÍFICA AGREGADOS MIUDOS FRASCO CHAPMAN (NBR 9775:2011)",u:"UN",v:120.0,p:146.5,a:0.0},
-];
-
-/* Multiplicadores da metodologia SUDECAP (aba PARÂMETROS da planilha de origem) */
-const SUDECAP_K_PADRAO = {k1:1.1623, k2:0.10, k3:0.10, iss:0.025, pis:0.0132, cofins:0.0608};
-
-/* ---- DAER/RS — Referencial de Preços Unitários de Projetos, data-base jan/2021 ----
-   Departamento Autônomo de Estradas de Rodagem, DGP/SPR/EER.
-   k: fatores aplicáveis ao preço unitário — "kz" (kapa de zona) e "kext" (kapa de extensão).
-   lin: [a,b] para itens em verba calculados por a + b x extensão do trecho.
-   calc: item sem preço publicado, a calcular pelo próprio órgão. */
-const DAER_ENCARGOS = {sociais:0.9154, administrativos:0.30, remuneracao:0.12, fiscais:0.1268};
-const DAER_GRUPOS = {
-  "1":"Estudos de tráfego", "2":"Estudos topográficos", "3":"Sondagens", "4":"Projetos",
-  "5":"Ensaios de solo", "6":"Ensaios de agregados", "7":"Ensaios de materiais betuminosos",
-  "8":"Ensaios de pista", "9":"Dosagens e projetos de misturas", "10":"Avaliações de pavimentos",
-  "11":"Estudos", "12":"Ensaios de estabilidade de taludes", "13":"Meio ambiente",
-  "14":"Orçamentação", "15":"Outros"
-};
-const DAER_ITENS = [
- {i:"1.1",d:"Estudo de tráfego simplificado — um posto, contagem de 1 dia (16 h), tráfego baixo ≤ 1500",u:"un",p:4328.53},
- {i:"1.2",d:"Estudo de tráfego simplificado — um posto, contagem de 1 dia (16 h), tráfego alto > 1500",u:"un",p:5134.40},
- {i:"1.3.1",d:"Estudo de tráfego — um posto, 3 dias úteis consecutivos (24 h), tráfego baixo ≤ 1500",u:"un",p:10188.70},
- {i:"1.3.2",d:"Estudo de tráfego — um posto, 3 dias úteis consecutivos (16 h), tráfego baixo ≤ 1500",u:"un",p:8579.44},
- {i:"1.4.1",d:"Estudo de tráfego — um posto, 3 dias úteis consecutivos (24 h), tráfego alto > 1500",u:"un",p:13050.74},
- {i:"1.4.2",d:"Estudo de tráfego — um posto, 3 dias úteis consecutivos (16 h), tráfego alto > 1500",u:"un",p:10191.20},
- {i:"1.5",d:"Estudo de tráfego — um posto, 7 dias (24 h), tráfego baixo ≤ 1500",u:"un",p:11519.10},
- {i:"1.6",d:"Estudo de tráfego — um posto, 7 dias (24 h), tráfego alto > 1500",u:"un",p:14757.73},
- {i:"1.7",d:"Estudo de tráfego — interseção \"T\", um posto, 3 dias úteis consecutivos (24 h)",u:"un",p:16944.60},
- {i:"1.8",d:"Estudo de tráfego — interseção \"cruz\", um posto, 3 dias úteis consecutivos (24 h)",u:"un",p:20067.93},
- {i:"1.9",d:"Contagem de pedestres — um posto, dois fluxos, 3 dias úteis consecutivos (16 h)",u:"un",p:4447.86},
- {i:"1.10",d:"Pesquisa de origem e destino (O/D) para um posto, 7 dias, amostragem conforme IS 110/10",u:"un",p:13514.68},
- {i:"2.1",d:"Estudos topográficos — linha geral com RTK e VANT",u:"km",p:1439.65,k:"kzkext"},
- {i:"2.2",d:"Estudos topográficos — interseções e fontes de materiais",u:"m²",p:0.13},
- {i:"3.1",d:"Sondagem manual e mista em solo / alteração de rocha",u:"m",p:146.07},
- {i:"3.2",d:"Sondagem com retroescavadeira",u:"m",p:154.74},
- {i:"3.3",d:"Sondagem a percussão (SPT) com lavagem",u:"m",p:180.85},
- {i:"3.4",d:"Sondagem a percussão (SPT) com amostragem contínua",u:"m",p:361.71},
- {i:"3.5",d:"Sondagem rotativa em rocha alterada d A (AWG)",u:"m",p:212.82},
- {i:"3.6",d:"Sondagem rotativa em rocha alterada d B (BWG)",u:"m",p:303.24},
- {i:"3.7",d:"Sondagem rotativa em rocha vulcânica d A (AWG)",u:"m",p:460.16},
- {i:"3.8",d:"Sondagem rotativa em rocha vulcânica d B (BWG)",u:"m",p:660.63},
- {i:"3.9",d:"Sondagem rotativa em rocha vulcânica d N (NWG)",u:"m",p:972.19},
- {i:"3.10",d:"Sondagem rotativa em rocha plutônica d A (AWG)",u:"m",p:939.69},
- {i:"3.11",d:"Sondagem rotativa em rocha plutônica d B (BWG)",u:"m",p:1283.33},
- {i:"3.12",d:"Sondagem rotativa em rocha sedimentar d A (AWG)",u:"m",p:247.85},
- {i:"3.13",d:"Sondagem rotativa em rocha sedimentar d B (BWG)",u:"m",p:363.89},
- {i:"3.14",d:"Sondagem rotativa em cascalho d A (AWG)",u:"m",p:845.56},
- {i:"3.15",d:"Sondagem rotativa em cascalho d B (BWG)",u:"m",p:1169.63},
- {i:"3.16",d:"Sondagem com instalação de piezômetros",u:"m",p:1271.21},
- {i:"3.17",d:"Leitura de piezômetro / aferição de nível d'água",u:"vb",p:422.07},
- {i:"3.18",d:"Mobilização de equipamentos de sondagem rotativa e percussão",u:"un",p:6390.38},
- {i:"3.19",d:"Mobilização de equipamentos de sondagem CPTU",u:"un",p:6390.38},
- {i:"3.20",d:"Mobilização de equipamentos de sondagem rotativa e percussão — região metropolitana de Porto Alegre",u:"un",p:3837.88},
- {i:"3.21",d:"Mobilização de equipamentos de sondagem CPTU — região metropolitana de Porto Alegre",u:"un",p:3837.88},
- {i:"3.22",d:"Instalação de equipamentos de sondagem rotativa e/ou percussão e/ou CPTU — por furo",u:"un",p:265.05},
- {i:"3.23",d:"Coleta de amostra com amostrador tipo Shelby",u:"ens",p:352.41},
- {i:"3.24",d:"Vane test (cisalhamento por torção) in situ, exclusive sondagem SPT",u:"ens",p:93.02},
- {i:"3.25",d:"Instalação de flutuante no furo — 3 furos, lâmina d'água até 15 m, largura do rio até 10 m",u:"un",calc:true},
- {i:"3.26",d:"Sondagem CPTU",u:"m",calc:true},
- {i:"3.27",d:"Ensaio de dissipação",u:"ens",calc:true},
- {i:"3.28",d:"Janela de inspeção 0,50 × 0,50 (sem ensaio)",u:"un",p:311.71},
- {i:"4.1",d:"Projeto de terraplenagem",u:"km",p:1906.93,k:"kzkext"},
- {i:"4.2",d:"Projeto de estabilização de aterros em solos moles",u:"vb",lin:[21122.028,704.067]},
- {i:"4.3",d:"Projeto geométrico",u:"km",p:4852.17,k:"kzkext"},
- {i:"4.4",d:"Projeto de drenagem (exclusive projeto hidráulico de pontes)",u:"km",p:2335.89,k:"kzkext"},
- {i:"4.5",d:"Projeto de pavimentação",u:"vb",lin:[20956.422,698.547]},
- {i:"4.6",d:"Projeto de pavimentação para interseções (sem linha geral)",u:"un",p:8526.76},
- {i:"4.7",d:"Projeto de sinalização",u:"km",p:2453.33,k:"kzkext"},
- {i:"4.8.1",d:"Projeto estrutural de ponte / viaduto (extensão até 200 m)",u:"m²",p:100.16},
- {i:"4.9",d:"Projeto estrutural de passarela / alargamento de ponte ou viaduto",u:"m",p:292.71},
- {i:"4.10",d:"Projeto estrutural de estabilização de taludes — cortina atirantada",u:"m²",p:59.23},
- {i:"4.11",d:"Projeto estrutural de estabilização de taludes — muro de arrimo ou gabião",u:"m²",p:19.54},
- {i:"4.12",d:"Projeto de interseções — tipo 0",u:"un",p:23428.09},
- {i:"4.13",d:"Projeto de interseções — tipo 1",u:"un",p:11714.00},
- {i:"4.14",d:"Projeto de interseções — tipo 2",u:"un",p:7028.35},
- {i:"4.15",d:"Projeto de iluminação pública",u:"km",p:1860.05},
- {i:"4.16",d:"Projeto de iluminação para interseções — tipo 0",u:"un",p:9778.00},
- {i:"4.17",d:"Projeto de iluminação para interseções — tipo 1",u:"un",p:6859.69},
- {i:"4.18",d:"Projeto de obras complementares",u:"km",p:983.87,k:"kzkext"},
- {i:"4.19",d:"Projeto de desapropriação",u:"km",p:1696.67,k:"kzkext"},
- {i:"4.20",d:"Projeto de restauração de pavimento",u:"vb",lin:[21793.032,726.434]},
- {i:"4.21",d:"Serviços gráficos — linha geral",u:"vb",lin:[1047.63,157.144]},
- {i:"4.22",d:"Serviços gráficos — encadernação (extensão maior que 5 km)",u:"vb",p:777.26},
- {i:"4.23",d:"Serviços gráficos — encadernação (extensão menor que 5 km)",u:"vb",p:136.42},
- {i:"4.24",d:"Serviços gráficos — interseção tipo 0",u:"vb",p:1513.17},
- {i:"4.25",d:"Serviços gráficos — interseção tipo 1 ou 2",u:"vb",p:554.73},
- {i:"4.26",d:"Serviços gráficos — pontes e viadutos < 100 m",u:"vb",p:548.59},
- {i:"4.27",d:"Serviços gráficos — pontes e viadutos > 100 m",u:"vb",p:851.86},
- {i:"4.28",d:"Serviços gráficos — relatórios periódicos",u:"vb",p:21.87},
- {i:"5.1",d:"Granulometria por peneiramento",u:"ens",p:71.21},
- {i:"5.2",d:"Granulometria por sedimentação",u:"ens",p:237.37},
- {i:"5.3",d:"Limite de liquidez",u:"ens",p:29.20},
- {i:"5.4",d:"Limite de plasticidade",u:"ens",p:29.06},
- {i:"5.5",d:"Compactação Proctor normal com reuso de material (6 pontos)",u:"ens",p:76.21},
- {i:"5.6",d:"Compactação Proctor intermediário com reuso de material (6 pontos)",u:"ens",p:84.68},
- {i:"5.7",d:"Compactação Proctor modificado com reuso de material (6 pontos)",u:"ens",p:95.26},
- {i:"5.8",d:"ISC na energia normal (1 ponto)",u:"ens",p:82.80},
- {i:"5.9",d:"ISC na energia intermediária (1 ponto)",u:"ens",p:92.00},
- {i:"5.10",d:"ISC na energia modificada (1 ponto)",u:"ens",p:103.50},
- {i:"5.11",d:"Compactação e ISC na energia normal (6 pontos)",u:"ens",p:414.03},
- {i:"5.12",d:"Compactação e ISC na energia intermediária (6 pontos)",u:"ens",p:414.03},
- {i:"5.13",d:"Compactação e ISC na energia modificada (6 pontos)",u:"ens",p:517.54},
- {i:"5.14",d:"Resiliência em solos",u:"ens",p:649.07},
- {i:"5.15",d:"Massa específica real dos grãos",u:"ens",p:59.49},
- {i:"5.16",d:"Adensamento vertical",u:"ens",p:1298.14},
- {i:"6.1",d:"Equivalente de areia (solos ou agregados miúdos)",u:"ens",p:116.83},
- {i:"6.2",d:"Abrasão Los Angeles",u:"ens",p:239.94},
- {i:"6.3",d:"Sanidade (soundness test com 5 ciclos)",u:"ens",p:466.25},
- {i:"6.4",d:"Adesividade a ligantes betuminosos (método DAER)",u:"ens",p:284.78},
- {i:"6.5",d:"Lâminas petrográficas — confecção e análise",u:"ens",p:594.98},
- {i:"6.6",d:"Peso específico de rocha (real e aparente)",u:"ens",p:106.66},
- {i:"6.7",d:"Absorção d'água em rocha ou em agregado",u:"ens",p:36.78},
- {i:"7.1",d:"Extração de corpo de prova de concreto asfáltico",u:"ens",p:50.26},
- {i:"7.2",d:"Resiliência em materiais betuminosos",u:"ens",p:363.48},
- {i:"7.3",d:"Resistência à tração por compressão diametral em corpos de prova de CBUQ",u:"ens",p:106.01},
- {i:"7.4",d:"Teor de betume",u:"ens",p:135.98},
- {i:"8.1",d:"Densidade de campo — cone de areia",u:"ens",p:112.28},
- {i:"8.2",d:"Densidade de campo — cilindro cortante",u:"ens",p:51.49},
- {i:"8.3",d:"Umidade in situ",u:"ens",p:28.66},
- {i:"9.1",d:"Estudo de solo-cimento (4 teores com 3 corpos de prova por teor)",u:"est",p:1438.57},
- {i:"9.2",d:"Estudo de solo melhorado com cimento (4 teores com 3 corpos de prova por teor)",u:"est",p:1723.49},
- {i:"10.1",d:"Levantamento deflectométrico com FWD — espaçamento de 40 m entre estações",u:"km.faixa",p:456.66,k:"kz"},
- {i:"10.2",d:"Levantamento deflectométrico com FWD — espaçamento de 200 m entre estações",u:"km.faixa",p:102.20,k:"kz"},
- {i:"10.3",d:"Levantamento deflectométrico com FWD — espaçamento de 500 m entre estações",u:"km.faixa",p:49.41,k:"kz"},
- {i:"10.4",d:"Avaliação de irregularidade com perfilômetro a laser (barra com 3 lasers)",u:"km.faixa",p:36.90,k:"kz"},
- {i:"10.5",d:"Avaliação de irregularidade com perfilômetro a laser (barra com 5 lasers) para trilha de roda",u:"km.faixa",p:40.94,k:"kz"},
- {i:"10.6",d:"Avaliação de irregularidade com perfilômetro a laser (barra com 5 lasers) para duas trilhas simultâneas",u:"km.faixa",p:45.30,k:"kz"},
- {i:"10.7",d:"Avaliação de irregularidade com equipamento tipo resposta, com aquisição automática de dados",u:"km.faixa",p:24.30,k:"kz"},
- {i:"10.8",d:"Avaliação de defeitos de pavimento com aparelho VIZIROAD",u:"km.pista",p:52.25,k:"kz"},
- {i:"10.9",d:"Inventário de superfície — VIZIR",u:"km.pista",p:73.25,k:"kz"},
- {i:"10.10",d:"Viga Benkelman — levantamento por pista de 20 em 20 m alterando a faixa",u:"km.pista",p:576.58,k:"kzkext"},
- {i:"10.11",d:"Inventário de superfície — levantamento visual contínuo (LVC)",u:"km.pista",p:73.25,k:"kz"},
- {i:"10.12",d:"Inventário de superfície — DNIT PRO 06/2004",u:"km.pista",p:262.12,k:"kzkext"},
- {i:"10.13",d:"Inventário de superfície — levantamento visual contínuo a cada 200 m, com vídeo-registro",u:"km.pista",p:109.29},
- {i:"10.14",d:"Avaliação de rugosidade com rugosímetro Merlin",u:"km.faixa",p:251.28},
- {i:"11.1",d:"Hidrologia (exclusive pontes)",u:"km",p:1935.74,k:"kzkext"},
- {i:"11.2",d:"Hidrologia e projeto hidráulico de pontes",u:"est",p:14849.35},
- {i:"11.3",d:"Estudo topográfico para pontes até 50 m",u:"est",p:7744.92},
- {i:"11.4",d:"Estudo topográfico para pontes de 51 a 200 m",u:"est",p:15216.88},
- {i:"11.5",d:"Estudo topográfico para pontes de 201 a 350 m",u:"est",p:22961.93},
- {i:"11.6",d:"Estudo topográfico para pontes acima de 351 m",u:"est",calc:true,obs:"A calcular pela SEP/EOA."},
- {i:"11.7",d:"Estudos geológico e geotécnico",u:"vb",lin:[23357.31,778.577]},
- {i:"11.8",d:"Estudos geológico e geotécnico para interseções (exclusive linha geral)",u:"est",p:10162.75},
- {i:"12.1",d:"Cisalhamento direto (para 3 corpos de prova)",u:"ens",p:559.28},
- {i:"12.2",d:"Triaxial lento (CD) para 3 corpos de prova",u:"ens",p:1396.11},
- {i:"12.3",d:"Permeabilidade a carga constante, com permeâmetro",u:"ens",p:237.23},
- {i:"12.4",d:"Avaliação e análise geotécnica de taludes instáveis",u:"est",p:19472.00},
- {i:"13.1",d:"Serviços de supervisão ambiental",u:"un",p:110858.78},
- {i:"13.2",d:"Relatório ambiental",u:"un",p:762.55},
- {i:"13.3",d:"Estudo ambiental de rodovias para LPIA — interseções e OAEs, inclui acessos com até 1,000 km",u:"un",p:19904.56},
- {i:"13.4",d:"Estudo ambiental de rodovias para licença prévia e de instalação para alteração (LPIA)",u:"un",lin:[30231.498,1007.716]},
- {i:"14.1",d:"Elaboração de orçamento de obra (inclusive OAE)",u:"un",calc:true,obs:"A calcular pela SPR."},
- {i:"14.2",d:"Elaboração de orçamento de obra (exclusive OAE)",u:"un",calc:true,obs:"A calcular pela SPR."},
- {i:"14.3",d:"Elaboração de orçamento de conserva pavimentada",u:"un",calc:true,obs:"A calcular pela SPR."},
- {i:"14.4",d:"Elaboração de orçamento de conserva não pavimentada",u:"un",calc:true,obs:"A calcular pela SPR."},
- {i:"14.5",d:"Elaboração de orçamento de conserva — sinalização",u:"un",calc:true,obs:"A calcular pela SPR."},
- {i:"14.6",d:"Elaboração de orçamento de OAE",u:"un",calc:true,obs:"A calcular pela SPR."},
- {i:"15.1",d:"Avaliação econômica",u:"un",p:7684.74},
- {i:"15.2",d:"Plano funcional — duplicação em zona rural",u:"km",p:1416.21},
- {i:"15.3",d:"Plano funcional — travessia urbana",u:"km",p:3089.17},
- {i:"15.4",d:"Vistoria de obras de arte especiais",u:"un",p:3905.60}
-];
-const DAER_IDX = {}; DAER_ITENS.forEach(x=>{ DAER_IDX[x.i] = x; });
-
-/* ---- Referências de mercado consultadas para pré-preenchimento ----
-   Valores coletados de fontes públicas na data indicada. Servem para poupar
-   digitação, não para dispensar conferência: toda peça técnica deve reproduzir
-   o valor direto da publicação oficial vigente na data da estimativa. */
-const REFERENCIAS_MERCADO = {
-  consulta: "04/08/2026",
-  cub: [
-    {uf:"PA", rot:"Pará — Sinduscon-PA", v:2337.43, mes:"jun/2026"},
-    {uf:"BA", rot:"Bahia — Sinduscon-BA", v:2176.85, mes:"jun/2026"},
-    {uf:"RJ", rot:"Rio de Janeiro — Sinduscon-Rio", v:2463.94, mes:"jun/2026"}
-  ],
-  /* série histórica do CUB-PA usada apenas como proxy regional de atualização */
-  cubProxy: {uf:"PA", "jan/2018":1240.22, "jan/2021":1532.88, "jun/2026":2337.43},
-  sengeBase: 1929.04,            /* CUB-BA R8-N de jun/2024, declarado na própria tabela */
-  incc: {doze:0.0678, ano:0.0427, mes:"jun/2026"},
-  htSudecap: "61.11.04"          /* engenheiro sênior de projeto, tabela SUDECAP 04/2026 */
-};
-
-/* ---- SUDECAP: estimativa do número de pranchas A1 por especialidade ----
-   A tabela mede projeto por prancha, e o número de pranchas é característica do
-   empreendimento, não da tabela. Este módulo produz uma ESTIMATIVA, calculada por
-   N = [fixas + densidade(área)] x fator da tipologia, onde a densidade adota metade
-   do detalhamento por metro quadrado acima de 2.000 m², para refletir a repetição
-   de pavimentos-tipo. Não decorre de nenhuma das sete fontes. */
-const SUDECAP_EST_LIMIAR = 2000;
-const SUDECAP_EST_DISC = {
-  arquitetura:{fixas:4, div:250, base:"area", nota:"plantas por pavimento, cortes, fachadas, cobertura, situação e detalhes"},
-  cadastro_arq:{fixas:2, div:350, base:"area", nota:"levantamento com menor densidade de detalhamento"},
-  estrutura:{fixas:3, div:220, base:"area", nota:"formas e armação por pavimento"},
-  estrutura_met:{fixas:2, div:300, base:"projecao", nota:"pórticos, ligações e detalhes"},
-  hidrossanitario:{fixas:2, div:300, base:"area", nota:"água fria, esgoto e isométricos"},
-  drenagem:{fixas:1, div:600, base:"projecao", nota:"cobertura e condutores"},
-  eletrico:{fixas:2, div:280, base:"area", nota:"pontos, circuitos, quadros e diagramas"},
-  spda:{fixas:1, div:800, base:"projecao", nota:"malha de captação e descidas"},
-  incendio:{fixas:2, div:400, base:"area", nota:"saídas, hidrantes e detalhes"},
-  cabeamento:{fixas:1, div:500, base:"area", nota:"pontos e rack"},
-  cftv:{fixas:1, div:500, base:"area", nota:"posicionamento de câmeras e infraestrutura"},
-  climatizacao:{fixas:1, div:400, base:"area", nota:"dutos, equipamentos e detalhes"},
-  gases:{fixas:1, div:600, base:"area", nota:"rede e central"},
-  com_visual:{fixas:1, div:800, base:"area", nota:"placas e detalhamento gráfico"},
-  impermeabilizacao:{fixas:1, div:700, base:"projecao", nota:"áreas molhadas e detalhes"},
-  paisagismo:{fixas:1, div:1200, base:"terreno", nota:"plantio e detalhes"},
-  coordenacao:{fixas:1, div:1000, base:"area", nota:"pranchas de compatibilização"},
-  maquete:{fixas:1, div:0, base:"unidade", nota:"item medido por unidade, não por prancha"}
-};
-const SUDECAP_EST_TIPOLOGIA = {
-  educacional:1.00, saude:1.40, administrativo:1.00, comercial:1.00, esportivo:0.80,
-  quadra:0.50, seguranca:1.05, militar:1.10, penitenciaria:1.30, teatro:1.20,
-  convencoes:1.15, industrial:0.60, residencial:0.90, residencia:0.95,
-  habitacional:0.85, restauro:1.50, parques:0.50
-};
-
 /* ---- Tipologias normalizadas e correspondência entre tabelas ---- */
 const TIPOLOGIAS = [
   {id:"educacional", nome:"Escola / edifício educacional", iopes:"educacionais", cehop:"educacionais", cehopGr:"geral", senge:"escolas", sengeEstr:"escolas"},
@@ -1972,7 +1149,7 @@ const SERVICOS = [
 /* =========================================================
    2. ESTADO
    ========================================================= */
-const CHAVE = "comparador_honorarios_projetos_v2_cau_mod1";
+const CHAVE = "comparador_honorarios_projetos_v1";
 const estado = {
   tipologia:"educacional", area:1200, projecao:400, terreno:800,
   intervencao:"novo", fundacao:"superficial",
@@ -1984,14 +1161,7 @@ const estado = {
     arqTipo:"ARQ", incendio:"HEX", clima:"SCR", eletricaComp:false, maquete:0,
     vo:500000, apav:1200, selC1:{}
   },
-  cau:{
-    bh:0, fp:0, cub:0, sr:0, r:100, orc:"analitico", interp:false, sc1:0, fp1:0, sc2:0, fp2:0,
-    tipoMod1:"3.1", syncTipo:true, bhModo:"cub", cubTipologico:0, bhMercado:0,
-    fpModo:"auto", catOverride:"auto", areaDescoberta:0, qRep:0, rAuto:true
-  },
-  sudecap:{ k1:1.1623, k2:0.10, k3:0.10, iss:0.025, pis:0.0132, cofins:0.0608,
-            qtd:{}, auto:true, busca:"", und:"" },
-  daer:{ kz:1, kext:1, fator:1, faixas:2, pistas:1, sel:{}, qtd:{}, busca:"", grupo:"" },
+  cau:{ bh:0, fp:0, cub:0, sr:0, r:100, orc:"analitico", interp:false, sc1:0, fp1:0, sc2:0, fp2:0 },
   infra:{area:20000, km:2, classe:0, desnivel:4, areaCont:0}
 };
 SERVICOS.forEach(s=>{ estado.sel[s.id] = !!s.pad; });
@@ -2012,24 +1182,10 @@ function carregar(){
     if(d.custom) Object.keys(d.custom).forEach(k=>{ const v=Number(d.custom[k]); if(isFinite(v)&&v>=0) estado.custom[k]=v; });
     if(d.qtd) Object.keys(d.qtd).forEach(k=>{ const v=Number(d.qtd[k]); if(isFinite(v)&&v>=0) estado.qtd[k]=v; });
     if(d.infra) Object.keys(estado.infra).forEach(k=>{ const v=Number(d.infra[k]); if(isFinite(v)&&v>=0) estado.infra[k]=v; });
-    if(d.daer){
-      ["kz","kext","fator","faixas","pistas"].forEach(k=>{ const v=Number(d.daer[k]); if(isFinite(v)&&v>=0) estado.daer[k]=v; });
-      if(d.daer.sel && typeof d.daer.sel==="object"){
-        estado.daer.sel = {};
-        DAER_ITENS.forEach(x=>{ if(d.daer.sel[x.i]===true) estado.daer.sel[x.i]=true; });
-      }
-      if(d.daer.qtd) Object.keys(d.daer.qtd).forEach(k=>{ const v=Number(d.daer.qtd[k]); if(isFinite(v)&&v>=0) estado.daer.qtd[k]=v; });
-    }
-    if(d.sudecap){
-      ["k1","k2","k3","iss","pis","cofins"].forEach(k=>{ const v=Number(d.sudecap[k]); if(isFinite(v)&&v>=0) estado.sudecap[k]=v; });
-      if(d.sudecap.qtd) Object.keys(d.sudecap.qtd).forEach(k=>{ const v=Number(d.sudecap.qtd[k]); if(isFinite(v)&&v>=0) estado.sudecap.qtd[k]=v; });
-      if(typeof d.sudecap.auto==="boolean") estado.sudecap.auto = d.sudecap.auto;
-    }
     if(d.cau){
-      ["bh","fp","cub","sr","r","sc1","fp1","sc2","fp2","cubTipologico","bhMercado","areaDescoberta","qRep"].forEach(k=>{ const v=Number(d.cau[k]); if(isFinite(v)&&v>=0) estado.cau[k]=v; });
-      ["orc","tipoMod1","bhModo","fpModo","catOverride"].forEach(k=>{ if(typeof d.cau[k]==="string") estado.cau[k]=d.cau[k]; });
-      ["interp","syncTipo","rAuto"].forEach(k=>{ if(typeof d.cau[k]==="boolean") estado.cau[k]=d.cau[k]; });
-      if(!CAU_MOD1_IDX[estado.cau.tipoMod1]) estado.cau.tipoMod1 = CAU_MAPA_TIPOLOGIA[estado.tipologia] || "3.1";
+      ["bh","fp","cub","sr","r","sc1","fp1","sc2","fp2"].forEach(k=>{ const v=Number(d.cau[k]); if(isFinite(v)&&v>=0) estado.cau[k]=v; });
+      if(typeof d.cau.orc==="string") estado.cau.orc=d.cau.orc;
+      if(typeof d.cau.interp==="boolean") estado.cau.interp=d.cau.interp;
     }
     if(d.caixa){
       ["ht1","apd","apt","age","vo","apav","maquete"].forEach(k=>{ const v=Number(d.caixa[k]); if(isFinite(v)&&v>=0) estado.caixa[k]=v; });
@@ -2096,221 +1252,28 @@ function caixaPrazo(){
   return CAIXA_C9[CAIXA_C9.length-1];
 }
 
-/* --- DAER/RS: kapas de zona e de extensão, fórmulas lineares e quantidades --- */
-function daerExt(){ return estado.infra.km || 0; }
-function daerFatores(it){
-  const D = estado.daer;
-  if(!it.k) return 1;
-  if(it.k==="kz") return (D.kz||1);
-  return (D.kz||1) * (D.kext||1);
-}
-/* Preço unitário já modulado pelas kapas e pelo fator de atualização.
-   Itens em verba com fórmula linear e itens a calcular não têm preço unitário. */
-function daerUnit(it){
-  if(!it || it.calc || it.lin) return null;
-  return it.p * daerFatores(it) * (estado.daer.fator||1);
-}
-/* Quantidade padrão conforme a unidade de medida do item */
-function daerQtdPadrao(it){
-  const D = estado.daer, ext = daerExt();
-  if(it.u==="km") return ext;
-  if(it.u==="km.faixa") return ext * (D.faixas||0);
-  if(it.u==="km.pista") return ext * (D.pistas||0);
-  return 1;
-}
-function daerQtd(it){
-  const q = estado.daer.qtd[it.i];
-  return (q===undefined || !isFinite(q)) ? daerQtdPadrao(it) : q;
-}
-function daerTotal(it){
-  if(!it || it.calc) return null;
-  const f = estado.daer.fator||1;
-  if(it.lin) return (it.lin[0] + it.lin[1]*daerExt()) * f;
-  const u = daerUnit(it);
-  return u===null ? null : u * daerQtd(it);
-}
-/* Equivalente por quilômetro, para confronto com as demais referências lineares */
-function daerPorKm(codigo){
-  const it = DAER_IDX[codigo]; if(!it || it.calc) return null;
-  const ext = daerExt();
-  if(it.lin) return ext>0 ? ((it.lin[0] + it.lin[1]*ext) * (estado.daer.fator||1)) / ext : null;
-  if(it.u!=="km") return null;
-  return daerUnit(it);
-}
-
-/* --- Pré-preenchimento a partir das referências de mercado consultadas --- */
-function refCub(uf){
-  const r = REFERENCIAS_MERCADO.cub.find(x=>x.uf===uf);
-  return r || REFERENCIAS_MERCADO.cub[0];
-}
-function refHt1(){
-  const it = SUDECAP_IDX[REFERENCIAS_MERCADO.htSudecap];
-  return it ? it.p : null;
-}
-function refFatorSenge(){
-  return refCub("BA").v / REFERENCIAS_MERCADO.sengeBase;
-}
-function refFatorProxy(mesBase){
-  const c = REFERENCIAS_MERCADO.cubProxy;
-  const b = c[mesBase], a = c["jun/2026"];
-  return (b>0 && a>0) ? a/b : null;
-}
-/* Aplica somente as sugestões cuja base é exatamente o índice que a fonte declara.
-   Os fatores do IOPES e do DAER usam proxy regional e ficam fora do automático. */
-function aplicarReferencias(uf){
-  const cub = refCub(uf || "PA");
-  estado.cau.cub = cub.v;
-  if(estado.cau.bhModo==="cub" && !(estado.cau.cubTipologico>0)) estado.cau.cubTipologico = cub.v;
-  const ht = refHt1();
-  if(ht) estado.caixa.ht1 = ht;
-  estado.fatores.senge = refFatorSenge();
-  return {cub:cub, ht1:ht, senge:estado.fatores.senge};
-}
-
-/* --- SUDECAP: estimativa do número de pranchas por especialidade --- */
-function sudecapAreaBase(base){
-  if(base==="area") return estado.area||0;
-  if(base==="projecao") return estado.projecao||0;
-  if(base==="terreno") return estado.terreno||0;
-  return 0;
-}
-function sudecapEstimativa(svId){
-  const d = SUDECAP_EST_DISC[svId];
-  if(!d) return null;
-  const fator = SUDECAP_EST_TIPOLOGIA[estado.tipologia];
-  const f = (fator===undefined ? 1 : fator);
-  if(d.base==="unidade") return {n:1, densidade:0, fator:f, area:0, disc:d,
-    formula:"1 unidade — o item é medido por unidade, não por prancha"};
-  const A = sudecapAreaBase(d.base);
-  let dens = 0;
-  if(d.div>0){
-    dens = A<=SUDECAP_EST_LIMIAR ? A/d.div
-         : SUDECAP_EST_LIMIAR/d.div + (A-SUDECAP_EST_LIMIAR)/(2*d.div);
-  }
-  const n = Math.max(1, Math.round((d.fixas + dens) * f));
-  const rot = d.fixas + " prancha" + (d.fixas>1?"s":"") + " fixa" + (d.fixas>1?"s":"") +
-    (d.div>0 ? " + 1 a cada " + fmt0.format(d.div) + " m² (metade da densidade acima de " +
-      fmt0.format(SUDECAP_EST_LIMIAR) + " m²)" : "") +
-    ", sobre " + fmt0.format(A) + " m², × fator " + fmt2.format(f) + " da tipologia";
-  return {n:n, densidade:dens, fator:f, area:A, disc:d, formula:rot};
-}
-function sudecapQtd(svId){
-  const manual = estado.sudecap.qtd[svId];
-  if(manual!==undefined && isFinite(manual)) return {q:manual, estimada:false};
-  if(estado.sudecap.auto){
-    const e = sudecapEstimativa(svId);
-    if(e) return {q:e.n, estimada:true, est:e};
-  }
-  return {q:1, estimada:false};
-}
-
-/* --- SUDECAP: multiplicador K, taxa de ressarcimento e recomposição do preço --- */
-function sudecapK4(){ const S = estado.sudecap; return (S.iss||0) + (S.pis||0) + (S.cofins||0); }
-function sudecapK(){
-  const S = estado.sudecap, k4 = sudecapK4();
-  if(k4>=1) return null;
-  return ((1 + (S.k1||0) + (S.k2||0)) * (1 + (S.k3||0))) / (1 - k4);
-}
-function sudecapTRDE(){
-  const S = estado.sudecap, k4 = sudecapK4();
-  if(k4>=1) return null;
-  return (1 + (S.k3||0)) / (1 - k4);
-}
-/* razão preço de venda / custo para mão de obra pura e para insumo puro */
-function sudecapRazoes(){
-  const S = estado.sudecap, K = sudecapK(), T = sudecapTRDE();
-  if(K===null || T===null) return null;
-  return {mo: K/(1 + (S.k1||0)), ins: T, K:K, trde:T};
-}
-function sudecapPadrao(){
-  return Math.abs(estado.sudecap.k1-SUDECAP_K_PADRAO.k1)<1e-9 &&
-         Math.abs(estado.sudecap.k2-SUDECAP_K_PADRAO.k2)<1e-9 &&
-         Math.abs(estado.sudecap.k3-SUDECAP_K_PADRAO.k3)<1e-9 &&
-         Math.abs(estado.sudecap.iss-SUDECAP_K_PADRAO.iss)<1e-9 &&
-         Math.abs(estado.sudecap.pis-SUDECAP_K_PADRAO.pis)<1e-9 &&
-         Math.abs(estado.sudecap.cofins-SUDECAP_K_PADRAO.cofins)<1e-9;
-}
-/* Preço de venda do item: publicado quando os parâmetros são os originais;
-   recomposto pela participação de mão de obra quando o usuário altera o K. */
-function sudecapPV(item){
-  if(!item) return null;
-  if(sudecapPadrao()) return item.p;
-  const r = sudecapRazoes();
-  if(!r) return null;
-  return item.v * (item.a * r.mo + (1 - item.a) * r.ins);
-}
-const SUDECAP_IDX = {}; SUDECAP_ITENS.forEach(it=>{ SUDECAP_IDX[it.c] = it; });
-
-/* --- CAU/BR: integração dos Módulos I e II --- */
-function cauTipoAtual(){ return CAU_MOD1_IDX[estado.cau.tipoMod1] || null; }
-function cauSc(){ return Math.max(0,(estado.area||0) + 0.25*(estado.cau.areaDescoberta||0)); }
-function cauCategoria(){
-  const C = estado.cau, t = cauTipoAtual();
-  const ov = Number(C.catOverride);
-  return (C.catOverride!=="auto" && ov>=1 && ov<=4) ? ov : (t ? t.cat : null);
-}
-function cauFpTabela(Sc, categoria){
-  if(!(Sc>0) || !(categoria>=1 && categoria<=4)) return 0;
-  const col = categoria-1;
-  if(Sc<=CAU_FP_FAIXAS[0].sc) return CAU_FP_FAIXAS[0].fp[col];
-  for(let i=1;i<CAU_FP_FAIXAS.length;i++){
-    const atual = CAU_FP_FAIXAS[i];
-    if(Sc<=atual.sc){
-      const anterior = CAU_FP_FAIXAS[i-1];
-      if(!isFinite(atual.sc)) return atual.fp[col];
-      const f = (Sc-anterior.sc)/(atual.sc-anterior.sc);
-      return anterior.fp[col] - (anterior.fp[col]-atual.fp[col])*f;
-    }
-  }
-  return CAU_FP_FAIXAS[CAU_FP_FAIXAS.length-1].fp[col];
-}
-function cauBhInfo(){
-  const C = estado.cau, t = cauTipoAtual();
-  if(C.bhModo==="manual") return {v:C.bh||0, origem:"BH informada manualmente", historico:false, tipo:t};
-  if(!t) return {v:0, origem:"Tipologia do Módulo I não selecionada", historico:false, tipo:null};
-  let v=0, origem="";
-  if(C.bhModo==="tabela"){
-    v=t.bh2013; origem="Tabela 8 — referência jun/2013";
-  } else {
-    v=(C.cubTipologico||0)*t.fator;
-    origem="CUB atual "+t.cub+" × fator "+fmt2.format(t.fator);
-  }
-  if(t.cat===4 && C.bhMercado>0 && C.bhMercado>v){ v=C.bhMercado; origem+="; prevaleceu a BH de mercado da categoria IV"; }
-  return {v:v, origem:origem, historico:C.bhModo==="tabela", tipo:t};
-}
-function cauBh(){ return cauBhInfo().v; }
+/* --- CAU/BR: fator percentual, redutor de repetições e fórmulas próprias --- */
 function cauFp(){
   const C = estado.cau;
-  if(C.fpModo==="auto") return cauFpTabela(cauSc(),cauCategoria());
   if(C.interp && C.sc2>C.sc1 && C.fp1>0 && C.fp2>0){
-    const Sc = Math.max(C.sc1,Math.min(cauSc(),C.sc2));
+    const Sc = estado.area;
     return C.fp1 - (C.fp1 - C.fp2) * ((Sc - C.sc1)/(C.sc2 - C.sc1));
   }
   return C.fp;
 }
-function cauRedutorTabela(q){
-  q=Math.max(0,Number(q)||0);
-  if(q>=128) return 0.125;
-  for(let i=1;i<CAU_REPETICOES.length;i++){
-    const [q2,r2]=CAU_REPETICOES[i], [q1,r1]=CAU_REPETICOES[i-1];
-    if(q<=q2) return r1 - (r1-r2)*((q-q1)/(q2-q1));
-  }
-  return 1;
-}
-function cauRedutor(){ return estado.cau.rAuto ? cauRedutorTabela(estado.cau.qRep) : Math.max(0,Math.min(1,(estado.cau.r||0)/100)); }
 /* R = Sp/Sc, com Sp = Snr + (Sr x r) */
 function cauR(){
-  const Sc = cauSc(), C = estado.cau;
+  const Sc = estado.area, C = estado.cau;
   if(!(Sc>0)) return 1;
   const Sr = Math.min(C.sr||0, Sc), Snr = Sc - Sr;
-  const Sp = Snr + Sr * cauRedutor();
+  const Sp = Snr + Sr * ((C.r||0)/100);
   return Sp / Sc;
 }
 /* PV = Sc x BH x (fp x R) -> preço unitário = BH x fp x R */
 function cauUnit(pct){
-  const bh = cauBh(), fp = cauFp();
-  if(!(bh>0) || !(fp>0) || !(pct>0)) return null;
-  return bh * (pct * fp/100) * cauR();
+  const C = estado.cau, fp = cauFp();
+  if(!(C.bh>0) || !(fp>0) || !(pct>0)) return null;
+  return C.bh * (pct * fp/100) * cauR();
 }
 /* Item 6.3.3: PV = 2,21 x [(255,33% x CUB) + (25,53% x CUB) x raiz(S)] */
 function cauPaisagismo(S){
@@ -2540,27 +1503,24 @@ function precoCaixa(sv, T){
 }
 
 function precoCau(sv, T){
-  const C = estado.cau, Sc = cauSc(), bhInfo = cauBhInfo(), cat = cauCategoria();
-  const semBase = () => NA(C.bhModo==="cub" && !(C.cubTipologico>0)
-    ? "Informe o CUB atual correspondente à tipologia CAU/BR para calcular a Base de Honorários."
-    : "Complete a tipologia, a Base de Honorários e o fp do Módulo I para ativar esta referência.");
-  const contexto = () => "Categoria "+(cat||"—")+" · BH "+(bhInfo.v>0?fmt2.format(bhInfo.v):"—")+" R$/m² ("+bhInfo.origem+") · fp "+fmt3.format(cauFp())+"% · R "+fmt4.format(cauR());
+  const C = estado.cau;
+  const semBase = () => NA("Informe a Base de Honorários e o fp base da Tabela 5 do Módulo I para ativar esta referência.");
   const item = (id, obs) => {
     const it = CAU_TAB1.find(x=>x.id===id);
     if(!it) return NA("Item não previsto na Tabela 1 do Módulo II.");
     const u = cauUnit(it.pct);
     if(u===null) return semBase();
-    const rot = "Item " + it.id + " · " + fmt0.format(it.pct*100) + "% do fp base · fp resultante = " +
-                fmt3.format(it.pct*cauFp()) + "% · " + contexto();
-    return {v:u, st:"ok", qtd:Sc, obs:[obs,rot].filter(Boolean).join(" ")};
+    const rot = "Item " + it.id + " · " + fmt0.format(it.pct*100) + "% do fp base · fp = " +
+                fmt3.format(it.pct*cauFp()) + "% · R = " + fmt3.format(cauR());
+    return {v:u, st:"ok", qtd:estado.area, obs:[obs,rot].filter(Boolean).join(" ")};
   };
   const soma = (ids, obs) => {
     let pct = 0;
     for(const id of ids){ const it = CAU_TAB1.find(x=>x.id===id); if(!it) return NA(); pct += it.pct; }
     const u = cauUnit(pct);
     if(u===null) return semBase();
-    return {v:u, st:"ok", qtd:Sc,
-      obs:[obs, "Itens " + ids.join(" + ") + " · " + fmt0.format(pct*100) + "% do fp base · "+contexto()].filter(Boolean).join(" ")};
+    return {v:u, st:"ok", qtd:estado.area,
+      obs:[obs, "Itens " + ids.join(" + ") + " · " + fmt0.format(pct*100) + "% do fp base"].filter(Boolean).join(" ")};
   };
   switch(sv.id){
     case "arquitetura": {
@@ -2568,8 +1528,8 @@ function precoCau(sv, T){
       if(estado.intervencao==="reforma") return item("1.1.2");
       const u = cauUnit(1.00);
       if(u===null) return semBase();
-      return {v:u, st:"ok", qtd:Sc,
-        obs:"Projeto arquitetônico completo do Módulo I: 100% do fp base · "+contexto()};
+      return {v:u, st:"ok", qtd:estado.area,
+        obs:"Projeto arquitetônico completo do Módulo I: 100% do fp base · fp = " + fmt3.format(cauFp()) + "% · R = " + fmt3.format(cauR())};
     }
     case "cadastro_arq": return item("1.1.1");
     case "fundacoes": return INC("A Tabela 1 não segrega fundações: integram o projeto de estrutura (item 1.2).");
@@ -2610,56 +1570,6 @@ function precoCau(sv, T){
   return NA("Serviço fora do escopo desta referência.");
 }
 
-/* Correspondência entre os serviços normalizados e os códigos da SUDECAP */
-const MAPA_SUDECAP = {
-  arquitetura:{cod:"62.01.04"},
-  cadastro_arq:{cod:"62.01.47"},
-  fundacoes:{na:"A tabela não traz item autônomo de projeto de fundações."},
-  estrutura:{cod:"62.01.16"},
-  estrutura_met:{cod:"62.01.21"},
-  hidrossanitario:{cod:"62.01.22"},
-  drenagem:{cod:"62.01.12"},
-  eletrico:{cod:"62.01.19"},
-  spda:{cod:"62.01.25"},
-  incendio:{cod:"62.01.23"},
-  cabeamento:{cod:"62.01.20"},
-  telefonia:{inc:"62.01.20", obs:"Telefonia e lógica integram o projeto de cabeamento estruturado."},
-  logica:{inc:"62.01.20"},
-  cftv:{cod:"62.01.34", obs:"Item único de sonorização, alarme e CFTV."},
-  sonorizacao:{inc:"62.01.34", obs:"Sonorização integra o mesmo item de alarme e CFTV — evita dupla contagem."},
-  climatizacao:{cod:"62.01.28"},
-  gases:{cod:"62.20.10"},
-  enfermagem:{na:"Chamada de enfermagem não consta da tabela."},
-  automacao:{na:"Automação predial não consta como item autônomo."},
-  com_visual:{cod:"62.01.24"},
-  paisagismo:{cod:"62.01.14", obs:"Áreas livres de obras de edificação; para praça, parque e área de lazer, ver o item 62.01.13."},
-  urbanizacao:{na:"Tratado por quilômetro nos projetos de infraestrutura urbana — ver a aba de infraestrutura."},
-  impermeabilizacao:{cod:"62.01.45"},
-  maquete:{cod:"62.20.03", obs:"Imagem fotorrealística; perspectiva colorida 50x70 cm é o item 62.01.42."},
-  pgrscc:{na:"Plano de resíduos da construção não consta da tabela."},
-  orcamento:{na:"A tabela não traz item de elaboração de orçamento — ela é a própria base de preços."},
-  coordenacao:{cod:"62.01.40", obs:"Compatibilização de projetos de edificação."}
-};
-
-function precoSudecap(sv, T){
-  const m = MAPA_SUDECAP[sv.id];
-  if(!m) return NA("Serviço fora do escopo desta referência.");
-  if(m.na) return NA(m.na);
-  if(m.inc){
-    const ref = SUDECAP_IDX[m.inc];
-    return INC((m.obs || "Absorvido por outro item da tabela.") + " Item " + m.inc + (ref?" — "+ref.d:""));
-  }
-  const it = SUDECAP_IDX[m.cod];
-  if(!it) return NA("Código " + m.cod + " não localizado na tabela.");
-  const pv = sudecapPV(it);
-  if(pv===null) return NA("Parâmetros de K inválidos: a soma dos impostos não pode atingir 100%.");
-  const qi = sudecapQtd(sv.id);
-  const rot = "Item " + it.c + " · " + it.d + " · " + fmt0.format(it.a*100) + "% de mão de obra no custo";
-  const est = qi.estimada && qi.est ? "Quantidade estimada: " + qi.est.formula + "." : "";
-  return {v:pv, st:"ok", qtd:qi.q, un:it.u, estimada:qi.estimada,
-          obs:[m.obs, rot, est].filter(Boolean).join(" ")};
-}
-
 function precoCustom(sv){
   const v = estado.custom[sv.id];
   return (v===undefined || v===null || v==="" || !isFinite(v)) ? NA("") : OK(Number(v), "Valor informado pelo usuário.");
@@ -2683,8 +1593,7 @@ function calcular(){
     const q = baseQtd(sv);
     const brutos = {
       iopes: precoIopes(sv,T), senge: precoSenge(sv,T), cehop: precoCehop(sv,T),
-      caixa: precoCaixa(sv,T), cau: precoCau(sv,T),
-      sudecap: precoSudecap(sv,T), custom: precoCustom(sv)
+      caixa: precoCaixa(sv,T), cau: precoCau(sv,T), custom: precoCustom(sv)
     };
     const cel = {};
     REFS.forEach(r=>{
@@ -2699,13 +1608,9 @@ function calcular(){
       let minAplicado = false;
       if(r.id==="cehop"){ const m = aplicaMinimoCehop(sv,total); total=m.total; minAplicado=m.min; }
       cel[r.id] = {st:"ok", unit:unit, total:total, obs:p.obs, aprox:p.aprox, conf:p.conf,
-                   min:minAplicado, fixo:!!p.fixo, qtd:qUsada, un:p.un || null,
-                   propria:!!r.unidadePropria, estimada:!!p.estimada};
+                   min:minAplicado, fixo:!!p.fixo, qtd:qUsada};
     });
-    /* Estatísticas de preço unitário só reúnem referências medidas na mesma unidade.
-       A SUDECAP mede por prancha A1 e fica de fora — entra apenas nos totais em R$. */
-    const valores = REFS.filter(r=>!r.unidadePropria).map(r=>cel[r.id])
-                        .filter(c=>c.st==="ok").map(c=>c.unit);
+    const valores = REFS.map(r=>cel[r.id]).filter(c=>c.st==="ok").map(c=>c.unit);
     linhas.push({sv:sv, q:q, cel:cel, valores:valores, comum:false});
   });
 
@@ -2764,8 +1669,6 @@ function initAbas(){
       if(b.id==="t-infra") renderInfra();
       if(b.id==="t-caixa") renderCaixa();
       if(b.id==="t-cau") renderCau();
-      if(b.id==="t-sud") renderSudecap();
-      if(b.id==="t-daer") renderDaer();
       if(b.id==="t-base") renderBase();
     });
   });
@@ -2790,7 +1693,6 @@ function initParametros(){
       if(tipo==="num"){ const v = Number(el.value); estado[campo] = isFinite(v)&&v>=0 ? v : 0; }
       else if(tipo==="bool") estado[campo] = el.checked;
       else estado[campo] = el.value;
-      if(campo==="tipologia") sincronizaTipoCau(true);
       atualizar();
     });
   };
@@ -2834,163 +1736,22 @@ function initParametros(){
     if(tipo==="bool") el.checked = estado.cau[campo];
     else el.value = String(estado.cau[campo]);
     el.addEventListener(tipo==="bool"?"change":"input", ()=>{
-      const anterior=estado.cau[campo];
       if(tipo==="num"){ const v=Number(el.value); estado.cau[campo] = isFinite(v)&&v>=0 ? v : 0; }
       else if(tipo==="bool") estado.cau[campo] = el.checked;
       else estado.cau[campo] = el.value;
-      if(campo==="tipoMod1" && anterior!==estado.cau.tipoMod1){ estado.cau.cubTipologico=0; estado.cau.bhMercado=0; }
-      if(campo==="tipoMod1" && document.activeElement===el) estado.cau.syncTipo=false;
-      if(campo==="syncTipo" && estado.cau.syncTipo) sincronizaTipoCau(true);
       sincronizaCau();
       atualizar();
       const abaCu = document.querySelector('button[aria-controls="p-cau"]');
       if(abaCu && abaCu.getAttribute("aria-selected")==="true") renderCau();
     });
   };
-  const selCauTipo = $("cu-tipo-mod1");
-  if(selCauTipo){
-    let grupo="", optgroup=null;
-    CAU_MOD1_TIPOLOGIAS.forEach(t=>{
-      if(t.grupo!==grupo){ grupo=t.grupo; optgroup=document.createElement("optgroup"); optgroup.label=grupo; selCauTipo.appendChild(optgroup); }
-      const o=document.createElement("option"); o.value=t.id; o.textContent=(t.item||t.id)+" — "+t.nome; optgroup.appendChild(o);
-    });
-  }
-
-  const ligaSud = (id, campo)=>{
-    const el = $(id); if(!el) return;
-    el.addEventListener("input", ()=>{
-      const v = Number(el.value);
-      estado.sudecap[campo] = isFinite(v)&&v>=0 ? v/100 : 0;
-      atualizar(); renderSudecap();
-    });
-  };
-  ["k1","k2","k3","iss","pis","cofins"].forEach(k=> ligaSud("sd-"+k, k));
-  const ckAuto = $("sd-auto");
-  if(ckAuto){
-    ckAuto.checked = estado.sudecap.auto;
-    ckAuto.addEventListener("change", ()=>{
-      estado.sudecap.auto = ckAuto.checked;
-      atualizar(); renderSudecap();
-    });
-  }
-  const btRest = $("sd-restaurar");
-  if(btRest) btRest.addEventListener("click", ()=>{
-    estado.sudecap.qtd = {}; estado.sudecap.auto = true;
-    atualizar(); renderSudecap();
-  });
-
-  /* referências de mercado */
-  const selUf = $("ref-uf");
-  if(selUf){
-    REFERENCIAS_MERCADO.cub.forEach(c=>{
-      const o = document.createElement("option");
-      o.value = c.uf; o.textContent = c.rot + " — " + R$(c.v) + " (" + c.mes + ")";
-      selUf.appendChild(o);
-    });
-    selUf.value = "PA";
-    selUf.addEventListener("input", renderReferencias);
-  }
-  const selHt = $("ref-ht");
-  if(selHt){
-    SUDECAP_ITENS.filter(x=>x.u==="H" && x.c.indexOf("61.11.")===0).forEach(x=>{
-      const o = document.createElement("option");
-      o.value = x.c; o.textContent = x.d.charAt(0)+x.d.slice(1).toLowerCase()+" — "+R$(x.p)+"/h";
-      selHt.appendChild(o);
-    });
-    selHt.value = REFERENCIAS_MERCADO.htSudecap;
-    selHt.addEventListener("input", renderReferencias);
-  }
-  const btRef = $("ref-aplicar");
-  if(btRef) btRef.addEventListener("click", ()=>{
-    const uf = selUf ? selUf.value : "PA";
-    if(selHt) REFERENCIAS_MERCADO.htSudecap = selHt.value;
-    aplicarReferencias(uf);
-    sincronizaCau(); atualizar(); renderReferencias();
-  });
-  const btPi = $("ref-proxy-iopes");
-  if(btPi) btPi.addEventListener("click", ()=>{
-    const f = refFatorProxy("jan/2018");
-    if(f) estado.fatores.iopes = f;
-    const el = $("f-iopes"); if(el) el.value = fmt4.format(estado.fatores.iopes).replace(",",".");
-    atualizar(); renderReferencias();
-  });
-  const btPd = $("ref-proxy-daer");
-  if(btPd) btPd.addEventListener("click", ()=>{
-    const f = refFatorProxy("jan/2021");
-    if(f) estado.daer.fator = f;
-    const el = $("da-fator"); if(el) el.value = String(estado.daer.fator);
-    atualizar(); renderReferencias(); renderInfra();
-  });
-  const btNeutro = $("ref-neutro");
-  if(btNeutro) btNeutro.addEventListener("click", ()=>{
-    estado.fatores.iopes = 1; estado.fatores.senge = 1; estado.fatores.cehop = 1;
-    estado.daer.fator = 1;
-    ["iopes","senge","cehop"].forEach(r=>{ const el = $("f-"+r); if(el) el.value = "1.0000"; });
-    const el = $("da-fator"); if(el) el.value = "1";
-    atualizar(); renderReferencias();
-  });
-
-  const ligaDaer = (id, campo)=>{
-    const el = $(id); if(!el) return;
-    el.value = String(estado.daer[campo]);
-    el.addEventListener("input", ()=>{
-      const v = Number(el.value);
-      estado.daer[campo] = isFinite(v)&&v>=0 ? v : 0;
-      salvar(); renderDaer(); renderInfra();
-    });
-  };
-  ["kz","kext","fator","faixas","pistas"].forEach(k=> ligaDaer("da-"+k, k));
-  const elExt = $("da-ext");
-  if(elExt){
-    elExt.value = String(estado.infra.km);
-    elExt.addEventListener("input", ()=>{
-      const v = Number(elExt.value);
-      estado.infra.km = isFinite(v)&&v>=0 ? v : 0;
-      const espelho = $("i-km"); if(espelho) espelho.value = String(estado.infra.km);
-      salvar(); renderDaer(); renderInfra();
-    });
-  }
-  const selGrupo = $("da-grupo");
-  if(selGrupo){
-    Object.keys(DAER_GRUPOS).forEach(k=>{
-      const o = document.createElement("option");
-      o.value = k; o.textContent = k + " — " + DAER_GRUPOS[k];
-      selGrupo.appendChild(o);
-    });
-  }
-  ["da-busca","da-grupo"].forEach(id=>{
-    const el = $(id); if(!el) return;
-    el.addEventListener("input", ()=>{
-      estado.daer[id==="da-busca"?"busca":"grupo"] = el.value;
-      renderDaerTabela();
-    });
-  });
-  const btReset = $("sd-reset");
-  if(btReset) btReset.addEventListener("click", ()=>{
-    Object.keys(SUDECAP_K_PADRAO).forEach(k=>{ estado.sudecap[k] = SUDECAP_K_PADRAO[k]; });
-    atualizar(); renderSudecap();
-  });
-  ["sd-busca","sd-und"].forEach(id=>{
-    const el = $(id); if(!el) return;
-    el.addEventListener("input", ()=>{
-      estado.sudecap[id==="sd-busca"?"busca":"und"] = el.value;
-      renderSudecapTabela();
-    });
-  });
-
-  ligaCau("u-cub-tip","cubTipologico","num"); ligaCau("u-bh","bh","num"); ligaCau("u-fp","fp","num"); ligaCau("u-cub","cub","num");
-  ligaCau("cu-tipo-mod1","tipoMod1","txt"); ligaCau("cu-sync-tipo","syncTipo","bool");
-  ligaCau("cu-bh-modo","bhModo","txt"); ligaCau("cu-cub-tip","cubTipologico","num");
-  ligaCau("cu-bh-mercado","bhMercado","num"); ligaCau("cu-bh","bh","num");
-  ligaCau("cu-fp-modo","fpModo","txt"); ligaCau("cu-cat-override","catOverride","txt");
-  ligaCau("cu-fp","fp","num"); ligaCau("cu-cub","cub","num");
-  ligaCau("cu-area-desc","areaDescoberta","num"); ligaCau("cu-sr","sr","num");
-  ligaCau("cu-q-rep","qRep","num"); ligaCau("cu-r-auto","rAuto","bool");
-  ligaCau("cu-r","r","num"); ligaCau("cu-orc","orc","txt");
+  ligaCau("u-bh","bh","num"); ligaCau("u-fp","fp","num"); ligaCau("u-cub","cub","num");
+  ligaCau("cu-bh","bh","num"); ligaCau("cu-fp","fp","num"); ligaCau("cu-cub","cub","num");
+  ligaCau("cu-sr","sr","num"); ligaCau("cu-r","r","num"); ligaCau("cu-orc","orc","txt");
   ligaCau("cu-interp","interp","bool");
   ligaCau("cu-sc1","sc1","num"); ligaCau("cu-fp1","fp1","num");
   ligaCau("cu-sc2","sc2","num"); ligaCau("cu-fp2","fp2","num");
-  sincronizaTipoCau(false); sincronizaCau();
+  sincronizaCau();
 
   ligaCaixa("c-ht1","ht1","num");
   ligaCaixa("c-modalidade","modalidade","txt");
@@ -3016,7 +1777,6 @@ function initParametros(){
     el.addEventListener("input", ()=>{
       const v = Number(el.value);
       estado.infra[campo] = isFinite(v)&&v>=0 ? v : 0;
-      if(campo==="km"){ const e2 = $("da-ext"); if(e2) e2.value = String(estado.infra.km); }
       salvar(); renderInfra();
     });
   });
@@ -3040,45 +1800,23 @@ function sincronizaCaixa(){
   }
 }
 
-/* mantém em sincronia os campos do CAU/BR e aplica o mapeamento da tipologia geral */
-function sincronizaTipoCau(forcar){
-  if(!estado.cau.syncTipo) return;
-  const id=CAU_MAPA_TIPOLOGIA[estado.tipologia];
-  if(id && CAU_MOD1_IDX[id] && id!==estado.cau.tipoMod1){
-    estado.cau.tipoMod1=id;
-    estado.cau.cubTipologico=0;
-    estado.cau.bhMercado=0;
-  }
-}
+/* mantém em sincronia os campos do CAU/BR que aparecem em duas abas */
 function sincronizaCau(){
-  const C=estado.cau, bh=cauBh(), fp=cauFp(), red=cauRedutor()*100, t=cauTipoAtual();
-  const pares = [["u-cub-tip","cubTipologico"],["cu-cub-tip","cubTipologico"],["cu-bh-mercado","bhMercado"],
-                 ["u-cub","cub"],["cu-cub","cub"],["cu-area-desc","areaDescoberta"],["cu-sr","sr"],
-                 ["cu-q-rep","qRep"],["cu-orc","orc"],["cu-sc1","sc1"],["cu-fp1","fp1"],
-                 ["cu-sc2","sc2"],["cu-fp2","fp2"],["cu-bh-modo","bhModo"],["cu-fp-modo","fpModo"],
-                 ["cu-cat-override","catOverride"],["cu-tipo-mod1","tipoMod1"]];
-  pares.forEach(([id,campo])=>{ const el=$(id); if(el && document.activeElement!==el) el.value=String(C[campo]); });
-  const sync=$("cu-sync-tipo"); if(sync) sync.checked=C.syncTipo;
-  const ip=$("cu-interp"); if(ip) ip.checked=C.interp;
-  const ra=$("cu-r-auto"); if(ra) ra.checked=C.rAuto;
-
-  [["u-bh",bh],["cu-bh",bh],["u-fp",fp],["cu-fp",fp],["cu-r",red]].forEach(([id,v])=>{
-    const el=$(id); if(el && document.activeElement!==el) el.value=isFinite(v)?String(Math.round(v*10000)/10000):"";
+  const pares = [["u-bh","bh"],["cu-bh","bh"],["u-fp","fp"],["cu-fp","fp"],["u-cub","cub"],["cu-cub","cub"],
+                 ["cu-sr","sr"],["cu-r","r"],["cu-orc","orc"],["cu-sc1","sc1"],["cu-fp1","fp1"],
+                 ["cu-sc2","sc2"],["cu-fp2","fp2"]];
+  pares.forEach(([id,campo])=>{
+    const el = $(id);
+    if(el && document.activeElement!==el) el.value = String(estado.cau[campo]);
   });
-  const bhManual=C.bhModo==="manual";
-  [$("u-bh"),$("cu-bh")].forEach(el=>{ if(el) el.disabled=!bhManual; });
-  const fpManual=C.fpModo==="manual";
-  [$("u-fp"),$("cu-fp")].forEach(el=>{ if(el) el.disabled=!fpManual; });
-  const interpIds=["cu-interp","cu-sc1","cu-fp1","cu-sc2","cu-fp2"];
-  interpIds.forEach(id=>{ const el=$(id); if(el) el.disabled=!fpManual; });
-  const rEl=$("cu-r"); if(rEl) rEl.disabled=C.rAuto;
-  const cubTipEls=[$("u-cub-tip"),$("cu-cub-tip")]; cubTipEls.forEach(el=>{ if(el) el.disabled=C.bhModo!=="cub"; });
-  const mercado=$("cu-bh-mercado"); if(mercado) mercado.disabled=!(t && t.cat===4 && C.bhModo!=="manual");
-  const tipoSel=$("cu-tipo-mod1"); if(tipoSel) tipoSel.disabled=C.syncTipo;
-  const dica=$("cu-cub-tip-dica");
-  if(dica) dica.textContent=t ? ("CUB correspondente: "+t.cub+" · referência histórica jun/2013: "+R$(t.cub2013)+" · fator "+fmt2.format(t.fator)) : "Selecione uma tipologia.";
-  const resumo=$("u-cau-resumo");
-  if(resumo) resumo.innerHTML=t ? ("Tipologia CAU: <b>"+esc((t.item||t.id)+" — "+t.nome)+"</b> · categoria <b>"+esc(CAU_CAT_ROT[cauCategoria()]||"—")+"</b> · origem da BH: <b>"+esc(cauBhInfo().origem)+"</b>") : "Selecione a tipologia CAU/BR na aba específica.";
+  const ip = $("cu-interp"); if(ip) ip.checked = estado.cau.interp;
+  const fpEl = $("cu-fp"), fpEl2 = $("u-fp");
+  const usandoInterp = estado.cau.interp && estado.cau.sc2>estado.cau.sc1 && estado.cau.fp1>0 && estado.cau.fp2>0;
+  [fpEl,fpEl2].forEach(el=>{ if(el) el.disabled = usandoInterp; });
+  if(usandoInterp){
+    const v = fmt4.format(cauFp());
+    [fpEl,fpEl2].forEach(el=>{ if(el && document.activeElement!==el) el.value = v.replace(",","."); });
+  }
 }
 
 /* ---------- tabela principal ---------- */
@@ -3094,12 +1832,6 @@ function celulaHTML(c, refId){
   if(c.conf)  marcas += ' <span class="tag conf" title="Valor com divergência de leitura na fonte">conferir</span>';
   if(c.min)   marcas += ' <span class="tag aprox" title="Valor mínimo de projeto da CEHOP aplicado">mínimo</span>';
   if(c.fixo)  marcas += ' <span class="tag aprox" title="Valor fixo, múltiplo da hora técnica">fixo</span>';
-  if(c.propria){
-    const u = c.un || "un";
-    if(c.estimada) marcas += ' <span class="tag est" title="Quantidade de pranchas estimada pela área e pela tipologia">estimado</span>';
-    return '<td class="n"'+(c.obs?' title="'+esc(c.obs)+'"':'')+'><b>'+R$(c.total)+'</b>'+marcas+
-           '<span class="mini">'+fmt2.format(c.unit)+' /'+esc(u)+' × '+fmt2.format(c.qtd)+'</span></td>';
-  }
   const tit = c.obs ? ' title="'+esc(c.obs)+'"' : "";
   return '<td class="n"'+tit+'><b>'+R$(c.total)+'</b>'+marcas+
          '<span class="mini">'+fmt2.format(c.unit)+' /un.</span></td>';
@@ -3112,7 +1844,7 @@ function renderCalc(){
   GRUPOS.forEach(g=>{
     const doGrupo = res.linhas.filter(L=>L.sv.grupo===g.id);
     if(!doGrupo.length) return;
-    html += '<tr class="grupo"><td colspan="11" style="border-left:4px solid '+g.cor+'">'+esc(g.nome)+'</td></tr>';
+    html += '<tr class="grupo"><td colspan="10" style="border-left:4px solid '+g.cor+'">'+esc(g.nome)+'</td></tr>';
     doGrupo.forEach(L=>{
       const sv = L.sv;
       const marcado = estado.sel[sv.id];
@@ -3128,7 +1860,6 @@ function renderCalc(){
         celulaHTML(L.cel.cehop,"cehop")+
         celulaHTML(L.cel.caixa,"caixa")+
         celulaHTML(L.cel.cau,"cau")+
-        celulaHTML(L.cel.sudecap,"sudecap")+
         '<td class="n"><input class="pers num" type="number" step="0.01" min="0" data-cu="'+sv.id+'" value="'+
           (estado.custom[sv.id]!==undefined?estado.custom[sv.id]:"")+'" placeholder="—" aria-label="Preço personalizado de '+esc(sv.nome)+'">'+
           (L.cel.custom.st==="ok"?'<span class="mini">'+R$(L.cel.custom.total)+'</span>':'')+'</td>'+
@@ -3169,8 +1900,7 @@ function correspondencias(T){
   partes.push('SENGE: '+ (T.senge ? esc(SENGE_CIVIS_ROT[T.senge]) : "sem correspondência"));
   partes.push('CEHOP: '+ (T.cehop ? esc(CEHOP_ARQ_ROT[T.cehop]) : "sem correspondência"));
   partes.push('CAIXA: índices independentes da tipologia');
-  partes.push('CAU/BR: tipologia, categoria, BH e fp vêm dos Módulos I e II');
-  partes.push('SUDECAP: preço por prancha, independente da tipologia');
+  partes.push('CAU/BR: tipologia entra pelo fp base do Módulo I');
   return partes.join(" &middot; ");
 }
 
@@ -3269,7 +1999,7 @@ function renderGraficoTotal(){
 
 function renderGraficoDisciplinas(){
   const res = ULTIMO;
-  const refs = REFS.filter(r=> !r.unidadePropria && (res.ativos.indexOf(r)>=0 || (r.id==="custom" && res.totais.custom.itens>0)));
+  const refs = REFS.filter(r=> res.ativos.indexOf(r)>=0 || (r.id==="custom" && res.totais.custom.itens>0));
   const linhas = res.linhas.filter(L=> estado.sel[L.sv.id] && L.valores.length>0 && !(estado.comum && !L.comum));
   const W=900, ml=250, mr=70, mt=14, hLinha=Math.max(34, 14+refs.length*9);
   const H = mt + linhas.length*hLinha + 24;
@@ -3297,7 +2027,7 @@ function renderGraficoDisciplinas(){
 
 function renderGraficoDispersao(){
   const res = ULTIMO;
-  const refs = REFS.filter(r=> !r.unidadePropria && (res.ativos.indexOf(r)>=0 || (r.id==="custom" && res.totais.custom.itens>0)));
+  const refs = REFS.filter(r=> res.ativos.indexOf(r)>=0 || (r.id==="custom" && res.totais.custom.itens>0));
   const linhas = res.linhas.filter(L=> estado.sel[L.sv.id] && L.valores.length>1 && !(estado.comum && !L.comum));
   const W=900, ml=250, mr=110, mt=16, hLinha=26;
   const H = mt + linhas.length*hLinha + 20;
@@ -3327,7 +2057,7 @@ function renderGraficoDispersao(){
 
 function renderEstatistica(){
   const res = ULTIMO;
-  const refs = REFS.filter(r=> !r.unidadePropria && (res.ativos.indexOf(r)>=0 || (r.id==="custom" && res.totais.custom.itens>0)));
+  const refs = REFS.filter(r=> res.ativos.indexOf(r)>=0 || (r.id==="custom" && res.totais.custom.itens>0));
   let html = "";
   res.linhas.forEach(L=>{
     if(!estado.sel[L.sv.id]) return;
@@ -3415,58 +2145,42 @@ function renderInfra(){
   $("corpo-infra").innerHTML = html;
 
   const mapaVias = [
-    ["Terraplenagem","terraplenagem","terrapl","62.03.02","4.1"],
-    ["Projeto geométrico","geometrico",null,"62.03.01","4.3"],
-    ["Pavimentação","pavimentacao","pavim","62.03.08","4.5"],
-    ["Restauração de pavimento",null,null,null,"4.20"],
-    ["Drenagem pluvial (micro)","drenagem","drenS","62.03.04","4.4"],
-    ["Drenagem complexa / macrodrenagem",null,"drenC","62.03.03",null],
-    ["Alimentação de água",null,"agua",null,null],
-    ["Esgotos sanitários — elevatória",null,"esgoto",null,null],
-    ["Rede elétrica",null,"eletr",null,null],
-    ["Iluminação pública",null,null,null,"4.15"],
-    ["Sinalização","sinalizacao","sinal","62.03.11","4.7"],
-    ["Cadastramento de infraestrutura","cadastro","cadastro",null,null],
-    ["Estudos topográficos","topograficos",null,null,"2.1"],
-    ["Estudos geotécnicos","geotecnicos",null,null,"11.7"],
-    ["Estudos hidrológicos","hidrologicos",null,null,"11.1"],
-    ["Obras complementares",null,null,null,"4.18"],
-    ["Desapropriação",null,null,null,"4.19"],
-    ["Estabilização de aterros em solos moles",null,null,null,"4.2"],
-    ["Orçamento e plano de execução","orcamento",null,null,null],
-    ["Serviços de coordenação","coordenacao",null,null,null],
-    ["Paisagismo urbano",null,null,"62.03.12",null],
-    ["Estudo hidráulico de canal existente",null,null,"62.03.20",null]
+    ["Terraplenagem e geométrico de vias","terraplenagem","terrapl"],
+    ["Pavimentação","pavimentacao","pavim"],
+    ["Drenagem pluvial (micro)","drenagem","drenS"],
+    ["Drenagem complexa / macrodrenagem",null,"drenC"],
+    ["Alimentação de água",null,"agua"],
+    ["Esgotos sanitários — elevatória",null,"esgoto"],
+    ["Rede elétrica",null,"eletr"],
+    ["Sinalização vertical e horizontal","sinalizacao","sinal"],
+    ["Cadastramento de infraestrutura","cadastro","cadastro"],
+    ["Projeto geométrico","geometrico",null],
+    ["Estudos topográficos","topograficos",null],
+    ["Estudos geotécnicos","geotecnicos",null],
+    ["Estudos hidrológicos","hidrologicos",null],
+    ["Orçamento e plano de execução","orcamento",null],
+    ["Serviços de coordenação","coordenacao",null]
   ];
-  let hv = "", sv1=0, sv2=0, sv3=0, sv4=0;
-  mapaVias.forEach(([nome,ks,kc,kd,ka])=>{
+  let hv = "", sv1=0, sv2=0;
+  mapaVias.forEach(([nome,ks,kc])=>{
     const us = ks && SENGE_ESTRADAS[ks] ? SENGE_ESTRADAS[ks][cl]*estado.fatores.senge : null;
     const uc = kc && CEHOP.vias[kc]!=null ? CEHOP.vias[kc]*estado.fatores.cehop : null;
-    const itd = kd ? SUDECAP_IDX[kd] : null;
-    const ud = (itd && itd.u==="KM") ? sudecapPV(itd) : null;
-    const ita = ka ? DAER_IDX[ka] : null;
-    const ua = ka ? daerPorKm(ka) : null;
-    if(us) sv1+=us*km; if(uc) sv2+=uc*km; if(ud) sv3+=ud*km; if(ua) sv4+=ua*km;
-    const c = (v,extra) => v!=null
-      ? '<td class="n">'+fmt2.format(v)+(extra?'<span class="mini">'+extra+'</span>':'')+'</td>'
-      : '<td class="n na">—</td>';
-    const marcas = [];
-    if(itd) marcas.push("SUDECAP "+itd.c);
-    if(ita) marcas.push("DAER "+ita.i+(ita.lin?" (verba)":"")+(ita.k?" · "+(ita.k==="kz"?"Kz":"Kz × Kext"):""));
-    hv += '<tr><td class="serv">'+esc(nome)+(marcas.length?'<small class="mini">'+esc(marcas.join(" · "))+'</small>':'')+'</td>'+
-      c(us)+c(uc)+c(ud)+c(ua, ita && ita.lin ? "derivado da verba" : null)+'</tr>';
+    const ts = us!=null ? us*km : null, tc = uc!=null ? uc*km : null;
+    if(ts) sv1+=ts; if(tc) sv2+=tc;
+    hv += '<tr><td class="serv">'+esc(nome)+'</td>'+
+      (us!=null?'<td class="n">'+fmt2.format(us)+'</td>':'<td class="n na">—</td>')+
+      (uc!=null?'<td class="n">'+fmt2.format(uc)+'</td>':'<td class="n na">—</td>')+
+      (ts!=null?'<td class="n">'+R$(ts)+'</td>':'<td class="n na">—</td>')+
+      (tc!=null?'<td class="n">'+R$(tc)+'</td>':'<td class="n na">—</td>')+'</tr>';
   });
-  hv += '<tr class="total"><td>Total para '+fmt2.format(km)+' km</td>'+
-    '<td class="n">'+R$(sv1)+'</td><td class="n">'+R$(sv2)+'</td>'+
-    '<td class="n">'+R$(sv3)+'</td><td class="n">'+R$(sv4)+'</td></tr>';
+  hv += '<tr class="total"><td>Total dos projetos lineares ('+fmt2.format(km)+' km)</td><td></td><td></td>'+
+    '<td class="n">'+R$(sv1)+'</td><td class="n">'+R$(sv2)+'</td></tr>';
   $("corpo-vias").innerHTML = hv;
 
   const dados = [
     {nome:"IOPES/ES", cor:"#2e6f73", area:somaI, vias:0},
     {nome:"SENGE-BA", cor:"#a8531f", area:somaS, vias:sv1},
-    {nome:"CEHOP/SE", cor:"#3c5a99", area:somaC, vias:sv2},
-    {nome:"SUDECAP", cor:"#6b4c9a", area:0, vias:sv3},
-    {nome:"DAER/RS", cor:"#8a6d1f", area:0, vias:sv4}
+    {nome:"CEHOP/SE", cor:"#3c5a99", area:somaC, vias:sv2}
   ];
   const W=900,H=260,ml=90,mr=20,mt=24,mb=52;
   const maxV = Math.max.apply(null, dados.map(d=>d.area+d.vias).concat([1]));
@@ -3488,54 +2202,6 @@ function renderInfra(){
   s+='<line x1="'+ml+'" y1="'+(H-mb)+'" x2="'+(W-mr)+'" y2="'+(H-mb)+'" stroke="#16202b" stroke-width="1.5"/>';
   s+=svgTexto(ml,H-10,"Tom cheio: redes e obras em área · Tom claro: projetos lineares de vias",{size:10.5,cor:"#8a959d"});
   const el=$("ch-infra"); el.setAttribute("viewBox","0 0 "+W+" "+H); el.innerHTML=s;
-}
-
-/* =========================================================
-   7-B. REFERÊNCIAS DE MERCADO
-   ========================================================= */
-function renderReferencias(){
-  const alvo = $("ref-corpo"); if(!alvo) return;
-  const uf = ($("ref-uf") && $("ref-uf").value) || "PA";
-  const codHt = ($("ref-ht") && $("ref-ht").value) || REFERENCIAS_MERCADO.htSudecap;
-  const cub = refCub(uf);
-  const itHt = SUDECAP_IDX[codHt];
-  const fSenge = refFatorSenge();
-  const pIopes = refFatorProxy("jan/2018"), pDaer = refFatorProxy("jan/2021");
-  const marca = (aplicado) => aplicado
-    ? '<td class="n"><span class="tag incluso">aplicado</span></td>'
-    : '<td class="n"><span class="tag aprox">sugerido</span></td>';
-
-  let h = "";
-  h += '<tr><td class="serv">CUB-R8N do CAU/BR<small>Fórmulas de paisagismo e urbanismo do Módulo II</small></td>'+
-    '<td class="n">'+R$(cub.v)+'</td><td style="font-size:12px">'+esc(cub.rot+" · "+cub.mes)+'</td>'+
-    marca(Math.abs((estado.cau.cub||0)-cub.v)<0.01);
-  h += '<tr><td class="serv">CUB tipológico do Módulo I<small>Base de Honorários = CUB × fator de adequação</small></td>'+
-    '<td class="n">'+R$(cub.v)+'</td><td style="font-size:12px">'+esc(cub.rot+" · série R8-N")+
-    '<small class="mini">Para tipologia cujo CUB não seja o R8-N, substitua pela série correspondente</small></td>'+
-    marca(Math.abs((estado.cau.cubTipologico||0)-cub.v)<0.01);
-  h += '<tr><td class="serv">Hora técnica ht1 da CAIXA<small>Apêndice C não publica valor: é proposto pela licitante</small></td>'+
-    '<td class="n">'+(itHt?R$(itHt.p):"—")+'</td><td style="font-size:12px">'+
-    (itHt?esc("SUDECAP "+itHt.c+" · "+itHt.d.charAt(0)+itHt.d.slice(1).toLowerCase()+" · 04/2026"):"—")+'</td>'+
-    marca(itHt && Math.abs((estado.caixa.ht1||0)-itHt.p)<0.01);
-  h += '<tr><td class="serv">Fator de atualização do SENGE-BA<small>Índice exato: a tabela declara CUB-BA de jun/2024 = '+fmt2.format(REFERENCIAS_MERCADO.sengeBase)+'</small></td>'+
-    '<td class="n">'+fmt4.format(fSenge)+'</td><td style="font-size:12px">'+esc(refCub("BA").rot+" · "+refCub("BA").mes)+' ÷ '+fmt2.format(REFERENCIAS_MERCADO.sengeBase)+'</td>'+
-    marca(Math.abs((estado.fatores.senge||1)-fSenge)<0.0005);
-  h += '<tr><td class="serv">Fator de atualização do IOPES/ES<small><b>Proxy regional</b> — o índice correto seria o CUB-ES ou o INCC</small></td>'+
-    '<td class="n">'+(pIopes?fmt4.format(pIopes):"—")+'</td><td style="font-size:12px">Série CUB-PA jan/2018 → jun/2026</td>'+
-    marca(pIopes && Math.abs((estado.fatores.iopes||1)-pIopes)<0.0005);
-  h += '<tr><td class="serv">Fator de atualização do DAER/RS<small><b>Proxy regional</b> — o índice correto seria um indexador rodoviário</small></td>'+
-    '<td class="n">'+(pDaer?fmt4.format(pDaer):"—")+'</td><td style="font-size:12px">Série CUB-PA jan/2021 → jun/2026</td>'+
-    marca(pDaer && Math.abs((estado.daer.fator||1)-pDaer)<0.0005);
-  alvo.innerHTML = h;
-
-  const d = $("ref-data");
-  if(d) d.textContent = "consulta de " + REFERENCIAS_MERCADO.consulta + " · INCC-DI acumulado em 12 meses: " +
-    fmt2.format(REFERENCIAS_MERCADO.incc.doze*100) + "% até " + REFERENCIAS_MERCADO.incc.mes;
-  const av = $("ref-aviso");
-  if(av) av.innerHTML = "Os dois fatores marcados como <b>proxy regional</b> ficam fora do preenchimento automático: "+
-    "aplicam a variação do CUB do Pará a tabelas do Espírito Santo e do Rio Grande do Sul. "+
-    "Servem para dimensionar a ordem de grandeza da defasagem, não para instruir processo — nesse caso, "+
-    "use a série do próprio estado ou o INCC, e registre a escolha na memória de cálculo.";
 }
 
 /* =========================================================
@@ -3652,242 +2318,64 @@ function renderCaixa(){
    ========================================================= */
 function renderCau(){
   sincronizaCau();
-  const C=estado.cau, Sc=cauSc(), fp=cauFp(), R=cauR(), bhInfo=cauBhInfo(), t=cauTipoAtual(), cat=cauCategoria();
-  const pronto=bhInfo.v>0 && fp>0 && Sc>0;
-  let alerta="";
-  if(!t && C.bhModo!=="manual") alerta='<div class="aviso critico" style="margin-bottom:14px"><b>Selecione uma tipologia do Módulo I.</b> Sem ela não é possível obter categoria, CUB correspondente, fator de adequação e fp.</div>';
-  else if(C.bhModo==="cub" && !(C.cubTipologico>0)) alerta='<div class="aviso critico" style="margin-bottom:14px"><b>Informe o CUB atual correspondente.</b> Para '+esc(t?t.cub:"a tipologia selecionada")+', a BH será o CUB atual multiplicado pelo fator de adequação '+(t?fmt2.format(t.fator):"—")+'.</div>';
-  else if(C.bhModo==="tabela") alerta='<div class="aviso" style="margin-bottom:14px"><b>Valor histórico ativado.</b> A BH da Tabela 8 reproduz a referência de jun/2013. Use-a apenas para teste ou conferência; para uma estimativa corrente, selecione “CUB atual da tipologia × fator de adequação”.</div>';
-  else if(C.bhModo==="manual" && !(C.bh>0)) alerta='<div class="aviso critico" style="margin-bottom:14px"><b>Informe a BH manual.</b></div>';
-  $("cau-alerta").innerHTML=alerta;
+  const C = estado.cau, Sc = estado.area, fp = cauFp(), R = cauR();
+  const pronto = C.bh>0 && fp>0;
 
-  const pvArq=pronto?cauUnit(1.00)*Sc:0;
-  const Sr=Math.min(C.sr||0,Sc), Sp=Sc-Sr+Sr*cauRedutor();
+  $("cau-alerta").innerHTML = pronto ? "" :
+    '<div class="aviso critico" style="margin-bottom:14px"><b>Faltam dois parâmetros do Módulo I.</b> ' +
+    'A Base de Honorários (BH) e o fator percentual base (Tabela 5) não integram o Módulo II — este documento apenas remete a eles. ' +
+    'Enquanto não forem informados, a coluna CAU/BR fica vazia na calculadora. Consulte o Módulo I das Tabelas de Honorários no sítio do CAU/BR ' +
+    'e lance aqui os valores correspondentes à tipologia e à área do seu empreendimento.</div>';
+
+  const pvArq = pronto ? cauUnit(1.00)*Sc : 0;
   $("cu-cartoes").innerHTML =
-    '<div class="cartao" style="border-top-color:var(--cau)"><div class="rot" style="color:var(--cau)">Tipologia e categoria</div>'+
-      '<div class="val" style="font-size:17px">'+(t?esc(t.item||t.id)+" · "+esc(CAU_CAT_ROT[cat]||"—"):"—")+'</div><div class="sub">'+
-      (t?esc(t.nome)+'<br>CUB '+esc(t.cub)+' · fator '+fmt2.format(t.fator):'aguardando seleção')+'</div></div>'+
-    '<div class="cartao" style="border-top-color:var(--cau)"><div class="rot" style="color:var(--cau)">Base de Honorários</div>'+
-      '<div class="val">'+(bhInfo.v>0?R$(bhInfo.v):"—")+'</div><div class="sub">'+esc(bhInfo.origem)+
-      (bhInfo.historico?'<br><span class="marca-alto">referência histórica jun/2013</span>':'')+'</div></div>'+
     '<div class="cartao" style="border-top-color:var(--cau)"><div class="rot" style="color:var(--cau)">fp aplicado</div>'+
       '<div class="val">'+(fp>0?fmt3.format(fp)+"%":"—")+'</div><div class="sub">'+
-      (C.fpModo==="auto"?'Tabela 5 · interpolado para Sc = '+fmt2.format(Sc)+' m²':'Informado/interpolado manualmente')+'</div></div>'+
-    '<div class="cartao" style="border-top-color:var(--cau)"><div class="rot" style="color:var(--cau)">Repetições e área de cálculo</div>'+
-      '<div class="val">R = '+fmt4.format(R)+'</div><div class="sub">r = '+fmt2.format(cauRedutor()*100)+'% · q = '+fmt2.format(C.qRep)+
-      '<br>Sp = '+fmt2.format(Sp)+' m² · Sc = '+fmt2.format(Sc)+' m²</div></div>'+
+      (C.interp && C.sc2>C.sc1 && C.fp1>0 && C.fp2>0 ? "Interpolado entre "+fmt0.format(C.sc1)+" e "+fmt0.format(C.sc2)+" m²" : "Informado diretamente")+'</div></div>'+
+    '<div class="cartao" style="border-top-color:var(--cau)"><div class="rot" style="color:var(--cau)">R — redutor de repetições</div>'+
+      '<div class="val">'+fmt4.format(R)+'</div><div class="sub">S<sub>p</sub> = '+fmt0.format(Sc - Math.min(C.sr,Sc) + Math.min(C.sr,Sc)*(C.r/100))+
+      ' m² sobre S<sub>c</sub> = '+fmt0.format(Sc)+' m²</div></div>'+
     '<div class="cartao" style="border-top-color:var(--cau)"><div class="rot" style="color:var(--cau)">PV do projeto arquitetônico</div>'+
       '<div class="val">'+(pronto?R$(pvArq):"—")+'</div><div class="sub">'+
-      (pronto?fmt2.format(pvArq/Sc)+' R$/m² · 100% do fp base':'aguardando parâmetros')+'</div></div>';
+      (pronto?fmt2.format(pvArq/Sc)+' R$/m² · 100% do fp base':'aguardando BH e fp')+'</div></div>'+
+    '<div class="cartao" style="border-top-color:var(--cau)"><div class="rot" style="color:var(--cau)">Base de honorários</div>'+
+      '<div class="val">'+(C.bh>0?R$(C.bh):"—")+'</div><div class="sub">por m² de área construída<br>CUB-R8N: '+(C.cub>0?R$(C.cub):"não informado")+'</div></div>';
 
-  let h="",g="";
+  let h = "", g = "";
   CAU_TAB1.forEach(it=>{
-    if(it.g!==g){ g=it.g; h+='<tr class="grupo"><td colspan="7">'+esc(g)+'</td></tr>'; }
-    const u=cauUnit(it.pct);
-    h+='<tr><td class="num" style="font-size:11.5px">'+it.id+'</td>'+ 
-      '<td class="serv">'+esc(it.nome)+'</td>'+ 
-      '<td class="n">'+fmt0.format(it.pct*100)+'%</td>'+ 
-      '<td class="n">'+(fp>0?fmt3.format(it.pct*fp)+"%":'<span class="na">—</span>')+'</td>'+ 
-      '<td class="n">'+(u===null?'<span class="na">—</span>':fmt2.format(u))+'</td>'+ 
-      '<td class="n">'+(u===null?'<span class="na">—</span>':'<b>'+R$(u*Sc)+'</b>')+'</td>'+ 
+    if(it.g!==g){ g = it.g; h += '<tr class="grupo"><td colspan="7">'+esc(g)+'</td></tr>'; }
+    const u = cauUnit(it.pct);
+    h += '<tr><td class="num" style="font-size:11.5px">'+it.id+'</td>'+
+      '<td class="serv">'+esc(it.nome)+'</td>'+
+      '<td class="n">'+fmt0.format(it.pct*100)+'%</td>'+
+      '<td class="n">'+(fp>0?fmt3.format(it.pct*fp)+"%":'<span class="na">—</span>')+'</td>'+
+      '<td class="n">'+(u===null?'<span class="na">—</span>':fmt2.format(u))+'</td>'+
+      '<td class="n">'+(u===null?'<span class="na">—</span>':'<b>'+R$(u*Sc)+'</b>')+'</td>'+
       '<td style="font-size:11.5px;color:var(--tinta-3)">'+esc(it.parc)+'</td></tr>';
   });
-  $("cu-corpo").innerHTML=h;
+  $("cu-corpo").innerHTML = h;
 
-  const pvPais=cauPaisagismo(estado.terreno);
-  $("cu-pais").innerHTML=CAU_PAIS.map(it=>
-    '<tr><td class="serv">'+esc(it.id+" — "+it.nome)+'</td>'+ 
-    '<td class="n">'+fmt0.format(it.pct*100)+'%</td>'+ 
+  const pvPais = cauPaisagismo(estado.terreno);
+  $("cu-pais").innerHTML = CAU_PAIS.map(it=>
+    '<tr><td class="serv">'+esc(it.id+" — "+it.nome)+'</td>'+
+    '<td class="n">'+fmt0.format(it.pct*100)+'%</td>'+
     '<td class="n">'+(pvPais===null?'<span class="na">informe o CUB-R8N</span>':'<b>'+R$(pvPais*it.pct)+'</b>')+'</td></tr>').join("");
 
-  const faixa=cauFaixaUrb(estado.terreno);
-  $("cu-tab2").innerHTML=CAU_TAB2.map(f=>{
-    const ativa=(f===faixa);
-    const rot=f[0]===Infinity?"A partir de 10.240.000 m²":(f===CAU_TAB2[0]?"Até ":"")+fmt0.format(f[0])+" m²";
-    return '<tr'+(ativa?' class="subtotal"':'')+'><td class="serv">'+esc(rot)+(ativa?' <span class="tag incluso">faixa atual</span>':'')+'</td>'+ 
-      '<td class="n">'+fmt2.format(f[1])+'</td><td class="n">'+fmt2.format(f[2]*100)+'%</td>'+ 
+  const faixa = cauFaixaUrb(estado.terreno);
+  $("cu-tab2").innerHTML = CAU_TAB2.map(f=>{
+    const ativa = (f===faixa);
+    const rot = f[0]===Infinity ? "A partir de 10.240.000 m²" : (f===CAU_TAB2[0]?"Até ":"")+fmt0.format(f[0])+" m²";
+    return '<tr'+(ativa?' class="subtotal"':'')+'><td class="serv">'+esc(rot)+(ativa?' <span class="tag incluso">faixa atual</span>':'')+'</td>'+
+      '<td class="n">'+fmt2.format(f[1])+'</td><td class="n">'+fmt2.format(f[2]*100)+'%</td>'+
       '<td class="n">'+(C.cub>0?R$(f[2]*C.cub):'<span class="na">—</span>')+'</td></tr>';
   }).join("");
 
-  $("cu-urb").innerHTML=CAU_URB.map(it=>{
-    const v=cauUrbano(estado.terreno,it.pct);
-    return '<tr><td class="num" style="font-size:11.5px">'+it.id+'</td><td class="serv">'+esc(it.nome)+'</td>'+ 
-      '<td class="n">'+fmt0.format(it.pct*100)+'%</td>'+ 
+  $("cu-urb").innerHTML = CAU_URB.map(it=>{
+    const v = cauUrbano(estado.terreno, it.pct);
+    return '<tr><td class="num" style="font-size:11.5px">'+it.id+'</td><td class="serv">'+esc(it.nome)+'</td>'+
+      '<td class="n">'+fmt0.format(it.pct*100)+'%</td>'+
       '<td class="n">'+(v===null?'<span class="na">informe o CUB-R8N</span>':'<b>'+R$(v)+'</b>')+'</td></tr>';
   }).join("");
-}
-
-/* =========================================================
-   8-D. METODOLOGIA SUDECAP
-   ========================================================= */
-function renderSudecap(){
-  const S = estado.sudecap, r = sudecapRazoes(), padrao = sudecapPadrao();
-  [["sd-k1","k1"],["sd-k2","k2"],["sd-k3","k3"],["sd-iss","iss"],["sd-pis","pis"],["sd-cofins","cofins"]]
-    .forEach(([id,campo])=>{
-      const el = $(id);
-      if(el && document.activeElement!==el) el.value = String(Math.round(S[campo]*10000)/100);
-    });
-
-  const k4 = sudecapK4();
-  $("sd-cartoes").innerHTML =
-    '<div class="cartao" style="border-top-color:var(--sudecap)"><div class="rot" style="color:var(--sudecap)">Multiplicador K</div>'+
-      '<div class="val">'+(r?fmt4.format(r.K):"—")+'</div><div class="sub">[(1 + '+fmt4.format(S.k1)+' + '+fmt2.format(S.k2)+') × (1 + '+fmt2.format(S.k3)+')] ÷ (1 − '+fmt4.format(k4)+')</div></div>'+
-    '<div class="cartao" style="border-top-color:var(--sudecap)"><div class="rot" style="color:var(--sudecap)">TRDE</div>'+
-      '<div class="val">'+(r?fmt4.format(r.trde):"—")+'</div><div class="sub">Taxa de ressarcimento de despesas e encargos, aplicada aos custos que não são mão de obra</div></div>'+
-    '<div class="cartao" style="border-top-color:var(--sudecap)"><div class="rot" style="color:var(--sudecap)">Razão sobre o custo</div>'+
-      '<div class="val">'+(r?fmt4.format(r.mo):"—")+'</div><div class="sub">Mão de obra pura: K ÷ (1 + K1)<br>Insumo puro: <b>'+(r?fmt4.format(r.ins):"—")+'</b></div></div>'+
-    '<div class="cartao" style="border-top-color:'+(padrao?"var(--sudecap)":"var(--alto)")+'"><div class="rot" style="color:'+(padrao?"var(--sudecap)":"var(--alto)")+'">Estado dos parâmetros</div>'+
-      '<div class="val" style="font-size:17px">'+(padrao?"Publicados":"Alterados")+'</div>'+
-      '<div class="sub">'+(padrao?"Preços exatamente como na planilha de 04/2026":"Preços recompostos item a item pela participação de mão de obra")+'</div></div>';
-
-  const ckAuto = $("sd-auto"); if(ckAuto) ckAuto.checked = S.auto;
-  let hq = "";
-  SERVICOS.forEach(sv=>{
-    const m = MAPA_SUDECAP[sv.id];
-    if(!m || !m.cod) return;
-    const it = SUDECAP_IDX[m.cod]; if(!it) return;
-    const pv = sudecapPV(it);
-    const qi = sudecapQtd(sv.id);
-    const est = sudecapEstimativa(sv.id);
-    hq += '<tr><td class="serv">'+esc(sv.nome)+'</td>'+
-      '<td style="font-size:12px"><span class="num">'+it.c+'</span><small class="mini">'+esc(it.d)+'</small></td>'+
-      '<td class="n">'+esc(it.u)+'</td>'+
-      '<td class="n">'+(pv===null?"—":R$(pv))+'</td>'+
-      '<td class="n">'+(est ? fmt0.format(est.n)+'<span class="mini" title="'+esc(est.formula)+'">'+esc(est.disc.nota)+'</span>'
-                            : '<span class="na">—</span>')+'</td>'+
-      '<td class="n"><input class="pers num" type="number" step="0.5" min="0" data-sq="'+sv.id+'" value="'+qi.q+'" aria-label="Quantidade de '+esc(sv.nome)+'">'+
-        (qi.estimada?'<span class="mini"><span class="tag est">estimado</span></span>':'<span class="mini">informada</span>')+'</td>'+
-      '<td class="n"><b>'+(pv===null?"—":R$(pv*qi.q))+'</b></td></tr>';
-  });
-  $("sd-qtd").innerHTML = hq;
-  document.querySelectorAll('#sd-qtd input[data-sq]').forEach(el=>{
-    el.addEventListener("input", ()=>{
-      const v = Number(el.value);
-      estado.sudecap.qtd[el.dataset.sq] = isFinite(v)&&v>=0 ? v : 0;
-      atualizar();
-      const linha = el.closest("tr");
-      const it = SUDECAP_IDX[(MAPA_SUDECAP[el.dataset.sq]||{}).cod];
-      const pv = sudecapPV(it);
-      if(linha && pv!==null) linha.lastElementChild.innerHTML = "<b>"+R$(pv*(isFinite(v)?v:0))+"</b>";
-    });
-  });
-
-  renderSudecapTabela();
-}
-
-function renderSudecapTabela(){
-  const S = estado.sudecap;
-  const termo = (S.busca||"").trim().toLowerCase();
-  const und = S.und || "";
-  let h = "", n = 0, grupoAtual = "";
-  SUDECAP_ITENS.forEach(it=>{
-    if(und && it.u!==und) return;
-    if(termo && it.d.toLowerCase().indexOf(termo)<0 && it.c.indexOf(termo)<0) return;
-    const g = it.c.split(".").slice(0,2).join(".");
-    if(g!==grupoAtual && SUDECAP_GRUPOS[g]){
-      grupoAtual = g;
-      h += '<tr class="grupo"><td colspan="7">'+esc(g+" — "+SUDECAP_GRUPOS[g])+'</td></tr>';
-    }
-    const pv = sudecapPV(it);
-    n++;
-    h += '<tr><td class="num" style="font-size:11.5px">'+it.c+'</td>'+
-      '<td class="serv" style="font-size:12px">'+esc(it.d)+'</td>'+
-      '<td class="n">'+esc(it.u)+'</td>'+
-      '<td class="n">'+fmt2.format(it.v)+'</td>'+
-      '<td class="n">'+fmt0.format(it.a*100)+'%</td>'+
-      '<td class="n"><b>'+(pv===null?"—":fmt2.format(pv))+'</b></td>'+
-      '<td class="n">'+(pv===null?"—":fmt4.format(pv/it.v))+'</td></tr>';
-  });
-  $("sd-corpo").innerHTML = h || '<tr><td colspan="7" class="na">Nenhum item corresponde ao filtro.</td></tr>';
-  $("sd-contagem").textContent = n + " de " + SUDECAP_ITENS.length + " itens exibidos.";
-}
-
-/* =========================================================
-   8-E. METODOLOGIA DAER/RS
-   ========================================================= */
-function renderDaer(){
-  const D = estado.daer, ext = daerExt();
-  const el = $("da-ext"); if(el && document.activeElement!==el) el.value = String(ext);
-
-  let total = 0, marcados = 0, semPreco = 0;
-  DAER_ITENS.forEach(it=>{
-    if(!D.sel[it.i]) return;
-    marcados++;
-    if(it.calc){ semPreco++; return; }
-    const t = daerTotal(it);
-    if(t!==null) total += t;
-  });
-
-  $("da-cartoes").innerHTML =
-    '<div class="cartao" style="border-top-color:var(--daer)"><div class="rot" style="color:var(--daer)">Extensão do trecho</div>'+
-      '<div class="val">'+fmt2.format(ext)+' km</div><div class="sub">'+fmt0.format(D.faixas)+' faixas · '+fmt0.format(D.pistas)+' pistas</div></div>'+
-    '<div class="cartao" style="border-top-color:var(--daer)"><div class="rot" style="color:var(--daer)">Modulação Kz × Kext</div>'+
-      '<div class="val">'+fmt4.format((D.kz||1)*(D.kext||1))+'</div><div class="sub">Kz = '+fmt2.format(D.kz)+' · Kext = '+fmt2.format(D.kext)+
-      '<br>Aplicada só aos itens que a tabela indica</div></div>'+
-    '<div class="cartao" style="border-top-color:var(--daer)"><div class="rot" style="color:var(--daer)">Escopo selecionado</div>'+
-      '<div class="val">'+R$(total)+'</div><div class="sub"><b>'+marcados+'</b> itens marcados'+
-      (semPreco?' · <b>'+semPreco+'</b> a calcular pelo órgão':'')+'</div></div>'+
-    '<div class="cartao" style="border-top-color:var(--daer)"><div class="rot" style="color:var(--daer)">Data-base</div>'+
-      '<div class="val" style="font-size:17px">janeiro/2021</div><div class="sub">Fator aplicado: <b>'+fmt4.format(D.fator)+'</b><br>'+
-      (Math.abs(D.fator-1)<1e-9?'Preços como publicados':'Preços atualizados pelo fator informado')+'</div></div>';
-
-  renderDaerTabela();
-}
-
-function renderDaerTabela(){
-  const D = estado.daer;
-  const termo = (D.busca||"").trim().toLowerCase();
-  const grupo = D.grupo || "";
-  let h = "", n = 0, atual = "";
-  DAER_ITENS.forEach(it=>{
-    const g = it.i.split(".")[0];
-    if(grupo && g!==grupo) return;
-    if(termo && it.d.toLowerCase().indexOf(termo)<0 && it.i.indexOf(termo)<0) return;
-    if(g!==atual){ atual = g; h += '<tr class="grupo"><td colspan="8">'+esc(g+" — "+(DAER_GRUPOS[g]||""))+'</td></tr>'; }
-    n++;
-    const marcado = !!D.sel[it.i];
-    const u = daerUnit(it), t = daerTotal(it);
-    let cPreco, cFat, cQtd, cTot;
-    if(it.calc){
-      cPreco = '<td class="n na" colspan="4">'+esc(it.obs || "Sem preço publicado — a calcular pelo órgão.")+'</td>';
-      cFat = cQtd = cTot = "";
-    } else if(it.lin){
-      cPreco = '<td class="n">'+fmt2.format(it.lin[0])+' + '+fmt3.format(it.lin[1])+' × ext</td>';
-      cFat = '<td class="n na">verba</td>';
-      cQtd = '<td class="n">'+fmt2.format(daerExt())+' km</td>';
-      cTot = '<td class="n"><b>'+R$(t)+'</b></td>';
-    } else {
-      cPreco = '<td class="n">'+fmt2.format(u)+'</td>';
-      cFat = '<td class="n">'+(it.k ? (it.k==="kz"?"Kz":"Kz × Kext") : '<span class="na">—</span>')+'</td>';
-      cQtd = '<td class="n"><input class="pers num" type="number" step="0.5" min="0" data-dq="'+it.i+'" value="'+daerQtd(it)+'" aria-label="Quantidade do item '+it.i+'"></td>';
-      cTot = '<td class="n"><b>'+R$(t)+'</b></td>';
-    }
-    h += '<tr'+(marcado?'':' style="opacity:.55"')+'>'+
-      '<td><input type="checkbox" data-ds="'+it.i+'" '+(marcado?"checked":"")+' aria-label="Incluir item '+it.i+'"></td>'+
-      '<td class="num" style="font-size:11.5px">'+it.i+'</td>'+
-      '<td class="serv" style="font-size:12px">'+esc(it.d)+'</td>'+
-      '<td class="n">'+esc(it.u)+'</td>'+cPreco+cFat+cQtd+cTot+'</tr>';
-  });
-  $("da-corpo").innerHTML = h || '<tr><td colspan="8" class="na">Nenhum item corresponde ao filtro.</td></tr>';
-  $("da-contagem").textContent = n + " de " + DAER_ITENS.length + " itens exibidos.";
-
-  document.querySelectorAll('#da-corpo input[data-ds]').forEach(el=>{
-    el.addEventListener("change", ()=>{
-      if(el.checked) estado.daer.sel[el.dataset.ds] = true;
-      else delete estado.daer.sel[el.dataset.ds];
-      salvar(); renderDaer();
-    });
-  });
-  document.querySelectorAll('#da-corpo input[data-dq]').forEach(el=>{
-    el.addEventListener("input", ()=>{
-      const v = Number(el.value);
-      estado.daer.qtd[el.dataset.dq] = isFinite(v)&&v>=0 ? v : 0;
-      const it = DAER_IDX[el.dataset.dq];
-      const linha = el.closest("tr");
-      if(linha && it) linha.lastElementChild.innerHTML = "<b>"+R$(daerTotal(it))+"</b>";
-      salvar();
-    });
-  });
 }
 
 /* =========================================================
@@ -4036,21 +2524,6 @@ function renderBase(){
     CAIXA_C9.map(f=>[f[1], f[2], f[3], f[4], f[5]]),
     'Ar = área equivalente de remuneração nas edificações novas, reformas e ampliações; área efetiva da intervenção nas pequenas intervenções remuneradas pelo valor da obra.');
 
-  h += tabelaHTML("CAU/BR — Módulo I, Tabelas 3 e 8: tipologias, categorias e Base de Honorários",
-    ["Item","Tipologia","Categoria","CUB correspondente","CUB jun/2013","Fator de adequação","BH jun/2013"],
-    CAU_MOD1_TIPOLOGIAS.map(x=>[x.item||x.id,x.nome,"Categoria "+x.cat,x.cub,x.cub2013,x.fator,x.bh2013]),
-    'Os valores nominais de CUB e BH reproduzem a referência histórica de jun/2013. Para cálculo corrente, use o CUB atual correspondente multiplicado pelo fator de adequação.');
-
-  h += tabelaHTML("CAU/BR — Módulo I, Tabela 5: fator percentual do projeto arquitetônico",
-    ["Área construída estimada","Categoria I","Categoria II","Categoria III","Categoria IV"],
-    CAU_FP_FAIXAS.map(x=>[x.sc===Infinity?"A partir de 256.001 m²":("Até "+fmt0.format(x.sc)+" m²")].concat(x.fp)),
-    'Áreas intermediárias são calculadas por interpolação linear, conforme a fórmula publicada.');
-
-  h += tabelaHTML("CAU/BR — Módulo I, Tabela 4: redutor para repetições do mesmo projeto",
-    ["Quantidade de repetições q","Redutor r"],
-    CAU_REPETICOES.map(x=>[x[0]===128?"A partir de 128":x[0],fmt2.format(x[1]*100)+"%"]),
-    'Quantidades intermediárias são calculadas por interpolação linear.');
-
   h += tabelaHTML("CAU/BR — Módulo II, Tabela 1: percentuais sobre o fp do projeto arquitetônico",
     ["Item","Projeto / serviço","Grupo","% do fp base","Parcelamento"],
     CAU_TAB1.map(x=>[x.id, x.nome, x.g, fmt0.format(x.pct*100)+"%", x.parc]),
@@ -4072,28 +2545,6 @@ function renderBase(){
   h += tabelaHTML("CAU/BR — Módulo II, itens 1.8 a 1.10: urbanismo e relatórios urbanísticos",
     ["Item","Projeto / serviço","% da Tabela 2"],
     CAU_URB.map(x=>[x.id, x.nome, fmt0.format(x.pct*100)+"%"]));
-
-  h += tabelaHTML("SUDECAP/BH — parâmetros do preço de venda (04/2026, onerada)",
-    ["Parâmetro","Valor"],
-    [["K1 — encargos sociais básicos","116,23%"],["K2 — administração central","10,00%"],
-     ["K3 — margem de lucro","10,00%"],["ISS","2,50%"],["PIS","1,32%"],["COFINS","6,08%"],
-     ["K4 — impostos","9,90%"],["Multiplicador K","2,7620"],["TRDE","1,2209"],
-     ["Razão sobre o custo — mão de obra pura","1,2773"],["Razão sobre o custo — insumo puro","1,2209"]],
-    'PV = CD<sub>sal</sub> × K + CD<sub>outros</sub> × TRDE. A memória de cálculo da planilha remete às Orientações para Elaboração de Planilhas Orçamentárias de Obras Públicas do TCU.');
-
-  h += tabelaHTML("SUDECAP/BH — preços unitários (04/2026, onerada, sem BDI)",
-    ["Código","Descrição","Unid.","Custo","Preço de venda","Mão de obra no custo"],
-    SUDECAP_ITENS.map(it=>[it.c, it.d, it.u, it.v, it.p, fmt0.format(it.a*100)+"%"]),
-    'Tabela completa com ' + SUDECAP_ITENS.length + ' itens. A participação de mão de obra é deduzida da razão entre preço de venda e custo publicados.');
-
-  h += tabelaHTML("DAER/RS — Referencial de Preços Unitários de Projetos (data-base janeiro/2021)",
-    ["Item","Descrição","Unid.","Preço unitário","Fatores / fórmula"],
-    DAER_ITENS.map(x=>[x.i, x.d, x.u,
-      x.calc ? null : (x.lin ? null : x.p),
-      x.calc ? (x.obs || "A calcular pelo órgão")
-             : (x.lin ? fmt2.format(x.lin[0])+" + "+fmt3.format(x.lin[1])+" × ext"
-                      : (x.k ? (x.k==="kz"?"PU × Kz":"PU × Kz × Kext") : "PU"))]),
-    'Encargos sociais 91,54%, custos administrativos 30,00%, remuneração da empresa 12,00% e despesas fiscais 12,68%. Kz é a kapa de zona, Kext a kapa de extensão e ext a extensão do trecho em quilômetros.');
 
   alvo.innerHTML = h;
   alvo.dataset.pronto = "1";
@@ -4119,24 +2570,14 @@ function baixarCSV(){
   L.push(["CAIXA — hora técnica ht1 (R$)", fmt2.format(estado.caixa.ht1)]);
   L.push(["CAIXA — área equivalente Ae (m²)", fmt2.format(caixaAe())]);
   L.push(["CAIXA — modalidade", estado.caixa.modalidade]);
-  const ct=cauTipoAtual(), cb=cauBhInfo();
-  L.push(["CAU/BR — tipologia Módulo I", ct ? (ct.item||ct.id)+" — "+ct.nome : ""]);
-  L.push(["CAU/BR — categoria aplicada", cauCategoria()||""]);
-  L.push(["CAU/BR — área Sc (m²)", fmt2.format(cauSc())]);
-  L.push(["CAU/BR — Base de Honorários BH (R$/m²)", fmt2.format(cb.v)]);
-  L.push(["CAU/BR — origem da BH", cb.origem]);
+  L.push(["CAU/BR — Base de Honorários BH (R$/m²)", fmt2.format(estado.cau.bh)]);
   L.push(["CAU/BR — fp base aplicado (%)", fmt3.format(cauFp())]);
-  L.push(["CAU/BR — redutor r das áreas repetidas (%)", fmt2.format(cauRedutor()*100)]);
-  L.push(["CAU/BR — redutor global R", fmt4.format(cauR())]);
+  L.push(["CAU/BR — redutor R", fmt4.format(cauR())]);
   L.push(["CAU/BR — CUB-R8N (R$/m²)", fmt2.format(estado.cau.cub)]);
-  L.push(["SUDECAP — multiplicador K", sudecapK()===null?"":fmt4.format(sudecapK())]);
-  L.push(["SUDECAP — TRDE", sudecapTRDE()===null?"":fmt4.format(sudecapTRDE())]);
-  L.push(["SUDECAP — parâmetros", sudecapPadrao()?"publicados":"alterados pelo usuário"]);
   L.push([]);
   L.push(["Serviço","Unidade","Quantidade",
     "IOPES unit.","IOPES total","SENGE unit.","SENGE total","CEHOP unit.","CEHOP total",
-    "CAIXA unit.","CAIXA total","CAU/BR unit.","CAU/BR total",
-    "SUDECAP unit.","SUDECAP total","Personalizada unit.","Personalizada total","Observações"]);
+    "CAIXA unit.","CAIXA total","CAU/BR unit.","CAU/BR total","Personalizada unit.","Personalizada total","Observações"]);
   res.linhas.forEach(li=>{
     if(!estado.sel[li.sv.id]) return;
     if(estado.comum && !li.comum) return;
@@ -4148,17 +2589,15 @@ function baixarCSV(){
     }).filter(Boolean).join(" | ");
     const cu = id => { const c=li.cel[id]; return c.st==="ok" ? [n(c.unit), n(c.total)] : (c.st==="incluso"?["incluso","0,00"]:["",""]); };
     L.push([li.sv.nome, li.sv.un, fmt2.format(li.q)]
-      .concat(cu("iopes"), cu("senge"), cu("cehop"), cu("caixa"), cu("cau"), cu("sudecap"), cu("custom"), [obs]));
+      .concat(cu("iopes"), cu("senge"), cu("cehop"), cu("caixa"), cu("cau"), cu("custom"), [obs]));
   });
   L.push([]);
   L.push(["TOTAIS","","",
     "", n(res.totais.iopes.total), "", n(res.totais.senge.total), "", n(res.totais.cehop.total),
-    "", n(res.totais.caixa.total), "", n(res.totais.cau.total), "", n(res.totais.sudecap.total),
-    "", n(res.totais.custom.total), ""]);
+    "", n(res.totais.caixa.total), "", n(res.totais.cau.total), "", n(res.totais.custom.total), ""]);
   L.push(["BASE COMUM","","",
     "", n(res.totais.iopes.comum), "", n(res.totais.senge.comum), "", n(res.totais.cehop.comum),
-    "", n(res.totais.caixa.comum), "", n(res.totais.cau.comum), "", n(res.totais.sudecap.comum),
-    "", n(res.totais.custom.comum), ""]);
+    "", n(res.totais.caixa.comum), "", n(res.totais.cau.comum), "", n(res.totais.custom.comum), ""]);
 
   const csv = "\uFEFF" + L.map(l=>l.map(c=>'"'+String(c===undefined?"":c).replace(/"/g,'""')+'"').join(";")).join("\r\n");
   const blob = new Blob([csv], {type:"text/csv;charset=utf-8;"});
@@ -4187,7 +2626,6 @@ function atualizar(preservaFoco){
   if(abaComp && abaComp.getAttribute("aria-selected")==="true") renderComparativo();
   const abaCaixa = document.querySelector('button[aria-controls="p-caixa"]');
   if(abaCaixa && abaCaixa.getAttribute("aria-selected")==="true") renderCaixa();
-  renderReferencias();
   const abaCau = document.querySelector('button[aria-controls="p-cau"]');
   if(abaCau && abaCau.getAttribute("aria-selected")==="true") renderCau();
   sincronizaCaixa(); sincronizaCau();
@@ -4195,10 +2633,7 @@ function atualizar(preservaFoco){
 }
 
 function iniciar(){
-  let primeiraVez = false;
-  try{ primeiraVez = !localStorage.getItem(CHAVE); }catch(e){ primeiraVez = true; }
   carregar();
-  if(primeiraVez) aplicarReferencias("PA");
   initAbas();
   initParametros();
   $("bt-csv").addEventListener("click", baixarCSV);
@@ -4226,25 +2661,10 @@ window.APP = {
   CAIXA_C1:CAIXA_C1, CAIXA_C1_IR:CAIXA_C1_IR, CAIXA_C2:CAIXA_C2, CAIXA_C5:CAIXA_C5,
   CAIXA_C6:CAIXA_C6, CAIXA_C7:CAIXA_C7, CAIXA_C8:CAIXA_C8, CAIXA_C9:CAIXA_C9,
   caixaAe:caixaAe, caixaUnit:caixaUnit, caixaIR:caixaIR, caixaPrazo:caixaPrazo,
-  CAU_MOD1_TIPOLOGIAS:CAU_MOD1_TIPOLOGIAS, CAU_MOD1_IDX:CAU_MOD1_IDX,
-  CAU_FP_FAIXAS:CAU_FP_FAIXAS, CAU_REPETICOES:CAU_REPETICOES, CAU_MAPA_TIPOLOGIA:CAU_MAPA_TIPOLOGIA,
   CAU_TAB1:CAU_TAB1, CAU_TAB2:CAU_TAB2, CAU_PAIS:CAU_PAIS, CAU_URB:CAU_URB,
-  cauTipoAtual:cauTipoAtual, cauSc:cauSc, cauCategoria:cauCategoria, cauBh:cauBh, cauBhInfo:cauBhInfo,
-  cauFp:cauFp, cauFpTabela:cauFpTabela, cauRedutor:cauRedutor, cauRedutorTabela:cauRedutorTabela,
-  cauR:cauR, cauUnit:cauUnit, cauPaisagismo:cauPaisagismo, cauUrbano:cauUrbano, cauFaixaUrb:cauFaixaUrb,
-  DAER_ITENS:DAER_ITENS, DAER_IDX:DAER_IDX, DAER_GRUPOS:DAER_GRUPOS, DAER_ENCARGOS:DAER_ENCARGOS,
-  daerUnit:daerUnit, daerTotal:daerTotal, daerPorKm:daerPorKm, daerQtd:daerQtd,
-  daerQtdPadrao:daerQtdPadrao, daerFatores:daerFatores, daerExt:daerExt,
-  SUDECAP_ITENS:SUDECAP_ITENS, SUDECAP_GRUPOS:SUDECAP_GRUPOS, SUDECAP_IDX:SUDECAP_IDX,
-  SUDECAP_K_PADRAO:SUDECAP_K_PADRAO, MAPA_SUDECAP:MAPA_SUDECAP,
-  sudecapK:sudecapK, sudecapTRDE:sudecapTRDE, sudecapRazoes:sudecapRazoes,
-  sudecapPV:sudecapPV, sudecapPadrao:sudecapPadrao,
+  cauFp:cauFp, cauR:cauR, cauUnit:cauUnit, cauPaisagismo:cauPaisagismo,
+  cauUrbano:cauUrbano, cauFaixaUrb:cauFaixaUrb,
   estado:estado, calcular:calcular, estatistica:estatistica,
-  REFERENCIAS_MERCADO:REFERENCIAS_MERCADO, refCub:refCub, refHt1:refHt1,
-  refFatorSenge:refFatorSenge, refFatorProxy:refFatorProxy, aplicarReferencias:aplicarReferencias,
-  SUDECAP_EST_DISC:SUDECAP_EST_DISC, SUDECAP_EST_TIPOLOGIA:SUDECAP_EST_TIPOLOGIA,
-  SUDECAP_EST_LIMIAR:SUDECAP_EST_LIMIAR,
-  sudecapEstimativa:sudecapEstimativa, sudecapQtd:sudecapQtd, sudecapAreaBase:sudecapAreaBase,
   sengeHa:sengeHa, faixaValor:faixaValor, faixaCivis:faixaCivis, CHAVE:CHAVE
 };
 </script>

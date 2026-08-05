@@ -35,7 +35,7 @@ Excecoes/observacoes:
 
 ## Inventario verificado dos aplicativos
 
-Inventario originalmente verificado em 21/07/2026 e atualizado em 04/08/2026 para atualizacao do ThermoX Pro e do Comparador de Honorarios de Projetos. Todos os cards listados possuem arquivo local correspondente.
+Inventario originalmente verificado em 21/07/2026 e atualizado em 04/08/2026 para atualizacao do Comparador de Honorarios de Projetos para a versao 6. Todos os cards listados possuem arquivo local correspondente.
 
 | Card | Aplicativo | Rota publicada | Arquivo local principal | Status local | Status site |
 |---|---|---|---|---|---|
@@ -135,7 +135,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/hidrocalc/` | 488029 bytes | 488029 caracteres |
 | `/elevadorcalc/` | 259316 bytes | 259316 caracteres |
 | `/thermox-pro/` | 428015 bytes | 428015 caracteres |
-| `/comparador-honorarios-projetos/` | 167925 bytes | 167925 caracteres |
+| `/comparador-honorarios-projetos/` | 289138 bytes | 289138 caracteres |
 
 ## Estrutura local principal
 
@@ -924,16 +924,16 @@ Arquivo: `comparador-honorarios-projetos/index.html`
 
 Ultima atualizacao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\comparador-honorarios-projetos (2).html`
+- Fonte: `C:\Users\ACER\Documents\Downloads\comparador-honorarios-projetos-v6.html`
 - Data: 04/08/2026
-- Alteracao: substituicao integral de `comparador-honorarios-projetos/index.html` pela nova versao do aplicativo.
+- Alteracao: substituicao integral de `comparador-honorarios-projetos/index.html` pela versao 6 do aplicativo.
 
 Observacoes:
 
 - Aplicativo standalone empacotado em HTML unico.
 - Tela inicial do site aponta para `/comparador-honorarios-projetos/`.
 - O card foi classificado no filtro `Orcamento`.
-- Validar apos futuras alteracoes se a comparacao de honorarios de projetos por IOPES, SENGE-BA, CEHOP e CAIXA continua carregando corretamente.
+- Validar apos futuras alteracoes se a comparacao de honorarios de projetos por IOPES, SENGE-BA, CEHOP, CAIXA e CAU/BR Modulos I e II continua carregando corretamente.
 
 ## Artigos publicados na home
 
