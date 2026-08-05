@@ -19,7 +19,7 @@ O site `www.obrasinteligentes.ia.br` e uma pagina estatica hospedada na Hostinge
 C:\Obras Inteligentes\index.html
 ```
 
-A tela inicial possui atualmente 45 cards de aplicativos. Cada card aponta para uma rota estatica dentro do dominio. A regra geral e:
+A tela inicial possui atualmente 46 cards de aplicativos. Cada card aponta para uma rota estatica dentro do dominio. A regra geral e:
 
 ```text
 https://www.obrasinteligentes.ia.br/nome-da-rota/
@@ -32,6 +32,8 @@ Em 05/08/2026, a tela inicial recebeu novo hero visual com imagem 3D de obra em 
 C:\Obras Inteligentes\assets\hero-obras-ai-3d.png
 ```
 
+Em 05/08/2026, o link `Contato` no rodape passou a apontar para `https://www.instagram.com/andrebeta.obraspublicas/`.
+
 Excecoes/observacoes:
 
 - Alguns cards usam URL absoluta no `href`, mas a rota final continua dentro do mesmo dominio.
@@ -41,7 +43,7 @@ Excecoes/observacoes:
 
 ## Inventario verificado dos aplicativos
 
-Inventario originalmente verificado em 21/07/2026 e atualizado em 04/08/2026 para atualizacao do Comparador de Honorarios de Projetos para a versao 6. Todos os cards listados possuem arquivo local correspondente.
+Inventario originalmente verificado em 21/07/2026 e atualizado em 05/08/2026 para inclusao do ConsultoriaPro e do link de contato para Instagram. Todos os cards listados possuem arquivo local correspondente.
 
 | Card | Aplicativo | Rota publicada | Arquivo local principal | Status local | Status site |
 |---|---|---|---|---|---|
@@ -90,6 +92,7 @@ Inventario originalmente verificado em 21/07/2026 e atualizado em 04/08/2026 par
 | 43 / ELEVADORES | ElevadorCalc Pro | `/elevadorcalc/` | `C:\Obras Inteligentes\elevadorcalc\index.html` | existe | 200 |
 | 44 / TROCAD. CALOR | ThermoX Pro | `/thermox-pro/` | `C:\Obras Inteligentes\thermox-pro\index.html` | existe | 200 |
 | 45 / HONORARIOS | Comparador de Honorarios de Projetos | `/comparador-honorarios-projetos/` | `C:\Obras Inteligentes\comparador-honorarios-projetos\index.html` | existe | 200 |
+| 46 / CONSULTORIA | ConsultoriaPro | `/consultoriapro-rodoviario/` | `C:\Obras Inteligentes\consultoriapro-rodoviario\index.html` | existe | 200 |
 
 ## Tamanhos verificados
 
@@ -142,6 +145,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/elevadorcalc/` | 259316 bytes | 259316 caracteres |
 | `/thermox-pro/` | 428015 bytes | 428015 caracteres |
 | `/comparador-honorarios-projetos/` | 289138 bytes | 289138 caracteres |
+| `/consultoriapro-rodoviario/` | 247336 bytes | 247336 caracteres |
 
 ## Estrutura local principal
 
@@ -941,6 +945,24 @@ Observacoes:
 - O card foi classificado no filtro `Orcamento`.
 - Validar apos futuras alteracoes se a comparacao de honorarios de projetos por IOPES, SENGE-BA, CEHOP, CAIXA e CAU/BR Modulos I e II continua carregando corretamente.
 
+### ConsultoriaPro
+
+Rota: `/consultoriapro-rodoviario/`  
+Arquivo: `consultoriapro-rodoviario/index.html`
+
+Ultima inclusao:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\consultoria_pro_engenharia_consultiva_rodoviaria_v5_ajustado.html`
+- Data: 05/08/2026
+- Alteracao: inclusao de novo card na home e publicacao do aplicativo como HTML standalone.
+
+Observacoes:
+
+- Aplicativo standalone empacotado em HTML unico.
+- Tela inicial do site aponta para `/consultoriapro-rodoviario/`.
+- O card foi classificado no filtro `Orcamento`.
+- Validar apos futuras alteracoes se orcamento parametrico de engenharia consultiva rodoviaria, supervisao, equipes, custos, desapropriacao, reassentamento, gestao ambiental, gerenciamento e BDI continuam carregando corretamente.
+
 ## Artigos publicados na home
 
 Em 20/07/2026, os tres cards iniciais do bloco `Conteudo` da home foram substituidos por artigos reais enviados em PDF. Em 21/07/2026, foi incluido um quarto artigo. A estrategia adotada foi renderizar cada pagina do PDF como PNG dentro de uma pagina HTML propria, preservando a diagramacao original, tabelas, figuras e paginacao. Cada pagina tambem oferece link para abrir/baixar o PDF original.
@@ -1133,7 +1155,8 @@ $headers=@{ 'User-Agent'='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
   '/hidrocalc/',
   '/elevadorcalc/',
   '/thermox-pro/',
-  '/comparador-honorarios-projetos/'
+  '/comparador-honorarios-projetos/',
+  '/consultoriapro-rodoviario/'
 ) | ForEach-Object {
   $url = "https://www.obrasinteligentes.ia.br$_?v=check"
   $r = Invoke-WebRequest -UseBasicParsing -Headers $headers -Uri $url -TimeoutSec 30
