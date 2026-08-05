@@ -144,7 +144,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/hidrocalc/` | 488029 bytes | 488029 caracteres |
 | `/elevadorcalc/` | 259316 bytes | 259316 caracteres |
 | `/thermox-pro/` | 428015 bytes | 428015 caracteres |
-| `/comparador-honorarios-projetos/` | 289138 bytes | 289138 caracteres |
+| `/comparador-honorarios-projetos/` | 317011 bytes | 317011 caracteres |
 | `/consultoriapro-rodoviario/` | 284681 bytes | 284681 caracteres |
 
 ## Estrutura local principal
@@ -899,7 +899,7 @@ Arquivo: `elevadorcalc/index.html`
 Ultima inclusao:
 
 - Fonte: `C:\Users\ACER\Documents\Downloads\ElevadorCalc_Pro_v2.0.html`
-- Data: 04/08/2026
+- Data: 05/08/2026
 - Alteracao: inclusao de novo card na home e publicacao do aplicativo como HTML standalone.
 
 Observacoes:
@@ -934,9 +934,9 @@ Arquivo: `comparador-honorarios-projetos/index.html`
 
 Ultima atualizacao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\comparador-honorarios-projetos-v6.html`
+- Fonte: `C:\Users\ACER\Documents\Downloads\comparador-honorarios-projetos-v6-abertura.html`
 - Data: 04/08/2026
-- Alteracao: substituicao integral de `comparador-honorarios-projetos/index.html` pela versao 6 do aplicativo.
+- Alteracao: substituicao integral de `comparador-honorarios-projetos/index.html` pela versao 6 com tela de abertura.
 
 Observacoes:
 
