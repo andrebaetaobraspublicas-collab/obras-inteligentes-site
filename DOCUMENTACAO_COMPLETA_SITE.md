@@ -126,7 +126,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/aterramentopro/` | 324591 bytes | 324591 caracteres |
 | `/parafusopro/` | 223926 bytes | 223926 caracteres |
 | `/risco-cambial/` | 68775 bytes | 68775 caracteres |
-| `/protendpro/` | 820879 bytes | 820879 caracteres |
+| `/protendpro/` | 862838 bytes | 862838 caracteres |
 | `/eventogramapro/` | 728843 bytes | 728843 caracteres |
 | `/termo-massa/` | 145812 bytes | 145812 caracteres |
 | `/cabocalc/` | 129693 bytes | 129693 caracteres |
@@ -615,11 +615,11 @@ Observacoes:
 Rota: `/protendpro/`  
 Arquivo: `protendpro/index.html`
 
-Ultima inclusao:
+Ultima atualizacao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\ProtendPro_Aprimorado_v1_6_0_FINAL.html`
-- Data: 24/07/2026
-- Alteracao: atualizacao do aplicativo ProtendPro para nova versao standalone 1.6.0.
+- Fonte: `C:\Users\ACER\Documents\Downloads\ProtendPro_Aprimorado_v1_8_0_FINAL.html`
+- Data: 06/08/2026
+- Alteracao: atualizacao do aplicativo ProtendPro para nova versao standalone 1.8.0.
 
 Observacoes:
 
