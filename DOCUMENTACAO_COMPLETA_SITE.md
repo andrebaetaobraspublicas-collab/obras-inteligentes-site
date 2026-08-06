@@ -108,7 +108,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/administracao-canteiro/` | 480651 bytes | 480651 caracteres |
 | `/memorial-descritivo/` | 6349 bytes | 6349 caracteres |
 | `/sispav-reabilitacao/` | 147360 bytes | 147360 caracteres |
-| `/muros-arrimo/` | 91962 bytes | 91962 caracteres |
+| `/muros-arrimo/` | 466334 bytes | 466334 caracteres |
 | `/casa-parametrica/` | 38883 bytes | 38883 caracteres |
 | `/termopro/` | 475675 bytes | 475675 caracteres |
 | `/circuitopro/` | 236513 bytes | 236513 caracteres |
@@ -286,8 +286,10 @@ Arquivo: `muros-arrimo/index.html`
 
 Ultima atualizacao:
 
-- Fonte: `Calculadora de Muros de Arrimo -completo-.html`.
-- Commit historico: `a3ee841` - `Adiciona calculadora de muros de arrimo`.
+- Fonte: `C:\Users\ACER\Documents\Downloads\ArrimoCalc_v2.4.html`.
+- Data: 06/08/2026
+- Alteracao: substituicao integral de `muros-arrimo/index.html` pela versao ArrimoCalc v2.4.
+- Commit historico de inclusao: `a3ee841` - `Adiciona calculadora de muros de arrimo`.
 
 ### Casa Parametrica
 
