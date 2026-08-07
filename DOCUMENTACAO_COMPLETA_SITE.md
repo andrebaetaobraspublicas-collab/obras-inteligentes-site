@@ -93,6 +93,7 @@ Inventario originalmente verificado em 21/07/2026 e atualizado em 05/08/2026 par
 | 44 / TROCAD. CALOR | ThermoX Pro | `/thermox-pro/` | `C:\Obras Inteligentes\thermox-pro\index.html` | existe | 200 |
 | 45 / HONORARIOS | Comparador de Honorarios de Projetos | `/comparador-honorarios-projetos/` | `C:\Obras Inteligentes\comparador-honorarios-projetos\index.html` | existe | 200 |
 | 46 / CONSULTORIA | ConsultoriaPro | `/consultoriapro-rodoviario/` | `C:\Obras Inteligentes\consultoriapro-rodoviario\index.html` | existe | 200 |
+| 47 / GERADORES | GeradorPro | `/geradorpro/` | `C:\Obras Inteligentes\geradorpro\index.html` | existe | 200 |
 
 ## Tamanhos verificados
 
@@ -146,6 +147,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/thermox-pro/` | 428015 bytes | 428015 caracteres |
 | `/comparador-honorarios-projetos/` | 317011 bytes | 317011 caracteres |
 | `/consultoriapro-rodoviario/` | 284681 bytes | 284681 caracteres |
+| `/geradorpro/` | 265143 bytes | 265143 caracteres |
 
 ## Estrutura local principal
 
@@ -966,6 +968,24 @@ Observacoes:
 - A versao publicada inclui abertura, governanca, rastreabilidade, cronogramas e aba de relatorio profissional.
 - Validar apos futuras alteracoes se orcamento parametrico de engenharia consultiva rodoviaria, supervisao, equipes, custos, desapropriacao, reassentamento, gestao ambiental, gerenciamento e BDI continuam carregando corretamente.
 
+### GeradorPro
+
+Rota: `/geradorpro/`  
+Arquivo: `geradorpro/index.html`
+
+Ultima inclusao:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\GeradorPro_v1.2_Abertura_3D.html`
+- Data: 06/08/2026
+- Alteracao: inclusao de novo card na home e publicacao do aplicativo GeradorPro v1.2 como HTML standalone.
+
+Observacoes:
+
+- Aplicativo standalone empacotado em HTML unico, com tela de abertura 3D.
+- Tela inicial do site aponta para `/geradorpro/`.
+- O card foi classificado no filtro `Instalacoes`.
+- Validar apos futuras alteracoes se selecao, dimensionamento, autonomia de grupos geradores, cargas prioritarias, partida de motores, curto-circuito, catalogo e relatorios continuam carregando corretamente.
+
 ## Artigos publicados na home
 
 Em 20/07/2026, os tres cards iniciais do bloco `Conteudo` da home foram substituidos por artigos reais enviados em PDF. Em 21/07/2026, foi incluido um quarto artigo. A estrategia adotada foi renderizar cada pagina do PDF como PNG dentro de uma pagina HTML propria, preservando a diagramacao original, tabelas, figuras e paginacao. Cada pagina tambem oferece link para abrir/baixar o PDF original.
@@ -1159,7 +1179,8 @@ $headers=@{ 'User-Agent'='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
   '/elevadorcalc/',
   '/thermox-pro/',
   '/comparador-honorarios-projetos/',
-  '/consultoriapro-rodoviario/'
+  '/consultoriapro-rodoviario/',
+  '/geradorpro/'
 ) | ForEach-Object {
   $url = "https://www.obrasinteligentes.ia.br$_?v=check"
   $r = Invoke-WebRequest -UseBasicParsing -Headers $headers -Uri $url -TimeoutSec 30
