@@ -149,7 +149,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/comparador-honorarios-projetos/` | 317011 bytes | 317011 caracteres |
 | `/consultoriapro-rodoviario/` | 284681 bytes | 284681 caracteres |
 | `/geradorpro/` | 265143 bytes | 265143 caracteres |
-| `/spdapro/` | 406209 bytes | 406209 caracteres |
+| `/spdapro/` | 709941 bytes | 709941 caracteres |
 
 ## Estrutura local principal
 
@@ -993,18 +993,18 @@ Observacoes:
 Rota: `/spdapro/`  
 Arquivo: `spdapro/index.html`
 
-Ultima inclusao:
+Ultima atualizacao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\SPDAPro_v1.4.html`
+- Fonte: `C:\Users\ACER\Documents\Downloads\SPDAPro_v1.7_abertura_3D.zip`
 - Data: 07/08/2026
-- Alteracao: inclusao de novo card na home e publicacao do aplicativo SPDAPro v1.4 como HTML standalone.
+- Alteracao: substituicao integral de `spdapro/index.html` pela versao SPDAPro v1.7 com abertura 3D.
 
 Observacoes:
 
-- Aplicativo standalone empacotado em HTML unico.
+- Aplicativo standalone empacotado em HTML unico, extraido do ZIP enviado.
 - Tela inicial do site aponta para `/spdapro/`.
 - O card foi classificado no filtro `Instalacoes`.
-- Validar apos futuras alteracoes se analise de risco, SPDA externo, aterramento, equipotencializacao, potenciais preliminares e relatorios continuam carregando corretamente.
+- Validar apos futuras alteracoes se analise de risco, SPDA externo, aterramento, equipotencializacao, potenciais preliminares, otimizacao tecnico-economica, abertura 3D e relatorios continuam carregando corretamente.
 
 ## Artigos publicados na home
 
