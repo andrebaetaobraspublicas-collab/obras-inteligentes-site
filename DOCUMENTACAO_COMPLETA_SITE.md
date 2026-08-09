@@ -154,7 +154,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/geradorpro/` | 265143 bytes | 265143 caracteres |
 | `/spdapro/` | 709941 bytes | 709941 caracteres |
 | `/lumipro/` | 756040 bytes | 756040 caracteres |
-| `/esgotocalcpro/` | 420156 bytes | 420156 caracteres |
+| `/esgotocalcpro/` | 587293 bytes | 587293 caracteres |
 | `/equivaleclt/` | 58612 bytes | 58612 caracteres |
 
 ## Estrutura local principal
@@ -1037,9 +1037,9 @@ Arquivo: `esgotocalcpro/index.html`
 
 Ultima atualizacao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\EsgotoCalc_Pro_v1.1.html`
+- Fonte: `C:\Users\ACER\Documents\Downloads\EsgotoCalc_Pro_v1.2.html`
 - Data: 09/08/2026
-- Alteracao: substituicao integral de `esgotocalcpro/index.html` pela versao EsgotoCalc Pro v1.1 enviada.
+- Alteracao: substituicao integral de `esgotocalcpro/index.html` pela versao EsgotoCalc Pro v1.2 enviada.
 
 Observacoes:
 
