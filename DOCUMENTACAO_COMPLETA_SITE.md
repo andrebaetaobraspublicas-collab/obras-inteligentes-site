@@ -154,7 +154,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/geradorpro/` | 265143 bytes | 265143 caracteres |
 | `/spdapro/` | 709941 bytes | 709941 caracteres |
 | `/lumipro/` | 756040 bytes | 756040 caracteres |
-| `/esgotocalcpro/` | 397059 bytes | 397059 caracteres |
+| `/esgotocalcpro/` | 420156 bytes | 420156 caracteres |
 | `/equivaleclt/` | 58612 bytes | 58612 caracteres |
 
 ## Estrutura local principal
@@ -1037,9 +1037,9 @@ Arquivo: `esgotocalcpro/index.html`
 
 Ultima atualizacao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\EsgotoCalc Pro.html`
+- Fonte: `C:\Users\ACER\Documents\Downloads\EsgotoCalc_Pro_v1.1.html`
 - Data: 09/08/2026
-- Alteracao: substituicao integral de `esgotocalcpro/index.html` pela nova versao enviada.
+- Alteracao: substituicao integral de `esgotocalcpro/index.html` pela versao EsgotoCalc Pro v1.1 enviada.
 
 Observacoes:
 
@@ -1054,11 +1054,11 @@ Observacoes:
 Rota: `/equivaleclt/`  
 Arquivo: `equivaleclt/index.html`
 
-Ultima inclusao:
+Ultima atualizacao:
 
 - Fonte: `C:\Users\ACER\Documents\Downloads\EquivaleCLT_v1.1.html`
 - Data: 09/08/2026
-- Alteracao: inclusao de novo card na home e publicacao do aplicativo EquivaleCLT como HTML standalone.
+- Alteracao: substituicao integral de `equivaleclt/index.html` pela nova versao enviada, preservando o card existente.
 
 Observacoes:
 
