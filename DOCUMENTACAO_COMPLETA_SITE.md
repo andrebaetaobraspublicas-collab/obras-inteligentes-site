@@ -97,6 +97,7 @@ Inventario originalmente verificado em 21/07/2026 e atualizado em 05/08/2026 par
 | 48 / SPDA | SPDAPro | `/spdapro/` | `C:\Obras Inteligentes\spdapro\index.html` | existe | 200 |
 | 49 / ILUMINACAO | LumiPro | `/lumipro/` | `C:\Obras Inteligentes\lumipro\index.html` | existe | 200 |
 | 50 / SANEAMENTO | EsgotoCalc Pro | `/esgotocalcpro/` | `C:\Obras Inteligentes\esgotocalcpro\index.html` | existe | 200 |
+| 51 / CLT-PJ | EquivaleCLT | `/equivaleclt/` | `C:\Obras Inteligentes\equivaleclt\index.html` | existe | 200 |
 
 ## Tamanhos verificados
 
@@ -154,6 +155,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/spdapro/` | 709941 bytes | 709941 caracteres |
 | `/lumipro/` | 756040 bytes | 756040 caracteres |
 | `/esgotocalcpro/` | 397059 bytes | 397059 caracteres |
+| `/equivaleclt/` | 58612 bytes | 58612 caracteres |
 
 ## Estrutura local principal
 
@@ -1047,6 +1049,25 @@ Observacoes:
 - O menu/filtro antes chamado `Pavimentacao e Infraestrutura` foi renomeado para `Pavimentacao, Saneamento e Infraestrutura`.
 - Validar apos futuras alteracoes se o dimensionamento de redes coletoras de esgoto sanitario, vazoes, declividades, diametros, tensao trativa, laminas e memoria tecnica continuam carregando corretamente.
 
+### EquivaleCLT
+
+Rota: `/equivaleclt/`  
+Arquivo: `equivaleclt/index.html`
+
+Ultima inclusao:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\EquivaleCLT_v1.1.html`
+- Data: 09/08/2026
+- Alteracao: inclusao de novo card na home e publicacao do aplicativo EquivaleCLT como HTML standalone.
+
+Observacoes:
+
+- Aplicativo standalone empacotado em HTML unico.
+- Tela inicial do site aponta para `/equivaleclt/`.
+- O card foi classificado no filtro `Orcamento`.
+- O link interno de download do HTML foi ajustado para `index.html`, preservando o nome de arquivo baixado `EquivaleCLT_v1.1.html`.
+- Validar apos futuras alteracoes se a simulacao CLT/PJ, encargos SINAPI, beneficios, tributos, reservas, cenarios comparativos e relatorio continuam carregando corretamente.
+
 ## Artigos publicados na home
 
 Em 20/07/2026, os tres cards iniciais do bloco `Conteudo` da home foram substituidos por artigos reais enviados em PDF. Em 21/07/2026, foi incluido um quarto artigo. A estrategia adotada foi renderizar cada pagina do PDF como PNG dentro de uma pagina HTML propria, preservando a diagramacao original, tabelas, figuras e paginacao. Cada pagina tambem oferece link para abrir/baixar o PDF original.
@@ -1244,7 +1265,8 @@ $headers=@{ 'User-Agent'='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
   '/geradorpro/',
   '/spdapro/',
   '/lumipro/',
-  '/esgotocalcpro/'
+  '/esgotocalcpro/',
+  '/equivaleclt/'
 ) | ForEach-Object {
   $url = "https://www.obrasinteligentes.ia.br$_?v=check"
   $r = Invoke-WebRequest -UseBasicParsing -Headers $headers -Uri $url -TimeoutSec 30
