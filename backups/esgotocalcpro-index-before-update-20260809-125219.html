@@ -1,0 +1,2638 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EsgotoCalc Pro — Dimensionamento de Redes Coletoras de Esgoto Sanitário</title>
+<style>
+:root{
+  --paper:#EDF1F0; --paper2:#F7F9F8; --grid:rgba(14,42,51,.07);
+  --ink:#0E2A33; --ink2:#3A5A63; --ink3:#6B858C;
+  --line:#C9D6D6; --line2:#DDE6E5;
+  --hydro:#12718F; --hydro-soft:#D6EAF1;
+  --ocre:#B26A12; --ocre-soft:#F6E7CE;
+  --ok:#2C7A50; --ok-soft:#DCEDE2;
+  --warn:#B0791A; --warn-soft:#F7EBD2;
+  --fail:#A6302A; --fail-soft:#F6DEDB;
+  --solo:#B9A98B; --tubo:#5A6E75;
+  --shadow:0 1px 2px rgba(14,42,51,.06),0 8px 24px -12px rgba(14,42,51,.22);
+  --r:3px;
+  --ff-ui:ui-sans-serif,system-ui,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --ff-mono:ui-monospace,"SFMono-Regular","SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+}
+html[data-tema="escuro"]{
+  --paper:#0C1A1F; --paper2:#122529; --grid:rgba(180,214,220,.06);
+  --ink:#E4EEEF; --ink2:#A8C0C5; --ink3:#7C979D;
+  --line:#25424A; --line2:#1B333A;
+  --hydro:#4FB8D8; --hydro-soft:#0E3542;
+  --ocre:#E0A44B; --ocre-soft:#3A2B12;
+  --ok:#5FBE8A; --ok-soft:#12331F;
+  --warn:#DDB05A; --warn-soft:#33280F;
+  --fail:#E5766C; --fail-soft:#3A1613;
+  --solo:#6B5F49; --tubo:#8AA3AB;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px -12px rgba(0,0,0,.7);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:var(--ff-ui); color:var(--ink); background:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+  font-size:14px; line-height:1.45; -webkit-text-size-adjust:100%;
+}
+/* ---------- Cabeçalho ---------- */
+header.topo{
+  position:sticky; top:0; z-index:50;
+  background:var(--paper2); border-bottom:1px solid var(--line);
+  box-shadow:var(--shadow);
+}
+.topo-in{max-width:1400px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.marca{display:flex;align-items:baseline;gap:9px;min-width:0}
+.marca b{
+  font-size:18px;font-weight:800;letter-spacing:-.35px;
+  text-transform:uppercase; white-space:nowrap;
+}
+.marca b span{color:var(--hydro)}
+.marca .ver{font-family:var(--ff-mono);font-size:10.5px;color:var(--ink3);border:1px solid var(--line);padding:1px 5px;border-radius:2px}
+.marca .sub{font-size:11.5px;color:var(--ink3);white-space:nowrap}
+.topo-acoes{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}
+/* ---------- Botões ---------- */
+button,.btn{
+  font-family:var(--ff-ui);font-size:12.5px;font-weight:600;
+  padding:6px 11px;border:1px solid var(--line);background:var(--paper2);color:var(--ink);
+  border-radius:var(--r);cursor:pointer;transition:background .12s,border-color .12s,transform .05s;
+}
+button:hover,.btn:hover{background:var(--hydro-soft);border-color:var(--hydro)}
+button:active{transform:translateY(1px)}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--hydro);outline-offset:2px}
+button.pri{background:var(--hydro);border-color:var(--hydro);color:#fff}
+button.pri:hover{filter:brightness(1.08);background:var(--hydro)}
+button.mini{padding:3px 7px;font-size:11px}
+button.danger{color:var(--fail);border-color:var(--line)}
+button.danger:hover{background:var(--fail-soft);border-color:var(--fail)}
+button[disabled]{opacity:.45;cursor:not-allowed}
+/* ---------- Navegação em pranchas ---------- */
+nav.pranchas{background:var(--paper2);border-bottom:1px solid var(--line);overflow-x:auto;scrollbar-width:thin}
+.pranchas-in{max-width:1400px;margin:0 auto;display:flex;gap:0;padding:0 8px;min-width:max-content}
+.aba{
+  display:flex;align-items:center;gap:7px;padding:9px 13px;border:0;background:transparent;
+  border-bottom:2px solid transparent;border-radius:0;color:var(--ink2);font-weight:600;font-size:12.5px;white-space:nowrap;
+}
+.aba:hover{background:transparent;border-bottom-color:var(--line);color:var(--ink)}
+.aba .num{font-family:var(--ff-mono);font-size:10px;color:var(--ink3);letter-spacing:.5px}
+.aba[aria-selected="true"]{color:var(--hydro);border-bottom-color:var(--hydro)}
+.aba[aria-selected="true"] .num{color:var(--hydro)}
+/* ---------- Layout ---------- */
+main{max-width:1400px;margin:0 auto;padding:18px 16px 64px}
+.painel[hidden]{display:none}
+.grade{display:grid;gap:14px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(330px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.g4{grid-template-columns:repeat(auto-fit,minmax(185px,1fr))}
+.card{
+  background:var(--paper2);border:1px solid var(--line);border-radius:var(--r);
+  padding:14px;box-shadow:var(--shadow);
+}
+.card>h3{
+  margin:0 0 10px;font-size:11px;font-weight:800;letter-spacing:.9px;text-transform:uppercase;color:var(--ink3);
+  border-bottom:1px solid var(--line2);padding-bottom:7px;display:flex;align-items:center;gap:8px;justify-content:space-between;
+}
+.card>h3 .tag{font-family:var(--ff-mono);font-weight:600;letter-spacing:0;text-transform:none;font-size:10.5px;color:var(--ink3)}
+h2.titulo{
+  margin:0 0 4px;font-size:21px;font-weight:800;letter-spacing:-.4px;
+}
+p.lede{margin:0 0 16px;color:var(--ink2);font-size:13px;max-width:78ch}
+.divisor{height:1px;background:var(--line2);margin:14px 0}
+/* ---------- Campos ---------- */
+.campo{display:flex;flex-direction:column;gap:3px;margin-bottom:9px}
+.campo label{font-size:11.5px;font-weight:600;color:var(--ink2);display:flex;justify-content:space-between;gap:6px;align-items:baseline}
+.campo label .un{font-family:var(--ff-mono);font-size:10.5px;color:var(--ink3);font-weight:500}
+input,select,textarea{
+  font-family:var(--ff-mono);font-size:13px;padding:6px 8px;
+  border:1px solid var(--line);border-radius:var(--r);background:var(--paper);color:var(--ink);width:100%;
+}
+select{font-family:var(--ff-ui)}
+input[type=checkbox]{width:auto;accent-color:var(--hydro)}
+.ck{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--ink2);margin-bottom:7px;cursor:pointer}
+.ajuda{font-size:11px;color:var(--ink3);line-height:1.4}
+/* ---------- Resultados ---------- */
+.res{display:grid;gap:1px;background:var(--line2);border:1px solid var(--line2);border-radius:var(--r);overflow:hidden}
+.res .lin{display:flex;justify-content:space-between;align-items:baseline;gap:10px;background:var(--paper2);padding:6px 9px}
+.res .lin b{font-family:var(--ff-mono);font-size:13.5px;font-weight:700;white-space:nowrap}
+.res .lin span{font-size:12px;color:var(--ink2)}
+.res .lin small{font-family:var(--ff-mono);color:var(--ink3);font-size:10.5px}
+.kpi{background:var(--paper2);border:1px solid var(--line);border-left:3px solid var(--hydro);border-radius:var(--r);padding:9px 11px}
+.kpi .rot{font-size:10.5px;text-transform:uppercase;letter-spacing:.7px;color:var(--ink3);font-weight:700}
+.kpi .val{font-family:var(--ff-mono);font-size:20px;font-weight:700;letter-spacing:-.5px;line-height:1.25}
+.kpi .obs{font-size:11px;color:var(--ink2)}
+.kpi.ok{border-left-color:var(--ok)} .kpi.warn{border-left-color:var(--warn)} .kpi.fail{border-left-color:var(--fail)}
+.selo{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:2px 7px;border-radius:20px;border:1px solid}
+.selo.ok{background:var(--ok-soft);color:var(--ok);border-color:var(--ok)}
+.selo.warn{background:var(--warn-soft);color:var(--warn);border-color:var(--warn)}
+.selo.fail{background:var(--fail-soft);color:var(--fail);border-color:var(--fail)}
+.selo.neutro{background:var(--paper);color:var(--ink3);border-color:var(--line)}
+/* ---------- Tabelas ---------- */
+.tabela-rolo{overflow:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--paper2)}
+table{border-collapse:collapse;width:100%;font-size:12px}
+th,td{padding:5px 7px;border-bottom:1px solid var(--line2);text-align:right;white-space:nowrap}
+th{
+  background:var(--paper);position:sticky;top:0;z-index:2;
+  font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--ink3);font-weight:800;
+  border-bottom:1px solid var(--line);
+}
+th.esq,td.esq{text-align:left}
+td{font-family:var(--ff-mono)}
+td.txt{font-family:var(--ff-ui)}
+tbody tr:hover{background:var(--hydro-soft)}
+tbody tr.reprovado{background:var(--fail-soft)}
+tbody tr.reprovado:hover{background:var(--fail-soft);filter:brightness(.97)}
+tbody tr.alerta{background:var(--warn-soft)}
+table input,table select{padding:3px 5px;font-size:11.5px;min-width:62px}
+caption{caption-side:bottom;text-align:left;padding:7px;font-size:11px;color:var(--ink3)}
+.num-cel{font-variant-numeric:tabular-nums}
+/* ---------- Perfil (assinatura) ---------- */
+.prancha{
+  background:var(--paper2);border:1px solid var(--line);border-radius:var(--r);padding:0;overflow:hidden;box-shadow:var(--shadow);
+}
+.prancha-cab{
+  display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;
+  padding:8px 12px;border-bottom:1px solid var(--line);background:var(--paper);
+  font-family:var(--ff-mono);font-size:10.5px;letter-spacing:.4px;text-transform:uppercase;color:var(--ink3);
+}
+.prancha-cab b{color:var(--ink);font-size:11px}
+#perfilBox{overflow:auto;background:var(--paper2)}
+#perfil{display:block;min-width:720px}
+/* ---------- Avisos ---------- */
+.aviso{border:1px solid;border-left-width:3px;border-radius:var(--r);padding:9px 11px;font-size:12.5px;margin-bottom:9px}
+.aviso.info{background:var(--hydro-soft);border-color:var(--hydro);color:var(--ink)}
+.aviso.ok{background:var(--ok-soft);border-color:var(--ok)}
+.aviso.warn{background:var(--warn-soft);border-color:var(--warn)}
+.aviso.fail{background:var(--fail-soft);border-color:var(--fail)}
+.aviso b{display:block;margin-bottom:2px}
+.lista-check{list-style:none;margin:0;padding:0}
+.lista-check li{display:flex;gap:9px;align-items:flex-start;padding:7px 0;border-bottom:1px solid var(--line2);font-size:12.5px}
+.lista-check li:last-child{border-bottom:0}
+.lista-check .ic{flex:0 0 auto;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:800;margin-top:1px}
+.lista-check .ic.ok{background:var(--ok-soft);color:var(--ok)}
+.lista-check .ic.warn{background:var(--warn-soft);color:var(--warn)}
+.lista-check .ic.fail{background:var(--fail-soft);color:var(--fail)}
+.lista-check .ic.na{background:var(--paper);color:var(--ink3);border:1px solid var(--line)}
+.lista-check .txt b{display:block;font-size:12.5px}
+.lista-check .txt small{color:var(--ink3);font-size:11px;display:block;margin-top:1px}
+/* ---------- Diversos ---------- */
+.barra{display:flex;gap:7px;flex-wrap:wrap;align-items:center;margin-bottom:11px}
+.barra .esp{flex:1}
+.mono{font-family:var(--ff-mono)}
+.dim{color:var(--ink3)}
+.nowrap{white-space:nowrap}
+details.doc{border:1px solid var(--line);border-radius:var(--r);padding:9px 11px;background:var(--paper2);margin-bottom:9px}
+details.doc summary{cursor:pointer;font-weight:700;font-size:12.5px;color:var(--ink2)}
+details.doc[open] summary{margin-bottom:8px;color:var(--ink)}
+details.doc .corpo{font-size:12.5px;color:var(--ink2);line-height:1.55}
+details.doc code{font-family:var(--ff-mono);background:var(--paper);padding:1px 4px;border-radius:2px;border:1px solid var(--line2);font-size:11.5px}
+.toast{
+  position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:200;
+  background:var(--ink);color:var(--paper2);padding:9px 16px;border-radius:20px;font-size:12.5px;font-weight:600;
+  box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;
+}
+.toast.ver{opacity:1;transform:translateX(-50%) translateY(-4px)}
+.rodape{max-width:1400px;margin:0 auto;padding:16px;color:var(--ink3);font-size:11px;border-top:1px solid var(--line2)}
+.eq{font-family:var(--ff-mono);font-size:12px;background:var(--paper);border:1px solid var(--line2);border-radius:var(--r);padding:7px 9px;margin:6px 0;overflow-x:auto;white-space:pre}
+@media (max-width:640px){
+  main{padding:14px 10px 56px}
+  .marca .sub{display:none}
+  .topo-in{padding:8px 10px}
+  h2.titulo{font-size:18px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media print{
+  body{background:#fff;background-image:none;font-size:10.5pt}
+  header.topo,nav.pranchas,.topo-acoes,.barra,.naoimprime{display:none!important}
+  .painel[hidden]{display:block!important}
+  .card,.prancha{box-shadow:none;break-inside:avoid;page-break-inside:avoid}
+  main{max-width:none;padding:0}
+  .tabela-rolo{overflow:visible}
+  #perfil{min-width:0;width:100%}
+}
+</style>
+</head>
+<body>
+<header class="topo">
+  <div class="topo-in">
+    <div class="marca">
+      <b>Esgoto<span>Calc</span> Pro</b>
+      <span class="ver" id="verTag">v1.0</span>
+      <span class="sub">Redes coletoras de esgoto sanitário — NBR 9649 / NBR 14486</span>
+    </div>
+    <div class="topo-acoes">
+      <button id="btSalvar" title="Grava o projeto no navegador">Salvar</button>
+      <button id="btExportar" title="Baixa um arquivo .json com o projeto">Exportar</button>
+      <button id="btImportar" title="Carrega um projeto .json">Importar</button>
+      <input type="file" id="arqImport" accept=".json,application/json" hidden>
+      <button id="btImprimir">Imprimir</button>
+      <button id="btTema" title="Alterna claro/escuro">Tema</button>
+    </div>
+  </div>
+</header>
+
+<nav class="pranchas" aria-label="Etapas do projeto">
+  <div class="pranchas-in" role="tablist">
+    <button class="aba" role="tab" data-alvo="pProjeto"      aria-selected="true"><span class="num">01</span>Projeto</button>
+    <button class="aba" role="tab" data-alvo="pVazoes"       aria-selected="false"><span class="num">02</span>Vazões</button>
+    <button class="aba" role="tab" data-alvo="pTrecho"       aria-selected="false"><span class="num">03</span>Trecho</button>
+    <button class="aba" role="tab" data-alvo="pRede"         aria-selected="false"><span class="num">04</span>Rede e perfil</button>
+    <button class="aba" role="tab" data-alvo="pEstrutural"   aria-selected="false"><span class="num">05</span>Estrutural</button>
+    <button class="aba" role="tab" data-alvo="pVala"         aria-selected="false"><span class="num">06</span>Vala e quantitativos</button>
+    <button class="aba" role="tab" data-alvo="pMateriais"    aria-selected="false"><span class="num">07</span>Materiais</button>
+    <button class="aba" role="tab" data-alvo="pConformidade" aria-selected="false"><span class="num">08</span>Conformidade</button>
+    <button class="aba" role="tab" data-alvo="pRelatorio"    aria-selected="false"><span class="num">09</span>Relatório</button>
+    <button class="aba" role="tab" data-alvo="pTestes"       aria-selected="false"><span class="num">10</span>Testes</button>
+  </div>
+</nav>
+
+<main>
+
+<!-- ============ 01 PROJETO ============ -->
+<section class="painel" id="pProjeto" role="tabpanel">
+  <h2 class="titulo">Parâmetros do projeto</h2>
+  <p class="lede">Defina identificação, população, consumo e critérios normativos. Todos os demais módulos leem daqui.</p>
+
+  <div class="grade g2">
+    <div class="card">
+      <h3>Identificação <span class="tag">cabeçalho do relatório</span></h3>
+      <div class="campo"><label>Obra / empreendimento</label><input id="idObra" placeholder="Ex.: Ampliação do SES — Bairro Jardim Norte"></div>
+      <div class="grade g2" style="gap:0 12px">
+        <div class="campo"><label>Município / UF</label><input id="idMunicipio" placeholder="Ex.: Brasília / DF"></div>
+        <div class="campo"><label>Contratante</label><input id="idContratante" placeholder="Ex.: Companhia de Saneamento"></div>
+        <div class="campo"><label>Responsável técnico</label><input id="idRT" placeholder="Nome"></div>
+        <div class="campo"><label>CREA / ART</label><input id="idCrea" placeholder="Nº"></div>
+        <div class="campo"><label>Data do estudo</label><input id="idData" placeholder="dd/mm/aaaa"></div>
+        <div class="campo"><label>Revisão</label><input id="idRev" placeholder="R00"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>População e consumo <span class="tag">NBR 9649 item 5.1</span></h3>
+      <div class="grade g2" style="gap:0 12px">
+        <div class="campo"><label>População início de plano <span class="un">hab</span></label><input type="number" id="popI" value="4500" step="1" min="0"></div>
+        <div class="campo"><label>População fim de plano <span class="un">hab</span></label><input type="number" id="popF" value="8200" step="1" min="0"></div>
+        <div class="campo"><label>Consumo per capita início <span class="un">L/hab·dia</span></label><input type="number" id="qpcI" value="150" step="1" min="1"></div>
+        <div class="campo"><label>Consumo per capita fim <span class="un">L/hab·dia</span></label><input type="number" id="qpcF" value="180" step="1" min="1"></div>
+        <div class="campo"><label>Coeficiente de retorno C <span class="un">—</span></label><input type="number" id="coefC" value="0.80" step="0.01" min="0.1" max="1"></div>
+        <div class="campo"><label>K1 — dia de maior consumo <span class="un">—</span></label><input type="number" id="k1" value="1.20" step="0.01" min="1"></div>
+        <div class="campo"><label>K2 — hora de maior consumo <span class="un">—</span></label><input type="number" id="k2" value="1.50" step="0.01" min="1"></div>
+        <div class="campo"><label>K3 — hora de menor consumo <span class="un">—</span></label><input type="number" id="k3" value="0.50" step="0.01" min="0.1" max="1"></div>
+        <div class="campo"><label>Taxa de infiltração <span class="un">L/s·km</span></label><input type="number" id="txInf" value="0.10" step="0.01" min="0"></div>
+        <div class="campo"><label>Extensão total da rede <span class="un">m</span></label><input type="number" id="extRede" value="6200" step="1" min="1"></div>
+      </div>
+      <div class="ajuda">A extensão total é usada para converter a vazão da bacia em <b>taxa de contribuição linear</b> (L/s·m), distribuída trecho a trecho.</div>
+    </div>
+
+    <div class="card">
+      <h3>Critérios hidráulicos <span class="tag">NBR 9649:1986</span></h3>
+      <div class="grade g2" style="gap:0 12px">
+        <div class="campo"><label>Vazão mínima de projeto <span class="un">L/s</span></label><input type="number" id="qMin" value="1.5" step="0.1" min="0.1"></div>
+        <div class="campo"><label>Tensão trativa mínima <span class="un">Pa</span></label><input type="number" id="ttMin" value="1.0" step="0.1" min="0.1"></div>
+        <div class="campo"><label>Lâmina relativa máxima Y/D <span class="un">—</span></label><input type="number" id="ydMax" value="0.75" step="0.01" min="0.3" max="0.9"></div>
+        <div class="campo"><label>Y/D máx. se V<sub>f</sub> &gt; V<sub>c</sub> <span class="un">—</span></label><input type="number" id="ydCrit" value="0.50" step="0.01" min="0.3" max="0.9"></div>
+        <div class="campo"><label>Velocidade máxima <span class="un">m/s</span></label><input type="number" id="vMax" value="5.0" step="0.1" min="1"></div>
+        <div class="campo"><label>n de Manning (verificação) <span class="un">—</span></label><input type="number" id="nNorma" value="0.013" step="0.001" min="0.008"></div>
+        <div class="campo"><label>Peso específico do esgoto <span class="un">N/m³</span></label><input type="number" id="gamaAgua" value="10000" step="10" min="9000"></div>
+        <div class="campo"><label>Diâmetro mínimo da rede <span class="un">mm</span></label><input type="number" id="dnMin" value="150" step="10" min="100"></div>
+      </div>
+      <label class="ck"><input type="checkbox" id="usarNnorma" checked> Usar n = 0,013 para todos os materiais na verificação normativa</label>
+      <div class="ajuda">A NBR 9649 fixa n = 0,013 independentemente do material para a verificação hidráulica. O n do catálogo entra apenas na aba comparativa.</div>
+    </div>
+
+    <div class="card">
+      <h3>Assentamento <span class="tag">recobrimento e vala</span></h3>
+      <div class="grade g2" style="gap:0 12px">
+        <div class="campo"><label>Recobrimento mín. no leito da via <span class="un">m</span></label><input type="number" id="recVia" value="0.90" step="0.05" min="0.3"></div>
+        <div class="campo"><label>Recobrimento mín. no passeio <span class="un">m</span></label><input type="number" id="recPasseio" value="0.65" step="0.05" min="0.3"></div>
+        <div class="campo"><label>Profundidade máxima recomendada <span class="un">m</span></label><input type="number" id="profMax" value="4.00" step="0.1" min="1"></div>
+        <div class="campo"><label>Distância máxima entre PVs <span class="un">m</span></label><input type="number" id="distPV" value="100" step="5" min="20"></div>
+        <div class="campo"><label>Folga lateral na vala (cada lado) <span class="un">m</span></label><input type="number" id="folgaVala" value="0.30" step="0.05" min="0.1"></div>
+        <div class="campo"><label>Largura mínima de vala <span class="un">m</span></label><input type="number" id="valaMin" value="0.60" step="0.05" min="0.4"></div>
+        <div class="campo"><label>Espessura do berço/lastro <span class="un">m</span></label><input type="number" id="berco" value="0.10" step="0.01" min="0"></div>
+        <div class="campo"><label>Nível d'água (prof. do NA) <span class="un">m</span></label><input type="number" id="profNA" value="0" step="0.1" min="0"></div>
+      </div>
+      <div class="ajuda">Profundidade do NA = 0 significa lençol não considerado. Valores &gt; 0 acionam a verificação de esgotamento de vala.</div>
+    </div>
+  </div>
+
+  <div class="barra" style="margin-top:14px">
+    <button class="pri" id="btExemplo">Carregar exemplo</button>
+    <button id="btLimpar" class="danger">Limpar projeto</button>
+    <span class="esp"></span>
+    <span class="dim mono" id="statusSalvo"></span>
+  </div>
+</section>
+
+<!-- ============ 02 VAZÕES ============ -->
+<section class="painel" id="pVazoes" role="tabpanel" hidden>
+  <h2 class="titulo">Vazões de contribuição</h2>
+  <p class="lede">Vazão doméstica de início e fim de plano, infiltração, contribuições concentradas e parcela pluvial parasitária pelo método racional.</p>
+
+  <div class="grade g4" id="kpiVazoes"></div>
+
+  <div class="divisor"></div>
+
+  <div class="grade g2">
+    <div class="card">
+      <h3>Memória de cálculo — vazão doméstica</h3>
+      <div class="eq">Qi = (C · Pi · qi · K2) / 86 400        [L/s]
+Qf = (C · Pf · qf · K1 · K2) / 86 400   [L/s]</div>
+      <div class="res" id="resDomestica"></div>
+      <div class="ajuda" style="margin-top:8px">O início de plano usa apenas K2 (hora de maior consumo do ano inicial); o fim de plano acumula K1 · K2.</div>
+    </div>
+
+    <div class="card">
+      <h3>Contribuições concentradas <span class="tag">grandes geradores</span></h3>
+      <div class="barra"><button class="mini pri" id="btAddConc">Adicionar contribuinte</button><span class="esp"></span><span class="dim mono" id="totConc"></span></div>
+      <div class="tabela-rolo">
+        <table>
+          <thead><tr><th class="esq">Identificação</th><th>Vazão início<br>L/s</th><th>Vazão fim<br>L/s</th><th>Nó de lançamento</th><th></th></tr></thead>
+          <tbody id="tbConc"></tbody>
+        </table>
+      </div>
+      <div class="ajuda" style="margin-top:8px">Hospitais, indústrias, escolas e presídios devem entrar como vazão concentrada no nó correspondente, não diluídos na taxa linear.</div>
+    </div>
+
+    <div class="card">
+      <h3>Infiltração <span class="tag">NBR 9649 item 5.1.4</span></h3>
+      <div class="res" id="resInfiltracao"></div>
+      <div class="ajuda" style="margin-top:8px">Faixa usual de 0,05 a 1,00 L/s·km, função do tipo de tubo, junta, nível do lençol e idade da rede.</div>
+    </div>
+
+    <div class="card">
+      <h3>Parcela pluvial parasitária <span class="tag">método racional</span></h3>
+      <div class="grade g2" style="gap:0 12px">
+        <div class="campo"><label>Área da microbacia <span class="un">ha</span></label><input type="number" id="racA" value="12.5" step="0.1" min="0"></div>
+        <div class="campo"><label>Coeficiente de escoamento C <span class="un">—</span></label><input type="number" id="racC" value="0.05" step="0.01" min="0" max="1"></div>
+        <div class="campo"><label>Intensidade de chuva i <span class="un">mm/h</span></label><input type="number" id="racI" value="60" step="1" min="0"></div>
+        <div class="campo"><label>Fração que atinge a rede <span class="un">%</span></label><input type="number" id="racFrac" value="100" step="1" min="0" max="100"></div>
+      </div>
+      <div class="eq">Q = C · i · A / 360   [m³/s]   com A em ha, i em mm/h</div>
+      <div class="res" id="resRacional"></div>
+      <label class="ck" style="margin-top:8px"><input type="checkbox" id="racNaRede"> Somar esta parcela às vazões de fim de plano da rede</label>
+      <div class="aviso warn" style="margin-top:9px"><b>Atenção</b> Em sistema separador absoluto a contribuição pluvial é indevida. Use C baixo (0,02 a 0,10) apenas para estimar o extravasamento causado por ligações clandestinas e verificar a capacidade remanescente.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 03 TRECHO ============ -->
+<section class="painel" id="pTrecho" role="tabpanel">
+  <h2 class="titulo">Dimensionamento de trecho</h2>
+  <p class="lede">Verificação hidráulica de um trecho isolado e busca automática do menor diâmetro e da menor declividade que atendem à norma.</p>
+
+  <div class="grade g2">
+    <div class="card">
+      <h3>Dados de entrada</h3>
+      <div class="grade g2" style="gap:0 12px">
+        <div class="campo"><label>Material</label><select id="tMat"></select></div>
+        <div class="campo"><label>Diâmetro nominal</label><select id="tDN"></select></div>
+        <div class="campo"><label>Vazão de início de plano Q<sub>i</sub> <span class="un">L/s</span></label><input type="number" id="tQi" value="1.5" step="0.1" min="0.01"></div>
+        <div class="campo"><label>Vazão de fim de plano Q<sub>f</sub> <span class="un">L/s</span></label><input type="number" id="tQf" value="12" step="0.1" min="0.01"></div>
+        <div class="campo"><label>Declividade I <span class="un">m/m</span></label><input type="number" id="tI" value="0.0060" step="0.0001" min="0.0001"></div>
+        <div class="campo"><label>Extensão do trecho <span class="un">m</span></label><input type="number" id="tL" value="80" step="1" min="1"></div>
+      </div>
+      <div class="barra" style="margin-top:6px">
+        <button class="pri" id="btDimensionar">Dimensionar automaticamente</button>
+        <button id="btIminima">Aplicar declividade mínima</button>
+      </div>
+      <div class="ajuda">O dimensionamento automático percorre os diâmetros comerciais do material escolhido, do menor para o maior, e adota a menor declividade que satisfaz simultaneamente tensão trativa, lâmina máxima e velocidade.</div>
+    </div>
+
+    <div class="card">
+      <h3>Verificações <span class="tag" id="tSelo"></span></h3>
+      <div class="grade g2" style="gap:9px">
+        <div class="kpi" id="kTT"></div>
+        <div class="kpi" id="kYD"></div>
+        <div class="kpi" id="kV"></div>
+        <div class="kpi" id="kI"></div>
+      </div>
+      <div class="divisor"></div>
+      <div class="res" id="resTrecho"></div>
+    </div>
+  </div>
+
+  <div class="divisor"></div>
+  <div class="grade g2">
+    <div class="card">
+      <h3>Seção transversal <span class="tag">lâmina d'água</span></h3>
+      <div id="secaoBox" style="display:grid;place-items:center;padding:6px"></div>
+    </div>
+    <div class="card">
+      <h3>Curva de capacidade <span class="tag">Q e V em função de Y/D</span></h3>
+      <div id="curvaBox" style="overflow:auto"></div>
+    </div>
+  </div>
+
+  <details class="doc" style="margin-top:14px">
+    <summary>Formulação empregada</summary>
+    <div class="corpo">
+      <div class="eq">θ = 2 · arccos(1 − 2·Y/D)
+A = (D²/8) · (θ − sen θ)
+P = θ · D / 2
+Rh = A / P = (D/4) · (1 − sen θ / θ)
+Q = (1/n) · A · Rh^(2/3) · I^(1/2)     (Manning)
+σt = γ · Rh · I                        (tensão trativa média)
+Vc = 6 · √(g · Rh)                     (velocidade crítica)
+Imin = 0,0055 · Qi^(−0,47)             (Qi em L/s, σt = 1,0 Pa)
+Imax = 4,65 · Qf^(−0,67)               (Qf em L/s, V = 5 m/s)</div>
+      <p>A lâmina relativa é obtida por bisseção no intervalo Y/D ∈ (0 ; 0,93], região em que a vazão é estritamente crescente. Acima de Y/D ≈ 0,938 a vazão volta a decrescer e a solução deixa de ser única — por isso o limite normativo de 0,75 é também uma proteção contra instabilidade de escoamento.</p>
+    </div>
+  </details>
+</section>
+
+<!-- ============ 04 REDE ============ -->
+<section class="painel" id="pRede" role="tabpanel" hidden>
+  <h2 class="titulo">Rede coletora — cálculo trecho a trecho</h2>
+  <p class="lede">Cada linha é um trecho entre dois poços de visita. As cotas de fundo são encadeadas de montante para jusante, respeitando recobrimento mínimo e degraus nos PVs.</p>
+
+  <div class="barra">
+    <button class="pri" id="btAddTrecho">Adicionar trecho</button>
+    <button id="btDimRede">Dimensionar rede inteira</button>
+    <button id="btRecalcular">Recalcular</button>
+    <button id="btCsvRede">Exportar CSV</button>
+    <span class="esp"></span>
+    <span id="seloRede"></span>
+  </div>
+
+  <div class="tabela-rolo" style="max-height:none">
+    <table id="tabRede">
+      <thead>
+        <tr>
+          <th class="esq">PV mont.</th><th class="esq">PV jus.</th>
+          <th>L<br>m</th>
+          <th>Cota terr.<br>mont.</th><th>Cota terr.<br>jus.</th>
+          <th class="esq">Material</th><th>DN<br>mm</th><th>I<br>m/m</th>
+          <th>Q conc. f<br>L/s</th>
+          <th>Q<sub>i</sub><br>L/s</th><th>Q<sub>f</sub><br>L/s</th>
+          <th>Y/D<sub>f</sub></th><th>V<sub>f</sub><br>m/s</th><th>σt<sub>i</sub><br>Pa</th>
+          <th>Cota fundo<br>mont.</th><th>Cota fundo<br>jus.</th>
+          <th>Prof.<br>mont.</th><th>Prof.<br>jus.</th>
+          <th class="esq">Situação</th><th></th>
+        </tr>
+      </thead>
+      <tbody id="tbRede"></tbody>
+      <caption>Q<sub>i</sub> e Q<sub>f</sub> são vazões acumuladas de jusante do trecho, incluindo taxa linear, infiltração e contribuições concentradas a montante.</caption>
+    </table>
+  </div>
+
+  <div class="divisor"></div>
+
+  <div class="prancha" id="pranchaPerfil">
+    <div class="prancha-cab">
+      <span>Perfil longitudinal — <b id="perfilTitulo">rede principal</b></span>
+      <span>Escala vertical exagerada <b id="perfilExag">10×</b></span>
+      <span class="naoimprime" style="display:flex;gap:12px;align-items:center">
+        <label class="ck" style="margin:0;display:inline-flex"><input type="checkbox" id="perfilLamina" checked> lâmina d'água</label>
+        <select id="perfilModo" style="width:auto;padding:2px 6px;font-size:11px">
+          <option value="cota">cotas absolutas</option>
+          <option value="prof">profundidade da vala</option>
+        </select>
+      </span>
+    </div>
+    <div id="perfilBox"></div>
+  </div>
+  <div class="grade g4" id="kpiRede" style="margin-top:14px"></div>
+</section>
+
+<!-- ============ 05 ESTRUTURAL ============ -->
+<section class="painel" id="pEstrutural" role="tabpanel" hidden>
+  <h2 class="titulo">Verificação estrutural do tubo enterrado</h2>
+  <p class="lede">Carga de solo, carga móvel e deflexão diametral pela fórmula de Iowa modificada (Spangler) para tubos flexíveis — PVC e PEAD — e carga admissível para tubos rígidos.</p>
+
+  <div class="grade g2">
+    <div class="card">
+      <h3>Condições de instalação</h3>
+      <div class="grade g2" style="gap:0 12px">
+        <div class="campo"><label>Material</label><select id="eMat"></select></div>
+        <div class="campo"><label>Diâmetro nominal</label><select id="eDN"></select></div>
+        <div class="campo"><label>Rigidez anelar SN <span class="un">kN/m²</span></label><select id="eSN"><option>2</option><option selected>4</option><option>8</option><option>16</option></select></div>
+        <div class="campo"><label>Altura de recobrimento H <span class="un">m</span></label><input type="number" id="eH" value="2.00" step="0.05" min="0.2"></div>
+        <div class="campo"><label>Peso específico do solo <span class="un">kN/m³</span></label><input type="number" id="eGama" value="18" step="0.5" min="10"></div>
+        <div class="campo"><label>Módulo de reação do solo E' <span class="un">kPa</span></label><select id="eEl">
+          <option value="1400">Solo fino, sem compactação — 1 400</option>
+          <option value="2800">Compactação leve (&lt;85% Proctor) — 2 800</option>
+          <option value="7000" selected>Compactação moderada (85–95%) — 7 000</option>
+          <option value="14000">Compactação alta (&gt;95%) — 14 000</option>
+          <option value="20000">Brita graduada compactada — 20 000</option>
+        </select></div>
+        <div class="campo"><label>Fator de recalque D<sub>L</sub> <span class="un">—</span></label><input type="number" id="eDL" value="1.25" step="0.05" min="1" max="2"></div>
+        <div class="campo"><label>Fator de berço K<sub>x</sub> <span class="un">—</span></label><input type="number" id="eKx" value="0.10" step="0.005" min="0.08" max="0.11"></div>
+        <div class="campo"><label>Carga de roda <span class="un">kN</span></label><input type="number" id="eP" value="75" step="5" min="0"></div>
+        <div class="campo"><label>Deflexão admissível <span class="un">%</span></label><input type="number" id="eDefAdm" value="5.0" step="0.5" min="1" max="10"></div>
+      </div>
+      <label class="ck"><input type="checkbox" id="eTrafego" checked> Considerar carga móvel rodoviária (TB-450, roda isolada)</label>
+    </div>
+
+    <div class="card">
+      <h3>Resultados <span class="tag" id="eSelo"></span></h3>
+      <div class="grade g2" style="gap:9px">
+        <div class="kpi" id="eK1"></div>
+        <div class="kpi" id="eK2"></div>
+        <div class="kpi" id="eK3"></div>
+        <div class="kpi" id="eK4"></div>
+      </div>
+      <div class="divisor"></div>
+      <div class="res" id="eRes"></div>
+    </div>
+  </div>
+
+  <div class="divisor"></div>
+  <div class="card">
+    <h3>Deflexão em função do recobrimento</h3>
+    <div id="eGrafico" style="overflow:auto"></div>
+  </div>
+
+  <details class="doc" style="margin-top:14px">
+    <summary>Formulação estrutural</summary>
+    <div class="corpo">
+      <div class="eq">Carga de solo (prisma, tubo flexível):   qs = γs · H            [kPa]
+Carga móvel (Boussinesq, r = 0):        qm = 3·P·If / (2·π·H²)  [kPa]
+Rigidez do tubo:                        PS = 6,7 · SN           [kPa]
+Deflexão (Iowa modificada):
+  Δy/D = DL · Kx · (qs + qm) / (0,149·PS + 0,061·E')</div>
+      <p>Para tubos flexíveis (PVC e PEAD) a hipótese de prisma de solo é a usual e conservadora: o tubo deforma mais que o solo lateral, transferindo carga para as laterais. O critério de aceitação é a deflexão de longo prazo, limitada a 5% do diâmetro — muitos fabricantes de PEAD corrugado recomendam 3% como meta de projeto. O fator de impacto <code>If</code> adotado decresce de 1,50 (H ≤ 0,6 m) até 1,00 (H ≥ 2,0 m).</p>
+      <p>Para tubos rígidos de concreto o programa apresenta a carga vertical por metro linear, que deve ser comparada com a classe de resistência do tubo (carga mínima isenta de fissura), conforme catálogo do fabricante e a NBR 8890, aplicando o fator de equivalência do berço adotado.</p>
+    </div>
+  </details>
+</section>
+
+<!-- ============ 06 VALA ============ -->
+<section class="painel" id="pVala" role="tabpanel" hidden>
+  <h2 class="titulo">Vala, escoramento e quantitativos</h2>
+  <p class="lede">Volumes de escavação, reaterro e material importado por trecho, tipo de escoramento exigido pela profundidade e planilha de custos com preços unitários editáveis.</p>
+
+  <div class="grade g4" id="kpiVala"></div>
+
+  <div class="divisor"></div>
+
+  <div class="tabela-rolo">
+    <table>
+      <thead><tr>
+        <th class="esq">Trecho</th><th>L<br>m</th><th>Prof. média<br>m</th><th>Largura<br>m</th>
+        <th>Escavação<br>m³</th><th>Berço<br>m³</th><th>Tubo<br>m³</th><th>Reaterro<br>m³</th>
+        <th>Escoramento<br>m²</th><th>Esgotamento<br>m</th><th class="esq">Tipo de escoramento</th>
+      </tr></thead>
+      <tbody id="tbVala"></tbody>
+      <caption>Largura da vala = diâmetro externo + 2 × folga lateral, limitada inferiormente pela largura mínima do projeto.</caption>
+    </table>
+  </div>
+
+  <div class="divisor"></div>
+
+  <div class="card">
+    <h3>Planilha orçamentária <span class="tag">preços unitários editáveis</span></h3>
+    <div class="aviso info"><b>Preencha os códigos e preços da tabela vigente</b> Os campos de código e preço unitário estão em branco propositalmente. Informe a referência efetivamente adotada (SINAPI, SICRO ou tabela própria), com mês-base e desoneração, e registre a fonte no relatório.</div>
+    <div class="barra">
+      <div class="campo" style="margin:0;min-width:200px"><label>Referência de preços</label><input id="orcRef" placeholder="Ex.: SINAPI-DF, jun/2026, desonerado"></div>
+      <div class="campo" style="margin:0;max-width:130px"><label>BDI <span class="un">%</span></label><input type="number" id="orcBDI" value="22.5" step="0.1" min="0"></div>
+    </div>
+    <div class="tabela-rolo">
+      <table>
+        <thead><tr><th class="esq">Item</th><th class="esq">Código</th><th class="esq">Un</th><th>Quantidade</th><th>Preço unit.<br>R$</th><th>Total sem BDI<br>R$</th><th>Total com BDI<br>R$</th></tr></thead>
+        <tbody id="tbOrc"></tbody>
+        <tfoot><tr id="orcTotal"></tr></tfoot>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 07 MATERIAIS ============ -->
+<section class="painel" id="pMateriais" role="tabpanel" hidden>
+  <h2 class="titulo">Biblioteca de tubos</h2>
+  <p class="lede">Diâmetros comerciais, rugosidade e características de cada material. Valores de referência para anteprojeto — confirme sempre no catálogo do fabricante antes da especificação final.</p>
+
+  <div class="grade g3" id="cardsMat"></div>
+
+  <div class="divisor"></div>
+
+  <div class="card">
+    <h3>Comparativo de capacidade <span class="tag">mesma declividade, Y/D = 0,75</span></h3>
+    <div class="barra">
+      <div class="campo" style="margin:0;max-width:170px"><label>Declividade <span class="un">m/m</span></label><input type="number" id="cmpI" value="0.0050" step="0.0005" min="0.0005"></div>
+      <label class="ck" style="margin:0"><input type="checkbox" id="cmpNcat" checked> usar n de catálogo (desmarcado: n = 0,013)</label>
+    </div>
+    <div class="tabela-rolo">
+      <table>
+        <thead><tr><th class="esq">Material</th><th>n</th><th>DN<br>mm</th><th>DI<br>mm</th><th>DE<br>mm</th><th>Q a 75%<br>L/s</th><th>V a 75%<br>m/s</th><th>Q a seção plena<br>L/s</th><th>σt a 75%<br>Pa</th></tr></thead>
+        <tbody id="tbCmp"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="grade g2" style="margin-top:14px">
+    <details class="doc" open>
+      <summary>PEAD — notas de especificação</summary>
+      <div class="corpo">
+        <p><b>PEAD corrugado de parede dupla (PEAD-DP)</b> — parede externa corrugada, parede interna lisa. É o produto usual em coletores por gravidade de DN 100 a DN 1200. Classificado pela rigidez anelar SN (kN/m²): SN 4 para recobrimentos correntes, SN 8 sob tráfego pesado ou grandes profundidades, SN 16 em situações críticas. Referências de ensaio e classificação: EN 13476 e ISO 21138 para tubos de parede estruturada.</p>
+        <p><b>PEAD liso PE 100</b> — usado em linhas de recalque, travessias e sifões invertidos, onde há pressão interna. Especificado por SDR e PN; o diâmetro interno depende da série adotada, o que reduz sensivelmente a área útil em relação ao DE nominal.</p>
+        <p><b>Cuidados de projeto</b> — a leveza do PEAD facilita o assentamento, mas transfere a responsabilidade estrutural para o solo lateral: a deflexão depende muito mais de E' do que da rigidez do tubo. Exija compactação controlada da envoltória lateral e verifique flutuação quando houver lençol acima da geratriz superior. Em juntas soldadas por eletrofusão, exija qualificação de soldador e registro dos parâmetros de fusão.</p>
+        <p><b>Rugosidade</b> — o interior liso permite n entre 0,009 e 0,011. Para a verificação normativa da NBR 9649 o valor a usar continua sendo n = 0,013; o ganho hidráulico do material só pode ser invocado se a norma ou o contratante admitirem expressamente.</p>
+      </div>
+    </details>
+    <details class="doc">
+      <summary>Escolha de material — critérios práticos</summary>
+      <div class="corpo">
+        <ul>
+          <li><b>PVC</b> — padrão em redes urbanas até DN 400. Junta elástica, leve, boa resistência química, custo competitivo.</li>
+          <li><b>PEAD corrugado</b> — vantajoso em solos agressivos, terrenos com recalque diferencial, travessias e onde a junta soldada elimina infiltração. Cobre faixa de diâmetros maior que o PVC.</li>
+          <li><b>Concreto</b> — diâmetros grandes (DN ≥ 400), interceptores e emissários. Exige proteção contra ataque por H₂S em trechos com baixa velocidade ou queda livre.</li>
+          <li><b>Cerâmica (grês)</b> — excelente resistência química e à abrasão; fragilidade no manuseio e custo restringem o uso.</li>
+          <li><b>Ferro fundido</b> — travessias, trechos aéreos, sifões e onde há carga externa elevada ou pequeno recobrimento.</li>
+        </ul>
+        <p class="dim">A definição do material em obra pública precisa de justificativa técnica no projeto básico. Especificação de marca ou de material sem motivação técnica é restrição indevida à competitividade.</p>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- ============ 08 CONFORMIDADE ============ -->
+<section class="painel" id="pConformidade" role="tabpanel" hidden>
+  <h2 class="titulo">Verificação de conformidade</h2>
+  <p class="lede">Checagem automática dos critérios hidráulicos e de assentamento, e roteiro de verificação documental para projeto básico de obra pública.</p>
+
+  <div class="grade g2">
+    <div class="card">
+      <h3>Critérios hidráulicos e geométricos <span class="tag">automático</span></h3>
+      <ul class="lista-check" id="chkAuto"></ul>
+    </div>
+    <div class="card">
+      <h3>Roteiro documental <span class="tag">preenchimento manual</span></h3>
+      <ul class="lista-check" id="chkDoc"></ul>
+    </div>
+  </div>
+
+  <div class="divisor"></div>
+
+  <div class="grade g2">
+    <details class="doc" open>
+      <summary>Referências normativas aplicáveis</summary>
+      <div class="corpo">
+        <ul>
+          <li><b>ABNT NBR 9649</b> — Projeto de redes coletoras de esgoto sanitário. Fixa vazão mínima de 1,5 L/s, tensão trativa mínima de 1,0 Pa, lâmina máxima de 75% e n = 0,013.</li>
+          <li><b>ABNT NBR 14486</b> — Sistemas enterrados para condução de esgoto sanitário: projeto de redes coletoras com tubos de PVC.</li>
+          <li><b>ABNT NBR 12207</b> — Projeto de interceptores de esgoto sanitário.</li>
+          <li><b>ABNT NBR 7362</b> — Tubos de PVC com junta elástica para coletor de esgoto.</li>
+          <li><b>ABNT NBR 8890</b> — Tubo de concreto de seção circular para águas pluviais e esgoto sanitário.</li>
+          <li><b>ABNT NBR 12266</b> — Projeto e execução de valas para assentamento de tubulações.</li>
+          <li><b>EN 13476 / ISO 21138</b> — Tubos de parede estruturada em PE, PP e PVC-U (referência para PEAD corrugado).</li>
+          <li><b>NR-18</b> — Segurança em escavações e escoramento de valas.</li>
+        </ul>
+      </div>
+    </details>
+    <details class="doc" open>
+      <summary>Pontos de atenção em fiscalização e auditoria</summary>
+      <div class="corpo">
+        <ul>
+          <li><b>Projeto básico deficiente</b> — rede dimensionada sem memória de cálculo trecho a trecho, sem perfil longitudinal e sem cadastro do sistema existente é causa recorrente de aditivos.</li>
+          <li><b>Quantitativo de escavação</b> — verifique se a profundidade adotada no orçamento corresponde à do perfil. Superestimar profundidade média infla escavação, escoramento e esgotamento simultaneamente.</li>
+          <li><b>Escoramento</b> — a faixa de profundidade determina o tipo. Orçar escoramento contínuo onde o perfil indica valas rasas é sobrepreço; não orçar onde é exigido é risco à segurança e fonte de aditivo.</li>
+          <li><b>Esgotamento de vala</b> — só cabe onde o perfil cruza o lençol. Deve estar demonstrado por sondagem, não presumido.</li>
+          <li><b>Material especificado</b> — a troca de PVC por PEAD, ou vice-versa, durante a execução altera preço e exige justificativa técnica e reequilíbrio formalizado.</li>
+          <li><b>Tensão trativa</b> — trechos iniciais com declividade abaixo da mínima geram assoreamento e manutenção permanente. É defeito de projeto, não de operação.</li>
+          <li><b>Ligações prediais</b> — quantidade e profundidade precisam estar compatíveis com o número de economias previstas no estudo populacional.</li>
+        </ul>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- ============ 09 RELATÓRIO ============ -->
+<section class="painel" id="pRelatorio" role="tabpanel" hidden>
+  <h2 class="titulo">Relatório técnico</h2>
+  <p class="lede">Documento consolidado para impressão ou geração de PDF pelo próprio navegador.</p>
+  <div class="barra naoimprime">
+    <button class="pri" id="btGerarRel">Gerar relatório</button>
+    <button id="btImprimir2">Imprimir / salvar em PDF</button>
+    <label class="ck" style="margin:0"><input type="checkbox" id="relPerfil" checked> incluir perfil longitudinal</label>
+    <label class="ck" style="margin:0"><input type="checkbox" id="relOrc" checked> incluir planilha orçamentária</label>
+  </div>
+  <div id="relatorio"></div>
+</section>
+
+<!-- ============ 10 TESTES ============ -->
+<section class="painel" id="pTestes" role="tabpanel" hidden>
+  <h2 class="titulo">Autoteste do núcleo de cálculo</h2>
+  <p class="lede">Bateria de verificações executada no próprio navegador contra soluções analíticas, valores tabelados e casos-limite.</p>
+  <div class="barra">
+    <button class="pri" id="btTestar">Executar testes</button>
+    <span class="esp"></span>
+    <span id="seloTestes"></span>
+  </div>
+  <div class="tabela-rolo">
+    <table><thead><tr><th style="width:44px">#</th><th class="esq">Grupo</th><th class="esq">Verificação</th><th>Obtido</th><th>Esperado</th><th style="width:70px">Status</th></tr></thead><tbody id="tbTestes"></tbody></table>
+  </div>
+</section>
+
+</main>
+
+<div class="rodape">
+  <b>EsgotoCalc Pro</b> — ferramenta de apoio ao dimensionamento de redes coletoras de esgoto sanitário. Os resultados não substituem a análise de profissional habilitado nem dispensam a consulta às normas ABNT vigentes e aos catálogos dos fabricantes. Dados de diâmetros e rugosidades são valores de referência para anteprojeto.
+</div>
+<div class="toast" id="toast"></div>
+<script>
+/* ==================================================================
+   EsgotoCalc Pro — núcleo de cálculo
+   Este bloco é puro (sem DOM) e é extraído integralmente pela
+   suíte de testes em Node.js. Não inserir referências a document
+   ou window entre os marcadores CORE-START e CORE-END.
+   ================================================================== */
+/* ==CORE-START== */
+var NUCLEO = (function () {
+  'use strict';
+  var G = 9.81;
+
+  /* ---------------- utilidades numéricas ---------------- */
+  function num(v, padrao) {
+    if (v === null || v === undefined || v === '') return padrao === undefined ? 0 : padrao;
+    if (typeof v === 'number') return isFinite(v) ? v : (padrao === undefined ? 0 : padrao);
+    var s = String(v).trim().replace(/\s/g, '');
+    if (s.indexOf(',') > -1 && s.indexOf('.') > -1) s = s.replace(/\./g, '').replace(',', '.');
+    else s = s.replace(',', '.');
+    var n = parseFloat(s);
+    return isFinite(n) ? n : (padrao === undefined ? 0 : padrao);
+  }
+  function arred(v, casas) {
+    var f = Math.pow(10, casas || 0);
+    return Math.round((v + Number.EPSILON) * f) / f;
+  }
+  function limitar(v, mn, mx) { return Math.min(mx, Math.max(mn, v)); }
+
+  /* ---------------- geometria de seção circular ---------------- */
+  // Y/D -> ângulo central molhado (rad)
+  function theta(yd) {
+    var y = limitar(yd, 1e-12, 1);
+    return 2 * Math.acos(1 - 2 * y);
+  }
+  function areaMolhada(D, yd) {
+    if (yd >= 1) return Math.PI * D * D / 4;
+    var t = theta(yd);
+    return (D * D / 8) * (t - Math.sin(t));
+  }
+  function perimetroMolhado(D, yd) {
+    if (yd >= 1) return Math.PI * D;
+    return theta(yd) * D / 2;
+  }
+  function raioHidraulico(D, yd) {
+    if (yd >= 1) return D / 4;
+    var t = theta(yd);
+    return (D / 4) * (1 - Math.sin(t) / t);
+  }
+  function larguraSuperficie(D, yd) {
+    if (yd >= 1) return 0;
+    return D * Math.sin(theta(yd) / 2);
+  }
+
+  /* ---------------- Manning ---------------- */
+  // D em m, I em m/m -> Q em m3/s
+  function vazaoManning(D, yd, n, I) {
+    if (D <= 0 || n <= 0 || I <= 0 || yd <= 0) return 0;
+    var A = areaMolhada(D, yd), Rh = raioHidraulico(D, yd);
+    return (1 / n) * A * Math.pow(Rh, 2 / 3) * Math.sqrt(I);
+  }
+  function velocidade(D, yd, n, I) {
+    var A = areaMolhada(D, yd);
+    return A > 0 ? vazaoManning(D, yd, n, I) / A : 0;
+  }
+  function vazaoPlena(D, n, I) { return vazaoManning(D, 1, n, I); }
+
+  // Lâmina relativa a partir da vazão (bisseção na região monotônica)
+  var YD_SUP = 0.93;
+  function laminaRelativa(Q, D, n, I) {
+    if (Q <= 0) return 0;
+    var qMax = vazaoManning(D, YD_SUP, n, I);
+    if (Q > qMax) return null;                 // trecho afogado / sem solução no domínio
+    var a = 1e-9, b = YD_SUP, m = 0;
+    for (var k = 0; k < 200; k++) {
+      m = (a + b) / 2;
+      if (vazaoManning(D, m, n, I) < Q) a = m; else b = m;
+      if (b - a < 1e-12) break;
+    }
+    return (a + b) / 2;
+  }
+  // Declividade necessária para uma dada lâmina
+  function declividadeParaLamina(Q, D, n, yd) {
+    var A = areaMolhada(D, yd), Rh = raioHidraulico(D, yd);
+    if (A <= 0) return Infinity;
+    var r = Q * n / (A * Math.pow(Rh, 2 / 3));
+    return r * r;
+  }
+
+  /* ---------------- critérios da NBR 9649 ---------------- */
+  function tensaoTrativa(D, yd, I, gama) {
+    return (gama === undefined ? 10000 : gama) * raioHidraulico(D, yd) * I;
+  }
+  function velocidadeCritica(D, yd) { return 6 * Math.sqrt(G * raioHidraulico(D, yd)); }
+  // Qi em L/s -> I mínima (m/m), tensão trativa de 1,0 Pa e n = 0,013
+  function declividadeMinimaNBR(QiLs) {
+    var q = Math.max(QiLs, 1e-6);
+    return 0.0055 * Math.pow(q, -0.47);
+  }
+  // Qf em L/s -> I máxima (m/m) correspondente a V = 5 m/s
+  function declividadeMaximaNBR(QfLs) {
+    var q = Math.max(QfLs, 1e-6);
+    return 4.65 * Math.pow(q, -0.67);
+  }
+  // Declividade mínima exata para atingir a tensão trativa alvo com a lâmina real
+  function declividadeMinimaTrativa(QiLs, D, n, ttAlvo, gama) {
+    var Q = QiLs / 1000, g = gama || 10000;
+    var lo = 1e-6, hi = 0.5;
+    for (var k = 0; k < 120; k++) {
+      var m = (lo + hi) / 2;
+      var yd = laminaRelativa(Q, D, n, m);
+      // yd nulo significa seção sem capacidade: é preciso AUMENTAR a declividade
+      var tt = yd === null ? -Infinity : tensaoTrativa(D, yd, m, g);
+      if (tt < ttAlvo) lo = m; else hi = m;
+    }
+    // hi é sempre o lado viável: garante seção com capacidade e σt >= alvo.
+    // Se nem o limite superior tem capacidade, o diâmetro é insuficiente.
+    if (laminaRelativa(Q, D, n, hi) === null) return null;
+    return hi;
+  }
+
+  /* ---------------- verificação completa de um trecho ---------------- */
+  function verificarTrecho(p) {
+    var D = p.D;                       // m (diâmetro interno)
+    var n = p.n, I = p.I, gama = p.gama || 10000;
+    var Qi = Math.max(num(p.Qi), num(p.qMin, 1.5)) / 1000;  // m3/s
+    var Qf = Math.max(num(p.Qf), num(p.qMin, 1.5)) / 1000;
+    var ydMax = p.ydMax || 0.75, ydCrit = p.ydCrit || 0.50;
+    var ttMin = p.ttMin || 1.0, vMax = p.vMax || 5.0;
+
+    var ydI = laminaRelativa(Qi, D, n, I);
+    var ydF = laminaRelativa(Qf, D, n, I);
+    var afogado = (ydF === null);
+    var ydFc = afogado ? 1 : ydF;
+    var ydIc = (ydI === null) ? 1 : ydI;
+
+    var vI = velocidade(D, ydIc, n, I);
+    var vF = velocidade(D, ydFc, n, I);
+    var ttI = tensaoTrativa(D, ydIc, I, gama);
+    var ttF = tensaoTrativa(D, ydFc, I, gama);
+    var vc = velocidadeCritica(D, ydFc);
+    var ydLim = (vF > vc) ? Math.min(ydMax, ydCrit) : ydMax;
+
+    var ok = {
+      trativa: ttI >= ttMin - 1e-9,
+      lamina: !afogado && ydFc <= ydLim + 1e-9,
+      velocidade: vF <= vMax + 1e-9,
+      declividade: I >= declividadeMinimaNBR(Qi * 1000) - 1e-9
+    };
+    var falhas = [];
+    if (!ok.trativa) falhas.push('tensão trativa');
+    if (!ok.lamina) falhas.push(afogado ? 'seção insuficiente' : 'lâmina');
+    if (!ok.velocidade) falhas.push('velocidade');
+
+    return {
+      D: D, n: n, I: I,
+      QiLs: Qi * 1000, QfLs: Qf * 1000,
+      ydI: ydIc, ydF: ydFc, afogado: afogado,
+      vI: vI, vF: vF, ttI: ttI, ttF: ttF,
+      vc: vc, ydLimite: ydLim, criticoExcedido: vF > vc,
+      laminaI_m: ydIc * D, laminaF_m: ydFc * D,
+      areaF: areaMolhada(D, ydFc), rhF: raioHidraulico(D, ydFc),
+      qPlena: vazaoPlena(D, n, I) * 1000,
+      folgaCapacidade: vazaoManning(D, ydLim, n, I) * 1000 - Qf * 1000,
+      iMinNBR: declividadeMinimaNBR(Qi * 1000),
+      iMaxNBR: declividadeMaximaNBR(Qf * 1000),
+      ok: ok,
+      aprovado: ok.trativa && ok.lamina && ok.velocidade,
+      falhas: falhas
+    };
+  }
+
+  /* ---------------- busca automática de DN e declividade ---------------- */
+  function menorDeclividadeValida(p) {
+    // menor I que atende trativa, lâmina e velocidade, em passos de 0,0001 m/m
+    var passo = p.passo || 0.0001;
+    var iBase = declividadeMinimaTrativa(Math.max(p.Qi, p.qMin || 1.5), p.D, p.n, p.ttMin || 1, p.gama);
+    if (iBase === null) return null;   // diâmetro sem capacidade em qualquer declividade
+    var i = Math.ceil(Math.max(iBase, passo) / passo) * passo;
+    for (var k = 0; k < 6000; k++) {
+      var r = verificarTrecho(Object.assign({}, p, { I: i }));
+      if (r.aprovado) return { I: arred(i, 6), res: r };
+      if (!r.ok.velocidade) return null;   // aumentar I só piora
+      i += passo;
+    }
+    return null;
+  }
+  function dimensionarTrecho(p, diametros) {
+    for (var k = 0; k < diametros.length; k++) {
+      var d = diametros[k];
+      if (p.dnMin && d.dn < p.dnMin) continue;
+      var r = menorDeclividadeValida(Object.assign({}, p, { D: d.di / 1000 }));
+      if (r) return { dn: d.dn, di: d.di, de: d.de, I: r.I, res: r.res };
+    }
+    return null;
+  }
+
+  /* ---------------- vazões ---------------- */
+  function vazoesDomesticas(p) {
+    var qi = (num(p.coefC) * num(p.popI) * num(p.qpcI) * num(p.k2)) / 86400;
+    var qf = (num(p.coefC) * num(p.popF) * num(p.qpcF) * num(p.k1) * num(p.k2)) / 86400;
+    var qmed = (num(p.coefC) * num(p.popF) * num(p.qpcF)) / 86400;
+    var qmin = (num(p.coefC) * num(p.popI) * num(p.qpcI) * num(p.k3)) / 86400;
+    return { inicial: qi, final: qf, media: qmed, minima: qmin };
+  }
+  function vazaoInfiltracao(txLsKm, extensaoM) { return txLsKm * (extensaoM / 1000); }
+  // A em ha, i em mm/h -> L/s
+  function metodoRacional(C, i, Aha, fracao) {
+    var q = C * i * Aha / 360;                 // m3/s
+    return q * 1000 * (fracao === undefined ? 1 : fracao);
+  }
+  function taxaContribuicaoLinear(qLs, extensaoM) {
+    return extensaoM > 0 ? qLs / extensaoM : 0;
+  }
+
+  /* ---------------- cotas e profundidades ---------------- */
+  function recobrimentoMinimo(p) {
+    return p.passeio ? num(p.recPasseio, 0.65) : num(p.recVia, 0.90);
+  }
+  function calcularCotas(trecho) {
+    // trecho: {ctm, ctj, L, I, deM (m), cotaFundoMontanteImposta?}
+    var deM = trecho.de / 1000;
+    var recMin = trecho.recMin;
+    var cfMontMin = trecho.ctm - recMin - deM;
+    var cfMont = trecho.cfMontImposta !== undefined && trecho.cfMontImposta !== null
+      ? Math.min(trecho.cfMontImposta, cfMontMin) : cfMontMin;
+    var cfJus = cfMont - trecho.I * trecho.L;
+    var cfJusMin = trecho.ctj - recMin - deM;
+    var elevouPorRecobrimento = false;
+    if (cfJus > cfJusMin) { cfJus = cfJusMin; elevouPorRecobrimento = true; }
+    return {
+      cfMont: cfMont, cfJus: cfJus,
+      profMont: trecho.ctm - cfMont,
+      profJus: trecho.ctj - cfJus,
+      declividadeReal: trecho.L > 0 ? (cfMont - cfJus) / trecho.L : 0,
+      ajustadoPorRecobrimento: elevouPorRecobrimento
+    };
+  }
+
+  /* ---------------- estrutural ---------------- */
+  function fatorImpacto(H) {
+    if (H <= 0.6) return 1.50;
+    if (H >= 2.0) return 1.00;
+    return 1.50 - (H - 0.6) * (0.50 / 1.4);
+  }
+  function cargaSoloPrisma(gamaSolo, H) { return gamaSolo * H; }          // kPa
+  function cargaMovelBoussinesq(P, H, comImpacto) {
+    if (H <= 0) return 0;
+    var If = comImpacto === false ? 1 : fatorImpacto(H);
+    return (3 * P * If) / (2 * Math.PI * H * H);                          // kPa
+  }
+  function rigidezAnelar(SN) { return 6.7 * SN; }                          // kPa
+  function deflexaoIowa(p) {
+    var q = num(p.qSolo) + num(p.qMovel);
+    var den = 0.149 * rigidezAnelar(num(p.SN)) + 0.061 * num(p.El);
+    if (den <= 0) return Infinity;
+    return 100 * (num(p.DL, 1.25) * num(p.Kx, 0.10) * q) / den;            // %
+  }
+  function cargaLinearRigido(qTotalKPa, deM) { return qTotalKPa * deM; }   // kN/m
+
+  /* ---------------- vala e escoramento ---------------- */
+  function larguraVala(deMm, folga, minimo) {
+    return Math.max(num(minimo, 0.60), deMm / 1000 + 2 * num(folga, 0.30));
+  }
+  function tipoEscoramento(prof) {
+    if (prof < 1.25) return { tipo: 'Dispensável (solo estável)', fator: 0 };
+    if (prof < 2.00) return { tipo: 'Pontaleteamento', fator: 0.30 };
+    if (prof < 3.00) return { tipo: 'Descontínuo', fator: 0.60 };
+    if (prof <= 4.00) return { tipo: 'Contínuo', fator: 1.00 };
+    return { tipo: 'Especial / metálico', fator: 1.00 };
+  }
+  function volumesVala(p) {
+    var b = larguraVala(p.de, p.folga, p.valaMin);
+    var h = p.profMedia;
+    var esc = b * h * p.L;
+    var berco = b * num(p.berco, 0.10) * p.L;
+    var vTubo = Math.PI * Math.pow(num(p.de) / 1000, 2) / 4 * p.L;
+    var reat = Math.max(0, esc - berco - vTubo);
+    var e = tipoEscoramento(h);
+    return {
+      largura: b, escavacao: esc, berco: berco, volumeTubo: vTubo, reaterro: reat,
+      escoramento: 2 * h * p.L * e.fator, tipoEscoramento: e.tipo,
+      esgotamento: (num(p.profNA) > 0 && h > num(p.profNA)) ? p.L : 0
+    };
+  }
+
+  /* ---------------- biblioteca de materiais ---------------- */
+  // di/de em mm. Valores de referência para anteprojeto.
+  var MATERIAIS = {
+    pvc: {
+      nome: 'PVC — junta elástica', norma: 'NBR 7362', n: 0.010, rigido: false, cor: '#2E7D9A',
+      nota: 'Padrão em redes urbanas até DN 400. DE nominal, DI de referência.',
+      d: [{dn:100,di:100.0,de:110},{dn:150,di:148.0,de:160},{dn:200,di:186.0,de:200},
+          {dn:250,di:232.0,de:250},{dn:300,di:293.0,de:315},{dn:400,di:372.0,de:400}]
+    },
+    peadc: {
+      nome: 'PEAD corrugado parede dupla', norma: 'EN 13476 / ISO 21138', n: 0.010, rigido: false, cor: '#1F7A4C',
+      nota: 'DN referido ao diâmetro interno. Interior liso, exterior corrugado. Classes SN 4, SN 8 e SN 16.',
+      d: [{dn:100,di:100,de:118},{dn:150,di:150,de:175},{dn:200,di:200,de:232},
+          {dn:250,di:250,de:290},{dn:300,di:300,de:345},{dn:400,di:400,de:462},
+          {dn:500,di:500,de:578},{dn:600,di:600,de:695},{dn:800,di:800,de:925},
+          {dn:1000,di:1000,de:1155},{dn:1200,di:1200,de:1370}]
+    },
+    peadl: {
+      nome: 'PEAD liso PE 100 (SDR 17)', norma: 'linha de recalque / sifão', n: 0.009, rigido: false, cor: '#4A9E6E',
+      nota: 'DN referido ao diâmetro externo. DI calculado para SDR 17. Uso em recalque, travessias e sifões invertidos.',
+      d: [{dn:110,di:96.8,de:110},{dn:160,di:141.0,de:160},{dn:200,di:176.2,de:200},
+          {dn:250,di:220.4,de:250},{dn:315,di:277.6,de:315},{dn:355,di:312.8,de:355},
+          {dn:400,di:352.6,de:400},{dn:500,di:440.6,de:500},{dn:630,di:555.2,de:630}]
+    },
+    concreto: {
+      nome: 'Concreto', norma: 'NBR 8890', n: 0.013, rigido: true, cor: '#7A7168',
+      nota: 'DN referido ao diâmetro interno. Exige proteção contra ataque por H₂S em trechos de baixa velocidade.',
+      d: [{dn:300,di:300,de:380},{dn:400,di:400,de:490},{dn:500,di:500,de:600},
+          {dn:600,di:600,de:710},{dn:700,di:700,de:825},{dn:800,di:800,de:940},
+          {dn:900,di:900,de:1055},{dn:1000,di:1000,de:1170},{dn:1200,di:1200,de:1400},
+          {dn:1500,di:1500,de:1740}]
+    },
+    ceramica: {
+      nome: 'Cerâmica (grês)', norma: 'NBR 5645', n: 0.013, rigido: true, cor: '#9A5B3A',
+      nota: 'Alta resistência química e à abrasão. Fragilidade no manuseio e transporte.',
+      d: [{dn:100,di:100,de:118},{dn:150,di:150,de:174},{dn:200,di:200,de:230},
+          {dn:250,di:250,de:286},{dn:300,di:300,de:342},{dn:400,di:400,de:456},
+          {dn:500,di:500,de:570},{dn:600,di:600,de:684}]
+    },
+    fofo: {
+      nome: 'Ferro fundido dúctil', norma: 'NBR 7675', n: 0.011, rigido: true, cor: '#4A4F55',
+      nota: 'Travessias, trechos aéreos, sifões e locais com recobrimento reduzido ou carga elevada.',
+      d: [{dn:100,di:100,de:118},{dn:150,di:150,de:170},{dn:200,di:200,de:222},
+          {dn:250,di:250,de:274},{dn:300,di:300,de:326},{dn:400,di:400,de:429},
+          {dn:500,di:500,de:532},{dn:600,di:600,de:635}]
+    }
+  };
+  function listaDiametros(chave) {
+    var m = MATERIAIS[chave];
+    return m ? m.d.slice() : [];
+  }
+  function acharDiametro(chave, dn) {
+    var l = listaDiametros(chave);
+    for (var i = 0; i < l.length; i++) if (l[i].dn === dn) return l[i];
+    return null;
+  }
+
+  /* ---------------- formatação pt-BR ---------------- */
+  function fmt(v, casas) {
+    if (v === null || v === undefined || !isFinite(v)) return '—';
+    var c = casas === undefined ? 2 : casas;
+    var s = Math.abs(v).toFixed(c);
+    var p = s.split('.');
+    p[0] = p[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    return (v < 0 ? '-' : '') + p.join(',');
+  }
+  function fmtR$(v) { return 'R$ ' + fmt(v, 2); }
+  function dataBR(d) {
+    var x = d || new Date();
+    var p = function (k) { return (k < 10 ? '0' : '') + k; };
+    return p(x.getDate()) + '/' + p(x.getMonth() + 1) + '/' + x.getFullYear();
+  }
+
+  return {
+    G: G, num: num, arred: arred, limitar: limitar,
+    theta: theta, areaMolhada: areaMolhada, perimetroMolhado: perimetroMolhado,
+    raioHidraulico: raioHidraulico, larguraSuperficie: larguraSuperficie,
+    vazaoManning: vazaoManning, velocidade: velocidade, vazaoPlena: vazaoPlena,
+    laminaRelativa: laminaRelativa, declividadeParaLamina: declividadeParaLamina,
+    tensaoTrativa: tensaoTrativa, velocidadeCritica: velocidadeCritica,
+    declividadeMinimaNBR: declividadeMinimaNBR, declividadeMaximaNBR: declividadeMaximaNBR,
+    declividadeMinimaTrativa: declividadeMinimaTrativa,
+    verificarTrecho: verificarTrecho, menorDeclividadeValida: menorDeclividadeValida,
+    dimensionarTrecho: dimensionarTrecho,
+    vazoesDomesticas: vazoesDomesticas, vazaoInfiltracao: vazaoInfiltracao,
+    metodoRacional: metodoRacional, taxaContribuicaoLinear: taxaContribuicaoLinear,
+    recobrimentoMinimo: recobrimentoMinimo, calcularCotas: calcularCotas,
+    fatorImpacto: fatorImpacto, cargaSoloPrisma: cargaSoloPrisma,
+    cargaMovelBoussinesq: cargaMovelBoussinesq, rigidezAnelar: rigidezAnelar,
+    deflexaoIowa: deflexaoIowa, cargaLinearRigido: cargaLinearRigido,
+    larguraVala: larguraVala, tipoEscoramento: tipoEscoramento, volumesVala: volumesVala,
+    MATERIAIS: MATERIAIS, listaDiametros: listaDiametros, acharDiametro: acharDiametro,
+    fmt: fmt, fmtR$: fmtR$, dataBR: dataBR,
+    YD_SUP: YD_SUP
+  };
+})();
+/* ==CORE-END== */
+/* ==================================================================
+   Camada de interface
+   ================================================================== */
+(function () {
+'use strict';
+var N = NUCLEO, f = N.fmt, CHAVE = 'esgotocalc.pro.v1', VERSAO = '1.0';
+
+function $(s, r) { return (r || document).querySelector(s); }
+function $$(s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); }
+function el(tag, attrs, filhos) {
+  var e = document.createElement(tag);
+  if (attrs) for (var k in attrs) {
+    if (k === 'class') e.className = attrs[k];
+    else if (k === 'html') e.innerHTML = attrs[k];
+    else if (k === 'texto') e.textContent = attrs[k];
+    else if (k.slice(0, 2) === 'on') e.addEventListener(k.slice(2), attrs[k]);
+    else e.setAttribute(k, attrs[k]);
+  }
+  (filhos || []).forEach(function (c) { if (c) e.appendChild(c); });
+  return e;
+}
+function svgEl(tag, attrs) {
+  var e = document.createElementNS('http://www.w3.org/2000/svg', tag);
+  for (var k in attrs) e.setAttribute(k, attrs[k]);
+  return e;
+}
+function toast(msg) {
+  var t = $('#toast'); t.textContent = msg; t.classList.add('ver');
+  clearTimeout(toast._t); toast._t = setTimeout(function () { t.classList.remove('ver'); }, 2200);
+}
+function uid() { return 't' + Math.random().toString(36).slice(2, 9); }
+
+/* ---------------- estado ---------------- */
+var CAMPOS_PROJETO = ['idObra','idMunicipio','idContratante','idRT','idCrea','idData','idRev',
+  'popI','popF','qpcI','qpcF','coefC','k1','k2','k3','txInf','extRede',
+  'qMin','ttMin','ydMax','ydCrit','vMax','nNorma','gamaAgua','dnMin',
+  'recVia','recPasseio','profMax','distPV','folgaVala','valaMin','berco','profNA',
+  'racA','racC','racI','racFrac','cmpI','orcRef','orcBDI',
+  'eH','eGama','eEl','eDL','eKx','eP','eDefAdm','eSN'];
+var CAMPOS_CK = ['usarNnorma','eTrafego','cmpNcat','perfilLamina','racNaRede'];
+
+var EST = {
+  versao: VERSAO, projeto: {}, ck: {}, concentradas: [], trechos: [],
+  orc: { itens: {} }, tema: 'claro'
+};
+
+function lerCampos() {
+  CAMPOS_PROJETO.forEach(function (id) { var e = $('#' + id); if (e) EST.projeto[id] = e.value; });
+  CAMPOS_CK.forEach(function (id) { var e = $('#' + id); if (e) EST.ck[id] = e.checked; });
+}
+function escreverCampos() {
+  CAMPOS_PROJETO.forEach(function (id) { var e = $('#' + id); if (e && EST.projeto[id] !== undefined) e.value = EST.projeto[id]; });
+  CAMPOS_CK.forEach(function (id) { var e = $('#' + id); if (e && EST.ck[id] !== undefined) e.checked = !!EST.ck[id]; });
+}
+function P(id, padrao) { return N.num(EST.projeto[id], padrao); }
+function Ptxt(id) { return EST.projeto[id] || ''; }
+
+/* ---------------- persistência ---------------- */
+function salvar(silencioso) {
+  lerCampos();
+  try {
+    localStorage.setItem(CHAVE, JSON.stringify(EST));
+    $('#statusSalvo').textContent = 'projeto salvo às ' + new Date().toTimeString().slice(0, 5);
+    if (!silencioso) toast('Projeto salvo neste navegador');
+  } catch (e) { toast('Não foi possível salvar: ' + e.message); }
+}
+function carregar() {
+  try {
+    var s = localStorage.getItem(CHAVE);
+    if (!s) return false;
+    var o = JSON.parse(s);
+    EST.projeto = o.projeto || {}; EST.ck = o.ck || {};
+    EST.concentradas = o.concentradas || []; EST.trechos = o.trechos || [];
+    EST.orc = o.orc || { itens: {} }; EST.tema = o.tema || 'claro';
+    return true;
+  } catch (e) { return false; }
+}
+
+/* ---------------- abas ---------------- */
+function irPara(alvo) {
+  $$('.aba').forEach(function (b) {
+    var sel = b.dataset.alvo === alvo;
+    b.setAttribute('aria-selected', sel ? 'true' : 'false');
+    $('#' + b.dataset.alvo).hidden = !sel;
+  });
+  window.scrollTo({ top: 0, behavior: 'auto' });
+  recalcularTudo();
+}
+
+/* ==================================================================
+   VAZÕES
+   ================================================================== */
+function vazoesGlobais() {
+  var v = N.vazoesDomesticas({
+    coefC: P('coefC', .8), popI: P('popI'), popF: P('popF'),
+    qpcI: P('qpcI'), qpcF: P('qpcF'), k1: P('k1', 1.2), k2: P('k2', 1.5), k3: P('k3', .5)
+  });
+  var inf = N.vazaoInfiltracao(P('txInf'), P('extRede'));
+  var plu = N.metodoRacional(P('racC'), P('racI'), P('racA'), P('racFrac', 100) / 100);
+  var concI = 0, concF = 0;
+  EST.concentradas.forEach(function (c) { concI += N.num(c.qi); concF += N.num(c.qf); });
+  var extra = EST.ck.racNaRede ? plu : 0;
+  return {
+    dom: v, infiltracao: inf, pluvial: plu, pluvialNaRede: extra,
+    concI: concI, concF: concF,
+    tclI: N.taxaContribuicaoLinear(v.inicial, P('extRede')),
+    tclF: N.taxaContribuicaoLinear(v.final + extra, P('extRede')),
+    txInfLinear: P('txInf') / 1000,
+    totalI: v.inicial + inf + concI,
+    totalF: v.final + inf + concF + extra
+  };
+}
+
+function renderVazoes() {
+  var V = vazoesGlobais();
+  var box = $('#kpiVazoes'); box.innerHTML = '';
+  [['Vazão início de plano', f(V.dom.inicial, 2) + ' L/s', 'doméstica, sem infiltração', ''],
+   ['Vazão fim de plano', f(V.dom.final, 2) + ' L/s', 'doméstica, K1 · K2', ''],
+   ['Vazão total de projeto', f(V.totalF, 2) + ' L/s', 'com infiltração e concentradas', 'ok'],
+   ['Taxa linear fim de plano', f(V.tclF * 1000, 4) + ' L/s·km', f(V.tclF, 6) + ' L/s por metro', '']
+  ].forEach(function (k) {
+    box.appendChild(el('div', { class: 'kpi ' + k[3] }, [
+      el('div', { class: 'rot', texto: k[0] }), el('div', { class: 'val', texto: k[1] }), el('div', { class: 'obs', texto: k[2] })
+    ]));
+  });
+
+  var r = $('#resDomestica'); r.innerHTML = '';
+  linhas(r, [
+    ['População início / fim', f(P('popI'), 0) + ' / ' + f(P('popF'), 0) + ' hab'],
+    ['Consumo per capita início / fim', f(P('qpcI'), 0) + ' / ' + f(P('qpcF'), 0) + ' L/hab·dia'],
+    ['Vazão média de fim de plano', f(V.dom.media, 2) + ' L/s'],
+    ['Vazão mínima (K3, início)', f(V.dom.minima, 2) + ' L/s'],
+    ['Vazão máxima início de plano Qi', f(V.dom.inicial, 2) + ' L/s'],
+    ['Vazão máxima fim de plano Qf', f(V.dom.final, 2) + ' L/s'],
+    ['Relação Qf / Qi', f(V.dom.inicial > 0 ? V.dom.final / V.dom.inicial : 0, 2)]
+  ]);
+
+  var ri = $('#resInfiltracao'); ri.innerHTML = '';
+  linhas(ri, [
+    ['Extensão total da rede', f(P('extRede') / 1000, 3) + ' km'],
+    ['Taxa adotada', f(P('txInf'), 3) + ' L/s·km'],
+    ['Vazão de infiltração total', f(V.infiltracao, 2) + ' L/s'],
+    ['Participação na vazão de fim de plano', f(V.totalF > 0 ? 100 * V.infiltracao / V.totalF : 0, 1) + ' %']
+  ]);
+
+  var rr = $('#resRacional'); rr.innerHTML = '';
+  linhas(rr, [
+    ['Vazão pluvial estimada', f(V.pluvial, 2) + ' L/s'],
+    ['Relação com a vazão de fim de plano', f(V.dom.final > 0 ? 100 * V.pluvial / V.dom.final : 0, 1) + ' %'],
+    ['Incorporada ao cálculo da rede', EST.ck.racNaRede ? 'sim' : 'não']
+  ]);
+  $('#totConc').textContent = 'total: ' + f(V.concI, 2) + ' / ' + f(V.concF, 2) + ' L/s';
+}
+function linhas(cont, arr) {
+  arr.forEach(function (a) {
+    cont.appendChild(el('div', { class: 'lin' }, [
+      el('span', { texto: a[0] }), el('b', { texto: a[1] })
+    ]));
+  });
+}
+
+function renderConc() {
+  var tb = $('#tbConc'); tb.innerHTML = '';
+  if (!EST.concentradas.length) {
+    tb.appendChild(el('tr', {}, [el('td', { colspan: 5, class: 'esq txt dim', texto: 'Nenhum contribuinte concentrado. Use o botão acima para adicionar hospitais, indústrias ou grandes geradores.' })]));
+    return;
+  }
+  EST.concentradas.forEach(function (c, i) {
+    var tr = el('tr');
+    tr.appendChild(td(inp(c.nome, 'text', function (v) { c.nome = v; }), 'esq'));
+    tr.appendChild(td(inp(c.qi, 'number', function (v) { c.qi = v; recalcularTudo(); })));
+    tr.appendChild(td(inp(c.qf, 'number', function (v) { c.qf = v; recalcularTudo(); })));
+    tr.appendChild(td(inp(c.no, 'text', function (v) { c.no = v; recalcularTudo(); })));
+    tr.appendChild(td(el('button', { class: 'mini danger', texto: '✕', onclick: function () { EST.concentradas.splice(i, 1); renderConc(); recalcularTudo(); } })));
+    tb.appendChild(tr);
+  });
+}
+function td(filho, cls) { var t = el('td', { class: cls || '' }); t.appendChild(typeof filho === 'string' ? document.createTextNode(filho) : filho); return t; }
+function inp(valor, tipo, onch) {
+  var e = el('input', { type: tipo, value: valor === undefined ? '' : valor });
+  if (tipo === 'number') e.step = 'any';
+  e.addEventListener('input', function () { onch(e.value); });
+  return e;
+}
+
+/* ==================================================================
+   TRECHO ISOLADO
+   ================================================================== */
+function preencherMateriais(sel, escolhido) {
+  sel.innerHTML = '';
+  Object.keys(N.MATERIAIS).forEach(function (k) {
+    sel.appendChild(el('option', { value: k, texto: N.MATERIAIS[k].nome }));
+  });
+  if (escolhido) sel.value = escolhido;
+}
+function preencherDN(sel, mat, escolhido) {
+  sel.innerHTML = '';
+  N.listaDiametros(mat).forEach(function (d) {
+    sel.appendChild(el('option', { value: d.dn, texto: 'DN ' + d.dn + '  (DI ' + f(d.di, 1) + ' mm)' }));
+  });
+  if (escolhido && sel.querySelector('option[value="' + escolhido + '"]')) sel.value = escolhido;
+}
+function nDeCalculo(mat) {
+  return EST.ck.usarNnorma ? P('nNorma', 0.013) : N.MATERIAIS[mat].n;
+}
+function paramsNorma() {
+  return {
+    qMin: P('qMin', 1.5), ttMin: P('ttMin', 1), ydMax: P('ydMax', .75),
+    ydCrit: P('ydCrit', .5), vMax: P('vMax', 5), gama: P('gamaAgua', 10000)
+  };
+}
+
+function renderTrecho() {
+  var mat = $('#tMat').value, dn = parseFloat($('#tDN').value);
+  var d = N.acharDiametro(mat, dn); if (!d) return;
+  var n = nDeCalculo(mat);
+  var p = Object.assign(paramsNorma(), {
+    D: d.di / 1000, n: n, I: N.num($('#tI').value),
+    Qi: N.num($('#tQi').value), Qf: N.num($('#tQf').value)
+  });
+  var r = N.verificarTrecho(p);
+
+  kpi('#kTT', 'Tensão trativa (Qi)', f(r.ttI, 2) + ' Pa', 'mínimo ' + f(p.ttMin, 1) + ' Pa', r.ok.trativa ? 'ok' : 'fail');
+  kpi('#kYD', 'Lâmina Y/D (Qf)', r.afogado ? 'afogado' : f(r.ydF * 100, 1) + ' %', 'limite ' + f(r.ydLimite * 100, 0) + ' %', r.ok.lamina ? 'ok' : 'fail');
+  kpi('#kV', 'Velocidade final', f(r.vF, 2) + ' m/s', 'crítica ' + f(r.vc, 2) + ' m/s', r.ok.velocidade ? 'ok' : 'fail');
+  kpi('#kI', 'Declividade', f(p.I * 1000, 2) + ' m/km', 'mínima NBR ' + f(r.iMinNBR * 1000, 2) + ' m/km', p.I >= r.iMinNBR ? 'ok' : 'warn');
+
+  $('#tSelo').innerHTML = '';
+  $('#tSelo').appendChild(el('span', { class: 'selo ' + (r.aprovado ? 'ok' : 'fail'), texto: r.aprovado ? 'Aprovado' : 'Reprovado: ' + r.falhas.join(', ') }));
+
+  var res = $('#resTrecho'); res.innerHTML = '';
+  linhas(res, [
+    ['Material / rugosidade', N.MATERIAIS[mat].nome + '  ·  n = ' + f(n, 3)],
+    ['Diâmetro interno', f(d.di, 1) + ' mm   (DE ' + f(d.de, 1) + ' mm)'],
+    ['Lâmina d\'água início / fim', f(r.laminaI_m * 100, 1) + ' / ' + f(r.laminaF_m * 100, 1) + ' cm'],
+    ['Y/D início de plano', f(r.ydI * 100, 1) + ' %'],
+    ['Velocidade início de plano', f(r.vI, 2) + ' m/s'],
+    ['Tensão trativa fim de plano', f(r.ttF, 2) + ' Pa'],
+    ['Raio hidráulico (Qf)', f(r.rhF * 1000, 1) + ' mm'],
+    ['Área molhada (Qf)', f(r.areaF * 10000, 1) + ' cm²'],
+    ['Vazão a seção plena', f(r.qPlena, 2) + ' L/s'],
+    ['Capacidade remanescente até Y/D limite', f(r.folgaCapacidade, 2) + ' L/s'],
+    ['Declividade mínima NBR (Qi)', f(r.iMinNBR, 5) + ' m/m'],
+    ['Declividade máxima NBR (Qf)', f(r.iMaxNBR, 5) + ' m/m'],
+    ['Desnível no trecho', f(p.I * N.num($('#tL').value), 3) + ' m']
+  ]);
+  desenharSecao(d.di / 1000, r.ydF, N.MATERIAIS[mat].cor);
+  desenharCurva(d.di / 1000, n, p.I);
+}
+function kpi(sel, rot, val, obs, cls) {
+  var e = $(sel); e.className = 'kpi ' + (cls || '');
+  e.innerHTML = '';
+  e.appendChild(el('div', { class: 'rot', texto: rot }));
+  e.appendChild(el('div', { class: 'val', texto: val }));
+  e.appendChild(el('div', { class: 'obs', texto: obs }));
+}
+
+function desenharSecao(D, yd, cor) {
+  var box = $('#secaoBox'); box.innerHTML = '';
+  var S = 220, cx = S / 2, cy = S / 2, R = S / 2 - 24;
+  var svg = svgEl('svg', { viewBox: '0 0 ' + S + ' ' + (S + 26), width: S, height: S + 26 });
+  var yTopo = cy + R - 2 * R * yd;
+  var clipId = 'cl' + Math.random().toString(36).slice(2, 7);
+  var defs = svgEl('defs'); var cp = svgEl('clipPath', { id: clipId });
+  cp.appendChild(svgEl('circle', { cx: cx, cy: cy, r: R - 3 })); defs.appendChild(cp); svg.appendChild(defs);
+  svg.appendChild(svgEl('circle', { cx: cx, cy: cy, r: R, fill: 'none', stroke: cor || 'var(--tubo)', 'stroke-width': 6 }));
+  var agua = svgEl('rect', { x: cx - R, y: yTopo, width: 2 * R, height: cy + R - yTopo, fill: 'var(--hydro)', 'fill-opacity': .38, 'clip-path': 'url(#' + clipId + ')' });
+  svg.appendChild(agua);
+  svg.appendChild(svgEl('line', { x1: cx - R, y1: yTopo, x2: cx + R, y2: yTopo, stroke: 'var(--hydro)', 'stroke-width': 2 }));
+  // cotas
+  var l1 = svgEl('line', { x1: cx + R + 10, y1: cy + R, x2: cx + R + 10, y2: yTopo, stroke: 'var(--ink3)', 'stroke-width': 1 });
+  svg.appendChild(l1);
+  var t = svgEl('text', { x: cx, y: S + 18, 'text-anchor': 'middle', fill: 'var(--ink2)', 'font-size': 12, 'font-family': 'var(--ff-mono)' });
+  t.textContent = 'Y = ' + f(yd * D * 100, 1) + ' cm   ·   Y/D = ' + f(yd * 100, 1) + '%   ·   DI = ' + f(D * 1000, 0) + ' mm';
+  svg.appendChild(t);
+  box.appendChild(svg);
+}
+
+function desenharCurva(D, n, I) {
+  var box = $('#curvaBox'); box.innerHTML = '';
+  var W = 420, H = 220, ml = 46, mr = 40, mt = 12, mb = 30;
+  var svg = svgEl('svg', { viewBox: '0 0 ' + W + ' ' + H, width: '100%', height: H, preserveAspectRatio: 'xMidYMid meet' });
+  var qP = N.vazaoPlena(D, n, I) * 1000, vP = N.velocidade(D, 1, n, I);
+  var qMaxEsc = N.vazaoManning(D, 0.94, n, I) * 1000;
+  var px = function (yd) { return ml + (W - ml - mr) * yd; };
+  var pyQ = function (q) { return H - mb - (H - mt - mb) * (q / (qMaxEsc || 1)); };
+  var pyV = function (v) { return H - mb - (H - mt - mb) * (v / (vP * 1.2 || 1)); };
+  // eixos
+  svg.appendChild(svgEl('line', { x1: ml, y1: mt, x2: ml, y2: H - mb, stroke: 'var(--line)' }));
+  svg.appendChild(svgEl('line', { x1: ml, y1: H - mb, x2: W - mr, y2: H - mb, stroke: 'var(--line)' }));
+  var dq = '', dv = '';
+  for (var i = 1; i <= 96; i++) {
+    var yd = i / 100;
+    dq += (i === 1 ? 'M' : 'L') + px(yd) + ' ' + pyQ(N.vazaoManning(D, yd, n, I) * 1000);
+    dv += (i === 1 ? 'M' : 'L') + px(yd) + ' ' + pyV(N.velocidade(D, yd, n, I));
+  }
+  svg.appendChild(svgEl('path', { d: dq, fill: 'none', stroke: 'var(--hydro)', 'stroke-width': 2 }));
+  svg.appendChild(svgEl('path', { d: dv, fill: 'none', stroke: 'var(--ocre)', 'stroke-width': 2, 'stroke-dasharray': '5 3' }));
+  var yl = P('ydMax', .75);
+  svg.appendChild(svgEl('line', { x1: px(yl), y1: mt, x2: px(yl), y2: H - mb, stroke: 'var(--fail)', 'stroke-width': 1.2, 'stroke-dasharray': '3 3' }));
+  var rot = function (x, y, txt, cor, anc) {
+    var t = svgEl('text', { x: x, y: y, fill: cor, 'font-size': 10.5, 'font-family': 'var(--ff-mono)', 'text-anchor': anc || 'start' });
+    t.textContent = txt; svg.appendChild(t);
+  };
+  rot(px(yl) + 4, mt + 11, 'Y/D ' + f(yl * 100, 0) + '%', 'var(--fail)');
+  rot(ml, H - 8, '0', 'var(--ink3)'); rot(W - mr, H - 8, '100% Y/D', 'var(--ink3)', 'end');
+  rot(4, mt + 10, 'Q (L/s)', 'var(--hydro)'); rot(W - 4, mt + 10, 'V (m/s)', 'var(--ocre)', 'end');
+  rot(4, H - mb + 12, '0', 'var(--ink3)');
+  rot(ml + 6, mt + 24, 'Q plena ' + f(qP, 1) + ' L/s  ·  V plena ' + f(vP, 2) + ' m/s', 'var(--ink3)');
+  box.appendChild(svg);
+}
+
+/* ==================================================================
+   REDE
+   ================================================================== */
+function novoTrecho(base) {
+  return Object.assign({
+    id: uid(), pvm: 'PV-1', pvj: 'PV-2', L: 80, ctm: 100.00, ctj: 99.60,
+    mat: 'pvc', dn: 150, I: 0.006, passeio: false
+  }, base || {});
+}
+function upstreamDe(t) { return EST.trechos.filter(function (x) { return x.pvj === t.pvm; }); }
+
+function calcularRede() {
+  var V = vazoesGlobais(), prm = paramsNorma();
+  var mapa = {}; EST.trechos.forEach(function (t) { mapa[t.id] = t; });
+  var memo = {}, visit = {};
+  function acumulado(t) {
+    if (memo[t.id]) return memo[t.id];
+    if (visit[t.id]) return { L: N.num(t.L), concI: 0, concF: 0, ciclo: true };
+    visit[t.id] = 1;
+    var L = N.num(t.L), ci = 0, cf = 0, ciclo = false;
+    upstreamDe(t).forEach(function (u) {
+      var a = acumulado(u); L += a.L; ci += a.concI; cf += a.concF; ciclo = ciclo || a.ciclo;
+    });
+    EST.concentradas.forEach(function (c) {
+      if (c.no && (c.no === t.pvm || c.no === t.pvj)) { ci += N.num(c.qi); cf += N.num(c.qf); }
+    });
+    memo[t.id] = { L: L, concI: ci, concF: cf, ciclo: ciclo };
+    return memo[t.id];
+  }
+
+  // ordem topológica simples (montante -> jusante)
+  var ordem = EST.trechos.slice().sort(function (a, b) { return acumulado(a).L - acumulado(b).L; });
+  var cotasJus = {};   // por id de trecho
+  var linhas = [];
+
+  ordem.forEach(function (t) {
+    var ac = acumulado(t);
+    var mat = N.MATERIAIS[t.mat] ? t.mat : 'pvc';
+    var d = N.acharDiametro(mat, N.num(t.dn)) || N.listaDiametros(mat)[0];
+    var n = nDeCalculo(mat);
+    var Qi = Math.max(prm.qMin, V.tclI * ac.L + V.txInfLinear * ac.L + ac.concI);
+    var Qf = Math.max(prm.qMin, V.tclF * ac.L + V.txInfLinear * ac.L + ac.concF);
+    var r = N.verificarTrecho(Object.assign({}, prm, { D: d.di / 1000, n: n, I: N.num(t.I), Qi: Qi, Qf: Qf }));
+
+    var recMin = N.recobrimentoMinimo({ passeio: t.passeio, recVia: P('recVia', .9), recPasseio: P('recPasseio', .65) });
+    var ups = upstreamDe(t), cand = [];
+    ups.forEach(function (u) {
+      if (cotasJus[u.id] === undefined) return;
+      var du = N.acharDiametro(u.mat, N.num(u.dn)) || { de: d.de };
+      cand.push(cotasJus[u.id] + du.de / 1000 - d.de / 1000);   // alinhamento pelas geratrizes superiores
+    });
+    var cot = N.calcularCotas({
+      ctm: N.num(t.ctm), ctj: N.num(t.ctj), L: N.num(t.L), I: N.num(t.I), de: d.de, recMin: recMin,
+      cfMontImposta: cand.length ? Math.min.apply(null, cand) : null
+    });
+    var degrau = cand.length ? Math.max(0, Math.min.apply(null, cand) - cot.cfMont) : 0;
+    cotasJus[t.id] = cot.cfJus;
+
+    var probs = r.falhas.slice();
+    if (d.dn < P('dnMin', 150)) probs.push('DN abaixo do mínimo');
+    if (cot.profJus > P('profMax', 4) || cot.profMont > P('profMax', 4)) probs.push('profundidade excessiva');
+    if (N.num(t.L) > P('distPV', 100)) probs.push('vão entre PVs acima do máximo');
+    if (ac.ciclo) probs.push('laço na topologia');
+    if (cot.ajustadoPorRecobrimento) probs.push('declividade elevada para manter recobrimento');
+
+    linhas.push({
+      t: t, mat: mat, d: d, n: n, Qi: Qi, Qf: Qf, r: r, cot: cot, degrau: degrau,
+      Lacum: ac.L, recMin: recMin, problemas: probs,
+      aprovado: r.aprovado && !probs.length
+    });
+  });
+  return { linhas: linhas, V: V };
+}
+
+function renderRede() {
+  var R = calcularRede(), tb = $('#tbRede'); tb.innerHTML = '';
+  if (!EST.trechos.length) {
+    tb.appendChild(el('tr', {}, [el('td', { colspan: 20, class: 'esq txt dim', texto: 'Nenhum trecho lançado. Use "Adicionar trecho" ou carregue o exemplo na aba Projeto.' })]));
+    $('#seloRede').innerHTML = ''; $('#perfilBox').innerHTML = ''; $('#kpiRede').innerHTML = '';
+    renderVala(R); return;
+  }
+  R.linhas.forEach(function (L) {
+    var t = L.t;
+    var tr = el('tr', { class: !L.aprovado ? (L.r.aprovado ? 'alerta' : 'reprovado') : '' });
+    tr.appendChild(td(inp(t.pvm, 'text', function (v) { t.pvm = v; agenda(); }), 'esq'));
+    tr.appendChild(td(inp(t.pvj, 'text', function (v) { t.pvj = v; agenda(); }), 'esq'));
+    tr.appendChild(td(inp(t.L, 'number', function (v) { t.L = v; agenda(); })));
+    tr.appendChild(td(inp(t.ctm, 'number', function (v) { t.ctm = v; agenda(); })));
+    tr.appendChild(td(inp(t.ctj, 'number', function (v) { t.ctj = v; agenda(); })));
+    var sm = el('select'); preencherMateriais(sm, t.mat);
+    sm.addEventListener('change', function () {
+      t.mat = sm.value;
+      var ds = N.listaDiametros(t.mat);
+      if (!N.acharDiametro(t.mat, N.num(t.dn))) t.dn = ds[0].dn;
+      renderRede(); agenda();
+    });
+    tr.appendChild(td(sm, 'esq'));
+    var sd = el('select'); preencherDN(sd, t.mat, t.dn);
+    sd.addEventListener('change', function () { t.dn = parseFloat(sd.value); agenda(); });
+    tr.appendChild(td(sd));
+    tr.appendChild(td(inp(t.I, 'number', function (v) { t.I = v; agenda(); })));
+    tr.appendChild(td(el('span', { class: 'dim', texto: '—' })));
+    tr.appendChild(td(f(L.Qi, 2)));
+    tr.appendChild(td(f(L.Qf, 2)));
+    tr.appendChild(td(L.r.afogado ? '—' : f(L.r.ydF * 100, 1) + '%'));
+    tr.appendChild(td(f(L.r.vF, 2)));
+    tr.appendChild(td(f(L.r.ttI, 2)));
+    tr.appendChild(td(f(L.cot.cfMont, 3)));
+    tr.appendChild(td(f(L.cot.cfJus, 3)));
+    tr.appendChild(td(f(L.cot.profMont, 2)));
+    tr.appendChild(td(f(L.cot.profJus, 2)));
+    var sit = L.aprovado ? el('span', { class: 'selo ok', texto: 'OK' })
+      : el('span', { class: 'selo ' + (L.r.aprovado ? 'warn' : 'fail'), texto: L.problemas.join('; ') });
+    tr.appendChild(td(sit, 'esq'));
+    tr.appendChild(td(el('button', {
+      class: 'mini danger', texto: '✕', onclick: function () {
+        EST.trechos = EST.trechos.filter(function (x) { return x.id !== t.id; }); renderRede(); agenda();
+      }
+    })));
+    tb.appendChild(tr);
+  });
+
+  var repro = R.linhas.filter(function (l) { return !l.aprovado; }).length;
+  $('#seloRede').innerHTML = '';
+  $('#seloRede').appendChild(el('span', {
+    class: 'selo ' + (repro ? 'fail' : 'ok'),
+    texto: repro ? repro + ' de ' + R.linhas.length + ' trechos com pendência' : R.linhas.length + ' trechos conformes'
+  }));
+
+  var Lt = 0, esc = 0, profMax = 0;
+  R.linhas.forEach(function (l) {
+    Lt += N.num(l.t.L);
+    profMax = Math.max(profMax, l.cot.profMont, l.cot.profJus);
+  });
+  var box = $('#kpiRede'); box.innerHTML = '';
+  var nos = {}; R.linhas.forEach(function (l) { nos[l.t.pvm] = 1; nos[l.t.pvj] = 1; });
+  [['Extensão lançada', f(Lt, 1) + ' m', R.linhas.length + ' trechos'],
+   ['Poços de visita', String(Object.keys(nos).length), 'nós distintos na tabela'],
+   ['Profundidade máxima', f(profMax, 2) + ' m', 'limite de projeto ' + f(P('profMax', 4), 2) + ' m'],
+   ['Vazão no trecho final', f(Math.max.apply(null, R.linhas.map(function (l) { return l.Qf; })), 2) + ' L/s', 'fim de plano']
+  ].forEach(function (k) {
+    box.appendChild(el('div', { class: 'kpi' }, [el('div', { class: 'rot', texto: k[0] }), el('div', { class: 'val', texto: k[1] }), el('div', { class: 'obs', texto: k[2] })]));
+  });
+
+  desenharPerfil(R);
+  renderVala(R);
+}
+
+var _tmr = null;
+function agenda() { clearTimeout(_tmr); _tmr = setTimeout(function () { renderRede(); salvar(true); }, 260); }
+
+function desenharPerfil(R) {
+  var box = $('#perfilBox'); box.innerHTML = '';
+  if (!R.linhas.length) return;
+  var modo = $('#perfilModo') ? $('#perfilModo').value : 'cota';
+  var seq = R.linhas.slice();
+  var Ltot = 0; seq.forEach(function (l) { Ltot += N.num(l.t.L); });
+  if (Ltot <= 0) return;
+
+  var W = Math.max(760, Math.min(2400, 120 + seq.length * 130)), H = 380;
+  var ml = 68, mr = 52, mt = 36, mb = 86;
+
+  // Na vista de cotas a escala vertical é ditada pelo relevo, o que achata a vala.
+  // A vista de profundidade rebate o terreno sobre uma linha de referência e
+  // torna legíveis o recobrimento, o degrau nos PVs e a altura de escavação.
+  var cMin, cMax, terrenoDe, fundoDe, topoDe;
+  if (modo === 'prof') {
+    var pmax = 0;
+    seq.forEach(function (l) { pmax = Math.max(pmax, l.cot.profMont, l.cot.profJus); });
+    cMax = 0.35; cMin = -(pmax + 0.35);
+    terrenoDe = function () { return 0; };
+    fundoDe = function (l, lado) { return -(lado === 'm' ? l.cot.profMont : l.cot.profJus); };
+    topoDe = function (l, lado) { return fundoDe(l, lado) + l.d.de / 1000; };
+  } else {
+    var cotas = [];
+    seq.forEach(function (l) { cotas.push(N.num(l.t.ctm), N.num(l.t.ctj), l.cot.cfMont, l.cot.cfJus); });
+    cMax = Math.max.apply(null, cotas) + 0.5; cMin = Math.min.apply(null, cotas) - 0.5;
+    terrenoDe = function (l, lado) { return N.num(lado === 'm' ? l.t.ctm : l.t.ctj); };
+    fundoDe = function (l, lado) { return lado === 'm' ? l.cot.cfMont : l.cot.cfJus; };
+    topoDe = function (l, lado) { return fundoDe(l, lado) + l.d.de / 1000; };
+  }
+  var faixa = Math.max(0.5, cMax - cMin);
+  var px = function (x) { return ml + (W - ml - mr) * (x / Ltot); };
+  var py = function (c) { return mt + (H - mt - mb) * (1 - (c - cMin) / faixa); };
+  var exag = ((H - mt - mb) / faixa) / ((W - ml - mr) / Ltot);
+  $('#perfilExag').textContent = f(exag, 1) + '×';
+  $('#perfilTitulo').textContent = (Ptxt('idObra') || 'rede projetada') + ' — ' + f(Ltot, 0) + ' m';
+
+  var svg = svgEl('svg', { viewBox: '0 0 ' + W + ' ' + H, width: W, height: H, id: 'perfil' });
+
+  // malha horizontal com rótulo de cota ou de profundidade
+  for (var g = 0; g <= 6; g++) {
+    var c = cMin + faixa * g / 6;
+    svg.appendChild(svgEl('line', { x1: ml, y1: py(c), x2: W - mr, y2: py(c), stroke: 'var(--line2)', 'stroke-width': 1 }));
+    var tx = svgEl('text', { x: ml - 7, y: py(c) + 3.5, 'text-anchor': 'end', 'font-size': 9.5, 'font-family': 'var(--ff-mono)', fill: 'var(--ink3)' });
+    // na vista de profundidade a folga acima do terreno não recebe rótulo
+    tx.textContent = modo === 'prof' ? (c > 1e-9 ? '' : f(-c, 2)) : f(c, 2);
+    svg.appendChild(tx);
+  }
+  var eixo = svgEl('text', { x: ml - 7, y: mt - 12, 'text-anchor': 'end', 'font-size': 9, 'font-family': 'var(--ff-mono)', fill: 'var(--ink3)' });
+  eixo.textContent = modo === 'prof' ? 'prof. (m)' : 'cota (m)';
+  svg.appendChild(eixo);
+
+  // terreno
+  var x = 0, dTer = '', dSolo = '';
+  seq.forEach(function (l, i) {
+    var x0 = x, x1 = x + N.num(l.t.L);
+    if (i === 0) { dTer = 'M' + px(x0) + ' ' + py(terrenoDe(l, 'm')); dSolo = dTer; }
+    dTer += 'L' + px(x1) + ' ' + py(terrenoDe(l, 'j'));
+    dSolo += 'L' + px(x1) + ' ' + py(terrenoDe(l, 'j'));
+    x = x1;
+  });
+  dSolo += 'L' + px(Ltot) + ' ' + (H - mb) + 'L' + px(0) + ' ' + (H - mb) + 'Z';
+  svg.appendChild(svgEl('path', { d: dSolo, fill: 'var(--solo)', 'fill-opacity': .16, stroke: 'none' }));
+  svg.appendChild(svgEl('path', { d: dTer, fill: 'none', stroke: 'var(--solo)', 'stroke-width': 2.2 }));
+
+  // tubos e lâmina
+  var comLamina = $('#perfilLamina').checked;
+  x = 0;
+  seq.forEach(function (l) {
+    var x0 = x, x1 = x + N.num(l.t.L), de = l.d.de / 1000, di = l.d.di / 1000;
+    var bM = py(fundoDe(l, 'm')), bJ = py(fundoDe(l, 'j'));
+    var tM = py(topoDe(l, 'm')), tJ = py(topoDe(l, 'j'));
+    var corpo = 'M' + px(x0) + ' ' + bM + 'L' + px(x1) + ' ' + bJ + 'L' + px(x1) + ' ' + tJ + 'L' + px(x0) + ' ' + tM + 'Z';
+    svg.appendChild(svgEl('path', { d: corpo, fill: N.MATERIAIS[l.mat].cor, 'fill-opacity': .30, stroke: N.MATERIAIS[l.mat].cor, 'stroke-width': 1.4 }));
+    if (comLamina && !l.r.afogado) {
+      var esp = (de - di) / 2;
+      var baseM = fundoDe(l, 'm') + esp, baseJ = fundoDe(l, 'j') + esp;
+      var la = 'M' + px(x0) + ' ' + py(baseM) + 'L' + px(x1) + ' ' + py(baseJ) +
+        'L' + px(x1) + ' ' + py(baseJ + l.r.ydF * di) + 'L' + px(x0) + ' ' + py(baseM + l.r.ydF * di) + 'Z';
+      svg.appendChild(svgEl('path', { d: la, fill: 'var(--hydro)', 'fill-opacity': .6, stroke: 'none' }));
+    }
+    var xm = (px(x0) + px(x1)) / 2;
+    var yr = Math.min(H - mb - 6, Math.max(bM, bJ) + 15);
+    var rt = svgEl('text', { x: xm, y: yr, 'text-anchor': 'middle', 'font-size': 9.5, 'font-family': 'var(--ff-mono)', fill: 'var(--ink2)' });
+    rt.textContent = 'DN' + l.d.dn + '  ' + f(N.num(l.t.I) * 1000, 1) + '\u2030';
+    svg.appendChild(rt);
+    x = x1;
+  });
+
+  // poços de visita
+  x = 0;
+  seq.forEach(function (l, i) {
+    desenhaPV(svg, px(x), py(terrenoDe(l, 'm')), py(fundoDe(l, 'm')), l.t.pvm, l.cot.profMont, H, mb, ml, W - mr);
+    x += N.num(l.t.L);
+    if (i === seq.length - 1) desenhaPV(svg, px(x), py(terrenoDe(l, 'j')), py(fundoDe(l, 'j')), l.t.pvj, l.cot.profJus, H, mb, ml, W - mr);
+  });
+
+  var lg = svgEl('text', { x: ml, y: H - 10, 'font-size': 9.5, 'font-family': 'var(--ff-mono)', fill: 'var(--ink3)' });
+  lg.textContent = modo === 'prof'
+    ? 'terreno rebatido \u00b7 tubo \u00b7 l\u00e2mina d\u2019\u00e1gua   |   profundidades em metros   |   h = profundidade da vala no PV'
+    : 'terreno \u00b7 tubo \u00b7 l\u00e2mina d\u2019\u00e1gua   |   cotas em metros   |   h = profundidade da vala no PV';
+  svg.appendChild(lg);
+  box.appendChild(svg);
+}
+function desenhaPV(svg, xp, yTer, yFundo, nome, prof, H, mb, xMin, xMax) {
+  var w = 9;
+  svg.appendChild(svgEl('rect', { x: xp - w / 2, y: yTer, width: w, height: Math.max(2, yFundo - yTer), fill: 'var(--paper2)', stroke: 'var(--ink2)', 'stroke-width': 1.3 }));
+  var xr = Math.min(Math.max(xp, (xMin || 0) + 16), (xMax || xp) + 22);
+  var t1 = svgEl('text', { x: xr, y: yTer - 6, 'text-anchor': 'middle', 'font-size': 9.5, 'font-weight': 700, 'font-family': 'var(--ff-mono)', fill: 'var(--ink)' });
+  t1.textContent = nome; svg.appendChild(t1);
+  var t2 = svgEl('text', { x: xr, y: H - mb + 14, 'text-anchor': 'middle', 'font-size': 9, 'font-family': 'var(--ff-mono)', fill: 'var(--ink3)' });
+  t2.textContent = 'h=' + f(prof, 2); svg.appendChild(t2);
+}
+
+function dimensionarRede() {
+  var R = calcularRede(), prm = paramsNorma(), mudou = 0;
+  R.linhas.forEach(function (L) {
+    var lista = N.listaDiametros(L.mat);
+    var r = N.dimensionarTrecho(Object.assign({}, prm, {
+      n: nDeCalculo(L.mat), Qi: L.Qi, Qf: L.Qf, dnMin: P('dnMin', 150)
+    }), lista);
+    if (r) {
+      var iTerreno = (N.num(L.t.ctm) - N.num(L.t.ctj)) / Math.max(1, N.num(L.t.L));
+      var iAdot = Math.max(r.I, Math.min(iTerreno, r.res.iMaxNBR));
+      var v = N.verificarTrecho(Object.assign({}, prm, { D: r.di / 1000, n: nDeCalculo(L.mat), I: iAdot, Qi: L.Qi, Qf: L.Qf }));
+      L.t.dn = r.dn; L.t.I = N.arred(v.aprovado ? iAdot : r.I, 5); mudou++;
+    }
+  });
+  renderRede(); salvar(true);
+  toast(mudou + ' trechos redimensionados');
+}
+
+/* ==================================================================
+   ESTRUTURAL
+   ================================================================== */
+function calcEstrutural() {
+  var mat = $('#eMat').value, dn = parseFloat($('#eDN').value);
+  var d = N.acharDiametro(mat, dn) || N.listaDiametros(mat)[0];
+  var H = P('eH', 2), SN = P('eSN', 4);
+  var qs = N.cargaSoloPrisma(P('eGama', 18), H);
+  var qm = EST.ck.eTrafego ? N.cargaMovelBoussinesq(P('eP', 75), H, true) : 0;
+  var def = N.deflexaoIowa({ qSolo: qs, qMovel: qm, SN: SN, El: P('eEl', 7000), DL: P('eDL', 1.25), Kx: P('eKx', .10) });
+  return {
+    mat: mat, d: d, H: H, SN: SN, qs: qs, qm: qm, qt: qs + qm, def: def,
+    rigido: N.MATERIAIS[mat].rigido, If: N.fatorImpacto(H),
+    ps: N.rigidezAnelar(SN), wLinear: N.cargaLinearRigido(qs + qm, d.de / 1000),
+    adm: P('eDefAdm', 5)
+  };
+}
+function renderEstrutural() {
+  var E = calcEstrutural();
+  var st = E.rigido ? 'ok' : (E.def <= 3 ? 'ok' : (E.def <= E.adm ? 'warn' : 'fail'));
+  kpi('#eK1', 'Carga de solo', f(E.qs, 1) + ' kPa', 'prisma γ·H', '');
+  kpi('#eK2', 'Carga móvel', f(E.qm, 1) + ' kPa', 'fator de impacto ' + f(E.If, 2), '');
+  kpi('#eK3', E.rigido ? 'Carga linear' : 'Deflexão prevista',
+    E.rigido ? f(E.wLinear, 1) + ' kN/m' : f(E.def, 2) + ' %',
+    E.rigido ? 'comparar com a classe do tubo' : 'admissível ' + f(E.adm, 1) + ' %', st);
+  kpi('#eK4', 'Rigidez do tubo PS', f(E.ps, 0) + ' kPa', 'SN ' + f(E.SN, 0) + ' kN/m²', '');
+
+  $('#eSelo').innerHTML = '';
+  if (E.rigido) {
+    $('#eSelo').appendChild(el('span', { class: 'selo neutro', texto: 'tubo rígido — verificar classe em catálogo' }));
+  } else {
+    $('#eSelo').appendChild(el('span', {
+      class: 'selo ' + st,
+      texto: E.def <= 3 ? 'Deflexão confortável' : (E.def <= E.adm ? 'Dentro do limite, sem folga' : 'Deflexão acima do admissível')
+    }));
+  }
+  var r = $('#eRes'); r.innerHTML = '';
+  linhas(r, [
+    ['Material', N.MATERIAIS[E.mat].nome],
+    ['Diâmetro externo', f(E.d.de, 1) + ' mm'],
+    ['Recobrimento H', f(E.H, 2) + ' m'],
+    ['Módulo de reação do solo E\'', f(P('eEl', 7000), 0) + ' kPa'],
+    ['Carga total sobre o tubo', f(E.qt, 1) + ' kPa'],
+    ['Carga vertical por metro', f(E.wLinear, 2) + ' kN/m'],
+    ['Deflexão de longo prazo Δy/D', E.rigido ? 'não aplicável' : f(E.def, 2) + ' %'],
+    ['Deflexão absoluta', E.rigido ? '—' : f(E.def / 100 * E.d.de, 1) + ' mm'],
+    ['Contribuição do solo na rigidez', f(100 * 0.061 * P('eEl', 7000) / (0.149 * E.ps + 0.061 * P('eEl', 7000)), 1) + ' %']
+  ]);
+  graficoDeflexao(E);
+}
+function graficoDeflexao(E) {
+  var box = $('#eGrafico'); box.innerHTML = '';
+  if (E.rigido) { box.appendChild(el('div', { class: 'aviso info', html: '<b>Tubo rígido</b> A verificação por deflexão não se aplica. Compare a carga vertical por metro linear com a classe de resistência do tubo, aplicando o fator de equivalência do berço adotado.' })); return; }
+  var W = 720, H = 250, ml = 52, mr = 20, mt = 14, mb = 34;
+  var svg = svgEl('svg', { viewBox: '0 0 ' + W + ' ' + H, width: '100%', height: H, preserveAspectRatio: 'xMidYMid meet' });
+  var Hmax = 6, dmax = 0;
+  var serie = [2, 4, 8, 16].map(function (sn) {
+    var pts = [];
+    for (var h = 0.3; h <= Hmax + 1e-9; h += 0.1) {
+      var qs = N.cargaSoloPrisma(P('eGama', 18), h);
+      var qm = EST.ck.eTrafego ? N.cargaMovelBoussinesq(P('eP', 75), h, true) : 0;
+      var dv = N.deflexaoIowa({ qSolo: qs, qMovel: qm, SN: sn, El: P('eEl', 7000), DL: P('eDL', 1.25), Kx: P('eKx', .1) });
+      pts.push([h, dv]); dmax = Math.max(dmax, dv);
+    }
+    return { sn: sn, pts: pts };
+  });
+  dmax = Math.max(dmax, E.adm * 1.2);
+  var px = function (h) { return ml + (W - ml - mr) * (h / Hmax); };
+  var py = function (v) { return H - mb - (H - mt - mb) * (v / dmax); };
+  svg.appendChild(svgEl('line', { x1: ml, y1: mt, x2: ml, y2: H - mb, stroke: 'var(--line)' }));
+  svg.appendChild(svgEl('line', { x1: ml, y1: H - mb, x2: W - mr, y2: H - mb, stroke: 'var(--line)' }));
+  svg.appendChild(svgEl('line', { x1: ml, y1: py(E.adm), x2: W - mr, y2: py(E.adm), stroke: 'var(--fail)', 'stroke-dasharray': '4 3' }));
+  var cores = { 2: 'var(--fail)', 4: 'var(--ocre)', 8: 'var(--hydro)', 16: 'var(--ok)' };
+  serie.forEach(function (s) {
+    var d = s.pts.map(function (p, i) { return (i ? 'L' : 'M') + px(p[0]) + ' ' + py(p[1]); }).join('');
+    svg.appendChild(svgEl('path', { d: d, fill: 'none', stroke: cores[s.sn], 'stroke-width': s.sn === E.SN ? 2.6 : 1.3, 'stroke-opacity': s.sn === E.SN ? 1 : .55 }));
+    var last = s.pts[s.pts.length - 1];
+    var t = svgEl('text', { x: px(last[0]) - 4, y: Math.max(mt + 9, py(last[1]) - 4), 'text-anchor': 'end', 'font-size': 10, 'font-family': 'var(--ff-mono)', fill: cores[s.sn] });
+    t.textContent = 'SN' + s.sn; svg.appendChild(t);
+  });
+  svg.appendChild(svgEl('circle', { cx: px(E.H), cy: py(E.def), r: 4, fill: 'var(--ink)' }));
+  var lab = function (x, y, txt, anc, cor) { var t = svgEl('text', { x: x, y: y, 'font-size': 10, 'font-family': 'var(--ff-mono)', fill: cor || 'var(--ink3)', 'text-anchor': anc || 'start' }); t.textContent = txt; svg.appendChild(t); };
+  lab(4, mt + 10, 'Δy/D (%)'); lab(W - mr, H - 8, 'H (m)', 'end');
+  lab(ml + 4, py(E.adm) - 4, 'admissível ' + f(E.adm, 1) + '%', 'start', 'var(--fail)');
+  lab(px(E.H) + 7, py(E.def) - 6, 'projeto: H=' + f(E.H, 2) + ' m · ' + f(E.def, 2) + '%', 'start', 'var(--ink)');
+  for (var h = 0; h <= Hmax; h++) lab(px(h), H - mb + 14, String(h), 'middle');
+  box.appendChild(svg);
+}
+
+/* ==================================================================
+   VALA E ORÇAMENTO
+   ================================================================== */
+function renderVala(R) {
+  R = R || calcularRede();
+  var tb = $('#tbVala'); tb.innerHTML = '';
+  var tot = { esc: 0, berco: 0, reat: 0, escor: 0, esg: 0, L: 0, tubo: {} };
+  R.linhas.forEach(function (L) {
+    var profM = (L.cot.profMont + L.cot.profJus) / 2 + P('berco', .1);
+    var v = N.volumesVala({
+      de: L.d.de, folga: P('folgaVala', .3), valaMin: P('valaMin', .6),
+      profMedia: profM, L: N.num(L.t.L), berco: P('berco', .1), profNA: P('profNA')
+    });
+    tot.esc += v.escavacao; tot.berco += v.berco; tot.reat += v.reaterro;
+    tot.escor += v.escoramento; tot.esg += v.esgotamento; tot.L += N.num(L.t.L);
+    var chave = L.mat + '|' + L.d.dn;
+    tot.tubo[chave] = (tot.tubo[chave] || 0) + N.num(L.t.L);
+    var tr = el('tr');
+    [[L.t.pvm + ' → ' + L.t.pvj, 'esq txt'], [f(N.num(L.t.L), 1)], [f(profM, 2)], [f(v.largura, 2)],
+     [f(v.escavacao, 2)], [f(v.berco, 2)], [f(v.volumeTubo, 2)], [f(v.reaterro, 2)],
+     [f(v.escoramento, 2)], [f(v.esgotamento, 1)], [v.tipoEscoramento, 'esq txt']
+    ].forEach(function (c) { tr.appendChild(el('td', { class: c[1] || '', texto: c[0] })); });
+    tb.appendChild(tr);
+  });
+  if (!R.linhas.length) tb.appendChild(el('tr', {}, [el('td', { colspan: 11, class: 'esq txt dim', texto: 'Lance os trechos na aba 04 para gerar os quantitativos.' })]));
+
+  var box = $('#kpiVala'); box.innerHTML = '';
+  [['Escavação total', f(tot.esc, 1) + ' m³', f(tot.L > 0 ? tot.esc / tot.L : 0, 2) + ' m³ por metro de rede'],
+   ['Reaterro', f(tot.reat, 1) + ' m³', 'já descontados berço e tubo'],
+   ['Escoramento', f(tot.escor, 1) + ' m²', 'ponderado pelo tipo exigido'],
+   ['Esgotamento de vala', f(tot.esg, 1) + ' m', P('profNA') > 0 ? 'NA a ' + f(P('profNA'), 2) + ' m' : 'lençol não considerado']
+  ].forEach(function (k) {
+    box.appendChild(el('div', { class: 'kpi' }, [el('div', { class: 'rot', texto: k[0] }), el('div', { class: 'val', texto: k[1] }), el('div', { class: 'obs', texto: k[2] })]));
+  });
+  renderOrcamento(tot, R);
+}
+
+function itensOrcamento(tot, R) {
+  var nos = {}; R.linhas.forEach(function (l) { nos[l.t.pvm] = 1; nos[l.t.pvj] = 1; });
+  var itens = [
+    { k: 'escav', desc: 'Escavação mecanizada de vala', un: 'm³', qtd: tot.esc },
+    { k: 'escor', desc: 'Escoramento de vala (conforme profundidade)', un: 'm²', qtd: tot.escor },
+    { k: 'esgot', desc: 'Esgotamento de vala', un: 'm', qtd: tot.esg },
+    { k: 'berco', desc: 'Berço / lastro de areia', un: 'm³', qtd: tot.berco },
+    { k: 'reat', desc: 'Reaterro compactado de vala', un: 'm³', qtd: tot.reat },
+    { k: 'bfora', desc: 'Carga, transporte e bota-fora do excedente', un: 'm³', qtd: Math.max(0, tot.esc - tot.reat - tot.berco) }
+  ];
+  Object.keys(tot.tubo).forEach(function (ch) {
+    var p = ch.split('|');
+    itens.push({ k: 'tubo_' + ch, desc: 'Tubo ' + N.MATERIAIS[p[0]].nome + ' DN ' + p[1] + ' — fornecimento e assentamento', un: 'm', qtd: tot.tubo[ch] });
+  });
+  itens.push({ k: 'pv', desc: 'Poço de visita', un: 'un', qtd: Object.keys(nos).length });
+  itens.push({ k: 'lig', desc: 'Ligação predial completa', un: 'un', qtd: 0, editavelQtd: true });
+  return itens;
+}
+
+function renderOrcamento(tot, R) {
+  var tb = $('#tbOrc'); tb.innerHTML = '';
+  var bdi = P('orcBDI', 0) / 100, somaS = 0, somaC = 0;
+  itensOrcamento(tot, R).forEach(function (it) {
+    var reg = EST.orc.itens[it.k] || (EST.orc.itens[it.k] = { cod: '', pu: '', qtd: '' });
+    var qtd = it.editavelQtd ? N.num(reg.qtd) : it.qtd;
+    var pu = N.num(reg.pu);
+    var ts = qtd * pu, tc = ts * (1 + bdi);
+    somaS += ts; somaC += tc;
+    var tr = el('tr');
+    tr.appendChild(el('td', { class: 'esq txt', texto: it.desc }));
+    tr.appendChild(td(inp(reg.cod, 'text', function (v) { reg.cod = v; salvar(true); }), 'esq'));
+    tr.appendChild(el('td', { class: 'esq', texto: it.un }));
+    if (it.editavelQtd) tr.appendChild(td(inp(reg.qtd, 'number', function (v) { reg.qtd = v; renderVala(); })));
+    else tr.appendChild(el('td', { texto: f(qtd, 2) }));
+    tr.appendChild(td(inp(reg.pu, 'number', function (v) { reg.pu = v; renderVala(); })));
+    tr.appendChild(el('td', { texto: f(ts, 2) }));
+    tr.appendChild(el('td', { texto: f(tc, 2) }));
+    tb.appendChild(tr);
+  });
+  var tf = $('#orcTotal'); tf.innerHTML = '';
+  tf.appendChild(el('td', { class: 'esq txt', colspan: 5, html: '<b>Total geral</b> &nbsp;<span class="dim">' + (Ptxt('orcRef') || 'referência de preços não informada') + ' · BDI ' + f(P('orcBDI', 0), 2) + '%</span>' }));
+  tf.appendChild(el('td', { html: '<b>' + f(somaS, 2) + '</b>' }));
+  tf.appendChild(el('td', { html: '<b>' + f(somaC, 2) + '</b>' }));
+  var km = N.num(R && R.linhas ? R.linhas.reduce(function (a, l) { return a + N.num(l.t.L); }, 0) : 0) / 1000;
+  if (km > 0) {
+    var tr2 = el('tr');
+    tr2.appendChild(el('td', { class: 'esq txt dim', colspan: 6, texto: 'Custo por quilômetro de rede (com BDI)' }));
+    tr2.appendChild(el('td', { class: 'dim', texto: f(somaC / km, 2) }));
+    tb.appendChild(tr2);
+  }
+}
+
+/* ==================================================================
+   MATERIAIS
+   ================================================================== */
+function renderMateriais() {
+  var box = $('#cardsMat'); box.innerHTML = '';
+  Object.keys(N.MATERIAIS).forEach(function (k) {
+    var m = N.MATERIAIS[k];
+    var faixa = m.d[0].dn + ' a ' + m.d[m.d.length - 1].dn;
+    var c = el('div', { class: 'card' });
+    c.style.borderLeft = '3px solid ' + m.cor;
+    c.innerHTML = '<h3>' + m.nome + ' <span class="tag">' + m.norma + '</span></h3>' +
+      '<div class="res">' +
+      '<div class="lin"><span>Rugosidade n</span><b>' + f(m.n, 3) + '</b></div>' +
+      '<div class="lin"><span>Comportamento</span><b>' + (m.rigido ? 'rígido' : 'flexível') + '</b></div>' +
+      '<div class="lin"><span>Faixa de DN</span><b>' + faixa + ' mm</b></div>' +
+      '<div class="lin"><span>Bitolas disponíveis</span><b>' + m.d.length + '</b></div></div>' +
+      '<div class="ajuda" style="margin-top:8px">' + m.nota + '</div>';
+    box.appendChild(c);
+  });
+  renderComparativo();
+}
+function renderComparativo() {
+  var tb = $('#tbCmp'); tb.innerHTML = '';
+  var I = P('cmpI', .005), usarCat = EST.ck.cmpNcat;
+  Object.keys(N.MATERIAIS).forEach(function (k) {
+    var m = N.MATERIAIS[k], n = usarCat ? m.n : P('nNorma', .013);
+    m.d.forEach(function (d, i) {
+      var D = d.di / 1000;
+      var q75 = N.vazaoManning(D, .75, n, I) * 1000;
+      var v75 = N.velocidade(D, .75, n, I);
+      var tr = el('tr');
+      [[i === 0 ? m.nome : '', 'esq txt'], [i === 0 ? f(n, 3) : ''], [String(d.dn)], [f(d.di, 1)], [f(d.de, 1)],
+       [f(q75, 2)], [f(v75, 2)], [f(N.vazaoPlena(D, n, I) * 1000, 2)], [f(N.tensaoTrativa(D, .75, I, P('gamaAgua', 10000)), 2)]
+      ].forEach(function (c) { tr.appendChild(el('td', { class: c[1] || '', texto: c[0] })); });
+      if (i === 0) tr.style.borderTop = '2px solid var(--line)';
+      tb.appendChild(tr);
+    });
+  });
+}
+
+/* ==================================================================
+   CONFORMIDADE
+   ================================================================== */
+function renderConformidade() {
+  var R = calcularRede(), V = R.V, prm = paramsNorma();
+  var itens = [];
+  function add(st, titulo, det) { itens.push({ st: st, t: titulo, d: det }); }
+
+  var nTr = R.linhas.length;
+  if (!nTr) add('na', 'Rede não lançada', 'Nenhum trecho na aba 04. As verificações automáticas dependem do lançamento da rede.');
+
+  var repTT = R.linhas.filter(function (l) { return !l.r.ok.trativa; });
+  add(nTr ? (repTT.length ? 'fail' : 'ok') : 'na', 'Tensão trativa mínima de ' + f(prm.ttMin, 1) + ' Pa',
+    repTT.length ? repTT.length + ' trecho(s) abaixo do mínimo: ' + repTT.map(function (l) { return l.t.pvm + '→' + l.t.pvj; }).join(', ') + '. Risco de assoreamento permanente.' : 'Todos os trechos atendem à condição de autolimpeza no início de plano.');
+
+  var repYD = R.linhas.filter(function (l) { return !l.r.ok.lamina; });
+  add(nTr ? (repYD.length ? 'fail' : 'ok') : 'na', 'Lâmina máxima de ' + f(prm.ydMax * 100, 0) + '% do diâmetro',
+    repYD.length ? repYD.length + ' trecho(s) com lâmina acima do limite ou seção insuficiente.' : 'Lâmina de fim de plano dentro do limite em todos os trechos.');
+
+  var repV = R.linhas.filter(function (l) { return !l.r.ok.velocidade; });
+  add(nTr ? (repV.length ? 'fail' : 'ok') : 'na', 'Velocidade máxima de ' + f(prm.vMax, 1) + ' m/s',
+    repV.length ? repV.length + ' trecho(s) acima da velocidade máxima. Avaliar degraus ou dissipação.' : 'Velocidades compatíveis com a resistência do material.');
+
+  var critico = R.linhas.filter(function (l) { return l.r.criticoExcedido; });
+  add(critico.length ? 'warn' : (nTr ? 'ok' : 'na'), 'Velocidade crítica e aeração',
+    critico.length ? critico.length + ' trecho(s) com V acima da crítica — nesses casos a lâmina foi limitada a ' + f(prm.ydCrit * 100, 0) + '% para garantir ventilação.' : 'Nenhum trecho supera a velocidade crítica.');
+
+  var dnPeq = R.linhas.filter(function (l) { return l.d.dn < P('dnMin', 150); });
+  add(dnPeq.length ? 'fail' : (nTr ? 'ok' : 'na'), 'Diâmetro mínimo de ' + f(P('dnMin', 150), 0) + ' mm',
+    dnPeq.length ? dnPeq.length + ' trecho(s) com DN inferior ao mínimo adotado.' : 'Todos os trechos respeitam o diâmetro mínimo.');
+
+  var profs = R.linhas.filter(function (l) { return l.cot.profMont > P('profMax', 4) || l.cot.profJus > P('profMax', 4); });
+  add(profs.length ? 'warn' : (nTr ? 'ok' : 'na'), 'Profundidade máxima de ' + f(P('profMax', 4), 2) + ' m',
+    profs.length ? profs.length + ' trecho(s) excedem a profundidade recomendada. Avaliar elevatória, alteração de traçado ou escoramento especial.' : 'Profundidades dentro da faixa executável com escoramento convencional.');
+
+  var vaos = R.linhas.filter(function (l) { return N.num(l.t.L) > P('distPV', 100); });
+  add(vaos.length ? 'fail' : (nTr ? 'ok' : 'na'), 'Distância máxima entre poços de visita',
+    vaos.length ? vaos.length + ' trecho(s) com vão acima de ' + f(P('distPV', 100), 0) + ' m, incompatível com o alcance dos equipamentos de desobstrução.' : 'Espaçamento entre PVs compatível com a manutenção.');
+
+  var recAj = R.linhas.filter(function (l) { return l.cot.ajustadoPorRecobrimento; });
+  add(recAj.length ? 'warn' : (nTr ? 'ok' : 'na'), 'Recobrimento mínimo',
+    recAj.length ? recAj.length + ' trecho(s) tiveram a cota de fundo elevada para manter o recobrimento; a declividade real ficou maior que a lançada.' : 'Recobrimento mínimo atendido sem ajuste de cota.');
+
+  add(V.infiltracao / Math.max(V.totalF, 1e-9) > 0.35 ? 'warn' : 'ok', 'Participação da infiltração',
+    'Infiltração corresponde a ' + f(100 * V.infiltracao / Math.max(V.totalF, 1e-9), 1) + '% da vazão de fim de plano. Acima de 35% convém rever a taxa adotada e o material de junta.');
+
+  add(P('popF') > P('popI') ? 'ok' : 'warn', 'Coerência do estudo populacional',
+    P('popF') > P('popI') ? 'População de fim de plano superior à de início, como esperado em rede com horizonte de projeto.' : 'População de fim de plano não é maior que a inicial. Verifique o estudo demográfico e o alcance do plano.');
+
+  var ul = $('#chkAuto'); ul.innerHTML = '';
+  itens.forEach(function (it) { ul.appendChild(itemCheck(it.st, it.t, it.d)); });
+
+  var doc = [
+    ['Memória de cálculo trecho a trecho', 'Planilha com vazões, diâmetro, declividade, lâmina, velocidade e tensão trativa de cada trecho, assinada por responsável técnico.'],
+    ['Perfil longitudinal e planta cadastral', 'Cotas de terreno e de fundo, PVs numerados, interferências e amarração ao sistema existente.'],
+    ['Sondagens e nível do lençol', 'Justificativa do esgotamento de vala e do tipo de escoramento orçado.'],
+    ['Estudo populacional e de vazões', 'Fonte dos dados de população, per capita, coeficientes e horizonte de projeto.'],
+    ['Especificação de materiais', 'Material, classe de rigidez e tipo de junta com justificativa técnica, sem indicação de marca.'],
+    ['Composições de custo e referência', 'Tabela de referência, mês-base, desoneração e composições de escavação, escoramento, esgotamento e assentamento.'],
+    ['Demonstração do BDI', 'Composição analítica do BDI compatível com a natureza da obra e com o regime tributário.'],
+    ['Licenciamento e outorga', 'Manifestação do órgão ambiental e do gestor do corpo receptor, quando aplicável.'],
+    ['Plano de manutenção', 'Trechos de baixa declividade e pontos de acúmulo identificados, com periodicidade de limpeza.'],
+    ['Compatibilização com o sistema existente', 'Capacidade remanescente do coletor tronco e da estação de tratamento a jusante.']
+  ];
+  var ul2 = $('#chkDoc'); ul2.innerHTML = '';
+  doc.forEach(function (d) { ul2.appendChild(itemCheck('na', d[0], d[1])); });
+}
+function itemCheck(st, titulo, det) {
+  var ic = { ok: '✓', warn: '!', fail: '✕', na: '□' }[st] || '□';
+  var li = el('li');
+  li.appendChild(el('span', { class: 'ic ' + st, texto: ic }));
+  li.appendChild(el('span', { class: 'txt', html: '<b>' + titulo + '</b><small>' + det + '</small>' }));
+  return li;
+}
+
+/* ==================================================================
+   RELATÓRIO
+   ================================================================== */
+function gerarRelatorio() {
+  var R = calcularRede(), V = R.V, prm = paramsNorma();
+  var d = $('#relatorio'); d.innerHTML = '';
+  var h = [];
+  h.push('<div class="card"><h3>Identificação</h3><div class="res">');
+  [['Obra', Ptxt('idObra') || '—'], ['Município / UF', Ptxt('idMunicipio') || '—'],
+   ['Contratante', Ptxt('idContratante') || '—'], ['Responsável técnico', Ptxt('idRT') || '—'],
+   ['CREA / ART', Ptxt('idCrea') || '—'], ['Data', Ptxt('idData') || N.dataBR()],
+   ['Revisão', Ptxt('idRev') || 'R00']
+  ].forEach(function (a) { h.push('<div class="lin"><span>' + a[0] + '</span><b>' + a[1] + '</b></div>'); });
+  h.push('</div></div>');
+
+  h.push('<div class="card"><h3>1. Critérios de projeto</h3><div class="res">');
+  [['Norma de referência', 'ABNT NBR 9649 e NBR 14486'],
+   ['Vazão mínima de projeto', f(prm.qMin, 2) + ' L/s'],
+   ['Tensão trativa mínima', f(prm.ttMin, 2) + ' Pa'],
+   ['Lâmina máxima', f(prm.ydMax * 100, 0) + ' % do diâmetro'],
+   ['Velocidade máxima', f(prm.vMax, 2) + ' m/s'],
+   ['Rugosidade de cálculo', EST.ck.usarNnorma ? 'n = ' + f(P('nNorma', .013), 3) + ' para todos os materiais' : 'n de catálogo por material'],
+   ['Recobrimento mínimo', f(P('recVia', .9), 2) + ' m (via) / ' + f(P('recPasseio', .65), 2) + ' m (passeio)'],
+   ['Diâmetro mínimo', f(P('dnMin', 150), 0) + ' mm']
+  ].forEach(function (a) { h.push('<div class="lin"><span>' + a[0] + '</span><b>' + a[1] + '</b></div>'); });
+  h.push('</div></div>');
+
+  h.push('<div class="card"><h3>2. Vazões</h3><div class="res">');
+  [['População início / fim de plano', f(P('popI'), 0) + ' / ' + f(P('popF'), 0) + ' hab'],
+   ['Vazão doméstica de início de plano', f(V.dom.inicial, 2) + ' L/s'],
+   ['Vazão doméstica de fim de plano', f(V.dom.final, 2) + ' L/s'],
+   ['Vazão de infiltração', f(V.infiltracao, 2) + ' L/s'],
+   ['Contribuições concentradas (início / fim)', f(V.concI, 2) + ' / ' + f(V.concF, 2) + ' L/s'],
+   ['Vazão total de fim de plano', f(V.totalF, 2) + ' L/s'],
+   ['Taxa de contribuição linear de fim de plano', f(V.tclF * 1000, 4) + ' L/s·km']
+  ].forEach(function (a) { h.push('<div class="lin"><span>' + a[0] + '</span><b>' + a[1] + '</b></div>'); });
+  h.push('</div></div>');
+
+  if (R.linhas.length) {
+    h.push('<div class="card"><h3>3. Dimensionamento hidráulico</h3><div class="tabela-rolo"><table><thead><tr>' +
+      '<th class="esq">Trecho</th><th>L (m)</th><th class="esq">Material</th><th>DN</th><th>I (m/m)</th>' +
+      '<th>Qi (L/s)</th><th>Qf (L/s)</th><th>Y/D</th><th>V (m/s)</th><th>σt (Pa)</th><th>Prof. jus. (m)</th><th class="esq">Situação</th></tr></thead><tbody>');
+    R.linhas.forEach(function (l) {
+      h.push('<tr><td class="esq txt">' + l.t.pvm + ' → ' + l.t.pvj + '</td><td>' + f(N.num(l.t.L), 1) + '</td>' +
+        '<td class="esq txt">' + N.MATERIAIS[l.mat].nome + '</td><td>' + l.d.dn + '</td><td>' + f(N.num(l.t.I), 5) + '</td>' +
+        '<td>' + f(l.Qi, 2) + '</td><td>' + f(l.Qf, 2) + '</td><td>' + (l.r.afogado ? '—' : f(l.r.ydF * 100, 1) + '%') + '</td>' +
+        '<td>' + f(l.r.vF, 2) + '</td><td>' + f(l.r.ttI, 2) + '</td><td>' + f(l.cot.profJus, 2) + '</td>' +
+        '<td class="esq txt">' + (l.aprovado ? 'conforme' : l.problemas.join('; ')) + '</td></tr>');
+    });
+    h.push('</tbody></table></div></div>');
+  }
+
+  d.innerHTML = h.join('');
+
+  if ($('#relPerfil').checked && R.linhas.length) {
+    var c = el('div', { class: 'card' });
+    c.innerHTML = '<h3>4. Perfil longitudinal</h3>';
+    var svg = $('#perfil');
+    if (svg) { var cl = svg.cloneNode(true); cl.removeAttribute('id'); cl.setAttribute('width', '100%'); c.appendChild(cl); }
+    d.appendChild(c);
+  }
+  if ($('#relOrc').checked) {
+    var c2 = el('div', { class: 'card' });
+    c2.innerHTML = '<h3>5. Quantitativos e orçamento</h3>';
+    var t = $('#tbOrc').closest('.tabela-rolo');
+    if (t) c2.appendChild(t.cloneNode(true));
+    d.appendChild(c2);
+  }
+  var c3 = el('div', { class: 'card' });
+  c3.innerHTML = '<h3>Ressalvas</h3><div class="ajuda">Os resultados apresentados decorrem exclusivamente dos dados informados. Diâmetros internos, externos e rugosidades são valores de referência para anteprojeto e devem ser confirmados no catálogo do fabricante antes da especificação definitiva. Os preços unitários são de responsabilidade do usuário, devendo constar a referência, o mês-base e o regime de desoneração adotados. Documento gerado em ' + N.dataBR() + '.</div>';
+  d.appendChild(c3);
+  toast('Relatório gerado');
+}
+
+/* ==================================================================
+   CSV / IMPORT / EXPORT
+   ================================================================== */
+function baixar(nome, conteudo, tipo) {
+  var b = new Blob(['\ufeff' + conteudo], { type: tipo || 'text/plain;charset=utf-8' });
+  var a = el('a', { href: URL.createObjectURL(b), download: nome });
+  document.body.appendChild(a); a.click();
+  setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+}
+function csvRede() {
+  var R = calcularRede();
+  var cab = ['PV montante', 'PV jusante', 'L (m)', 'Cota terreno mont', 'Cota terreno jus', 'Material', 'DN (mm)',
+    'I (m/m)', 'Qi (L/s)', 'Qf (L/s)', 'Y/D fim', 'V fim (m/s)', 'sigma t inicio (Pa)',
+    'Cota fundo mont', 'Cota fundo jus', 'Prof mont (m)', 'Prof jus (m)', 'Situacao'];
+  var lin = [cab.join(';')];
+  R.linhas.forEach(function (l) {
+    lin.push([l.t.pvm, l.t.pvj, f(N.num(l.t.L), 2), f(N.num(l.t.ctm), 3), f(N.num(l.t.ctj), 3),
+      N.MATERIAIS[l.mat].nome, l.d.dn, f(N.num(l.t.I), 5), f(l.Qi, 3), f(l.Qf, 3),
+      f(l.r.ydF * 100, 1), f(l.r.vF, 3), f(l.r.ttI, 3), f(l.cot.cfMont, 3), f(l.cot.cfJus, 3),
+      f(l.cot.profMont, 2), f(l.cot.profJus, 2), l.aprovado ? 'conforme' : l.problemas.join(' / ')].join(';'));
+  });
+  baixar('rede-coletora.csv', lin.join('\n'), 'text/csv;charset=utf-8');
+}
+
+/* ==================================================================
+   EXEMPLO
+   ================================================================== */
+function carregarExemplo() {
+  EST.projeto = {
+    idObra: 'Implantação de rede coletora — Setor Norte', idMunicipio: 'Brasília / DF',
+    idContratante: 'Companhia de Saneamento', idRT: '', idCrea: '', idData: N.dataBR(), idRev: 'R00',
+    popI: 4500, popF: 8200, qpcI: 150, qpcF: 180, coefC: 0.80, k1: 1.20, k2: 1.50, k3: 0.50,
+    txInf: 0.10, extRede: 980, qMin: 1.5, ttMin: 1.0, ydMax: 0.75, ydCrit: 0.50, vMax: 5.0,
+    nNorma: 0.013, gamaAgua: 10000, dnMin: 150, recVia: 0.90, recPasseio: 0.65, profMax: 4.00,
+    distPV: 100, folgaVala: 0.30, valaMin: 0.60, berco: 0.10, profNA: 0,
+    racA: 12.5, racC: 0.05, racI: 60, racFrac: 100, cmpI: 0.0050, orcRef: '', orcBDI: 22.5,
+    eH: 2.00, eGama: 18, eEl: 7000, eDL: 1.25, eKx: 0.10, eP: 75, eDefAdm: 5.0, eSN: 4
+  };
+  EST.ck = { usarNnorma: true, eTrafego: true, cmpNcat: true, perfilLamina: true, racNaRede: false };
+  EST.concentradas = [{ nome: 'Hospital regional', qi: 1.2, qf: 2.4, no: 'PV-3' }];
+  EST.trechos = [
+    novoTrecho({ pvm: 'PV-1', pvj: 'PV-2', L: 90, ctm: 812.40, ctj: 811.85, mat: 'pvc', dn: 150, I: 0.0061 }),
+    novoTrecho({ pvm: 'PV-2', pvj: 'PV-3', L: 95, ctm: 811.85, ctj: 811.20, mat: 'pvc', dn: 150, I: 0.0068 }),
+    novoTrecho({ pvm: 'PV-3', pvj: 'PV-4', L: 100, ctm: 811.20, ctj: 810.35, mat: 'pvc', dn: 200, I: 0.0060 }),
+    novoTrecho({ pvm: 'PV-4', pvj: 'PV-5', L: 100, ctm: 810.35, ctj: 809.40, mat: 'peadc', dn: 200, I: 0.0060 }),
+    novoTrecho({ pvm: 'PV-5', pvj: 'PV-6', L: 100, ctm: 809.40, ctj: 808.30, mat: 'peadc', dn: 250, I: 0.0055 }),
+    novoTrecho({ pvm: 'PV-6', pvj: 'PV-7', L: 100, ctm: 808.30, ctj: 807.10, mat: 'peadc', dn: 250, I: 0.0055 }),
+    novoTrecho({ pvm: 'PV-7', pvj: 'PV-8', L: 100, ctm: 807.10, ctj: 805.90, mat: 'peadc', dn: 300, I: 0.0050 }),
+    novoTrecho({ pvm: 'PV-8', pvj: 'PV-9', L: 100, ctm: 805.90, ctj: 804.60, mat: 'concreto', dn: 300, I: 0.0050 }),
+    novoTrecho({ pvm: 'PV-9', pvj: 'PV-10', L: 95, ctm: 804.60, ctj: 803.20, mat: 'concreto', dn: 400, I: 0.0045 }),
+    novoTrecho({ pvm: 'PV-10', pvj: 'PV-11', L: 100, ctm: 803.20, ctj: 801.70, mat: 'concreto', dn: 400, I: 0.0045 })
+  ];
+  EST.orc = { itens: {} };
+  escreverCampos();
+  renderTudo(); salvar(true);
+  toast('Exemplo carregado — 10 trechos, PVC, PEAD e concreto');
+}
+
+/* ==================================================================
+   RENDER GERAL
+   ================================================================== */
+function recalcularTudo() {
+  lerCampos();
+  renderVazoes(); renderTrecho(); renderRede(); renderEstrutural();
+  renderComparativo(); renderConformidade();
+}
+function renderTudo() {
+  lerCampos(); renderConc(); renderMateriais(); recalcularTudo();
+}
+
+/* ==================================================================
+   INICIALIZAÇÃO
+   ================================================================== */
+function iniciar() {
+  $('#verTag').textContent = 'v' + VERSAO;
+  var temExemplo = !carregar();
+  document.documentElement.setAttribute('data-tema', EST.tema || 'claro');
+
+  $$('.aba').forEach(function (b) { b.addEventListener('click', function () { irPara(b.dataset.alvo); }); });
+
+  preencherMateriais($('#tMat'), 'pvc'); preencherDN($('#tDN'), 'pvc', 150);
+  preencherMateriais($('#eMat'), 'peadc'); preencherDN($('#eDN'), 'peadc', 200);
+  $('#tMat').addEventListener('change', function () { preencherDN($('#tDN'), $('#tMat').value); renderTrecho(); });
+  $('#tDN').addEventListener('change', renderTrecho);
+  $('#eMat').addEventListener('change', function () { preencherDN($('#eDN'), $('#eMat').value); renderEstrutural(); });
+  $('#eDN').addEventListener('change', renderEstrutural);
+
+  ['tQi', 'tQf', 'tI', 'tL'].forEach(function (id) { $('#' + id).addEventListener('input', renderTrecho); });
+  CAMPOS_PROJETO.forEach(function (id) {
+    var e = $('#' + id); if (!e) return;
+    e.addEventListener('input', function () { lerCampos(); agendaGeral(); });
+  });
+  CAMPOS_CK.forEach(function (id) {
+    var e = $('#' + id); if (!e) return;
+    e.addEventListener('change', function () { lerCampos(); recalcularTudo(); salvar(true); });
+  });
+
+  $('#btSalvar').addEventListener('click', function () { salvar(); });
+  $('#btImprimir').addEventListener('click', function () { window.print(); });
+  $('#btImprimir2').addEventListener('click', function () { window.print(); });
+  $('#btTema').addEventListener('click', function () {
+    EST.tema = (document.documentElement.getAttribute('data-tema') === 'escuro') ? 'claro' : 'escuro';
+    document.documentElement.setAttribute('data-tema', EST.tema); salvar(true);
+  });
+  $('#btExportar').addEventListener('click', function () {
+    lerCampos(); baixar('esgotocalc-projeto.json', JSON.stringify(EST, null, 2), 'application/json');
+  });
+  $('#btImportar').addEventListener('click', function () { $('#arqImport').click(); });
+  $('#arqImport').addEventListener('change', function (ev) {
+    var fl = ev.target.files[0]; if (!fl) return;
+    var fr = new FileReader();
+    fr.onload = function () {
+      try {
+        var o = JSON.parse(fr.result);
+        EST.projeto = o.projeto || {}; EST.ck = o.ck || {};
+        EST.concentradas = o.concentradas || []; EST.trechos = o.trechos || []; EST.orc = o.orc || { itens: {} };
+        escreverCampos(); renderTudo(); salvar(true); toast('Projeto importado');
+      } catch (e) { toast('Arquivo inválido: ' + e.message); }
+    };
+    fr.readAsText(fl); ev.target.value = '';
+  });
+  $('#btExemplo').addEventListener('click', carregarExemplo);
+  $('#btLimpar').addEventListener('click', function () {
+    if (!confirm('Isso apaga o projeto salvo neste navegador. Continuar?')) return;
+    localStorage.removeItem(CHAVE); EST.trechos = []; EST.concentradas = []; EST.orc = { itens: {} };
+    renderTudo(); toast('Projeto limpo');
+  });
+  $('#btAddConc').addEventListener('click', function () {
+    EST.concentradas.push({ nome: 'Novo contribuinte', qi: 0, qf: 0, no: '' });
+    renderConc(); recalcularTudo();
+  });
+  $('#btAddTrecho').addEventListener('click', function () {
+    var ult = EST.trechos[EST.trechos.length - 1];
+    EST.trechos.push(ult
+      ? novoTrecho({ pvm: ult.pvj, pvj: proxPV(ult.pvj), ctm: N.num(ult.ctj), ctj: N.num(ult.ctj) - 0.5, mat: ult.mat, dn: ult.dn, I: ult.I })
+      : novoTrecho());
+    renderRede(); salvar(true);
+  });
+  $('#btDimRede').addEventListener('click', dimensionarRede);
+  $('#btRecalcular').addEventListener('click', function () { recalcularTudo(); toast('Recalculado'); });
+  $('#btCsvRede').addEventListener('click', csvRede);
+  $('#perfilLamina').addEventListener('change', function () { renderRede(); });
+  $('#perfilModo').addEventListener('change', function () { renderRede(); });
+  $('#btDimensionar').addEventListener('click', function () {
+    var mat = $('#tMat').value;
+    var r = N.dimensionarTrecho(Object.assign(paramsNorma(), {
+      n: nDeCalculo(mat), Qi: N.num($('#tQi').value), Qf: N.num($('#tQf').value), dnMin: P('dnMin', 150)
+    }), N.listaDiametros(mat));
+    if (!r) { toast('Nenhum diâmetro do material atende às condições'); return; }
+    preencherDN($('#tDN'), mat, r.dn); $('#tDN').value = r.dn; $('#tI').value = N.arred(r.I, 5);
+    renderTrecho(); toast('Adotado DN ' + r.dn + ' com I = ' + f(r.I * 1000, 2) + ' m/km');
+  });
+  $('#btIminima').addEventListener('click', function () {
+    var qi = Math.max(N.num($('#tQi').value), P('qMin', 1.5));
+    $('#tI').value = N.arred(N.declividadeMinimaNBR(qi), 5); renderTrecho();
+  });
+  $('#btGerarRel').addEventListener('click', gerarRelatorio);
+  $('#btTestar').addEventListener('click', executarTestes);
+  $('#cmpI').addEventListener('input', renderComparativo);
+
+  if (temExemplo) { carregarExemplo(); }
+  else { escreverCampos(); renderTudo(); }
+  irPara('pProjeto');
+}
+function proxPV(nome) {
+  var m = String(nome).match(/^(.*?)(\d+)$/);
+  return m ? m[1] + (parseInt(m[2], 10) + 1) : nome + '-2';
+}
+var _tg = null;
+function agendaGeral() { clearTimeout(_tg); _tg = setTimeout(function () { recalcularTudo(); salvar(true); }, 300); }
+window.EsgotoCalc = { EST: EST, recalcular: recalcularTudo, calcularRede: calcularRede, irPara: irPara };
+document.addEventListener('DOMContentLoaded', iniciar);
+})();
+
+/* ==================================================================
+   Definição dos testes — bloco puro, reaproveitado pela suíte Node
+   ================================================================== */
+/* ==TESTS-START== */
+var TESTES_DEF = function (N) {
+  var T = [];
+  function ok(grupo, nome, obtido, esperado, tol) {
+    var passou;
+    if (typeof esperado === 'boolean' || typeof esperado === 'string') passou = obtido === esperado;
+    else if (esperado === null) passou = obtido === null;
+    else passou = isFinite(obtido) && Math.abs(obtido - esperado) <= (tol === undefined ? 1e-6 : tol);
+    T.push({ g: grupo, n: nome, o: obtido, e: esperado, p: passou });
+  }
+  function verdade(grupo, nome, cond, descricao) {
+    T.push({ g: grupo, n: nome, o: cond ? 'verdadeiro' : 'falso', e: descricao || 'verdadeiro', p: !!cond });
+  }
+  var D = 0.30, n = 0.013, I = 0.005, PI = Math.PI;
+
+  /* ---------- A. Geometria da seção circular ---------- */
+  ok('Geometria', 'θ para Y/D = 0,50 vale π', N.theta(0.5), PI, 1e-9);
+  ok('Geometria', 'θ para Y/D = 1,00 vale 2π', N.theta(1), 2 * PI, 1e-6);
+  ok('Geometria', 'Área a meia seção é metade da área plena', N.areaMolhada(D, 0.5), PI * D * D / 8, 1e-9);
+  ok('Geometria', 'Área a seção plena', N.areaMolhada(D, 1), PI * D * D / 4, 1e-9);
+  ok('Geometria', 'Perímetro a meia seção', N.perimetroMolhado(D, 0.5), PI * D / 2, 1e-9);
+  ok('Geometria', 'Perímetro a seção plena', N.perimetroMolhado(D, 1), PI * D, 1e-9);
+  ok('Geometria', 'Rh a meia seção vale D/4', N.raioHidraulico(D, 0.5), D / 4, 1e-9);
+  ok('Geometria', 'Rh a seção plena vale D/4', N.raioHidraulico(D, 1), D / 4, 1e-9);
+  ok('Geometria', 'Largura da superfície a meia seção vale D', N.larguraSuperficie(D, 0.5), D, 1e-9);
+  ok('Geometria', 'Largura da superfície a seção plena é nula', N.larguraSuperficie(D, 1), 0, 1e-9);
+  ok('Geometria', 'A/D² tabelado para Y/D = 0,80', N.areaMolhada(1, 0.8), 0.6736, 5e-4);
+  ok('Geometria', 'Rh/D tabelado para Y/D = 0,80', N.raioHidraulico(1, 0.8), 0.3042, 5e-4);
+  ok('Geometria', 'A/D² tabelado para Y/D = 0,75', N.areaMolhada(1, 0.75), 0.6319, 5e-4);
+  ok('Geometria', 'Rh/D tabelado para Y/D = 0,75', N.raioHidraulico(1, 0.75), 0.3017, 5e-4);
+  ok('Geometria', 'A/D² tabelado para Y/D = 0,20', N.areaMolhada(1, 0.20), 0.1118, 5e-4);
+  ok('Geometria', 'Rh/D tabelado para Y/D = 0,20', N.raioHidraulico(1, 0.20), 0.1206, 5e-4);
+  verdade('Geometria', 'Rh máximo ocorre próximo a Y/D = 0,81',
+    N.raioHidraulico(1, 0.81) > N.raioHidraulico(1, 0.70) && N.raioHidraulico(1, 0.81) > N.raioHidraulico(1, 0.95));
+  verdade('Geometria', 'Área é estritamente crescente com Y/D', (function () {
+    for (var y = 0.02; y < 1; y += 0.02) if (N.areaMolhada(1, y + 0.01) <= N.areaMolhada(1, y)) return false;
+    return true;
+  })());
+
+  /* ---------- B. Manning ---------- */
+  var Qp = N.vazaoPlena(D, n, I);
+  ok('Manning', 'Vazão plena confere com A·Rh^(2/3)·√I/n',
+    Qp, (1 / n) * (PI * D * D / 4) * Math.pow(D / 4, 2 / 3) * Math.sqrt(I), 1e-9);
+  ok('Manning', 'Vazão a meia seção é metade da plena', N.vazaoManning(D, 0.5, n, I), Qp / 2, 1e-9);
+  ok('Manning', 'Velocidade a meia seção iguala a plena', N.velocidade(D, 0.5, n, I), N.velocidade(D, 1, n, I), 1e-9);
+  verdade('Manning', 'Vazão máxima ocorre acima de Y/D = 0,90',
+    N.vazaoManning(D, 0.938, n, I) > Qp && N.vazaoManning(D, 0.938, n, I) / Qp > 1.07 && N.vazaoManning(D, 0.938, n, I) / Qp < 1.08);
+  verdade('Manning', 'Velocidade máxima em torno de Y/D = 0,81 é ~1,14 × a plena', (function () {
+    var r = N.velocidade(D, 0.81, n, I) / N.velocidade(D, 1, n, I);
+    return r > 1.13 && r < 1.15;
+  })());
+  ok('Manning', 'Vazão dobra ao quadruplicar a declividade',
+    N.vazaoManning(D, 0.6, n, 4 * I) / N.vazaoManning(D, 0.6, n, I), 2, 1e-9);
+  ok('Manning', 'Vazão é inversamente proporcional a n',
+    N.vazaoManning(D, 0.6, 0.026, I) / N.vazaoManning(D, 0.6, 0.013, I), 0.5, 1e-9);
+  ok('Manning', 'Vazão nula com declividade nula', N.vazaoManning(D, 0.6, n, 0), 0, 0);
+  ok('Manning', 'Vazão nula com lâmina nula', N.vazaoManning(D, 0, n, I), 0, 0);
+  verdade('Manning', 'Escala de Manning: Q ∝ D^(8/3) a seção plena', (function () {
+    var r = N.vazaoPlena(0.6, n, I) / N.vazaoPlena(0.3, n, I);
+    return Math.abs(r - Math.pow(2, 8 / 3)) < 1e-6;
+  })());
+
+  /* ---------- C. Inversão da lâmina ---------- */
+  [[0.10, 0.15], [0.15, 0.30], [0.30, 0.50], [0.40, 0.75], [0.50, 0.90]].forEach(function (par) {
+    var Dd = par[0], yd = par[1];
+    var q = N.vazaoManning(Dd, yd, n, I);
+    ok('Lâmina', 'Ida e volta Q→Y/D para D=' + Dd + ' m e Y/D=' + yd, N.laminaRelativa(q, Dd, n, I), yd, 1e-6);
+  });
+  ok('Lâmina', 'Vazão nula devolve lâmina nula', N.laminaRelativa(0, D, n, I), 0, 0);
+  ok('Lâmina', 'Vazão acima da capacidade devolve nulo', N.laminaRelativa(9999, D, n, I), null);
+  verdade('Lâmina', 'Limite superior de busca é 0,93', N.YD_SUP === 0.93);
+  ok('Lâmina', 'Declividade calculada reproduz a lâmina alvo', (function () {
+    var q = N.vazaoManning(D, 0.75, n, 0.004);
+    return N.declividadeParaLamina(q, D, n, 0.75);
+  })(), 0.004, 1e-9);
+
+  /* ---------- D. Tensão trativa e velocidade crítica ---------- */
+  ok('Trativa', 'σt a meia seção com I = 0,005', N.tensaoTrativa(D, 0.5, 0.005, 10000), 10000 * (D / 4) * 0.005, 1e-9);
+  ok('Trativa', 'σt é proporcional à declividade',
+    N.tensaoTrativa(D, 0.6, 0.010, 10000) / N.tensaoTrativa(D, 0.6, 0.005, 10000), 2, 1e-9);
+  ok('Trativa', 'σt com γ = 9 810 N/m³', N.tensaoTrativa(D, 0.5, 0.005, 9810), 9810 * (D / 4) * 0.005, 1e-9);
+  ok('Trativa', 'Velocidade crítica a meia seção', N.velocidadeCritica(D, 0.5), 6 * Math.sqrt(9.81 * D / 4), 1e-9);
+  verdade('Trativa', 'Velocidade crítica cresce com o diâmetro', N.velocidadeCritica(0.6, 0.5) > N.velocidadeCritica(0.3, 0.5));
+
+  /* ---------- E. Declividades normativas ---------- */
+  ok('NBR 9649', 'Declividade mínima para Qi = 1,5 L/s', N.declividadeMinimaNBR(1.5), 0.0055 * Math.pow(1.5, -0.47), 1e-12);
+  ok('NBR 9649', 'Declividade mínima para Qi = 1,5 L/s em m/km', N.declividadeMinimaNBR(1.5) * 1000, 4.546, 0.01);
+  verdade('NBR 9649', 'Declividade mínima decresce com o aumento da vazão',
+    N.declividadeMinimaNBR(10) < N.declividadeMinimaNBR(1.5));
+  ok('NBR 9649', 'Declividade máxima para Qf = 10 L/s', N.declividadeMaximaNBR(10), 4.65 * Math.pow(10, -0.67), 1e-12);
+  verdade('NBR 9649', 'Declividade máxima decresce com o aumento da vazão',
+    N.declividadeMaximaNBR(100) < N.declividadeMaximaNBR(10));
+  verdade('NBR 9649', 'Faixa mínima/máxima é coerente para Q = 20 L/s',
+    N.declividadeMinimaNBR(20) < N.declividadeMaximaNBR(20));
+  verdade('NBR 9649', 'Declividade mínima da NBR gera σt próxima de 1,0 Pa em DN 150', (function () {
+    var Dd = 0.148, Im = N.declividadeMinimaNBR(1.5);
+    var yd = N.laminaRelativa(0.0015, Dd, 0.013, Im);
+    var tt = N.tensaoTrativa(Dd, yd, Im, 10000);
+    return tt > 0.75 && tt < 1.35;
+  })());
+  ok('NBR 9649', 'Declividade mínima exata reproduz σt = 1,0 Pa', (function () {
+    var Dd = 0.148, Im = N.declividadeMinimaTrativa(1.5, Dd, 0.013, 1.0, 10000);
+    var yd = N.laminaRelativa(0.0015, Dd, 0.013, Im);
+    return N.tensaoTrativa(Dd, yd, Im, 10000);
+  })(), 1.0, 5e-3);
+  ok('NBR 9649', 'Declividade mínima exata reproduz σt = 1,5 Pa', (function () {
+    var Dd = 0.20, Im = N.declividadeMinimaTrativa(3.0, Dd, 0.013, 1.5, 10000);
+    var yd = N.laminaRelativa(0.0030, Dd, 0.013, Im);
+    return N.tensaoTrativa(Dd, yd, Im, 10000);
+  })(), 1.5, 5e-3);
+
+  /* ---------- F. Verificação de trecho ---------- */
+  var base = { qMin: 1.5, ttMin: 1.0, ydMax: 0.75, ydCrit: 0.50, vMax: 5.0, gama: 10000, n: 0.013 };
+  var v1 = N.verificarTrecho(Object.assign({}, base, { D: 0.148, I: 0.006, Qi: 1.5, Qf: 8 }));
+  verdade('Trecho', 'DN 150 com I = 0,006 e Qf = 8 L/s é aprovado', v1.aprovado);
+  verdade('Trecho', 'Lâmina de fim de plano abaixo do limite', v1.ydF < 0.75);
+  verdade('Trecho', 'Tensão trativa de início supera 1,0 Pa', v1.ttI >= 1.0);
+  var v2 = N.verificarTrecho(Object.assign({}, base, { D: 0.148, I: 0.0005, Qi: 1.5, Qf: 12 }));
+  verdade('Trecho', 'Declividade muito baixa reprova por tensão trativa', !v2.ok.trativa);
+  verdade('Trecho', 'Declividade muito baixa também compromete a lâmina', !v2.aprovado);
+  var v3 = N.verificarTrecho(Object.assign({}, base, { D: 0.148, I: 0.006, Qi: 1.5, Qf: 200 }));
+  verdade('Trecho', 'Vazão excessiva marca o trecho como afogado', v3.afogado);
+  verdade('Trecho', 'Trecho afogado é reprovado', !v3.aprovado);
+  var v4 = N.verificarTrecho(Object.assign({}, base, { D: 0.30, I: 0.50, Qi: 20, Qf: 200 }));
+  verdade('Trecho', 'Declividade de 50% reprova por velocidade', !v4.ok.velocidade);
+  verdade('Trecho', 'Velocidade acima da crítica reduz a lâmina limite',
+    v4.criticoExcedido ? v4.ydLimite <= 0.50 + 1e-9 : true);
+  var v5 = N.verificarTrecho(Object.assign({}, base, { D: 0.148, I: 0.006, Qi: 0.2, Qf: 0.4 }));
+  ok('Trecho', 'Vazão abaixo do mínimo é elevada a 1,5 L/s', v5.QiLs, 1.5, 1e-9);
+  ok('Trecho', 'Vazão de fim também respeita o mínimo', v5.QfLs, 1.5, 1e-9);
+  verdade('Trecho', 'Capacidade remanescente é positiva quando aprovado', v1.folgaCapacidade > 0);
+  verdade('Trecho', 'Lâmina em metros é coerente com Y/D', Math.abs(v1.laminaF_m - v1.ydF * 0.148) < 1e-9);
+
+  /* ---------- G. Busca automática ---------- */
+  var auto = N.dimensionarTrecho(Object.assign({}, base, { Qi: 1.5, Qf: 15, dnMin: 150 }), N.listaDiametros('pvc'));
+  verdade('Automático', 'Dimensionamento automático encontra solução em PVC', !!auto);
+  verdade('Automático', 'Solução automática respeita o DN mínimo', auto && auto.dn >= 150);
+  verdade('Automático', 'Solução automática é aprovada na verificação', auto && auto.res.aprovado);
+  var autoP = N.dimensionarTrecho(Object.assign({}, base, { Qi: 2, Qf: 60, dnMin: 150 }), N.listaDiametros('peadc'));
+  verdade('Automático', 'Dimensionamento automático encontra solução em PEAD corrugado', !!autoP);
+  verdade('Automático', 'Solução em PEAD é aprovada', autoP && autoP.res.aprovado);
+  verdade('Automático', 'Vazão maior exige diâmetro maior ou igual', (function () {
+    var a = N.dimensionarTrecho(Object.assign({}, base, { Qi: 1.5, Qf: 8, dnMin: 100 }), N.listaDiametros('peadc'));
+    var b = N.dimensionarTrecho(Object.assign({}, base, { Qi: 5, Qf: 120, dnMin: 100 }), N.listaDiametros('peadc'));
+    return a && b && b.dn >= a.dn;
+  })());
+  verdade('Automático', 'Menor declividade válida atende à tensão trativa', (function () {
+    var r = N.menorDeclividadeValida(Object.assign({}, base, { D: 0.148, Qi: 1.5, Qf: 10 }));
+    return r && r.res.ttI >= 1.0 - 1e-6;
+  })());
+
+  /* ---------- H. Vazões ---------- */
+  var vz = N.vazoesDomesticas({ coefC: 0.8, popI: 4500, popF: 8200, qpcI: 150, qpcF: 180, k1: 1.2, k2: 1.5, k3: 0.5 });
+  ok('Vazões', 'Vazão doméstica de início de plano', vz.inicial, 0.8 * 4500 * 150 * 1.5 / 86400, 1e-9);
+  ok('Vazões', 'Vazão doméstica de início de plano em L/s', vz.inicial, 9.375, 1e-3);
+  ok('Vazões', 'Vazão doméstica de fim de plano', vz.final, 0.8 * 8200 * 180 * 1.2 * 1.5 / 86400, 1e-9);
+  ok('Vazões', 'Vazão doméstica de fim de plano em L/s', vz.final, 24.6, 1e-2);
+  ok('Vazões', 'Vazão média de fim de plano', vz.media, 0.8 * 8200 * 180 / 86400, 1e-9);
+  verdade('Vazões', 'Vazão mínima é inferior à média', vz.minima < vz.media);
+  verdade('Vazões', 'Vazão de fim supera a de início', vz.final > vz.inicial);
+  ok('Vazões', 'Infiltração de 0,10 L/s·km em 6,2 km', N.vazaoInfiltracao(0.10, 6200), 0.62, 1e-9);
+  ok('Vazões', 'Infiltração nula com taxa nula', N.vazaoInfiltracao(0, 6200), 0, 0);
+  ok('Vazões', 'Método racional: C=0,5, i=100 mm/h, A=10 ha', N.metodoRacional(0.5, 100, 10, 1), 0.5 * 100 * 10 / 360 * 1000, 1e-6);
+  ok('Vazões', 'Método racional em L/s', N.metodoRacional(0.5, 100, 10, 1), 1388.888889, 1e-3);
+  ok('Vazões', 'Método racional com fração de 50%', N.metodoRacional(0.5, 100, 10, 0.5), 694.4444445, 1e-3);
+  ok('Vazões', 'Taxa de contribuição linear', N.taxaContribuicaoLinear(24.6, 6200), 24.6 / 6200, 1e-12);
+  ok('Vazões', 'Taxa linear nula com extensão nula', N.taxaContribuicaoLinear(24.6, 0), 0, 0);
+
+  /* ---------- I. Cotas e profundidades ---------- */
+  var c1 = N.calcularCotas({ ctm: 100, ctj: 99.5, L: 100, I: 0.005, de: 200, recMin: 0.90 });
+  ok('Cotas', 'Cota de fundo a montante', c1.cfMont, 100 - 0.9 - 0.2, 1e-9);
+  ok('Cotas', 'Cota de fundo a jusante', c1.cfJus, 98.9 - 0.5, 1e-9);
+  ok('Cotas', 'Profundidade a montante', c1.profMont, 1.10, 1e-9);
+  ok('Cotas', 'Profundidade a jusante', c1.profJus, 1.10, 1e-9);
+  ok('Cotas', 'Declividade real confere com a lançada', c1.declividadeReal, 0.005, 1e-12);
+  verdade('Cotas', 'Sem ajuste quando terreno acompanha a declividade', !c1.ajustadoPorRecobrimento);
+  var c2 = N.calcularCotas({ ctm: 100, ctj: 99.0, L: 100, I: 0.002, de: 200, recMin: 0.90 });
+  verdade('Cotas', 'Terreno mais inclinado que o tubo aciona ajuste de cota', c2.ajustadoPorRecobrimento);
+  verdade('Cotas', 'Declividade real supera a lançada após o ajuste', c2.declividadeReal > 0.002);
+  ok('Cotas', 'Profundidade mínima é mantida após o ajuste', c2.profJus, 1.10, 1e-9);
+  var c3 = N.calcularCotas({ ctm: 100, ctj: 99.5, L: 100, I: 0.005, de: 200, recMin: 0.90, cfMontImposta: 98.20 });
+  ok('Cotas', 'Cota imposta a montante é respeitada quando mais profunda', c3.cfMont, 98.20, 1e-9);
+  verdade('Cotas', 'Cota imposta aumenta a profundidade', c3.profMont > c1.profMont);
+  ok('Cotas', 'Recobrimento no leito da via', N.recobrimentoMinimo({ passeio: false, recVia: 0.9, recPasseio: 0.65 }), 0.9, 1e-9);
+  ok('Cotas', 'Recobrimento no passeio', N.recobrimentoMinimo({ passeio: true, recVia: 0.9, recPasseio: 0.65 }), 0.65, 1e-9);
+
+  /* ---------- J. Estrutural ---------- */
+  ok('Estrutural', 'Fator de impacto para H = 0,50 m', N.fatorImpacto(0.5), 1.50, 1e-9);
+  ok('Estrutural', 'Fator de impacto para H = 2,00 m', N.fatorImpacto(2.0), 1.00, 1e-9);
+  ok('Estrutural', 'Fator de impacto para H = 3,00 m', N.fatorImpacto(3.0), 1.00, 1e-9);
+  ok('Estrutural', 'Fator de impacto interpolado para H = 1,30 m', N.fatorImpacto(1.3), 1.25, 1e-9);
+  ok('Estrutural', 'Carga de solo por prisma', N.cargaSoloPrisma(18, 2), 36, 1e-9);
+  ok('Estrutural', 'Carga móvel de Boussinesq sem impacto', N.cargaMovelBoussinesq(75, 2, false), 3 * 75 / (2 * Math.PI * 4), 1e-9);
+  ok('Estrutural', 'Carga móvel a 2,00 m em kPa', N.cargaMovelBoussinesq(75, 2, false), 8.9524, 1e-3);
+  verdade('Estrutural', 'Carga móvel decai com o recobrimento',
+    N.cargaMovelBoussinesq(75, 4, true) < N.cargaMovelBoussinesq(75, 1, true));
+  ok('Estrutural', 'Rigidez anelar de SN 4', N.rigidezAnelar(4), 26.8, 1e-9);
+  ok('Estrutural', 'Rigidez anelar de SN 8', N.rigidezAnelar(8), 53.6, 1e-9);
+  ok('Estrutural', 'Deflexão de referência (SN4, H=2 m, E\'=7 000)', (function () {
+    return N.deflexaoIowa({ qSolo: 36, qMovel: 8.9524, SN: 4, El: 7000, DL: 1.25, Kx: 0.10 });
+  })(), 1.3038, 5e-3);
+  verdade('Estrutural', 'SN maior reduz a deflexão',
+    N.deflexaoIowa({ qSolo: 36, qMovel: 0, SN: 8, El: 7000, DL: 1.25, Kx: 0.1 }) <
+    N.deflexaoIowa({ qSolo: 36, qMovel: 0, SN: 4, El: 7000, DL: 1.25, Kx: 0.1 }));
+  verdade('Estrutural', 'Solo bem compactado reduz a deflexão',
+    N.deflexaoIowa({ qSolo: 36, qMovel: 0, SN: 4, El: 14000, DL: 1.25, Kx: 0.1 }) <
+    N.deflexaoIowa({ qSolo: 36, qMovel: 0, SN: 4, El: 2800, DL: 1.25, Kx: 0.1 }));
+  verdade('Estrutural', 'Solo domina a rigidez do conjunto em SN 4', (function () {
+    var solo = 0.061 * 7000, tubo = 0.149 * N.rigidezAnelar(4);
+    return solo / (solo + tubo) > 0.90;
+  })());
+  ok('Estrutural', 'Carga linear em tubo rígido DN 400', N.cargaLinearRigido(45, 0.49), 22.05, 1e-9);
+  ok('Estrutural', 'Deflexão nula sem carga', N.deflexaoIowa({ qSolo: 0, qMovel: 0, SN: 4, El: 7000, DL: 1.25, Kx: 0.1 }), 0, 1e-12);
+
+  /* ---------- K. Vala e escoramento ---------- */
+  ok('Vala', 'Largura de vala para DE 200 mm', N.larguraVala(200, 0.30, 0.60), 0.80, 1e-9);
+  ok('Vala', 'Largura mínima prevalece para DE 100 mm', N.larguraVala(100, 0.20, 0.60), 0.60, 1e-9);
+  ok('Vala', 'Largura de vala para DE 600 mm', N.larguraVala(600, 0.30, 0.60), 1.20, 1e-9);
+  ok('Vala', 'Escoramento dispensável a 1,00 m', N.tipoEscoramento(1.0).fator, 0, 1e-9);
+  ok('Vala', 'Pontaleteamento a 1,50 m', N.tipoEscoramento(1.5).fator, 0.30, 1e-9);
+  ok('Vala', 'Escoramento descontínuo a 2,50 m', N.tipoEscoramento(2.5).fator, 0.60, 1e-9);
+  ok('Vala', 'Escoramento contínuo a 3,50 m', N.tipoEscoramento(3.5).fator, 1.00, 1e-9);
+  ok('Vala', 'Escoramento especial acima de 4,00 m', N.tipoEscoramento(5.0).tipo, 'Especial / metálico');
+  var vv = N.volumesVala({ de: 200, folga: 0.30, valaMin: 0.60, profMedia: 2, L: 100, berco: 0.10, profNA: 0 });
+  ok('Vala', 'Volume de escavação', vv.escavacao, 0.8 * 2 * 100, 1e-9);
+  ok('Vala', 'Volume de berço', vv.berco, 0.8 * 0.1 * 100, 1e-9);
+  ok('Vala', 'Volume ocupado pelo tubo', vv.volumeTubo, Math.PI * 0.04 / 4 * 100, 1e-9);
+  ok('Vala', 'Volume de reaterro', vv.reaterro, 160 - 8 - Math.PI * 0.04 / 4 * 100, 1e-9);
+  ok('Vala', 'Área de escoramento a 2,00 m', vv.escoramento, 2 * 2 * 100 * 0.60, 1e-9);
+  ok('Vala', 'Sem esgotamento quando o NA não é informado', vv.esgotamento, 0, 1e-9);
+  var vv2 = N.volumesVala({ de: 200, folga: 0.30, valaMin: 0.60, profMedia: 3, L: 100, berco: 0.10, profNA: 1.5 });
+  ok('Vala', 'Esgotamento acionado quando a vala cruza o NA', vv2.esgotamento, 100, 1e-9);
+  verdade('Vala', 'Reaterro nunca é negativo',
+    N.volumesVala({ de: 600, folga: 0.05, valaMin: 0.60, profMedia: 0.3, L: 10, berco: 0.10, profNA: 0 }).reaterro >= 0);
+
+  /* ---------- L. Biblioteca de materiais ---------- */
+  var chaves = Object.keys(N.MATERIAIS);
+  ok('Materiais', 'Seis materiais cadastrados', chaves.length, 6, 0);
+  verdade('Materiais', 'PEAD corrugado está cadastrado', !!N.MATERIAIS.peadc);
+  verdade('Materiais', 'PEAD liso está cadastrado', !!N.MATERIAIS.peadl);
+  ok('Materiais', 'PEAD corrugado cobre DN 100 a DN 1200',
+    N.MATERIAIS.peadc.d[0].dn + '-' + N.MATERIAIS.peadc.d[N.MATERIAIS.peadc.d.length - 1].dn, '100-1200');
+  ok('Materiais', 'Rugosidade do PEAD corrugado', N.MATERIAIS.peadc.n, 0.010, 1e-9);
+  ok('Materiais', 'Rugosidade do PEAD liso', N.MATERIAIS.peadl.n, 0.009, 1e-9);
+  ok('Materiais', 'Rugosidade do concreto', N.MATERIAIS.concreto.n, 0.013, 1e-9);
+  verdade('Materiais', 'PVC e PEAD são classificados como flexíveis',
+    !N.MATERIAIS.pvc.rigido && !N.MATERIAIS.peadc.rigido && !N.MATERIAIS.peadl.rigido);
+  verdade('Materiais', 'Concreto, cerâmica e ferro fundido são classificados como rígidos',
+    N.MATERIAIS.concreto.rigido && N.MATERIAIS.ceramica.rigido && N.MATERIAIS.fofo.rigido);
+  verdade('Materiais', 'PEAD liso SDR 17 tem DI coerente com o DE', (function () {
+    return N.MATERIAIS.peadl.d.every(function (d) {
+      var teorico = d.de * (1 - 2 / 17);
+      return d.di <= teorico && teorico - d.di < 1.5;
+    });
+  })());
+  chaves.forEach(function (k) {
+    var m = N.MATERIAIS[k];
+    verdade('Materiais', m.nome + ': diâmetro interno sempre menor que o externo',
+      m.d.every(function (d) { return d.di < d.de; }));
+    verdade('Materiais', m.nome + ': bitolas em ordem crescente',
+      m.d.every(function (d, i) { return i === 0 || d.dn > m.d[i - 1].dn; }));
+    verdade('Materiais', m.nome + ': todas as bitolas com dimensões positivas',
+      m.d.every(function (d) { return d.dn > 0 && d.di > 0 && d.de > 0; }));
+    verdade('Materiais', m.nome + ': capacidade cresce com o diâmetro',
+      m.d.every(function (d, i) {
+        return i === 0 || N.vazaoManning(d.di / 1000, 0.75, m.n, 0.005) > N.vazaoManning(m.d[i - 1].di / 1000, 0.75, m.n, 0.005);
+      }));
+    verdade('Materiais', m.nome + ': busca por DN localiza todas as bitolas',
+      m.d.every(function (d) { var a = N.acharDiametro(k, d.dn); return a && a.di === d.di; }));
+    verdade('Materiais', m.nome + ': lista de diâmetros é uma cópia independente', (function () {
+      var l = N.listaDiametros(k); l.push({ dn: -1 });
+      return N.MATERIAIS[k].d.length !== l.length;
+    })());
+  });
+  ok('Materiais', 'Busca por DN inexistente devolve nulo', N.acharDiametro('pvc', 999), null);
+  ok('Materiais', 'Lista de material inexistente é vazia', N.listaDiametros('inexistente').length, 0, 0);
+  verdade('Materiais', 'PEAD corrugado oferece mais bitolas que o PVC',
+    N.MATERIAIS.peadc.d.length > N.MATERIAIS.pvc.d.length);
+  verdade('Materiais', 'PEAD liso DN 250 tem área útil menor que o corrugado DN 250', (function () {
+    var a = N.acharDiametro('peadl', 250), b = N.acharDiametro('peadc', 250);
+    return a.di < b.di;
+  })());
+
+  /* ---------- M. Conversão e formatação ---------- */
+  ok('Formato', 'Número com vírgula decimal', N.num('12,5'), 12.5, 1e-12);
+  ok('Formato', 'Número com separador de milhar e vírgula', N.num('1.234,56'), 1234.56, 1e-12);
+  ok('Formato', 'Número com ponto decimal', N.num('12.5'), 12.5, 1e-12);
+  ok('Formato', 'Texto vazio devolve o padrão', N.num('', 7), 7, 1e-12);
+  ok('Formato', 'Texto inválido devolve o padrão', N.num('abc', 3), 3, 1e-12);
+  ok('Formato', 'Valor nulo devolve o padrão', N.num(null, 5), 5, 1e-12);
+  ok('Formato', 'Zero é preservado', N.num('0', 9), 0, 1e-12);
+  ok('Formato', 'Formatação com duas casas', N.fmt(1234.5678, 2), '1.234,57');
+  ok('Formato', 'Formatação de milhão', N.fmt(1234567.891, 3), '1.234.567,891');
+  ok('Formato', 'Formatação de negativo', N.fmt(-45.5, 1), '-45,5');
+  ok('Formato', 'Formatação de zero casas', N.fmt(1500, 0), '1.500');
+  ok('Formato', 'Infinito devolve travessão', N.fmt(Infinity, 2), '—');
+  ok('Formato', 'Valor nulo devolve travessão', N.fmt(null, 2), '—');
+  ok('Formato', 'Moeda em reais', N.fmtR$(1234.5), 'R$ 1.234,50');
+  ok('Formato', 'Arredondamento para três casas', N.arred(1.23456, 3), 1.235, 1e-12);
+  ok('Formato', 'Arredondamento para inteiro', N.arred(1.5, 0), 2, 1e-12);
+  ok('Formato', 'Limitação superior', N.limitar(15, 0, 10), 10, 1e-12);
+  ok('Formato', 'Limitação inferior', N.limitar(-5, 0, 10), 0, 1e-12);
+  verdade('Formato', 'Data no padrão dd/mm/aaaa', /^\d{2}\/\d{2}\/\d{4}$/.test(N.dataBR(new Date(2026, 7, 8))));
+  ok('Formato', 'Data específica', N.dataBR(new Date(2026, 7, 8)), '08/08/2026');
+
+  /* ---------- N. Cenários integrados ---------- */
+  (function () {
+    // Trecho inicial típico: DN 150 PVC, Qi mínima, declividade mínima da norma
+    var Im = N.declividadeMinimaNBR(1.5);
+    var r = N.verificarTrecho(Object.assign({}, base, { D: 0.148, I: Im, Qi: 1.5, Qf: 4 }));
+    verdade('Cenários', 'Trecho de cabeceira com I mínima atende à lâmina', r.ok.lamina);
+    verdade('Cenários', 'Trecho de cabeceira com I mínima atende à velocidade', r.ok.velocidade);
+    verdade('Cenários', 'Trecho de cabeceira opera com lâmina reduzida', r.ydF < 0.50);
+  })();
+  (function () {
+    // Coletor tronco em PEAD DN 400
+    var r = N.verificarTrecho(Object.assign({}, base, { D: 0.400, I: 0.003, Qi: 15, Qf: 90 }));
+    verdade('Cenários', 'Coletor PEAD DN 400 com I = 0,003 é aprovado', r.aprovado);
+    verdade('Cenários', 'Coletor PEAD DN 400 opera abaixo da velocidade crítica', !r.criticoExcedido);
+    verdade('Cenários', 'Tensão trativa do coletor supera 1,0 Pa', r.ttI > 1.0);
+  })();
+  (function () {
+    // Comparação hidráulica PEAD corrugado x concreto no mesmo DN
+    var Dd = 0.400, Ii = 0.004;
+    var qPead = N.vazaoManning(Dd, 0.75, N.MATERIAIS.peadc.n, Ii);
+    var qConc = N.vazaoManning(Dd, 0.75, N.MATERIAIS.concreto.n, Ii);
+    verdade('Cenários', 'PEAD conduz mais que concreto no mesmo DN e declividade', qPead > qConc);
+    ok('Cenários', 'Ganho de capacidade do PEAD sobre o concreto', qPead / qConc, 0.013 / 0.010, 1e-9);
+  })();
+  (function () {
+    // Rede com vazão crescente exige diâmetros não decrescentes
+    var dns = [], qs = [5, 20, 60, 150, 400];
+    qs.forEach(function (q) {
+      var a = N.dimensionarTrecho(Object.assign({}, base, { Qi: q / 4, Qf: q, dnMin: 150 }), N.listaDiametros('peadc'));
+      dns.push(a ? a.dn : 0);
+    });
+    verdade('Cenários', 'Sequência de vazões crescentes gera diâmetros não decrescentes',
+      dns.every(function (d, i) { return d > 0 && (i === 0 || d >= dns[i - 1]); }));
+  })();
+  (function () {
+    // Cascata de cotas em três trechos
+    var t1 = N.calcularCotas({ ctm: 100.0, ctj: 99.5, L: 100, I: 0.005, de: 160, recMin: 0.9 });
+    var t2 = N.calcularCotas({ ctm: 99.5, ctj: 99.0, L: 100, I: 0.005, de: 200, recMin: 0.9, cfMontImposta: t1.cfJus + 0.160 - 0.200 });
+    var t3 = N.calcularCotas({ ctm: 99.0, ctj: 98.4, L: 100, I: 0.005, de: 250, recMin: 0.9, cfMontImposta: t2.cfJus + 0.200 - 0.250 });
+    verdade('Cenários', 'Cotas de fundo decrescem de montante para jusante',
+      t1.cfMont > t1.cfJus && t2.cfMont > t2.cfJus && t3.cfMont > t3.cfJus);
+    verdade('Cenários', 'Aumento de diâmetro aprofunda a cota de fundo no PV', t2.cfMont <= t1.cfJus);
+    verdade('Cenários', 'Profundidades permanecem executáveis', t3.profJus < 4.0);
+  })();
+
+  return T;
+};
+/* ==TESTS-END== */
+
+/* ---------------- execução no navegador ---------------- */
+function executarTestes() {
+  var T = TESTES_DEF(NUCLEO), tb = document.querySelector('#tbTestes');
+  tb.innerHTML = '';
+  var falhas = 0;
+  T.forEach(function (t, i) {
+    if (!t.p) falhas++;
+    var tr = document.createElement('tr');
+    if (!t.p) tr.className = 'reprovado';
+    function c(txt, cls) { var d = document.createElement('td'); d.className = cls || ''; d.textContent = txt; return d; }
+    tr.appendChild(c(String(i + 1)));
+    tr.appendChild(c(t.g, 'esq txt'));
+    tr.appendChild(c(t.n, 'esq txt'));
+    tr.appendChild(c(typeof t.o === 'number' ? NUCLEO.fmt(t.o, 6) : String(t.o)));
+    tr.appendChild(c(typeof t.e === 'number' ? NUCLEO.fmt(t.e, 6) : String(t.e)));
+    var s = document.createElement('td');
+    s.innerHTML = '<span class="selo ' + (t.p ? 'ok' : 'fail') + '">' + (t.p ? 'ok' : 'falha') + '</span>';
+    tr.appendChild(s);
+    tb.appendChild(tr);
+  });
+  var sel = document.querySelector('#seloTestes');
+  sel.innerHTML = '<span class="selo ' + (falhas ? 'fail' : 'ok') + '">' +
+    (falhas ? falhas + ' falha(s) em ' + T.length + ' verificações' : T.length + ' verificações aprovadas') + '</span>';
+}
+</script>
+</body>
+</html>

@@ -152,8 +152,8 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/consultoriapro-rodoviario/` | 284681 bytes | 284681 caracteres |
 | `/geradorpro/` | 265143 bytes | 265143 caracteres |
 | `/spdapro/` | 709941 bytes | 709941 caracteres |
-| `/lumipro/` | 628028 bytes | 628028 caracteres |
-| `/esgotocalcpro/` | 154356 bytes | 154356 caracteres |
+| `/lumipro/` | 756040 bytes | 756040 caracteres |
+| `/esgotocalcpro/` | 397059 bytes | 397059 caracteres |
 
 ## Estrutura local principal
 
@@ -1015,11 +1015,11 @@ Observacoes:
 Rota: `/lumipro/`  
 Arquivo: `lumipro/index.html`
 
-Ultima inclusao:
+Ultima atualizacao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\LumiPro_v1.4.html`
-- Data: 08/08/2026
-- Alteracao: inclusao de novo card na home e publicacao do aplicativo LumiPro como HTML standalone.
+- Fonte: `C:\Users\ACER\Documents\Downloads\LumiPro_v1.5(1).html`
+- Data: 09/08/2026
+- Alteracao: substituicao integral de `lumipro/index.html` pela nova versao enviada.
 
 Observacoes:
 
@@ -1033,11 +1033,11 @@ Observacoes:
 Rota: `/esgotocalcpro/`  
 Arquivo: `esgotocalcpro/index.html`
 
-Ultima inclusao:
+Ultima atualizacao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\EsgotoCalcPro.html`
-- Data: 08/08/2026
-- Alteracao: inclusao de novo card na home e publicacao do aplicativo EsgotoCalc Pro como HTML standalone.
+- Fonte: `C:\Users\ACER\Documents\Downloads\EsgotoCalc Pro.html`
+- Data: 09/08/2026
+- Alteracao: substituicao integral de `esgotocalcpro/index.html` pela nova versao enviada.
 
 Observacoes:
 
