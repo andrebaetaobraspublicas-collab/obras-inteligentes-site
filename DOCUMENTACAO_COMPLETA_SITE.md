@@ -95,6 +95,7 @@ Inventario originalmente verificado em 21/07/2026 e atualizado em 05/08/2026 par
 | 46 / CONSULTORIA | ConsultoriaPro | `/consultoriapro-rodoviario/` | `C:\Obras Inteligentes\consultoriapro-rodoviario\index.html` | existe | 200 |
 | 47 / GERADORES | GeradorPro | `/geradorpro/` | `C:\Obras Inteligentes\geradorpro\index.html` | existe | 200 |
 | 48 / SPDA | SPDAPro | `/spdapro/` | `C:\Obras Inteligentes\spdapro\index.html` | existe | 200 |
+| 49 / ILUMINACAO | LumiPro | `/lumipro/` | `C:\Obras Inteligentes\lumipro\index.html` | existe | 200 |
 
 ## Tamanhos verificados
 
@@ -150,6 +151,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/consultoriapro-rodoviario/` | 284681 bytes | 284681 caracteres |
 | `/geradorpro/` | 265143 bytes | 265143 caracteres |
 | `/spdapro/` | 709941 bytes | 709941 caracteres |
+| `/lumipro/` | 628028 bytes | 628028 caracteres |
 
 ## Estrutura local principal
 
@@ -1006,6 +1008,24 @@ Observacoes:
 - O card foi classificado no filtro `Instalacoes`.
 - Validar apos futuras alteracoes se analise de risco, SPDA externo, aterramento, equipotencializacao, potenciais preliminares, otimizacao tecnico-economica, abertura 3D e relatorios continuam carregando corretamente.
 
+### LumiPro
+
+Rota: `/lumipro/`  
+Arquivo: `lumipro/index.html`
+
+Ultima inclusao:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\LumiPro_v1.4.html`
+- Data: 08/08/2026
+- Alteracao: inclusao de novo card na home e publicacao do aplicativo LumiPro como HTML standalone.
+
+Observacoes:
+
+- Aplicativo standalone empacotado em HTML unico.
+- Tela inicial do site aponta para `/lumipro/`.
+- O card foi classificado no filtro `Instalacoes`.
+- Validar apos futuras alteracoes se dimensionamento luminotecnico, ambientes, luminarias, iluminancia, catalogo e relatorios continuam carregando corretamente.
+
 ## Artigos publicados na home
 
 Em 20/07/2026, os tres cards iniciais do bloco `Conteudo` da home foram substituidos por artigos reais enviados em PDF. Em 21/07/2026, foi incluido um quarto artigo. A estrategia adotada foi renderizar cada pagina do PDF como PNG dentro de uma pagina HTML propria, preservando a diagramacao original, tabelas, figuras e paginacao. Cada pagina tambem oferece link para abrir/baixar o PDF original.
@@ -1201,7 +1221,8 @@ $headers=@{ 'User-Agent'='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
   '/comparador-honorarios-projetos/',
   '/consultoriapro-rodoviario/',
   '/geradorpro/',
-  '/spdapro/'
+  '/spdapro/',
+  '/lumipro/'
 ) | ForEach-Object {
   $url = "https://www.obrasinteligentes.ia.br$_?v=check"
   $r = Invoke-WebRequest -UseBasicParsing -Headers $headers -Uri $url -TimeoutSec 30
