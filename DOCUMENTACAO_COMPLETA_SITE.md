@@ -96,6 +96,7 @@ Inventario originalmente verificado em 21/07/2026 e atualizado em 05/08/2026 par
 | 47 / GERADORES | GeradorPro | `/geradorpro/` | `C:\Obras Inteligentes\geradorpro\index.html` | existe | 200 |
 | 48 / SPDA | SPDAPro | `/spdapro/` | `C:\Obras Inteligentes\spdapro\index.html` | existe | 200 |
 | 49 / ILUMINACAO | LumiPro | `/lumipro/` | `C:\Obras Inteligentes\lumipro\index.html` | existe | 200 |
+| 50 / SANEAMENTO | EsgotoCalc Pro | `/esgotocalcpro/` | `C:\Obras Inteligentes\esgotocalcpro\index.html` | existe | 200 |
 
 ## Tamanhos verificados
 
@@ -152,6 +153,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/geradorpro/` | 265143 bytes | 265143 caracteres |
 | `/spdapro/` | 709941 bytes | 709941 caracteres |
 | `/lumipro/` | 628028 bytes | 628028 caracteres |
+| `/esgotocalcpro/` | 154356 bytes | 154356 caracteres |
 
 ## Estrutura local principal
 
@@ -476,7 +478,7 @@ Observacoes:
 
 - Aplicativo standalone empacotado em HTML unico.
 - Tela inicial do site aponta para `/drenapro/`.
-- O card foi remanejado do filtro `Instalacoes` para `Pavimentacao e Infraestrutura` em 03/08/2026.
+- O card foi remanejado do filtro `Instalacoes` para `Pavimentacao, Saneamento e Infraestrutura` em 03/08/2026.
 - Validar apos futuras alteracoes se a abertura, os calculos hidrologicos/hidraulicos, as exportacoes e os relatorios continuam carregando corretamente.
 
 ### TaludePro
@@ -494,7 +496,7 @@ Observacoes:
 
 - Aplicativo standalone empacotado em HTML unico.
 - Tela inicial do site aponta para `/taludepro/`.
-- O card foi remanejado do filtro `Estruturas` para `Pavimentacao e Infraestrutura` em 03/08/2026.
+- O card foi remanejado do filtro `Estruturas` para `Pavimentacao, Saneamento e Infraestrutura` em 03/08/2026.
 - Validar apos futuras alteracoes se a abertura, os calculos geotecnicos, as verificacoes de estabilidade e os relatorios continuam carregando corretamente.
 
 ### SolarPro
@@ -716,7 +718,7 @@ Observacoes:
 
 - Aplicativo standalone empacotado em HTML unico.
 - Tela inicial do site aponta para `/brucknercalc/`.
-- O card foi classificado no filtro `Pavimentacao e Infraestrutura`.
+- O card foi classificado no filtro `Pavimentacao, Saneamento e Infraestrutura`.
 - Validar apos futuras alteracoes se o otimizador de terraplenagem por curva de massas, cortes, aterros, volumes, distancias de transporte, orcamento e dados SICRO continuam carregando corretamente.
 
 ### MolaPro
@@ -896,7 +898,7 @@ Observacoes:
 
 - Aplicativo standalone empacotado em HTML unico, com tela de abertura.
 - Tela inicial do site aponta para `/hidrocalc/`.
-- O card foi classificado no filtro `Pavimentacao e Infraestrutura`.
+- O card foi classificado no filtro `Pavimentacao, Saneamento e Infraestrutura`.
 - Validar apos futuras alteracoes se delimitacao de bacias, morfometria, tempo de concentracao, IDF, vazoes de projeto, mapas e memoria de calculo continuam carregando corretamente.
 
 ### ElevadorCalc Pro
@@ -1025,6 +1027,25 @@ Observacoes:
 - Tela inicial do site aponta para `/lumipro/`.
 - O card foi classificado no filtro `Instalacoes`.
 - Validar apos futuras alteracoes se dimensionamento luminotecnico, ambientes, luminarias, iluminancia, catalogo e relatorios continuam carregando corretamente.
+
+### EsgotoCalc Pro
+
+Rota: `/esgotocalcpro/`  
+Arquivo: `esgotocalcpro/index.html`
+
+Ultima inclusao:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\EsgotoCalcPro.html`
+- Data: 08/08/2026
+- Alteracao: inclusao de novo card na home e publicacao do aplicativo EsgotoCalc Pro como HTML standalone.
+
+Observacoes:
+
+- Aplicativo standalone empacotado em HTML unico.
+- Tela inicial do site aponta para `/esgotocalcpro/`.
+- O card foi classificado no filtro `Pavimentacao, Saneamento e Infraestrutura`.
+- O menu/filtro antes chamado `Pavimentacao e Infraestrutura` foi renomeado para `Pavimentacao, Saneamento e Infraestrutura`.
+- Validar apos futuras alteracoes se o dimensionamento de redes coletoras de esgoto sanitario, vazoes, declividades, diametros, tensao trativa, laminas e memoria tecnica continuam carregando corretamente.
 
 ## Artigos publicados na home
 
@@ -1222,7 +1243,8 @@ $headers=@{ 'User-Agent'='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
   '/consultoriapro-rodoviario/',
   '/geradorpro/',
   '/spdapro/',
-  '/lumipro/'
+  '/lumipro/',
+  '/esgotocalcpro/'
 ) | ForEach-Object {
   $url = "https://www.obrasinteligentes.ia.br$_?v=check"
   $r = Invoke-WebRequest -UseBasicParsing -Headers $headers -Uri $url -TimeoutSec 30
