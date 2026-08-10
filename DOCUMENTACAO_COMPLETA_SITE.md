@@ -98,6 +98,7 @@ Inventario originalmente verificado em 21/07/2026 e atualizado em 05/08/2026 par
 | 49 / ILUMINACAO | LumiPro | `/lumipro/` | `C:\Obras Inteligentes\lumipro\index.html` | existe | 200 |
 | 50 / SANEAMENTO | EsgotoCalc Pro | `/esgotocalcpro/` | `C:\Obras Inteligentes\esgotocalcpro\index.html` | existe | 200 |
 | 51 / CLT-PJ | EquivaleCLT | `/equivaleclt/` | `C:\Obras Inteligentes\equivaleclt\index.html` | existe | 200 |
+| 52 / HIDROSSANITARIO | HidroSan Pro | `/hidrosan-pro/` | `C:\Obras Inteligentes\hidrosan-pro\index.html` | existe | 200 |
 
 ## Tamanhos verificados
 
@@ -156,6 +157,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/lumipro/` | 756040 bytes | 756040 caracteres |
 | `/esgotocalcpro/` | 587293 bytes | 587293 caracteres |
 | `/equivaleclt/` | 58612 bytes | 58612 caracteres |
+| `/hidrosan-pro/` | 290818 bytes | 290818 caracteres |
 
 ## Estrutura local principal
 
@@ -1068,6 +1070,24 @@ Observacoes:
 - O link interno de download do HTML foi ajustado para `index.html`, preservando o nome de arquivo baixado `EquivaleCLT_v1.1.html`.
 - Validar apos futuras alteracoes se a simulacao CLT/PJ, encargos SINAPI, beneficios, tributos, reservas, cenarios comparativos e relatorio continuam carregando corretamente.
 
+### HidroSan Pro
+
+Rota: `/hidrosan-pro/`  
+Arquivo: `hidrosan-pro/index.html`
+
+Ultima inclusao:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\HidroSan_Pro_v1.5_Offline.html`
+- Data: 09/08/2026
+- Alteracao: inclusao de novo card na home e publicacao do aplicativo HidroSan Pro v1.5 como HTML standalone.
+
+Observacoes:
+
+- Aplicativo standalone empacotado em HTML unico, com tela de abertura e aviso de responsabilidade.
+- Tela inicial do site aponta para `/hidrosan-pro/`.
+- O card foi classificado no filtro `Instalacoes`.
+- Validar apos futuras alteracoes se os modulos de agua fria, esgoto sanitario, ventilacao sanitaria, reservatorios, criterios normativos, exemplos, relatorios e memorias de calculo continuam carregando corretamente.
+
 ## Artigos publicados na home
 
 Em 20/07/2026, os tres cards iniciais do bloco `Conteudo` da home foram substituidos por artigos reais enviados em PDF. Em 21/07/2026, foi incluido um quarto artigo. A estrategia adotada foi renderizar cada pagina do PDF como PNG dentro de uma pagina HTML propria, preservando a diagramacao original, tabelas, figuras e paginacao. Cada pagina tambem oferece link para abrir/baixar o PDF original.
@@ -1266,7 +1286,8 @@ $headers=@{ 'User-Agent'='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
   '/spdapro/',
   '/lumipro/',
   '/esgotocalcpro/',
-  '/equivaleclt/'
+  '/equivaleclt/',
+  '/hidrosan-pro/'
 ) | ForEach-Object {
   $url = "https://www.obrasinteligentes.ia.br$_?v=check"
   $r = Invoke-WebRequest -UseBasicParsing -Headers $headers -Uri $url -TimeoutSec 30
