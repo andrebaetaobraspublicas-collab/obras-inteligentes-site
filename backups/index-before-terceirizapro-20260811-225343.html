@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -520,12 +520,12 @@ body.modal-open{overflow:hidden}
       <button class="filter-btn" type="button" data-filter="Instalacoes">Instala&ccedil;&otilde;es</button>
       <button class="filter-btn" type="button" data-filter="Pavimentacao, Saneamento e Infraestrutura">Pavimenta&ccedil;&atilde;o, Saneamento e Infraestrutura</button>
       <button class="filter-btn" type="button" data-filter="Engenharia Mecanica">Engenharia Mec&acirc;nica</button>
-      <button class="filter-btn" type="button" data-filter="Gestao de Obras e de Contratos">Gest&atilde;o de Obras e de Contratos</button>
+      <button class="filter-btn" type="button" data-filter="Gestao de Obras">Gest&atilde;o de Obras</button>
       <button class="filter-btn" type="button" data-filter="Riscos">Riscos</button>
       <button class="filter-btn" type="button" data-filter="Orcamento">Or&ccedil;amento</button>
       <button class="filter-btn" type="button" data-filter="Artigos">Artigos</button>
     </div>
-    <div class="app-filter-status" id="appFilterStatus">53 aplicativos encontrados</div>
+    <div class="app-filter-status" id="appFilterStatus">52 aplicativos encontrados</div>
   </div>
 
   <div class="apps">
@@ -1100,17 +1100,6 @@ body.modal-open{overflow:hidden}
       <p>Engenharia hidrossanit&aacute;ria integrada para instala&ccedil;&otilde;es prediais, com &aacute;gua fria, esgoto sanit&aacute;rio, ventila&ccedil;&atilde;o, reservat&oacute;rios, crit&eacute;rios normativos e mem&oacute;rias de c&aacute;lculo.</p>
       <div class="meta">Abrir sistema &middot; hidrossanit&aacute;rio</div>
     </a>
-
-    <a class="app" href="/terceirizapro/" aria-label="Abrir TerceirizaPro - Conta Vinculada e Gestao de Contratos">
-      <span class="arrow">&rarr;</span>
-      <div class="app-num">53 / TERCEIRIZACAO</div>
-      <svg class="app-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M14 7h15l7 7v27H14z"/><path d="M29 7v8h7"/><path d="M20 22h12"/><path d="M20 28h12"/><path d="M20 34h8"/><path d="M10 13v30h24"/>
-      </svg>
-      <h3>TerceirizaPro</h3>
-      <p>Gest&atilde;o de contratos de terceiriza&ccedil;&atilde;o com fato gerador, conta vinculada, provis&otilde;es trabalhistas, medi&ccedil;&otilde;es, glosas, concilia&ccedil;&atilde;o, riscos e relat&oacute;rios t&eacute;cnicos.</p>
-      <div class="meta">Abrir sistema &middot; gest&atilde;o contratual</div>
-    </a>
   </div>
 </section>
 
@@ -1220,7 +1209,6 @@ body.modal-open{overflow:hidden}
         <a href="/comparador-honorarios-projetos/">Comparador de Honor&aacute;rios de Projetos</a>
         <a href="/consultoriapro-rodoviario/">ConsultoriaPro - Engenharia Consultiva Rodovi&aacute;ria</a>
         <a href="/equivaleclt/">EquivaleCLT - Comparador CLT e PJ</a>
-        <a href="/terceirizapro/">TerceirizaPro - Conta Vinculada</a>
       </div>
       <div class="foot-col">
         <h4>Conteúdo</h4>
@@ -1305,13 +1293,13 @@ body.modal-open{overflow:hidden}
 <script>
 (function(){
   const entries = new Map([
-    ["/manutencao/", ["Gestao de Obras e de Contratos", "manutencao predial nbr 5674 gestao ativos"]],
-    ["/fiscalizacao/", ["Gestao de Obras e de Contratos", "fiscalizacao contratos lei 14133 tcu medicao aditivos"]],
+    ["/manutencao/", ["Gestao de Obras", "manutencao predial nbr 5674 gestao ativos"]],
+    ["/fiscalizacao/", ["Gestao de Obras", "fiscalizacao contratos lei 14133 tcu medicao aditivos"]],
     ["/estrutural/", ["Estruturas", "calculadora estrutural concreto armado vigas pilares lajes"]],
     ["/pavimentos/", ["Pavimentacao, Saneamento e Infraestrutura", "calculadora pavimentos pavimentacao solo trafego camadas custos infraestrutura"]],
     ["/riscos/", ["Riscos", "mapa matriz riscos gestao probabilidade impacto"]],
     ["/administracao-canteiro/", ["Orcamento", "administracao local canteiro obra custos indiretos orcamento"]],
-    ["/memorial-descritivo/", ["Gestao de Obras e de Contratos", "memorial descritivo especificacoes tecnicas obras"]],
+    ["/memorial-descritivo/", ["Gestao de Obras", "memorial descritivo especificacoes tecnicas obras"]],
     ["/sispav-reabilitacao/", ["Pavimentacao, Saneamento e Infraestrutura", "sispav reabilitacao gestao pavimentos patologia vias infraestrutura"]],
     ["/muros-arrimo/", ["Estruturas", "muros arrimo contencao empuxo estabilidade solo"]],
     ["/casa-parametrica/", ["Orcamento", "casa parametrica area programa custos habitacao"]],
@@ -1321,18 +1309,18 @@ body.modal-open{overflow:hidden}
     ["/bombapro/", ["Instalacoes", "bombapro bombas hidraulica vazao altura manometrica"]],
     ["/paraboltpro/", ["Estruturas", "paraboltpro chumbadores mecanicos ancoragem concreto"]],
     ["/steelpro/", ["Estruturas", "steelpro estrutura metalica aco perfis ligacoes"]],
-    ["/cronogramapro/", ["Gestao de Obras e de Contratos", "cronogramapro prazo parametrico cronograma obras planejamento"]],
+    ["/cronogramapro/", ["Gestao de Obras", "cronogramapro prazo parametrico cronograma obras planejamento"]],
     ["/drenapro/", ["Pavimentacao, Saneamento e Infraestrutura", "drenapro drenagem urbana chuva galerias sarjetas infraestrutura"]],
     ["/taludepro/", ["Pavimentacao, Saneamento e Infraestrutura", "taludepro taludes estabilidade solo geotecnia infraestrutura pavimentacao encostas"]],
     ["/solarpro/", ["Instalacoes", "solarpro energia fotovoltaica irradiacao placas inversor"]],
-    ["/pgrcc/", ["Gestao de Obras e de Contratos", "residuos construcao civil pgrcc gerenciamento"]],
+    ["/pgrcc/", ["Gestao de Obras", "residuos construcao civil pgrcc gerenciamento"]],
     ["/ventopro/", ["Estruturas", "ventopro vento edificacoes forcas nbr 6123"]],
     ["/concretopro/", ["Estruturas", "concretopro dosagem traco concreto materiais"]],
     ["/aterramentopro/", ["Instalacoes", "aterramentopro aterramento eletrico hastes resistencia solo"]],
     ["/parafusopro/", ["Estruturas", "parafusopro parafusos ligacoes aco cisalhamento tracao"]],
     ["/risco-cambial/", ["Riscos", "simulador risco cambial cambio contratos moeda estrangeira"]],
     ["/protendpro/", ["Estruturas", "protendpro vigas protendidas protensao perdas concreto"]],
-    ["/eventogramapro/", ["Gestao de Obras e de Contratos", "eventogramapro eventograma edificacoes planejamento etapas"]],
+    ["/eventogramapro/", ["Gestao de Obras", "eventogramapro eventograma edificacoes planejamento etapas"]],
     ["/termo-massa/", ["Estruturas", "termo massa temperatura concretagem concreto massa"]],
     ["/cabocalc/", ["Estruturas", "cabocalc cabos aco estruturais estacionarios tracao"]],
     ["/subestacaopro/", ["Instalacoes", "subestacaopro subestacoes prediais transformadores demanda protecoes"]],
@@ -1356,8 +1344,7 @@ body.modal-open{overflow:hidden}
     ["/lumipro/", ["Instalacoes", "lumipro iluminacao luminotecnica luminarias iluminancia lux fluxo luminoso projeto luminotecnico eficiencia energia instalacoes eletricas"]],
     ["/esgotocalcpro/", ["Pavimentacao, Saneamento e Infraestrutura", "esgotocalc pro esgoto sanitario saneamento redes coletoras rede coletora nbr 9649 nbr 14486 diametro declividade vazao tensao trativa infraestrutura"]],
     ["/equivaleclt/", ["Orcamento", "equivaleclt clt pj pessoa juridica remuneracao encargos sinapi beneficios tributos fgts ferias decimo terceiro equivalencia orcamento"]],
-    ["/hidrosan-pro/", ["Instalacoes", "hidrosan pro hidrossanitario hidrossanitaria instalacoes prediais agua fria esgoto sanitario ventilacao sanitaria reservatorios nbr 5626 nbr 8160 memoria calculo"]],
-    ["/terceirizapro/", ["Gestao de Obras e de Contratos", "terceirizapro terceirizacao terceirizacao conta vinculada conta deposito vinculada contratos gestao fiscalizacao medicao glosa provisoes trabalhistas encargos fato gerador lei 14133"]]
+    ["/hidrosan-pro/", ["Instalacoes", "hidrosan pro hidrossanitario hidrossanitaria instalacoes prediais agua fria esgoto sanitario ventilacao sanitaria reservatorios nbr 5626 nbr 8160 memoria calculo"]]
   ]);
 
   const appCards = Array.from(document.querySelectorAll(".apps .app"));
@@ -1381,7 +1368,7 @@ body.modal-open{overflow:hidden}
   }
 
   appCards.forEach(function(card){
-    const entry = entries.get(cardPath(card)) || ["Gestao de Obras e de Contratos", ""];
+    const entry = entries.get(cardPath(card)) || ["Gestao de Obras", ""];
     card.dataset.category = entry[0];
     card.dataset.search = normalize(card.textContent + " " + entry[0] + " " + entry[1]);
   });

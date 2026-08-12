@@ -43,7 +43,7 @@ Excecoes/observacoes:
 
 ## Inventario verificado dos aplicativos
 
-Inventario originalmente verificado em 21/07/2026 e atualizado em 05/08/2026 para inclusao do ConsultoriaPro, link de contato para Instagram e atualizacao do ConsultoriaPro para v5.1.2 com relatorio profissional corrigido. Todos os cards listados possuem arquivo local correspondente.
+Inventario originalmente verificado em 21/07/2026 e atualizado em 11/08/2026 para inclusao do TerceirizaPro e renomeacao do filtro Gestao de Obras para Gestao de Obras e de Contratos. Todos os cards listados possuem arquivo local correspondente.
 
 | Card | Aplicativo | Rota publicada | Arquivo local principal | Status local | Status site |
 |---|---|---|---|---|---|
@@ -99,6 +99,7 @@ Inventario originalmente verificado em 21/07/2026 e atualizado em 05/08/2026 par
 | 50 / SANEAMENTO | EsgotoCalc Pro | `/esgotocalcpro/` | `C:\Obras Inteligentes\esgotocalcpro\index.html` | existe | 200 |
 | 51 / CLT-PJ | EquivaleCLT | `/equivaleclt/` | `C:\Obras Inteligentes\equivaleclt\index.html` | existe | 200 |
 | 52 / HIDROSSANITARIO | HidroSan Pro | `/hidrosan-pro/` | `C:\Obras Inteligentes\hidrosan-pro\index.html` | existe | 200 |
+| 53 / TERCEIRIZACAO | TerceirizaPro | `/terceirizapro/` | `C:\Obras Inteligentes\terceirizapro\index.html` | existe | 200 |
 
 ## Tamanhos verificados
 
@@ -158,6 +159,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/esgotocalcpro/` | 587293 bytes | 587293 caracteres |
 | `/equivaleclt/` | 58612 bytes | 58612 caracteres |
 | `/hidrosan-pro/` | 290818 bytes | 290818 caracteres |
+| `/terceirizapro/` | 723110 bytes | 723110 caracteres |
 
 ## Estrutura local principal
 
@@ -1088,6 +1090,25 @@ Observacoes:
 - O card foi classificado no filtro `Instalacoes`.
 - Validar apos futuras alteracoes se os modulos de agua fria, esgoto sanitario, ventilacao sanitaria, reservatorios, criterios normativos, exemplos, relatorios e memorias de calculo continuam carregando corretamente.
 
+### TerceirizaPro
+
+Rota: `/terceirizapro/`  
+Arquivo: `terceirizapro/index.html`
+
+Ultima inclusao:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\TerceirizaPro_v2.0_Conta_Vinculada_Consolidado (1) (1).html`
+- Data: 11/08/2026
+- Alteracao: inclusao de novo card na home e publicacao do aplicativo TerceirizaPro v2.0 como HTML standalone.
+
+Observacoes:
+
+- Aplicativo standalone empacotado em HTML unico.
+- Tela inicial do site aponta para `/terceirizapro/`.
+- O card foi classificado no filtro `Gestao de Obras e de Contratos`.
+- O menu/filtro antes chamado `Gestao de Obras` foi renomeado para `Gestao de Obras e de Contratos`.
+- Validar apos futuras alteracoes se os modulos de fato gerador, conta vinculada, provisoes trabalhistas, medicoes, glosas, conciliacao, riscos e relatorios continuam carregando corretamente.
+
 ## Artigos publicados na home
 
 Em 20/07/2026, os tres cards iniciais do bloco `Conteudo` da home foram substituidos por artigos reais enviados em PDF. Em 21/07/2026, foi incluido um quarto artigo. A estrategia adotada foi renderizar cada pagina do PDF como PNG dentro de uma pagina HTML propria, preservando a diagramacao original, tabelas, figuras e paginacao. Cada pagina tambem oferece link para abrir/baixar o PDF original.
@@ -1287,7 +1308,8 @@ $headers=@{ 'User-Agent'='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
   '/lumipro/',
   '/esgotocalcpro/',
   '/equivaleclt/',
-  '/hidrosan-pro/'
+  '/hidrosan-pro/',
+  '/terceirizapro/'
 ) | ForEach-Object {
   $url = "https://www.obrasinteligentes.ia.br$_?v=check"
   $r = Invoke-WebRequest -UseBasicParsing -Headers $headers -Uri $url -TimeoutSec 30
