@@ -43,7 +43,7 @@ Excecoes/observacoes:
 
 ## Inventario verificado dos aplicativos
 
-Inventario originalmente verificado em 21/07/2026 e atualizado em 12/08/2026 para inclusao do AlvenariaPro no filtro Estruturas. Todos os cards listados possuem arquivo local correspondente.
+Inventario originalmente verificado em 21/07/2026 e atualizado em 12/08/2026 para atualizacao do AlvenariaPro. Todos os cards listados possuem arquivo local correspondente.
 
 | Card | Aplicativo | Rota publicada | Arquivo local principal | Status local | Status site |
 |---|---|---|---|---|---|
@@ -163,7 +163,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/hidrosan-pro/` | 290818 bytes | 290818 caracteres |
 | `/terceirizapro/` | 723110 bytes | 723110 caracteres |
 | `/cimbrepro/` | 188067 bytes | 188067 caracteres |
-| `/alvenariapro/` | 275378 bytes | 275378 caracteres |
+| `/alvenariapro/` | 348577 bytes | 348577 caracteres |
 
 ## Estrutura local principal
 
@@ -1136,18 +1136,18 @@ Observacoes:
 Rota: `/alvenariapro/`  
 Arquivo: `alvenariapro/index.html`
 
-Ultima inclusao:
+Ultima atualizacao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\AlvenariaPro_v1.2.html`
+- Fonte: `C:\Users\ACER\Documents\Downloads\AlvenariaPro_v1.3.html`
 - Data: 12/08/2026
-- Alteracao: inclusao de novo card na home e publicacao do aplicativo AlvenariaPro v1.2 como HTML standalone.
+- Alteracao: substituicao do HTML publicado pela nova versao AlvenariaPro v1.3 como HTML standalone.
 
 Observacoes:
 
 - Aplicativo standalone empacotado em HTML unico.
 - Tela inicial do site aponta para `/alvenariapro/`.
 - O card foi classificado no filtro `Estruturas`.
-- Validar apos futuras alteracoes se os modulos de materiais, blocos, planta estrutural, cargas verticais, flexo-compressao, cisalhamento, graute, armaduras, cintas, quantitativos e relatorios continuam carregando corretamente.
+- Validar apos futuras alteracoes se os modulos de materiais, blocos, planta estrutural, cargas verticais, flexo-compressao, cisalhamento, graute, armaduras, cintas, modulacao construtiva, amarracoes, quantitativos e relatorios continuam carregando corretamente.
 
 ## Artigos publicados na home
 
