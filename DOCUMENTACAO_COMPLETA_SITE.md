@@ -43,7 +43,7 @@ Excecoes/observacoes:
 
 ## Inventario verificado dos aplicativos
 
-Inventario originalmente verificado em 21/07/2026 e atualizado em 11/08/2026 para inclusao do CimbrePro no filtro Estruturas. Todos os cards listados possuem arquivo local correspondente.
+Inventario originalmente verificado em 21/07/2026 e atualizado em 12/08/2026 para atualizacao do CimbrePro. Todos os cards listados possuem arquivo local correspondente.
 
 | Card | Aplicativo | Rota publicada | Arquivo local principal | Status local | Status site |
 |---|---|---|---|---|---|
@@ -161,7 +161,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/equivaleclt/` | 58612 bytes | 58612 caracteres |
 | `/hidrosan-pro/` | 290818 bytes | 290818 caracteres |
 | `/terceirizapro/` | 723110 bytes | 723110 caracteres |
-| `/cimbrepro/` | 141877 bytes | 141877 caracteres |
+| `/cimbrepro/` | 188067 bytes | 188067 caracteres |
 
 ## Estrutura local principal
 
@@ -1116,11 +1116,11 @@ Observacoes:
 Rota: `/cimbrepro/`  
 Arquivo: `cimbrepro/index.html`
 
-Ultima inclusao:
+Ultima atualizacao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\CimbrePro.html`
-- Data: 11/08/2026
-- Alteracao: inclusao de novo card na home e publicacao do aplicativo CimbrePro v1.0 como HTML standalone.
+- Fonte: `C:\Users\ACER\Documents\Downloads\CimbrePro (standalone).html`
+- Data: 12/08/2026
+- Alteracao: substituicao do HTML publicado pela nova versao standalone do CimbrePro.
 
 Observacoes:
 
