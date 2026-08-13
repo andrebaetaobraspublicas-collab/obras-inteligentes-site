@@ -163,7 +163,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/hidrosan-pro/` | 290818 bytes | 290818 caracteres |
 | `/terceirizapro/` | 723110 bytes | 723110 caracteres |
 | `/cimbrepro/` | 188067 bytes | 188067 caracteres |
-| `/alvenariapro/` | 348577 bytes | 348577 caracteres |
+| `/alvenariapro/` | 474835 bytes | 474835 caracteres |
 
 ## Estrutura local principal
 
@@ -1138,16 +1138,16 @@ Arquivo: `alvenariapro/index.html`
 
 Ultima atualizacao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\AlvenariaPro_v1.3.html`
+- Fonte: `C:\Users\ACER\Documents\Downloads\AlvenariaPro_v1.4.html`
 - Data: 12/08/2026
-- Alteracao: substituicao do HTML publicado pela nova versao AlvenariaPro v1.3 como HTML standalone.
+- Alteracao: substituicao do HTML publicado pela nova versao AlvenariaPro v1.4 como HTML standalone.
 
 Observacoes:
 
 - Aplicativo standalone empacotado em HTML unico.
 - Tela inicial do site aponta para `/alvenariapro/`.
 - O card foi classificado no filtro `Estruturas`.
-- Validar apos futuras alteracoes se os modulos de materiais, blocos, planta estrutural, cargas verticais, flexo-compressao, cisalhamento, graute, armaduras, cintas, modulacao construtiva, amarracoes, quantitativos e relatorios continuam carregando corretamente.
+- Validar apos futuras alteracoes se os modulos de materiais, blocos, editor CAD, importacao DXF/PDF, planta estrutural, cargas verticais, flexo-compressao, cisalhamento, graute, armaduras, cintas, modulacao construtiva, amarracoes, quantitativos e relatorios continuam carregando corretamente.
 
 ## Artigos publicados na home
 
