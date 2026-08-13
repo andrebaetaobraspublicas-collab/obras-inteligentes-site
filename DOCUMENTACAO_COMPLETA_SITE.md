@@ -43,7 +43,7 @@ Excecoes/observacoes:
 
 ## Inventario verificado dos aplicativos
 
-Inventario originalmente verificado em 21/07/2026 e atualizado em 12/08/2026 para atualizacao do AlvenariaPro. Todos os cards listados possuem arquivo local correspondente.
+Inventario originalmente verificado em 21/07/2026 e atualizado em 13/08/2026 para inclusao do AndaimeFach Pro no filtro Estruturas. Todos os cards listados possuem arquivo local correspondente.
 
 | Card | Aplicativo | Rota publicada | Arquivo local principal | Status local | Status site |
 |---|---|---|---|---|---|
@@ -102,6 +102,7 @@ Inventario originalmente verificado em 21/07/2026 e atualizado em 12/08/2026 par
 | 53 / TERCEIRIZACAO | TerceirizaPro | `/terceirizapro/` | `C:\Obras Inteligentes\terceirizapro\index.html` | existe | 200 |
 | 54 / CIMBRES | CimbrePro | `/cimbrepro/` | `C:\Obras Inteligentes\cimbrepro\index.html` | existe | 200 |
 | 55 / ALVENARIA | AlvenariaPro | `/alvenariapro/` | `C:\Obras Inteligentes\alvenariapro\index.html` | existe | 200 |
+| 56 / ANDAIMES | AndaimeFach Pro | `/andaimefach-pro/` | `C:\Obras Inteligentes\andaimefach-pro\index.html` | existe | 200 |
 
 ## Tamanhos verificados
 
@@ -164,6 +165,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/terceirizapro/` | 723110 bytes | 723110 caracteres |
 | `/cimbrepro/` | 188067 bytes | 188067 caracteres |
 | `/alvenariapro/` | 474835 bytes | 474835 caracteres |
+| `/andaimefach-pro/` | 160989 bytes | 160989 caracteres |
 
 ## Estrutura local principal
 
@@ -1149,6 +1151,24 @@ Observacoes:
 - O card foi classificado no filtro `Estruturas`.
 - Validar apos futuras alteracoes se os modulos de materiais, blocos, editor CAD, importacao DXF/PDF, planta estrutural, cargas verticais, flexo-compressao, cisalhamento, graute, armaduras, cintas, modulacao construtiva, amarracoes, quantitativos e relatorios continuam carregando corretamente.
 
+### AndaimeFach Pro
+
+Rota: `/andaimefach-pro/`  
+Arquivo: `andaimefach-pro/index.html`
+
+Ultima inclusao:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\AndaimeFach Pro - abertura.html`
+- Data: 13/08/2026
+- Alteracao: inclusao de novo card na home e publicacao do aplicativo AndaimeFach Pro como HTML standalone.
+
+Observacoes:
+
+- Aplicativo standalone empacotado em HTML unico, com tela de abertura e aviso legal.
+- Tela inicial do site aponta para `/andaimefach-pro/`.
+- O card foi classificado no filtro `Estruturas`.
+- Validar apos futuras alteracoes se os modulos de geometria da fachada, cargas, vento, ancoragens, verificacao estrutural, otimizacao, cronograma, orcamento, memorial e exportacoes continuam carregando corretamente.
+
 ## Artigos publicados na home
 
 Em 20/07/2026, os tres cards iniciais do bloco `Conteudo` da home foram substituidos por artigos reais enviados em PDF. Em 21/07/2026, foi incluido um quarto artigo. A estrategia adotada foi renderizar cada pagina do PDF como PNG dentro de uma pagina HTML propria, preservando a diagramacao original, tabelas, figuras e paginacao. Cada pagina tambem oferece link para abrir/baixar o PDF original.
@@ -1351,7 +1371,8 @@ $headers=@{ 'User-Agent'='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
   '/hidrosan-pro/',
   '/terceirizapro/',
   '/cimbrepro/',
-  '/alvenariapro/'
+  '/alvenariapro/',
+  '/andaimefach-pro/'
 ) | ForEach-Object {
   $url = "https://www.obrasinteligentes.ia.br$_?v=check"
   $r = Invoke-WebRequest -UseBasicParsing -Headers $headers -Uri $url -TimeoutSec 30

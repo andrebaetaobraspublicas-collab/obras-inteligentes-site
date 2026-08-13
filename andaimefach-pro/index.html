@@ -1,0 +1,2895 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AndaimeFach Pro — Otimizador de Montagem e Carga de Andaimes Fachadeiros</title>
+<style>
+/* ===================== TOKENS ===================== */
+:root{
+  --bg:#EDF0F2; --bg2:#E3E8EB; --surf:#FFFFFF; --surf2:#F7F9FA;
+  --ink:#141C24; --ink2:#4A5763; --ink3:#7A8792;
+  --line:#CBD4DA; --line2:#E1E8EC;
+  --acc:#0B5FA5; --acc2:#083F6E; --accsoft:#E4EEF7;
+  --ok:#12724A; --oksoft:#E1F1E9;
+  --warn:#B45A06; --warnsoft:#FBEEDF;
+  --bad:#B22222; --badsoft:#FAE6E6;
+  --zinc:#94A3AD;
+  --r:5px;
+  --f-disp:ui-sans-serif,-apple-system,"Segoe UI Semibold","Helvetica Neue",Arial,sans-serif;
+  --f-body:ui-sans-serif,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --f-num:ui-monospace,"SFMono-Regular","Cascadia Mono","Consolas","Liberation Mono",monospace;
+  --sh:0 1px 2px rgba(20,28,36,.06),0 1px 8px rgba(20,28,36,.04);
+}
+html[data-tema="escuro"]{
+  --bg:#0E1318; --bg2:#131A21; --surf:#161E26; --surf2:#1B242D;
+  --ink:#E6EDF3; --ink2:#AEBCC7; --ink3:#7C8B97;
+  --line:#2B3641; --line2:#222C35;
+  --acc:#4FA3E3; --acc2:#8CC6F2; --accsoft:#12293C;
+  --ok:#4ECB8F; --oksoft:#11291F;
+  --warn:#E8952F; --warnsoft:#2B2013;
+  --bad:#F07070; --badsoft:#2C1616;
+  --zinc:#5C6B77;
+  --sh:0 1px 2px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--ink); font-family:var(--f-body);
+  font-size:14px; line-height:1.5; -webkit-font-smoothing:antialiased;
+}
+/* Malha de módulo: o fundo é a própria lógica do andaime */
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:0; opacity:.5;
+  background-image:
+    linear-gradient(to right, var(--line2) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--line2) 1px, transparent 1px);
+  background-size:48px 24px;
+  mask-image:linear-gradient(to bottom, rgba(0,0,0,.55), transparent 70%);
+}
+.wrap{position:relative; z-index:1; max-width:1360px; margin:0 auto; padding:0 18px 80px}
+
+/* ===================== TIPOGRAFIA ===================== */
+h1,h2,h3,h4{font-family:var(--f-disp); margin:0; font-weight:700; letter-spacing:-.015em}
+.eyebrow{
+  font-family:var(--f-num); font-size:10.5px; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--ink3); font-weight:600;
+}
+.num{font-family:var(--f-num); font-variant-numeric:tabular-nums}
+
+/* ===================== CABEÇALHO ===================== */
+header{
+  position:sticky; top:0; z-index:40; background:var(--surf);
+  border-bottom:1px solid var(--line); box-shadow:var(--sh);
+}
+.hd{max-width:1360px; margin:0 auto; padding:9px 18px; display:flex; align-items:center; gap:14px}
+.mark{display:flex; align-items:center; gap:10px; min-width:0}
+.mark svg{flex:none}
+.mark b{font-family:var(--f-disp); font-size:15px; letter-spacing:-.02em; display:block; line-height:1.15}
+.mark span{font-family:var(--f-num); font-size:9.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink3)}
+.hd .sp{flex:1}
+.pill{
+  font-family:var(--f-num); font-size:11px; padding:4px 9px; border-radius:99px;
+  border:1px solid var(--line); background:var(--surf2); color:var(--ink2); white-space:nowrap;
+}
+.pill.ok{background:var(--oksoft); border-color:transparent; color:var(--ok); font-weight:700}
+.pill.bad{background:var(--badsoft); border-color:transparent; color:var(--bad); font-weight:700}
+.pill.warn{background:var(--warnsoft); border-color:transparent; color:var(--warn); font-weight:700}
+
+/* ===================== ABAS ===================== */
+nav.abas{
+  display:flex; gap:0; overflow-x:auto; border-bottom:1px solid var(--line);
+  background:var(--surf); scrollbar-width:thin;
+}
+nav.abas .inner{max-width:1360px; margin:0 auto; padding:0 12px; display:flex}
+.aba{
+  appearance:none; background:none; border:0; border-bottom:2px solid transparent;
+  padding:10px 13px 9px; cursor:pointer; color:var(--ink3); font-family:var(--f-body);
+  font-size:12.5px; font-weight:600; white-space:nowrap; display:flex; align-items:center; gap:7px;
+  transition:color .13s, border-color .13s;
+}
+.aba i{font-family:var(--f-num); font-style:normal; font-size:10px; color:var(--zinc); font-weight:700}
+.aba:hover{color:var(--ink)}
+.aba[aria-selected="true"]{color:var(--acc); border-bottom-color:var(--acc)}
+.aba[aria-selected="true"] i{color:var(--acc)}
+.aba:focus-visible{outline:2px solid var(--acc); outline-offset:-2px}
+
+/* ===================== LAYOUT ===================== */
+.painel{display:none; padding-top:20px}
+.painel.on{display:block; animation:sobe .18s ease}
+@keyframes sobe{from{opacity:0; transform:translateY(4px)}to{opacity:1;transform:none}}
+.grid{display:grid; gap:14px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.split{display:grid; grid-template-columns:minmax(0,380px) minmax(0,1fr); gap:14px; align-items:start}
+.split.w{grid-template-columns:minmax(0,1fr) minmax(0,440px)}
+@media(max-width:1000px){.split,.split.w{grid-template-columns:1fr}.g3,.g4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:620px){.g2,.g3,.g4{grid-template-columns:1fr}}
+
+.card{background:var(--surf); border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--sh)}
+.card>.hdr{
+  padding:10px 14px; border-bottom:1px solid var(--line2); display:flex; align-items:center; gap:10px;
+}
+.card>.hdr h3{font-size:13px}
+.card>.hdr .sp{flex:1}
+.card>.bd{padding:14px}
+.card.sticky{position:sticky; top:96px}
+
+/* ===================== FORMULÁRIOS ===================== */
+label.f{display:block; margin-bottom:10px}
+label.f>span{
+  display:block; font-size:11px; color:var(--ink2); margin-bottom:3px; font-weight:600;
+  display:flex; justify-content:space-between; gap:8px; align-items:baseline;
+}
+label.f>span em{font-family:var(--f-num); font-style:normal; font-size:10px; color:var(--ink3); font-weight:500}
+input,select,textarea{
+  width:100%; padding:6px 8px; border:1px solid var(--line); border-radius:4px;
+  background:var(--surf2); color:var(--ink); font-family:var(--f-num); font-size:13px;
+}
+select,textarea{font-family:var(--f-body)}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--acc); outline-offset:-1px; border-color:var(--acc)}
+input[type=checkbox]{width:auto; accent-color:var(--acc)}
+.chk{display:flex; align-items:center; gap:7px; font-size:12.5px; margin-bottom:9px; cursor:pointer}
+.hint{font-size:11px; color:var(--ink3); margin:-4px 0 10px}
+fieldset{border:0; padding:0; margin:0 0 4px}
+legend{padding:0}
+.sub{
+  font-family:var(--f-num); font-size:10px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--ink3); font-weight:700; margin:16px 0 8px; padding-bottom:4px; border-bottom:1px solid var(--line2);
+}
+.sub:first-child{margin-top:0}
+
+/* ===================== BOTÕES ===================== */
+button.b{
+  appearance:none; border:1px solid var(--line); background:var(--surf2); color:var(--ink);
+  padding:6px 12px; border-radius:4px; font-size:12.5px; font-weight:600; cursor:pointer;
+  font-family:var(--f-body); transition:background .12s,border-color .12s;
+}
+button.b:hover{background:var(--bg2); border-color:var(--zinc)}
+button.b.pri{background:var(--acc); border-color:var(--acc); color:#fff}
+button.b.pri:hover{background:var(--acc2); border-color:var(--acc2)}
+button.b.sm{padding:4px 9px; font-size:11.5px}
+button.b:focus-visible{outline:2px solid var(--acc); outline-offset:2px}
+.row{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
+
+/* ===================== TABELAS ===================== */
+table{width:100%; border-collapse:collapse; font-size:12.5px}
+th,td{padding:5px 8px; text-align:left; border-bottom:1px solid var(--line2)}
+th{
+  font-family:var(--f-num); font-size:9.5px; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--ink3); font-weight:700; background:var(--surf2); position:sticky; top:0;
+}
+td.n,th.n{text-align:right; font-family:var(--f-num); font-variant-numeric:tabular-nums}
+tr:last-child td{border-bottom:0}
+tbody tr:hover{background:var(--surf2)}
+.tw{overflow:auto; max-height:520px; border:1px solid var(--line2); border-radius:4px}
+tfoot td{font-weight:700; background:var(--surf2); border-top:2px solid var(--line)}
+
+/* ===================== INDICADORES ===================== */
+.kpi{border:1px solid var(--line); border-radius:var(--r); padding:11px 12px; background:var(--surf)}
+.kpi .k{font-family:var(--f-num); font-size:9.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink3); font-weight:700}
+.kpi .v{font-family:var(--f-num); font-size:21px; font-weight:700; letter-spacing:-.03em; margin-top:3px; line-height:1.1}
+.kpi .u{font-size:11px; color:var(--ink3); font-family:var(--f-body); font-weight:600}
+.kpi.ok .v{color:var(--ok)} .kpi.bad .v{color:var(--bad)} .kpi.warn .v{color:var(--warn)}
+
+.tag{
+  display:inline-flex; align-items:center; gap:4px; font-family:var(--f-num); font-size:10px;
+  font-weight:700; padding:2px 7px; border-radius:3px; letter-spacing:.04em;
+}
+.tag.ok{background:var(--oksoft); color:var(--ok)}
+.tag.bad{background:var(--badsoft); color:var(--bad)}
+.tag.warn{background:var(--warnsoft); color:var(--warn)}
+.tag.neu{background:var(--bg2); color:var(--ink2)}
+
+/* barra de taxa de utilização */
+.bar{height:5px; background:var(--bg2); border-radius:3px; overflow:hidden; min-width:60px}
+.bar i{display:block; height:100%; background:var(--ok); border-radius:3px; transition:width .3s}
+.bar i.warn{background:var(--warn)} .bar i.bad{background:var(--bad)}
+
+.aviso{
+  border-left:3px solid var(--warn); background:var(--warnsoft); padding:9px 12px;
+  border-radius:0 4px 4px 0; font-size:12px; color:var(--ink2); margin-bottom:12px;
+}
+.aviso b{color:var(--ink)}
+.aviso.info{border-left-color:var(--acc); background:var(--accsoft)}
+.aviso.erro{border-left-color:var(--bad); background:var(--badsoft)}
+
+/* ===================== ELEVAÇÃO (elemento assinatura) ===================== */
+.elev{background:var(--surf2); border:1px solid var(--line2); border-radius:4px; overflow:auto; padding:8px}
+.elev svg{display:block; margin:0 auto}
+.leg{display:flex; gap:14px; flex-wrap:wrap; font-size:11px; color:var(--ink2); margin-top:9px; font-family:var(--f-num)}
+.leg span{display:flex; align-items:center; gap:5px}
+.leg b{width:11px; height:11px; border-radius:2px; display:inline-block}
+
+/* ===================== CHECKLIST ===================== */
+.ck{border:1px solid var(--line2); border-radius:4px; margin-bottom:8px; overflow:hidden}
+.ck>h4{padding:8px 12px; background:var(--surf2); font-size:12px; border-bottom:1px solid var(--line2)}
+.ck ul{list-style:none; margin:0; padding:0}
+.ck li{display:flex; gap:9px; padding:7px 12px; border-bottom:1px solid var(--line2); font-size:12.5px; align-items:flex-start}
+.ck li:last-child{border-bottom:0}
+.ck li input{margin-top:2px}
+.ck li em{font-style:normal; font-family:var(--f-num); font-size:10px; color:var(--ink3); display:block; margin-top:1px}
+
+/* ===================== RELATÓRIO ===================== */
+#relDoc{background:var(--surf); padding:26px 30px; border:1px solid var(--line); border-radius:var(--r)}
+#relDoc h2{font-size:17px; margin:22px 0 8px; padding-bottom:5px; border-bottom:1px solid var(--line)}
+#relDoc h2:first-child{margin-top:0}
+#relDoc h3{font-size:13px; margin:15px 0 6px}
+#relDoc p{margin:0 0 8px; font-size:12.5px; color:var(--ink2)}
+#relDoc table{margin-bottom:12px; font-size:11.5px}
+.form{font-family:var(--f-num); font-size:12px; background:var(--surf2); border-left:3px solid var(--acc);
+      padding:7px 11px; margin:6px 0 10px; border-radius:0 3px 3px 0; overflow-x:auto; white-space:pre-wrap}
+
+@media print{
+  header,nav.abas,.noprint{display:none!important}
+  body{background:#fff} body::before{display:none}
+  .wrap{max-width:none; padding:0}
+  #relDoc{border:0; padding:0}
+  .painel{display:none!important} .painel.on{display:block!important}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important; transition:none!important}}
+</style>
+</head>
+<body>
+
+<style id="af-splash-css">
+html.af-lock, html.af-lock body{overflow:hidden !important}
+#af-splash{
+  position:fixed; inset:0; z-index:99999; overflow:hidden;
+  background:
+    radial-gradient(130% 100% at 72% 8%, #24384b 0%, #16222e 42%, #0b131b 100%);
+  font-family:ui-sans-serif,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  color:#EAF1F6;
+  transition:opacity .45s ease, visibility .45s;
+}
+#af-splash.af-out{opacity:0; visibility:hidden}
+#af-splash::after{
+  content:""; position:absolute; inset:0; pointer-events:none;
+  background:radial-gradient(70% 60% at 50% 55%, transparent 30%, rgba(4,8,12,.72) 100%);
+}
+#af-scene{
+  position:absolute; inset:0; perspective:1500px; perspective-origin:50% 42%;
+}
+#af-splash.af-legal-on #af-scene{opacity:.32; transform:scale(1.02)}
+#af-scene{transition:opacity .6s ease, transform .6s ease}
+#af-cam{
+  position:absolute; left:50%; top:50%; width:0; height:0;
+  transform-style:preserve-3d;
+  animation:af-cam 7.5s cubic-bezier(.16,.7,.2,1) forwards;
+}
+@keyframes af-cam{
+  0%  {transform:translateZ(-1900px) rotateX(-2deg) rotateY(-44deg)}
+  100%{transform:translateZ(-1220px) rotateX(-7deg) rotateY(-22deg)}
+}
+#af-cam .part{position:absolute; transform-style:preserve-3d}
+#af-cam .tube{position:absolute; transform-style:preserve-3d}
+#af-cam .lvl{position:absolute; transform-style:preserve-3d;
+  animation:af-rise .7s cubic-bezier(.18,.86,.24,1) both}
+#af-cam .fa{position:absolute}
+@keyframes af-rise{
+  from{opacity:0; transform:translate3d(0,-110px,40px) scale(.96)}
+  60% {opacity:1}
+  to  {opacity:1; transform:none}
+}
+#af-facade{
+  position:absolute; transform-style:preserve-3d;
+  background:
+    repeating-linear-gradient(to right, rgba(255,255,255,.045) 0 2px, transparent 2px 118px),
+    repeating-linear-gradient(to bottom, rgba(255,255,255,.05) 0 2px, transparent 2px 96px),
+    linear-gradient(160deg,#2b3d4e,#1a2732);
+  box-shadow:inset 0 0 160px rgba(0,0,0,.65);
+  animation:af-rise 1s cubic-bezier(.2,.8,.25,1) both;
+}
+#af-ground{position:absolute; transform-style:preserve-3d}
+#af-brand{
+  position:absolute; left:0; right:0; bottom:7%; z-index:3; text-align:center;
+  opacity:0; animation:af-brand .9s cubic-bezier(.2,.8,.25,1) 2.3s forwards;
+  transition:opacity .4s ease, transform .4s ease;
+}
+#af-splash.af-legal-on #af-brand{opacity:0; transform:translateY(10px)}
+@keyframes af-brand{from{opacity:0; transform:translateY(16px)} to{opacity:1; transform:none}}
+#af-brand .n{
+  font-size:clamp(30px,4.6vw,60px); font-weight:800; letter-spacing:-.03em; margin:0;
+  text-shadow:0 6px 30px rgba(0,0,0,.6);
+}
+#af-brand .n em{font-style:normal; color:#6FB6EE}
+#af-brand .s{
+  margin-top:10px; font-family:ui-monospace,"Cascadia Mono",Consolas,monospace;
+  font-size:11.5px; letter-spacing:.28em; text-transform:uppercase; color:#9DB4C6;
+}
+#af-bar{margin:22px auto 0; width:min(360px,60vw); height:2px; background:rgba(255,255,255,.14); overflow:hidden}
+#af-bar i{display:block; height:100%; width:100%; background:#6FB6EE; transform:scaleX(0); transform-origin:left;
+  animation:af-bar 1.3s cubic-bezier(.4,0,.2,1) 2.5s forwards}
+@keyframes af-bar{to{transform:scaleX(1)}}
+#af-legal{position:absolute; inset:0; z-index:4; display:none; align-items:center; justify-content:center; padding:24px}
+#af-splash.af-legal-on #af-legal{display:flex}
+#af-legal .box{
+  width:min(680px,100%); max-height:88vh; display:flex; flex-direction:column;
+  background:#FFFFFF; color:#141C24; border-radius:6px;
+  box-shadow:0 40px 90px rgba(0,0,0,.55);
+  opacity:0; transform:translateY(14px) scale(.985);
+  animation:af-box .5s cubic-bezier(.2,.8,.25,1) .12s forwards;
+}
+@keyframes af-box{to{opacity:1; transform:none}}
+#af-legal .top{padding:18px 24px 14px; border-bottom:1px solid #E1E8EC; display:flex; gap:12px; align-items:center}
+#af-legal .top h2{margin:0; font-size:16px; letter-spacing:-.02em}
+#af-legal .top .tag{
+  margin-left:auto; font-family:ui-monospace,Consolas,monospace; font-size:10px; letter-spacing:.14em;
+  text-transform:uppercase; color:#B45A06; background:#FBEEDF; padding:4px 9px; border-radius:99px; font-weight:700;
+}
+#af-legal .bd{padding:16px 24px; overflow:auto; font-size:13.2px; line-height:1.62; color:#39454F}
+#af-legal .bd h3{margin:16px 0 5px; font-size:12.5px; color:#141C24}
+#af-legal .bd h3:first-child{margin-top:0}
+#af-legal .bd p{margin:0 0 4px}
+#af-legal .bd ul{margin:4px 0 0; padding-left:18px}
+#af-legal .bd li{margin-bottom:4px}
+#af-legal .ft{padding:14px 24px 18px; border-top:1px solid #E1E8EC; display:flex; flex-direction:column; gap:12px}
+#af-legal label.ck{display:flex; gap:10px; align-items:flex-start; font-size:13px; cursor:pointer; color:#141C24}
+#af-legal label.ck input{margin:2px 0 0; width:16px; height:16px; accent-color:#0B5FA5; flex:none}
+#af-legal .row{display:flex; gap:10px; justify-content:flex-end; align-items:center; flex-wrap:wrap}
+#af-legal button{
+  font:inherit; font-size:13px; font-weight:700; line-height:1.2; white-space:nowrap; padding:10px 18px; border-radius:5px; cursor:pointer;
+  border:1px solid #CBD4DA; background:#F7F9FA; color:#4A5763;
+}
+#af-legal button.pri{background:#0B5FA5; border-color:#0B5FA5; color:#fff}
+#af-legal button.pri[disabled]{background:#C8D2DA; border-color:#C8D2DA; color:#EFF4F7; cursor:not-allowed}
+#af-legal .msg{font-size:12px; color:#B22222; margin-right:auto; display:none}
+#af-legal .msg.on{display:block}
+@media (prefers-reduced-motion:reduce){
+  #af-cam,#af-cam .tube,#af-facade,#af-brand,#af-bar i,#af-legal .box{animation-duration:.01s !important; animation-delay:0s !important}
+}
+</style>
+
+<div id="af-splash" role="dialog" aria-modal="true" aria-label="Tela de abertura do AndaimeFach Pro">
+  <div id="af-scene" aria-hidden="true"><div id="af-cam"></div></div>
+  <div id="af-brand">
+    <p class="n">Andaime<em>Fach</em> Pro</p>
+    <p class="s">Montagem &amp; Carga &middot; Andaimes Fachadeiros</p>
+    <div id="af-bar"><i></i></div>
+  </div>
+  <div id="af-legal">
+    <div class="box">
+      <div class="top">
+        <h2>Aviso legal e termo de uso</h2>
+        <span class="tag">Leitura obrigat&oacute;ria</span>
+      </div>
+      <div class="bd">
+        <h3>1. Natureza do software</h3>
+        <p>O AndaimeFach Pro &eacute; uma ferramenta de <b>apoio ao dimensionamento e &agrave; verifica&ccedil;&atilde;o</b> de andaimes fachadeiros. Os resultados s&atilde;o estimativas obtidas a partir dos dados informados pelo usu&aacute;rio e das hip&oacute;teses adotadas no modelo de c&aacute;lculo.</p>
+        <h3>2. Responsabilidade t&eacute;cnica</h3>
+        <p>O uso n&atilde;o substitui projeto, memorial de c&aacute;lculo, ART/RRT nem a supervis&atilde;o de profissional legalmente habilitado. Toda decis&atilde;o de montagem, carga, ancoragem, contraventamento e libera&ccedil;&atilde;o da estrutura &eacute; de responsabilidade exclusiva do respons&aacute;vel t&eacute;cnico da obra.</p>
+        <h3>3. Normas aplic&aacute;veis</h3>
+        <p>Cabe ao usu&aacute;rio conferir a ader&ecirc;ncia dos resultados &agrave;s normas e regulamentos vigentes, entre eles:</p>
+        <ul>
+          <li>NR-18 e NR-35 (seguran&ccedil;a do trabalho e trabalho em altura);</li>
+          <li>ABNT NBR 6494, NBR 6120 e NBR 8800/8681, no que couber;</li>
+          <li>cat&aacute;logo, limites e instru&ccedil;&otilde;es do fabricante do sistema de andaime utilizado.</li>
+        </ul>
+        <h3>4. Dados e limita&ccedil;&otilde;es</h3>
+        <p>A qualidade do resultado depende integralmente da qualidade dos dados de entrada. O programa n&atilde;o verifica a veracidade das informa&ccedil;&otilde;es, n&atilde;o considera condi&ccedil;&otilde;es n&atilde;o declaradas (corros&atilde;o, pe&ccedil;as danificadas, apoio inadequado, a&ccedil;&otilde;es excepcionais) e pode conter limita&ccedil;&otilde;es de modelagem.</p>
+        <h3>5. Isen&ccedil;&atilde;o de garantias</h3>
+        <p>O software &eacute; fornecido no estado em que se encontra, sem garantia de adequa&ccedil;&atilde;o a finalidade espec&iacute;fica. Os autores n&atilde;o respondem por perdas, danos materiais, pessoais ou lucros cessantes decorrentes do uso ou da impossibilidade de uso desta ferramenta.</p>
+      </div>
+      <div class="ft">
+        <label class="ck"><input type="checkbox" id="af-ck"> <span>Li, compreendi e <b>concordo</b> com o aviso legal acima. Declaro que utilizarei o programa como ferramenta de apoio, sob responsabilidade t&eacute;cnica habilitada.</span></label>
+        <div class="row">
+          <span class="msg" id="af-msg">&Eacute; necess&aacute;rio concordar com o aviso legal para acessar o sistema.</span>
+          <button type="button" id="af-no">N&atilde;o concordo</button>
+          <button type="button" class="pri" id="af-go" disabled>Entrar no sistema</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<header>
+ <div class="hd">
+  <div class="mark">
+   <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true">
+     <rect x="1.5" y="1.5" width="23" height="23" fill="none" stroke="var(--acc)" stroke-width="1.6"/>
+     <line x1="1.5" y1="13" x2="24.5" y2="13" stroke="var(--acc)" stroke-width="1.2"/>
+     <line x1="1.5" y1="1.5" x2="24.5" y2="13" stroke="var(--warn)" stroke-width="1.6"/>
+     <line x1="1.5" y1="24.5" x2="24.5" y2="13" stroke="var(--warn)" stroke-width="1.6"/>
+   </svg>
+   <div><b>AndaimeFach&nbsp;Pro</b><span>Otimizador de montagem e carga</span></div>
+  </div>
+  <div class="sp"></div>
+  <span class="pill num" id="pillCfg">—</span>
+  <span class="pill" id="pillVer">—</span>
+  <button class="b sm" id="btTema" title="Alternar tema claro/escuro">Tema</button>
+ </div>
+</header>
+
+<nav class="abas"><div class="inner" role="tablist">
+ <button class="aba" role="tab" data-p="p-projeto"><i>01</i>Projeto</button>
+ <button class="aba" role="tab" data-p="p-geo"><i>02</i>Geometria</button>
+ <button class="aba" role="tab" data-p="p-cargas"><i>03</i>Cargas</button>
+ <button class="aba" role="tab" data-p="p-estr"><i>04</i>Verificação estrutural</button>
+ <button class="aba" role="tab" data-p="p-otim"><i>05</i>Otimizador</button>
+ <button class="aba" role="tab" data-p="p-crono"><i>06</i>Cronograma</button>
+ <button class="aba" role="tab" data-p="p-orc"><i>07</i>Orçamento</button>
+ <button class="aba" role="tab" data-p="p-seg"><i>08</i>Segurança</button>
+ <button class="aba" role="tab" data-p="p-rel"><i>09</i>Relatório</button>
+ <button class="aba" role="tab" data-p="p-ifc"><i>10</i>Modelo IFC</button>
+ <button class="aba" role="tab" data-p="p-test"><i>11</i>Autoteste</button>
+</div></nav>
+
+<div class="wrap">
+
+<!-- =============== 01 PROJETO =============== -->
+<section class="painel" id="p-projeto" role="tabpanel">
+ <div class="split">
+  <div class="card"><div class="hdr"><h3>Identificação</h3></div><div class="bd">
+    <label class="f"><span>Nome do projeto</span><input id="pj_nome" type="text" placeholder="Ex.: Edifício Aurora — fachada sul"></label>
+    <label class="f"><span>Obra / contrato</span><input id="pj_obra" type="text" placeholder="Ex.: Contrato 041/2026"></label>
+    <label class="f"><span>Local</span><input id="pj_local" type="text" placeholder="Cidade / UF"></label>
+    <label class="f"><span>Responsável técnico</span><input id="pj_resp" type="text" placeholder="Nome — CREA/UF"></label>
+    <label class="f"><span>Data-base dos preços</span><input id="pj_data" type="text" placeholder="Ex.: SINAPI 06/2026"></label>
+    <label class="f"><span>Observações</span><textarea id="pj_obs" rows="3" placeholder="Restrições de canteiro, interferências, condicionantes."></textarea></label>
+  </div></div>
+
+  <div>
+   <div class="card" style="margin-bottom:14px"><div class="hdr"><h3>Arquivo do projeto</h3></div><div class="bd">
+     <p class="hint" style="margin-top:0">Os dados ficam gravados neste navegador. Use exportar/importar para levar o projeto a outra máquina ou anexá-lo ao processo.</p>
+     <div class="row">
+       <button class="b pri" id="btSalvar">Salvar projeto</button>
+       <button class="b" id="btExportar">Exportar .json</button>
+       <button class="b" id="btImportar">Importar .json</button>
+       <input type="file" id="fileIn" accept=".json" style="display:none">
+       <button class="b" id="btLimpar">Restaurar padrões</button>
+     </div>
+     <p class="hint" id="msgSalvo" style="margin:10px 0 0"></p>
+   </div></div>
+
+   <div class="card"><div class="hdr"><h3>Casos de partida</h3><div class="sp"></div><span class="eyebrow">Carregue e ajuste</span></div><div class="bd">
+     <p class="hint" style="margin-top:0">Três configurações completas para comparar ordens de grandeza antes de lançar os dados reais.</p>
+     <div class="grid g3" id="exemplos"></div>
+   </div></div>
+
+   <div class="card" style="margin-top:14px"><div class="hdr"><h3>O que este sistema faz</h3></div><div class="bd">
+     <p style="margin-top:0;font-size:12.5px;color:var(--ink2)">Dado o contorno da fachada e as peças disponíveis, o sistema monta o quantitativo modular, verifica montante, piso, ancoragem e apoio para as combinações de ELU, varre o espaço de configurações possíveis em busca da mais barata que ainda passa em todas as verificações, e devolve cronograma, orçamento e memorial.</p>
+     <p style="font-size:12.5px;color:var(--ink2);margin-bottom:0">Referências adotadas: <b>NBR 16492:2017</b> (andaimes — montagem e utilização), <b>NBR 6123:1988</b> (vento), <b>NBR 8800:2008</b> (barras de aço), <b>NBR 6120:2019</b> (cargas), <b>NR-18</b> e <b>NR-35</b>. As classes de carga de serviço seguem a escala de 1 a 6 consagrada na EN 12811-1, adotada pela prática nacional.</p>
+   </div></div>
+  </div>
+ </div>
+</section>
+
+<!-- =============== 02 GEOMETRIA =============== -->
+<section class="painel" id="p-geo" role="tabpanel">
+ <div class="split">
+  <div class="card sticky"><div class="hdr"><h3>Contorno e modulação</h3></div><div class="bd" style="max-height:calc(100vh - 170px);overflow:auto">
+    <div class="sub">Fachada</div>
+    <div class="grid g2">
+      <label class="f"><span>Largura <em>m</em></span><input id="g_larg" type="number" step="0.1" value="24"></label>
+      <label class="f"><span>Altura <em>m</em></span><input id="g_alt" type="number" step="0.1" value="18"></label>
+    </div>
+    <label class="f"><span>Afastamento andaime–fachada <em>m</em></span><input id="g_afast" type="number" step="0.01" value="0.15"></label>
+
+    <div class="sub">Módulo</div>
+    <div class="grid g2">
+      <label class="f"><span>Vão (comprimento) <em>m</em></span>
+        <select id="g_vao"><option>1.50</option><option selected>2.00</option><option>2.50</option><option>3.00</option></select></label>
+      <label class="f"><span>Altura do lance <em>m</em></span>
+        <select id="g_lance"><option>1.00</option><option selected>2.00</option></select></label>
+    </div>
+    <div class="grid g2">
+      <label class="f"><span>Largura do andaime <em>m</em></span>
+        <select id="g_w"><option>0.80</option><option selected>1.00</option><option>1.20</option></select></label>
+      <label class="f"><span>Largura da prancha <em>m</em></span><input id="g_bpiso" type="number" step="0.01" value="0.32"></label>
+    </div>
+
+    <div class="sub">Travamento e ancoragem</div>
+    <div class="grid g2">
+      <label class="f"><span>Vãos por diagonal <em>un</em></span><input id="g_diag" type="number" step="1" value="3"></label>
+      <label class="f"><span>Pisos por lance <em>níveis</em></span><input id="g_pisos" type="number" step="1" value="1"></label>
+    </div>
+    <div class="grid g2">
+      <label class="f"><span>Ancoragem horizontal <em>a cada N vãos</em></span><input id="g_ah" type="number" step="1" value="2"></label>
+      <label class="f"><span>Ancoragem vertical <em>a cada N lances</em></span><input id="g_av" type="number" step="1" value="1"></label>
+    </div>
+    <label class="chk"><input type="checkbox" id="g_tela" checked> Tela de proteção de fachada</label>
+    <label class="chk"><input type="checkbox" id="g_rodape" checked> Rodapé e guarda-corpo em todos os níveis</label>
+
+    <div class="sub">Torre de acesso</div>
+    <label class="f"><span>Distância máxima até a escada <em>m</em></span><input id="g_esc" type="number" step="1" value="30"></label>
+  </div></div>
+
+  <div>
+   <div class="grid g4" id="geoKpis" style="margin-bottom:14px"></div>
+   <div class="card" style="margin-bottom:14px"><div class="hdr"><h3>Elevação da fachada</h3><div class="sp"></div>
+     <span class="eyebrow" id="elevInfo"></span></div><div class="bd">
+     <div class="elev" id="elev"></div>
+     <div class="leg">
+       <span><b style="background:var(--acc)"></b>montante</span>
+       <span><b style="background:var(--warn)"></b>diagonal</span>
+       <span><b style="background:var(--ok)"></b>ancoragem</span>
+       <span><b style="background:var(--zinc)"></b>piso / travessa</span>
+       <span id="legCrit"></span>
+     </div>
+   </div></div>
+   <div class="card"><div class="hdr"><h3>Quantitativo de peças</h3><div class="sp"></div>
+     <button class="b sm" id="btCsvQuant">Baixar .csv</button></div><div class="bd">
+     <div class="tw"><table id="tbQuant"></table></div>
+   </div></div>
+  </div>
+ </div>
+</section>
+
+<!-- =============== 03 CARGAS =============== -->
+<section class="painel" id="p-cargas" role="tabpanel">
+ <div class="split">
+  <div class="card sticky"><div class="hdr"><h3>Ações</h3></div><div class="bd" style="max-height:calc(100vh - 170px);overflow:auto">
+    <div class="sub">Carga de serviço</div>
+    <label class="f"><span>Classe de carga</span><select id="c_classe"></select></label>
+    <p class="hint" id="c_classeTxt"></p>
+    <div class="grid g2">
+      <label class="f"><span>Níveis carregados <em>simultâneos</em></span><input id="c_nlv" type="number" step="1" value="2"></label>
+      <label class="f"><span>Redução no 2º nível <em>%</em></span><input id="c_red" type="number" step="5" value="50"></label>
+    </div>
+    <label class="f"><span>Carga concentrada de verificação <em>kN</em></span><input id="c_pconc" type="number" step="0.1" value="1.5"></label>
+
+    <div class="sub">Peso próprio</div>
+    <div class="grid g2">
+      <label class="f"><span>Prancha metálica <em>kg/m²</em></span><input id="c_mpiso" type="number" step="0.5" value="16"></label>
+      <label class="f"><span>Tela de fachada <em>kg/m²</em></span><input id="c_mtela" type="number" step="0.05" value="0.3"></label>
+    </div>
+    <label class="f"><span>Acessórios e conexões <em>% do aço</em></span><input id="c_acess" type="number" step="1" value="8"></label>
+
+    <div class="sub">Vento — NBR 6123</div>
+    <div class="grid g2">
+      <label class="f"><span>V₀ <em>m/s</em></span><input id="c_v0" type="number" step="1" value="30"></label>
+      <label class="f"><span>S₁ topografia</span><input id="c_s1" type="number" step="0.05" value="1"></label>
+    </div>
+    <div class="grid g2">
+      <label class="f"><span>Categoria</span><select id="c_cat"><option>I</option><option>II</option><option selected>III</option><option>IV</option><option>V</option></select></label>
+      <label class="f"><span>Classe</span><select id="c_cls"><option selected>A</option><option>B</option><option>C</option></select></label>
+    </div>
+    <label class="f"><span>S₃ estatístico</span><input id="c_s3" type="number" step="0.05" value="0.95"></label>
+    <p class="hint">S₃ = 0,95 corresponde a estrutura temporária com baixo fator de ocupação. Para andaime junto a hospital ou escola, use 1,10.</p>
+    <div class="grid g2">
+      <label class="f"><span>Índice de área exposta φ</span><input id="c_phi" type="number" step="0.05" value="0.6"></label>
+      <label class="f"><span>Coef. de arrasto Cₐ</span><input id="c_ca" type="number" step="0.1" value="1.3"></label>
+    </div>
+    <p class="hint">Sem tela, φ cai para a área dos próprios tubos, entre 0,20 e 0,30. Com tela de polipropileno, entre 0,50 e 0,90 conforme a malha.</p>
+
+    <div class="sub">Coeficientes de combinação</div>
+    <div class="grid g2">
+      <label class="f"><span>γ<sub>g</sub> peso próprio</span><input id="c_gg" type="number" step="0.05" value="1.25"></label>
+      <label class="f"><span>γ<sub>q</sub> serviço</span><input id="c_gq" type="number" step="0.05" value="1.5"></label>
+    </div>
+    <div class="grid g2">
+      <label class="f"><span>γ<sub>w</sub> vento</span><input id="c_gw" type="number" step="0.05" value="1.4"></label>
+      <label class="f"><span>ψ₀ do secundário</span><input id="c_psi" type="number" step="0.05" value="0.6"></label>
+    </div>
+  </div></div>
+
+  <div>
+   <div class="grid g4" id="cargaKpis" style="margin-bottom:14px"></div>
+   <div class="grid g2">
+    <div class="card"><div class="hdr"><h3>Peso próprio por família</h3></div><div class="bd">
+      <div class="tw"><table id="tbPeso"></table></div></div></div>
+    <div class="card"><div class="hdr"><h3>Vento — passo a passo</h3></div><div class="bd" id="ventoPasso"></div></div>
+   </div>
+   <div class="card" style="margin-top:14px"><div class="hdr"><h3>Combinações no estado-limite último</h3></div><div class="bd">
+     <div class="tw"><table id="tbComb"></table></div>
+     <p class="hint" style="margin-bottom:0">A combinação governante é aplicada a todas as verificações da aba seguinte.</p>
+   </div></div>
+  </div>
+ </div>
+</section>
+
+<!-- =============== 04 ESTRUTURAL =============== -->
+<section class="painel" id="p-estr" role="tabpanel">
+ <div class="split">
+  <div class="card sticky"><div class="hdr"><h3>Peças e apoios</h3></div><div class="bd" style="max-height:calc(100vh - 170px);overflow:auto">
+    <div class="sub">Tubo do montante</div>
+    <label class="f"><span>Perfil</span><select id="e_tubo"></select></label>
+    <div class="grid g2">
+      <label class="f"><span>f<sub>y</sub> <em>MPa</em></span><input id="e_fy" type="number" step="5" value="250"></label>
+      <label class="f"><span>E <em>MPa</em></span><input id="e_E" type="number" step="1000" value="200000"></label>
+    </div>
+    <label class="f"><span>Coef. de flambagem K</span><input id="e_K" type="number" step="0.05" value="1.0"></label>
+    <p class="hint">K = 1,0 vale para montante travado nos dois extremos pelo quadro. Emende fora dos nós ou aumente K para 1,3.</p>
+
+    <div class="sub">Prancha / piso</div>
+    <div class="grid g2">
+      <label class="f"><span>W<sub>el</sub> <em>cm³</em></span><input id="e_Wp" type="number" step="0.5" value="9"></label>
+      <label class="f"><span>I <em>cm⁴</em></span><input id="e_Ip" type="number" step="1" value="55"></label>
+    </div>
+    <label class="f"><span>Limite de flecha <em>L/…</em></span><input id="e_flecha" type="number" step="10" value="200"></label>
+
+    <div class="sub">Ancoragem</div>
+    <div class="grid g2">
+      <label class="f"><span>Resistência por ponto <em>kN</em></span><input id="e_Ranc" type="number" step="0.5" value="6"></label>
+      <label class="f"><span>Força mínima normativa <em>kN</em></span><input id="e_Amin" type="number" step="0.1" value="1.5"></label>
+    </div>
+    <p class="hint">6 kN cobre um chumbador mecânico M12 bem executado em concreto estrutural. Em alvenaria, substitua pelo valor do ensaio de arrancamento.</p>
+
+    <div class="sub">Apoio na base</div>
+    <div class="grid g2">
+      <label class="f"><span>Prancha de apoio <em>m × m</em></span><input id="e_sap" type="text" value="0.25 x 0.30"></label>
+      <label class="f"><span>Tensão admissível <em>kPa</em></span><input id="e_sadm" type="number" step="10" value="200"></label>
+    </div>
+    <p class="hint">200 kPa cobre solo compactado corrente. Sobre laje ou piso de concreto, informe a capacidade do elemento.</p>
+  </div></div>
+
+  <div>
+   <div class="grid g4" id="estrKpis" style="margin-bottom:14px"></div>
+   <div class="card" style="margin-bottom:14px"><div class="hdr"><h3>Verificações</h3><div class="sp"></div>
+     <span class="eyebrow">Sd / Rd</span></div><div class="bd">
+     <div class="tw"><table id="tbVerif"></table></div>
+   </div></div>
+   <div class="card"><div class="hdr"><h3>Memória de cálculo</h3></div><div class="bd" id="memCalc"></div></div>
+  </div>
+ </div>
+</section>
+
+<!-- =============== 05 OTIMIZADOR =============== -->
+<section class="painel" id="p-otim" role="tabpanel">
+ <div class="split">
+  <div class="card sticky"><div class="hdr"><h3>Espaço de busca</h3></div><div class="bd" style="max-height:calc(100vh - 170px);overflow:auto">
+    <p class="hint" style="margin-top:0">Marque o que o fornecedor tem em estoque. O sistema testa todas as combinações e descarta as que não passam na verificação estrutural.</p>
+    <div class="sub">Vão</div><div id="o_vaos"></div>
+    <div class="sub">Altura do lance</div><div id="o_lances"></div>
+    <div class="sub">Largura</div><div id="o_ws"></div>
+    <div class="sub">Perfil do montante</div><div id="o_tubos"></div>
+    <div class="sub">Ancoragem vertical</div><div id="o_avs"></div>
+    <div class="sub">Critério</div>
+    <label class="f"><span>Minimizar</span><select id="o_obj">
+      <option value="custo">Custo total de locação e montagem</option>
+      <option value="peso">Peso de aço na fachada</option>
+      <option value="pecas">Número de peças</option>
+      <option value="hh">Homem-hora de montagem</option>
+    </select></label>
+    <label class="f"><span>Taxa máxima de utilização <em>%</em></span><input id="o_taxa" type="number" step="5" value="100"></label>
+    <p class="hint">Reduza para 85% se quiser margem para carga acidental não prevista.</p>
+    <button class="b pri" id="btOtim" style="width:100%">Otimizar configuração</button>
+    <p class="hint" id="o_status" style="margin:10px 0 0"></p>
+  </div></div>
+
+  <div>
+   <div class="aviso info" id="o_resumo" style="display:none"></div>
+   <div class="card" style="margin-bottom:14px"><div class="hdr"><h3>Ranking de configurações</h3><div class="sp"></div>
+     <button class="b sm" id="btAplicar" disabled>Aplicar a melhor ao projeto</button></div><div class="bd">
+     <div class="tw"><table id="tbOtim"><tbody><tr><td style="color:var(--ink3)">Ajuste o espaço de busca e clique em Otimizar configuração.</td></tr></tbody></table></div>
+   </div></div>
+   <div class="card"><div class="hdr"><h3>Custo × vão para a configuração vencedora</h3></div><div class="bd" id="o_grafico"></div></div>
+  </div>
+ </div>
+</section>
+
+<!-- =============== 06 CRONOGRAMA =============== -->
+<section class="painel" id="p-crono" role="tabpanel">
+ <div class="split">
+  <div class="card sticky"><div class="hdr"><h3>Ritmo de execução</h3></div><div class="bd" style="max-height:calc(100vh - 170px);overflow:auto">
+    <div class="sub">Equipes</div>
+    <div class="grid g2">
+      <label class="f"><span>Equipes de montagem</span><input id="k_eq" type="number" step="1" value="2"></label>
+      <label class="f"><span>Montadores por equipe</span><input id="k_mo" type="number" step="1" value="3"></label>
+    </div>
+    <label class="f"><span>Jornada <em>h/dia</em></span><input id="k_jor" type="number" step="0.5" value="8"></label>
+    <div class="sub">Produtividade</div>
+    <div class="grid g2">
+      <label class="f"><span>Montagem <em>m²/equipe·dia</em></span><input id="k_pm" type="number" step="5" value="60"></label>
+      <label class="f"><span>Desmontagem <em>m²/equipe·dia</em></span><input id="k_pd" type="number" step="5" value="95"></label>
+    </div>
+    <div class="sub">Prazos</div>
+    <div class="grid g2">
+      <label class="f"><span>Mobilização <em>dias</em></span><input id="k_mob" type="number" step="1" value="3"></label>
+      <label class="f"><span>Permanência <em>dias</em></span><input id="k_perm" type="number" step="5" value="90"></label>
+    </div>
+    <label class="f"><span>Dias úteis por mês</span><input id="k_du" type="number" step="1" value="21"></label>
+    <div class="sub">Restrição de estoque</div>
+    <label class="chk"><input type="checkbox" id="k_est"> Limitar peças disponíveis</label>
+    <label class="f"><span>Montantes em estoque <em>un</em></span><input id="k_estq" type="number" step="10" value="600" disabled></label>
+  </div></div>
+
+  <div>
+   <div class="grid g4" id="cronoKpis" style="margin-bottom:14px"></div>
+   <div class="card" style="margin-bottom:14px"><div class="hdr"><h3>Linha de balanço — avanço por lance</h3><div class="sp"></div>
+     <span class="eyebrow">montagem · permanência · desmontagem</span></div><div class="bd">
+     <div class="elev" id="lob"></div>
+   </div></div>
+   <div class="grid g2">
+     <div class="card"><div class="hdr"><h3>Marcos</h3></div><div class="bd"><div class="tw"><table id="tbMarcos"></table></div></div></div>
+     <div class="card"><div class="hdr"><h3>Consumo semanal de peças</h3></div><div class="bd"><div class="tw"><table id="tbConsumo"></table></div></div></div>
+   </div>
+  </div>
+ </div>
+</section>
+
+<!-- =============== 07 ORÇAMENTO =============== -->
+<section class="painel" id="p-orc" role="tabpanel">
+ <div class="split w">
+  <div>
+   <div class="grid g4" id="orcKpis" style="margin-bottom:14px"></div>
+   <div class="card" style="margin-bottom:14px"><div class="hdr"><h3>Composição do custo direto</h3><div class="sp"></div>
+     <button class="b sm" id="btCsvOrc">Baixar .csv</button></div><div class="bd">
+     <p class="hint" style="margin-top:0">Os preços unitários são editáveis. Confira os códigos e os valores na tabela de referência vigente e na data-base do seu processo antes de usar.</p>
+     <div class="tw"><table id="tbOrc"></table></div>
+   </div></div>
+   <div class="card"><div class="hdr"><h3>Cenário: locar ou comprar</h3></div><div class="bd">
+     <div class="grid g2" style="margin-bottom:12px">
+       <label class="f"><span>Preço de compra do conjunto <em>R$/m²</em></span><input id="b_compra" type="number" step="1" value="180"></label>
+       <label class="f"><span>Valor residual após a obra <em>%</em></span><input id="b_resid" type="number" step="5" value="55"></label>
+     </div>
+     <div class="tw"><table id="tbCenario"></table></div>
+   </div></div>
+  </div>
+
+  <div>
+   <div class="card sticky"><div class="hdr"><h3>BDI</h3></div><div class="bd" style="max-height:calc(100vh - 170px);overflow:auto">
+     <label class="f"><span>Regime tributário</span><select id="b_reg">
+       <option value="atual">Atual — PIS/COFINS/ISS</option>
+       <option value="transicao">Transição — CBS + IBS reduzidos</option>
+       <option value="iva">IVA pleno — CBS + IBS</option>
+     </select></label>
+     <div class="grid g2">
+       <label class="f"><span>Adm. central <em>%</em></span><input id="b_ac" type="number" step="0.1" value="4"></label>
+       <label class="f"><span>Seguro e garantia <em>%</em></span><input id="b_s" type="number" step="0.1" value="0.8"></label>
+     </div>
+     <div class="grid g2">
+       <label class="f"><span>Risco <em>%</em></span><input id="b_r" type="number" step="0.1" value="1.2"></label>
+       <label class="f"><span>Desp. financeira <em>%</em></span><input id="b_df" type="number" step="0.1" value="1"></label>
+     </div>
+     <label class="f"><span>Lucro <em>%</em></span><input id="b_l" type="number" step="0.1" value="7"></label>
+     <div class="sub">Tributos</div>
+     <div id="b_trib"></div>
+     <div class="sub">Resultado</div>
+     <div class="form" id="b_formula"></div>
+     <div class="grid g2" id="bdiKpis"></div>
+   </div></div>
+  </div>
+ </div>
+</section>
+
+<!-- =============== 08 SEGURANÇA =============== -->
+<section class="painel" id="p-seg" role="tabpanel">
+ <div class="split w">
+  <div>
+   <div class="grid g4" id="segKpis" style="margin-bottom:14px"></div>
+   <div class="card" style="margin-bottom:14px"><div class="hdr"><h3>Verificação de conformidade</h3><div class="sp"></div>
+     <button class="b sm" id="btSegLimpa">Desmarcar tudo</button></div><div class="bd" id="checklist"></div>
+   </div>
+   <div class="card"><div class="hdr"><h3>Ficha de inspeção periódica</h3></div><div class="bd">
+     <p class="hint" style="margin-top:0">Emita uma ficha por período e arquive assinada. A periodicidade abaixo é o intervalo máximo entre inspeções.</p>
+     <div class="grid g2" style="margin-bottom:12px">
+       <label class="f"><span>Intervalo entre inspeções <em>dias</em></span><input id="s_int" type="number" step="1" value="15"></label>
+       <label class="f"><span>Data da liberação inicial</span><input id="s_dt" type="date"></label>
+     </div>
+     <div class="tw"><table id="tbInsp"></table></div>
+   </div></div>
+  </div>
+
+  <div>
+   <div class="card sticky"><div class="hdr"><h3>Trabalho em altura</h3></div><div class="bd" style="max-height:calc(100vh - 170px);overflow:auto">
+     <div class="sub">Equipe exposta</div>
+     <div class="grid g2">
+       <label class="f"><span>Trabalhadores em altura</span><input id="s_n" type="number" step="1" value="6"></label>
+       <label class="f"><span>Altura máxima <em>m</em></span><input id="s_h" type="number" step="0.5" value="18" readonly></label>
+     </div>
+     <div class="sub">Dimensionamento de EPI</div>
+     <div class="tw" style="max-height:none"><table id="tbEpi"></table></div>
+     <div class="sub">Zona livre de queda</div>
+     <div id="s_zlq"></div>
+     <div class="sub">Isolamento no térreo</div>
+     <div id="s_isol"></div>
+   </div></div>
+  </div>
+ </div>
+</section>
+
+<!-- =============== 09 RELATÓRIO =============== -->
+<section class="painel" id="p-rel" role="tabpanel">
+ <div class="row noprint" style="margin-bottom:14px">
+   <button class="b pri" id="btGerarRel">Gerar memorial</button>
+   <button class="b" id="btImprimir">Imprimir ou salvar em PDF</button>
+   <button class="b" id="btCsvTudo">Baixar quantitativo e orçamento .csv</button>
+ </div>
+ <div id="relDoc"><p style="color:var(--ink3)">Clique em Gerar memorial para montar o documento com os dados atuais do projeto.</p></div>
+</section>
+
+<!-- =============== 10 MODELO IFC =============== -->
+<section class="painel" id="p-ifc" role="tabpanel">
+ <div class="split">
+  <div class="card sticky"><div class="hdr"><h3>O que exportar</h3></div><div class="bd" style="max-height:calc(100vh - 170px);overflow:auto">
+    <p class="hint" style="margin-top:0">O modelo é gerado a partir da configuração atual das abas Geometria e Verificação estrutural. Desmarque famílias para aliviar o arquivo.</p>
+    <div class="sub">Famílias</div>
+    <label class="chk"><input type="checkbox" checked disabled> Montantes, travessas e longarinas</label>
+    <label class="chk"><input type="checkbox" checked disabled> Diagonais de contraventamento</label>
+    <label class="chk"><input type="checkbox" id="i_piso" checked> Pranchas metálicas</label>
+    <label class="chk"><input type="checkbox" id="i_gc" checked> Guarda-corpo</label>
+    <label class="chk"><input type="checkbox" id="i_rodape" checked> Rodapé</label>
+    <label class="chk"><input type="checkbox" id="i_sapata" checked> Sapatas e pranchas de apoio</label>
+    <label class="chk"><input type="checkbox" id="i_anc" checked> Pontos de ancoragem</label>
+    <label class="chk"><input type="checkbox" id="i_tela"> Tela de fachada</label>
+
+    <div class="sub">Identificação no arquivo</div>
+    <label class="f"><span>Organização</span><input id="i_org" type="text" placeholder="Empresa ou órgão"></label>
+    <p class="hint">Nome do projeto, obra, local e responsável vêm da aba Projeto e vão para o cabeçalho STEP.</p>
+
+    <div class="row" style="margin-top:14px">
+      <button class="b pri" id="btIfc" style="flex:1">Gerar modelo</button>
+      <button class="b" id="btIfcBaixar" disabled>Baixar .ifc</button>
+    </div>
+    <p class="hint" id="i_status" style="margin:10px 0 0"></p>
+  </div></div>
+
+  <div>
+   <div class="grid g4" id="ifcKpis" style="margin-bottom:14px"></div>
+   <div class="card" style="margin-bottom:14px"><div class="hdr"><h3>Conteúdo do modelo</h3><div class="sp"></div>
+     <span class="eyebrow">IFC4 · Coordination View</span></div><div class="bd">
+     <div class="tw"><table id="tbIfc"><tbody><tr><td style="color:var(--ink3)">Clique em Gerar modelo para montar o IFC da configuração atual.</td></tr></tbody></table></div>
+   </div></div>
+   <div class="grid g2">
+     <div class="card"><div class="hdr"><h3>Convenções adotadas</h3></div><div class="bd" id="ifcConv"></div></div>
+     <div class="card"><div class="hdr"><h3>Primeiras linhas do arquivo</h3></div><div class="bd">
+       <div class="form" id="ifcPrev" style="max-height:260px;overflow:auto">—</div></div></div>
+   </div>
+  </div>
+ </div>
+</section>
+
+<!-- =============== 11 AUTOTESTE =============== -->
+<section class="painel" id="p-test" role="tabpanel">
+ <div class="card"><div class="hdr"><h3>Autoteste do motor de cálculo</h3><div class="sp"></div>
+   <button class="b pri sm" id="btTest">Rodar testes</button></div><div class="bd">
+   <p class="hint" style="margin-top:0">Confere as rotinas de vento, flambagem, flexão, quantitativo, otimização, cronograma e BDI contra valores calculados à mão. Se algum item falhar, não use os resultados.</p>
+   <div id="testOut"></div>
+ </div></div>
+</section>
+
+</div><!-- /wrap -->
+
+<script>
+"use strict";
+/* ==========================================================================
+   AF — motor de cálculo do otimizador de andaimes fachadeiros
+   Estrutura: AF.dados | AF.geo | AF.carga | AF.estr | AF.otim | AF.crono | AF.orc
+   Unidades internas: metro, kN, kPa, kg. Tensões em MPa quando indicado.
+   ========================================================================== */
+var AF = {};
+
+/* ---------- Bases de dados normativas e de catálogo ---------- */
+AF.dados = {
+  /* NBR 6123:1988, Tabela 2 — parâmetros b e p do fator S2 */
+  S2: {
+    "I":  {A:{b:1.10,p:0.06},  B:{b:1.11,p:0.065}, C:{b:1.12,p:0.07}},
+    "II": {A:{b:1.00,p:0.085}, B:{b:1.00,p:0.09},  C:{b:1.00,p:0.10}},
+    "III":{A:{b:0.94,p:0.10},  B:{b:0.94,p:0.105}, C:{b:0.93,p:0.115}},
+    "IV": {A:{b:0.86,p:0.12},  B:{b:0.85,p:0.125}, C:{b:0.84,p:0.135}},
+    "V":  {A:{b:0.74,p:0.15},  B:{b:0.73,p:0.16},  C:{b:0.71,p:0.175}}
+  },
+  Fr: {A:1.00, B:0.98, C:0.95},
+
+  /* Classes de carga de serviço (escala EN 12811-1, prática nacional) */
+  classes: [
+    {n:1, q:0.75, uso:"Inspeção e acesso, sem depósito de material"},
+    {n:2, q:1.50, uso:"Pintura, limpeza de fachada, serviços leves"},
+    {n:3, q:2.00, uso:"Revestimento, chapisco e reboco sem estoque"},
+    {n:4, q:3.00, uso:"Alvenaria e revestimento com estoque no piso"},
+    {n:5, q:4.50, uso:"Alvenaria pesada, pedra, elementos pré-moldados"},
+    {n:6, q:6.00, uso:"Depósito intenso de material sobre a plataforma"}
+  ],
+
+  /* Tubos comerciais de montante. massa linear em kg/m calculada de rho=7850 */
+  tubos: [
+    {id:"D33.7x2.65", de:33.7, t:2.65}, {id:"D42.4x3.00", de:42.4, t:3.00},
+    {id:"D48.3x2.25", de:48.3, t:2.25}, {id:"D48.3x3.00", de:48.3, t:3.00},
+    {id:"D48.3x3.20", de:48.3, t:3.20}, {id:"D48.3x4.00", de:48.3, t:4.00},
+    {id:"D60.3x3.20", de:60.3, t:3.20}
+  ],
+
+  /* Preços unitários de partida, em reais. Editáveis na aba Orçamento. */
+  precos: {
+    quadro_mes:9.50, diagonal_mes:3.20, longarina_mes:3.80, piso_mes:7.50,
+    sapata_mes:2.40, guardacorpo_mes:3.10, rodape_mes:2.20, escada_mes:14.00,
+    tela_m2:6.80, ancoragem_un:22.00,
+    hh_montador:31.50, hh_encarregado:44.00,
+    transporte_t:210.00, art:1450.00, inspecao_evento:380.00
+  },
+
+  /* Homem-hora de montagem por peça */
+  hh: {quadro:0.22, diagonal:0.07, longarina:0.08, piso:0.10, sapata:0.05,
+       guardacorpo:0.09, rodape:0.06, escada:0.45, ancoragem:0.35, tela_m2:0.05}
+};
+
+/* ---------- Utilidades ---------- */
+AF.u = {
+  rnd:function(v,d){var p=Math.pow(10,d===undefined?2:d); return Math.round(v*p)/p;},
+  num:function(v,d){ if(!isFinite(v)) return "—";
+    return v.toLocaleString("pt-BR",{minimumFractionDigits:d===undefined?2:d,maximumFractionDigits:d===undefined?2:d});},
+  brl:function(v){ if(!isFinite(v)) return "—";
+    return v.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});},
+  /* Área e propriedades de seção tubular circular vazada */
+  secao:function(de,t){
+    var D=de/1000, d=(de-2*t)/1000;
+    var A=Math.PI/4*(D*D-d*d);                 // m2
+    var I=Math.PI/64*(Math.pow(D,4)-Math.pow(d,4)); // m4
+    var r=Math.sqrt(I/A);                      // m
+    return {A:A, I:I, r:r, massa:A*7850, D:D, d:d};
+  }
+};
+
+/* ==========================================================================
+   GEOMETRIA — modulação e quantitativo
+   ========================================================================== */
+AF.geo = function(p){
+  var largura=+p.largura, altura=+p.altura, vao=+p.vao, hL=+p.alturaLance, w=+p.w;
+  if(!(largura>0)||!(altura>0)||!(vao>0)||!(hL>0)||!(w>0)) throw new Error("Geometria inválida");
+
+  var nVaos   = Math.ceil(largura/vao);
+  var nLances = Math.ceil(altura/hL);
+  var vaoReal = largura/nVaos;                 // vão efetivo após acerto
+  var alturaReal = nLances*hL;                 // altura montada (múltiplo do lance)
+  var nQuadros   = (nVaos+1)*nLances;          // quadro = pórtico transversal
+  var nMontantes = 2*(nVaos+1);                // montantes por fila em planta
+  var areaFachada= largura*alturaReal;
+  var bPiso=+p.bPiso||0.32;
+  var nPisosLarg = Math.max(1, Math.round(w/bPiso));
+  var nivPorLance= Math.max(1, Math.round(+p.pisosPorLance||1));
+
+  var vaosPorDiag = Math.max(1, Math.round(+p.vaosPorDiagonal||3));
+  var nDiag = Math.ceil(nVaos/vaosPorDiag)*nLances;
+
+  var ah = Math.max(1, Math.round(+p.ancHoriz||2));
+  var av = Math.max(1, Math.round(+p.ancVert||2));
+  /* Níveis e prumadas ancorados. O último lance e a última prumada são sempre
+     amarrados, mesmo que não caiam no passo — topo solto é falha de montagem. */
+  var ancNiveis=[]; for(var jn=av; jn<=nLances; jn+=av) ancNiveis.push(jn);
+  if(ancNiveis[ancNiveis.length-1]!==nLances) ancNiveis.push(nLances);
+  var ancPrumadas=[]; for(var ip=0; ip<=nVaos; ip+=ah) ancPrumadas.push(ip);
+  if(ancPrumadas[ancPrumadas.length-1]!==nVaos) ancPrumadas.push(nVaos);
+  var nAncV = ancNiveis.length, nAncH = ancPrumadas.length;
+  var nAnc  = nAncH*nAncV;
+
+  var nEscadas = Math.max(1, Math.ceil(largura/(+p.distEscada||30)));
+
+  var q = {
+    quadro:      nQuadros,
+    montante:    2*(nVaos+1)*nLances,
+    longarina:   nVaos*nLances*2,
+    diagonal:    nDiag,
+    piso:        nVaos*nLances*nPisosLarg*nivPorLance,
+    sapata:      nMontantes,
+    guardacorpo: p.rodape ? nVaos*nLances*2 : 0,
+    rodape:      p.rodape ? nVaos*nLances : 0,
+    ancoragem:   nAnc,
+    escada:      nEscadas*nLances,
+    tela_m2:     p.tela ? areaFachada : 0
+  };
+
+  /* comprimentos lineares de aço tubular, em metro */
+  var comp = {
+    montante:  q.montante*hL,
+    travQuadro:nQuadros*w,
+    longarina: q.longarina*vaoReal,
+    diagonal:  q.diagonal*Math.sqrt(vaoReal*vaoReal+hL*hL),
+    guardacorpo:q.guardacorpo*vaoReal,
+    escada:    q.escada*(hL*2.4)
+  };
+  comp.total = comp.montante+comp.travQuadro+comp.longarina+comp.diagonal+comp.guardacorpo+comp.escada;
+
+  return {
+    nVaos:nVaos, nLances:nLances, vaoReal:vaoReal, alturaReal:alturaReal,
+    nQuadros:nQuadros, nMontantes:nMontantes, areaFachada:areaFachada,
+    nPisosLarg:nPisosLarg, nivPorLance:nivPorLance,
+    nAnc:nAnc, nAncH:nAncH, nAncV:nAncV, ancVertM:av*hL, ancHorizM:ah*vaoReal,
+    ancNiveis:ancNiveis, ancPrumadas:ancPrumadas,
+    nEscadas:nEscadas, quant:q, comp:comp,
+    areaPiso:nVaos*nLances*nivPorLance*vaoReal*w,
+    w:w, hL:hL, vao:vaoReal, largura:largura, altura:altura
+  };
+};
+
+/* ==========================================================================
+   VENTO — NBR 6123:1988
+   ========================================================================== */
+AF.vento = {
+  S2:function(cat,cls,z){
+    var t=AF.dados.S2[cat]; if(!t) throw new Error("Categoria de rugosidade inválida: "+cat);
+    var c=t[cls]; if(!c) throw new Error("Classe inválida: "+cls);
+    var zz=Math.max(z,5);
+    return c.b*AF.dados.Fr[cls]*Math.pow(zz/10,c.p);
+  },
+  Vk:function(V0,S1,S2,S3){ return V0*S1*S2*S3; },
+  q:function(Vk){ return 0.613*Vk*Vk/1000; },       // kN/m2
+  /* Força total na fachada integrada por faixas de 2 m de altura */
+  forca:function(p){
+    var faixas=[], z=0, dz=2.0, Ftot=0;
+    while(z < p.altura-1e-9){
+      var h2=Math.min(z+dz,p.altura), zm=(z+h2)/2;
+      var s2=AF.vento.S2(p.cat,p.cls,zm);
+      var vk=AF.vento.Vk(p.V0,p.S1,s2,p.S3);
+      var qk=AF.vento.q(vk);
+      var Ae=p.largura*(h2-z)*p.phi;
+      var F=p.Ca*qk*Ae;
+      faixas.push({z0:z,z1:h2,zm:zm,S2:s2,Vk:vk,q:qk,Ae:Ae,F:F});
+      Ftot+=F; z=h2;
+    }
+    return {faixas:faixas, Ftot:Ftot, qTopo:faixas.length?faixas[faixas.length-1].q:0};
+  }
+};
+
+/* ==========================================================================
+   CARGAS — peso próprio, serviço, vento e combinações
+   ========================================================================== */
+AF.carga = function(g,p){
+  var sec=AF.u.secao(p.tubo.de,p.tubo.t);
+  var mAco = g.comp.total*sec.massa;                       // kg
+  var mPiso= g.areaPiso*(+p.mPiso);                        // kg
+  var mTela= g.quant.tela_m2*(+p.mTela);                   // kg
+  var mAcess = mAco*(+p.pctAcess)/100;
+  var mTotal = mAco+mPiso+mTela+mAcess;
+  var pp = mTotal*9.81/1000;                               // kN
+
+  var classe = AF.dados.classes.filter(function(c){return c.n===+p.classe;})[0];
+  if(!classe) throw new Error("Classe de carga inválida");
+  var qs = classe.q;                                       // kN/m2
+
+  /* Carga de serviço no montante interno mais solicitado.
+     Área de influência por nível = vão x largura/2 (montante interno recebe meio vão de cada lado). */
+  var Ainf = g.vao*g.w/2;
+  var nlv  = Math.max(1, Math.round(+p.nivelCarregado));
+  var red  = (+p.reducao)/100;
+  var fatorNiveis = 1 + (nlv-1)*(1-red);
+  var Nq = qs*Ainf*fatorNiveis;                            // kN por montante
+
+  /* Peso próprio acumulado no montante da base (distribuição uniforme) */
+  var Npp = pp/g.nMontantes;
+
+  /* Vento */
+  var v = AF.vento.forca({altura:g.alturaReal,largura:g.largura,V0:+p.V0,S1:+p.S1,S3:+p.S3,
+                          cat:p.cat,cls:p.cls,phi:+p.phi,Ca:+p.Ca});
+  var Fanc = v.Ftot/g.nAnc;
+
+  /* Binário local do vento entre níveis de ancoragem, distribuído nos montantes de uma fila */
+  var Ftrecho = v.Ftot/Math.max(1,g.nAncV);
+  var Nw = Ftrecho*(g.ancVertM/2)/(g.w*(g.nVaos+1));
+
+  /* Combinações ELU */
+  var gg=+p.gg, gq=+p.gq, gw=+p.gw, psi=+p.psi;
+  var c1 = gg*Npp + gq*Nq + gw*psi*Nw;
+  var c2 = gg*Npp + gw*Nw + gq*psi*Nq;
+  var comb = [
+    {nome:"C1 · serviço principal", expr:gg+"·PP + "+gq+"·Q + "+gw+"·"+psi+"·W", N:c1},
+    {nome:"C2 · vento principal",   expr:gg+"·PP + "+gw+"·W + "+gq+"·"+psi+"·Q", N:c2}
+  ];
+  var gov = c1>=c2 ? comb[0] : comb[1];
+
+  return {
+    massa:{aco:mAco, piso:mPiso, tela:mTela, acess:mAcess, total:mTotal},
+    pp:pp, ppMontante:Npp, qs:qs, classe:classe, Ainf:Ainf, fatorNiveis:fatorNiveis,
+    Nq:Nq, Nw:Nw, vento:v, Fanc:Fanc, comb:comb, governante:gov, NSd:gov.N, sec:sec
+  };
+};
+
+/* ==========================================================================
+   VERIFICAÇÃO ESTRUTURAL — NBR 8800:2008
+   ========================================================================== */
+AF.estr = {
+  /* Fator de redução por flambagem global, NBR 8800 item 5.3.3 */
+  chi:function(lb0){
+    return lb0<=1.5 ? Math.pow(0.658, lb0*lb0) : 0.877/(lb0*lb0);
+  },
+  /* Fator Q de flambagem local para seção tubular circular, NBR 8800 Anexo F */
+  Q:function(D,t,E,fy){
+    var r=D/t, l1=0.11*E/fy, l2=0.45*E/fy;
+    if(r<=l1) return 1;
+    if(r<=l2) return 0.038*E/(fy*r)+2/3;
+    return 0.038*E/(fy*r)+2/3;   // acima de l2 a seção não é admitida; sinalizada à parte
+  },
+  montante:function(o){
+    var s=AF.u.secao(o.de,o.t);
+    var E=o.E*1000, fy=o.fy*1000;                 // kPa
+    var KL=o.K*o.L;
+    var Ne=Math.PI*Math.PI*E*s.I/(KL*KL);         // kN
+    var Q=AF.estr.Q(s.D*1000,o.t,o.E,o.fy);
+    var lb0=Math.sqrt(Q*s.A*fy/Ne);
+    var chi=AF.estr.chi(lb0);
+    var NRd=chi*Q*s.A*fy/1.10;
+    return {sec:s, Ne:Ne, Q:Q, lb0:lb0, chi:chi, NRd:NRd, esbeltez:KL/s.r, KL:KL};
+  },
+  piso:function(o){
+    var L=o.L, b=o.b;
+    var ppLin=o.mPiso*b*9.81/1000;                       // kN/m
+    var qLin =o.qs*b;                                    // kN/m
+    var Md = o.gg*ppLin*L*L/8 + o.gq*qLin*L*L/8;
+    var Mc = o.gg*ppLin*L*L/8 + o.gq*o.Pconc*L/4;
+    var MSd= Math.max(Md,Mc);
+    var W  = o.W/1e6, I=o.I/1e8;                          // m3, m4
+    var MRd= W*o.fy*1000/1.10;
+    var fServ = 5*(qLin+ppLin)*Math.pow(L,4)/(384*o.E*1000*I);
+    var fLim  = L/o.divFlecha;
+    return {ppLin:ppLin,qLin:qLin,Mdist:Md,Mconc:Mc,MSd:MSd,MRd:MRd,
+            flecha:fServ,flechaLim:fLim,govConc:Mc>Md};
+  },
+  /* Executa o conjunto de verificações e devolve a lista com taxas de utilização */
+  todas:function(g,c,p){
+    var it=[];
+    var m=AF.estr.montante({de:p.tubo.de,t:p.tubo.t,E:p.E,fy:p.fy,K:p.K,L:g.hL});
+    it.push({grupo:"Montante", nome:"Compressão com flambagem", Sd:c.NSd, Rd:m.NRd, un:"kN",
+             obs:"λ₀ = "+AF.u.rnd(m.lb0,3)+" · χ = "+AF.u.rnd(m.chi,3)+" · Q = "+AF.u.rnd(m.Q,3)});
+    it.push({grupo:"Montante", nome:"Índice de esbeltez", Sd:m.esbeltez, Rd:200, un:"—",
+             obs:"KL/r, limite 200 para peça comprimida"});
+
+    var pi=AF.estr.piso({L:g.vao,b:p.bPiso,mPiso:p.mPiso,qs:c.qs,Pconc:p.Pconc,
+                         gg:p.gg,gq:p.gq,W:p.Wpiso,I:p.Ipiso,fy:p.fy,E:p.E,divFlecha:p.divFlecha});
+    it.push({grupo:"Piso", nome:"Flexão da prancha", Sd:pi.MSd, Rd:pi.MRd, un:"kN·m",
+             obs:pi.govConc?"governa a carga concentrada de "+p.Pconc+" kN":"governa a carga distribuída"});
+    it.push({grupo:"Piso", nome:"Flecha em serviço", Sd:pi.flecha*1000, Rd:pi.flechaLim*1000, un:"mm",
+             obs:"limite L/"+p.divFlecha});
+
+    var Fanc=Math.max(p.gw*c.Fanc, p.Amin);
+    it.push({grupo:"Ancoragem", nome:"Força por ponto", Sd:Fanc, Rd:p.Ranc, un:"kN",
+             obs:g.nAnc+" pontos · "+AF.u.rnd(c.vento.Ftot,1)+" kN de vento total"});
+    it.push({grupo:"Ancoragem", nome:"Espaçamento vertical", Sd:g.ancVertM, Rd:4.0, un:"m",
+             obs:"prática consolidada: no máximo 4,00 m entre níveis amarrados"});
+    it.push({grupo:"Ancoragem", nome:"Espaçamento horizontal", Sd:g.ancHorizM, Rd:6.0, un:"m",
+             obs:"no máximo 6,00 m entre prumadas amarradas"});
+
+    var Asap=p.sapataA;
+    var sigma=c.NSd/Asap;
+    it.push({grupo:"Apoio", nome:"Tensão no apoio", Sd:sigma, Rd:p.sigmaAdm, un:"kPa",
+             obs:"prancha de "+AF.u.rnd(Asap,3)+" m² sob cada montante"});
+
+    it.forEach(function(x){ x.taxa = x.Rd>0 ? x.Sd/x.Rd : Infinity; x.ok = x.taxa<=1.0; });
+    var taxaMax=Math.max.apply(null,it.map(function(x){return x.taxa;}));
+    return {itens:it, ok:it.every(function(x){return x.ok;}), taxaMax:taxaMax,
+            montante:m, piso:pi, Fanc:Fanc, sigma:sigma,
+            critico:it.reduce(function(a,b){return b.taxa>a.taxa?b:a;})};
+  }
+};
+
+/* ==========================================================================
+   CUSTO DIRETO — usado pelo otimizador e pela aba Orçamento
+   ========================================================================== */
+AF.orc = {
+  itens:function(g,meses,pr,hh){
+    var q=g.quant, L=[];
+    function loc(nome,un,qtd,pu){ L.push({fam:"Locação",nome:nome,un:un,qtd:qtd,pu:pu,total:qtd*pu}); }
+    loc("Quadro / pórtico transversal","un·mês",q.quadro*meses,pr.quadro_mes);
+    loc("Diagonal de contraventamento","un·mês",q.diagonal*meses,pr.diagonal_mes);
+    loc("Longarina","un·mês",q.longarina*meses,pr.longarina_mes);
+    loc("Prancha metálica","un·mês",q.piso*meses,pr.piso_mes);
+    loc("Sapata ajustável","un·mês",q.sapata*meses,pr.sapata_mes);
+    loc("Guarda-corpo","un·mês",q.guardacorpo*meses,pr.guardacorpo_mes);
+    loc("Rodapé","un·mês",q.rodape*meses,pr.rodape_mes);
+    loc("Módulo de escada","un·mês",q.escada*meses,pr.escada_mes);
+
+    var HH = q.quadro*hh.quadro + q.diagonal*hh.diagonal + q.longarina*hh.longarina +
+             q.piso*hh.piso + q.sapata*hh.sapata + q.guardacorpo*hh.guardacorpo +
+             q.rodape*hh.rodape + q.escada*hh.escada + q.ancoragem*hh.ancoragem +
+             q.tela_m2*hh.tela_m2;
+    var HHtot = HH*1.55;   // montagem + desmontagem a 55% do tempo de montagem
+
+    L.push({fam:"Mão de obra",nome:"Montador — montagem e desmontagem",un:"h",qtd:HHtot,pu:pr.hh_montador,total:HHtot*pr.hh_montador});
+    L.push({fam:"Mão de obra",nome:"Encarregado — 1 para cada 6 montadores",un:"h",qtd:HHtot/6,pu:pr.hh_encarregado,total:HHtot/6*pr.hh_encarregado});
+    L.push({fam:"Materiais",nome:"Tela de proteção de fachada",un:"m²",qtd:q.tela_m2,pu:pr.tela_m2,total:q.tela_m2*pr.tela_m2});
+    L.push({fam:"Materiais",nome:"Ponto de ancoragem com chumbador",un:"un",qtd:q.ancoragem,pu:pr.ancoragem_un,total:q.ancoragem*pr.ancoragem_un});
+    L.push({fam:"Serviços",nome:"Transporte de ida e volta",un:"t",qtd:g._massa_t*2,pu:pr.transporte_t,total:g._massa_t*2*pr.transporte_t});
+    L.push({fam:"Serviços",nome:"ART de projeto e execução",un:"vb",qtd:1,pu:pr.art,total:pr.art});
+    L.push({fam:"Serviços",nome:"Inspeções periódicas",un:"evento",qtd:g._inspecoes,pu:pr.inspecao_evento,total:g._inspecoes*pr.inspecao_evento});
+
+    var total=L.reduce(function(a,b){return a+b.total;},0);
+    return {itens:L, total:total, HH:HHtot};
+  },
+  /* IVA equivalente: alíquota nominal descontada do crédito aproveitado.
+     CBS e IBS são não cumulativos, então só a parcela não creditada onera o preço. */
+  ivaEq:function(o){ return ((+o.CBS||0)+(+o.IBS||0))*(1-(+o.credito||0)/100); },
+
+  /* Separa os tributos por regime entre os que incidem por dentro (na base do preço,
+     entram no denominador) e os que incidem por fora (somam sobre o preço). */
+  tributos:function(o){
+    var reg=o.regime||"atual";
+    var ivaEq=(reg==="atual")?0:AF.orc.ivaEq(o);
+    var porDentro;
+    if(reg==="atual") porDentro=(+o.PIS||0)+(+o.COFINS||0)+(+o.ISS||0)+(+o.CPRB||0);
+    else if(reg==="transicao") porDentro=(+o.ISS||0)+(+o.PIS||0)+(+o.COFINS||0)+(+o.CPRB||0);
+    else porDentro=0;
+    return {regime:reg, ivaEq:ivaEq, porDentro:porDentro, total:porDentro+ivaEq};
+  },
+
+  /* BDI conforme o regime tributário.
+     atual      BDI = [ (1+AC+S+R)(1+DF)(1+L) / (1−I) ] − 1
+     transição  BDI = [ (1+AC+S+R)(1+DF)(1+L)(1+IVAeq) / (1−ISS) ] − 1
+     IVA pleno  BDI =   (1+AC+S+R)(1+DF)(1+L)(1+IVAeq) − 1
+     Na transição e no IVA pleno, CBS e IBS incidem por fora e por isso multiplicam
+     o fator em vez de reduzir a base. */
+  bdi:function(o){
+    var reg=o.regime||"atual";
+    var A=(1+(+o.AC||0)/100+(+o.S||0)/100+(+o.R||0)/100)*(1+(+o.DF||0)/100)*(1+(+o.L||0)/100);
+    if(reg==="iva"){
+      var ivaEq=(o.ivaEq!==undefined)?+o.ivaEq:AF.orc.ivaEq(o);
+      return (A*(1+ivaEq/100)-1)*100;
+    }
+    if(reg==="transicao"){
+      var iq=(o.ivaEq!==undefined)?+o.ivaEq:AF.orc.ivaEq(o);
+      var dd=1-(+o.porDentro||0)/100;
+      if(dd<=0) throw new Error("Tributos por dentro inviáveis");
+      return (A*(1+iq/100)/dd-1)*100;
+    }
+    var I=((o.I!==undefined)?+o.I:(+o.porDentro||0))/100;
+    if(I>=1) throw new Error("Carga tributária inviável");
+    return (A/(1-I)-1)*100;
+  },
+  formulaBdi:function(reg){
+    if(reg==="iva")       return "BDI = (1+AC+S+R)·(1+DF)·(1+L)·(1+IVAeq) − 1";
+    if(reg==="transicao") return "BDI = [ (1+AC+S+R)·(1+DF)·(1+L)·(1+IVAeq) / (1−ISS) ] − 1";
+    return "BDI = [ (1+AC+S+R)·(1+DF)·(1+L) / (1−I) ] − 1";
+  }
+};
+
+/* ==========================================================================
+   OTIMIZADOR — varredura completa do espaço de configurações viáveis
+   ========================================================================== */
+AF.otim = function(base, esp){
+  var res=[], desc=[], testadas=0;
+  esp.vaos.forEach(function(vao){
+   esp.lances.forEach(function(hL){
+    esp.ws.forEach(function(w){
+     esp.tubos.forEach(function(tid){
+      esp.avs.forEach(function(av){
+       testadas++;
+       var tubo=AF.dados.tubos.filter(function(t){return t.id===tid;})[0];
+       var pg=Object.assign({},base.pg,{vao:vao,alturaLance:hL,w:w,ancVert:av});
+       var g,c,v;
+       try{
+         g=AF.geo(pg);
+         c=AF.carga(g,Object.assign({},base.pc,{tubo:tubo}));
+         v=AF.estr.todas(g,c,Object.assign({},base.pe,{tubo:tubo}));
+       }catch(e){ desc.push({cfg:vao+"×"+hL+"×"+w+" "+tid, motivo:"erro de cálculo"}); return; }
+
+       var motivo=null;
+       if(!v.ok) motivo="reprova em "+v.critico.nome;
+       else if(v.taxaMax>esp.taxaMax) motivo="taxa de "+Math.round(v.taxaMax*100)+"% acima do limite";
+       if(motivo){ desc.push({cfg:vao.toFixed(2)+"×"+hL.toFixed(2)+"×"+w.toFixed(2)+" "+tid+" anc/"+av, motivo:motivo}); return; }
+
+       g._massa_t=c.massa.total/1000;
+       g._inspecoes=base.inspecoes;
+       var o=AF.orc.itens(g,base.meses,base.precos,AF.dados.hh);
+       var pecas=Object.keys(g.quant).reduce(function(a,k){return a+(k==="tela_m2"?0:g.quant[k]);},0);
+       res.push({
+         vao:vao, hL:hL, w:w, tubo:tid, av:av,
+         nVaos:g.nVaos, nLances:g.nLances, nAnc:g.nAnc,
+         custo:o.total, peso:c.massa.aco+c.massa.acess, pecas:pecas, hh:o.HH,
+         taxa:v.taxaMax, critico:v.critico.nome, area:g.areaFachada, g:g, c:c, v:v
+       });
+      });
+     });
+    });
+   });
+  });
+  var chave = esp.objetivo;
+  res.sort(function(a,b){ return a[chave]-b[chave]; });
+  return {viaveis:res, descartadas:desc, testadas:testadas};
+};
+
+/* ==========================================================================
+   CRONOGRAMA — linha de balanço
+   ========================================================================== */
+AF.crono = function(g,p){
+  var area=g.areaFachada;
+  var cap=Math.max(1e-6, p.prodMont*p.equipes);
+  var dMont=Math.max(1,Math.ceil(area/cap));
+  var dDesm=Math.max(1,Math.ceil(area/Math.max(1e-6,p.prodDesm*p.equipes)));
+  var restrito=false, dMontBase=dMont;
+  if(p.estoqueOn && p.estoque>0 && g.quant.montante>p.estoque){
+    var ciclos=Math.ceil(g.quant.montante/p.estoque);
+    dMont=dMont*ciclos; restrito=true;
+  }
+  var ritmo=g.nLances/dMont;                        // lances por dia
+  var t0=p.mobilizacao;
+  var lances=[];
+  for(var i=1;i<=g.nLances;i++){
+    var ini=t0+(i-1)/ritmo, fim=t0+i/ritmo;
+    lances.push({lance:i, montIni:ini, montFim:fim,
+                 desmIni:t0+dMont+p.permanencia+(g.nLances-i)/Math.max(1e-9,g.nLances/dDesm),
+                 desmFim:t0+dMont+p.permanencia+(g.nLances-i+1)/Math.max(1e-9,g.nLances/dDesm)});
+  }
+  var total=p.mobilizacao+dMont+p.permanencia+dDesm;
+  var meses=total/p.diasUteisMes;
+  var HHdia=p.equipes*p.montadores*p.jornada;
+  var marcos=[
+    {m:"Mobilização e conferência das peças", dia:0, dur:p.mobilizacao},
+    {m:"Montagem da fachada", dia:t0, dur:dMont},
+    {m:"Liberação para uso", dia:t0+dMont, dur:0},
+    {m:"Permanência em serviço", dia:t0+dMont, dur:p.permanencia},
+    {m:"Desmontagem", dia:t0+dMont+p.permanencia, dur:dDesm},
+    {m:"Desmobilização", dia:total, dur:0}
+  ];
+  var semanas=Math.max(1,Math.ceil(dMont/7));
+  var consumo=Object.keys(g.quant).map(function(k){
+    return {peca:k, total:g.quant[k], porSemana:g.quant[k]/semanas};
+  });
+  return {dMont:dMont, dMontBase:dMontBase, dDesm:dDesm, total:total, meses:meses, ritmo:ritmo,
+          permanencia:p.permanencia, mobilizacao:p.mobilizacao,
+          lances:lances, marcos:marcos, HHdia:HHdia, consumo:consumo, semanas:semanas,
+          restrito:restrito, area:area};
+};
+
+
+/* ==========================================================================
+   IFC4 — geração do modelo do andaime em STEP (ISO 10303-21)
+   Sistema de eixos: X na largura da fachada, Y afastando-se da edificação, Z para cima.
+   ========================================================================== */
+AF.ifc = (function(){
+  var B64="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_$";
+  function hash32(s){var h=2166136261>>>0;for(var i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)>>>0;}return h>>>0;}
+  function prng(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);
+    t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+  /* GUID IFC: 128 bits em 22 caracteres base-64, o primeiro com apenas 2 bits */
+  function guidFactory(seed){
+    var r=prng(hash32(String(seed))), hx="0123456789abcdef";
+    return function(){
+      var hex=""; for(var i=0;i<32;i++) hex+=hx[Math.floor(r()*16)];
+      var n=BigInt("0x"+hex), s64=BigInt(64), out="";
+      for(var k=0;k<22;k++){ out=B64[Number(n%s64)]+out; n=n/s64; }
+      return out;
+    };
+  }
+  function R(x){ x=+x; if(!isFinite(x)) x=0;
+    var s=x.toFixed(6); if(s.indexOf(".")>=0){ s=s.replace(/0+$/,""); if(s.slice(-1)===".") s+="0"; }
+    return s; }
+  function T(s){
+    s=String(s==null?"":s); var out="",buf="";
+    function flush(){ if(buf){ out+="\\X2\\"+buf+"\\X0\\"; buf=""; } }
+    for(var i=0;i<s.length;i++){
+      var c=s.charCodeAt(i);
+      if(c<128){ flush(); out += (s[i]==="'"?"''":(s[i]==="\\"?"\\\\":s[i])); }
+      else buf += ("0000"+c.toString(16).toUpperCase()).slice(-4);
+    }
+    flush(); return "'"+out+"'";
+  }
+  function W(){ this.n=0; this.l=[]; }
+  W.prototype.add=function(str){ this.n++; this.l.push("#"+this.n+"="+str+";"); return "#"+this.n; };
+
+  function gerar(g,c,e,meta,opt){
+    opt=opt||{};
+    /* A modulação da ancoragem e da diagonal vem da meta; se divergir da geometria
+       recebida, o modelo não corresponderia ao quantitativo verificado. */
+    if(meta.ancVert!==undefined && Math.abs(g.ancVertM-Math.round(meta.ancVert)*g.hL)>1e-9)
+      throw new Error("Ancoragem vertical da meta nao corresponde a geometria calculada");
+    function on(k,padrao){ return opt[k]===undefined ? padrao : !!opt[k]; }
+    var inc={montante:1, travessa:1, longarina:1, diagonal:1,
+             piso:on("piso",true), guardacorpo:on("guardacorpo",true), rodape:on("rodape",true),
+             sapata:on("sapata",true), ancoragem:on("ancoragem",true), tela:on("tela",false)};
+    var w=new W(), G=guidFactory((meta.nome||"andaime")+"|"+g.nVaos+"x"+g.nLances+"|"+g.vao+"|"+g.hL);
+    var tubo=meta.tubo, raio=tubo.de/2000, esp=tubo.t/1000;
+    var y0=+meta.afastamento||0.15, y1=y0+g.w;
+    var espPiso=0.05, espRodape=0.03, hRodape=0.20;
+
+    /* --- contexto geométrico --- */
+    var pO=w.add("IFCCARTESIANPOINT((0.,0.,0.))");
+    var axO=w.add("IFCAXIS2PLACEMENT3D("+pO+",$,$)");
+    var ctx=w.add("IFCGEOMETRICREPRESENTATIONCONTEXT($,'Model',3,1.E-05,"+axO+",$)");
+    var body=w.add("IFCGEOMETRICREPRESENTATIONSUBCONTEXT('Body','Model',*,*,*,*,"+ctx+",$,.MODEL_VIEW.,$)");
+    var dirs={};
+    function DIR(x,y,z){ var k=R(x)+","+R(y)+","+R(z);
+      if(!dirs[k]) dirs[k]=w.add("IFCDIRECTION(("+k+"))"); return dirs[k]; }
+    var dZ=DIR(0,0,1);
+
+    /* --- unidades --- */
+    var un=[w.add("IFCSIUNIT(*,.LENGTHUNIT.,$,.METRE.)"),
+            w.add("IFCSIUNIT(*,.AREAUNIT.,$,.SQUARE_METRE.)"),
+            w.add("IFCSIUNIT(*,.VOLUMEUNIT.,$,.CUBIC_METRE.)"),
+            w.add("IFCSIUNIT(*,.PLANEANGLEUNIT.,$,.RADIAN.)"),
+            w.add("IFCSIUNIT(*,.MASSUNIT.,.KILO.,.GRAM.)")];
+    var ua=w.add("IFCUNITASSIGNMENT(("+un.join(",")+"))");
+
+    /* --- autoria --- */
+    var resp=(meta.responsavel||"Responsavel tecnico").split(" ");
+    var per=w.add("IFCPERSON($,"+T(resp.slice(1).join(" ")||"-")+","+T(resp[0])+",$,$,$,$,$)");
+    var org=w.add("IFCORGANIZATION($,"+T(meta.organizacao||"AndaimeFach Pro")+",$,$,$)");
+    var po=w.add("IFCPERSONANDORGANIZATION("+per+","+org+",$)");
+    var app=w.add("IFCAPPLICATION("+org+",'1.1','AndaimeFach Pro','ANDAIMEFACH')");
+    var ts=Math.floor((meta.data||Date.now())/1000);
+    var oh=w.add("IFCOWNERHISTORY("+po+","+app+",$,.ADDED.,"+ts+","+po+","+app+","+ts+")");
+
+    /* --- estrutura espacial --- */
+    var proj=w.add("IFCPROJECT("+T(G())+","+oh+","+T(meta.nome||"Andaime fachadeiro")+","+
+      T(meta.descricao||"")+",$,$,$,("+ctx+"),"+ua+")");
+    var plSite=w.add("IFCLOCALPLACEMENT($,"+axO+")");
+    var site=w.add("IFCSITE("+T(G())+","+oh+","+T(meta.local||"Canteiro")+",$,$,"+plSite+
+      ",$,$,.ELEMENT.,$,$,$,$,$)");
+    var plBld=w.add("IFCLOCALPLACEMENT("+plSite+","+axO+")");
+    var bld=w.add("IFCBUILDING("+T(G())+","+oh+","+T(meta.obra||"Edificacao")+",$,$,"+plBld+
+      ",$,$,.ELEMENT.,$,$,$)");
+
+    var storeys=[], plStorey=[];
+    for(var j=0;j<g.nLances;j++){
+      var pz=w.add("IFCCARTESIANPOINT((0.,0.,"+R(j*g.hL)+"))");
+      var az=w.add("IFCAXIS2PLACEMENT3D("+pz+",$,$)");
+      var pl=w.add("IFCLOCALPLACEMENT("+plBld+","+az+")");
+      plStorey.push(pl);
+      storeys.push(w.add("IFCBUILDINGSTOREY("+T(G())+","+oh+","+T("Lance "+(j+1))+",$,$,"+pl+
+        ",$,$,.ELEMENT.,"+R(j*g.hL)+")"));
+    }
+    w.add("IFCRELAGGREGATES("+T(G())+","+oh+",$,$,"+proj+",("+site+"))");
+    w.add("IFCRELAGGREGATES("+T(G())+","+oh+",$,$,"+site+",("+bld+"))");
+    w.add("IFCRELAGGREGATES("+T(G())+","+oh+",$,$,"+bld+",("+storeys.join(",")+"))");
+
+    /* --- perfis e formas reaproveitadas --- */
+    var perfTubo=w.add("IFCCIRCLEHOLLOWPROFILEDEF(.AREA.,"+T("TUBO "+tubo.de+"x"+tubo.t)+",$,"+
+      R(raio)+","+R(esp)+")");
+    var formas={};
+    function formaTubo(L){
+      var k="t"+R(L); if(formas[k]) return formas[k];
+      var sol=w.add("IFCEXTRUDEDAREASOLID("+perfTubo+","+axO+","+dZ+","+R(L)+")");
+      var sr=w.add("IFCSHAPEREPRESENTATION("+body+",'Body','SweptSolid',("+sol+"))");
+      return formas[k]=w.add("IFCPRODUCTDEFINITIONSHAPE($,$,("+sr+"))");
+    }
+    function formaCaixa(a,b,L,nome){
+      var k="c"+R(a)+"_"+R(b)+"_"+R(L); if(formas[k]) return formas[k];
+      var pf=w.add("IFCRECTANGLEPROFILEDEF(.AREA.,"+T(nome)+",$,"+R(a)+","+R(b)+")");
+      var sol=w.add("IFCEXTRUDEDAREASOLID("+pf+","+axO+","+dZ+","+R(L)+")");
+      var sr=w.add("IFCSHAPEREPRESENTATION("+body+",'Body','SweptSolid',("+sol+"))");
+      return formas[k]=w.add("IFCPRODUCTDEFINITIONSHAPE($,$,("+sr+"))");
+    }
+    /* placement com eixo local Z = eixo da peça */
+    function place(parent,x,y,z,ax,rf){
+      var p=w.add("IFCCARTESIANPOINT(("+R(x)+","+R(y)+","+R(z)+"))");
+      var a=w.add("IFCAXIS2PLACEMENT3D("+p+","+(ax||"$")+","+(rf||"$")+")");
+      return w.add("IFCLOCALPLACEMENT("+parent+","+a+")");
+    }
+
+    var fam={};   /* famílias de elementos, para pset e material */
+    var porStorey=[]; for(var q=0;q<g.nLances;q++) porStorey.push([]);
+    function push(f,j,ref){ (fam[f]=fam[f]||[]).push(ref); porStorey[j].push(ref); }
+
+    var nv=g.nVaos, hL=g.hL, vao=g.vao;
+    var dLong=DIR(1,0,0), rLong=DIR(0,0,1);
+    var dTrav=DIR(0,1,0), rTrav=DIR(0,0,1);
+    var dc=Math.sqrt(vao*vao+hL*hL), cs=vao/dc, sn=hL/dc;
+
+    for(var j=0;j<g.nLances;j++){
+      var P=plStorey[j];
+      /* montantes */
+      if(inc.montante) for(var i=0;i<=nv;i++) for(var s2=0;s2<2;s2++){
+        var yy=s2?y1:y0;
+        push("montante",j,w.add("IFCMEMBER("+T(G())+","+oh+","+T("Montante L"+(j+1)+" P"+(i+1)+(s2?" ext":" int"))+
+          ",$,'MONTANTE',"+place(P,i*vao,yy,0)+","+formaTubo(hL)+",$,.POST.)"));
+      }
+      /* travessas do quadro */
+      if(inc.travessa) for(var i2=0;i2<=nv;i2++)
+        push("travessa",j,w.add("IFCMEMBER("+T(G())+","+oh+","+T("Travessa L"+(j+1)+" P"+(i2+1))+
+          ",$,'TRAVESSA',"+place(P,i2*vao,y0,hL,dTrav,rTrav)+","+formaTubo(g.w)+",$,.MEMBER.)"));
+      /* longarinas */
+      if(inc.longarina) for(var i3=0;i3<nv;i3++) for(var s3=0;s3<2;s3++)
+        push("longarina",j,w.add("IFCMEMBER("+T(G())+","+oh+","+T("Longarina L"+(j+1)+" V"+(i3+1))+
+          ",$,'LONGARINA',"+place(P,i3*vao,s3?y1:y0,hL,dLong,rLong)+","+formaTubo(vao)+",$,.STRINGER.)"));
+      /* diagonais */
+      if(inc.diagonal){
+        var passo=Math.max(1,Math.round(meta.vaosPorDiagonal||3));
+        for(var i4=0;i4<nv;i4+=passo){
+          var sobe=(j%2===0);
+          var ax4=sobe?DIR(cs,0,sn):DIR(cs,0,-sn);
+          push("diagonal",j,w.add("IFCMEMBER("+T(G())+","+oh+","+T("Diagonal L"+(j+1)+" V"+(i4+1))+
+            ",$,'DIAGONAL',"+place(P,i4*vao,y1,sobe?0:hL,ax4,DIR(0,1,0))+","+formaTubo(dc)+",$,.BRACE.)"));
+        }
+      }
+      /* pranchas */
+      if(inc.piso){
+        var bp=+meta.bPiso||0.32, np=g.nPisosLarg;
+        var yIni=y0+(g.w-np*bp)/2;
+        for(var i5=0;i5<nv;i5++) for(var k5=0;k5<np;k5++)
+          push("piso",j,w.add("IFCPLATE("+T(G())+","+oh+","+T("Prancha L"+(j+1)+" V"+(i5+1)+" F"+(k5+1))+
+            ",$,'PRANCHA',"+place(P,i5*vao,yIni+(k5+0.5)*bp,hL-espPiso/2,dLong,dTrav)+","+
+            formaCaixa(bp,espPiso,vao,"PRANCHA")+",$,.SHEET.)"));
+      }
+      /* guarda-corpo e rodapé */
+      if(inc.guardacorpo) for(var i6=0;i6<nv;i6++) [1.20,0.70].forEach(function(hg){
+        push("guardacorpo",j,w.add("IFCRAILING("+T(G())+","+oh+","+T("Guarda-corpo L"+(j+1)+" V"+(i6+1)+" h="+hg)+
+          ",$,'GUARDA-CORPO',"+place(P,i6*vao,y1,hL+hg,dLong,rLong)+","+formaTubo(vao)+",$,.GUARDRAIL.)"));
+      });
+      if(inc.rodape) for(var i7=0;i7<nv;i7++)
+        push("rodape",j,w.add("IFCPLATE("+T(G())+","+oh+","+T("Rodape L"+(j+1)+" V"+(i7+1))+
+          ",$,'RODAPE',"+place(P,i7*vao,y1,hL+hRodape/2,dLong,DIR(0,0,1))+","+
+          formaCaixa(hRodape,espRodape,vao,"RODAPE")+",$,.SHEET.)"));
+      /* tela */
+      if(inc.tela)
+        push("tela",j,w.add("IFCCOVERING("+T(G())+","+oh+","+T("Tela de fachada L"+(j+1))+
+          ",$,'TELA',"+place(P,g.largura/2,y1+0.01,hL/2,dTrav,dLong)+","+
+          formaCaixa(g.largura,hL,0.002,"TELA")+",$,.MEMBRANE.)"));
+      /* ancoragens */
+      if(inc.ancoragem && g.ancNiveis.indexOf(j+1)>=0){
+        g.ancPrumadas.forEach(function(i8){
+          push("ancoragem",j,w.add("IFCMECHANICALFASTENER("+T(G())+","+oh+","+
+            T("Ancoragem L"+(j+1)+" P"+(i8+1))+",$,'ANCORAGEM',"+
+            place(P,i8*vao,0,hL,dTrav,dLong)+","+formaCaixa(0.05,0.05,y0,"ANCORAGEM")+
+            ",$,"+R(0.012)+","+R(y0)+",.ANCHORBOLT.)"));
+        });
+      }
+      /* sapatas no lance térreo */
+      if(inc.sapata && j===0) for(var i9=0;i9<=nv;i9++) for(var s9=0;s9<2;s9++)
+        push("sapata",0,w.add("IFCFOOTING("+T(G())+","+oh+","+T("Sapata P"+(i9+1)+(s9?" ext":" int"))+
+          ",$,'SAPATA',"+place(P,i9*vao,s9?y1:y0,-0.05)+","+
+          formaCaixa(0.25,0.30,0.05,"PRANCHA DE APOIO")+",$,.PAD_FOOTING.)"));
+    }
+
+    /* --- contenção espacial --- */
+    for(var j2=0;j2<g.nLances;j2++) if(porStorey[j2].length)
+      w.add("IFCRELCONTAINEDINSPATIALSTRUCTURE("+T(G())+","+oh+","+T("Lance "+(j2+1))+",$,("+
+        porStorey[j2].join(",")+"),"+storeys[j2]+")");
+
+    /* --- material --- */
+    var aco=w.add("IFCMATERIAL("+T("Aco estrutural fy="+meta.fy+" MPa")+",$,"+T("Aco")+")");
+    var metal=[]; ["montante","travessa","longarina","diagonal","guardacorpo","piso","ancoragem"]
+      .forEach(function(f){ if(fam[f]) metal=metal.concat(fam[f]); });
+    if(metal.length) w.add("IFCRELASSOCIATESMATERIAL("+T(G())+","+oh+",$,$,("+metal.join(",")+"),"+aco+")");
+
+    /* --- conjuntos de propriedades --- */
+    function pv(nome,tipo,val){ return w.add("IFCPROPERTYSINGLEVALUE("+T(nome)+",$,"+tipo+"("+
+      (tipo==="IFCTEXT"||tipo==="IFCLABEL"?T(val):(tipo==="IFCINTEGER"?Math.round(val):R(val)))+"),$)"); }
+    function pset(nome,props,alvos){
+      if(!alvos||!alvos.length) return;
+      var ps=w.add("IFCPROPERTYSET("+T(G())+","+oh+","+T(nome)+",$,("+props.join(",")+"))");
+      w.add("IFCRELDEFINESBYPROPERTIES("+T(G())+","+oh+",$,$,("+alvos.join(",")+"),"+ps+")");
+    }
+    pset("AndaimeFach_Configuracao",[
+      pv("LarguraFachada","IFCREAL",g.largura), pv("AlturaMontada","IFCREAL",g.alturaReal),
+      pv("AreaFachada","IFCREAL",g.areaFachada), pv("Vao","IFCREAL",g.vao),
+      pv("AlturaLance","IFCREAL",g.hL), pv("LarguraAndaime","IFCREAL",g.w),
+      pv("NumeroVaos","IFCINTEGER",g.nVaos), pv("NumeroLances","IFCINTEGER",g.nLances),
+      pv("ClasseCarga","IFCINTEGER",c.classe.n), pv("CargaServico_kNm2","IFCREAL",c.qs),
+      pv("VentoTotal_kN","IFCREAL",c.vento.Ftot), pv("PesoTotal_kg","IFCREAL",c.massa.total),
+      pv("PontosAncoragem","IFCINTEGER",g.nAnc),
+      pv("TaxaUtilizacaoMaxima","IFCREAL",e.taxaMax),
+      pv("ItemCritico","IFCTEXT",e.critico.nome),
+      pv("Situacao","IFCTEXT",e.ok?"Aprovado":"Reprovado"),
+      pv("Normas","IFCTEXT","NBR 16492:2017; NBR 6123:1988; NBR 8800:2008; NR-18; NR-35")
+    ],[bld]);
+    pset("AndaimeFach_Montante",[
+      pv("Perfil","IFCLABEL","Tubo "+tubo.de+" x "+tubo.t+" mm"),
+      pv("DiametroExterno_mm","IFCREAL",tubo.de), pv("Espessura_mm","IFCREAL",tubo.t),
+      pv("NSd_kN","IFCREAL",c.NSd), pv("NRd_kN","IFCREAL",e.montante.NRd),
+      pv("Esbeltez","IFCREAL",e.montante.esbeltez), pv("Chi","IFCREAL",e.montante.chi)
+    ],fam.montante);
+    pset("AndaimeFach_Prancha",[
+      pv("MSd_kNm","IFCREAL",e.piso.MSd), pv("MRd_kNm","IFCREAL",e.piso.MRd),
+      pv("Flecha_mm","IFCREAL",e.piso.flecha*1000)
+    ],fam.piso);
+    pset("AndaimeFach_Ancoragem",[
+      pv("FSd_kN","IFCREAL",e.Fanc), pv("EspacamentoVertical_m","IFCREAL",g.ancVertM),
+      pv("EspacamentoHorizontal_m","IFCREAL",g.ancHorizM)
+    ],fam.ancoragem);
+
+    /* --- montagem do arquivo --- */
+    var iso=new Date(meta.data||Date.now()).toISOString().slice(0,19);
+    var total=0; Object.keys(fam).forEach(function(f){ total+=fam[f].length; });
+    var cab=["ISO-10303-21;","HEADER;",
+      "FILE_DESCRIPTION(('ViewDefinition [CoordinationView]'),'2;1');",
+      "FILE_NAME("+T((meta.nome||"andaime")+".ifc")+","+T(iso)+",("+T(meta.responsavel||"-")+"),("+
+        T(meta.organizacao||"AndaimeFach Pro")+"),'AndaimeFach Pro 1.1','AndaimeFach Pro','');",
+      "FILE_SCHEMA(('IFC4'));","ENDSEC;","DATA;"];
+    var txt=cab.concat(w.l).concat(["ENDSEC;","END-ISO-10303-21;",""]).join("\n");
+    return {texto:txt, entidades:w.n, elementos:total, familias:fam,
+            bytes:txt.length, storeys:g.nLances};
+  }
+  return {gerar:gerar, guidFactory:guidFactory, real:R, texto:T};
+})();
+
+if(typeof module!=="undefined" && module.exports) module.exports=AF;
+if(typeof window!=="undefined") window.AF=AF;
+</script>
+
+<script>
+"use strict";
+/* ==========================================================================
+   Interface — leitura de campos, cálculo e renderização
+   ========================================================================== */
+var $=function(id){return document.getElementById(id);};
+var U=AF.u, N=U.num, BRL=U.brl;
+var v=function(id){var e=$(id); return e?parseFloat(String(e.value).replace(",","."))||0:0;};
+var tx=function(id){var e=$(id); return e?e.value:"";};
+var ck=function(id){var e=$(id); return e?e.checked:false;};
+var S={};   // último estado calculado
+
+function el(tag,attrs,html){
+  var e=document.createElementNS(tag==="svg"||SVGT[tag]?"http://www.w3.org/2000/svg":"http://www.w3.org/1999/xhtml",tag);
+  for(var k in attrs) e.setAttribute(k,attrs[k]);
+  if(html!==undefined) e.textContent=html;
+  return e;
+}
+var SVGT={g:1,line:1,rect:1,circle:1,text:1,path:1,polygon:1,polyline:1};
+
+function kpi(cont,arr){
+  cont.innerHTML="";
+  arr.forEach(function(k){
+    var d=document.createElement("div");
+    d.className="kpi"+(k.cls?" "+k.cls:"");
+    d.innerHTML='<div class="k">'+k.k+'</div><div class="v">'+k.v+
+                (k.u?' <span class="u">'+k.u+'</span>':'')+'</div>';
+    cont.appendChild(d);
+  });
+}
+function tabela(tb,cols,rows,foot){
+  var h="<thead><tr>"+cols.map(function(c){return '<th class="'+(c.n?"n":"")+'">'+c.t+'</th>';}).join("")+"</tr></thead><tbody>";
+  h+=rows.map(function(r){
+    return "<tr>"+cols.map(function(c,i){
+      return '<td class="'+(c.n?"n":"")+'">'+(r[i]===undefined?"":r[i])+'</td>';}).join("")+"</tr>";
+  }).join("");
+  h+="</tbody>";
+  if(foot) h+="<tfoot><tr>"+cols.map(function(c,i){
+    return '<td class="'+(c.n?"n":"")+'">'+(foot[i]===undefined?"":foot[i])+'</td>';}).join("")+"</tr></tfoot>";
+  tb.innerHTML=h;
+}
+
+/* ---------- Leitura dos parâmetros ---------- */
+function paramsGeo(){
+  return {largura:v("g_larg"), altura:v("g_alt"), vao:parseFloat($("g_vao").value),
+          alturaLance:parseFloat($("g_lance").value), w:parseFloat($("g_w").value),
+          bPiso:v("g_bpiso"), pisosPorLance:v("g_pisos"), vaosPorDiagonal:v("g_diag"),
+          ancHoriz:v("g_ah"), ancVert:v("g_av"), tela:ck("g_tela"), rodape:ck("g_rodape"),
+          distEscada:v("g_esc"), afastamento:v("g_afast")};
+}
+function tuboSel(){ return AF.dados.tubos.filter(function(t){return t.id===$("e_tubo").value;})[0]||AF.dados.tubos[3]; }
+function paramsCarga(){
+  return {tubo:tuboSel(), mPiso:v("c_mpiso"), mTela:v("c_mtela"), pctAcess:v("c_acess"),
+          classe:parseInt($("c_classe").value,10), nivelCarregado:v("c_nlv"), reducao:v("c_red"),
+          V0:v("c_v0"), S1:v("c_s1"), S3:v("c_s3"), cat:$("c_cat").value, cls:$("c_cls").value,
+          phi:v("c_phi"), Ca:v("c_ca"), gg:v("c_gg"), gq:v("c_gq"), gw:v("c_gw"), psi:v("c_psi")};
+}
+function areaSapata(){
+  var m=String(tx("e_sap")).replace(",",".").match(/([\d.]+)\s*[xX×]\s*([\d.]+)/);
+  return m ? parseFloat(m[1])*parseFloat(m[2]) : 0.05;
+}
+function paramsEstr(){
+  return {tubo:tuboSel(), E:v("e_E"), fy:v("e_fy"), K:v("e_K"), bPiso:v("g_bpiso"),
+          mPiso:v("c_mpiso"), Pconc:v("c_pconc"), gg:v("c_gg"), gq:v("c_gq"), gw:v("c_gw"),
+          Wpiso:v("e_Wp"), Ipiso:v("e_Ip"), divFlecha:v("e_flecha"),
+          Ranc:v("e_Ranc"), Amin:v("e_Amin"), sapataA:areaSapata(), sigmaAdm:v("e_sadm")};
+}
+function paramsCrono(){
+  return {equipes:Math.max(1,v("k_eq")), montadores:Math.max(1,v("k_mo")), jornada:v("k_jor"),
+          prodMont:v("k_pm"), prodDesm:v("k_pd"), mobilizacao:v("k_mob"),
+          permanencia:v("k_perm"), diasUteisMes:Math.max(1,v("k_du")),
+          estoqueOn:ck("k_est"), estoque:v("k_estq")};
+}
+
+/* ==========================================================================
+   ELEVAÇÃO — desenho técnico da fachada montada
+   ========================================================================== */
+function desenhaElevacao(g,c){
+  var cont=$("elev"); cont.innerHTML="";
+  var nx=g.nVaos, ny=g.nLances;
+  var simples = nx*ny>1400;
+  var cw=Math.max(9,Math.min(52,820/nx)), chh=Math.max(7,Math.min(38,470/ny));
+  var ml=42, mt=26, mb=30, mr=16;
+  var W=ml+nx*cw+mr, H=mt+ny*chh+mb;
+  var ns="http://www.w3.org/2000/svg";
+  var svg=document.createElementNS(ns,"svg");
+  svg.setAttribute("viewBox","0 0 "+W+" "+H);
+  svg.setAttribute("width",Math.min(W,1000)); svg.setAttribute("height",Math.min(W,1000)*H/W);
+  svg.setAttribute("role","img");
+  svg.setAttribute("aria-label","Elevação com "+nx+" vãos e "+ny+" lances");
+
+  function add(t,a){var e=document.createElementNS(ns,t); for(var k in a) e.setAttribute(k,a[k]); svg.appendChild(e); return e;}
+  function X(i){return ml+i*cw;}
+  function Y(j){return mt+(ny-j)*chh;}   // j=0 no chão
+
+  /* terreno */
+  add("line",{x1:ml-14,y1:Y(0),x2:X(nx)+10,y2:Y(0),stroke:"var(--ink)","stroke-width":1.6});
+  for(var h=0;h<=nx*cw+20;h+=7)
+    add("line",{x1:ml-14+h,y1:Y(0),x2:ml-20+h,y2:Y(0)+6,stroke:"var(--zinc)","stroke-width":.7});
+
+  /* fachada do edifício (hachura à esquerda) */
+  add("rect",{x:ml-14,y:mt-8,width:11,height:ny*chh+8,fill:"var(--bg2)",stroke:"var(--line)","stroke-width":.8});
+
+  /* pisos e longarinas */
+  for(var j=1;j<=ny;j++)
+    add("line",{x1:X(0),y1:Y(j),x2:X(nx),y2:Y(j),stroke:"var(--zinc)","stroke-width":2.2,"stroke-linecap":"square"});
+
+  /* montantes com gradiente de compressão acumulada */
+  for(var i=0;i<=nx;i++){
+    for(var j2=0;j2<ny;j2++){
+      var frac=(ny-j2)/ny;                 // 1 na base
+      add("line",{x1:X(i),y1:Y(j2),x2:X(i),y2:Y(j2+1),stroke:"var(--acc)",
+                  "stroke-width":(1.1+1.9*frac).toFixed(2),opacity:(0.42+0.58*frac).toFixed(2)});
+    }
+  }
+
+  /* diagonais */
+  if(!simples){
+    var passo=Math.max(1,Math.round(v("g_diag")));
+    for(var j3=0;j3<ny;j3++){
+      for(var i3=0;i3<nx;i3+=passo){
+        var sobe=(j3%2===0);
+        add("line",{x1:X(i3),y1:sobe?Y(j3):Y(j3+1),x2:X(i3+1),y2:sobe?Y(j3+1):Y(j3),
+                    stroke:"var(--warn)","stroke-width":1.3,opacity:.9});
+      }
+    }
+  }
+
+  /* ancoragens */
+  g.ancNiveis.forEach(function(jj){
+    g.ancPrumadas.forEach(function(ii){
+      add("polygon",{points:(X(ii)-4)+","+Y(jj)+" "+(X(ii)+4)+","+Y(jj)+" "+X(ii)+","+(Y(jj)-6),
+                     fill:"var(--ok)"});
+      add("line",{x1:ml-3,y1:Y(jj),x2:X(ii),y2:Y(jj),stroke:"var(--ok)","stroke-width":1,
+                  "stroke-dasharray":"3 2",opacity:.75});
+    });
+  });
+  /* sapatas */
+  for(var is=0;is<=nx;is++)
+    add("rect",{x:X(is)-4,y:Y(0)-3,width:8,height:4,fill:"var(--ink2)"});
+
+  /* réguas: lances numerados à esquerda, vãos ao alto */
+  var passoL=ny>28?Math.ceil(ny/14):1;
+  for(var jl=1;jl<=ny;jl+=passoL){
+    var t=document.createElementNS(ns,"text");
+    t.setAttribute("x",ml-20); t.setAttribute("y",(Y(jl)+Y(jl-1))/2+3.5);
+    t.setAttribute("text-anchor","end"); t.setAttribute("font-size","9");
+    t.setAttribute("font-family","var(--f-num)"); t.setAttribute("fill","var(--ink3)");
+    t.textContent=jl; svg.appendChild(t);
+  }
+  var passoV=nx>24?Math.ceil(nx/12):1;
+  for(var iv=1;iv<=nx;iv+=passoV){
+    var t2=document.createElementNS(ns,"text");
+    t2.setAttribute("x",(X(iv)+X(iv-1))/2); t2.setAttribute("y",mt-12);
+    t2.setAttribute("text-anchor","middle"); t2.setAttribute("font-size","9");
+    t2.setAttribute("font-family","var(--f-num)"); t2.setAttribute("fill","var(--ink3)");
+    t2.textContent=iv; svg.appendChild(t2);
+  }
+  /* cotas */
+  function cota(x1,y1,x2,y2,txt){
+    add("line",{x1:x1,y1:y1,x2:x2,y2:y2,stroke:"var(--ink3)","stroke-width":.8});
+    var t3=document.createElementNS(ns,"text");
+    t3.setAttribute("x",(x1+x2)/2); t3.setAttribute("y",(y1+y2)/2+(y1===y2?-4:0));
+    t3.setAttribute("text-anchor","middle"); t3.setAttribute("font-size","9.5");
+    t3.setAttribute("font-family","var(--f-num)"); t3.setAttribute("fill","var(--ink3)");
+    t3.textContent=txt; svg.appendChild(t3);
+  }
+  cota(X(0),H-mb+16,X(nx),H-mb+16,N(g.largura,2)+" m · "+nx+" vãos de "+N(g.vao,2)+" m");
+
+  cont.appendChild(svg);
+  $("elevInfo").textContent=nx+" vãos × "+ny+" lances"+(simples?" · diagonais omitidas no desenho":"");
+  $("legCrit").innerHTML='<b style="background:var(--ink2)"></b>base: N<sub>Sd</sub> = '+N(c.NSd,2)+' kN/montante';
+}
+
+/* ==========================================================================
+   CÁLCULO GERAL
+   ========================================================================== */
+function calc(){
+  var erro=null;
+  try{
+    var pg=paramsGeo(), pc=paramsCarga(), pe=paramsEstr();
+    var g=AF.geo(pg);
+    var c=AF.carga(g,pc);
+    var e=AF.estr.todas(g,c,pe);
+    var k=AF.crono(g,paramsCrono());
+    g._massa_t=c.massa.total/1000;
+    g._inspecoes=Math.max(1,Math.ceil((k.permanencia||v("k_perm"))/Math.max(1,v("s_int"))));
+    S={g:g,c:c,e:e,k:k,pg:pg,pc:pc,pe:pe};
+  }catch(ex){ erro=ex.message; }
+
+  if(erro){
+    $("pillVer").className="pill bad"; $("pillVer").textContent="Erro: "+erro; return;
+  }
+  renderGeo(); renderCargas(); renderEstr(); renderCrono(); renderOrc(); renderSeg(); renderTopo();
+}
+
+function renderTopo(){
+  var g=S.g,e=S.e;
+  $("pillCfg").textContent=N(g.vao,2)+"×"+N(g.hL,2)+" m · "+g.nVaos+"×"+g.nLances+" · "+tuboSel().id;
+  var p=$("pillVer");
+  if(e.ok){ p.className="pill ok"; p.textContent="Verificado · taxa "+Math.round(e.taxaMax*100)+"%"; }
+  else{ p.className="pill bad"; p.textContent="Reprova em "+e.critico.nome+" · "+Math.round(e.taxaMax*100)+"%"; }
+}
+
+/* ---------- 02 Geometria ---------- */
+function renderGeo(){
+  var g=S.g,c=S.c;
+  kpi($("geoKpis"),[
+    {k:"Área de fachada",v:N(g.areaFachada,1),u:"m²"},
+    {k:"Modulação",v:g.nVaos+"×"+g.nLances,u:"vãos × lances"},
+    {k:"Altura montada",v:N(g.alturaReal,2),u:"m"},
+    {k:"Peso na fachada",v:N(c.massa.total/1000,2),u:"t"}
+  ]);
+  desenhaElevacao(g,c);
+  var nomes={quadro:"Quadro / pórtico transversal",montante:"Montante (trecho de lance)",
+    longarina:"Longarina",diagonal:"Diagonal de contraventamento",piso:"Prancha metálica",
+    sapata:"Sapata ajustável",guardacorpo:"Guarda-corpo",rodape:"Rodapé",
+    ancoragem:"Ponto de ancoragem",escada:"Módulo de escada",tela_m2:"Tela de fachada"};
+  var rows=Object.keys(g.quant).map(function(k){
+    return [nomes[k]||k, k==="tela_m2"?"m²":"un", N(g.quant[k],k==="tela_m2"?1:0)];
+  });
+  rows.push(["Aço tubular — comprimento total","m",N(g.comp.total,1)]);
+  rows.push(["Área de piso montada","m²",N(g.areaPiso,1)]);
+  tabela($("tbQuant"),[{t:"Peça"},{t:"Un"},{t:"Quantidade",n:1}],rows);
+}
+
+/* ---------- 03 Cargas ---------- */
+function renderCargas(){
+  var g=S.g,c=S.c;
+  kpi($("cargaKpis"),[
+    {k:"Carga de serviço",v:N(c.qs,2),u:"kN/m²"},
+    {k:"Peso próprio total",v:N(c.pp,1),u:"kN"},
+    {k:"Vento na fachada",v:N(c.vento.Ftot,1),u:"kN"},
+    {k:"N<sub>Sd</sub> no montante",v:N(c.NSd,2),u:"kN"}
+  ]);
+  $("c_classeTxt").textContent="Classe "+c.classe.n+" — "+c.classe.uso+". Carga uniforme de "+N(c.qs,2)+" kN/m².";
+
+  tabela($("tbPeso"),[{t:"Família"},{t:"Massa (kg)",n:1},{t:"%",n:1}],
+    [["Aço tubular",N(c.massa.aco,0),N(100*c.massa.aco/c.massa.total,1)],
+     ["Pranchas",N(c.massa.piso,0),N(100*c.massa.piso/c.massa.total,1)],
+     ["Tela",N(c.massa.tela,0),N(100*c.massa.tela/c.massa.total,1)],
+     ["Acessórios e conexões",N(c.massa.acess,0),N(100*c.massa.acess/c.massa.total,1)]],
+    ["Total",N(c.massa.total,0),"100,0"]);
+
+  var vt=c.vento, ult=vt.faixas[vt.faixas.length-1];
+  $("ventoPasso").innerHTML=
+    '<div class="form">S₂(z='+N(ult.zm,1)+' m) = b·F<sub>r</sub>·(z/10)^p = '+N(ult.S2,3)+
+    '\nV<sub>k</sub> = V₀·S₁·S₂·S₃ = '+N(v("c_v0"),0)+'·'+N(v("c_s1"),2)+'·'+N(ult.S2,3)+'·'+N(v("c_s3"),2)+' = '+N(ult.Vk,2)+' m/s'+
+    '\nq = 0,613·V<sub>k</sub>² = '+N(ult.q,3)+' kN/m²   (no topo)'+
+    '\nA<sub>e</sub> = A·φ = '+N(S.g.areaFachada,1)+'·'+N(v("c_phi"),2)+' = '+N(S.g.areaFachada*v("c_phi"),1)+' m²'+
+    '\nF = C<sub>a</sub>·q·A<sub>e</sub> integrado em '+vt.faixas.length+' faixas = '+N(vt.Ftot,2)+' kN</div>'+
+    '<p class="hint" style="margin-bottom:0">Força por ponto de ancoragem: <b>'+N(c.Fanc,2)+
+    ' kN</b> distribuída em '+S.g.nAnc+' pontos.</p>';
+
+  tabela($("tbComb"),[{t:"Combinação"},{t:"Expressão"},{t:"N no montante (kN)",n:1},{t:""}],
+    c.comb.map(function(x){
+      return [x.nome,x.expr,N(x.N,2), x===c.governante?'<span class="tag ok">governa</span>':''];
+    }));
+}
+
+/* ---------- 04 Estrutural ---------- */
+function renderEstr(){
+  var e=S.e,c=S.c,g=S.g;
+  kpi($("estrKpis"),[
+    {k:"Taxa máxima",v:Math.round(e.taxaMax*100)+"%",u:"",cls:e.taxaMax<=0.85?"ok":(e.taxaMax<=1?"warn":"bad")},
+    {k:"Item crítico",v:'<span style="font-size:13px">'+e.critico.nome+'</span>'},
+    {k:"N<sub>Rd</sub> do montante",v:N(e.montante.NRd,1),u:"kN"},
+    {k:"Situação",v:e.ok?"Aprovado":"Reprovado",cls:e.ok?"ok":"bad"}
+  ]);
+  var rows=e.itens.map(function(x){
+    var pc=Math.min(100,x.taxa*100), cl=x.taxa<=0.85?"":(x.taxa<=1?"warn":"bad");
+    return [x.grupo, x.nome, N(x.Sd,x.Sd<10?3:1), N(x.Rd,x.Rd<10?3:1), x.un,
+      '<div class="bar"><i class="'+cl+'" style="width:'+pc+'%"></i></div>',
+      '<span class="tag '+(x.ok?"ok":"bad")+'">'+Math.round(x.taxa*100)+'%</span>',
+      '<span style="font-size:11px;color:var(--ink3)">'+x.obs+'</span>'];
+  });
+  tabela($("tbVerif"),[{t:"Grupo"},{t:"Verificação"},{t:"Sd",n:1},{t:"Rd",n:1},{t:"Un"},{t:"Utilização"},{t:"Taxa",n:1},{t:"Observação"}],rows);
+
+  var m=e.montante, pi=e.piso, s=m.sec;
+  $("memCalc").innerHTML=
+   '<div class="sub" style="margin-top:0">Montante — compressão</div><div class="form">'+
+   'Seção Ø'+tuboSel().de+' × '+tuboSel().t+' mm →  A = '+N(s.A*1e4,2)+' cm²   I = '+N(s.I*1e8,2)+' cm⁴   r = '+N(s.r*100,2)+' cm\n'+
+   'KL = '+N(v("e_K"),2)+' · '+N(g.hL,2)+' = '+N(m.KL,2)+' m       KL/r = '+N(m.esbeltez,1)+'\n'+
+   'N_e = π²EI/(KL)² = '+N(m.Ne,1)+' kN\n'+
+   'λ₀ = √(Q·A·f_y/N_e) = '+N(m.lb0,3)+'   →   χ = '+N(m.chi,3)+'\n'+
+   'N_Rd = χ·Q·A·f_y/1,10 = '+N(m.NRd,2)+' kN     N_Sd = '+N(c.NSd,2)+' kN</div>'+
+   '<div class="sub">Decomposição de N<sub>Sd</sub></div><div class="form">'+
+   'PP  = '+N(c.pp,1)+' kN / '+g.nMontantes+' montantes = '+N(c.ppMontante,3)+' kN\n'+
+   'Q   = q·A_inf·f_níveis = '+N(c.qs,2)+' · '+N(c.Ainf,3)+' · '+N(c.fatorNiveis,2)+' = '+N(c.Nq,3)+' kN\n'+
+   'W   = binário local entre ancoragens = '+N(c.Nw,3)+' kN\n'+
+   c.governante.nome+':  '+c.governante.expr+' = '+N(c.NSd,2)+' kN</div>'+
+   '<div class="sub">Prancha — flexão e flecha</div><div class="form">'+
+   'Vão '+N(g.vao,2)+' m · faixa '+N(v("g_bpiso"),2)+' m\n'+
+   'q_lin = '+N(pi.qLin,3)+' kN/m  ·  pp_lin = '+N(pi.ppLin,3)+' kN/m\n'+
+   'M_Sd = '+N(pi.MSd,3)+' kN·m   ('+(pi.govConc?"carga concentrada":"carga distribuída")+')\n'+
+   'M_Rd = W·f_y/1,10 = '+N(pi.MRd,3)+' kN·m\n'+
+   'flecha = '+N(pi.flecha*1000,2)+' mm   limite L/'+v("e_flecha")+' = '+N(pi.flechaLim*1000,2)+' mm</div>'+
+   '<div class="sub">Ancoragem e apoio</div><div class="form">'+
+   'F_vento = '+N(c.vento.Ftot,2)+' kN  →  '+g.nAnc+' pontos ('+g.nAncH+' × '+g.nAncV+')\n'+
+   'F_Sd por ponto = max(γ_w·F/n ; F_mín) = '+N(e.Fanc,2)+' kN   ≤ '+N(v("e_Ranc"),2)+' kN\n'+
+   'σ_apoio = N_Sd/A = '+N(c.NSd,2)+'/'+N(areaSapata(),3)+' = '+N(e.sigma,1)+' kPa  ≤ '+N(v("e_sadm"),0)+' kPa</div>';
+}
+
+/* ---------- 06 Cronograma ---------- */
+function renderCrono(){
+  var g=S.g,k=S.k;
+  kpi($("cronoKpis"),[
+    {k:"Montagem",v:k.dMont,u:"dias úteis",cls:k.restrito?"warn":""},
+    {k:"Ciclo total",v:k.total,u:"dias"},
+    {k:"Meses de locação",v:N(k.meses,2),u:""},
+    {k:"Ritmo",v:N(k.ritmo,2),u:"lances/dia"}
+  ]);
+  desenhaLOB(g,k);
+  tabela($("tbMarcos"),[{t:"Marco"},{t:"Início (dia)",n:1},{t:"Duração",n:1}],
+    k.marcos.map(function(m){return [m.m,N(m.dia,0),m.dur?N(m.dur,0)+" d":"—"];}));
+  var nomes={quadro:"Quadro",montante:"Montante",longarina:"Longarina",diagonal:"Diagonal",
+    piso:"Prancha",sapata:"Sapata",guardacorpo:"Guarda-corpo",rodape:"Rodapé",
+    ancoragem:"Ancoragem",escada:"Escada",tela_m2:"Tela (m²)"};
+  tabela($("tbConsumo"),[{t:"Peça"},{t:"Total",n:1},{t:"Por semana",n:1}],
+    k.consumo.map(function(c){return [nomes[c.peca]||c.peca,N(c.total,0),N(c.porSemana,0)];}));
+}
+function desenhaLOB(g,k){
+  var cont=$("lob"); cont.innerHTML="";
+  var ns="http://www.w3.org/2000/svg";
+  var ml=40,mt=22,mb=32,mr=18, W=880, hRow=Math.max(4,Math.min(20,400/g.nLances));
+  var H=mt+g.nLances*hRow+mb, plotW=W-ml-mr;
+  var sx=function(d){return ml+d/k.total*plotW;};
+  var sy=function(l){return mt+(g.nLances-l)*hRow;};
+  var svg=document.createElementNS(ns,"svg");
+  svg.setAttribute("viewBox","0 0 "+W+" "+H); svg.setAttribute("width","100%");
+  svg.setAttribute("role","img"); svg.setAttribute("aria-label","Linha de balanço da montagem");
+  function add(t,a,txt){var e=document.createElementNS(ns,t); for(var q in a) e.setAttribute(q,a[q]);
+    if(txt!==undefined) e.textContent=txt; svg.appendChild(e); return e;}
+
+  /* grade temporal */
+  var passo=Math.max(1,Math.ceil(k.total/12));
+  for(var d=0;d<=k.total;d+=passo){
+    add("line",{x1:sx(d),y1:mt-6,x2:sx(d),y2:H-mb+4,stroke:"var(--line2)","stroke-width":1});
+    add("text",{x:sx(d),y:H-mb+16,"text-anchor":"middle","font-size":9,
+      "font-family":"var(--f-num)",fill:"var(--ink3)"},"d"+d);
+  }
+  /* faixas */
+  k.lances.forEach(function(L){
+    add("rect",{x:sx(L.montIni),y:sy(L.lance)+1,width:Math.max(1.5,sx(L.montFim)-sx(L.montIni)),
+      height:hRow-2,fill:"var(--acc)",rx:1.5,opacity:.92});
+    add("rect",{x:sx(L.montFim),y:sy(L.lance)+hRow/2-1,width:Math.max(0,sx(L.desmIni)-sx(L.montFim)),
+      height:2,fill:"var(--zinc)",opacity:.55});
+    add("rect",{x:sx(L.desmIni),y:sy(L.lance)+1,width:Math.max(1.5,sx(L.desmFim)-sx(L.desmIni)),
+      height:hRow-2,fill:"var(--warn)",rx:1.5,opacity:.9});
+  });
+  /* eixo de lances */
+  var pl=g.nLances>24?Math.ceil(g.nLances/12):1;
+  for(var l=1;l<=g.nLances;l+=pl)
+    add("text",{x:ml-8,y:sy(l)+hRow/2+3,"text-anchor":"end","font-size":9,
+      "font-family":"var(--f-num)",fill:"var(--ink3)"},"L"+l);
+  add("text",{x:ml,y:14,"font-size":9.5,"font-family":"var(--f-num)",fill:"var(--ink3)"},
+    "montagem  ·  permanência  ·  desmontagem");
+  cont.appendChild(svg);
+}
+
+/* ---------- 07 Orçamento ---------- */
+var precos=JSON.parse(JSON.stringify(AF.dados.precos));
+function renderOrc(){
+  var g=S.g,c=S.c,k=S.k;
+  g._massa_t=c.massa.total/1000;
+  g._inspecoes=Math.max(1,Math.ceil(v("k_perm")/Math.max(1,v("s_int"))));
+  var meses=Math.max(1,k.meses);
+  var o=AF.orc.itens(g,meses,precos,AF.dados.hh);
+  S.o=o; S.meses=meses;
+
+  var trib=lerTributos();
+  var bdi=AF.orc.bdi({regime:trib.regime,AC:v("b_ac"),S:v("b_s"),R:v("b_r"),DF:v("b_df"),L:v("b_l"),
+                      ivaEq:trib.ivaEq, porDentro:trib.porDentro, I:trib.porDentro});
+  var comBdi=o.total*(1+bdi/100);
+  S.bdi=bdi; S.comBdi=comBdi; S.trib=trib;
+
+  kpi($("orcKpis"),[
+    {k:"Custo direto",v:BRL(o.total)},
+    {k:"BDI",v:N(bdi,2)+"%"},
+    {k:"Preço com BDI",v:BRL(comBdi)},
+    {k:"Por m² de fachada",v:BRL(comBdi/g.areaFachada)}
+  ]);
+
+  var fams={}, rows=[];
+  o.itens.forEach(function(i){ fams[i.fam]=(fams[i.fam]||0)+i.total; });
+  var famAtual=null;
+  o.itens.forEach(function(i,ix){
+    if(i.fam!==famAtual){ famAtual=i.fam;
+      rows.push(['<b>'+i.fam+'</b>','','','','<b>'+BRL(fams[i.fam])+'</b>']); }
+    rows.push(["&nbsp;&nbsp;"+i.nome, i.un, N(i.qtd,i.qtd<100?2:0),
+      '<input data-pu="'+ix+'" type="number" step="0.01" value="'+U.rnd(i.pu,2)+'" style="width:92px;padding:3px 5px;font-size:12px">',
+      BRL(i.total)]);
+  });
+  tabela($("tbOrc"),[{t:"Item"},{t:"Un"},{t:"Quantidade",n:1},{t:"Preço unitário",n:1},{t:"Total",n:1}],rows,
+    ["Custo direto","","","",BRL(o.total)]);
+  Array.prototype.forEach.call($("tbOrc").querySelectorAll("input[data-pu]"),function(inp){
+    inp.addEventListener("change",function(){
+      var ix=+inp.getAttribute("data-pu"), chaves=Object.keys(precos);
+      var mapa=["quadro_mes","diagonal_mes","longarina_mes","piso_mes","sapata_mes",
+        "guardacorpo_mes","rodape_mes","escada_mes","hh_montador","hh_encarregado",
+        "tela_m2","ancoragem_un","transporte_t","art","inspecao_evento"];
+      if(mapa[ix]) precos[mapa[ix]]=parseFloat(inp.value)||0;
+      renderOrc();
+    });
+  });
+
+  /* cenário locar × comprar */
+  var compra=v("b_compra")*g.areaFachada;
+  var resid=compra*v("b_resid")/100;
+  var locacao=o.itens.filter(function(i){return i.fam==="Locação";}).reduce(function(a,b){return a+b.total;},0);
+  var outros=o.total-locacao;
+  tabela($("tbCenario"),[{t:"Cenário"},{t:"Locação / aquisição",n:1},{t:"Demais custos",n:1},{t:"Resultado",n:1},{t:""}],
+    [["Locar por "+N(meses,2)+" meses",BRL(locacao),BRL(outros),BRL(o.total),
+      locacao+outros<=compra-resid+outros?'<span class="tag ok">menor</span>':''],
+     ["Comprar e revender a "+N(v("b_resid"),0)+"%",BRL(compra)+" − "+BRL(resid),BRL(outros),
+      BRL(compra-resid+outros), compra-resid+outros<locacao+outros?'<span class="tag ok">menor</span>':'']]);
+
+  /* BDI */
+  var fA="(1+"+N(v("b_ac")/100,4)+"+"+N(v("b_s")/100,4)+"+"+N(v("b_r")/100,4)+")"+
+         "·(1+"+N(v("b_df")/100,4)+")·(1+"+N(v("b_l")/100,4)+")";
+  var linha2;
+  if(trib.regime==="iva")
+    linha2="    = "+fA+"·(1+"+N(trib.ivaEq/100,4)+") − 1";
+  else if(trib.regime==="transicao")
+    linha2="    = [ "+fA+"·(1+"+N(trib.ivaEq/100,4)+") / (1−"+N(trib.porDentro/100,4)+") ] − 1";
+  else
+    linha2="    = [ "+fA+" / (1−"+N(trib.porDentro/100,4)+") ] − 1";
+  $("b_formula").textContent=AF.orc.formulaBdi(trib.regime)+"\n"+linha2+"\n    = "+N(bdi,2)+" %"+
+    (trib.regime==="atual"?"":"\n\nIVAeq = (CBS+IBS)·(1 − base creditável) = "+N(trib.ivaEq,2)+" %");
+  kpi($("bdiKpis"),[
+    {k:trib.regime==="atual"?"Tributos por dentro":"Por dentro",v:N(trib.porDentro,2)+"%"},
+    {k:trib.regime==="atual"?"Tributos por fora":"IVAeq por fora",v:N(trib.ivaEq,2)+"%"},
+    {k:"Carga total",v:N(trib.total,2)+"%"},
+    {k:"BDI resultante",v:N(bdi,2)+"%"}
+  ]);
+}
+function lerTributos(){
+  var reg=$("b_reg").value, o={regime:reg,PIS:0,COFINS:0,ISS:0,CPRB:0,CBS:0,IBS:0,credito:0};
+  ["PIS","COFINS","ISS","CPRB","CBS","IBS","credito"].forEach(function(kk){
+    var e=$("bt_"+kk); if(e) o[kk]=parseFloat(String(e.value).replace(",","."))||0;
+  });
+  var t=AF.orc.tributos(o);
+  o.ivaEq=t.ivaEq; o.porDentro=t.porDentro; o.total=t.total;
+  return o;
+}
+function montaTributos(){
+  var reg=$("b_reg").value, campos;
+  if(reg==="atual") campos=[["PIS","PIS",0.65],["COFINS","COFINS",3.00],["ISS","ISS",3.00],["CPRB","CPRB",4.50]];
+  else if(reg==="transicao") campos=[["CBS","CBS",8.80],["IBS","IBS",0.10],
+    ["credito","Base creditável sobre o preço (%)",45],["ISS","ISS — por dentro",3.00],
+    ["PIS","PIS residual — por dentro",0.00],["COFINS","COFINS residual — por dentro",0.00]];
+  else campos=[["CBS","CBS",8.80],["IBS","IBS",17.70],["credito","Base creditável sobre o preço (%)",45]];
+  var ant={}; ["PIS","COFINS","ISS","CPRB","CBS","IBS","credito"].forEach(function(kk){
+    var e=$("bt_"+kk); if(e) ant[kk]=e.value; });
+  $("b_trib").innerHTML=campos.map(function(c){
+    return '<label class="f"><span>'+c[1]+(c[0]==="credito"?"":" <em>%</em>")+'</span>'+
+           '<input id="bt_'+c[0]+'" type="number" step="0.01" value="'+(ant[c[0]]!==undefined?ant[c[0]]:c[2])+'"></label>';
+  }).join("");
+  if(reg==="transicao") $("b_trib").insertAdjacentHTML("beforeend",
+    '<p class="hint">CBS e IBS são não cumulativos e incidem por fora: entram como (1+IVA<sub>eq</sub>) multiplicando o fator, '+
+    'e só o ISS permanece por dentro, no denominador. Os resíduos de PIS e COFINS, se houver na data-base, somam-se ao ISS.</p>');
+  if(reg==="iva") $("b_trib").insertAdjacentHTML("beforeend",
+    '<p class="hint">Com o IVA pleno não há tributo por dentro: o ISS está extinto e CBS e IBS incidem integralmente por fora. '+
+    'A equação perde o denominador.</p>');
+  $("b_trib").querySelectorAll("input").forEach(function(i){ i.addEventListener("input",renderOrc); });
+}
+
+/* ---------- 08 Segurança ---------- */
+var CHECK=[
+ {g:"Projeto e responsabilidade técnica",i:[
+   ["Projeto do andaime assinado por profissional habilitado, com ART recolhida","NR-18 · NBR 16492"],
+   ["Memorial com cargas, ancoragens e sequência de montagem disponível no canteiro","NR-18"],
+   ["Verificação da capacidade do elemento onde a ancoragem será fixada","NBR 16492"]]},
+ {g:"Montagem e materiais",i:[
+   ["Peças inspecionadas: sem amassamento, oxidação profunda, trinca ou solda rompida","NBR 16492"],
+   ["Base apoiada em superfície nivelada, com prancha ou sapata distribuidora","NR-18"],
+   ["Montantes travados por diagonal no espaçamento previsto em projeto","NR-18"],
+   ["Piso completo, sem vãos, travado contra deslocamento e escorregamento","NR-18"],
+   ["Rodapé de 20 cm e guarda-corpo a 1,20 m em todos os níveis com trabalho","NR-18"],
+   ["Amarração à estrutura respeitando o espaçamento calculado","NR-18"],
+   ["Tela de fachada instalada e fixada em todo o perímetro","NR-18"]]},
+ {g:"Acesso e circulação",i:[
+   ["Escada ou torre de acesso incorporada, sem uso de montante como escada","NR-18"],
+   ["Área do térreo isolada com barreira física e sinalizada","NR-18"],
+   ["Proibida a movimentação de carga sobre o piso além da classe prevista","NBR 16492"]]},
+ {g:"Trabalho em altura",i:[
+   ["Análise de risco elaborada e permissão de trabalho emitida","NR-35"],
+   ["Trabalhadores com treinamento de altura válido e atestado de aptidão","NR-35"],
+   ["Cinto tipo paraquedista com talabarte duplo e absorvedor de energia","NR-35"],
+   ["Pontos de ancoragem de vida independentes da estrutura do andaime","NR-35"],
+   ["Plano de resgate definido, com equipe e equipamento disponíveis","NR-35"]]},
+ {g:"Operação e desmontagem",i:[
+   ["Inspeção antes de cada jornada e após chuva forte, vento ou impacto","NR-18"],
+   ["Interrupção do trabalho em altura sob vento forte ou tempestade","NR-35"],
+   ["Desmontagem de cima para baixo, sem lançamento de peças","NR-18"],
+   ["Registro de todas as inspeções arquivado no canteiro","NR-18"]]}
+];
+function renderSeg(){
+  var g=S.g;
+  $("s_h").value=U.rnd(g.alturaReal,2);
+  if(!$("checklist").children.length){
+    $("checklist").innerHTML=CHECK.map(function(sec,si){
+      return '<div class="ck"><h4>'+sec.g+'</h4><ul>'+sec.i.map(function(it,ii){
+        return '<li><input type="checkbox" data-ck="'+si+'.'+ii+'"><div>'+it[0]+'<em>'+it[1]+'</em></div></li>';
+      }).join("")+'</ul></div>';
+    }).join("");
+    $("checklist").querySelectorAll("input").forEach(function(i){ i.addEventListener("change",segKpi); });
+  }
+  segKpi();
+
+  var n=Math.max(0,Math.round(v("s_n")));
+  tabela($("tbEpi"),[{t:"Item"},{t:"Quantidade",n:1}],
+    [["Cinturão tipo paraquedista",n],["Talabarte duplo com absorvedor",n],
+     ["Trava-quedas para acesso vertical",Math.max(2,Math.ceil(n/2))],
+     ["Capacete com jugular",n+2],["Linha de vida vertical na torre de acesso",g.nEscadas],
+     ["Ponto de ancoragem de vida",Math.max(2,Math.ceil(n/2))]]);
+
+  var lt=2.0, abs=1.75, hp=1.80, folga=1.0, zlq=lt+abs+hp+folga;
+  $("s_zlq").innerHTML='<div class="form">ZLQ = talabarte '+N(lt,2)+' + absorvedor '+N(abs,2)+
+    ' + altura do trabalhador '+N(hp,2)+' + folga '+N(folga,2)+' = '+N(zlq,2)+' m</div>'+
+    '<p class="hint">Abaixo de '+N(zlq,2)+' m acima do obstáculo mais próximo, o talabarte com absorvedor não impede o impacto. '+
+    'Nesses trechos use trava-quedas retrátil ou ancoragem acima da cabeça.</p>';
+
+  var isol=Math.max(2.0, 0.2*g.alturaReal);
+  $("s_isol").innerHTML='<div class="form">Raio de isolamento = máx(2,00 ; 0,20·H) = máx(2,00 ; 0,20·'+
+    N(g.alturaReal,2)+') = '+N(isol,2)+' m\nPerímetro a isolar ≈ '+N(g.largura+2*isol,1)+' m</div>';
+
+  var dt=$("s_dt").value, ins=[], intv=Math.max(1,Math.round(v("s_int")));
+  var perm=v("k_perm"), base=dt?new Date(dt+"T00:00:00"):null;
+  for(var d=0, i=1; d<=perm; d+=intv, i++){
+    var q=base?new Date(base.getTime()+d*86400000).toLocaleDateString("pt-BR"):"dia "+d;
+    ins.push([i, q, i===1?"Liberação inicial":"Inspeção periódica","☐ conforme  ☐ não conforme","____________"]);
+  }
+  tabela($("tbInsp"),[{t:"Nº",n:1},{t:"Data"},{t:"Tipo"},{t:"Resultado"},{t:"Responsável"}],ins);
+}
+function segKpi(){
+  var tot=CHECK.reduce(function(a,s){return a+s.i.length;},0);
+  var mk=$("checklist").querySelectorAll("input:checked").length;
+  var pc=tot?Math.round(100*mk/tot):0;
+  kpi($("segKpis"),[
+    {k:"Itens conformes",v:mk+"/"+tot,cls:pc===100?"ok":(pc>=70?"warn":"bad")},
+    {k:"Conformidade",v:pc+"%",cls:pc===100?"ok":(pc>=70?"warn":"bad")},
+    {k:"Altura de trabalho",v:N(S.g?S.g.alturaReal:0,2),u:"m"},
+    {k:"Liberação",v:pc===100?"Liberado":"Pendente",cls:pc===100?"ok":"bad"}
+  ]);
+}
+
+/* ---------- 05 Otimizador ---------- */
+var ESP={vaos:[1.5,2.0,2.5,3.0], lances:[1.0,2.0], ws:[0.8,1.0,1.2],
+         tubos:["D48.3x3.00","D48.3x3.20","D48.3x4.00"], avs:[1,2,3]};
+function montaEspaco(){
+  function cxs(cont,vals,sel,fmt){
+    $(cont).innerHTML=vals.map(function(x){
+      return '<label class="chk"><input type="checkbox" data-e="'+cont+'" value="'+x+'"'+
+        (sel.indexOf(x)>=0?" checked":"")+'> '+fmt(x)+'</label>';
+    }).join("");
+  }
+  cxs("o_vaos",[1.5,2.0,2.5,3.0],ESP.vaos,function(x){return N(x,2)+" m";});
+  cxs("o_lances",[1.0,2.0],ESP.lances,function(x){return N(x,2)+" m";});
+  cxs("o_ws",[0.8,1.0,1.2],ESP.ws,function(x){return N(x,2)+" m";});
+  $("o_tubos").innerHTML=AF.dados.tubos.map(function(t){
+    return '<label class="chk"><input type="checkbox" data-e="o_tubos" value="'+t.id+'"'+
+      (ESP.tubos.indexOf(t.id)>=0?" checked":"")+'> Ø'+t.de+' × '+N(t.t,2)+' mm</label>';}).join("");
+  cxs("o_avs",[1,2,3,4],ESP.avs,function(x){return "a cada "+x+(x===1?" lance":" lances");});
+}
+function leEspaco(){
+  function get(c,num){ return Array.prototype.map.call(
+    document.querySelectorAll('input[data-e="'+c+'"]:checked'),function(i){return num?parseFloat(i.value):i.value;}); }
+  return {vaos:get("o_vaos",1), lances:get("o_lances",1), ws:get("o_ws",1),
+          tubos:get("o_tubos",0), avs:get("o_avs",1),
+          objetivo:$("o_obj").value, taxaMax:v("o_taxa")/100};
+}
+function otimizar(){
+  var esp=leEspaco();
+  if(!esp.vaos.length||!esp.lances.length||!esp.ws.length||!esp.tubos.length||!esp.avs.length){
+    $("o_status").innerHTML='<span style="color:var(--bad)">Marque ao menos uma opção em cada grupo.</span>'; return;
+  }
+  $("o_status").textContent="Calculando…";
+  var t0=Date.now();
+  var base={pg:paramsGeo(), pc:paramsCarga(), pe:paramsEstr(),
+            meses:Math.max(1,S.k.meses), precos:precos,
+            inspecoes:Math.max(1,Math.ceil(v("k_perm")/Math.max(1,v("s_int"))))};
+  var r=AF.otim(base,esp);
+  S.otim=r;
+  var dt=Date.now()-t0;
+  $("o_status").innerHTML=r.testadas+" configurações testadas em "+dt+" ms · "+
+    r.viaveis.length+" viáveis · "+r.descartadas.length+" descartadas";
+
+  if(!r.viaveis.length){
+    $("o_resumo").style.display="block";
+    $("o_resumo").className="aviso erro";
+    $("o_resumo").innerHTML="<b>Nenhuma configuração passa nas verificações.</b> Os motivos mais frequentes: "+
+      resumoMotivos(r.descartadas)+". Reduza a classe de carga, aumente a seção do montante ou adense a ancoragem.";
+    $("btAplicar").disabled=true;
+    tabela($("tbOtim"),[{t:"—"}],[["Sem resultados"]]);
+    return;
+  }
+  var m=r.viaveis[0], atual=null;
+  try{ atual=custoAtual(); }catch(e){}
+  $("o_resumo").style.display="block"; $("o_resumo").className="aviso info";
+  $("o_resumo").innerHTML="<b>Melhor configuração:</b> vão de "+N(m.vao,2)+" m, lance de "+N(m.hL,2)+
+    " m, largura de "+N(m.w,2)+" m, montante Ø"+m.tubo.replace("D","").replace("x"," × ")+" mm, ancoragem a cada "+
+    m.av+(m.av===1?" lance":" lances")+". Custo direto de "+BRL(m.custo)+", taxa de utilização de "+
+    Math.round(m.taxa*100)+"% em "+m.critico.toLowerCase()+"."+
+    (atual!==null?" Contra a configuração atual de "+BRL(atual)+", a diferença é de <b>"+
+      BRL(atual-m.custo)+"</b> ("+N(100*(atual-m.custo)/atual,1)+"%).":"");
+
+  var rows=r.viaveis.slice(0,25).map(function(x,i){
+    var pc=Math.min(100,x.taxa*100), cl=x.taxa<=0.85?"":(x.taxa<=1?"warn":"bad");
+    return ['<span class="num">'+(i+1)+'</span>', N(x.vao,2), N(x.hL,2), N(x.w,2),
+      "Ø"+x.tubo.replace("D","").replace("x"," × "), x.av, x.nVaos+"×"+x.nLances, x.nAnc,
+      N(x.peso/1000,2), N(x.hh,0), BRL(x.custo),
+      '<div class="bar"><i class="'+cl+'" style="width:'+pc+'%"></i></div>',
+      Math.round(x.taxa*100)+"%"];
+  });
+  tabela($("tbOtim"),[{t:"#",n:1},{t:"Vão",n:1},{t:"Lance",n:1},{t:"Larg.",n:1},{t:"Montante"},
+    {t:"Anc.",n:1},{t:"Módulos"},{t:"Pontos",n:1},{t:"Aço (t)",n:1},{t:"HH",n:1},
+    {t:"Custo direto",n:1},{t:"Utilização"},{t:"Taxa",n:1}],rows);
+  $("btAplicar").disabled=false;
+  graficoOtim(r.viaveis);
+}
+function resumoMotivos(d){
+  var c={}; d.forEach(function(x){ c[x.motivo]=(c[x.motivo]||0)+1; });
+  return Object.keys(c).sort(function(a,b){return c[b]-c[a];}).slice(0,3)
+    .map(function(k){return k+" ("+c[k]+")";}).join(", ");
+}
+function custoAtual(){
+  var g=S.g; g._massa_t=S.c.massa.total/1000;
+  g._inspecoes=Math.max(1,Math.ceil(v("k_perm")/Math.max(1,v("s_int"))));
+  return AF.orc.itens(g,Math.max(1,S.k.meses),precos,AF.dados.hh).total;
+}
+function graficoOtim(vs){
+  var cont=$("o_grafico"); cont.innerHTML="";
+  var best=vs[0];
+  var pts=vs.filter(function(x){return x.hL===best.hL&&x.w===best.w&&x.tubo===best.tubo&&x.av===best.av;})
+            .sort(function(a,b){return a.vao-b.vao;});
+  if(pts.length<2){ cont.innerHTML='<p class="hint" style="margin:0">Marque mais opções de vão para comparar a curva de custo.</p>'; return; }
+  var ns="http://www.w3.org/2000/svg", W=760,H=230,ml=74,mr=18,mt=16,mb=34;
+  var svg=document.createElementNS(ns,"svg"); svg.setAttribute("viewBox","0 0 "+W+" "+H);
+  svg.setAttribute("width","100%"); svg.setAttribute("role","img");
+  svg.setAttribute("aria-label","Custo direto em função do vão");
+  function add(t,a,txt){var e=document.createElementNS(ns,t); for(var q in a)e.setAttribute(q,a[q]);
+    if(txt!==undefined)e.textContent=txt; svg.appendChild(e); return e;}
+  var cs=pts.map(function(p){return p.custo;});
+  var min=Math.min.apply(null,cs)*0.96, max=Math.max.apply(null,cs)*1.04;
+  var sx=function(i){return ml+(pts.length===1?0:i/(pts.length-1))*(W-ml-mr);};
+  var sy=function(c){return mt+(1-(c-min)/(max-min))*(H-mt-mb);};
+  for(var t=0;t<=4;t++){
+    var val=min+(max-min)*t/4, y=sy(val);
+    add("line",{x1:ml,y1:y,x2:W-mr,y2:y,stroke:"var(--line2)","stroke-width":1});
+    add("text",{x:ml-8,y:y+3.5,"text-anchor":"end","font-size":9.5,"font-family":"var(--f-num)",
+      fill:"var(--ink3)"},"R$ "+N(val/1000,0)+"k");
+  }
+  var dpath=pts.map(function(p,i){return (i?"L":"M")+sx(i)+" "+sy(p.custo);}).join(" ");
+  add("path",{d:dpath,fill:"none",stroke:"var(--acc)","stroke-width":2});
+  pts.forEach(function(p,i){
+    add("circle",{cx:sx(i),cy:sy(p.custo),r:p===best?5:3.5,
+      fill:p===best?"var(--warn)":"var(--acc)"});
+    add("text",{x:sx(i),y:H-mb+16,"text-anchor":"middle","font-size":10,
+      "font-family":"var(--f-num)",fill:"var(--ink3)"},N(p.vao,2)+" m");
+    add("text",{x:sx(i),y:sy(p.custo)-10,"text-anchor":"middle","font-size":9.5,
+      "font-family":"var(--f-num)",fill:p===best?"var(--warn)":"var(--ink3)"},
+      p.nVaos+" vãos");
+  });
+  cont.appendChild(svg);
+  cont.insertAdjacentHTML("beforeend",
+    '<p class="hint" style="margin:8px 0 0">Vão maior reduz o número de montantes e de peças, mas exige prancha e montante mais robustos. O ponto laranja é o mínimo dentro do que passa na verificação.</p>');
+}
+function aplicarMelhor(){
+  if(!S.otim||!S.otim.viaveis.length) return;
+  var m=S.otim.viaveis[0];
+  $("g_vao").value=m.vao.toFixed(2); $("g_lance").value=m.hL.toFixed(2);
+  $("g_w").value=m.w.toFixed(2); $("g_av").value=m.av; $("e_tubo").value=m.tubo;
+  calc(); irPara("p-geo");
+}
+
+/* ---------- 10 Modelo IFC ---------- */
+var ifcAtual=null;
+function opcoesIfc(){
+  return {piso:ck("i_piso"), guardacorpo:ck("i_gc"), rodape:ck("i_rodape"),
+          sapata:ck("i_sapata"), ancoragem:ck("i_anc"), tela:ck("i_tela")};
+}
+function metaIfc(){
+  return {nome:tx("pj_nome")||"Andaime fachadeiro", obra:tx("pj_obra")||"Edificacao",
+          local:tx("pj_local")||"Canteiro", responsavel:tx("pj_resp")||"Responsavel tecnico",
+          organizacao:tx("i_org")||"AndaimeFach Pro",
+          descricao:"Andaime fachadeiro modular — "+S.g.nVaos+" vaos x "+S.g.nLances+" lances",
+          tubo:tuboSel(), fy:v("e_fy"), afastamento:v("g_afast"), bPiso:v("g_bpiso"),
+          vaosPorDiagonal:v("g_diag"), ancVert:v("g_av"), ancHoriz:v("g_ah"), data:Date.now()};
+}
+function gerarIfc(){
+  calc();
+  $("i_status").textContent="Montando o modelo…";
+  var t0=Date.now();
+  try{ ifcAtual=AF.ifc.gerar(S.g,S.c,S.e,metaIfc(),opcoesIfc()); }
+  catch(ex){ $("i_status").innerHTML='<span style="color:var(--bad)">Falhou: '+ex.message+'</span>'; return; }
+  var r=ifcAtual, dt=Date.now()-t0;
+  $("i_status").textContent="Modelo montado em "+dt+" ms.";
+  $("btIfcBaixar").disabled=false;
+
+  kpi($("ifcKpis"),[
+    {k:"Elementos",v:N(r.elementos,0)},
+    {k:"Entidades IFC",v:N(r.entidades,0)},
+    {k:"Pavimentos",v:r.storeys,u:"lances"},
+    {k:"Tamanho",v:N(r.bytes/1048576,2),u:"MB"}
+  ]);
+
+  var nomes={montante:["Montante","IfcMember .POST."],travessa:["Travessa do quadro","IfcMember .MEMBER."],
+    longarina:["Longarina","IfcMember .STRINGER."],diagonal:["Diagonal","IfcMember .BRACE."],
+    piso:["Prancha metálica","IfcPlate .SHEET."],guardacorpo:["Guarda-corpo","IfcRailing .GUARDRAIL."],
+    rodape:["Rodapé","IfcPlate .SHEET."],sapata:["Sapata e prancha de apoio","IfcFooting .PAD_FOOTING."],
+    ancoragem:["Ponto de ancoragem","IfcMechanicalFastener .ANCHORBOLT."],
+    tela:["Tela de fachada","IfcCovering .MEMBRANE."]};
+  var ordem=["montante","travessa","longarina","diagonal","piso","guardacorpo","rodape","sapata","ancoragem","tela"];
+  var rows=ordem.filter(function(f){return r.familias[f];}).map(function(f){
+    return [nomes[f][0],'<span class="num" style="font-size:11px;color:var(--ink3)">'+nomes[f][1]+'</span>',
+            N(r.familias[f].length,0)];
+  });
+  var ausentes=ordem.filter(function(f){return !r.familias[f];});
+  tabela($("tbIfc"),[{t:"Família"},{t:"Entidade IFC4"},{t:"Elementos",n:1}],rows,
+    ["Total","",N(r.elementos,0)]);
+  if(ausentes.length) $("tbIfc").insertAdjacentHTML("afterend",
+    '<p class="hint" style="margin:8px 0 0">Fora do modelo nesta exportação: '+
+    ausentes.map(function(f){return nomes[f][0].toLowerCase();}).join(", ")+'.</p>');
+
+  $("ifcPrev").textContent=r.texto.split("\n").slice(0,26).join("\n")+"\n…";
+  $("ifcConv").innerHTML=
+    '<div class="form">Eixos:  X ao longo da fachada · Y afastando-se da edificação · Z para cima\n'+
+    'Origem: base do primeiro montante, face da edificação em Y = 0\n'+
+    'Afastamento adotado: '+N(v("g_afast"),2)+' m\n'+
+    'Um IfcBuildingStorey por lance, elevação a cada '+N(S.g.hL,2)+' m</div>'+
+    '<p style="font-size:12px;color:var(--ink2);margin:0 0 6px">Conjuntos de propriedades embutidos: '+
+    '<b>AndaimeFach_Configuracao</b> na edificação, com modulação, classe de carga, vento, peso, '+
+    'taxa de utilização e situação; <b>AndaimeFach_Montante</b> com perfil, N<sub>Sd</sub> e N<sub>Rd</sub>; '+
+    '<b>AndaimeFach_Prancha</b> com momentos e flecha; <b>AndaimeFach_Ancoragem</b> com força e espaçamentos.</p>'+
+    '<p style="font-size:12px;color:var(--ink2);margin:0">Não modelados: torre de acesso e escadas, '+
+    'emendas e conectores, contraventamento horizontal, e qualquer interferência da fachada real. '+
+    'O modelo representa a modulação regular calculada, não o levantamento da edificação existente.</p>';
+}
+function baixarIfc(){
+  if(!ifcAtual) return;
+  var b=new Blob([ifcAtual.texto],{type:"application/x-step"});
+  var a=document.createElement("a"); a.href=URL.createObjectURL(b);
+  a.download=(tx("pj_nome")||"andaime").replace(/[^\w\-]+/g,"-").toLowerCase()+".ifc";
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(function(){URL.revokeObjectURL(a.href);},2000);
+}
+
+/* ---------- 09 Relatório ---------- */
+function gerarRelatorio(){
+  calc();
+  var g=S.g,c=S.c,e=S.e,k=S.k,o=S.o;
+  function tb(cols,rows){
+    return "<table><thead><tr>"+cols.map(function(x){return "<th>"+x+"</th>";}).join("")+
+      "</tr></thead><tbody>"+rows.map(function(r){return "<tr>"+r.map(function(x){return "<td>"+x+"</td>";}).join("")+"</tr>";}).join("")+"</tbody></table>";
+  }
+  var h="";
+  h+='<div class="eyebrow">Memorial de cálculo e especificação</div>';
+  h+='<h2 style="border:0;margin:4px 0 2px;font-size:21px">Andaime fachadeiro — '+(tx("pj_nome")||"projeto sem nome")+'</h2>';
+  h+='<p style="font-family:var(--f-num);font-size:11.5px">'+
+     [tx("pj_obra"),tx("pj_local"),tx("pj_resp"),tx("pj_data")].filter(Boolean).join(" · ")+
+     ' · emitido em '+new Date().toLocaleDateString("pt-BR")+'</p>';
+
+  h+="<h2>1. Objeto</h2><p>Dimensionamento, verificação estrutural, planejamento de montagem e orçamento de andaime fachadeiro para fachada de "+
+     N(g.largura,2)+" m de largura por "+N(g.altura,2)+" m de altura, totalizando "+N(g.areaFachada,1)+
+     " m² de superfície montada. A modulação adotada é de "+g.nVaos+" vãos de "+N(g.vao,2)+" m por "+g.nLances+
+     " lances de "+N(g.hL,2)+" m, com largura útil de "+N(g.w,2)+" m e afastamento de "+N(v("g_afast"),2)+" m da fachada.</p>";
+  if(tx("pj_obs")) h+="<p>"+tx("pj_obs")+"</p>";
+
+  h+="<h2>2. Normas e referências</h2><p>NBR 16492:2017 — andaimes, requisitos para montagem e utilização. NBR 6123:1988 — forças devidas ao vento. NBR 8800:2008 — projeto de estruturas de aço. NBR 6120:2019 — ações para o cálculo de estruturas. NR-18 e NR-35 do Ministério do Trabalho. A classe de carga de serviço segue a escala de 1 a 6 da EN 12811-1, de uso corrente no mercado nacional.</p>";
+
+  h+="<h2>3. Quantitativo</h2>";
+  var nomes={quadro:"Quadro transversal",montante:"Montante (trecho)",longarina:"Longarina",
+    diagonal:"Diagonal",piso:"Prancha metálica",sapata:"Sapata ajustável",guardacorpo:"Guarda-corpo",
+    rodape:"Rodapé",ancoragem:"Ponto de ancoragem",escada:"Módulo de escada",tela_m2:"Tela de fachada"};
+  h+=tb(["Peça","Unidade","Quantidade"],Object.keys(g.quant).map(function(x){
+    return [nomes[x]||x, x==="tela_m2"?"m²":"un", N(g.quant[x],x==="tela_m2"?1:0)];}));
+  h+="<p>Massa total sobre a fachada: "+N(c.massa.total,0)+" kg, dos quais "+N(c.massa.aco,0)+
+     " kg de aço tubular. Comprimento total de tubo: "+N(g.comp.total,1)+" m.</p>";
+
+  h+="<h2>4. Ações</h2><h3>4.1 Carga de serviço</h3><p>Classe "+c.classe.n+" — "+c.classe.uso+
+     ", correspondente a "+N(c.qs,2)+" kN/m². Considerados "+v("c_nlv")+" níveis carregados simultaneamente, o segundo com redução de "+
+     v("c_red")+"%. Área de influência por montante interno de "+N(c.Ainf,3)+" m², resultando em "+N(c.Nq,3)+" kN por montante.</p>";
+  h+="<h3>4.2 Vento</h3>";
+  var ult=c.vento.faixas[c.vento.faixas.length-1];
+  h+='<div class="form">V₀ = '+v("c_v0")+' m/s   S₁ = '+N(v("c_s1"),2)+'   categoria '+$("c_cat").value+
+     ', classe '+$("c_cls").value+'   S₃ = '+N(v("c_s3"),2)+
+     '\nNo topo (z = '+N(ult.zm,1)+' m): S₂ = '+N(ult.S2,3)+' · V_k = '+N(ult.Vk,2)+' m/s · q = '+N(ult.q,3)+' kN/m²'+
+     '\nφ = '+N(v("c_phi"),2)+'   C_a = '+N(v("c_ca"),2)+
+     '\nF_total = '+N(c.vento.Ftot,2)+' kN, integrada em '+c.vento.faixas.length+' faixas de 2 m</div>';
+  h+="<h3>4.3 Combinações</h3>"+tb(["Combinação","Expressão","N no montante (kN)"],
+     c.comb.map(function(x){return [x.nome,x.expr,N(x.N,2)+(x===c.governante?" — governa":"")];}));
+
+  h+="<h2>5. Verificação estrutural</h2>";
+  h+="<p>Montante em tubo Ø"+S.pe.tubo.de+" × "+S.pe.tubo.t+" mm, aço com f<sub>y</sub> = "+v("e_fy")+
+     " MPa. Comprimento de flambagem KL = "+N(e.montante.KL,2)+" m, esbeltez KL/r = "+N(e.montante.esbeltez,1)+
+     ", λ₀ = "+N(e.montante.lb0,3)+", χ = "+N(e.montante.chi,3)+", resultando em N<sub>Rd</sub> = "+
+     N(e.montante.NRd,2)+" kN.</p>";
+  h+=tb(["Verificação","Sd","Rd","Un","Taxa","Situação"],e.itens.map(function(x){
+    return [x.grupo+" — "+x.nome, N(x.Sd,x.Sd<10?3:1), N(x.Rd,x.Rd<10?3:1), x.un,
+      Math.round(x.taxa*100)+"%", x.ok?"atende":"NÃO ATENDE"];}));
+  h+="<p><b>"+(e.ok?"Todas as verificações atendem.":"ATENÇÃO: há verificação reprovada.")+
+     "</b> Taxa máxima de utilização de "+Math.round(e.taxaMax*100)+"% em "+e.critico.nome.toLowerCase()+
+     ". Ancoragem em "+g.nAnc+" pontos, espaçados "+N(g.ancHorizM,2)+" m na horizontal e "+
+     N(g.ancVertM,2)+" m na vertical, cada um solicitado por "+N(e.Fanc,2)+" kN.</p>";
+
+  h+="<h2>6. Montagem</h2><p>Montagem prevista em "+k.dMont+" dias úteis com "+v("k_eq")+
+     " equipes de "+v("k_mo")+" montadores, ritmo de "+N(k.ritmo,2)+" lances por dia. Permanência de "+
+     v("k_perm")+" dias e desmontagem em "+k.dDesm+" dias, totalizando "+k.total+
+     " dias e "+N(k.meses,2)+" meses de locação.</p>";
+  h+=tb(["Marco","Início (dia)","Duração"],k.marcos.map(function(m){
+    return [m.m,N(m.dia,0),m.dur?N(m.dur,0)+" dias":"—"];}));
+  h+="<p>A sequência obedece à montagem de baixo para cima, com travamento por diagonal a cada "+
+     v("g_diag")+" vãos e amarração à estrutura antes de avançar ao lance seguinte. A desmontagem se dá em ordem inversa, sem lançamento de peças.</p>";
+
+  h+="<h2>7. Orçamento</h2>";
+  h+=tb(["Item","Un","Quantidade","P. unitário","Total"],o.itens.map(function(i){
+    return [i.nome,i.un,N(i.qtd,i.qtd<100?2:0),BRL(i.pu),BRL(i.total)];}));
+  h+="<p>Custo direto de <b>"+BRL(o.total)+"</b>. No regime "+
+     $("b_reg").options[$("b_reg").selectedIndex].text.toLowerCase()+", a carga tributária é de "+
+     N(S.trib.porDentro,2)+"% por dentro"+(S.trib.ivaEq?" e "+N(S.trib.ivaEq,2)+"% de IVA equivalente por fora":"")+
+     ", resultando em BDI de "+N(S.bdi,2)+"% e preço de <b>"+BRL(S.comBdi)+"</b>, equivalente a "+
+     BRL(S.comBdi/g.areaFachada)+" por m² de fachada.</p>";
+  h+='<div class="form">'+AF.orc.formulaBdi(S.trib.regime)+
+     (S.trib.regime==="atual"?"":"\nIVAeq = (CBS+IBS)·(1 − base creditável) = "+N(S.trib.ivaEq,2)+" %")+
+     "\nBDI = "+N(S.bdi,2)+" %</div>";
+
+  h+="<h2>8. Segurança</h2><p>Área do térreo isolada em raio de "+N(Math.max(2,0.2*g.alturaReal),2)+
+     " m. Zona livre de queda de 6,55 m para talabarte com absorvedor de energia. Inspeção a cada "+
+     v("s_int")+" dias e após qualquer evento de vento forte, chuva intensa ou impacto. A liberação para uso depende do preenchimento integral da lista de verificação de conformidade.</p>";
+
+  h+="<h2>9. Limitações</h2><p>Este memorial trata do andaime como estrutura modular regular apoiada no terreno e amarrada à edificação. Não cobre andaime suspenso, balancim, andaime em consolo, transposição de marquise, apoio sobre laje em balanço nem montagem sobre estrutura provisória. A parcela de esforço axial devida ao vento é estimada por binário local entre níveis de ancoragem, adequada à conferência de ordem de grandeza; para fachada irregular, altura acima de 30 m ou vento em situação de topografia acidentada, faça a análise em modelo tridimensional. Os preços unitários são de partida e devem ser substituídos pelos da tabela de referência e data-base do contrato.</p>";
+  h+='<p style="margin-top:22px;font-family:var(--f-num);font-size:11px;color:var(--ink3)">AndaimeFach Pro · '+
+     new Date().toLocaleString("pt-BR")+'</p>';
+  $("relDoc").innerHTML=h;
+}
+
+/* ---------- CSV ---------- */
+function baixa(nome,txt){
+  var b=new Blob(["\ufeff"+txt],{type:"text/csv;charset=utf-8"});
+  var a=document.createElement("a"); a.href=URL.createObjectURL(b); a.download=nome;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(function(){URL.revokeObjectURL(a.href);},1500);
+}
+function csvQuant(){
+  var g=S.g, l=["Peca;Unidade;Quantidade"];
+  Object.keys(g.quant).forEach(function(k){ l.push(k+";"+(k==="tela_m2"?"m2":"un")+";"+U.rnd(g.quant[k],2)); });
+  baixa("quantitativo-andaime.csv",l.join("\n"));
+}
+function csvOrc(){
+  var l=["Familia;Item;Unidade;Quantidade;PrecoUnitario;Total"];
+  S.o.itens.forEach(function(i){ l.push([i.fam,i.nome,i.un,U.rnd(i.qtd,2),U.rnd(i.pu,2),U.rnd(i.total,2)].join(";")); });
+  l.push(";Custo direto;;;;"+U.rnd(S.o.total,2));
+  l.push(";BDI (%);;;;"+U.rnd(S.bdi,2));
+  l.push(";Preco com BDI;;;;"+U.rnd(S.comBdi,2));
+  baixa("orcamento-andaime.csv",l.join("\n"));
+}
+
+/* ---------- Persistência ---------- */
+var CAMPOS=["pj_nome","pj_obra","pj_local","pj_resp","pj_data","pj_obs","g_larg","g_alt","g_afast",
+"g_vao","g_lance","g_w","g_bpiso","g_diag","g_pisos","g_ah","g_av","g_esc","c_classe","c_nlv","c_red",
+"c_pconc","c_mpiso","c_mtela","c_acess","c_v0","c_s1","c_cat","c_cls","c_s3","c_phi","c_ca","c_gg",
+"c_gq","c_gw","c_psi","e_tubo","e_fy","e_E","e_K","e_Wp","e_Ip","e_flecha","e_Ranc","e_Amin","e_sap",
+"e_sadm","k_eq","k_mo","k_jor","k_pm","k_pd","k_mob","k_perm","k_du","k_estq","b_compra","b_resid",
+"b_reg","b_ac","b_s","b_r","b_df","b_l","s_n","s_int","s_dt","o_obj","o_taxa","i_org"];
+var CHECKS=["g_tela","g_rodape","k_est","i_piso","i_gc","i_rodape","i_sapata","i_anc","i_tela"];
+var CHAVE="andaimefach.projeto.v1";
+function coletar(){
+  var d={campos:{},checks:{},precos:precos,trib:{}};
+  CAMPOS.forEach(function(id){ var e=$(id); if(e) d.campos[id]=e.value; });
+  CHECKS.forEach(function(id){ var e=$(id); if(e) d.checks[id]=e.checked; });
+  ["PIS","COFINS","ISS","CPRB","CBS","IBS","credito"].forEach(function(k){
+    var e=$("bt_"+k); if(e) d.trib[k]=e.value; });
+  d.esp=leEspaco();
+  d.checklist=Array.prototype.map.call(document.querySelectorAll("#checklist input"),function(i){return i.checked;});
+  return d;
+}
+function aplicar(d){
+  if(!d) return;
+  CAMPOS.forEach(function(id){ if(d.campos&&d.campos[id]!==undefined&&$(id)) $(id).value=d.campos[id]; });
+  CHECKS.forEach(function(id){ if(d.checks&&d.checks[id]!==undefined&&$(id)) $(id).checked=d.checks[id]; });
+  if(d.precos) Object.keys(d.precos).forEach(function(k){ precos[k]=d.precos[k]; });
+  montaTributos();
+  if(d.trib) Object.keys(d.trib).forEach(function(k){ var e=$("bt_"+k); if(e) e.value=d.trib[k]; });
+  if(d.esp){
+    ["o_vaos","o_lances","o_ws","o_tubos","o_avs"].forEach(function(c){
+      var chave={o_vaos:"vaos",o_lances:"lances",o_ws:"ws",o_tubos:"tubos",o_avs:"avs"}[c];
+      var vals=(d.esp[chave]||[]).map(String);
+      document.querySelectorAll('input[data-e="'+c+'"]').forEach(function(i){
+        i.checked=vals.indexOf(String(parseFloat(i.value)||i.value))>=0||vals.indexOf(i.value)>=0; });
+    });
+  }
+  $("k_estq").disabled=!ck("k_est");
+  calc();
+  if(d.checklist){
+    document.querySelectorAll("#checklist input").forEach(function(i,ix){ i.checked=!!d.checklist[ix]; });
+    segKpi();
+  }
+}
+function salvar(){
+  try{ localStorage.setItem(CHAVE,JSON.stringify(coletar()));
+    $("msgSalvo").innerHTML='Projeto salvo neste navegador em '+new Date().toLocaleString("pt-BR")+'.';
+  }catch(e){ $("msgSalvo").innerHTML='<span style="color:var(--bad)">Não foi possível salvar: '+e.message+'</span>'; }
+}
+function carregar(){
+  try{ var s=localStorage.getItem(CHAVE); if(s){ aplicar(JSON.parse(s)); return true; } }catch(e){}
+  return false;
+}
+
+/* ---------- Exemplos ---------- */
+var EXEMPLOS=[
+ {t:"Reforma de fachada",d:"Prédio de 6 pavimentos, pintura e revestimento leve.",
+  c:{g_larg:24,g_alt:18,g_vao:"2.00",g_lance:"2.00",g_w:"1.00",c_classe:"3",c_v0:30,c_cat:"III",
+     k_perm:90,k_eq:2,g_ah:2,g_av:2}},
+ {t:"Alvenaria em obra nova",d:"Torre de 14 pavimentos com estoque de blocos no piso.",
+  c:{g_larg:32,g_alt:42,g_vao:"1.50",g_lance:"2.00",g_w:"1.20",c_classe:"4",c_v0:35,c_cat:"II",
+     k_perm:180,k_eq:3,g_ah:2,g_av:1}},
+ {t:"Inspeção de galpão",d:"Fachada baixa e longa, acesso para vistoria e limpeza.",
+  c:{g_larg:60,g_alt:9,g_vao:"3.00",g_lance:"2.00",g_w:"0.80",c_classe:"1",c_v0:30,c_cat:"IV",
+     k_perm:30,k_eq:1,g_ah:3,g_av:2}}
+];
+function montaExemplos(){
+  $("exemplos").innerHTML=EXEMPLOS.map(function(e,i){
+    return '<div class="card"><div class="bd"><div class="eyebrow">Caso '+(i+1)+'</div>'+
+      '<h4 style="font-size:13px;margin:4px 0 4px">'+e.t+'</h4>'+
+      '<p style="font-size:11.5px;color:var(--ink3);margin:0 0 10px">'+e.d+'</p>'+
+      '<button class="b sm" data-ex="'+i+'">Carregar</button></div></div>';
+  }).join("");
+  $("exemplos").querySelectorAll("button[data-ex]").forEach(function(b){
+    b.addEventListener("click",function(){
+      var e=EXEMPLOS[+b.getAttribute("data-ex")];
+      Object.keys(e.c).forEach(function(k){ if($(k)) $(k).value=e.c[k]; });
+      calc(); irPara("p-geo");
+    });
+  });
+}
+
+/* ---------- 10 Autoteste ---------- */
+function rodarTestes(){
+  var T=[], falhas=0;
+  function ok(nome,cond,det){ T.push({nome:nome,ok:!!cond,det:det||""}); if(!cond) falhas++; }
+  function perto(nome,a,b,tol,un){
+    var d=Math.abs(a-b), c=d<=tol;
+    ok(nome,c,U.rnd(a,4)+" vs "+U.rnd(b,4)+(un?" "+un:"")+" · Δ "+U.rnd(d,5));
+  }
+  /* Seção tubular */
+  var s=U.secao(48.3,3.2);
+  perto("Área da seção Ø48,3×3,2 (cm²)",s.A*1e4,4.53,0.05,"cm²");
+  perto("Inércia da seção Ø48,3×3,2 (cm⁴)",s.I*1e8,11.59,0.2,"cm⁴");
+  perto("Raio de giração (cm)",s.r*100,1.60,0.03,"cm");
+  perto("Massa linear (kg/m)",s.massa,3.56,0.05,"kg/m");
+
+  /* Vento — NBR 6123 */
+  perto("S₂ cat.II cl.A em z=10 m",AF.vento.S2("II","A",10),1.00,0.001);
+  perto("S₂ cat.III cl.A em z=20 m",AF.vento.S2("III","A",20),0.94*Math.pow(2,0.10),0.001);
+  perto("S₂ cresce com a altura",AF.vento.S2("III","A",30)>AF.vento.S2("III","A",10)?1:0,1,0);
+  perto("V_k = V₀·S₁·S₂·S₃",AF.vento.Vk(30,1,0.94,0.95),30*0.94*0.95,0.001,"m/s");
+  perto("q = 0,613·V_k² a 30 m/s",AF.vento.q(30),0.5517,0.001,"kN/m²");
+  ok("Categoria inválida lança erro",(function(){try{AF.vento.S2("X","A",10);return false;}catch(e){return true;}})());
+
+  /* Geometria */
+  var g=AF.geo({largura:24,altura:18,vao:2,alturaLance:2,w:1,bPiso:0.32,pisosPorLance:1,
+    vaosPorDiagonal:3,ancHoriz:2,ancVert:2,tela:true,rodape:true,distEscada:30});
+  perto("24 m / vão 2 m = 12 vãos",g.nVaos,12,0);
+  perto("18 m / lance 2 m = 9 lances",g.nLances,9,0);
+  perto("Quadros = (12+1)·9",g.nQuadros,117,0);
+  perto("Montantes na base = 2·(12+1)",g.nMontantes,26,0);
+  perto("Área de fachada",g.areaFachada,432,0.01,"m²");
+  perto("Diagonais = ceil(12/3)·9",g.quant.diagonal,36,0);
+  perto("Pranchas por vão com w=1,00 e b=0,32",g.nPisosLarg,3,0);
+  var g2=AF.geo({largura:25,altura:18,vao:2,alturaLance:2,w:1,bPiso:0.32,pisosPorLance:1,
+    vaosPorDiagonal:3,ancHoriz:2,ancVert:2,tela:true,rodape:true,distEscada:30});
+  perto("Largura 25 m arredonda para 13 vãos",g2.nVaos,13,0);
+  perto("Vão real recalculado",g2.vaoReal,25/13,0.0001,"m");
+  ok("Geometria inválida lança erro",(function(){try{AF.geo({largura:0,altura:1,vao:1,alturaLance:1,w:1});return false;}catch(e){return true;}})());
+
+  /* Flambagem */
+  perto("χ para λ₀ = 0",AF.estr.chi(0),1,0.0001);
+  perto("χ para λ₀ = 1,0",AF.estr.chi(1),0.658,0.0001);
+  perto("χ para λ₀ = 2,0",AF.estr.chi(2),0.877/4,0.0001);
+  ok("χ decresce com λ₀",AF.estr.chi(0.5)>AF.estr.chi(1.5));
+  var m=AF.estr.montante({de:48.3,t:3.2,E:200000,fy:250,K:1,L:2});
+  perto("N_e = π²EI/(KL)² com L=2 m",m.Ne,Math.PI*Math.PI*200000e3*s.I/4,1,"kN");
+  perto("Esbeltez KL/r",m.esbeltez,2/s.r,0.01);
+  ok("Q = 1 para D/t = 15",Math.abs(m.Q-1)<1e-9);
+  ok("N_Rd menor que A·f_y/1,10",m.NRd < s.A*250e3/1.10);
+  var m2=AF.estr.montante({de:48.3,t:3.2,E:200000,fy:250,K:1,L:4});
+  ok("Lance maior reduz N_Rd",m2.NRd<m.NRd);
+
+  /* Flexão do piso */
+  var pi=AF.estr.piso({L:2,b:0.32,mPiso:16,qs:2,Pconc:1.5,gg:1.25,gq:1.5,W:9,I:55,fy:250,E:200000,divFlecha:200});
+  perto("q_lin = q·b",pi.qLin,0.64,0.0001,"kN/m");
+  perto("M_Rd = W·f_y/1,10",pi.MRd,9e-6*250e3/1.10,0.001,"kN·m");
+  perto("M distribuído = (γ_g·pp+γ_q·q)L²/8",pi.Mdist,(1.25*pi.ppLin+1.5*0.64)*4/8,0.0001,"kN·m");
+  perto("Limite de flecha L/200",pi.flechaLim,0.01,1e-9,"m");
+
+  /* Carga e combinações */
+  var c=AF.carga(g,{tubo:{de:48.3,t:3.2},mPiso:16,mTela:0.3,pctAcess:8,classe:3,
+    nivelCarregado:2,reducao:50,V0:30,S1:1,S3:0.95,cat:"III",cls:"A",phi:0.6,Ca:1.3,
+    gg:1.25,gq:1.5,gw:1.4,psi:0.6});
+  perto("Classe 3 vale 2,00 kN/m²",c.qs,2,1e-9,"kN/m²");
+  perto("Fator de níveis com 2 e redução de 50%",c.fatorNiveis,1.5,1e-9);
+  perto("Área de influência = vão·w/2",c.Ainf,1,1e-9,"m²");
+  perto("N_q = q·A_inf·fator",c.Nq,3,1e-9,"kN");
+  ok("Peso próprio positivo",c.pp>0,N(c.pp,1)+" kN");
+  ok("Vento total positivo",c.vento.Ftot>0,N(c.vento.Ftot,1)+" kN");
+  ok("Combinação governante é o máximo",Math.abs(c.NSd-Math.max(c.comb[0].N,c.comb[1].N))<1e-9);
+  var c2=AF.carga(g,{tubo:{de:48.3,t:3.2},mPiso:16,mTela:0.3,pctAcess:8,classe:5,
+    nivelCarregado:2,reducao:50,V0:30,S1:1,S3:0.95,cat:"III",cls:"A",phi:0.6,Ca:1.3,
+    gg:1.25,gq:1.5,gw:1.4,psi:0.6});
+  ok("Classe maior aumenta N_Sd",c2.NSd>c.NSd);
+  ok("Classe inválida lança erro",(function(){try{AF.carga(g,{tubo:{de:48.3,t:3.2},mPiso:16,mTela:0.3,
+    pctAcess:8,classe:9,nivelCarregado:1,reducao:0,V0:30,S1:1,S3:1,cat:"III",cls:"A",phi:0.6,Ca:1.3,
+    gg:1.25,gq:1.5,gw:1.4,psi:0.6});return false;}catch(e){return true;}})());
+
+  /* Verificações */
+  var pe={tubo:{de:48.3,t:3.2},E:200000,fy:250,K:1,bPiso:0.32,mPiso:16,Pconc:1.5,gg:1.25,gq:1.5,gw:1.4,
+    Wpiso:9,Ipiso:55,divFlecha:200,Ranc:3,Amin:1.5,sapataA:0.05,sigmaAdm:200};
+  var vf=AF.estr.todas(g,c,pe);
+  ok("Verificação devolve 8 itens",vf.itens.length===8,vf.itens.length+" itens");
+  ok("Taxa máxima é a maior das taxas",Math.abs(vf.taxaMax-Math.max.apply(null,vf.itens.map(function(x){return x.taxa;})))<1e-12);
+  ok("Item crítico coincide com a taxa máxima",Math.abs(vf.critico.taxa-vf.taxaMax)<1e-12);
+  ok("Situação global é o E lógico dos itens",vf.ok===vf.itens.every(function(x){return x.ok;}));
+  var vf2=AF.estr.todas(g,c,Object.assign({},pe,{Ranc:0.1}));
+  ok("Ancoragem fraca reprova",!vf2.ok);
+
+  /* Orçamento e BDI */
+  g._massa_t=c.massa.total/1000; g._inspecoes=6;
+  var o=AF.orc.itens(g,3,AF.dados.precos,AF.dados.hh);
+  ok("Orçamento soma todos os itens",Math.abs(o.total-o.itens.reduce(function(a,b){return a+b.total;},0))<1e-6);
+  ok("Orçamento positivo",o.total>0,BRL(o.total));
+  var o2=AF.orc.itens(g,6,AF.dados.precos,AF.dados.hh);
+  ok("Mais meses de locação custam mais",o2.total>o.total);
+  perto("BDI com dados clássicos",AF.orc.bdi({AC:4,S:0.8,R:1.2,DF:1,L:7,I:6.65}),
+    (((1+0.04+0.008+0.012)*(1+0.01)*(1+0.07))/(1-0.0665)-1)*100,0.0001,"%");
+  perto("Tributos no regime atual",AF.orc.tributos({regime:"atual",PIS:0.65,COFINS:3,ISS:3,CPRB:0}).total,6.65,1e-9,"%");
+  perto("IVA equivalente com 45% de crédito",AF.orc.ivaEq({CBS:8.8,IBS:17.7,credito:45}),26.5*0.55,1e-9,"%");
+  perto("Transição multiplica o IVAeq por fora e divide pelo ISS",
+    AF.orc.bdi({regime:"transicao",AC:4,S:0.8,R:1.2,DF:1,L:7,CBS:8.8,IBS:0.1,credito:45,ISS:3,porDentro:3}),
+    ((1.06*1.01*1.07)*(1+0.0489500)/(1-0.03)-1)*100,0.02,"%");
+  perto("IVA pleno não tem denominador",
+    AF.orc.bdi({regime:"iva",AC:4,S:0.8,R:1.2,DF:1,L:7,CBS:8.8,IBS:17.7,credito:45}),
+    ((1.06*1.01*1.07)*(1+0.145750)-1)*100,0.02,"%");
+  ok("Carga tributária de 100% é rejeitada",(function(){try{AF.orc.bdi({AC:0,S:0,R:0,DF:0,L:0,I:100});return false;}catch(e){return true;}})());
+
+  /* Cronograma */
+  var k=AF.crono(g,{equipes:2,montadores:3,jornada:8,prodMont:60,prodDesm:95,mobilizacao:3,
+    permanencia:90,diasUteisMes:21,estoqueOn:false,estoque:0});
+  perto("Dias de montagem = 432/(60·2)",k.dMont,4,0,"dias");
+  perto("Ciclo total = 3+4+90+3",k.total,3+4+90+Math.ceil(432/190),0,"dias");
+  ok("Ritmo positivo",k.ritmo>0);
+  ok("Todos os lances aparecem na linha de balanço",k.lances.length===g.nLances);
+  var k2=AF.crono(g,{equipes:2,montadores:3,jornada:8,prodMont:60,prodDesm:95,mobilizacao:3,
+    permanencia:90,diasUteisMes:21,estoqueOn:true,estoque:100});
+  ok("Estoque insuficiente estende a montagem",k2.dMont>k.dMont&&k2.restrito);
+
+  /* Otimizador */
+  var base={pg:{largura:24,altura:18,vao:2,alturaLance:2,w:1,bPiso:0.32,pisosPorLance:1,
+      vaosPorDiagonal:3,ancHoriz:2,ancVert:2,tela:true,rodape:true,distEscada:30},
+    pc:{mPiso:16,mTela:0.3,pctAcess:8,classe:3,nivelCarregado:2,reducao:50,V0:30,S1:1,S3:0.95,
+        cat:"III",cls:"A",phi:0.6,Ca:1.3,gg:1.25,gq:1.5,gw:1.4,psi:0.6},
+    pe:pe, meses:3, precos:AF.dados.precos, inspecoes:6};
+  var r=AF.otim(base,{vaos:[1.5,2,2.5],lances:[2],ws:[1],tubos:["D48.3x3.20"],avs:[2],
+    objetivo:"custo",taxaMax:1});
+  ok("Otimizador testa 3 configurações",r.testadas===3,r.testadas+" testadas");
+  ok("Viáveis mais descartadas fecham o total",r.viaveis.length+r.descartadas.length===r.testadas);
+  ok("Ranking ordenado pelo objetivo",r.viaveis.every(function(x,i){return i===0||r.viaveis[i-1].custo<=x.custo;}));
+  var r2=AF.otim(base,{vaos:[1.5,2,2.5],lances:[2],ws:[1],tubos:["D48.3x3.20"],avs:[2],
+    objetivo:"peso",taxaMax:1});
+  ok("Objetivo por peso reordena o ranking",r2.viaveis.every(function(x,i){return i===0||r2.viaveis[i-1].peso<=x.peso;}));
+  var r3=AF.otim(base,{vaos:[2],lances:[2],ws:[1],tubos:["D33.7x2.65"],avs:[4],objetivo:"custo",taxaMax:0.01});
+  ok("Limite de taxa apertado descarta tudo",r3.viaveis.length===0&&r3.descartadas.length===1);
+
+  /* Modelo IFC */
+  var metaT={nome:"Autoteste",obra:"Obra",local:"Local",responsavel:"RT",organizacao:"Org",
+    tubo:{de:48.3,t:3.2},fy:250,afastamento:0.15,bPiso:0.32,vaosPorDiagonal:3,ancVert:2,ancHoriz:2,data:0};
+  var ifcT=AF.ifc.gerar(g,c,vf,metaT,{piso:true,guardacorpo:true,rodape:true,sapata:true,ancoragem:true,tela:true});
+  ok("IFC abre com ISO-10303-21",ifcT.texto.indexOf("ISO-10303-21;")===0);
+  ok("IFC declara o esquema IFC4",ifcT.texto.indexOf("FILE_SCHEMA(('IFC4'));")>0);
+  ok("IFC fecha corretamente",/END-ISO-10303-21;\s*$/.test(ifcT.texto));
+  perto("Um pavimento por lance",ifcT.storeys,g.nLances,0);
+  perto("Montantes no IFC batem com o quantitativo",ifcT.familias.montante.length,g.quant.montante,0);
+  perto("Pranchas no IFC batem com o quantitativo",ifcT.familias.piso.length,g.quant.piso,0);
+  perto("Ancoragens no IFC batem com o quantitativo",ifcT.familias.ancoragem.length,g.quant.ancoragem,0);
+  ok("Total é a soma das famílias",ifcT.elementos===Object.keys(ifcT.familias)
+     .reduce(function(a,k){return a+ifcT.familias[k].length;},0),ifcT.elementos+" elementos");
+  ok("Linhas de dados no formato #n=ENTIDADE(...);",(function(){
+    var L=ifcT.texto.split("\n"), d=L.slice(L.indexOf("DATA;")+1,L.lastIndexOf("ENDSEC;"));
+    return d.every(function(x,i){ return /^#\d+=[A-Z0-9]+\(.*\);$/.test(x) && +x.slice(1,x.indexOf("="))===i+1; });
+  })());
+  ok("GUIDs com 22 caracteres do alfabeto IFC",(function(){
+    var gs=ifcT.texto.match(/'([0-9A-Za-z_$]{22})'/g)||[];
+    return gs.length>100 && gs.length===Object.keys(gs.reduce(function(a,x){a[x]=1;return a;},{})).length;
+  })());
+  ok("Arquivo sem caractere não-ASCII",!/[^\x00-\x7F]/.test(
+    AF.ifc.gerar(g,c,vf,Object.assign({},metaT,{nome:"Fachada — ação"}),{}).texto));
+  ok("Desligar famílias reduz o modelo",
+    AF.ifc.gerar(g,c,vf,metaT,{piso:false,guardacorpo:false,rodape:false,sapata:false,ancoragem:false,tela:false})
+      .elementos < ifcT.elementos);
+  perto("Real IFC com ponto decimal",AF.ifc.real(2)==="2.0"?1:0,1,0);
+
+  /* Formatação */
+  ok("Formatação numérica em pt-BR",N(1234.5,2).indexOf(",")>0,N(1234.5,2));
+  ok("Formatação monetária em reais",BRL(1000).indexOf("R$")>=0,BRL(1000));
+
+  var pass=T.length-falhas;
+  $("testOut").innerHTML=
+    '<div class="grid g4" style="margin-bottom:12px">'+
+    '<div class="kpi '+(falhas?"bad":"ok")+'"><div class="k">Resultado</div><div class="v">'+
+      (falhas?falhas+" falha"+(falhas>1?"s":""):"Tudo certo")+'</div></div>'+
+    '<div class="kpi"><div class="k">Aprovados</div><div class="v">'+pass+'</div></div>'+
+    '<div class="kpi"><div class="k">Total</div><div class="v">'+T.length+'</div></div>'+
+    '<div class="kpi"><div class="k">Cobertura</div><div class="v">'+Math.round(100*pass/T.length)+'%</div></div></div>'+
+    '<div class="tw"><table><thead><tr><th>Teste</th><th>Detalhe</th><th class="n">Situação</th></tr></thead><tbody>'+
+    T.map(function(t){return '<tr><td>'+t.nome+'</td><td style="font-family:var(--f-num);font-size:11px;color:var(--ink3)">'+
+      t.det+'</td><td class="n"><span class="tag '+(t.ok?"ok":"bad")+'">'+(t.ok?"passa":"FALHA")+'</span></td></tr>';}).join("")+
+    '</tbody></table></div>';
+  return {total:T.length,falhas:falhas};
+}
+
+/* ---------- Inicialização e ligações ---------- */
+function irPara(id){
+  document.querySelectorAll(".painel").forEach(function(p){ p.classList.toggle("on",p.id===id); });
+  document.querySelectorAll(".aba").forEach(function(a){
+    a.setAttribute("aria-selected", a.getAttribute("data-p")===id ? "true":"false"); });
+  try{ if(window.pageYOffset) window.scrollTo(0,0); }catch(e){}
+}
+function init(){
+  /* selects dinâmicos */
+  $("c_classe").innerHTML=AF.dados.classes.map(function(c){
+    return '<option value="'+c.n+'"'+(c.n===3?" selected":"")+'>Classe '+c.n+' — '+N(c.q,2)+' kN/m²</option>';}).join("");
+  $("e_tubo").innerHTML=AF.dados.tubos.map(function(t){
+    return '<option value="'+t.id+'"'+(t.id==="D48.3x3.20"?" selected":"")+'>Ø'+t.de+' × '+N(t.t,2)+' mm</option>';}).join("");
+  montaEspaco(); montaTributos(); montaExemplos();
+
+  document.querySelectorAll(".aba").forEach(function(a){
+    a.addEventListener("click",function(){ irPara(a.getAttribute("data-p")); }); });
+  irPara("p-projeto");
+
+  var semRecalculo={i_piso:1,i_gc:1,i_rodape:1,i_sapata:1,i_anc:1,i_tela:1,i_org:1};
+  var ids=CAMPOS.concat(CHECKS);
+  ids.forEach(function(id){ var e=$(id); if(!e) return;
+    if(semRecalculo[id]){ e.addEventListener("change",function(){ $("btIfcBaixar").disabled=true;
+      $("i_status").textContent="Opções alteradas. Gere o modelo novamente."; }); return; }
+    e.addEventListener("change",function(){
+      if(id==="b_reg") montaTributos();
+      if(id==="k_est") $("k_estq").disabled=!ck("k_est");
+      calc();
+    });
+    if(e.tagName==="INPUT"&&e.type==="number") e.addEventListener("input",calc);
+  });
+
+  $("btTema").addEventListener("click",function(){
+    var novo=document.documentElement.getAttribute("data-tema")==="escuro"?"claro":"escuro";
+    document.documentElement.setAttribute("data-tema",novo);
+    try{ localStorage.setItem("andaimefach.tema",novo); }catch(e){}
+    calc();
+  });
+  try{ var t=localStorage.getItem("andaimefach.tema"); if(t) document.documentElement.setAttribute("data-tema",t); }catch(e){}
+
+  $("btSalvar").addEventListener("click",salvar);
+  $("btLimpar").addEventListener("click",function(){
+    if(confirm("Restaurar todos os campos aos valores padrão? O projeto salvo será apagado.")){
+      try{ localStorage.removeItem(CHAVE); }catch(e){}
+      location.reload();
+    }
+  });
+  $("btExportar").addEventListener("click",function(){
+    var b=new Blob([JSON.stringify(coletar(),null,2)],{type:"application/json"});
+    var a=document.createElement("a"); a.href=URL.createObjectURL(b);
+    a.download=(tx("pj_nome")||"andaime").replace(/[^\w\-]+/g,"-").toLowerCase()+".json";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  });
+  $("btImportar").addEventListener("click",function(){ $("fileIn").click(); });
+  $("fileIn").addEventListener("change",function(){
+    var f=this.files[0]; if(!f) return;
+    var r=new FileReader();
+    r.onload=function(){ try{ aplicar(JSON.parse(r.result));
+      $("msgSalvo").textContent="Projeto importado de "+f.name+".";
+    }catch(e){ $("msgSalvo").innerHTML='<span style="color:var(--bad)">Arquivo inválido: '+e.message+'</span>'; } };
+    r.readAsText(f); this.value="";
+  });
+
+  $("btOtim").addEventListener("click",otimizar);
+  $("btAplicar").addEventListener("click",aplicarMelhor);
+  $("btGerarRel").addEventListener("click",function(){ gerarRelatorio(); });
+  $("btImprimir").addEventListener("click",function(){ if(!$("relDoc").querySelector("h2")) gerarRelatorio(); window.print(); });
+  $("btCsvQuant").addEventListener("click",csvQuant);
+  $("btCsvOrc").addEventListener("click",csvOrc);
+  $("btCsvTudo").addEventListener("click",function(){ csvQuant(); setTimeout(csvOrc,400); });
+  $("btTest").addEventListener("click",rodarTestes);
+  $("btIfc").addEventListener("click",gerarIfc);
+  $("btIfcBaixar").addEventListener("click",baixarIfc);
+  $("btSegLimpa").addEventListener("click",function(){
+    document.querySelectorAll("#checklist input").forEach(function(i){ i.checked=false; }); segKpi(); });
+  $("b_reg").addEventListener("change",function(){ montaTributos(); renderOrc(); });
+  ["b_ac","b_s","b_r","b_df","b_l","b_compra","b_resid"].forEach(function(id){
+    $(id).addEventListener("input",renderOrc); });
+  $("s_int").addEventListener("input",renderSeg);
+  $("s_n").addEventListener("input",renderSeg);
+  $("s_dt").addEventListener("change",renderSeg);
+
+  if(!carregar()) calc();
+}
+if(typeof document!=="undefined" && document.readyState!=="loading") init();
+else if(typeof document!=="undefined") document.addEventListener("DOMContentLoaded",init);
+if(typeof window!=="undefined"){ window.AFUI={calc:calc,rodarTestes:rodarTestes,state:function(){return S;},gerarIfc:gerarIfc,ifc:function(){return ifcAtual;}}; }
+</script>
+
+<script>
+(function(){
+  "use strict";
+  var root=document.documentElement, splash=document.getElementById("af-splash");
+  if(!splash) return;
+  root.classList.add("af-lock");
+
+  var cam=document.getElementById("af-cam");
+  var BAYS=3, LEVELS=5, BW=270, LH=200, DP=120;
+  var W=BAYS*BW, H=LEVELS*LH;
+  var X0=-W/2, Y0=-H*0.52, Z0=-DP/2;
+
+  var CUR=cam;
+  function el(cls,parent){var d=document.createElement("div"); if(cls)d.className=cls; (parent||CUR).appendChild(d); return d;}
+
+  function tube(x,y,z,len,thick,axis,tone,delay,rot){
+    var p=el("part"); p.style.transform="translate3d("+x+"px,"+y+"px,"+z+"px)";
+    var t=el("tube",p);
+    var base=["#9fb2bf","#8aa0ae","#76909f"][tone]||"#8aa0ae";
+    var dark=["#66808f","#57717f","#4a6472"][tone]||"#57717f";
+    var a=el("fa",t), b=el("fa",t);
+    var w,h,ta,tb;
+    if(axis==="y"){ w=thick; h=len; ta="translate(-50%,0)"; tb="translate(-50%,0) rotateY(90deg)"; }
+    else if(axis==="x"){ w=len; h=thick; ta="translate(0,-50%)"; tb="translate(0,-50%) rotateX(90deg)"; }
+    else { w=len; h=thick; ta="translate(0,-50%) rotateY(-90deg)"; tb="translate(0,-50%) rotateY(-90deg) rotateX(90deg)"; }
+    if(rot){ ta="translate(0,-50%) rotate("+rot+"deg)"; tb="translate(0,-50%) rotate("+rot+"deg) rotateX(90deg)"; }
+    [a,b].forEach(function(f,i){
+      f.style.cssText="position:absolute;left:0;top:0;width:"+w+"px;height:"+h+"px;transform-origin:0 50%;";
+      f.style.transform=(i?tb:ta);
+      f.style.background= i
+        ? "linear-gradient(90deg,"+dark+","+base+" 55%,"+dark+")"
+        : (axis==="y"
+            ? "linear-gradient(90deg,"+dark+" 0%,"+base+" 38%,#c9d8e2 52%,"+base+" 66%,"+dark+" 100%)"
+            : "linear-gradient(180deg,"+base+" 0%,#c2d2dd 38%,"+base+" 60%,"+dark+" 100%)");
+      f.style.boxShadow="0 0 0 .5px rgba(20,30,40,.35)";
+      if(i) f.style.filter="brightness(.82)";
+    });
+    return p;
+  }
+
+  function deck(x,y,z,w,d,delay){
+    var p=el("part"); p.style.transform="translate3d("+x+"px,"+y+"px,"+z+"px)";
+    var t=el("tube",p);
+    var f=el("fa",t);
+    f.style.cssText="position:absolute;left:0;top:0;width:"+w+"px;height:"+d+"px;transform-origin:0 0;transform:rotateX(90deg);"+
+      "background:repeating-linear-gradient(90deg,#b98b4e 0 2px,#a97c44 2px 34px,#8f6835 34px 36px);"+
+      "box-shadow:0 0 0 .5px rgba(20,30,40,.4), inset 0 0 26px rgba(0,0,0,.28);";
+    return p;
+  }
+
+  var facW=document.createElement("div"); facW.className="part";
+  facW.style.transform="translate3d("+(X0-900)+"px,"+(Y0-300)+"px,"+(Z0-190)+"px)";
+  var fac=document.createElement("div"); fac.id="af-facade";
+  fac.style.cssText+="left:0;top:0;width:"+(W+1800)+"px;height:"+(H+900)+"px;";
+  facW.appendChild(fac); cam.appendChild(facW);
+
+  var gnd=document.createElement("div"); gnd.id="af-ground";
+  gnd.style.cssText+="left:0;top:0;width:"+(W+900)+"px;height:"+(DP+900)+"px;background:radial-gradient(60% 70% at 50% 40%, rgba(120,160,190,.16), transparent 72%);transform:translate3d("+(X0-450)+"px,"+(Y0+H)+"px,"+(Z0-450)+"px) rotateX(90deg);";
+  cam.appendChild(gnd);
+
+  var STEP=400, T0=140;
+  for(var L=0; L<LEVELS; L++){
+    var y=Y0+H-(L+1)*LH, d0=T0+L*STEP;
+    CUR=document.createElement("div"); CUR.className="lvl";
+    CUR.style.animationDelay=d0+"ms"; cam.appendChild(CUR);
+    for(var c=0;c<=BAYS;c++){
+      var x=X0+c*BW;
+      tube(x,y,Z0,LH,11,"y",0,d0);
+      tube(x,y,Z0+DP,LH,11,"y",2,d0+40);
+      tube(x,y,Z0,DP,8,"z",1,d0+120);
+    }
+    for(var b=0;b<BAYS;b++){
+      var bx=X0+b*BW;
+      tube(bx,y,Z0,BW,8,"x",0,d0+90);
+      tube(bx,y+LH,Z0,BW,8,"x",1,d0+60);
+      tube(bx,y,Z0+DP,BW,8,"x",2,d0+110);
+      deck(bx,y+LH-6,Z0+6,BW,DP-12,d0+200);
+      if((b+L)%2===0){
+        var len=Math.sqrt(BW*BW+LH*LH), ang=-Math.atan2(LH,BW)*180/Math.PI;
+        tube(bx,y+LH,Z0-9,len,7,"x",2,d0+250,ang);
+      }
+      if(L===LEVELS-1){
+        tube(bx,y-58,Z0,BW,7,"x",0,d0+300);
+        tube(bx,y-100,Z0,BW,7,"x",1,d0+330);
+      }
+    }
+  }
+
+  var legalTimer=setTimeout(mostrarLegal,4000);
+  function mostrarLegal(){
+    clearTimeout(legalTimer);
+    splash.classList.add("af-legal-on");
+    if(ck) ck.focus();
+  }
+
+  var ck=document.getElementById("af-ck"), go=document.getElementById("af-go"),
+      no=document.getElementById("af-no"), msg=document.getElementById("af-msg");
+  ck.addEventListener("change",function(){ go.disabled=!ck.checked; if(ck.checked) msg.classList.remove("on"); });
+  no.addEventListener("click",function(){ msg.classList.add("on"); ck.focus(); });
+  go.addEventListener("click",function(){
+    if(!ck.checked){ msg.classList.add("on"); return; }
+    splash.classList.add("af-out");
+    root.classList.remove("af-lock");
+    setTimeout(function(){ splash.remove(); var s=document.getElementById("af-splash-css"); if(s)s.remove(); },500);
+  });
+})();
+</script>
+
+</body>
+</html>
