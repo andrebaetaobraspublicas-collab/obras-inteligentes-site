@@ -115,7 +115,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/manutencao/` | 278361 bytes | 274136 caracteres |
 | `/fiscalizacao/` | 354221 bytes | 354221 caracteres |
 | `/estrutural/` | 989496 bytes | 989496 caracteres |
-| `/pavimentos/` | 102865 bytes | 102865 caracteres |
+| `/pavimentos/` | 187093 bytes | 187093 caracteres |
 | `/riscos/` | 582771 bytes | 582771 caracteres |
 | `/administracao-canteiro/` | 480651 bytes | 480651 caracteres |
 | `/memorial-descritivo/` | 6349 bytes | 6349 caracteres |
@@ -260,6 +260,8 @@ Observacoes:
 
 - Recebeu aviso legal equivalente ao da Calculadora Estrutural.
 - Relatorios devem conter aviso resumido de responsabilidade tecnica.
+- Em 16/08/2026, foi atualizada com nova versao enviada como `index (31).html`, incorporando recursos de orcamento detalhado SINAPI.
+- Backup anterior salvo em `C:\Obras Inteligentes\backups\pavimentos-index-before-update-20260816-20260816-135250.html`.
 
 ### Mapa & Matriz de Riscos
 
