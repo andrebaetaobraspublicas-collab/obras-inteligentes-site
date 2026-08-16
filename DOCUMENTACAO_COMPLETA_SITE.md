@@ -128,7 +128,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/bombapro/` | 737818 bytes | 737818 caracteres |
 | `/paraboltpro/` | 1147646 bytes | 1147646 caracteres |
 | `/steelpro/` | 229160 bytes | 229160 caracteres |
-| `/cronogramapro/` | 505340 bytes | 505340 caracteres |
+| `/cronogramapro/` | 359726 bytes | 359726 caracteres |
 | `/drenapro/` | 185925 bytes | 185925 caracteres |
 | `/taludepro/` | 97674 bytes | 97674 caracteres |
 | `/solarpro/` | 485745 bytes | 485745 caracteres |
@@ -481,6 +481,8 @@ Observacoes:
 - Aplicativo standalone empacotado em HTML unico.
 - Tela inicial do site aponta para `/cronogramapro/`.
 - Validar apos futuras alteracoes se a abertura, os calculos parametricos, os graficos de Gantt e os relatorios continuam carregando corretamente.
+- Em 16/08/2026, foi atualizado com a nova versao `cronogramapro-v2.html` enviada pelo usuario, identificada no titulo como CronogramaPro v2.0.
+- Backup anterior salvo em `C:\Obras Inteligentes\backups\cronogramapro-index-before-v2-20260816-20260816-150311.html`.
 
 ### DrenaPro
 
