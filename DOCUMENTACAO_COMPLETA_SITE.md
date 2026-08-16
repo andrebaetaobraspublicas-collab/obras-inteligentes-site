@@ -43,7 +43,7 @@ Excecoes/observacoes:
 
 ## Inventario verificado dos aplicativos
 
-Inventario originalmente verificado em 21/07/2026 e atualizado em 15/08/2026 para atualizacao do Comparador de Honorarios de Projetos. Todos os cards listados possuem arquivo local correspondente.
+Inventario originalmente verificado em 21/07/2026 e atualizado em 15/08/2026 para inclusao do CriticaOpex e criacao do filtro Manutencao Predial. Todos os cards listados possuem arquivo local correspondente.
 
 | Card | Aplicativo | Rota publicada | Arquivo local principal | Status local | Status site |
 |---|---|---|---|---|---|
@@ -104,6 +104,7 @@ Inventario originalmente verificado em 21/07/2026 e atualizado em 15/08/2026 par
 | 55 / ALVENARIA | AlvenariaPro | `/alvenariapro/` | `C:\Obras Inteligentes\alvenariapro\index.html` | existe | 200 |
 | 56 / ANDAIMES | AndaimeFach Pro | `/andaimefach-pro/` | `C:\Obras Inteligentes\andaimefach-pro\index.html` | existe | 200 |
 | 57 / RECEBIMENTO | RecebeObra Pro | `/recebeobra-pro/` | `C:\Obras Inteligentes\recebeobra-pro\index.html` | existe | 200 |
+| 58 / OPEX PREDIAL | CriticaOpex | `/criticaopex/` | `C:\Obras Inteligentes\criticaopex\index.html` | existe | 200 |
 
 ## Tamanhos verificados
 
@@ -168,6 +169,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/alvenariapro/` | 474835 bytes | 474835 caracteres |
 | `/andaimefach-pro/` | 160989 bytes | 160989 caracteres |
 | `/recebeobra-pro/` | 617407 bytes | 617407 caracteres |
+| `/criticaopex/` | 236893 bytes | 236893 caracteres |
 
 ## Estrutura local principal
 
@@ -223,6 +225,7 @@ Observacoes:
 - Foi ajustado para acesso livre, sem exigir login.
 - O backend e simulado/local em JavaScript, adequado a hospedagem estatica.
 - Em 21/07/2026, recebeu tela inicial com aviso de uso demonstrativo, isencao de responsabilidade e botao de concordancia antes de liberar o aplicativo.
+- Em 15/08/2026, o card foi remanejado para o novo filtro `Manutencao Predial`.
 - A pasta antiga `Sistema Manutenção Predial` existe como historico, mas esta ignorada no Git.
 
 ### Fiscalizacao de Contratos
@@ -1189,6 +1192,25 @@ Observacoes:
 - O card foi classificado no filtro `Gestao de Obras e de Contratos`.
 - Validar apos futuras alteracoes se os modulos de contrato e obra, tipo de obra, documentos, ensaios, vistoria, punch list, prontidao, recebimento provisorio, recebimento definitivo, garantia, relatorios e armazenamento local continuam carregando corretamente.
 
+### CriticaOpex
+
+Rota: `/criticaopex/`  
+Arquivo: `criticaopex/index.html`
+
+Ultima inclusao:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\CriticaOpex_v2.1.html`
+- Data: 15/08/2026
+- Alteracao: inclusao de novo card na home e publicacao do aplicativo CriticaOpex v2.1 como HTML standalone.
+
+Observacoes:
+
+- Aplicativo standalone empacotado em HTML unico, com tela de abertura e aviso de responsabilidade.
+- Tela inicial do site aponta para `/criticaopex/`.
+- O card foi classificado no novo filtro `Manutencao Predial`.
+- O filtro `Manutencao Predial` tambem passou a agrupar o modulo original `/manutencao/`.
+- Validar apos futuras alteracoes se os modulos de vistoria predial, matriz GOS, biblioteca de patologias, catalogo de servicos, Opex imediato, otimizacao sob teto orcamentario, relatorios e armazenamento local continuam carregando corretamente.
+
 ## Artigos publicados na home
 
 Em 20/07/2026, os tres cards iniciais do bloco `Conteudo` da home foram substituidos por artigos reais enviados em PDF. Em 21/07/2026, foi incluido um quarto artigo. A estrategia adotada foi renderizar cada pagina do PDF como PNG dentro de uma pagina HTML propria, preservando a diagramacao original, tabelas, figuras e paginacao. Cada pagina tambem oferece link para abrir/baixar o PDF original.
@@ -1393,7 +1415,8 @@ $headers=@{ 'User-Agent'='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
   '/cimbrepro/',
   '/alvenariapro/',
   '/andaimefach-pro/',
-  '/recebeobra-pro/'
+  '/recebeobra-pro/',
+  '/criticaopex/'
 ) | ForEach-Object {
   $url = "https://www.obrasinteligentes.ia.br$_?v=check"
   $r = Invoke-WebRequest -UseBasicParsing -Headers $headers -Uri $url -TimeoutSec 30

@@ -521,12 +521,11 @@ body.modal-open{overflow:hidden}
       <button class="filter-btn" type="button" data-filter="Pavimentacao, Saneamento e Infraestrutura">Pavimenta&ccedil;&atilde;o, Saneamento e Infraestrutura</button>
       <button class="filter-btn" type="button" data-filter="Engenharia Mecanica">Engenharia Mec&acirc;nica</button>
       <button class="filter-btn" type="button" data-filter="Gestao de Obras e de Contratos">Gest&atilde;o de Obras e de Contratos</button>
-      <button class="filter-btn" type="button" data-filter="Manutencao Predial">Manuten&ccedil;&atilde;o Predial</button>
       <button class="filter-btn" type="button" data-filter="Riscos">Riscos</button>
       <button class="filter-btn" type="button" data-filter="Orcamento">Or&ccedil;amento</button>
       <button class="filter-btn" type="button" data-filter="Artigos">Artigos</button>
     </div>
-    <div class="app-filter-status" id="appFilterStatus">58 aplicativos encontrados</div>
+    <div class="app-filter-status" id="appFilterStatus">57 aplicativos encontrados</div>
   </div>
 
   <div class="apps">
@@ -1156,17 +1155,6 @@ body.modal-open{overflow:hidden}
       <p>Comissionamento e recebimento de obras p&uacute;blicas, com contrato, tipo de obra, documentos, ensaios, vistorias, punch list, prontid&atilde;o, recebimento provis&oacute;rio e definitivo e relat&oacute;rios.</p>
       <div class="meta">Abrir sistema &middot; recebimento de obras</div>
     </a>
-
-    <a class="app" href="/criticaopex/" aria-label="Abrir CriticaOpex - Priorizacao Tecnica e Opex de Manutencao Predial">
-      <span class="arrow">&rarr;</span>
-      <div class="app-num">58 / OPEX PREDIAL</div>
-      <svg class="app-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M7 41h34"/><path d="M10 41V16l14-9 14 9v25"/><path d="M17 41V29h14v12"/><path d="M16 20h5"/><path d="M27 20h5"/><path d="M15 26h18"/><path d="M34 9l5 3"/><path d="M34 9v7"/>
-      </svg>
-      <h3>CriticaOpex</h3>
-      <p>Priorizador de anomalias de vistoria predial pela matriz GOS, com criticidade, biblioteca de patologias, servi&ccedil;os de manuten&ccedil;&atilde;o, teto de Opex, otimiza&ccedil;&atilde;o e relat&oacute;rios t&eacute;cnicos.</p>
-      <div class="meta">Abrir sistema &middot; manuten&ccedil;&atilde;o predial</div>
-    </a>
   </div>
 </section>
 
@@ -1281,7 +1269,6 @@ body.modal-open{overflow:hidden}
         <a href="/alvenariapro/">AlvenariaPro - Alvenaria Estrutural</a>
         <a href="/andaimefach-pro/">AndaimeFach Pro - Andaimes Fachadeiros</a>
         <a href="/recebeobra-pro/">RecebeObra Pro - Recebimento de Obras</a>
-        <a href="/criticaopex/">CriticaOpex - Opex Predial</a>
       </div>
       <div class="foot-col">
         <h4>Conteúdo</h4>
@@ -1366,7 +1353,7 @@ body.modal-open{overflow:hidden}
 <script>
 (function(){
   const entries = new Map([
-    ["/manutencao/", ["Manutencao Predial", "manutencao predial nbr 5674 gestao ativos"]],
+    ["/manutencao/", ["Gestao de Obras e de Contratos", "manutencao predial nbr 5674 gestao ativos"]],
     ["/fiscalizacao/", ["Gestao de Obras e de Contratos", "fiscalizacao contratos lei 14133 tcu medicao aditivos"]],
     ["/estrutural/", ["Estruturas", "calculadora estrutural concreto armado vigas pilares lajes"]],
     ["/pavimentos/", ["Pavimentacao, Saneamento e Infraestrutura", "calculadora pavimentos pavimentacao solo trafego camadas custos infraestrutura"]],
@@ -1422,8 +1409,7 @@ body.modal-open{overflow:hidden}
     ["/cimbrepro/", ["Estruturas", "cimbrepro cimbres escoramentos metalicos lajes formas longarinas torres escoras desforma reescoramento cargas ifc estruturas"]],
     ["/alvenariapro/", ["Estruturas", "alvenariapro alvenaria estrutural blocos graute armaduras cintas paredes cargas verticais flexo compressao cisalhamento nbr 16868 estruturas"]],
     ["/andaimefach-pro/", ["Estruturas", "andaimefach pro andaimes fachadeiros montagem carga fachadas vento ancoragens contraventamento verificacao estrutural nr18 nr35 nbr 16492 nbr 6123 estruturas"]],
-    ["/recebeobra-pro/", ["Gestao de Obras e de Contratos", "recebeobra pro recebimento obras publicas comissionamento ensaios vistoria punch list prontuario entrega contrato fiscalizacao recebimento provisorio definitivo garantia relatorios"]],
-    ["/criticaopex/", ["Manutencao Predial", "criticaopex critica opex manutencao predial vistoria anomalias matriz gos criticidade patologias servicos teto orcamentario otimizacao relatorios"]]
+    ["/recebeobra-pro/", ["Gestao de Obras e de Contratos", "recebeobra pro recebimento obras publicas comissionamento ensaios vistoria punch list prontuario entrega contrato fiscalizacao recebimento provisorio definitivo garantia relatorios"]]
   ]);
 
   const appCards = Array.from(document.querySelectorAll(".apps .app"));
