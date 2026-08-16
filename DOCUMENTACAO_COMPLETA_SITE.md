@@ -169,7 +169,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/alvenariapro/` | 474835 bytes | 474835 caracteres |
 | `/andaimefach-pro/` | 160989 bytes | 160989 caracteres |
 | `/recebeobra-pro/` | 617407 bytes | 617407 caracteres |
-| `/criticaopex/` | 236893 bytes | 236893 caracteres |
+| `/criticaopex/` | 456066 bytes | 456066 caracteres |
 
 ## Estrutura local principal
 
@@ -1214,6 +1214,8 @@ Observacoes:
 - O card foi classificado no novo filtro `Manutencao Predial`.
 - O filtro `Manutencao Predial` tambem passou a agrupar o modulo original `/manutencao/`.
 - Validar apos futuras alteracoes se os modulos de vistoria predial, matriz GOS, biblioteca de patologias, catalogo de servicos, Opex imediato, otimizacao sob teto orcamentario, relatorios e armazenamento local continuam carregando corretamente.
+- Em 16/08/2026, foi atualizado com a nova versao `CriticaOpex_v2.6.1_Manual.html`, identificada no titulo como CriticaOpex 2.6.1, com manual integrado.
+- Backup anterior salvo em `C:\Obras Inteligentes\backups\criticaopex-index-before-v2-6-1-20260816-20260816-194624.html`.
 
 ## Artigos publicados na home
 
