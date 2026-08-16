@@ -43,7 +43,7 @@ Excecoes/observacoes:
 
 ## Inventario verificado dos aplicativos
 
-Inventario originalmente verificado em 21/07/2026 e atualizado em 14/08/2026 para inclusao do RecebeObra Pro no filtro Gestao de Obras e de Contratos. Todos os cards listados possuem arquivo local correspondente.
+Inventario originalmente verificado em 21/07/2026 e atualizado em 15/08/2026 para atualizacao do Comparador de Honorarios de Projetos. Todos os cards listados possuem arquivo local correspondente.
 
 | Card | Aplicativo | Rota publicada | Arquivo local principal | Status local | Status site |
 |---|---|---|---|---|---|
@@ -155,7 +155,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/hidrocalc/` | 488029 bytes | 488029 caracteres |
 | `/elevadorcalc/` | 259316 bytes | 259316 caracteres |
 | `/thermox-pro/` | 428015 bytes | 428015 caracteres |
-| `/comparador-honorarios-projetos/` | 317011 bytes | 317011 caracteres |
+| `/comparador-honorarios-projetos/` | 525309 bytes | 525309 caracteres |
 | `/consultoriapro-rodoviario/` | 284681 bytes | 284681 caracteres |
 | `/geradorpro/` | 265143 bytes | 265143 caracteres |
 | `/spdapro/` | 709941 bytes | 709941 caracteres |
@@ -958,16 +958,16 @@ Arquivo: `comparador-honorarios-projetos/index.html`
 
 Ultima atualizacao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\comparador-honorarios-projetos-v6-abertura.html`
-- Data: 04/08/2026
-- Alteracao: substituicao integral de `comparador-honorarios-projetos/index.html` pela versao 6 com tela de abertura.
+- Fonte: `C:\Users\ACER\Documents\Downloads\Comparador_Honorarios_Projetos_v8_1_Manual.html`
+- Data: 15/08/2026
+- Alteracao: substituicao integral de `comparador-honorarios-projetos/index.html` pela versao 8.1 com analise, auditoria, relatorio profissional, CUB, produtividade e manual integrado.
 
 Observacoes:
 
 - Aplicativo standalone empacotado em HTML unico.
 - Tela inicial do site aponta para `/comparador-honorarios-projetos/`.
 - O card foi classificado no filtro `Orcamento`.
-- Validar apos futuras alteracoes se a comparacao de honorarios de projetos por IOPES, SENGE-BA, CEHOP, CAIXA e CAU/BR Modulos I e II continua carregando corretamente.
+- Validar apos futuras alteracoes se a comparacao de honorarios de projetos por IOPES, SENGE-BA, CEHOP, CAIXA e CAU/BR Modulos I e II, analise, auditoria, relatorio profissional, CUB, produtividade e manual integrado continuam carregando corretamente.
 
 ### ConsultoriaPro
 
