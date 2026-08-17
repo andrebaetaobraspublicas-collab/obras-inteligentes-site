@@ -169,7 +169,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/alvenariapro/` | 474835 bytes | 474835 caracteres |
 | `/andaimefach-pro/` | 160989 bytes | 160989 caracteres |
 | `/recebeobra-pro/` | 617407 bytes | 617407 caracteres |
-| `/criticaopex/` | 456066 bytes | 456066 caracteres |
+| `/criticaopex/` | 631053 bytes | 631053 caracteres |
 
 ## Estrutura local principal
 
@@ -1216,6 +1216,8 @@ Observacoes:
 - Validar apos futuras alteracoes se os modulos de vistoria predial, matriz GOS, biblioteca de patologias, catalogo de servicos, Opex imediato, otimizacao sob teto orcamentario, relatorios e armazenamento local continuam carregando corretamente.
 - Em 16/08/2026, foi atualizado com a nova versao `CriticaOpex_v2.6.1_Manual.html`, identificada no titulo como CriticaOpex 2.6.1, com manual integrado.
 - Backup anterior salvo em `C:\Obras Inteligentes\backups\criticaopex-index-before-v2-6-1-20260816-20260816-194624.html`.
+- Em 16/08/2026, foi atualizado novamente com a nova versao `CriticaOpex_v3.1(1).html`, identificada no titulo como CriticaOpex 3.1, com gestao patrimonial, banco de ensaios e mapa de patologias.
+- Backup anterior salvo em `C:\Obras Inteligentes\backups\criticaopex-index-before-v3-1-20260816-20260816-225156.html`.
 
 ## Artigos publicados na home
 
