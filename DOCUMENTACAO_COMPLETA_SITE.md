@@ -43,7 +43,7 @@ Excecoes/observacoes:
 
 ## Inventario verificado dos aplicativos
 
-Inventario originalmente verificado em 21/07/2026 e atualizado em 15/08/2026 para inclusao do CriticaOpex e criacao do filtro Manutencao Predial. Todos os cards listados possuem arquivo local correspondente.
+Inventario originalmente verificado em 21/07/2026 e atualizado em 17/08/2026 para inclusao do PMOC Manager no filtro Manutencao Predial. Todos os cards listados possuem arquivo local correspondente.
 
 | Card | Aplicativo | Rota publicada | Arquivo local principal | Status local | Status site |
 |---|---|---|---|---|---|
@@ -105,6 +105,7 @@ Inventario originalmente verificado em 21/07/2026 e atualizado em 15/08/2026 par
 | 56 / ANDAIMES | AndaimeFach Pro | `/andaimefach-pro/` | `C:\Obras Inteligentes\andaimefach-pro\index.html` | existe | 200 |
 | 57 / RECEBIMENTO | RecebeObra Pro | `/recebeobra-pro/` | `C:\Obras Inteligentes\recebeobra-pro\index.html` | existe | 200 |
 | 58 / OPEX PREDIAL | CriticaOpex | `/criticaopex/` | `C:\Obras Inteligentes\criticaopex\index.html` | existe | 200 |
+| 59 / PMOC | PMOC Manager | `/pmoc-manager/` | `C:\Obras Inteligentes\pmoc-manager\index.html` | existe | 200 |
 
 ## Tamanhos verificados
 
@@ -170,6 +171,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/andaimefach-pro/` | 160989 bytes | 160989 caracteres |
 | `/recebeobra-pro/` | 617407 bytes | 617407 caracteres |
 | `/criticaopex/` | 631053 bytes | 631053 caracteres |
+| `/pmoc-manager/` | 604647 bytes | 604647 caracteres |
 
 ## Estrutura local principal
 
@@ -1219,6 +1221,24 @@ Observacoes:
 - Em 16/08/2026, foi atualizado novamente com a nova versao `CriticaOpex_v3.1(1).html`, identificada no titulo como CriticaOpex 3.1, com gestao patrimonial, banco de ensaios e mapa de patologias.
 - Backup anterior salvo em `C:\Obras Inteligentes\backups\criticaopex-index-before-v3-1-20260816-20260816-225156.html`.
 
+### PMOC Manager
+
+Rota: `/pmoc-manager/`  
+Arquivo: `pmoc-manager/index.html`
+
+Ultima inclusao:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\PMOC_Manager_v2.2_Visual_Manual_offline.html`
+- Data: 17/08/2026
+- Alteracao: inclusao de novo card na home, no filtro `Manutencao Predial`, e publicacao do aplicativo PMOC Manager v2.2 como HTML standalone.
+
+Observacoes:
+
+- Aplicativo standalone empacotado em HTML unico, com tela de abertura 3D, aviso legal e manual visual offline.
+- Tela inicial do site aponta para `/pmoc-manager/`.
+- Backup da home anterior salvo em `C:\Obras Inteligentes\backups\index-before-pmoc-manager-20260817-20260817-073334.html`.
+- Validar apos futuras alteracoes se os modulos de edificacao, equipamentos, plano PMOC, ordens de servico, QAI, ensaios, energia, pecas, indicadores, relatorios, anexos e armazenamento local continuam carregando corretamente.
+
 ## Artigos publicados na home
 
 Em 20/07/2026, os tres cards iniciais do bloco `Conteudo` da home foram substituidos por artigos reais enviados em PDF. Em 21/07/2026, foi incluido um quarto artigo. A estrategia adotada foi renderizar cada pagina do PDF como PNG dentro de uma pagina HTML propria, preservando a diagramacao original, tabelas, figuras e paginacao. Cada pagina tambem oferece link para abrir/baixar o PDF original.
@@ -1424,7 +1444,8 @@ $headers=@{ 'User-Agent'='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
   '/alvenariapro/',
   '/andaimefach-pro/',
   '/recebeobra-pro/',
-  '/criticaopex/'
+  '/criticaopex/',
+  '/pmoc-manager/'
 ) | ForEach-Object {
   $url = "https://www.obrasinteligentes.ia.br$_?v=check"
   $r = Invoke-WebRequest -UseBasicParsing -Headers $headers -Uri $url -TimeoutSec 30
