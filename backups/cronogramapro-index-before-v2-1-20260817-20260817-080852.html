@@ -546,46 +546,6 @@
 .cal-tbl td.cel-med{background:rgba(194,91,32,.14)}
 .cal-tbl td.cel-ruim{background:rgba(178,44,44,.16);font-weight:600}
 .cal-tbl th,.cal-tbl td{font-size:11px;padding:5px 6px}
-/* ---- analise probabilistica ---- */
-.block-title.sub{font-size:12px;letter-spacing:.06em;opacity:.85;margin-top:20px}
-.prob-box{position:relative}
-.prob-box.rodando{opacity:.45;pointer-events:none}
-.mc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;
-  background:rgba(45,95,122,.06);border:1px solid var(--line);border-radius:8px;padding:14px;margin-bottom:14px}
-.mc-f label{display:block;font:600 10px/1.3 var(--mono);letter-spacing:.05em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:5px}
-.mc-f select,.mc-f input{width:100%;padding:7px 8px;font-size:12px;border:1px solid var(--line-strong);border-radius:5px;background:#fff;color:var(--ink)}
-.mc-f .hint{margin-top:4px}
-.mc-f.mc-go{display:flex;flex-direction:column;justify-content:flex-end}
-.mc-f.mc-go .btn{width:100%;margin:0}
-.mc-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(105px,1fr));gap:8px;margin:12px 0 4px}
-.mck{border:1px solid var(--line);border-radius:7px;padding:10px 8px;text-align:center;background:var(--paper-2)}
-.mck .v{font:700 20px/1.1 var(--mono);color:var(--ink)}
-.mck .l{font:600 9.5px/1.3 var(--mono);letter-spacing:.04em;text-transform:uppercase;color:var(--ink-soft);margin-top:4px}
-.mck.destaque{background:rgba(178,58,48,.10);border-color:var(--crit)}
-.mck.destaque .v{color:var(--crit)}
-.pct-tbl tr.destaque{background:rgba(178,58,48,.10)}
-.pct-tbl tr.destaque td{font-weight:700;color:var(--crit)}
-.var-tbl th,.var-tbl td{font-size:11px;padding:5px 6px}
-.cv-in{width:52px;padding:3px 5px;font:600 11px var(--mono);border:1px solid var(--line-strong);border-radius:4px;text-align:right;background:#fff;color:var(--ink)}
-.mc-alvo-box{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;background:rgba(15,110,92,.07);
-  border:1px solid var(--line);border-radius:8px;padding:12px}
-.mc-alvo-box label{font:600 10px/1.3 var(--mono);letter-spacing:.05em;text-transform:uppercase;color:var(--ink-soft);flex:1 1 100%}
-.mc-alvo-box input{width:120px;padding:7px 8px;font-size:13px;border:1px solid var(--line-strong);border-radius:5px;background:#fff;color:var(--ink)}
-.mc-alvo-box .btn{margin:0}
-.mc-alvo-out{margin-top:8px;font-size:12.5px;line-height:1.6}
-.prob-alvo{display:inline-block;padding:4px 10px;border-radius:5px;font-weight:600;margin-right:8px}
-.prob-alvo.ok{background:rgba(15,110,92,.15);color:var(--accent)}
-.prob-alvo.med{background:rgba(194,91,32,.16);color:var(--accent-2)}
-.prob-alvo.ruim{background:rgba(178,58,48,.16);color:var(--crit)}
-.mc-metodo{margin-top:16px;padding:14px 16px;border-left:3px solid var(--grid-blue);background:rgba(45,95,122,.06);
-  font-size:12px;line-height:1.65;color:var(--ink-soft);border-radius:0 6px 6px 0}
-.mc-metodo b{color:var(--ink)}
-.met-panel h3{font-size:14px;margin:20px 0 8px;color:var(--ink)}
-.met-panel p{font-size:12.5px;line-height:1.75;color:var(--ink-soft);margin-bottom:10px;max-width:78ch}
-.met-panel ul{margin:0 0 12px 18px;font-size:12.5px;line-height:1.75;color:var(--ink-soft);max-width:78ch}
-.met-panel li{margin-bottom:6px}
-.met-panel .form{font-family:var(--mono);font-size:12px;background:var(--paper-2);border:1px solid var(--line);
-  border-radius:6px;padding:10px 14px;margin:8px 0 14px;white-space:pre-wrap;color:var(--ink);max-width:78ch}
 </style>
 </head>
 
@@ -722,7 +682,6 @@
   <div class="tabs">
     <button class="tab active" data-tab="edif"><span class="n">01</span>Edificação</button>
     <button class="tab" data-tab="rodo"><span class="n">02</span>Rodoviária</button>
-    <button class="tab" data-tab="metodo"><span class="n">03</span>Modelagem probabilística</button>
   </div>
 </header>
 
@@ -1083,105 +1042,6 @@
       </div>
     </div>
   </div>
-
-  <!-- ============ MODELAGEM PROBABILÍSTICA ============ -->
-  <div class="grid hidden" id="tab-metodo" style="grid-template-columns:1fr">
-    <div class="panel met-panel">
-      <div class="panel-head"><span class="idx">MC</span><h2>Como o CronogramaPro trata a incerteza de prazo</h2></div>
-      <div class="panel-body">
-
-        <p>Um cronograma determinístico responde a uma pergunta pouco útil: <i>quanto dura a obra se cada serviço
-        durar exatamente o previsto?</i> Como as durações são estimativas, o valor que resulta dessa conta não é o
-        prazo esperado — é apenas um dos cenários possíveis, e em geral um dos mais otimistas. A simulação de Monte
-        Carlo responde à pergunta correta: <b>qual a probabilidade de a obra terminar até determinada data?</b></p>
-
-        <h3>1. O que é sorteado na simulação de Monte Carlo</h3>
-        <p>Cada iteração da simulação de Monte Carlo sorteia um cenário completo da obra. O sorteio incide sobre o <b>esforço em dias úteis</b> de cada atividade, não sobre a duração em dias
-        corridos. Para a atividade i define-se um multiplicador aleatório m̃ᵢ de valor mais provável 1,00 — ou seja,
-        a estimativa determinística é tratada como a moda da distribuição, não como sua média.</p>
-        <div class="form">otimista       aᵢ = 1 − 1,30 · cvᵢ · dispersão
-mais provável  mᵢ = 1,00
-pessimista     bᵢ = 1 + 1,30 · cvᵢ · dispersão · assimetria</div>
-        <p>O coeficiente de variação cvᵢ de cada atividade decorre da natureza do serviço e da maturidade do projeto:
-        serviços geotécnicos e desmonte de rocha recebem cv elevado; acabamentos internos, cv moderado; lead times de
-        suprimento, cv alto por dependerem de terceiros. A maturidade do projeto (executivo, básico ou anteprojeto)
-        impõe um piso ao cv de toda a rede. Os valores são editáveis atividade por atividade na tabela de variáveis
-        de entrada do relatório.</p>
-
-        <h3>2. Famílias de distribuição disponíveis</h3>
-        <ul>
-          <li><b>PERT (beta de 3 pontos)</b> — padrão da análise de risco de cronograma. Concentra a massa em torno do
-          valor mais provável e admite cauda direita alongada. Equivale à distribuição beta com λ = 4.</li>
-          <li><b>Triangular</b> — densidade linear entre otimista e pessimista. Atribui mais peso às caudas que a PERT
-          e produz resultados mais conservadores para os mesmos três pontos.</li>
-          <li><b>Lognormal</b> — assimétrica à direita por construção, adequada quando os atrasos se compõem de forma
-          multiplicativa. Aplicada com média unitária imposta.</li>
-          <li><b>Normal truncada</b> — simétrica. Subestima o risco de cauda, porque em obra os atrasos são muito mais
-          prováveis que as antecipações. Útil apenas como termo de comparação.</li>
-          <li><b>Uniforme</b> — densidade constante entre os extremos. Distribuição de máxima entropia: usar quando não
-          há qualquer informação sobre a forma da incerteza, apenas sobre seus limites.</li>
-        </ul>
-        <p>Todas são amostradas por inversão da função de distribuição acumulada sobre um número uniforme gerado por
-        <b>cópula gaussiana</b>, o que permite trocar de família sem alterar a estrutura de correlação. A beta é invertida por tabela construída a partir da função beta incompleta
-        regularizada.</p>
-
-        <h3>3. Correlação entre atividades</h3>
-        <p>Tratar as atividades como independentes é o erro mais comum em simulação de cronograma. Pela lei dos grandes
-        números, os desvios se cancelam e a distribuição do prazo total fica artificialmente estreita — o P80 sai quase
-        colado no P50, sugerindo uma precisão que não existe. Na prática, causas comuns afetam a obra inteira: um ano
-        atipicamente chuvoso, uma equipe de gestão fraca, um fornecedor em dificuldade, uma conjuntura econômica adversa.</p>
-        <div class="form">z ᵢ = √ρ · z_sistêmico + √(1−ρ) · z_próprio,ᵢ
-u ᵢ = Φ(z ᵢ)
-m̃ᵢ = F⁻¹(u ᵢ)</div>
-        <p>O termo z_sistêmico é sorteado uma vez por iteração e compartilhado por todas as atividades; o termo próprio
-        é individual. O parâmetro ρ mede o peso da causa comum — o padrão adotado é 0,45. Com ρ = 0 recupera-se a
-        hipótese de independência, útil para demonstrar o efeito.</p>
-
-        <h3>4. Recálculo integral da rede a cada iteração</h3>
-        <p>Este é o ponto que distingue o modelo. A cada uma das milhares de iterações, a rede CPM inteira é resolvida
-        de novo — <b>inclusive a conversão de dias úteis em dias corridos</b>. Uma atividade que se alonga escorrega
-        para outros meses do calendário e passa a sofrer a pluviometria daquele período. Uma terraplenagem que atrasa
-        e alcança a estação chuvosa atrasa ainda mais; o mesmo serviço, adiantado, encontra a janela seca e recupera.</p>
-        <p>Essa realimentação entre duração e calendário responde por boa parte da assimetria observada no resultado e
-        não existe em simuladores que sorteiam durações já expressas em dias corridos. É também o motivo pelo qual a
-        data de início informada altera não apenas o prazo médio, mas o formato da distribuição.</p>
-
-        <h3>5. O que é medido</h3>
-        <ul>
-          <li><b>Percentis P5 a P95</b> — o prazo com dada probabilidade de não ser excedido. O P80 é a referência
-          usual para fixação contratual; o percentil adotado é escolha do usuário e fica registrado no relatório.</li>
-          <li><b>Contingência de prazo</b> — diferença entre o percentil adotado e o resultado determinístico. É a
-          reserva que deve ser explicitada na memória, e não diluída dentro dos coeficientes de produtividade.</li>
-          <li><b>Probabilidade de cumprir um prazo alvo</b> — permite avaliar diretamente o prazo de um edital ou de
-          um contrato em curso contra a distribuição simulada.</li>
-          <li><b>Índice de criticidade</b> — proporção de iterações em que a atividade integrou o caminho crítico.
-          Valores intermediários revelam caminhos quase-críticos, o principal ponto cego do cronograma determinístico.</li>
-          <li><b>Sensibilidade (diagrama tornado)</b> — correlação de Pearson entre o multiplicador sorteado da
-          atividade e o prazo total. Mede <i>quanto</i> a atividade move o resultado, não apenas com que frequência
-          está no caminho crítico. É a lista de prioridades de qualquer plano de mitigação.</li>
-        </ul>
-
-        <h3>6. Reprodutibilidade e verificação</h3>
-        <p>O gerador aleatório é congruencial linear com semente explícita: a mesma configuração produz sempre o mesmo
-        resultado, o que é condição para que a estimativa possa ser reproduzida por terceiros. Alterando apenas a
-        semente é possível verificar a estabilidade dos percentis — se o P80 oscila de forma relevante entre sementes,
-        o número de iterações é insuficiente.</p>
-        <p>Como referência prática: 500 iterações bastam para uma leitura rápida da ordem de grandeza; 2.000 estabilizam
-        os percentis centrais; 10.000 são recomendáveis quando se pretende ler P90 ou P95, que dependem da cauda.</p>
-
-        <h3>7. Limites do modelo</h3>
-        <p>A simulação propaga a incerteza <b>das durações</b> dentro de uma <b>estrutura lógica fixa</b>. Ela não
-        modela mudança de escopo, aditivo contratual, paralisação por falta de recursos orçamentários, rescisão,
-        embargo ou intervenção de órgão de controle — eventos que, nas obras públicas, respondem por parcela relevante
-        dos atrasos observados e que são de natureza discreta, não contínua. O resultado deve ser lido como o prazo
-        necessário para <i>executar</i> a obra, supondo que ela não seja interrompida por causas alheias à execução.</p>
-        <p>Os coeficientes de produtividade e os coeficientes de variação embutidos são referências de planejamento.
-        Antes de uso contratual devem ser calibrados com dados próprios de obras concluídas — que é, afinal, a única
-        fonte legítima de uma distribuição de probabilidade.</p>
-
-      </div>
-    </div>
-  </div>
 </main>
 
 <footer>
@@ -1315,21 +1175,11 @@ function criarCalendario({jornada, regime, perfil, start}){
   return {
     duBase, diasChuvaAno, perfil: perfilArr, start,
     /* dias úteis efetivos do mês para uma atividade de sensibilidade s */
-    _cache: new Map(),
-    /* memoizado por sensibilidade: a simulação chama esta função
-       milhões de vezes */
     du(mesIdx, s){
-      let arr=this._cache.get(s);
-      if(!arr){
-        arr=new Float64Array(12);
-        for(let m=0;m<12;m++){
-          const chuvaMes=(this.diasChuvaAno/12)*this.perfil[m];
-          const perda=Math.min(chuvaMes*s, this.duBase*0.85);
-          arr[m]=Math.max(this.duBase - perda - (RECESSO[m]||0), 1.5);
-        }
-        this._cache.set(s,arr);
-      }
-      return arr[mesIdx];
+      const chuvaMes = (this.diasChuvaAno/12) * this.perfil[mesIdx];
+      const perda = Math.min(chuvaMes * s, this.duBase*0.85);
+      const rec = RECESSO[mesIdx] || 0;
+      return Math.max(this.duBase - perda - rec, 1.5);
     },
     mesDe(offsetDiasCorridos){
       const base = this.start ? this.start.mo : 0;
@@ -1368,118 +1218,13 @@ function corridos(esforcoDu, iniCorridos, cal, sens){
 }
 
 /* ============================================================
-   2. DISTRIBUIÇÕES DE PROBABILIDADE
-   ------------------------------------------------------------
-   Todas as distribuições são amostradas por INVERSÃO da função
-   de distribuição acumulada a partir de um número uniforme u.
-   O u, por sua vez, vem de uma cópula gaussiana:
-
-       z  = √ρ·z_sistêmico + √(1−ρ)·z_independente
-       u  = Φ(z)
-       m  = F⁻¹(u)
-
-   Isso permite trocar livremente a família de distribuição
-   preservando a MESMA estrutura de correlação entre atividades.
-   ============================================================ */
-const DISTRIB = {
-  pert:      {nome:'PERT (beta de 3 pontos)',  desc:'Padrão em análise de risco de cronograma. Concentra massa em torno do valor mais provável e admite cauda direita alongada. Equivale à beta com λ=4.'},
-  triangular:{nome:'Triangular (3 pontos)',    desc:'Otimista, mais provável e pessimista com densidade linear. Atribui mais peso às caudas que a PERT — resultado mais conservador.'},
-  lognormal: {nome:'Lognormal',                desc:'Multiplicativa e assimétrica à direita por construção. Adequada quando os atrasos se compõem proporcionalmente. Média unitária imposta.'},
-  normal:    {nome:'Normal (truncada)',        desc:'Simétrica. Subestima o risco de cauda em cronogramas, onde os atrasos são muito mais prováveis que as antecipações. Útil como referência.'},
-  uniforme:  {nome:'Uniforme',                 desc:'Densidade constante entre otimista e pessimista. Máxima entropia — usar quando não há qualquer informação sobre a forma da incerteza.'}
-};
-
-/* Φ(z) — CDF normal padrão (Abramowitz & Stegun 7.1.26) */
-function phi(z){
-  const s = z<0 ? -1 : 1, x = Math.abs(z)/Math.SQRT2;
-  const t = 1/(1+0.3275911*x);
-  const y = 1 - (((((1.061405429*t - 1.453152027)*t) + 1.421413741)*t - 0.284496736)*t + 0.254829592)*t*Math.exp(-x*x);
-  return 0.5*(1 + s*y);
-}
-/* Φ⁻¹(p) — inversa da normal padrão (Acklam) */
-function invPhi(p){
-  if(p<=0) return -8; if(p>=1) return 8;
-  const a=[-3.969683028665376e+01,2.209460984245205e+02,-2.759285104469687e+02,1.383577518672690e+02,-3.066479806614716e+01,2.506628277459239e+00];
-  const b=[-5.447609879822406e+01,1.615858368580409e+02,-1.556989798598866e+02,6.680131188771972e+01,-1.328068155288572e+01];
-  const c=[-7.784894002430293e-03,-3.223964580411365e-01,-2.400758277161838e+00,-2.549732539343734e+00,4.374664141464968e+00,2.938163982698783e+00];
-  const d=[7.784695709041462e-03,3.224671290700398e-01,2.445134137142996e+00,3.754408661907416e+00];
-  const pl=0.02425;
-  if(p<pl){ const q=Math.sqrt(-2*Math.log(p));
-    return (((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5])/((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1); }
-  if(p>1-pl){ const q=Math.sqrt(-2*Math.log(1-p));
-    return -(((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5])/((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1); }
-  const q=p-0.5, r=q*q;
-  return (((((a[0]*r+a[1])*r+a[2])*r+a[3])*r+a[4])*r+a[5])*q/(((((b[0]*r+b[1])*r+b[2])*r+b[3])*r+b[4])*r+1);
-}
-
-/* ln Γ(x) — Lanczos */
-function gammaln(x){
-  const g=[76.18009172947146,-86.50532032941677,24.01409824083091,-1.231739572450155,0.1208650973866179e-2,-0.5395239384953e-5];
-  let y=x, tmp=x+5.5; tmp-=(x+0.5)*Math.log(tmp);
-  let ser=1.000000000190015;
-  for(let j=0;j<6;j++) ser+=g[j]/++y;
-  return -tmp+Math.log(2.5066282746310005*ser/x);
-}
-/* fração continuada de Lentz para a beta incompleta */
-function betacf(a,b,x){
-  const MAX=200, EPS=3e-12, FPMIN=1e-300;
-  const qab=a+b, qap=a+1, qam=a-1;
-  let c=1, d=1-qab*x/qap;
-  if(Math.abs(d)<FPMIN) d=FPMIN;
-  d=1/d; let h=d;
-  for(let m=1;m<=MAX;m++){
-    const m2=2*m;
-    let aa=m*(b-m)*x/((qam+m2)*(a+m2));
-    d=1+aa*d; if(Math.abs(d)<FPMIN) d=FPMIN;
-    c=1+aa/c;  if(Math.abs(c)<FPMIN) c=FPMIN;
-    d=1/d; h*=d*c;
-    aa=-(a+m)*(qab+m)*x/((a+m2)*(qap+m2));
-    d=1+aa*d; if(Math.abs(d)<FPMIN) d=FPMIN;
-    c=1+aa/c;  if(Math.abs(c)<FPMIN) c=FPMIN;
-    d=1/d; const del=d*c; h*=del;
-    if(Math.abs(del-1)<EPS) break;
-  }
-  return h;
-}
-/* I_x(a,b) — beta incompleta regularizada */
-function betainc(a,b,x){
-  if(x<=0) return 0; if(x>=1) return 1;
-  const bt=Math.exp(gammaln(a+b)-gammaln(a)-gammaln(b)+a*Math.log(x)+b*Math.log(1-x));
-  return x < (a+1)/(a+b+2) ? bt*betacf(a,b,x)/a : 1-bt*betacf(b,a,1-x)/b;
-}
-/* tabela de inversão da beta padrão: cdf em 129 pontos equiespaçados */
-const _tabBeta = new Map();
-function tabelaBeta(al,be){
-  const chave=al.toFixed(4)+'|'+be.toFixed(4);
-  if(_tabBeta.has(chave)) return _tabBeta.get(chave);
-  const N=128, cdf=new Float64Array(N+1);
-  for(let i=0;i<=N;i++) cdf[i]=betainc(al,be,i/N);
-  cdf[0]=0; cdf[N]=1;
-  _tabBeta.set(chave,cdf);
-  return cdf;
-}
-function invTabela(cdf,u){
-  const N=cdf.length-1;
-  let lo=0, hi=N;
-  while(hi-lo>1){ const mid=(lo+hi)>>1; if(cdf[mid]<=u) lo=mid; else hi=mid; }
-  const d=cdf[hi]-cdf[lo];
-  const frac = d>1e-15 ? (u-cdf[lo])/d : 0;
-  return (lo+frac)/N;
-}
-/* inversas fechadas */
-function invTriangular(u,a,m,b){
-  const fc=(m-a)/(b-a);
-  return u<fc ? a+Math.sqrt(u*(b-a)*(m-a)) : b-Math.sqrt((1-u)*(b-a)*(b-m));
-}
-
-/* ============================================================
-   3. REDE CPM — preparação indexada, passagem direta e reversa
+   2. REDE CPM (FS / SS / FF com defasagem em dias úteis)
    ------------------------------------------------------------
    atividade = {id, nome, du, sens, cv, fixo, grupo, preds:[{id,tipo,lag}]}
-     du    : esforço em dias úteis (convertido pelo calendário)
-     fixo  : duração fixa em dias corridos (lead times de suprimento)
-     sens  : sensibilidade à chuva (0–1)
-     cv    : coeficiente de variação de referência
+     du     : esforço em dias úteis (convertido pelo calendário)
+     fixo   : duração fixa em dias corridos (lead times de suprimento)
+     sens   : sensibilidade à chuva (0–1)
+     cv     : coeficiente de variação p/ Monte Carlo
    ============================================================ */
 function ordenarTopologico(ativs){
   const map = new Map(ativs.map(a=>[a.id,a]));
@@ -1500,242 +1245,92 @@ function ordenarTopologico(ativs){
   return out;
 }
 
-function prepararRede(ativs){
-  const ord = ordenarTopologico(ativs);
-  const n = ord.length;
-  const idx = new Map(ord.map((a,i)=>[a.id,i]));
-  const preds = ord.map(a=>(a.preds||[]).filter(p=>idx.has(p.id))
-                    .map(p=>({j:idx.get(p.id), tipo:p.tipo||'FS', lag:p.lag||0})));
-  const succs = ord.map(()=>[]);
-  preds.forEach((ps,i)=>ps.forEach(p=>succs[p.j].push({j:i, tipo:p.tipo, lag:p.lag})));
-  return {ord, n, idx, preds, succs,
-          buf:{es:new Float64Array(n), ef:new Float64Array(n), dur:new Float64Array(n), drv:new Int32Array(n)}};
-}
-
-function passagemDireta(prep, cal, escala, mults, buf){
-  const {ord,n,preds}=prep;
-  const es=buf.es, ef=buf.ef, dur=buf.dur, drv=buf.drv;
-  for(let i=0;i<n;i++){
-    const a=ord[i], ps=preds[i];
-    let e=0, d=-1;
-    for(let k=0;k<ps.length;k++){
-      const p=ps[k];
-      if(p.tipo==='FF') continue;
-      const ref = p.tipo==='SS' ? es[p.j] : ef[p.j];
-      const lagC = p.lag ? corridos(p.lag*escala, ref, cal, a.sens) : 0;
-      const cand = ref + lagC;
-      if(cand>e){ e=cand; d=p.j; }
-    }
-    const m = mults ? mults[i] : 1;
-    let du = a.fixo ? a.fixo*m : corridos((a.du||0)*escala*m, e, cal, a.sens);
-    if(du<0.5) du=0.5;
-    let f=e+du;
-    for(let k=0;k<ps.length;k++){
-      const p=ps[k]; if(p.tipo!=='FF') continue;
-      const lagC = p.lag ? corridos(p.lag*escala, ef[p.j], cal, a.sens) : 0;
-      if(ef[p.j]+lagC > f){ f=ef[p.j]+lagC; e=f-du; d=p.j; }
-    }
-    es[i]=e; ef[i]=f; dur[i]=du; drv[i]=d;
-  }
-  let last=0; for(let i=1;i<n;i++) if(ef[i]>ef[last]) last=i;
-  return {fim:ef[last], last};
-}
-
-/* cadeia que efetivamente determinou o término (caminho crítico da iteração) */
-function cadeiaCritica(prep, buf, last, marca){
-  let i=last, guard=0;
-  while(i>=0 && guard++<prep.n+2){ marca[i]=1; i=buf.drv[i]; }
-}
-
 function calcularRede(ativs, cal, escalaEsforco=1, fatorAleatorio=null){
-  const prep = prepararRede(ativs);
-  const buf = prep.buf;
-  let mults=null;
-  if(fatorAleatorio){ mults=new Float64Array(prep.n); prep.ord.forEach((a,i)=>mults[i]=fatorAleatorio(a)); }
-  const {fim} = passagemDireta(prep, cal, escalaEsforco, mults, buf);
-  /* passagem reversa */
-  const ls=new Float64Array(prep.n), lf=new Float64Array(prep.n);
-  for(let i=prep.n-1;i>=0;i--){
-    const ss=prep.succs[i];
-    let v = ss.length ? Infinity : fim;
-    for(let k=0;k<ss.length;k++){
-      const s=ss[k], a=prep.ord[s.j];
-      const lagC = s.lag ? corridos(s.lag*escalaEsforco, buf.es[i], cal, a.sens) : 0;
-      if(s.tipo==='SS')      v=Math.min(v, ls[s.j]-lagC+buf.dur[i]);
-      else if(s.tipo==='FF') v=Math.min(v, lf[s.j]-lagC);
-      else                   v=Math.min(v, ls[s.j]-lagC);
-    }
-    if(!isFinite(v)) v=fim;
-    lf[i]=v; ls[i]=v-buf.dur[i];
-  }
-  const R={};
-  prep.ord.forEach((a,i)=>{
-    const folga=Math.max(ls[i]-buf.es[i],0);
-    R[a.id]={es:buf.es[i], ef:buf.ef[i], dur:buf.dur[i], ls:ls[i], lf:lf[i], folga, critica:folga<=1.0,
-             esforco:(a.du||0)*escalaEsforco};
+  const ord = ordenarTopologico(ativs);
+  const R = {};
+  ord.forEach(a=>{
+    let es = 0;
+    const preds = (a.preds||[]).filter(p=>R[p.id]);
+    preds.forEach(p=>{
+      const r = R[p.id];
+      const lagC = p.lag ? corridos(p.lag*escalaEsforco, r.es, cal, a.sens) : 0;
+      if(p.tipo==='SS')      es = Math.max(es, r.es + lagC);
+      else if(p.tipo==='FF') es = Math.max(es, 0);
+      else                   es = Math.max(es, r.ef + lagC);
+    });
+    const mult = fatorAleatorio ? fatorAleatorio(a) : 1;
+    const esforco = (a.du||0) * escalaEsforco * mult;
+    let dur = a.fixo ? a.fixo*mult : corridos(esforco, es, cal, a.sens);
+    dur = Math.max(dur, 0.5);
+    let ef = es + dur;
+    /* restrições fim-a-fim (pacing da Linha de Balanço) */
+    preds.filter(p=>p.tipo==='FF').forEach(p=>{
+      const r = R[p.id];
+      const lagC = p.lag ? corridos(p.lag*escalaEsforco, r.ef, cal, a.sens) : 0;
+      if(r.ef + lagC > ef){ ef = r.ef + lagC; es = ef - dur; }
+    });
+    R[a.id] = {es, ef, dur, esforco};
   });
-  return {R, fim, ord:prep.ord, prep};
+  const fim = Math.max(...ord.map(a=>R[a.id].ef));
+  /* passagem reversa */
+  [...ord].reverse().forEach(a=>{
+    const sucs = ord.filter(s=>(s.preds||[]).some(p=>p.id===a.id));
+    let lf = sucs.length? Infinity : fim;
+    sucs.forEach(s=>{
+      const rel = s.preds.find(p=>p.id===a.id);
+      const rs = R[s.id];
+      const lagC = rel.lag ? corridos(rel.lag*escalaEsforco, R[a.id].es, cal, s.sens) : 0;
+      if(rel.tipo==='SS')      lf = Math.min(lf, rs.ls - lagC + R[a.id].dur);
+      else if(rel.tipo==='FF') lf = Math.min(lf, rs.lf - lagC);
+      else                     lf = Math.min(lf, rs.ls - lagC);
+    });
+    if(!isFinite(lf)) lf = fim;
+    R[a.id].lf = lf;
+    R[a.id].ls = lf - R[a.id].dur;
+    R[a.id].folga = Math.max(R[a.id].ls - R[a.id].es, 0);
+  });
+  ord.forEach(a=>{ R[a.id].critica = R[a.id].folga <= 1.0; });
+  return {R, fim, ord};
 }
 
 /* ============================================================
-   4. SIMULAÇÃO DE MONTE CARLO
+   3. MONTE CARLO — P50 / P80 / P90 + índice de criticidade
    ------------------------------------------------------------
-   Modelo de incerteza, por atividade i:
-     cv_i     coeficiente de variação de referência (função da
-              natureza do serviço e da maturidade do projeto)
-     cv_ef    = cv_i × dispersão_global
-     otimista     a_i = 1 − 1,30·cv_ef
-     mais provável m_i = 1        (a estimativa determinística)
-     pessimista   b_i = 1 + 1,30·cv_ef·assimetria
-
-   O multiplicador amostrado m̃_i incide sobre o ESFORÇO em dias
-   úteis; a duração em dias corridos é recalculada pelo calendário
-   produtivo a cada iteração — de modo que uma atividade que se
-   alonga também "escorrega" para outros meses do ano e sofre a
-   sazonalidade correspondente. Essa realimentação é a principal
-   fonte de assimetria do resultado, e não existe em simuladores
-   que sorteiam durações já em dias corridos.
-
-   Correlação: decomposição em um fator sistêmico comum (clima
-   atípico, gestão, suprimentos, economia) e um fator próprio de
-   cada atividade. Sem ela, o Teorema Central do Limite estreita
-   artificialmente a distribuição e produz um P80 falsamente
-   próximo do P50.
+   Fator lognormal de média 1, decomposto em componente SISTÊMICA
+   (comum a toda a obra: clima atípico, gestão, suprimentos) e
+   componente INDEPENDENTE. Sem essa correlação o Teorema Central
+   do Limite estreita artificialmente a distribuição e produz um
+   P80 irrealisticamente próximo do P50.
    ============================================================ */
-function lcg(seed){ let s=(seed>>>0)||1; return ()=>{ s=(1664525*s+1013904223)>>>0; return (s+0.5)/4294967296; }; }
+function lcg(seed){ let s=seed>>>0; return ()=>{ s=(1664525*s+1013904223)>>>0; return s/4294967296; }; }
 function normal(rnd){
   let u=0,v=0; while(u===0)u=rnd(); while(v===0)v=rnd();
   return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);
 }
 
-const MC_PADRAO = {n:2000, dist:'pert', rho:0.45, seed:20260816, disp:1.0, assim:2.0,
-                   cvOverride:null, excluir:null, guardarAmostras:true};
-
-function parametrosIncerteza(ativs, opt){
-  return ativs.map(a=>{
-    const ov = opt.cvOverride && opt.cvOverride[a.id]!=null ? +opt.cvOverride[a.id] : (a.cv!=null ? a.cv : 0.18);
-    const fora = !!(opt.excluir && opt.excluir[a.id]);
-    const cv = fora ? 0 : Math.max(0, ov*opt.disp);
-    const dO = cv*1.30, dP = cv*1.30*opt.assim;
-    const A = Math.max(0.20, 1-dO), B = 1+dP;
-    let tab=null, sigma=0;
-    if(cv>0){
-      if(opt.dist==='pert') tab = tabelaBeta(1+4*(1-A)/(B-A), 1+4*(B-1)/(B-A));
-      if(opt.dist==='lognormal') sigma = Math.sqrt(Math.log(1+cv*cv));
-    }
-    return {id:a.id, nome:a.nome, cv, a:A, m:1, b:B, tab, sigma, fora};
-  });
-}
-
-function amostrar(p, z, dist){
-  if(p.cv<=0) return 1;
-  if(dist==='normal')    return Math.max(0.20, 1 + p.cv*z);
-  if(dist==='lognormal') return Math.exp(p.sigma*z - p.sigma*p.sigma/2);
-  const u = phi(z);
-  if(dist==='uniforme')   return p.a + u*(p.b-p.a);
-  if(dist==='triangular') return invTriangular(u, p.a, p.m, p.b);
-  return p.a + invTabela(p.tab, u)*(p.b - p.a);   /* pert */
-}
-
-function simularMonteCarlo(ativs, cal, escala, opts){
-  const opt = Object.assign({}, MC_PADRAO, opts||{});
-  const prep = prepararRede(ativs);
-  const n = prep.n, N = Math.max(50, Math.min(opt.n|0, 20000));
-  const pars = parametrosIncerteza(prep.ord, opt);
-  const rnd = lcg(opt.seed);
-  const buf = {es:new Float64Array(n), ef:new Float64Array(n), dur:new Float64Array(n), drv:new Int32Array(n)};
-  const mults = new Float64Array(n), zind = new Float64Array(n);
-  const marca = new Uint8Array(n);
-  const fins = new Float64Array(N);
-  const critCount = new Float64Array(n);
-  const somaZ = new Float64Array(n), somaZ2 = new Float64Array(n), somaZF = new Float64Array(n);
-  let somaS=0, somaS2=0, somaSF=0;
-  const rq = Math.sqrt(opt.rho), rp = Math.sqrt(1-opt.rho);
-
-  for(let it=0; it<N; it++){
-    const zS = normal(rnd);
-    for(let i=0;i<n;i++){
-      const zi = normal(rnd);
-      zind[i] = zi;
-      mults[i] = amostrar(pars[i], rq*zS + rp*zi, opt.dist);
-    }
-    const r = passagemDireta(prep, cal, escala, mults, buf);
-    fins[it] = r.fim;
-    marca.fill(0);
-    cadeiaCritica(prep, buf, r.last, marca);
-    somaS+=zS; somaS2+=zS*zS; somaSF+=zS*r.fim;
-    for(let i=0;i<n;i++){
-      if(marca[i]) critCount[i]++;
-      somaZ[i]  += zind[i];
-      somaZ2[i] += zind[i]*zind[i];
-      somaZF[i] += zind[i]*r.fim;
-    }
+function monteCarlo(ativs, cal, escala, n=700, seed=20260816, rhoSist=0.45){
+  const rnd = lcg(seed);
+  const res=[]; const critCount={};
+  ativs.forEach(a=>critCount[a.id]=0);
+  for(let i=0;i<n;i++){
+    const zSist = normal(rnd);
+    const f = a=>{
+      const cv = a.cv || 0.18;
+      const z = Math.sqrt(rhoSist)*zSist + Math.sqrt(1-rhoSist)*normal(rnd);
+      return Math.exp(cv*z - cv*cv/2);
+    };
+    const r = calcularRede(ativs, cal, escala, f);
+    res.push(r.fim);
+    ativs.forEach(a=>{ if(r.R[a.id] && r.R[a.id].folga<=1.0) critCount[a.id]++; });
   }
-
-  /* estatísticas */
-  const ord = Float64Array.from(fins); ord.sort();
-  const q = p => ord[clamp(Math.round(p*(N-1)), 0, N-1)];
-  let soma=0; for(let i=0;i<N;i++) soma+=fins[i];
-  const media = soma/N;
-  let s2=0, s3=0;
-  for(let i=0;i<N;i++){ const d=fins[i]-media; s2+=d*d; s3+=d*d*d; }
-  const dp = Math.sqrt(s2/Math.max(N-1,1));
-  const assimetria = dp>0 ? (s3/N)/Math.pow(dp,3) : 0;
-
-  /* Sensibilidade — correlação de Pearson entre o componente PRÓPRIO
-     da atividade (o desvio que não vem da causa comum) e o prazo total.
-     Correlacionar o multiplicador cheio produziria um tornado inútil:
-     como todos os multiplicadores carregam o mesmo fator sistêmico,
-     todas as atividades apareceriam com correlação ≈ √ρ, inclusive as
-     que sequer estão no caminho crítico. A parcela sistêmica é medida
-     à parte e reportada como uma barra própria. */
-  const somaF = soma;
-  let somaF2=0; for(let i=0;i<N;i++) somaF2+=fins[i]*fins[i];
-  const mF = somaF/N, varF = somaF2/N - mF*mF;
-  const corr=(sx,sx2,sxf)=>{
-    const m=sx/N, v=sx2/N-m*m, cov=sxf/N-m*mF;
-    return (v>1e-12 && varF>1e-12) ? clamp(cov/Math.sqrt(v*varF),-1,1) : 0;
-  };
-  const sensibilidade={}, criticidade={};
-  prep.ord.forEach((a,i)=>{
-    sensibilidade[a.id] = pars[i].cv>0 ? corr(somaZ[i],somaZ2[i],somaZF[i]) : 0;
-    criticidade[a.id] = critCount[i]/N;
-  });
-  const sensSistemica = opt.rho>0 ? corr(somaS,somaS2,somaSF) : 0;
-
-  /* histograma */
-  const nb = clamp(Math.round(Math.sqrt(N)), 18, 45);
-  const lo = ord[0], hi = ord[N-1], larg = (hi-lo)/nb || 1;
-  const bins = new Array(nb).fill(0);
-  for(let i=0;i<N;i++) bins[clamp(Math.floor((fins[i]-lo)/larg),0,nb-1)]++;
-
-  const percentis={};
-  [1,5,10,15,20,25,30,40,50,60,70,75,80,85,90,95,99].forEach(p=>percentis['p'+p]=q(p/100));
-
-  return {
-    n:N, opt, percentis,
-    p10:percentis.p10, p50:percentis.p50, p80:percentis.p80, p90:percentis.p90,
-    media, dp, cv:media>0?dp/media:0, assimetria, min:ord[0], max:ord[N-1],
-    criticidade, sensibilidade, sensSistemica, parametros:pars,
-    hist:{bins, lo, larg, nb, max:Math.max.apply(null,bins)},
-    amostras: opt.guardarAmostras ? ord : null,
-    /* P(prazo ≤ t) por busca binária na amostra ordenada */
-    probAte(t){
-      let lo2=0, hi2=N;
-      while(lo2<hi2){ const mid=(lo2+hi2)>>1; if(ord[mid]<=t) lo2=mid+1; else hi2=mid; }
-      return lo2/N;
-    },
-    quantil:q
-  };
-}
-
-/* compatibilidade com a assinatura anterior */
-function monteCarlo(ativs, cal, escala, n=700, seed=20260816, rho=0.45){
-  return simularMonteCarlo(ativs, cal, escala, {n, seed, rho});
+  res.sort((a,b)=>a-b);
+  const q = p => res[clamp(Math.floor(p*res.length), 0, res.length-1)];
+  const idx={}; ativs.forEach(a=>idx[a.id]=critCount[a.id]/n);
+  return {p10:q(0.10), p50:q(0.50), p80:q(0.80), p90:q(0.90), media:res.reduce((s,x)=>s+x,0)/n, criticidade:idx, amostras:res};
 }
 
 /* ============================================================
-   5. LINHA DE BALANÇO (unidades repetitivas)
+   4. LINHA DE BALANÇO (unidades repetitivas)
    ------------------------------------------------------------
    Restrição de ritmo rigorosa: para toda unidade k, a equipe j
    só inicia k depois que a equipe j-1 concluiu k, respeitado o
@@ -1770,7 +1365,7 @@ function linhaBalanco(nUnid, ritmos, bufferDu, aprend={a:0.35, r:0.62}){
 }
 
 /* ============================================================
-   6. PARÂMETROS DE ENGENHARIA — EDIFICAÇÃO
+   5. PARÂMETROS DE ENGENHARIA — EDIFICAÇÃO
    ------------------------------------------------------------
    Consumo unitário de mão de obra (Hh/m² de área construída) e
    densidade máxima de operários por 100 m² de frente de serviço.
@@ -1812,7 +1407,7 @@ const PROJETO = {
 };
 
 /* ============================================================
-   7. CRÍTICA DE COERÊNCIA
+   6. CRÍTICA DE COERÊNCIA
    ============================================================ */
 function criticarEdif(v){
   const erros=[], avisos=[];
@@ -1843,7 +1438,7 @@ function criticarRodo(v){
 }
 
 /* ============================================================
-   8. AUXILIARES DE UI
+   7. AUXILIARES DE UI
    ============================================================ */
 function radioVal(name){const el=document.querySelector(`input[name="${name}"]:checked`);return el?el.value:null;}
 function checkedFactors(containerId){
@@ -1871,7 +1466,7 @@ function monthLabel(start,offsetMonths){
 }
 
 /* ============================================================
-   9. MÓDULO EDIFICAÇÃO — montagem da rede
+   8. MÓDULO EDIFICAÇÃO — montagem da rede
    ============================================================ */
 function montarRedeEdif(v){
   const {tipo,area,pav,sub,est,acab,turnos,etapasAcel,cx,temRocha,temCortina,temFund,temRebaix,projeto} = v;
@@ -1963,7 +1558,7 @@ function montarRedeEdif(v){
 }
 
 /* ============================================================
-   10. MÓDULO RODOVIÁRIO — montagem da rede
+   9. MÓDULO RODOVIÁRIO — montagem da rede
    ============================================================ */
 const VOL_TERRA = {plana:10000, ondulada:30000, montanhosa:62000};   // m³/km, pista simples
 const PROD_TERRA = 4500;   // m³/dia útil por FRENTE (2 a 3 conjuntos escavadeira+caminhões+trator+rolo)
@@ -2042,7 +1637,7 @@ function montarRedeRodo(v){
 }
 
 /* ============================================================
-   11. VALIDAÇÃO CRUZADA — banda empírica de prazo
+   10. VALIDAÇÃO CRUZADA — banda empírica de prazo
    ------------------------------------------------------------
    Curva tempo-porte do tipo T = K·Q^b (família Bromilow), com
    K e b calibrados para a construção brasileira. Serve como
@@ -2056,304 +1651,6 @@ function bandaRodo(ext, topo, pav){
   const k = {plana:1.00, ondulada:1.40, montanhosa:2.40}[topo] * (pav==='sab'?0.70:1);
   const T = 4.3*Math.pow(ext,0.42)*k;
   return {central:T, min:T*0.70, max:T*1.40};
-}
-
-
-/* ============================================================
-   16. ANÁLISE PROBABILÍSTICA — INTERFACE
-   ============================================================ */
-const ESTADO = {};
-
-function lerOpcoesMC(mod){
-  const g = k => document.getElementById('mc_'+k+'_'+mod);
-  const base = Object.assign({}, MC_PADRAO, {pct:80});
-  if(!g('dist')) return base;
-  const cvOverride={}, excluir={};
-  document.querySelectorAll('#prob-'+mod+' input[data-cv]').forEach(inp=>{
-    const v=parseFloat((inp.value+'').replace(',','.'));
-    if(isFinite(v)&&v>=0) cvOverride[inp.dataset.cv]=v/100;
-  });
-  document.querySelectorAll('#prob-'+mod+' input[data-inc]').forEach(c=>{
-    if(!c.checked) excluir[c.dataset.inc]=true;
-  });
-  return {
-    dist:  g('dist').value,
-    n:     parseInt(g('n').value)||2000,
-    disp:  parseFloat(g('disp').value)||1,
-    assim: parseFloat(g('assim').value)||2,
-    rho:   parseFloat(g('rho').value),
-    seed:  parseInt(g('seed').value)||1,
-    pct:   parseInt(g('pct').value)||80,
-    cvOverride, excluir, guardarAmostras:true
-  };
-}
-
-function resimular(mod){
-  const E=ESTADO[mod];
-  if(!E) return;
-  const alvoEl=document.getElementById('mc_alvo_'+mod);
-  const alvo = alvoEl ? alvoEl.value : '';
-  const box=document.getElementById('prob-'+mod);
-  box.classList.add('rodando');
-  const btn=document.getElementById('mc_go_'+mod);
-  if(btn){ btn.disabled=true; btn.textContent='◷ simulando…'; }
-  setTimeout(()=>{
-    const opt=lerOpcoesMC(mod);
-    const t0=Date.now();
-    E.opt=opt;
-    E.mc=simularMonteCarlo(E.ativs,E.cal,E.escala,opt);
-    E.ms=Date.now()-t0;
-    box.innerHTML=secaoProb(mod,E,alvo);
-    box.classList.remove('rodando');
-    atualizarKPI(mod,E);
-  },30);
-}
-
-function atualizarKPI(mod,E){
-  const k=document.getElementById('kpi-pct-'+mod);
-  if(k){
-    k.innerHTML=round(E.mc.quantil(E.opt.pct/100)/DIAS_MES,1)+'<small> mo</small>';
-    const l=document.getElementById('kpi-pct-lbl-'+mod);
-    if(l) l.textContent='P'+E.opt.pct+' · adotado';
-  }
-}
-
-function probAlvo(mod){
-  const E=ESTADO[mod]; if(!E) return;
-  const el=document.getElementById('mc_alvo_'+mod);
-  const out=document.getElementById('mc_alvo_out_'+mod);
-  if(!el||!out) return;
-  const v=parseFloat((el.value+'').replace(',','.'));
-  if(!isFinite(v)||v<=0){ out.innerHTML='<span class="hint">informe o prazo alvo em meses</span>'; return; }
-  const p=E.mc.probAte(v*DIAS_MES);
-  const cls = p>=0.8?'ok':(p>=0.5?'med':'ruim');
-  const folga = E.mc.quantil(0.80)/DIAS_MES - v;
-  out.innerHTML='<span class="prob-alvo '+cls+'">P(conclusão ≤ '+fmt(v)+' meses) = <b>'+round(p*100,1)+'%</b></span> '+
-    '<span class="hint">'+(p>=0.8
-      ? 'Prazo confortável: acima do P80 da simulação.'
-      : (p>=0.5
-        ? 'Prazo apertado: faltam '+fmt(folga)+' meses para atingir o P80 ('+round(E.mc.quantil(0.8)/DIAS_MES,1)+' meses).'
-        : 'Prazo improvável: menos de metade dos cenários simulados o cumprem. Em licitação, tende a gerar aditivo de prazo.'))+'</span>';
-}
-
-/* ---------- gráficos SVG ---------- */
-function svgHistograma(mc,det,pctAdotado){
-  const W=760,H=280,L=44,R=16,T=26,B=44;
-  const h=mc.hist, iw=W-L-R, ih=H-T-B;
-  const x=v=>L+((v-h.lo)/(h.larg*h.nb))*iw;
-  let barras='';
-  h.bins.forEach((c,i)=>{
-    const bw=iw/h.nb, bh=h.max? (c/h.max)*ih : 0;
-    barras+=`<rect x="${(L+i*bw).toFixed(1)}" y="${(T+ih-bh).toFixed(1)}" width="${(bw-1).toFixed(1)}" height="${bh.toFixed(1)}" fill="var(--grid-blue)" opacity="0.55"/>`;
-  });
-  const marca=(v,cor,txt,dy)=>{
-    const px=clamp(x(v),L,W-R);
-    return `<line x1="${px.toFixed(1)}" y1="${T-6}" x2="${px.toFixed(1)}" y2="${T+ih}" stroke="${cor}" stroke-width="2"/>`+
-           `<text x="${px.toFixed(1)}" y="${T-10+dy}" text-anchor="middle" font-size="11" font-weight="700" fill="${cor}" font-family="var(--mono)">${txt}</text>`;
-  };
-  let eixo='';
-  for(let i=0;i<=5;i++){
-    const v=h.lo+(h.larg*h.nb)*i/5, px=L+iw*i/5;
-    eixo+=`<line x1="${px}" y1="${T+ih}" x2="${px}" y2="${T+ih+4}" stroke="var(--line-strong)"/>`+
-          `<text x="${px}" y="${T+ih+17}" text-anchor="middle" font-size="10" fill="var(--ink-soft)" font-family="var(--mono)">${round(v/DIAS_MES,1)}</text>`;
-  }
-  return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto" xmlns="http://www.w3.org/2000/svg">
-    <line x1="${L}" y1="${T+ih}" x2="${W-R}" y2="${T+ih}" stroke="var(--line-strong)"/>
-    <line x1="${L}" y1="${T}" x2="${L}" y2="${T+ih}" stroke="var(--line-strong)"/>
-    ${barras}${eixo}
-    ${marca(det,'var(--grid-blue)','det '+round(det/DIAS_MES,1),0)}
-    ${marca(mc.p50,'var(--ink)','P50 '+round(mc.p50/DIAS_MES,1),13)}
-    ${marca(pctAdotado.v,'var(--crit)','P'+pctAdotado.p+' '+round(pctAdotado.v/DIAS_MES,1),0)}
-    <text x="${W/2}" y="${H-6}" text-anchor="middle" font-size="10.5" fill="var(--ink-soft)" font-family="var(--mono)">prazo total (meses)</text>
-    <text x="12" y="${T+ih/2}" transform="rotate(-90 12 ${T+ih/2})" text-anchor="middle" font-size="10.5" fill="var(--ink-soft)" font-family="var(--mono)">frequência</text>
-  </svg>`;
-}
-
-function svgCurvaS(mc,det,pctAdotado,start){
-  const W=760,H=290,L=46,R=54,T=18,B=46;
-  const iw=W-L-R, ih=H-T-B;
-  const lo=mc.min, hi=mc.max, span=(hi-lo)||1;
-  const x=v=>L+((v-lo)/span)*iw;
-  const y=p=>T+ih-(p*ih);
-  const A=mc.amostras, N=A.length, passos=Math.min(N,180);
-  let d='';
-  for(let i=0;i<=passos;i++){
-    const k=Math.min(N-1,Math.round(i*(N-1)/passos));
-    d+=(i?'L':'M')+x(A[k]).toFixed(1)+' '+y((k+1)/N).toFixed(1)+' ';
-  }
-  let grade='';
-  [0,0.25,0.5,0.75,0.8,0.9,1].forEach(p=>{
-    const py=y(p);
-    grade+=`<line x1="${L}" y1="${py.toFixed(1)}" x2="${W-R}" y2="${py.toFixed(1)}" stroke="var(--line)" stroke-dasharray="${p===0.8?'0':'3 3'}" opacity="${p===0.8?0.9:0.55}"/>`+
-           `<text x="${L-8}" y="${(py+3.5).toFixed(1)}" text-anchor="end" font-size="10" fill="var(--ink-soft)" font-family="var(--mono)">${round(p*100,0)}%</text>`;
-  });
-  let eixo='';
-  for(let i=0;i<=5;i++){
-    const v=lo+span*i/5, px=L+iw*i/5;
-    eixo+=`<text x="${px}" y="${T+ih+17}" text-anchor="middle" font-size="10" fill="var(--ink-soft)" font-family="var(--mono)">${round(v/DIAS_MES,1)}</text>`;
-    if(start) eixo+=`<text x="${px}" y="${T+ih+30}" text-anchor="middle" font-size="9" fill="var(--ink-soft)" font-family="var(--mono)">${monthLabel(start,v/DIAS_MES)||''}</text>`;
-  }
-  const pin=(v,p,cor,txt)=>`<circle cx="${x(v).toFixed(1)}" cy="${y(p).toFixed(1)}" r="4" fill="${cor}"/>`+
-    `<line x1="${x(v).toFixed(1)}" y1="${y(p).toFixed(1)}" x2="${x(v).toFixed(1)}" y2="${T+ih}" stroke="${cor}" stroke-width="1.5" stroke-dasharray="3 3"/>`+
-    `<text x="${clamp(x(v),L+4,W-R-40).toFixed(1)}" y="${(y(p)-9).toFixed(1)}" font-size="10.5" font-weight="700" fill="${cor}" font-family="var(--mono)">${txt}</text>`;
-  const pDet=mc.probAte(det);
-  return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto" xmlns="http://www.w3.org/2000/svg">
-    ${grade}
-    <line x1="${L}" y1="${T+ih}" x2="${W-R}" y2="${T+ih}" stroke="var(--line-strong)"/>
-    <line x1="${L}" y1="${T}" x2="${L}" y2="${T+ih}" stroke="var(--line-strong)"/>
-    <path d="${d}" fill="none" stroke="var(--accent)" stroke-width="2.4"/>
-    ${pin(det,pDet,'var(--grid-blue)','det '+round(det/DIAS_MES,1)+' ('+round(pDet*100,0)+'%)')}
-    ${pin(mc.p50,0.5,'var(--ink)','P50')}
-    ${pin(pctAdotado.v,pctAdotado.p/100,'var(--crit)','P'+pctAdotado.p+' '+round(pctAdotado.v/DIAS_MES,1))}
-    <text x="${W/2}" y="${H-6}" text-anchor="middle" font-size="10.5" fill="var(--ink-soft)" font-family="var(--mono)">prazo total (meses)${start?' e mês de conclusão':''}</text>
-    <text x="${W-R+8}" y="${y(0.8).toFixed(1)}" font-size="10" fill="var(--crit)" font-family="var(--mono)">P80</text>
-  </svg>`;
-}
-
-function svgTornado(mc,ativs){
-  let dados=ativs.map(a=>({nome:a.nome, s:mc.sensibilidade[a.id]||0, c:mc.criticidade[a.id]||0}))
-                 .filter(d=>Math.abs(d.s)>0.005)
-                 .sort((a,b)=>Math.abs(b.s)-Math.abs(a.s)).slice(0,10);
-  if(Math.abs(mc.sensSistemica)>0.005)
-    dados.unshift({nome:'▲ Fator sistêmico (causa comum a toda a obra)', s:mc.sensSistemica, c:1, sist:true});
-  dados.sort((a,b)=>Math.abs(b.s)-Math.abs(a.s));
-  if(!dados.length) return '<div class="hint">Nenhuma fonte de variabilidade ativa — todas as atividades foram excluídas da simulação.</div>';
-  const W=760, linha=26, T=26, H=T+dados.length*linha+26, L=300, R=60;
-  const iw=W-L-R, maxS=Math.max.apply(null,dados.map(d=>Math.abs(d.s)))||1;
-  let barras='';
-  dados.forEach((d,i)=>{
-    const y=T+i*linha, bw=(Math.abs(d.s)/maxS)*iw;
-    const cor = d.sist?'var(--accent)':(d.c>=0.7?'var(--crit)':(d.c>=0.25?'var(--accent-2)':'var(--grid-blue)'));
-    const nome=d.nome.length>44?d.nome.slice(0,42)+'…':d.nome;
-    barras+=`<text x="${L-10}" y="${y+13}" text-anchor="end" font-size="11" fill="var(--ink)">${nome}</text>`+
-            `<rect x="${L}" y="${y+3}" width="${bw.toFixed(1)}" height="16" fill="${cor}" opacity="0.75" rx="2"/>`+
-            `<text x="${(L+bw+7).toFixed(1)}" y="${y+16}" font-size="10.5" font-weight="700" fill="var(--ink-soft)" font-family="var(--mono)">${round(d.s,2)}</text>`;
-  });
-  return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto" xmlns="http://www.w3.org/2000/svg">
-    <text x="${L}" y="14" font-size="10.5" fill="var(--ink-soft)" font-family="var(--mono)">correlação com o prazo total (0 a 1)</text>
-    <line x1="${L}" y1="${T}" x2="${L}" y2="${H-22}" stroke="var(--line-strong)"/>
-    ${barras}
-  </svg>`;
-}
-
-/* ---------- seção completa ---------- */
-function secaoProb(mod,E,alvo){
-  const mc=E.mc, opt=E.opt, det=E.det, start=E.start;
-  const d2m=v=>v/DIAS_MES;
-  const adot={p:opt.pct, v:mc.quantil(opt.pct/100)};
-  const sel=(id,label,opcoes,valor,hint)=>{
-    let o=''; opcoes.forEach(([v,t])=>o+=`<option value="${v}"${String(v)===String(valor)?' selected':''}>${t}</option>`);
-    return `<div class="mc-f"><label>${label}</label><select id="mc_${id}_${mod}">${o}</select>${hint?`<div class="hint">${hint}</div>`:''}</div>`;
-  };
-
-  const controles=`
-    <div class="mc-grid">
-      ${sel('dist','Distribuição de probabilidade',Object.entries(DISTRIB).map(([k,v])=>[k,v.nome]),opt.dist)}
-      ${sel('n','Nº de iterações',[[500,'500 — rápido'],[1000,'1.000'],[2000,'2.000 — padrão'],[5000,'5.000'],[10000,'10.000 — refinado']],opt.n)}
-      ${sel('pct','Percentil adotado como prazo',[[50,'P50 — mediana'],[60,'P60'],[70,'P70'],[75,'P75'],[80,'P80 — usual em edital'],[85,'P85'],[90,'P90 — conservador'],[95,'P95 — muito conservador']],opt.pct)}
-      ${sel('disp','Dispersão global das estimativas',[[0.6,'Baixa (×0,6) — obra repetitiva conhecida'],[1,'Padrão (×1,0)'],[1.5,'Alta (×1,5) — projeto imaturo'],[2,'Muito alta (×2,0)']],opt.disp)}
-      ${sel('assim','Assimetria pessimista/otimista',[[1,'1,0 — simétrica'],[1.5,'1,5 — leve'],[2,'2,0 — padrão'],[3,'3,0 — alta']],opt.assim)}
-      ${sel('rho','Correlação sistêmica ρ',[[0,'0,00 — independência total'],[0.25,'0,25 — fraca'],[0.45,'0,45 — padrão'],[0.65,'0,65 — forte'],[0.8,'0,80 — muito forte']],opt.rho)}
-      <div class="mc-f"><label>Semente aleatória</label><input type="number" id="mc_seed_${mod}" value="${opt.seed}" step="1"><div class="hint">Fixa a reprodutibilidade do resultado.</div></div>
-      <div class="mc-f mc-go"><button class="btn btn-go" id="mc_go_${mod}" onclick="resimular('${mod}')">▸ Resimular</button>
-        <div class="hint">${mc.n.toLocaleString('pt-BR')} cenários${E.ms?' em '+E.ms+' ms':''}</div></div>
-    </div>`;
-
-  const contingencia=adot.v-det;
-  const resumo=`
-    <div class="mc-kpis">
-      <div class="mck"><div class="v">${round(d2m(det),1)}</div><div class="l">Determinístico (mo)</div></div>
-      <div class="mck"><div class="v">${round(mc.probAte(det)*100,0)}%</div><div class="l">Prob. de cumpri-lo</div></div>
-      <div class="mck destaque"><div class="v">${round(d2m(adot.v),1)}</div><div class="l">P${opt.pct} adotado (mo)</div></div>
-      <div class="mck"><div class="v">+${round(d2m(contingencia),1)}</div><div class="l">Contingência (mo)</div></div>
-      <div class="mck"><div class="v">${round(mc.cv*100,1)}%</div><div class="l">CV do prazo</div></div>
-      <div class="mck"><div class="v">${round(mc.assimetria,2)}</div><div class="l">Assimetria</div></div>
-    </div>`;
-
-  /* tabela de percentis */
-  const listaP=[5,10,20,25,30,40,50,60,70,75,80,85,90,95];
-  let linhasP='';
-  listaP.forEach(p=>{
-    const v=mc.quantil(p/100);
-    linhasP+=`<tr${p===opt.pct?' class="destaque"':''}>
-      <td class="num">P${p}</td>
-      <td class="num">${round(d2m(v),1)}</td>
-      <td class="num">${Math.round(v)}</td>
-      <td class="num">${start?monthLabel(start,d2m(v)):'—'}</td>
-      <td class="num">${round(d2m(v-det),1)}</td>
-    </tr>`;
-  });
-
-  /* tabela de variáveis de entrada */
-  let linhasV='';
-  E.ativs.forEach(a=>{
-    const p=mc.parametros.find(x=>x.id===a.id)||{cv:0,a:1,b:1,fora:true};
-    const cvPct=round((opt.cvOverride&&opt.cvOverride[a.id]!=null?opt.cvOverride[a.id]:(a.cv||0.18))*100,1);
-    linhasV+=`<tr>
-      <td>${a.nome}</td>
-      <td class="num">${a.fixo?fmt(a.fixo)+' d.c.':fmt(a.du)+' d.ú.'}</td>
-      <td class="num"><input class="cv-in" type="number" step="1" min="0" max="200" value="${cvPct}" data-cv="${a.id}"> %</td>
-      <td class="num">${round(p.a,2)}</td>
-      <td class="num">1,00</td>
-      <td class="num">${round(p.b,2)}</td>
-      <td class="num">${round((mc.sensibilidade[a.id]||0),2)}</td>
-      <td class="num">${round((mc.criticidade[a.id]||0)*100,0)}%</td>
-      <td class="num"><input type="checkbox" data-inc="${a.id}"${p.fora?'':' checked'}></td>
-    </tr>`;
-  });
-
-  return `
-    <div class="block-title">Análise probabilística de prazo — simulação de Monte Carlo</div>
-    ${controles}
-    ${resumo}
-
-    <div class="block-title sub">Distribuição de frequências do prazo total</div>
-    ${svgHistograma(mc,det,adot)}
-    <div class="hint">Cada barra reúne os cenários simulados cuja duração total caiu naquela faixa. A cauda direita alongada é a assinatura típica de cronogramas: atrasos se acumulam, antecipações não.</div>
-
-    <div class="block-title sub">Curva S de probabilidade acumulada</div>
-    ${svgCurvaS(mc,det,adot,start)}
-    <div class="hint">Leitura direta: para qualquer prazo no eixo horizontal, a curva informa a probabilidade de a obra terminar até ali. O prazo determinístico costuma ficar bem abaixo de 50% — é o valor mais provável de cada atividade isolada, não do conjunto.</div>
-
-    <div class="block-title sub">Aderência a um prazo alvo</div>
-    <div class="mc-alvo-box">
-      <label>Prazo alvo (meses) — ex.: prazo do edital ou do contrato</label>
-      <input type="number" id="mc_alvo_${mod}" step="0.5" min="0" value="${alvo||''}" placeholder="ex: 24" oninput="probAlvo('${mod}')">
-      <button class="btn btn-clr" onclick="probAlvo('${mod}')">Avaliar</button>
-    </div>
-    <div id="mc_alvo_out_${mod}" class="mc-alvo-out"></div>
-
-    <div class="block-title sub">Percentis do prazo</div>
-    <table class="pct-tbl">
-      <thead><tr><th class="num">Percentil</th><th class="num">Meses</th><th class="num">Dias corridos</th><th class="num">Conclusão</th><th class="num">Δ sobre determinístico (mo)</th></tr></thead>
-      <tbody>${linhasP}</tbody>
-    </table>
-    <div class="hint">Estatísticas da amostra: média ${round(d2m(mc.media),1)} · mediana ${round(d2m(mc.p50),1)} · desvio-padrão ${round(d2m(mc.dp),1)} mês · mínimo ${round(d2m(mc.min),1)} · máximo ${round(d2m(mc.max),1)} meses.</div>
-
-    <div class="block-title sub">Sensibilidade — diagrama tornado</div>
-    ${svgTornado(mc,E.ativs)}
-    <div class="hint">Correlação entre o <b>componente próprio</b> de cada atividade — o desvio que não vem da causa comum — e o prazo total. Diferente do índice de criticidade, mede <b>quanto</b> a atividade move o resultado, e não apenas <b>com que frequência</b> ela está no caminho crítico: é por onde se começa um plano de mitigação. A barra verde isola a parcela de risco atribuível ao <b>fator sistêmico</b> (ρ = ${fmt(opt.rho)}), que nenhuma ação sobre uma atividade isolada elimina — só se reduz melhorando gestão, suprimentos e sazonalidade de ataque. Valores negativos, quando aparecem, indicam efeitos indiretos de rede — tipicamente uma atividade que, ao atrasar, empurra a seguinte para uma janela de calendário mais produtiva.</div>
-
-    <div class="block-title sub">Variáveis de entrada da simulação</div>
-    <div class="hint" style="margin-bottom:8px">Edite o coeficiente de variação de qualquer atividade ou retire-a da simulação (tratando-a como determinística) e clique em Resimular. Os limites otimista e pessimista são recalculados a partir do CV, da dispersão global e da assimetria.</div>
-    <table class="var-tbl">
-      <thead><tr><th>Atividade</th><th class="num">Esforço</th><th class="num">CV</th><th class="num">Otimista</th><th class="num">M. provável</th><th class="num">Pessimista</th><th class="num">Sensib.</th><th class="num">Criticid.</th><th class="num">Incluir</th></tr></thead>
-      <tbody>${linhasV}</tbody>
-    </table>
-
-    <div class="mc-metodo">
-      <b>Modelagem adotada — ${DISTRIB[opt.dist].nome}.</b> ${DISTRIB[opt.dist].desc}
-      Para cada atividade i, o esforço em dias úteis é multiplicado por um fator aleatório m̃ᵢ com otimista
-      aᵢ = 1 − 1,30·cvᵢ·${fmt(opt.disp)}, mais provável 1,00 e pessimista bᵢ = 1 + 1,30·cvᵢ·${fmt(opt.disp)}·${fmt(opt.assim)}.
-      A amostragem usa cópula gaussiana: z = √ρ·z<sub>sistêmico</sub> + √(1−ρ)·z<sub>próprio</sub> com ρ = ${fmt(opt.rho)},
-      u = Φ(z) e m̃ᵢ = F⁻¹(u). O fator sistêmico é comum a todas as atividades da iteração e representa causas que afetam
-      a obra inteira (clima atípico, gestão, suprimentos, conjuntura). Em cada uma das ${mc.n.toLocaleString('pt-BR')} iterações
-      a rede CPM é integralmente recalculada, <b>inclusive a conversão de dias úteis em dias corridos</b>: uma atividade que
-      se alonga escorrega para outros meses e passa a sofrer a sazonalidade daquele período — realimentação que produz boa
-      parte da assimetria observada e que não aparece em simuladores que sorteiam durações já em dias corridos.
-      O caminho crítico é apurado por iteração (encadeamento das atividades que efetivamente determinaram o término),
-      o que permite medir a criticidade de caminhos quase-críticos.
-    </div>`;
 }
 
 
@@ -2394,10 +1691,7 @@ function calcEdif(){
   M.ativs.forEach(a=>{ a.cv = Math.max(a.cv, M.cvProjeto*0.8); });
 
   const rede = calcularRede(M.ativs, cal, gestao);
-  ESTADO.edif = {ativs:M.ativs, cal, escala:gestao, det:rede.fim, start, modulo:'edif'};
-  const opt  = lerOpcoesMC('edif');
-  const mc   = simularMonteCarlo(M.ativs, cal, gestao, opt);
-  ESTADO.edif.mc = mc; ESTADO.edif.opt = opt;
+  const mc   = monteCarlo(M.ativs, cal, gestao, 600);
 
   const d2m = d=>d/DIAS_MES;
   const P   = d2m(rede.fim);
@@ -2453,11 +1747,9 @@ function calcEdif(){
     {l:'Atividades na rede',v:M.ativs.length},
     {l:'Fator de gestão e interfaces',v:'× '+fmt(gestao)+' — '+GESTAO[gestao]},
     {l:'Maturidade do projeto',v:PROJETO[projeto].nome+' (CV '+pct(PROJETO[projeto].cv).replace('+','')+')'},
-    {l:'Distribuição de probabilidade adotada',v:DISTRIB[opt.dist].nome},
-    {l:'Iterações · correlação sistêmica · dispersão',v:mc.n+' · ρ='+fmt(opt.rho)+' · ×'+fmt(opt.disp)},
     {l:'Determinístico (caminho crítico)',v:round(P,1)+' meses',calc:true},
     {l:'P50 — probabilidade 50%',v:round(d2m(mc.p50),1)+' meses'},
-    {l:'P'+opt.pct+' — prazo adotado',v:round(d2m(mc.quantil(opt.pct/100)),1)+' meses',res:true},
+    {l:'P80 — prazo contratual recomendado',v:round(d2m(mc.p80),1)+' meses',res:true},
     {l:'P90 — cenário conservador',v:round(d2m(mc.p90),1)+' meses'},
 
     {sec:'6. Verificação de ordem de grandeza'},
@@ -2488,10 +1780,10 @@ function calcEdif(){
     titulo:'Cronograma — '+NOME_EST[est]+(turnos>1?' · '+turnos+' turnos':''),
     subtitulo:'Rede CPM ('+M.ativs.length+' atividades) · LOB '+pav+' pav · gargalo '+gargalo(M.ritmos)+' · '+fmt(mediaDU(cal,0.35))+' dias úteis efetivos/mês',
     prazoMeses:P, prazoDias:Math.round(rede.fim), etapas, start, memoria, entradas,
-    avisos:critica.avisos, mc, opt, ativs:M.ativs,
+    avisos:critica.avisos, mc:{p50:d2m(mc.p50),p80:d2m(mc.p80),p90:d2m(mc.p90)},
     banda, calendario:stripCalendario(cal,start,[0.85,0.50,0.08],['terraplenagem','estrutura','acabamento']),
     fatores:composicao(rede,M.ativs,d2m),
-    alerts:buildEdifAlerts({regime,temRocha,temCortina,acab,sub,area,turnos,est,etapasAcel,P,banda,cal,start,perfil,gestao,nElev:M.nElev,mc,opt,d2m}),
+    alerts:buildEdifAlerts({regime,temRocha,temCortina,acab,sub,area,turnos,est,etapasAcel,P,banda,cal,start,perfil,gestao,nElev:M.nElev,mc,d2m}),
     critCount:etapas.filter(e=>e.crit).length
   });
 }
@@ -2565,10 +1857,7 @@ function calcRodo(){
   M.ativs.forEach(a=>{ a.cv=Math.max(a.cv, PROJETO[projeto].cv*0.8); });
 
   const rede=calcularRede(M.ativs,cal,gestao);
-  ESTADO.rodo={ativs:M.ativs, cal, escala:gestao, det:rede.fim, start, modulo:'rodo'};
-  const opt=lerOpcoesMC('rodo');
-  const mc=simularMonteCarlo(M.ativs,cal,gestao,opt);
-  ESTADO.rodo.mc=mc; ESTADO.rodo.opt=opt;
+  const mc=monteCarlo(M.ativs,cal,gestao,600);
   const d2m=d=>d/DIAS_MES;
   const P=d2m(rede.fim);
 
@@ -2613,11 +1902,9 @@ function calcRodo(){
 
     {sec:(nPontes>0?'5':'4')+'. Prazo e incerteza'},
     {l:'Fator de gestão e interfaces',v:'× '+fmt(gestao)+' — '+GESTAO[gestao]},
-    {l:'Distribuição de probabilidade adotada',v:DISTRIB[opt.dist].nome},
-    {l:'Iterações · correlação sistêmica · dispersão',v:mc.n+' · ρ='+fmt(opt.rho)+' · ×'+fmt(opt.disp)},
     {l:'Determinístico (caminho crítico)',v:round(P,1)+' meses',calc:true},
     {l:'P50',v:round(d2m(mc.p50),1)+' meses'},
-    {l:'P'+opt.pct+' — prazo adotado',v:round(d2m(mc.quantil(opt.pct/100)),1)+' meses',res:true},
+    {l:'P80 — prazo contratual recomendado',v:round(d2m(mc.p80),1)+' meses',res:true},
     {l:'P90',v:round(d2m(mc.p90),1)+' meses'},
     {l:'Banda empírica de referência',v:fmt(banda.min)+' a '+fmt(banda.max)+' meses'}
   ].filter(Boolean);
@@ -2643,10 +1930,10 @@ function calcRodo(){
     titulo:'Cronograma — '+NOME_TOPO[topo]+' · '+NOME_PAV[pav]+(frentes>1?' · '+frentes+' frentes':''),
     subtitulo:fmt(ext)+' km · '+fmt(prodEfetiva)+' km/mês efetivos · '+fmt(duRevest)+' dias úteis/mês para o revestimento',
     prazoMeses:P, prazoDias:Math.round(rede.fim), etapas, start, memoria:memoriaR, entradas:entradasR,
-    avisos:criticaR.avisos, mc, opt, ativs:M.ativs,
+    avisos:criticaR.avisos, mc:{p50:d2m(mc.p50),p80:d2m(mc.p80),p90:d2m(mc.p90)},
     banda, calendario:stripCalendario(cal,start,[SENS_RODO.terra,SENS_RODO.revest[pav],SENS_RODO.sinal],['terraplenagem','revestimento','sinalização']),
     fatores:composicao(rede,M.ativs,d2m),
-    alerts:buildRodoAlerts({regime,pav,temRocha,topo,nPontes,dren,turnos,frentes,rede,cal,start,perfil,P,banda,gestao,mc,opt,d2m}),
+    alerts:buildRodoAlerts({regime,pav,temRocha,topo,nPontes,dren,turnos,frentes,rede,cal,start,perfil,P,banda,gestao,d2m}),
     critCount:etapas.filter(e=>e.crit).length
   });
 }
@@ -2671,7 +1958,7 @@ function buildEdifAlerts(o){
   if(o.P > o.banda.max) a.push({t:'warn',ic:'▲',m:'O prazo calculado ('+round(o.P,1)+' meses) está ACIMA da banda empírica de referência ('+fmt(o.banda.min)+'–'+fmt(o.banda.max)+' meses). Reveja complexidades, turnos e regime de chuvas.'});
   else if(o.P < o.banda.min) a.push({t:'warn',ic:'▲',m:'O prazo calculado ('+round(o.P,1)+' meses) está ABAIXO da banda empírica de referência ('+fmt(o.banda.min)+'–'+fmt(o.banda.max)+' meses). Verifique se o plano de ataque é executável com o efetivo previsto.'});
   else a.push({t:'info',ic:'◆',m:'Prazo coerente com a banda empírica de referência para o porte ('+fmt(o.banda.min)+'–'+fmt(o.banda.max)+' meses).'});
-  a.push({t:'crit',ic:'●',m:'O prazo determinístico é apenas o caminho crítico do cenário mais provável — a probabilidade de cumpri-lo é de aproximadamente '+round(o.mc.probAte(o.P*DIAS_MES)*100,0)+'%. O percentil adotado (P'+o.opt.pct+' = '+round(o.d2m(o.mc.quantil(o.opt.pct/100)),1)+' meses) incorpora a variabilidade correlacionada das atividades.'});
+  a.push({t:'crit',ic:'●',m:'Prazo determinístico é apenas o caminho crítico. Para efeito contratual recomenda-se adotar o P80 = '+round(o.mc.p80,1)+' meses, que incorpora a variabilidade correlacionada das atividades.'});
   if(o.turnos>1 && (o.est==='concreto'||o.est==='alvenaria') && o.etapasAcel.has('estrutura')) a.push({t:'warn',ic:'▲',m:'Estrutura moldada in loco: a cura impõe piso de '+CICLO_MIN_CONCRETO+' dias úteis por pavimento — turnos adicionais não reduzem esse limite físico.'});
   if(o.regime==='alto'||o.regime==='muito_alto'){
     const mb=melhorMesInicio(o.cal,0.85);
@@ -2705,7 +1992,7 @@ function buildRodoAlerts(o){
   else if(o.nPontes>0) a.push({t:'info',ic:'◆',m:'As OAE correm em paralelo com folga, mas dependem de acesso liberado pela terraplenagem.'});
   if(o.frentes>1) a.push({t:'warn',ic:'▲',m:o.frentes+' frentes: o ganho é de '+fmt(o.frentes*(1-0.07*(o.frentes-1)))+'× e não '+o.frentes+'×, por replicação de canteiro, usina e supervisão.'});
   if(o.gestao>=1.10) a.push({t:'info',ic:'◆',m:'Fator de gestão de '+fmt(o.gestao)+'× aplicado (medições, liberação de faixa, interferências de concessionárias).'});
-  a.push({t:'crit',ic:'●',m:'Para fixação de prazo em edital, adote um percentil explícito (P80 é a prática usual) e registre as premissas de sazonalidade — a data de início é premissa contratual relevante. A probabilidade de cumprir o prazo determinístico é de apenas '+round(o.mc.probAte(o.P*DIAS_MES)*100,0)+'%.'});
+  a.push({t:'crit',ic:'●',m:'Para fixação de prazo em edital, adote o P80 e explicite as premissas de sazonalidade — a data de início é premissa contratual relevante.'});
   return a;
 }
 
@@ -2807,8 +2094,24 @@ function renderResult(targetId,d){
     memHTML=`<div class="block-title">Memória de cálculo</div><div class="memoria">${memHTML}</div>`;
   }
 
-  /* seção probabilística (renderizada a partir do ESTADO do módulo) */
-  const probHTML = mc ? `<div id="prob-${modulo}" class="prob-box">${secaoProb(modulo,ESTADO[modulo],'')}</div>` : '';
+  /* faixa probabilística */
+  let probHTML='';
+  if(mc){
+    const lo=Math.min(P,mc.p50)*0.92, hi=mc.p90*1.04, span=hi-lo;
+    const posP=x=>clamp(((x-lo)/span)*100,0,100);
+    probHTML=`
+      <div class="block-title">Faixa probabilística de prazo (Monte Carlo, 600 iterações com correlação sistêmica)</div>
+      <div class="prob">
+        <div class="prob-bar">
+          <div class="prob-fill" style="left:${posP(mc.p50)}%;width:${posP(mc.p80)-posP(mc.p50)}%"></div>
+          <div class="prob-mark det" style="left:${posP(P)}%"><span>det. ${round(P,1)}</span></div>
+          <div class="prob-mark" style="left:${posP(mc.p50)}%"><span>P50 ${round(mc.p50,1)}</span></div>
+          <div class="prob-mark rec" style="left:${posP(mc.p80)}%"><span>P80 ${round(mc.p80,1)}</span></div>
+          <div class="prob-mark" style="left:${posP(mc.p90)}%"><span>P90 ${round(mc.p90,1)}</span></div>
+        </div>
+        <div class="prob-leg">Recomendação para fixação de prazo contratual: <b>P80 = ${round(mc.p80,1)} meses (${Math.round(mc.p80*DIAS_MES)} dias corridos)</b> — a diferença para o P50 é a reserva de contingência de prazo, e deve ser explicitada, não escondida no cálculo.</div>
+      </div>`;
+  }
 
   /* calendário produtivo */
   let calHTML='';
@@ -2840,7 +2143,7 @@ function renderResult(targetId,d){
       <div class="panel-body">
         <div class="summary">
           <div class="kpi"><div class="v">${round(P,1)}<small> mo</small></div><div class="l">Determinístico</div></div>
-          <div class="kpi"><div class="v crit" id="kpi-pct-${modulo}">${mc?round(mc.quantil(d.opt.pct/100)/DIAS_MES,1):'—'}<small> mo</small></div><div class="l" id="kpi-pct-lbl-${modulo}">P${d.opt?d.opt.pct:80} · adotado</div></div>
+          <div class="kpi"><div class="v crit">${mc?round(mc.p80,1):'—'}<small> mo</small></div><div class="l">P80 · contratual</div></div>
           <div class="kpi"><div class="v">${prazoDias}<small> d</small></div><div class="l">Dias corridos</div></div>
           <div class="kpi"><div class="v crit">${critCount}</div><div class="l">Atividades críticas</div></div>
         </div>
@@ -2888,15 +2191,15 @@ function renderResult(targetId,d){
 
         <div class="export-bar">
           <button onclick="imprimirRelatorio('relatorio-${modulo}')">⎙ Relatório completo / PDF</button>
-          <button onclick="copyResumo(${round(P,1)},${mc?round(mc.quantil(d.opt.pct/100)/DIAS_MES,1):0},${d.opt?d.opt.pct:80},${prazoDias},${critCount})">⧉ Copiar resumo</button>
+          <button onclick="copyResumo(${round(P,1)},${mc?round(mc.p80,1):0},${prazoDias},${critCount})">⧉ Copiar resumo</button>
         </div>
 
         <div class="disclaimer">
           <b>Nota metodológica:</b> o esforço de cada serviço é estimado em <b>dias úteis</b> a partir de consumos unitários de mão de obra
           (Hh/m²) e densidades máximas de frente, ou de produtividades por km, e convertido em <b>dias corridos</b> por um calendário
           produtivo que desconta feriados, recesso e dias de chuva ponderados pela sensibilidade climática de cada serviço.
-          A rede é resolvida por CPM com relações FS/SS/FF e defasagens; a análise probabilística vem de simulação de Monte Carlo
-          com cópula gaussiana e correlação sistêmica entre atividades, recalculando a rede inteira a cada iteração. Os coeficientes são referências de planejamento e devem ser calibrados com
+          A rede é resolvida por CPM com relações FS/SS/FF e defasagens; a faixa probabilística vem de simulação de Monte Carlo
+          com correlação sistêmica entre atividades. Os coeficientes são referências de planejamento e devem ser calibrados com
           dados próprios de produtividade antes de uso contratual.
         </div>
       </div>
@@ -2925,8 +2228,8 @@ function imprimirRelatorio(id){
   setTimeout(()=>{w.print();},400);
 }
 
-function copyResumo(p,pv,pct,d,c){
-  const t=`CronogramaPro — Prazo determinístico: ${p} meses (${d} dias corridos). Prazo adotado (P${pct}): ${pv} meses. ${c} atividades no caminho crítico. Estimativa por rede CPM com Linha de Balanço, calendário produtivo com sazonalidade de chuvas e simulação de Monte Carlo.`;
+function copyResumo(p,p80,d,c){
+  const t=`CronogramaPro — Prazo determinístico: ${p} meses (${d} dias corridos). Prazo recomendado para contrato (P80): ${p80} meses. ${c} atividades no caminho crítico. Estimativa por rede CPM com Linha de Balanço, calendário produtivo com sazonalidade de chuvas e simulação de Monte Carlo.`;
   navigator.clipboard.writeText(t).then(()=>alert('Resumo copiado.'));
 }
 
@@ -2954,10 +2257,8 @@ document.querySelectorAll('.tab').forEach(t=>{
     document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
     t.classList.add('active');
     const tab=t.dataset.tab;
-    ['edif','rodo','metodo'].forEach(k=>{
-      const el=document.getElementById('tab-'+k);
-      if(el) el.classList.toggle('hidden',tab!==k);
-    });
+    document.getElementById('tab-edif').classList.toggle('hidden',tab!=='edif');
+    document.getElementById('tab-rodo').classList.toggle('hidden',tab!=='rodo');
   });
 });
 document.querySelectorAll('.seg').forEach(seg=>{
@@ -2977,9 +2278,7 @@ if(typeof window!=='undefined'){
     criticarEdif, criticarRodo, parseStart, monthLabel, ordenarTopologico,
     JORNADA, REGIME_CHUVA, PERFIL_CLIMA, HH, DENS, TIPO_EDIF, PROJETO, GESTAO,
     VOL_TERRA, PROD_TERRA, PROD_LIN, SENS_RODO, DIAS_MES, CICLO_MIN_CONCRETO,
-    calcEdif, calcRodo, simularMonteCarlo, prepararRede, passagemDireta,
-    DISTRIB, MC_PADRAO, phi, invPhi, betainc, tabelaBeta, invTabela, invTriangular,
-    parametrosIncerteza, amostrar, secaoProb, lerOpcoesMC, resimular, probAlvo, ESTADO
+    calcEdif, calcRodo
   };
 }
 
