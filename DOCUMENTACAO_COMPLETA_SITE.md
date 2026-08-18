@@ -352,8 +352,8 @@ Observacoes criticas:
 - A versao atual da pagina usa cache busting:
 
 ```html
-static/static-api.js?v=revisado-20260817-1
-static/app.js?v=revisado-20260817-1
+static/static-api.js?v=revisado-20260817-2
+static/app.js?v=revisado-20260817-2
 ```
 
 Sempre que alterar `static-api.js` ou `app.js`, atualize tambem a query string no `casa-parametrica/index.html` para evitar cache do Chrome.
@@ -364,6 +364,14 @@ Atualizacao de 17/08/2026:
 - Arquivos substituidos a partir da pasta `casa` do ZIP: `data/default_parameters.json` e `static/static-api.js`; a query string de `index.html` foi atualizada para `revisado-20260817-1`.
 - Backup da versao de producao Git salvo em `C:\Obras Inteligentes\backups\casa-parametrica-production-git-before-20260817-20260817-212510.zip`.
 - Backup local dos arquivos substituidos salvo em `C:\Obras Inteligentes\backups\casa-parametrica-local-before-20260817-20260817-212510`.
+
+Atualizacao de 17/08/2026 - revisao 2:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\casa_parametrica_revisado (2).zip`.
+- Arquivos de execucao atualizados a partir da pasta `casa` do ZIP: `index.html`, `data/default_parameters.json`, `data/default_price_bases.json`, `static/app.js`, `static/static-api.js`, `static/styles.css` e `static/favicon.svg`.
+- A nova revisao acrescenta geracao de modelo IFC conceitual no aplicativo; a query string de `index.html` foi atualizada para `revisado-20260817-2`.
+- Backup da versao de producao Git salvo em `C:\Obras Inteligentes\backups\casa-parametrica-production-git-before-20260817-2159.zip`.
+- Backup local dos arquivos substituidos salvo em `C:\Obras Inteligentes\backups\casa-parametrica-local-before-20260817-2159`.
 
 Commits historicos relevantes:
 

@@ -265,6 +265,7 @@ function bindEstimateActions() {
   });
   $("#saveButton").addEventListener("click", saveCurrentScenario);
   $("#pdfButton").addEventListener("click", generateCurrentPdf);
+  $("#ifcButton").addEventListener("click", generateCurrentIfc);
 }
 
 function bindScenarioActions() {
@@ -822,6 +823,36 @@ async function generateCurrentPdf() {
     link.remove();
     setTimeout(() => URL.revokeObjectURL(url), 2000);
     toast("Relatório PDF gerado.", "success");
+  } catch (error) {
+    toast(error.message, "error");
+  } finally {
+    setLoading(false);
+  }
+}
+
+async function generateCurrentIfc() {
+  if (!currentRequest) {
+    toast("Calcule uma estimativa antes de gerar o modelo IFC.", "error");
+    return;
+  }
+  setLoading(true);
+  try {
+    const response = await fetch("/api/model.ifc", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(currentRequest)
+    });
+    if (!response.ok) throw new Error(await responseError(response));
+    const blob = await response.blob();
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${slug(currentRequest.name)}.ifc`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+    toast("Modelo IFC conceitual gerado. Trata-se de massa volumétrica (LOD 100), não de projeto.", "success");
   } catch (error) {
     toast(error.message, "error");
   } finally {

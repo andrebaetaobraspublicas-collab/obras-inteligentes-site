@@ -928,6 +928,411 @@
     };
   }
 
+  // ===========================================================================
+  // Gerador de modelo IFC4 (massing conceitual)
+  //
+  // Produz um arquivo IFC-SPF (STEP / ISO-10303-21) em texto puro, sem qualquer
+  // dependencia externa, no mesmo espirito do gerador de PDF acima.
+  //
+  // IMPORTANTE: este e um MODELO VOLUMETRICO CONCEITUAL (nivel ~LOD 100).
+  // Representa uma HIPOTESE de implantacao derivada dos parametros, NAO um
+  // projeto arquitetonico. As paredes internas, aberturas e ambientes nao estao
+  // em posicao real de projeto. Serve para estudo de volume, gabarito,
+  // afastamentos e coordenacao preliminar - nunca para medicao ou execucao.
+  //
+  // Estrutura espacial:
+  //   IfcProject -> IfcSite (com talude/cota) -> IfcBuilding -> IfcBuildingStorey[]
+  // Elementos por pavimento: laje (IfcSlab), paredes-casca (IfcWallStandardCase),
+  // aberturas (IfcOpeningElement + IfcWindow/IfcDoor), vazio de pe-direito duplo.
+  // Anexos: cobertura (IfcRoof), garagem (volume), piscina (IfcSlab rebaixado),
+  // terreno como IfcGeographicElement/IfcSite com sólido de talude.
+  // ===========================================================================
+  function buildIfcModel(request, result, parameters) {
+    const num = (v, f = 0) => (Number.isFinite(Number(v)) ? Number(v) : f);
+    const building = request.building || {};
+    const terrain = request.terrain || {};
+    const program = request.program || {};
+    const construction = request.construction || {};
+    const extras = request.extras || {};
+    const coeff = (parameters && parameters.quantity_coefficients) || {};
+
+    const mainArea = Math.max(1, num(building.built_area, 100));
+    const floors = Math.max(1, Math.round(num(building.floors, 1)));
+    const ceilingHeight = num(coeff.average_ceiling_height_m, 2.8);
+    const complexityPerimeter = ((coeff.perimeter_shape_factors) || {})[building.complexity] || 1.08;
+
+    // Geometria de projecao: retangulo com razao derivada da complexidade.
+    // Area de projecao = area principal / pavimentos.
+    const projection = mainArea / floors;
+    // proporcao do retangulo: mais "articulada" => mais alongada
+    const ratio = { compacta: 1.0, regular: 1.2, articulada: 1.45, complexa: 1.7 }[building.complexity] || 1.2;
+    const width = Math.sqrt(projection / ratio);   // menor lado (X)
+    const depth = projection / Math.max(0.5, width); // maior lado (Y)
+    const wallThickness = 0.2;
+    const slabThickness = 0.15;
+
+    // Terreno e cota de implantacao.
+    const slopeGrade = { plano: 0.0, leve: 0.06, inclinado: 0.15, muito_inclinado: 0.30 }[terrain.slope] || 0.0;
+    const siteMargin = Math.max(6, Math.sqrt(projection) * 1.2);
+    const siteW = width + siteMargin * 2;
+    const siteD = depth + siteMargin * 2;
+    const dropAcrossSite = slopeGrade * siteD;        // desnivel total no eixo Y
+    const platformCut = slopeGrade > 0 ? dropAcrossSite * 0.5 : 0; // plataforma nivelada (corte/aterro)
+    const buildingBaseZ = 0.0; // a edificacao assenta na plataforma (z=0); o terreno varia ao redor.
+
+    // ------------------------------------------------------------------
+    // Coletor de linhas STEP com numeracao incremental de #id.
+    // ------------------------------------------------------------------
+    const lines = [];
+    let id = 0;
+    const ref = () => `#${id}`;
+    const add = (body) => { id += 1; lines.push(`#${id}=${body};`); return `#${id}`; };
+    const S = (s) => `'${String(s == null ? "" : s).replace(/\\/g, "\\\\").replace(/'/g, "\\'")}'`;
+    const guid = () => {
+      // GUID IFC compactado (22 chars, base64-ish do padrao IFC).
+      const chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_$";
+      let g = "";
+      for (let i = 0; i < 22; i += 1) g += chars[Math.floor(Math.random() * 64)];
+      return g;
+    };
+    const guidRef = () => S(guid());
+
+    // ------------------------------------------------------------------
+    // Fundacao geometrica: contextos, unidades, owner history.
+    // ------------------------------------------------------------------
+    const person = add(`IFCPERSON($,$,'Casa Parametrica',$,$,$,$,$)`);
+    const org = add(`IFCORGANIZATION($,'Casa Parametrica','Modelo conceitual parametrico',$,$)`);
+    const personAndOrg = add(`IFCPERSONANDORGANIZATION(${person},${org},$)`);
+    const application = add(`IFCAPPLICATION(${org},'2026.08',${S("Casa Parametrica - Massing IFC")},'CasaParametrica')`);
+    const ownerHistory = add(`IFCOWNERHISTORY(${personAndOrg},${application},$,.ADDED.,$,${personAndOrg},${application},${Math.floor(Date.now() / 1000)})`);
+
+    const dimExp = add(`IFCDIMENSIONALEXPONENTS(0,0,0,0,0,0,0)`);
+    const unitLen = add(`IFCSIUNIT(*,.LENGTHUNIT.,$,.METRE.)`);
+    const unitArea = add(`IFCSIUNIT(*,.AREAUNIT.,$,.SQUARE_METRE.)`);
+    const unitVol = add(`IFCSIUNIT(*,.VOLUMEUNIT.,$,.CUBIC_METRE.)`);
+    const unitAngleRad = add(`IFCSIUNIT(*,.PLANEANGLEUNIT.,$,.RADIAN.)`);
+    const unitAssignment = add(`IFCUNITASSIGNMENT((${unitLen},${unitArea},${unitVol},${unitAngleRad}))`);
+
+    const originPt = add(`IFCCARTESIANPOINT((0.,0.,0.))`);
+    const dirZ = add(`IFCDIRECTION((0.,0.,1.))`);
+    const dirX = add(`IFCDIRECTION((1.,0.,0.))`);
+    const worldAxis = add(`IFCAXIS2PLACEMENT3D(${originPt},${dirZ},${dirX})`);
+    const dirTrue = add(`IFCDIRECTION((0.,1.))`);
+    const geomContext = add(`IFCGEOMETRICREPRESENTATIONCONTEXT($,'Model',3,1.0E-5,${worldAxis},${dirTrue})`);
+    const bodySubContext = add(`IFCGEOMETRICREPRESENTATIONSUBCONTEXT('Body','Model',*,*,*,*,${geomContext},$,.MODEL_VIEW.,$)`);
+
+    // Placement raiz reutilizavel.
+    const rootPlacement = add(`IFCLOCALPLACEMENT($,${worldAxis})`);
+
+    // ------------------------------------------------------------------
+    // Helpers de geometria: caixa por extrusao a partir de um retangulo.
+    // profile centrado; placement define a origem (canto) e a cota Z.
+    // ------------------------------------------------------------------
+    const placementAt = (x, y, z, parent) => {
+      const p = add(`IFCCARTESIANPOINT((${x.toFixed(4)},${y.toFixed(4)},${z.toFixed(4)}))`);
+      const ax = add(`IFCAXIS2PLACEMENT3D(${p},${dirZ},${dirX})`);
+      return add(`IFCLOCALPLACEMENT(${parent || rootPlacement},${ax})`);
+    };
+    const extrudedBox = (w, d, h) => {
+      // profile retangular centrado na origem local
+      const profPos2d = add(`IFCCARTESIANPOINT((0.,0.))`);
+      const profAxis = add(`IFCAXIS2PLACEMENT2D(${profPos2d},$)`);
+      const prof = add(`IFCRECTANGLEPROFILEDEF(.AREA.,$,${profAxis},${w.toFixed(4)},${d.toFixed(4)})`);
+      const solidPos = add(`IFCAXIS2PLACEMENT3D(${originPt},${dirZ},${dirX})`);
+      const extrudeDir = add(`IFCDIRECTION((0.,0.,1.))`);
+      const solid = add(`IFCEXTRUDEDAREASOLID(${prof},${solidPos},${extrudeDir},${h.toFixed(4)})`);
+      const shapeRep = add(`IFCSHAPEREPRESENTATION(${bodySubContext},'Body','SweptSolid',(${solid}))`);
+      return add(`IFCPRODUCTDEFINITIONSHAPE($,$,(${shapeRep}))`);
+    };
+    // caixa "casca" (hollow) para paredes perimetrais: retangulo externo com furo interno,
+    // via perfil arbitrario com void (contorno externo + contorno interno como buraco).
+    const hollowBox = (wOut, dOut, thickness, h) => {
+      const innerW = Math.max(0.2, wOut - 2 * thickness);
+      const innerD = Math.max(0.2, dOut - 2 * thickness);
+      const outerCurve = profileCurveOf(wOut, dOut);
+      const innerCurve = profileCurveOf(innerW, innerD);
+      const hollow = add(`IFCARBITRARYPROFILEDEFWITHVOIDS(.AREA.,$,${outerCurve},(${innerCurve}))`);
+      const solidPos = add(`IFCAXIS2PLACEMENT3D(${originPt},${dirZ},${dirX})`);
+      const extrudeDir = add(`IFCDIRECTION((0.,0.,1.))`);
+      const solid = add(`IFCEXTRUDEDAREASOLID(${hollow},${solidPos},${extrudeDir},${h.toFixed(4)})`);
+      const shapeRep = add(`IFCSHAPEREPRESENTATION(${bodySubContext},'Body','SweptSolid',(${solid}))`);
+      return add(`IFCPRODUCTDEFINITIONSHAPE($,$,(${shapeRep}))`);
+    };
+    // curva poligonal fechada para um retangulo centrado (para o perfil com voids)
+    function profileCurveOf(w, d) {
+      const hw = w / 2, hd = d / 2;
+      const p1 = add(`IFCCARTESIANPOINT((${(-hw).toFixed(4)},${(-hd).toFixed(4)}))`);
+      const p2 = add(`IFCCARTESIANPOINT((${hw.toFixed(4)},${(-hd).toFixed(4)}))`);
+      const p3 = add(`IFCCARTESIANPOINT((${hw.toFixed(4)},${hd.toFixed(4)}))`);
+      const p4 = add(`IFCCARTESIANPOINT((${(-hw).toFixed(4)},${hd.toFixed(4)}))`);
+      return add(`IFCPOLYLINE((${p1},${p2},${p3},${p4},${p1}))`);
+    }
+
+    // ------------------------------------------------------------------
+    // Estrutura espacial.
+    // ------------------------------------------------------------------
+    const project = add(`IFCPROJECT(${guidRef()},${ownerHistory},'Casa Parametrica',${S("Modelo conceitual de massa (LOD 100). Nao e projeto arquitetonico.")},$,$,$,(${geomContext}),${unitAssignment})`);
+
+    // Site com placement em cota (topo da plataforma). RefElevation informativa.
+    const sitePlacement = placementAt(-siteW / 2 + width / 2, -siteD / 2 + depth / 2, -platformCut, rootPlacement);
+    const siteShape = extrudedBox(siteW, siteD, Math.max(0.3, platformCut + 0.3));
+    const site = add(`IFCSITE(${guidRef()},${ownerHistory},'Terreno',${S("Plataforma de implantacao (corte/aterro conceitual)")},$,${sitePlacement},${siteShape},$,.ELEMENT.,$,$,${Math.round(buildingBaseZ * 1000)},$,$)`);
+
+    const buildingPlacement = placementAt(0, 0, buildingBaseZ, rootPlacement);
+    const ifcBuilding = add(`IFCBUILDING(${guidRef()},${ownerHistory},${S(request.name || "Edificacao")},${S(descricaoTipo(building, extras))},$,${buildingPlacement},$,$,.ELEMENT.,$,$,$)`);
+
+    // ------------------------------------------------------------------
+    // Pavimentos, lajes, paredes, aberturas.
+    // ------------------------------------------------------------------
+    const storeyRefs = [];
+    const productRels = []; // {storey, products:[]}
+    const doubleHeightArea = num(building.double_height_area, 0);
+
+    for (let level = 0; level < floors; level += 1) {
+      const z = buildingBaseZ + level * ceilingHeight;
+      const storeyPlacement = placementAt(0, 0, z, buildingPlacement);
+      const storey = add(`IFCBUILDINGSTOREY(${guidRef()},${ownerHistory},'Pavimento ${level + 1}',$,$,${storeyPlacement},$,$,.ELEMENT.,${z.toFixed(3)})`);
+      const products = [];
+
+      // Laje de piso.
+      const slabPlacement = placementAt(0, 0, 0, storeyPlacement);
+      const slabShape = extrudedBox(width, depth, slabThickness);
+      const slab = add(`IFCSLAB(${guidRef()},${ownerHistory},'Laje pav ${level + 1}',$,$,${slabPlacement},${slabShape},$,.FLOOR.)`);
+      products.push(slab);
+
+      // Paredes perimetrais como casca (hollow box) subindo o pe-direito.
+      const wallPlacement = placementAt(0, 0, slabThickness, storeyPlacement);
+      const wallShape = hollowBox(width, depth, wallThickness, ceilingHeight - slabThickness);
+      const wall = add(`IFCWALLSTANDARDCASE(${guidRef()},${ownerHistory},'Envoltoria pav ${level + 1}',${S("Casca perimetral conceitual")},$,${wallPlacement},${wallShape},$,.STANDARD.)`);
+      products.push(wall);
+
+      // Aberturas (janelas) distribuidas nas 4 fachadas, proporcional a area de esquadrias.
+      // Numero aproximado de vaos por pavimento.
+      const windowsPerFloor = Math.max(2, Math.round((num(program.bedrooms, 2) + 2) / floors) + 2);
+      for (let wI = 0; wI < windowsPerFloor; wI += 1) {
+        const side = wI % 4; // 0..3 -> 4 fachadas
+        const along = ((wI % 3) + 1) / 4; // posicao relativa 0.25/0.5/0.75
+        let wx = 0, wy = 0;
+        const winW = 1.4, winH = 1.3, sill = 1.0;
+        if (side === 0) { wx = -width / 2; wy = -depth / 2 + depth * along; }
+        else if (side === 1) { wx = width / 2; wy = -depth / 2 + depth * along; }
+        else if (side === 2) { wx = -width / 2 + width * along; wy = -depth / 2; }
+        else { wx = -width / 2 + width * along; wy = depth / 2; }
+        const openPlacement = placementAt(wx, wy, slabThickness + sill, storeyPlacement);
+        const openShape = extrudedBox(winW, wallThickness * 1.2, winH);
+        const opening = add(`IFCOPENINGELEMENT(${guidRef()},${ownerHistory},'Vao ${level + 1}-${wI + 1}',$,$,${openPlacement},${openShape},$,.OPENING.)`);
+        add(`IFCRELVOIDSELEMENT(${guidRef()},${ownerHistory},$,$,${wall},${opening})`);
+        const winShape = extrudedBox(winW * 0.95, wallThickness * 0.4, winH * 0.95);
+        const winPlacement = placementAt(wx, wy, slabThickness + sill, storeyPlacement);
+        const window = add(`IFCWINDOW(${guidRef()},${ownerHistory},'Janela ${level + 1}-${wI + 1}',$,$,${winPlacement},${winShape},$,${winH.toFixed(2)},${winW.toFixed(2)},.WINDOW.,.NOTDEFINED.,$)`);
+        add(`IFCRELFILLSELEMENT(${guidRef()},${ownerHistory},$,$,${opening},${window})`);
+        products.push(window);
+      }
+
+      // Porta de acesso no pavimento terreo.
+      if (level === 0) {
+        const doorPlacement = placementAt(0, -depth / 2, slabThickness, storeyPlacement);
+        const doorOpenShape = extrudedBox(1.0, wallThickness * 1.2, 2.1);
+        const doorOpening = add(`IFCOPENINGELEMENT(${guidRef()},${ownerHistory},'Vao porta',$,$,${doorPlacement},${doorOpenShape},$,.OPENING.)`);
+        add(`IFCRELVOIDSELEMENT(${guidRef()},${ownerHistory},$,$,${wall},${doorOpening})`);
+        const doorShape = extrudedBox(0.95, wallThickness * 0.4, 2.1);
+        const doorPl2 = placementAt(0, -depth / 2, slabThickness, storeyPlacement);
+        const door = add(`IFCDOOR(${guidRef()},${ownerHistory},'Porta de acesso',$,$,${doorPl2},${doorShape},$,2.10,1.00,.DOOR.,.SINGLE_SWING_LEFT.,$)`);
+        add(`IFCRELFILLSELEMENT(${guidRef()},${ownerHistory},$,$,${doorOpening},${door})`);
+        products.push(door);
+      }
+
+      storeyRefs.push(storey);
+      productRels.push({ storey, products });
+    }
+
+    // Vazio de pe-direito duplo: subtrai uma laje no pavimento superior (representado
+    // como um IfcSpace "vazado" informativo no ultimo pavimento).
+    let doubleHeightSpace = null;
+    if (doubleHeightArea > 0 && floors > 1) {
+      const topStorey = storeyRefs[storeyRefs.length - 1];
+      const dhW = Math.min(width * 0.8, Math.sqrt(doubleHeightArea));
+      const dhD = Math.min(depth * 0.8, doubleHeightArea / Math.max(0.5, dhW));
+      const dhPlacement = placementAt(0, 0, 0, placementAt(0, 0, buildingBaseZ + (floors - 1) * ceilingHeight, buildingPlacement));
+      const dhShape = extrudedBox(dhW, dhD, ceilingHeight * 0.98);
+      doubleHeightSpace = add(`IFCSPACE(${guidRef()},${ownerHistory},'Pe-direito duplo',${S("Vazio de pe-direito duplo (conceitual)")},$,${dhPlacement},${dhShape},$,.ELEMENT.,.INTERNAL.,$)`);
+    }
+
+    // ------------------------------------------------------------------
+    // Cobertura conforme tipo.
+    // ------------------------------------------------------------------
+    const roofZ = buildingBaseZ + floors * ceilingHeight;
+    const roofType = construction.roof || "colonial_ceramica";
+    const flatRoof = ["laje_impermeabilizada", "embutido_termoacustica", "cobertura_verde"].includes(roofType);
+    const roofPlacement = placementAt(0, 0, roofZ, buildingPlacement);
+    let roofShape;
+    if (flatRoof) {
+      roofShape = extrudedBox(width + 0.4, depth + 0.4, 0.3);
+    } else {
+      // telhado inclinado simplificado: prisma triangular ao longo do maior eixo
+      const ridgeH = Math.min(2.2, Math.sqrt(projection) * 0.18);
+      roofShape = gableRoofShape(width, depth, ridgeH, add, originPt, dirZ, dirX, bodySubContext);
+    }
+    const roof = add(`IFCROOF(${guidRef()},${ownerHistory},'Cobertura',${S(roofType)},$,${roofPlacement},${roofShape},$,.${flatRoof ? "FLAT_ROOF" : "GABLE_ROOF"}.)`);
+
+    // ------------------------------------------------------------------
+    // Garagem (volume anexo lateral), coberta ou nao.
+    // ------------------------------------------------------------------
+    let garage = null;
+    const garageSpaces = num(building.garage_spaces, 0);
+    if (garageSpaces > 0) {
+      const gW = Math.min(6, 2.6 * Math.min(2, garageSpaces));
+      const gD = 5.0;
+      const gH = building.garage_covered ? 2.6 : 0.15;
+      const gx = -(width / 2 + gW / 2 + 0.3);
+      const garagePlacement = placementAt(gx, -depth / 2 + gD / 2, buildingBaseZ, buildingPlacement);
+      const garageShape = extrudedBox(gW, gD, gH);
+      garage = add(`IFCBUILDINGELEMENTPROXY(${guidRef()},${ownerHistory},'Garagem',${S(building.garage_covered ? "Garagem coberta (conceitual)" : "Vaga descoberta (conceitual)")},$,${garagePlacement},${garageShape},$,.ELEMENT.)`);
+    }
+
+    // ------------------------------------------------------------------
+    // Piscina (laje rebaixada no terreno).
+    // ------------------------------------------------------------------
+    let pool = null;
+    if (extras.pool && num(extras.pool_area, 0) > 0) {
+      const poolArea = num(extras.pool_area, 18);
+      const pW = Math.sqrt(poolArea / 2);
+      const pD = poolArea / Math.max(0.5, pW);
+      const px = width / 2 + pW / 2 + 1.5;
+      const poolPlacement = placementAt(px, 0, -1.4, sitePlacement);
+      const poolShape = extrudedBox(pW, pD, 1.4);
+      pool = add(`IFCBUILDINGELEMENTPROXY(${guidRef()},${ownerHistory},'Piscina',${S("Piscina (volume conceitual)")},$,${poolPlacement},${poolShape},$,.ELEMENT.)`);
+    }
+
+    // ------------------------------------------------------------------
+    // Talude / desnivel do terreno (prisma inclinado) quando ha inclinacao.
+    // ------------------------------------------------------------------
+    let slopeMass = null;
+    if (slopeGrade > 0) {
+      const slopeShape = wedgeShape(siteW, siteD, dropAcrossSite, add, originPt, dirZ, dirX, bodySubContext);
+      const slopePlacement = placementAt(-siteW / 2 + width / 2, -siteD / 2 + depth / 2, -platformCut - 0.3, rootPlacement);
+      slopeMass = add(`IFCGEOGRAPHICELEMENT(${guidRef()},${ownerHistory},'Talude do terreno',${S("Desnivel natural (corte/aterro conceitual)")},$,${slopePlacement},${slopeShape},$,.TERRAIN.)`);
+    }
+
+    // ------------------------------------------------------------------
+    // Relacoes de agregacao e contencao espacial.
+    // ------------------------------------------------------------------
+    add(`IFCRELAGGREGATES(${guidRef()},${ownerHistory},$,$,${project},(${site}))`);
+    add(`IFCRELAGGREGATES(${guidRef()},${ownerHistory},$,$,${site},(${ifcBuilding}))`);
+    add(`IFCRELAGGREGATES(${guidRef()},${ownerHistory},$,$,${ifcBuilding},(${storeyRefs.join(",")}))`);
+
+    // Elementos por pavimento.
+    productRels.forEach(({ storey, products }, i) => {
+      if (products.length) {
+        add(`IFCRELCONTAINEDINSPATIALSTRUCTURE(${guidRef()},${ownerHistory},'Conteudo pav ${i + 1}',$,(${products.join(",")}),${storey})`);
+      }
+    });
+    // Cobertura e espaco de pe-direito no topo / building.
+    const buildingLevelProducts = [roof];
+    if (doubleHeightSpace) buildingLevelProducts.push(doubleHeightSpace);
+    if (garage) buildingLevelProducts.push(garage);
+    add(`IFCRELCONTAINEDINSPATIALSTRUCTURE(${guidRef()},${ownerHistory},'Elementos da edificacao',$,(${buildingLevelProducts.join(",")}),${storeyRefs[0]})`);
+    // Elementos do sitio (piscina, talude).
+    const siteProducts = [];
+    if (pool) siteProducts.push(pool);
+    if (slopeMass) siteProducts.push(slopeMass);
+    if (siteProducts.length) {
+      add(`IFCRELCONTAINEDINSPATIALSTRUCTURE(${guidRef()},${ownerHistory},'Elementos do terreno',$,(${siteProducts.join(",")}),${site})`);
+    }
+
+    // ------------------------------------------------------------------
+    // Property set com aviso e resumo parametrico.
+    // ------------------------------------------------------------------
+    const pv = (name, val) => add(`IFCPROPERTYSINGLEVALUE('${name}',$,IFCTEXT(${S(val)}),$)`);
+    const props = [
+      pv("Natureza", "Modelo conceitual de massa (LOD 100)"),
+      pv("Aviso", "Hipotese de implantacao. Nao e projeto arquitetonico nem base para medicao/execucao."),
+      pv("Area principal (m2)", String(mainArea)),
+      pv("Pavimentos", String(floors)),
+      pv("Custo tecnico (R$)", String(result.technical_cost)),
+      pv("Investimento total (R$)", String(result.investment_total)),
+      pv("Base de precos", String(result.price_base?.version || result.parameter_version))
+    ];
+    const pset = add(`IFCPROPERTYSET(${guidRef()},${ownerHistory},'Pset_CasaParametrica',${S("Resumo parametrico e avisos")},(${props.join(",")}))`);
+    add(`IFCRELDEFINESBYPROPERTIES(${guidRef()},${ownerHistory},$,$,(${ifcBuilding}),${pset})`);
+
+    // ------------------------------------------------------------------
+    // Montagem do arquivo STEP.
+    // ------------------------------------------------------------------
+    const now = new Date().toISOString();
+    const header = [
+      "ISO-10303-21;",
+      "HEADER;",
+      `FILE_DESCRIPTION(('Casa Parametrica - modelo conceitual de massa (LOD 100)','Nao e projeto arquitetonico'),'2;1');`,
+      `FILE_NAME('${(request.name || "casa-parametrica").replace(/'/g, "")}.ifc','${now}',('Casa Parametrica'),('Casa Parametrica'),'Casa Parametrica Massing 2026.08','Casa Parametrica','');`,
+      "FILE_SCHEMA(('IFC4'));",
+      "ENDSEC;",
+      "DATA;"
+    ].join("\n");
+    const footer = ["ENDSEC;", "END-ISO-10303-21;"].join("\n");
+    const content = `${header}\n${lines.join("\n")}\n${footer}\n`;
+    return content;
+  }
+
+  // Telhado de duas aguas: prisma triangular varrido ao longo do eixo Y (depth).
+  function gableRoofShape(width, depth, ridgeH, add, originPt, dirZ, dirX, bodySubContext) {
+    const hw = width / 2;
+    const p1 = add(`IFCCARTESIANPOINT((${(-hw).toFixed(4)},0.))`);
+    const p2 = add(`IFCCARTESIANPOINT((${hw.toFixed(4)},0.))`);
+    const p3 = add(`IFCCARTESIANPOINT((0.,${ridgeH.toFixed(4)}))`);
+    const poly = add(`IFCPOLYLINE((${p1},${p2},${p3},${p1}))`);
+    const prof = add(`IFCARBITRARYCLOSEDPROFILEDEF(.AREA.,$,${poly})`);
+    // roda o perfil para o plano XZ e varre em +Y
+    const rp = add(`IFCCARTESIANPOINT((0.,0.,0.))`);
+    const rdz = add(`IFCDIRECTION((0.,-1.,0.))`);
+    const rdx = add(`IFCDIRECTION((1.,0.,0.))`);
+    const solidPos = add(`IFCAXIS2PLACEMENT3D(${rp},${rdz},${rdx})`);
+    const extrudeDir = add(`IFCDIRECTION((0.,0.,1.))`);
+    const solid = add(`IFCEXTRUDEDAREASOLID(${prof},${solidPos},${extrudeDir},${depth.toFixed(4)})`);
+    const shapeRep = add(`IFCSHAPEREPRESENTATION(${bodySubContext},'Body','SweptSolid',(${solid}))`);
+    return add(`IFCPRODUCTDEFINITIONSHAPE($,$,(${shapeRep}))`);
+  }
+
+  // Cunha (wedge) para representar desnivel do terreno: triangulo varrido em X.
+  function wedgeShape(width, depth, drop, add, originPt, dirZ, dirX, bodySubContext) {
+    const hd = depth / 2;
+    const p1 = add(`IFCCARTESIANPOINT((${(-hd).toFixed(4)},0.))`);
+    const p2 = add(`IFCCARTESIANPOINT((${hd.toFixed(4)},0.))`);
+    const p3 = add(`IFCCARTESIANPOINT((${hd.toFixed(4)},${Math.max(0.1, drop).toFixed(4)}))`);
+    const poly = add(`IFCPOLYLINE((${p1},${p2},${p3},${p1}))`);
+    const prof = add(`IFCARBITRARYCLOSEDPROFILEDEF(.AREA.,$,${poly})`);
+    const rp = add(`IFCCARTESIANPOINT((0.,0.,0.))`);
+    const rdz = add(`IFCDIRECTION((1.,0.,0.))`);
+    const rdx = add(`IFCDIRECTION((0.,1.,0.))`);
+    const solidPos = add(`IFCAXIS2PLACEMENT3D(${rp},${rdz},${rdx})`);
+    const extrudeDir = add(`IFCDIRECTION((0.,0.,1.))`);
+    const solid = add(`IFCEXTRUDEDAREASOLID(${prof},${solidPos},${extrudeDir},${width.toFixed(4)})`);
+    const shapeRep = add(`IFCSHAPEREPRESENTATION(${bodySubContext},'Body','SweptSolid',(${solid}))`);
+    return add(`IFCPRODUCTDEFINITIONSHAPE($,$,(${shapeRep}))`);
+  }
+
+  function descricaoTipo(building, extras) {
+    const floors = Math.max(1, Math.round(Number(building.floors || 1)));
+    const tipo = floors > 1 ? "Sobrado" : "Edificacao terrea";
+    const compl = building.complexity ? ` - ${building.complexity}` : "";
+    return `${tipo}${compl}`;
+  }
+
+  function ifcModelResponse(request, result) {
+    const encoder = new TextEncoder();
+    return loadParameters().then((parameters) => {
+      const content = buildIfcModel(request, result, parameters);
+      return new Response(encoder.encode(content), {
+        status: 200,
+        headers: {
+          "Content-Type": "application/x-step",
+          "Content-Disposition": "attachment; filename=\"casa-parametrica-modelo.ifc\"",
+          "Cache-Control": "no-store, max-age=0"
+        }
+      });
+    });
+  }
+
   async function route(url, options) {
     const requestUrl = new URL(url, window.location.origin);
     const path = requestUrl.pathname;
@@ -954,8 +1359,12 @@
     if (path === "/api/program-compatibility") return jsonResponse(programCompatibility(readBody(options)));
     if (path === "/api/estimate") return jsonResponse(await estimate(readBody(options)));
     if (path === "/api/report.pdf") return pdfReportResponse(readBody(options), await estimate(readBody(options)));
+    if (path === "/api/model.ifc") {
+      const body = readBody(options);
+      return ifcModelResponse(body, await estimate(body));
+    }
 
-    const simulationMatch = path.match(/^\/api\/simulations\/([^/]+)(?:\/(duplicate|report\.pdf))?$/);
+    const simulationMatch = path.match(/^\/api\/simulations\/([^/]+)(?:\/(duplicate|report\.pdf|model\.ifc))?$/);
     if (path === "/api/simulations" && (options.method || "GET") === "GET") {
       return jsonResponse(scenarios().map(summary).sort((a, b) => String(b.updated_at).localeCompare(String(a.updated_at))));
     }
@@ -972,6 +1381,7 @@
       const record = items.find((item) => item.id === id);
       if (!record) return jsonResponse({ detail: "Cenario nao encontrado." }, 404);
       if (action === "report.pdf") return pdfReportResponse(record.input, record.result);
+      if (action === "model.ifc") return ifcModelResponse(record.input, record.result);
       if (action === "duplicate" && options.method === "POST") {
         const clone = { ...record, id: crypto.randomUUID(), name: `${record.name} - copia`, created_at: new Date().toISOString(), updated_at: new Date().toISOString() };
         saveScenarios([clone, ...items]);
