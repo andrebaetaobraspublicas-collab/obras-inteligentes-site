@@ -352,11 +352,18 @@ Observacoes criticas:
 - A versao atual da pagina usa cache busting:
 
 ```html
-static/static-api.js?v=pdf-formatado-20260719-1
-static/app.js?v=pdf-formatado-20260719-1
+static/static-api.js?v=revisado-20260817-1
+static/app.js?v=revisado-20260817-1
 ```
 
 Sempre que alterar `static-api.js` ou `app.js`, atualize tambem a query string no `casa-parametrica/index.html` para evitar cache do Chrome.
+
+Atualizacao de 17/08/2026:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\casa_parametrica_revisado (1).zip`.
+- Arquivos substituidos a partir da pasta `casa` do ZIP: `data/default_parameters.json` e `static/static-api.js`; a query string de `index.html` foi atualizada para `revisado-20260817-1`.
+- Backup da versao de producao Git salvo em `C:\Obras Inteligentes\backups\casa-parametrica-production-git-before-20260817-20260817-212510.zip`.
+- Backup local dos arquivos substituidos salvo em `C:\Obras Inteligentes\backups\casa-parametrica-local-before-20260817-20260817-212510`.
 
 Commits historicos relevantes:
 
