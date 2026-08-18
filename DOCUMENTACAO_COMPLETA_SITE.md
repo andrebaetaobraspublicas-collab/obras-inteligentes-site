@@ -19,7 +19,7 @@ O site `www.obrasinteligentes.ia.br` e uma pagina estatica hospedada na Hostinge
 C:\Obras Inteligentes\index.html
 ```
 
-A tela inicial possui atualmente 46 cards de aplicativos. Cada card aponta para uma rota estatica dentro do dominio. A regra geral e:
+A tela inicial possui atualmente 60 cards de aplicativos. Cada card aponta para uma rota estatica dentro do dominio. A regra geral e:
 
 ```text
 https://www.obrasinteligentes.ia.br/nome-da-rota/
@@ -43,7 +43,7 @@ Excecoes/observacoes:
 
 ## Inventario verificado dos aplicativos
 
-Inventario originalmente verificado em 21/07/2026 e atualizado em 17/08/2026 para inclusao do PMOC Manager no filtro Manutencao Predial. Todos os cards listados possuem arquivo local correspondente.
+Inventario originalmente verificado em 21/07/2026 e atualizado em 18/08/2026 para inclusao do MobilizaSICRO no filtro Orcamento. Todos os cards listados possuem arquivo local correspondente.
 
 | Card | Aplicativo | Rota publicada | Arquivo local principal | Status local | Status site |
 |---|---|---|---|---|---|
@@ -106,6 +106,7 @@ Inventario originalmente verificado em 21/07/2026 e atualizado em 17/08/2026 par
 | 57 / RECEBIMENTO | RecebeObra Pro | `/recebeobra-pro/` | `C:\Obras Inteligentes\recebeobra-pro\index.html` | existe | 200 |
 | 58 / OPEX PREDIAL | CriticaOpex | `/criticaopex/` | `C:\Obras Inteligentes\criticaopex\index.html` | existe | 200 |
 | 59 / PMOC | PMOC Manager | `/pmoc-manager/` | `C:\Obras Inteligentes\pmoc-manager\index.html` | existe | 200 |
+| 60 / MOBILIZACAO | MobilizaSICRO | `/mobilizasicro/` | `C:\Obras Inteligentes\mobilizasicro\index.html` | existe | 200 |
 
 ## Tamanhos verificados
 
@@ -172,6 +173,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/recebeobra-pro/` | 617407 bytes | 617407 caracteres |
 | `/criticaopex/` | 631053 bytes | 631053 caracteres |
 | `/pmoc-manager/` | 604647 bytes | 604647 caracteres |
+| `/mobilizasicro/` | 1337033 bytes | 1337033 caracteres |
 
 ## Estrutura local principal
 
@@ -1258,6 +1260,24 @@ Observacoes:
 - Backup da home anterior salvo em `C:\Obras Inteligentes\backups\index-before-pmoc-manager-20260817-20260817-073334.html`.
 - Validar apos futuras alteracoes se os modulos de edificacao, equipamentos, plano PMOC, ordens de servico, QAI, ensaios, energia, pecas, indicadores, relatorios, anexos e armazenamento local continuam carregando corretamente.
 
+### MobilizaSICRO
+
+Rota: `/mobilizasicro/`  
+Arquivo: `mobilizasicro/index.html`
+
+Ultima inclusao:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\MobilizaSICRO_v1.2.1.html`
+- Data: 18/08/2026
+- Alteracao: inclusao de novo card na home, no filtro `Orcamento`, e publicacao do aplicativo MobilizaSICRO v1.2.1 como HTML standalone.
+
+Observacoes:
+
+- Aplicativo standalone empacotado em HTML unico, com calculadora offline de mobilizacao e desmobilizacao baseada no SICRO, Volume 08.
+- Tela inicial do site aponta para `/mobilizasicro/`.
+- Backup da home anterior salvo em `C:\Obras Inteligentes\backups\index-before-mobilizasicro-20260818-0725.html`.
+- Validar apos futuras alteracoes se abertura, banco SICRO, servicos, planejamento, rotas, composicoes, cronograma, custos e relatorios continuam carregando corretamente.
+
 ## Artigos publicados na home
 
 Em 20/07/2026, os tres cards iniciais do bloco `Conteudo` da home foram substituidos por artigos reais enviados em PDF. Em 21/07/2026, foi incluido um quarto artigo. A estrategia adotada foi renderizar cada pagina do PDF como PNG dentro de uma pagina HTML propria, preservando a diagramacao original, tabelas, figuras e paginacao. Cada pagina tambem oferece link para abrir/baixar o PDF original.
@@ -1464,7 +1484,8 @@ $headers=@{ 'User-Agent'='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
   '/andaimefach-pro/',
   '/recebeobra-pro/',
   '/criticaopex/',
-  '/pmoc-manager/'
+  '/pmoc-manager/',
+  '/mobilizasicro/'
 ) | ForEach-Object {
   $url = "https://www.obrasinteligentes.ia.br$_?v=check"
   $r = Invoke-WebRequest -UseBasicParsing -Headers $headers -Uri $url -TimeoutSec 30
