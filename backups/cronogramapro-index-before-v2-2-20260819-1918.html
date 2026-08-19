@@ -166,7 +166,7 @@
     box-shadow:var(--shadow);
   }
   .head-inner{
-    max-width:1760px;margin:0 auto;padding:13px 10px;
+    max-width:1480px;margin:0 auto;padding:14px 16px;
     display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
   }
   .brand{display:flex;align-items:baseline;gap:12px}
@@ -185,7 +185,7 @@
 
   /* ---------- TABS ---------- */
   .tabs{
-    max-width:1760px;margin:0 auto;padding:0 10px;
+    max-width:1480px;margin:0 auto;padding:0 16px;
     display:flex;gap:0;
   }
   .tab{
@@ -199,9 +199,8 @@
   .tab .n{font-size:11px;opacity:.6;margin-right:6px}
 
   /* ---------- LAYOUT ---------- */
-  main{max-width:1760px;margin:0 auto;padding:22px 8px 70px}
-  .grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.08fr);gap:16px;align-items:start}
-  @media(min-width:1500px){.row{grid-template-columns:1fr 1fr 1fr}}
+  main{max-width:1480px;margin:0 auto;padding:26px 14px 80px}
+  .grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.35fr);gap:20px;align-items:start}
   @media(max-width:900px){.grid{grid-template-columns:1fr}}
 
   .panel{
@@ -380,7 +379,7 @@
   }
   .export-bar button:hover{border-color:var(--accent);color:var(--accent)}
 
-  footer{max-width:1760px;margin:0 auto;padding:0 10px 34px;font-family:var(--mono);font-size:11.5px;color:var(--ink-soft);line-height:1.7}
+  footer{max-width:1480px;margin:0 auto;padding:0 16px 40px;font-family:var(--mono);font-size:12.5px;color:var(--ink-soft);line-height:1.7}
   footer b{color:var(--ink-soft)}
   .hidden{display:none!important}
 
@@ -588,49 +587,6 @@
 .met-panel li{margin-bottom:6px}
 .met-panel .form{font-family:var(--mono);font-size:13px;background:var(--paper-2);border:1px solid var(--line);
   border-radius:6px;padding:10px 14px;margin:8px 0 14px;white-space:pre-wrap;color:var(--ink);max-width:78ch}
-/* ---- rede PERT ---- */
-.pert-bar{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:8px}
-.pert-leg{font:600 11px/1 var(--mono);color:var(--ink-soft);display:flex;align-items:center;gap:6px}
-.pert-leg .sw{width:15px;height:11px;border-radius:3px;display:inline-block;border:2px solid var(--line-strong);background:var(--paper-2)}
-.pert-leg .sw.crit{border-color:var(--crit);background:rgba(178,58,48,.14)}
-.pert-leg .sw.quase{border-color:var(--accent-2);background:rgba(194,91,32,.12)}
-.pert-bar .btn{margin:0;padding:6px 12px;font-size:12.5px}
-.pert-wrap{overflow-x:auto;overflow-y:hidden;border:1px solid var(--line);border-radius:8px;
-  background:linear-gradient(rgba(154,160,160,.05) 1px,transparent 1px),
-             linear-gradient(90deg,rgba(154,160,160,.05) 1px,transparent 1px);
-  background-size:24px 24px;padding:4px}
-.pert-wrap svg{min-width:100%}
-.pert-cadeia{margin-top:10px;padding:10px 14px;border-left:3px solid var(--crit);
-  background:rgba(178,58,48,.07);border-radius:0 6px 6px 0;font-size:13.5px;line-height:1.6;color:var(--ink-soft)}
-.pert-cadeia b{color:var(--crit)}
-/* ---- manual ---- */
-.man-busca{display:flex;gap:10px;margin-bottom:14px}
-.man-busca input{flex:1;padding:9px 12px;font-size:15.5px;border:1px solid var(--line-strong);
-  border-radius:6px;background:#fff;color:var(--ink);font-family:var(--sans)}
-.man-busca .btn{margin:0}
-.man-exemplos{background:rgba(15,110,92,.07);border:1px solid var(--line);border-radius:8px;
-  padding:12px 14px;margin-bottom:16px;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
-.man-exemplos b{font-size:13.5px;color:var(--ink);margin-right:4px}
-.btn-ex{margin:0;padding:6px 12px;font-size:13px;background:#fff;color:var(--accent);
-  border:1px solid var(--accent);border-radius:20px;cursor:pointer;font-family:var(--sans);font-weight:600}
-.btn-ex:hover{background:var(--accent);color:#fff}
-.man-sec{border:1px solid var(--line);border-radius:8px;margin-bottom:9px;overflow:hidden;background:var(--paper-2)}
-.man-h{width:100%;text-align:left;background:none;border:none;cursor:pointer;padding:13px 15px;
-  font:600 14px/1.3 var(--sans);color:var(--ink);display:flex;align-items:center;gap:11px}
-.man-h:hover{background:rgba(15,110,92,.06)}
-.man-h .mk{font-family:var(--mono);font-size:16.5px;color:var(--accent);width:14px;flex-shrink:0}
-.man-b{display:none;padding:4px 18px 18px 40px;font-size:14.5px;line-height:1.75;color:var(--ink-soft)}
-.man-sec.aberto .man-b{display:block}
-.man-b ol,.man-b ul{margin:0 0 12px 18px}
-.man-b li{margin-bottom:7px}
-.man-b p{margin-bottom:10px;max-width:88ch}
-.man-dl{margin:0}
-.man-dl dt{font-weight:600;color:var(--ink);margin-top:11px;font-size:14.5px}
-.man-dl dd{margin:3px 0 0;max-width:88ch}
-.man-nota{border-left:3px solid var(--accent-2);background:rgba(194,91,32,.08);
-  padding:9px 13px;border-radius:0 6px 6px 0;margin-top:12px !important}
-.man-form{font-family:var(--mono);font-size:13px;background:#fff;border:1px solid var(--line);
-  border-radius:6px;padding:12px 16px;margin:8px 0 14px;white-space:pre;color:var(--ink);overflow-x:auto}
 </style>
 </head>
 
@@ -768,7 +724,6 @@
     <button class="tab active" data-tab="edif"><span class="n">01</span>Edificação</button>
     <button class="tab" data-tab="rodo"><span class="n">02</span>Rodoviária</button>
     <button class="tab" data-tab="metodo"><span class="n">03</span>Modelagem probabilística</button>
-    <button class="tab" data-tab="manual"><span class="n">04</span>Manual do usuário</button>
   </div>
 </header>
 
@@ -1224,148 +1179,6 @@ m̃ᵢ = F⁻¹(u ᵢ)</div>
         <p>Os coeficientes de produtividade e os coeficientes de variação embutidos são referências de planejamento.
         Antes de uso contratual devem ser calibrados com dados próprios de obras concluídas — que é, afinal, a única
         fonte legítima de uma distribuição de probabilidade.</p>
-
-      </div>
-    </div>
-  </div>
-
-  <!-- ============ MANUAL DO USUÁRIO ============ -->
-  <div class="grid hidden" id="tab-manual" style="grid-template-columns:1fr">
-    <div class="panel man-panel">
-      <div class="panel-head"><span class="idx">?</span><h2>Manual do usuário</h2></div>
-      <div class="panel-body">
-
-        <div class="man-busca">
-          <input type="text" id="man_q" placeholder="Buscar no manual — ex: chuva, P80, folga, elevador, cura, tornado…" oninput="filtrarManual()">
-          <button class="btn btn-clr" onclick="document.getElementById('man_q').value='';filtrarManual()">Limpar</button>
-        </div>
-        <div id="man_vazio" class="hint hidden" style="margin-bottom:10px">Nenhum trecho do manual corresponde à busca.</div>
-
-        <div class="man-exemplos">
-          <b>Comece por um exemplo pronto:</b>
-          <button class="btn btn-ex" onclick="carregarExemplo('escola')">Escola municipal · 1.500 m²</button>
-          <button class="btn btn-ex" onclick="carregarExemplo('residencial')">Residencial · 4.000 m² · 8 pav</button>
-          <button class="btn btn-ex" onclick="carregarExemplo('hospital')">Hospital · 12.000 m² · alto padrão</button>
-          <button class="btn btn-ex" onclick="carregarExemplo('rodovia')">Rodovia · 30 km · CBUQ</button>
-          <button class="btn btn-ex" onclick="carregarExemplo('rodovia_ne')">Rodovia no Maranhão · início na chuva</button>
-        </div>
-
-        <div class="man-sec" data-man>
-          <button class="man-h" onclick="toggleMan(this)"><span class="mk">+</span>1. Em cinco minutos: como usar</button>
-          <div class="man-b">
-            <ol>
-              <li>Escolha a aba <b>01 Edificação</b> ou <b>02 Rodoviária</b>.</li>
-              <li>Preencha os campos obrigatórios (marcados com <b>*</b>): área e pavimentos, ou extensão da via.</li>
-              <li>Informe a <b>data de início</b> no formato mm/aaaa. É opcional, mas sem ela o programa usa a média anual de chuvas e você perde o efeito da sazonalidade — que costuma valer de 10% a 25% do prazo.</li>
-              <li>Ajuste <b>regime de chuvas</b> e <b>perfil sazonal</b> para a região da obra.</li>
-              <li>Clique em <b>Gerar cronograma</b>.</li>
-              <li>No relatório, leia primeiro os quatro indicadores do topo, depois a <b>curva S</b> e a <b>rede PERT</b>.</li>
-            </ol>
-            <p class="man-nota">O prazo que interessa para contrato não é o determinístico, e sim o percentil adotado (P80 por padrão). O determinístico costuma ter menos de 40% de probabilidade de ser cumprido.</p>
-          </div>
-        </div>
-
-        <div class="man-sec" data-man>
-          <button class="man-h" onclick="toggleMan(this)"><span class="mk">+</span>2. Campos da aba Edificação</button>
-          <div class="man-b">
-            <dl class="man-dl">
-              <dt>Tipo de edificação</dt><dd>Ajusta o consumo de mão de obra em instalações e acabamentos. Hospitais e prédios institucionais têm instalações mais densas; galpões industriais, muito menos acabamento.</dd>
-              <dt>Área construída e pavimentos</dt><dd>A razão entre os dois define a área por pavimento, que comanda o ritmo da Linha de Balanço. Lajes muito grandes sofrem perda logística; lajes pequenas não comportam equipe cheia.</dd>
-              <dt>Subsolos</dt><dd>Cada subsolo acrescenta escavação, contenção e estrutura enterrada — o bloco de maior variabilidade do cronograma.</dd>
-              <dt>Sistema estrutural</dt><dd>Concreto e alvenaria estrutural têm piso de ciclo por cura (7 dias úteis por pavimento) que nenhum turno extra vence. Metálica e pré-moldado não têm esse limite.</dd>
-              <dt>Padrão de acabamento</dt><dd>Controla o consumo unitário em acabamentos e fachada. Do padrão simples ao alto, o acabamento mais que dobra.</dd>
-              <dt>Turnos e jornada semanal</dt><dd>O 2º turno rende 55% do 1º e o 3º apenas 35% — nunca 100%. A jornada semanal age no calendário (dias úteis por mês), não como ganho de produtividade, para evitar dupla contagem.</dd>
-              <dt>Equipes simultâneas</dt><dd>Vedação, instalações, fachada e acabamento admitem equipes em pavimentos distintos, com perda de 8% por equipe adicional. A estrutura é sequencial e não se duplica. No modo automático, uma equipe a cada ~7 pavimentos.</dd>
-              <dt>Fatores de complexidade geotécnica</dt><dd>Rocha, cortinas atirantadas, rebaixamento e fundações profundas alongam o bloco inicial e elevam a variabilidade.</dd>
-              <dt>Gestão e interfaces</dt><dd>Multiplicador sobre todo o esforço. Obra pública típica adota 1,10, incorporando ciclos de medição e ajustes de projeto.</dd>
-              <dt>Maturidade do projeto</dt><dd>Define o piso de incerteza da simulação e insere a etapa de compatibilização quando o projeto não é executivo.</dd>
-              <dt>Suprimentos de longo prazo (automáticos)</dt><dd>O programa insere sozinho dois itens que costumam faltar em cronogramas paramétricos: a fabricação e entrega de <b>elevadores</b>, com 135 dias corridos de lead time contados a partir do pedido, e as <b>ligações definitivas de concessionárias</b> (energia, água e gás), com 110 dias corridos. Ambos correm em paralelo à obra, mas entram no caminho crítico se a compra não for antecipada. O número de elevadores é estimado pela área e pelo número de pavimentos; edificações de até 4 pavimentos e galpões não recebem elevador.</dd>
-            </dl>
-          </div>
-        </div>
-
-        <div class="man-sec" data-man>
-          <button class="man-h" onclick="toggleMan(this)"><span class="mk">+</span>3. Campos da aba Rodoviária</button>
-          <div class="man-b">
-            <dl class="man-dl">
-              <dt>Extensão e tipo de via</dt><dd>Pista dupla majora em 75% o volume de terraplenagem e alarga base e revestimento.</dd>
-              <dt>Topografia</dt><dd>Define o volume de terraplenagem por km quando ele não é informado: 10.000 (plana), 30.000 (ondulada) ou 62.000 m³/km (montanhosa).</dd>
-              <dt>Volume de terraplenagem (m³/km)</dt><dd>Campo opcional e o mais importante da aba. Se você já tem a curva de Brückner ou o quantitativo do SICRO, informe aqui: é o parâmetro que mais comanda o prazo.</dd>
-              <dt>Tipo de pavimento</dt><dd>Além da produtividade, define a sensibilidade à chuva. CBUQ tem sensibilidade 1,00 — não se aplica sob chuva nem sobre base úmida; o revestimento primário tem 0,65.</dd>
-              <dt>Frentes de ataque</dt><dd>O ganho é sublinear: cada frente adicional perde 7% por replicação de canteiro, usina e supervisão. Trechos abaixo de 4 km por frente geram aviso.</dd>
-              <dt>Obras de arte especiais</dt><dd>Correm em paralelo, com número de equipes limitado pelas frentes. Em obras curtas com muitas pontes, elas assumem o caminho crítico — o relatório avisa quando isso ocorre.</dd>
-            </dl>
-          </div>
-        </div>
-
-        <div class="man-sec" data-man>
-          <button class="man-h" onclick="toggleMan(this)"><span class="mk">+</span>4. Como ler a rede PERT/CPM</button>
-          <div class="man-b">
-            <p>Cada bloco é uma atividade. A leitura do bloco é a convenção clássica de seis campos:</p>
-            <div class="man-form">┌─────────────────────────────┐
-│  ES        duração       EF │
-│      NOME DA ATIVIDADE      │
-│        criticidade %        │
-│  LS         folga        LF │
-└─────────────────────────────┘</div>
-            <ul>
-              <li><b>ES</b> (early start) e <b>EF</b> (early finish): a data mais cedo em que a atividade pode começar e terminar.</li>
-              <li><b>LS</b> (late start) e <b>LF</b> (late finish): a data mais tarde sem atrasar a obra.</li>
-              <li><b>Folga</b>: diferença entre LS e ES. Folga nula significa atividade crítica.</li>
-              <li><b>Criticidade</b>: em quantos por cento dos cenários simulados aquela atividade esteve no caminho crítico.</li>
-            </ul>
-            <p>As colunas são níveis topológicos, então toda seta aponta da esquerda para a direita e o caminho crítico se lê como uma linha vermelha contínua. Setas tracejadas indicam vínculos <b>SS</b> (início-início) ou <b>FF</b> (fim-fim), típicos da Linha de Balanço, onde as equipes se sobrepõem em pavimentos ou trechos diferentes.</p>
-            <p class="man-nota">Um bloco laranja é uma atividade quase-crítica: hoje tem folga, mas assume o caminho crítico em parte dos cenários. É o ponto cego que o cronograma determinístico não mostra.</p>
-          </div>
-        </div>
-
-        <div class="man-sec" data-man>
-          <button class="man-h" onclick="toggleMan(this)"><span class="mk">+</span>5. Como ler a análise probabilística</button>
-          <div class="man-b">
-            <dl class="man-dl">
-              <dt>Histograma</dt><dd>Distribuição de frequências dos cenários simulados. A cauda direita alongada é a assinatura de cronograma: atrasos se acumulam, antecipações não.</dd>
-              <dt>Curva S</dt><dd>Para qualquer prazo no eixo horizontal, informa a probabilidade de a obra terminar até ali. É a peça que se leva para a discussão de prazo contratual.</dd>
-              <dt>Prazo alvo</dt><dd>Digite o prazo do edital ou do contrato e o sistema devolve a probabilidade de cumpri-lo. Abaixo de 50%, o prazo tende a gerar aditivo.</dd>
-              <dt>Percentis</dt><dd>P80 significa 80% de probabilidade de não ser excedido. A diferença entre o percentil adotado e o determinístico é a contingência de prazo, que deve ser explicitada na memória e não diluída nos coeficientes.</dd>
-              <dt>Diagrama tornado</dt><dd>Ordena as atividades por quanto movem o resultado. A barra verde é o fator sistêmico — risco de causa comum, que nenhuma ação sobre uma atividade isolada elimina.</dd>
-              <dt>Variáveis de entrada</dt><dd>Tabela editável: altere o coeficiente de variação de qualquer atividade, ou retire-a da simulação, e clique em Resimular.</dd>
-            </dl>
-            <p>A aba <b>03 Modelagem probabilística</b> detalha as famílias de distribuição, a cópula gaussiana e os limites do modelo.</p>
-          </div>
-        </div>
-
-        <div class="man-sec" data-man>
-          <button class="man-h" onclick="toggleMan(this)"><span class="mk">+</span>6. Perguntas frequentes</button>
-          <div class="man-b">
-            <dl class="man-dl">
-              <dt>Por que o prazo aumentou tanto em relação a estimativas rápidas?</dt><dd>Porque o esforço é medido em dias úteis e convertido em dias corridos por um calendário que desconta feriados, recesso coletivo e dias de chuva ponderados pela sensibilidade de cada serviço. Dividir esforço por 30 embute um ganho fictício de 30% a 45%.</dd>
-              <dt>Mudei a data de início e o prazo mudou. Está certo?</dt><dd>Sim, e é um dos pontos centrais do programa. Iniciar terraplenagem ou pavimentação na entrada da estação chuvosa alonga a obra; a mesma obra iniciada na janela seca termina antes.</dd>
-              <dt>O programa estima custo?</dt><dd>Não. Estima exclusivamente prazo.</dd>
-              <dt>Posso usar o resultado direto em edital?</dt><dd>Use como estimativa de referência e ponto de partida da discussão. Os coeficientes de produtividade e de variação são referências de planejamento e devem ser calibrados com dados próprios de obras concluídas antes de uso contratual.</dd>
-              <dt>O que o modelo não cobre?</dt><dd>Mudança de escopo, aditivo, paralisação orçamentária, embargo e rescisão — eventos discretos que, em obra pública, respondem por parcela relevante dos atrasos. O resultado é o prazo para executar, supondo que a obra não seja interrompida por causas alheias à execução.</dd>
-              <dt>Como reproduzo exatamente um resultado?</dt><dd>Mantendo os mesmos parâmetros e a mesma semente aleatória. A semente fica registrada na configuração da simulação.</dd>
-              <dt>Meus dados ficam salvos?</dt><dd>Não. O arquivo é autocontido e não guarda nada: ao fechar a página, tudo se perde. Use o botão de relatório para gerar o PDF.</dd>
-            </dl>
-          </div>
-        </div>
-
-        <div class="man-sec" data-man>
-          <button class="man-h" onclick="toggleMan(this)"><span class="mk">+</span>7. Glossário</button>
-          <div class="man-b">
-            <dl class="man-dl">
-              <dt>Dia útil (d.ú.)</dt><dd>Dia efetivamente trabalhável. Unidade em que se mede o esforço.</dd>
-              <dt>Dia corrido (d.c.)</dt><dd>Dia de calendário. Unidade em que se mede o prazo contratual.</dd>
-              <dt>Linha de Balanço (LOB)</dt><dd>Técnica para serviços repetitivos: cada equipe percorre pavimentos ou quilômetros em ritmo próprio, sem alcançar a equipe anterior.</dd>
-              <dt>Caminho crítico</dt><dd>Sequência de atividades sem folga: qualquer atraso nelas atrasa a obra inteira.</dd>
-              <dt>Folga total</dt><dd>Quanto uma atividade pode atrasar sem empurrar o término da obra.</dd>
-              <dt>Ciclo de laje</dt><dd>Dias úteis para executar a estrutura de um pavimento-tipo.</dd>
-              <dt>Sensibilidade climática</dt><dd>Fração dos dias de chuva que efetivamente paralisa o serviço. Terraplenagem 0,95; CBUQ 1,00; acabamento interno 0,08.</dd>
-              <dt>P80</dt><dd>Prazo com 80% de probabilidade de não ser excedido.</dd>
-              <dt>Contingência de prazo</dt><dd>Diferença entre o percentil adotado e o resultado determinístico.</dd>
-              <dt>Vínculos FS, SS e FF</dt><dd>Fim-início, início-início e fim-fim: as três formas de ligar duas atividades, todas com defasagem própria.</dd>
-            </dl>
-          </div>
-        </div>
 
       </div>
     </div>
@@ -2546,255 +2359,6 @@ function secaoProb(mod,E,alvo){
 
 
 /* ============================================================
-   18. REDE PERT / CPM — diagrama de precedências
-   ------------------------------------------------------------
-   Diagrama de blocos (activity-on-node) montado a partir da
-   mesma rede que produz a tabela cronológica: cada nó carrega
-   ES / DUR / EF na linha superior e LS / FOLGA / LF na inferior.
-   As colunas correspondem ao rank topológico (maior caminho
-   desde o início), o que garante que toda seta aponte da
-   esquerda para a direita.
-   ============================================================ */
-const PERT_GEO = {nw:184, nh:78, gapX:56, gapY:20, padL:16, padT:52, padB:34};
-
-function rankearRede(prep){
-  const {n, preds} = prep;
-  const rank = new Int32Array(n);
-  for(let i=0;i<n;i++){
-    let r=0;
-    preds[i].forEach(p=>{ if(rank[p.j]+1>r) r=rank[p.j]+1; });
-    rank[i]=r;
-  }
-  return rank;
-}
-
-/* posiciona os nós em colunas por rank e linhas por início mais cedo */
-function layoutPert(prep,R){
-  const rank = rankearRede(prep);
-  const cols = {};
-  prep.ord.forEach((a,i)=>{ (cols[rank[i]]=cols[rank[i]]||[]).push({a,i}); });
-  const nCols = Math.max.apply(null,Object.keys(cols).map(Number))+1;
-  const pos = new Array(prep.n);
-  let maxLin = 0;
-  const porCol=[];
-  for(let c=0;c<nCols;c++){
-    const lista=(cols[c]||[]).sort((x,y)=>R[x.a.id].es-R[y.a.id].es);
-    porCol[c]=lista.length;
-    if(lista.length>maxLin) maxLin=lista.length;
-  }
-  /* cada coluna é centralizada verticalmente, o que elimina a
-     faixa vazia que aparecia quando uma única coluna era densa */
-  for(let c=0;c<nCols;c++){
-    const lista=(cols[c]||[]).sort((x,y)=>R[x.a.id].es-R[y.a.id].es);
-    const off=(maxLin-lista.length)/2;
-    lista.forEach((o,k)=>{ pos[o.i]={col:c,lin:k+off}; });
-  }
-  return {rank,pos,nCols,maxLin,porCol};
-}
-
-function svgRedePert(mod,opcoes){
-  const E=ESTADO[mod];
-  if(!E||!E.R||!E.prep) return '<div class="hint">Rede indisponível.</div>';
-  const op=Object.assign({rotulos:true},opcoes||{});
-  const {prep,R,mc}=E;
-  const G=PERT_GEO;
-  const {pos,nCols,maxLin}=layoutPert(prep,R);
-  const W=G.padL*2+nCols*G.nw+(nCols-1)*G.gapX;
-  const H=G.padT+G.padB+maxLin*G.nh+(maxLin-1)*G.gapY+34;
-  const x=i=>G.padL+pos[i].col*(G.nw+G.gapX);
-  const y=i=>G.padT+pos[i].lin*(G.nh+G.gapY);
-  /* linha mais baixa ocupada em cada coluna, para que os desvios
-     passem rente aos nós e não no rodapé do desenho */
-  const fundoCol=new Array(nCols).fill(-1);
-  prep.ord.forEach((a,i)=>{ if(pos[i].lin>fundoCol[pos[i].col]) fundoCol[pos[i].col]=pos[i].lin; });
-  const m=v=>round(v/DIAS_MES,1);
-
-  /* ---- arestas ---- */
-  let setas='';
-  prep.ord.forEach((a,i)=>{
-    prep.preds[i].forEach(p=>{
-      const j=p.j, aj=prep.ord[j];
-      const crit = R[a.id].critica && R[aj.id].critica;
-      const x1=x(j)+G.nw, y1=y(j)+G.nh/2, x2=x(i), y2=y(i)+G.nh/2;
-      const cor = crit?'var(--crit)':'var(--line-strong)';
-      const lw  = crit?2.2:1.2;
-      const dash= p.tipo==='FS'?'':'5 4';
-      const vaos = pos[i].col-pos[j].col;
-      let d, mx, my;
-      if(vaos>1){
-        /* aresta que salta colunas: desvia por baixo da faixa de nós
-           para não atravessar as caixas intermediárias */
-        let linBaixa=-1;
-        for(let c=pos[j].col;c<=pos[i].col;c++) if(fundoCol[c]>linBaixa) linBaixa=fundoCol[c];
-        const yB=G.padT+(linBaixa+1)*(G.nh+G.gapY)-G.gapY+12+Math.min(vaos,4)*6;
-        const cx1=x1+34, cx2=x2-34;
-        d=`M${x1} ${y1} C${cx1} ${y1}, ${cx1} ${yB}, ${(x1+x2)/2} ${yB} S${cx2} ${y2}, ${x2} ${y2}`;
-        mx=(x1+x2)/2; my=yB-5;
-      } else {
-        const dx=Math.max((x2-x1)*0.45,26);
-        d=`M${x1} ${y1} C${x1+dx} ${y1}, ${x2-dx} ${y2}, ${x2} ${y2}`;
-        mx=(x1+x2)/2; my=(y1+y2)/2-6;
-      }
-      setas+=`<path d="${d}" fill="none" stroke="${cor}" stroke-width="${lw}" ${dash?`stroke-dasharray="${dash}"`:''} marker-end="url(#seta${crit?'C':''}-${mod})" opacity="${crit?1:.7}"/>`;
-      if(op.rotulos && p.tipo!=='FS'){
-        setas+=`<text x="${mx.toFixed(0)}" y="${my.toFixed(0)}" text-anchor="middle" font-size="10" font-family="var(--mono)" fill="${cor}">${p.tipo}</text>`;
-      }
-    });
-  });
-
-  /* ---- nós ---- */
-  let nos='';
-  prep.ord.forEach((a,i)=>{
-    const r=R[a.id], nx=x(i), ny=y(i);
-    const ic=(mc&&mc.criticidade[a.id])||0;
-    const crit=r.critica;
-    const quase=!crit && ic>=0.20;
-    const borda = crit?'var(--crit)':(quase?'var(--accent-2)':'var(--line-strong)');
-    const fundo = crit?'rgba(178,58,48,.10)':(quase?'rgba(194,91,32,.09)':'var(--paper-2)');
-    const lw = crit?2.4:1.1;
-    let nome=a.nome.replace(/·.*$/,'').trim();
-    if(nome.length>30) nome=nome.slice(0,29)+'…';
-    const dur = a.fixo ? m(r.dur)+'*' : m(r.dur);
-    nos+=`<g>
-      <rect x="${nx}" y="${ny}" width="${G.nw}" height="${G.nh}" rx="6" fill="${fundo}" stroke="${borda}" stroke-width="${lw}"/>
-      <line x1="${nx}" y1="${ny+22}" x2="${nx+G.nw}" y2="${ny+22}" stroke="${borda}" stroke-width=".8" opacity=".55"/>
-      <line x1="${nx}" y1="${ny+G.nh-22}" x2="${nx+G.nw}" y2="${ny+G.nh-22}" stroke="${borda}" stroke-width=".8" opacity=".55"/>
-      <text x="${nx+10}" y="${ny+15}" font-size="11" font-family="var(--mono)" fill="var(--ink-soft)">${m(r.es)}</text>
-      <text x="${nx+G.nw/2}" y="${ny+15}" text-anchor="middle" font-size="11.5" font-weight="700" font-family="var(--mono)" fill="${crit?'var(--crit)':'var(--ink)'}">${dur}</text>
-      <text x="${nx+G.nw-10}" y="${ny+15}" text-anchor="end" font-size="11" font-family="var(--mono)" fill="var(--ink-soft)">${m(r.ef)}</text>
-      <text x="${nx+G.nw/2}" y="${ny+40}" text-anchor="middle" font-size="11.5" font-weight="600" fill="var(--ink)">${nome}</text>
-      <text x="${nx+G.nw/2}" y="${ny+53}" text-anchor="middle" font-size="9.5" font-family="var(--mono)" fill="var(--ink-soft)">criticidade ${round(ic*100,0)}%</text>
-      <text x="${nx+10}" y="${ny+G.nh-7}" font-size="11" font-family="var(--mono)" fill="var(--ink-soft)">${m(r.ls)}</text>
-      <text x="${nx+G.nw/2}" y="${ny+G.nh-7}" text-anchor="middle" font-size="11" font-weight="600" font-family="var(--mono)" fill="${r.folga<=1?'var(--crit)':'var(--accent)'}">${m(r.folga)}</text>
-      <text x="${nx+G.nw-10}" y="${ny+G.nh-7}" text-anchor="end" font-size="11" font-family="var(--mono)" fill="var(--ink-soft)">${m(r.lf)}</text>
-    </g>`;
-  });
-
-  /* ---- cabeçalho de colunas ---- */
-  let reguas='';
-  for(let c=0;c<nCols;c++){
-    const cx=G.padL+c*(G.nw+G.gapX)+G.nw/2;
-    reguas+=`<text x="${cx.toFixed(0)}" y="26" text-anchor="middle" font-size="10" font-family="var(--mono)" fill="var(--ink-soft)" opacity=".8">nível ${c+1}</text>`;
-  }
-
-  const legenda=`<text x="${G.padL}" y="${H-12}" font-size="10.5" font-family="var(--mono)" fill="var(--ink-soft)">
-    nó: ES · duração · EF  /  LS · folga · LF  (meses) — * duração fixa de suprimento — linha tracejada: vínculo SS ou FF</text>`;
-
-  return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="display:block">
-    <defs>
-      <marker id="seta-${mod}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-        <path d="M0 0 L10 5 L0 10 z" fill="var(--line-strong)"/></marker>
-      <marker id="setaC-${mod}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-        <path d="M0 0 L10 5 L0 10 z" fill="var(--crit)"/></marker>
-    </defs>
-    ${reguas}${setas}${nos}${legenda}
-  </svg>`;
-}
-
-function secaoPert(mod){
-  const E=ESTADO[mod];
-  if(!E||!E.R) return '';
-  const nCrit=Object.values(E.R).filter(r=>r.critica).length;
-  const cadeia=E.prep.ord.filter(a=>E.R[a.id].critica).map(a=>a.nome.replace(/·.*$/,'').trim()).join(' → ');
-  return `
-    <div class="block-title">Rede PERT/CPM — diagrama de precedências</div>
-    <div class="pert-bar">
-      <span class="pert-leg"><i class="sw crit"></i> caminho crítico (${nCrit} atividades)</span>
-      <span class="pert-leg"><i class="sw quase"></i> quase-crítica (criticidade ≥ 20%)</span>
-      <span class="pert-leg"><i class="sw norm"></i> com folga</span>
-      <button class="btn btn-clr" onclick="ampliarRede('${mod}')">⛶ Ampliar</button>
-    </div>
-    <div class="pert-wrap" id="pert-${mod}">${svgRedePert(mod)}</div>
-    <div class="hint">Arraste na horizontal para percorrer a rede. As colunas são níveis topológicos: toda dependência aponta da esquerda para a direita, de modo que o caminho crítico se lê como uma linha contínua em vermelho.</div>
-    <div class="pert-cadeia"><b>Cadeia crítica:</b> ${cadeia}</div>`;
-}
-
-function ampliarRede(mod){
-  const E=ESTADO[mod]; if(!E) return;
-  const w=window.open('','_blank');
-  const estilo=document.querySelector('style').innerHTML;
-  w.document.write(`<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8">
-    <title>Rede PERT/CPM — CronogramaPro</title><style>${estilo}
-    body{background:#fff;background-image:none;padding:20px;overflow:auto}
-    .tit{font-family:var(--mono);font-size:12px;color:var(--ink-soft);margin-bottom:12px;
-         border-bottom:1px solid var(--line);padding-bottom:8px}
-    </style></head><body>
-    <div class="tit">CronogramaPro — Rede PERT/CPM · ${mod==='edif'?'Edificação':'Rodoviária'} ·
-    gerado em ${new Date().toLocaleDateString('pt-BR')} · nó: ES · duração · EF / LS · folga · LF (meses)</div>
-    ${svgRedePert(mod)}</body></html>`);
-  w.document.close();
-}
-
-
-/* ============================================================
-   19. MANUAL DO USUÁRIO — interação
-   ============================================================ */
-function toggleMan(btn){
-  const sec=btn.closest('.man-sec');
-  const aberto=sec.classList.toggle('aberto');
-  btn.querySelector('.mk').textContent = aberto?'−':'+';
-}
-
-function filtrarManual(){
-  const q=(document.getElementById('man_q').value||'').trim().toLowerCase();
-  const secs=[...document.querySelectorAll('#tab-manual .man-sec')];
-  let achou=0;
-  secs.forEach(s=>{
-    const txt=s.textContent.toLowerCase();
-    const bate = !q || txt.includes(q);
-    s.classList.toggle('hidden',!bate);
-    if(bate){
-      achou++;
-      if(q){ s.classList.add('aberto'); s.querySelector('.mk').textContent='−'; }
-    }
-  });
-  document.getElementById('man_vazio').classList.toggle('hidden',achou>0);
-}
-
-/* preenche o formulário com um caso pronto, troca de aba e calcula */
-const EXEMPLOS={
-  escola:{aba:'edif',campos:{e_tipo:'institucional',e_area:1500,e_pav:2,e_sub:0,e_jornada:'6',
-    e_chuva:'medio',e_regiao:'sudeste_co',e_gestao:'1.10',e_proj:'basico',e_equipes:'0',e_data:'04/2026'},
-    radios:{e_est:'concreto',e_ac:'simples',e_tn:'1'},complex:[]},
-  residencial:{aba:'edif',campos:{e_tipo:'residencial',e_area:4000,e_pav:8,e_sub:1,e_jornada:'6',
-    e_chuva:'medio',e_regiao:'sudeste_co',e_gestao:'1.00',e_proj:'executivo',e_equipes:'0',e_data:'03/2026'},
-    radios:{e_est:'concreto',e_ac:'padrao',e_tn:'1'},complex:[]},
-  hospital:{aba:'edif',campos:{e_tipo:'institucional',e_area:12000,e_pav:6,e_sub:2,e_jornada:'6',
-    e_chuva:'alto',e_regiao:'sudeste_co',e_gestao:'1.22',e_proj:'basico',e_equipes:'0',e_data:'09/2026'},
-    radios:{e_est:'concreto',e_ac:'alto',e_tn:'2'},complex:['fund_prof','cortina']},
-  rodovia:{aba:'rodo',campos:{r_ext:30,r_pav:'cbuq',r_chuva:'medio',r_regiao:'sudeste_co',r_dren:'1.5',
-    r_pontes:2,r_ponte_porte:'10',r_frentes:'1',r_jornada:'6',r_gestao:'1.10',r_proj:'basico',r_vol:'',r_data:'05/2026'},
-    radios:{r_v:'simples',r_t:'ondulada',r_tn:'1'},complex:[]},
-  rodovia_ne:{aba:'rodo',campos:{r_ext:30,r_pav:'cbuq',r_chuva:'alto',r_regiao:'ne_norte',r_dren:'1.5',
-    r_pontes:2,r_ponte_porte:'10',r_frentes:'1',r_jornada:'6',r_gestao:'1.10',r_proj:'basico',r_vol:'',r_data:'12/2026'},
-    radios:{r_v:'simples',r_t:'ondulada',r_tn:'1'},complex:[]}
-};
-
-function carregarExemplo(chave){
-  const ex=EXEMPLOS[chave]; if(!ex) return;
-  Object.entries(ex.campos).forEach(([id,v])=>{
-    const el=document.getElementById(id); if(el) el.value=v;
-  });
-  Object.entries(ex.radios).forEach(([nome,v])=>{
-    const el=document.querySelector(`input[name="${nome}"][value="${v}"]`);
-    if(el){ el.checked=true; el.dispatchEvent(new Event('change',{bubbles:true})); }
-  });
-  const cont = ex.aba==='edif' ? 'e_complex' : 'r_complex';
-  document.querySelectorAll(`#${cont} input`).forEach(c=>{
-    c.checked = ex.complex.indexOf(c.value)>=0;
-    c.closest('.chk').classList.toggle('on',c.checked);
-  });
-  irParaAba(ex.aba);
-  if(ex.aba==='edif') calcEdif(); else calcRodo();
-}
-
-function irParaAba(tab){
-  const btn=[...document.querySelectorAll('.tab')].find(b=>b.dataset.tab===tab);
-  if(btn) btn.click();
-}
-
-
-/* ============================================================
    11. DRIVER — EDIFICAÇÃO
    ============================================================ */
 function calcEdif(){
@@ -2831,7 +2395,7 @@ function calcEdif(){
   M.ativs.forEach(a=>{ a.cv = Math.max(a.cv, M.cvProjeto*0.8); });
 
   const rede = calcularRede(M.ativs, cal, gestao);
-  ESTADO.edif = {ativs:M.ativs, cal, escala:gestao, det:rede.fim, start, modulo:'edif', R:rede.R, prep:rede.prep};
+  ESTADO.edif = {ativs:M.ativs, cal, escala:gestao, det:rede.fim, start, modulo:'edif'};
   const opt  = lerOpcoesMC('edif');
   const mc   = simularMonteCarlo(M.ativs, cal, gestao, opt);
   ESTADO.edif.mc = mc; ESTADO.edif.opt = opt;
@@ -3002,7 +2566,7 @@ function calcRodo(){
   M.ativs.forEach(a=>{ a.cv=Math.max(a.cv, PROJETO[projeto].cv*0.8); });
 
   const rede=calcularRede(M.ativs,cal,gestao);
-  ESTADO.rodo={ativs:M.ativs, cal, escala:gestao, det:rede.fim, start, modulo:'rodo', R:rede.R, prep:rede.prep};
+  ESTADO.rodo={ativs:M.ativs, cal, escala:gestao, det:rede.fim, start, modulo:'rodo'};
   const opt=lerOpcoesMC('rodo');
   const mc=simularMonteCarlo(M.ativs,cal,gestao,opt);
   ESTADO.rodo.mc=mc; ESTADO.rodo.opt=opt;
@@ -3314,8 +2878,6 @@ function renderResult(targetId,d){
         </table>
         <div class="hint" style="margin-top:6px">O índice de criticidade indica em quantos cenários simulados a atividade pertenceu ao caminho crítico. Valores intermediários sinalizam caminhos quase-críticos — o principal ponto cego de um cronograma determinístico.</div>
 
-        ${mc?secaoPert(modulo):''}
-
         ${calHTML}
         ${memHTML}
 
@@ -3393,7 +2955,7 @@ document.querySelectorAll('.tab').forEach(t=>{
     document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
     t.classList.add('active');
     const tab=t.dataset.tab;
-    ['edif','rodo','metodo','manual'].forEach(k=>{
+    ['edif','rodo','metodo'].forEach(k=>{
       const el=document.getElementById('tab-'+k);
       if(el) el.classList.toggle('hidden',tab!==k);
     });
@@ -3418,9 +2980,7 @@ if(typeof window!=='undefined'){
     VOL_TERRA, PROD_TERRA, PROD_LIN, SENS_RODO, DIAS_MES, CICLO_MIN_CONCRETO,
     calcEdif, calcRodo, simularMonteCarlo, prepararRede, passagemDireta,
     DISTRIB, MC_PADRAO, phi, invPhi, betainc, tabelaBeta, invTabela, invTriangular,
-    parametrosIncerteza, amostrar, secaoProb, lerOpcoesMC, resimular, probAlvo, ESTADO,
-    svgRedePert, secaoPert, layoutPert, rankearRede, ampliarRede,
-    toggleMan, filtrarManual, carregarExemplo, irParaAba, EXEMPLOS
+    parametrosIncerteza, amostrar, secaoProb, lerOpcoesMC, resimular, probAlvo, ESTADO
   };
 }
 

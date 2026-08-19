@@ -506,6 +506,8 @@ Observacoes:
 - Backup anterior salvo em `C:\Obras Inteligentes\backups\cronogramapro-index-before-v2-1-20260817-20260817-080852.html`.
 - Em 17/08/2026, foi atualizado com a nova versao `cronogramapro-v2.1 (1).html` enviada pelo usuario.
 - Backup anterior salvo em `C:\Obras Inteligentes\backups\cronogramapro-index-before-v2-1-1-20260817-2216.html`.
+- Em 19/08/2026, foi atualizado com a nova versao `cronogramapro-v2.2.html` enviada pelo usuario.
+- Backup anterior salvo em `C:\Obras Inteligentes\backups\cronogramapro-index-before-v2-2-20260819-1918.html`.
 
 ### DrenaPro
 
