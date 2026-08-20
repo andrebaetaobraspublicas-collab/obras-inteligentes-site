@@ -156,7 +156,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/tubocalc/` | 256920 bytes | 256920 caracteres |
 | `/compressorselect-pro/` | 791039 bytes | 791039 caracteres |
 | `/ventiladorpro/` | 669301 bytes | 669301 caracteres |
-| `/hidrocalc/` | 488029 bytes | 488029 caracteres |
+| `/hidrocalc/` | 567089 bytes | 565179 caracteres |
 | `/elevadorcalc/` | 259316 bytes | 259316 caracteres |
 | `/thermox-pro/` | 428015 bytes | 428015 caracteres |
 | `/comparador-honorarios-projetos/` | 525309 bytes | 525309 caracteres |
@@ -952,9 +952,10 @@ Arquivo: `hidrocalc/index.html`
 
 Ultima inclusao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\HidroCalc v2.0 - standalone.html`
-- Data: 03/08/2026
-- Alteracao: inclusao de novo card na home e publicacao do aplicativo como HTML standalone.
+- Fonte: `C:\Users\ACER\Documents\Downloads\HidroCalc_v2.0_com_Manual_Interativo.html`
+- Data: 20/08/2026
+- Alteracao: substituicao integral de `hidrocalc/index.html` pela versao 2.0, com manual interativo incorporado.
+- Backup da versao anterior: `C:\Obras Inteligentes\backups\hidrocalc-index-before-v2-0-manual-interativo-20260820-2039.html`
 
 Observacoes:
 
