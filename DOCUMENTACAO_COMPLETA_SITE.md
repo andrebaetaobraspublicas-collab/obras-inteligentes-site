@@ -126,7 +126,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/casa-parametrica/` | 38883 bytes | 38883 caracteres |
 | `/termopro/` | 550398 bytes | 550398 caracteres |
 | `/circuitopro/` | 287904 bytes | 287904 caracteres |
-| `/reservatoriopro/` | 161199 bytes | 161199 caracteres |
+| `/reservatoriopro/` | 209145 bytes | 206623 caracteres |
 | `/bombapro/` | 737818 bytes | 737818 caracteres |
 | `/paraboltpro/` | 1147646 bytes | 1147646 caracteres |
 | `/steelpro/` | 229160 bytes | 229160 caracteres |
@@ -430,9 +430,10 @@ Arquivo: `reservatoriopro/index.html`
 
 Ultima atualizacao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\ReservatorioPro (2).html`
-- Data: 19/07/2026
-- Alteracao: substituicao integral de `reservatoriopro/index.html` pela nova versao do aplicativo.
+- Fonte: `C:\Users\ACER\Documents\Downloads\ReservatorioPro_manual_interativo.html`
+- Data: 20/08/2026
+- Alteracao: substituicao integral de `reservatoriopro/index.html` pela nova versao do aplicativo, com manual interativo incorporado.
+- Backup da versao anterior: `C:\Obras Inteligentes\backups\reservatoriopro-index-before-manual-interativo-20260820-0817.html`
 
 Observacoes:
 
