@@ -145,127 +145,6 @@ dialog{border:1px solid var(--line);border-radius:15px;padding:0;background:var(
 .ppd-enter:disabled{opacity:.4;cursor:not-allowed;box-shadow:none;filter:grayscale(.4)}
 @media(max-width:560px){.ppd-titles h1{font-size:26px}.ppd-legal-body{font-size:12.5px}}
 @media(prefers-reduced-motion:reduce){.ppd-splash *{animation-duration:.01ms!important;animation-iteration-count:1!important}}
-
-/* ===================== MANUAL DO USUÁRIO ===================== */
-.manual-top-btn{text-decoration:none;white-space:nowrap}
-.manual-top-btn[aria-current="page"]{background:var(--accent-soft);border-color:color-mix(in srgb,var(--accent) 45%,var(--line));color:var(--accent-2)}
-.manual-hero{position:relative;overflow:hidden;padding:26px;border:1px solid color-mix(in srgb,var(--accent) 32%,var(--line));border-radius:18px;background:linear-gradient(135deg,var(--panel),var(--accent-soft));box-shadow:var(--shadow);margin-bottom:16px}
-.manual-hero::after{content:"?";position:absolute;right:24px;top:-28px;font-size:170px;line-height:1;font-weight:900;color:color-mix(in srgb,var(--accent) 10%,transparent);pointer-events:none}
-.manual-hero-inner{position:relative;z-index:1;max-width:980px}
-.manual-eyebrow{display:inline-flex;align-items:center;gap:7px;padding:5px 9px;border-radius:999px;background:var(--panel);border:1px solid var(--line);font-size:11px;font-weight:850;color:var(--accent-2);text-transform:uppercase;letter-spacing:.08em}
-.manual-hero h2{margin:12px 0 7px;font-size:30px;letter-spacing:-.04em}
-.manual-hero p{margin:0;color:var(--muted);font-size:14px;max-width:820px}
-.manual-hero-actions,.manual-inline-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
-.manual-chip-row{display:flex;gap:7px;flex-wrap:wrap;margin-top:15px}
-.manual-chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:5px 9px;background:color-mix(in srgb,var(--panel) 86%,transparent);font-size:11px;font-weight:750}
-.manual-progress-card{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px;align-items:center;padding:15px 17px;border:1px solid var(--line);border-radius:14px;background:var(--panel);margin-bottom:16px}
-.manual-progress-title{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:8px;font-size:12px;font-weight:800}
-.manual-progress-track{height:12px;border:1px solid var(--line);background:var(--panel-2);border-radius:999px;overflow:hidden}
-.manual-progress-track>span{display:block;width:0;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--accent),var(--success));transition:width .25s ease}
-.manual-progress-value{min-width:74px;text-align:center;font-size:26px;font-weight:900;letter-spacing:-.04em}
-.manual-search-panel{display:grid;grid-template-columns:minmax(220px,1fr) auto auto;gap:9px;align-items:end;padding:14px 15px;border:1px solid var(--line);border-radius:14px;background:var(--panel);margin-bottom:16px}
-.manual-search-panel .field{grid-column:auto}
-.manual-search-meta{align-self:center;color:var(--muted);font-size:12px;white-space:nowrap}
-.manual-layout{display:grid;grid-template-columns:235px minmax(0,1fr);gap:16px;align-items:start}
-.manual-toc{position:sticky;top:88px;border:1px solid var(--line);border-radius:14px;background:var(--panel);box-shadow:var(--shadow);overflow:hidden}
-.manual-toc-head{padding:13px 14px;border-bottom:1px solid var(--line);font-size:12px;font-weight:850}
-.manual-toc nav{padding:7px}
-.manual-toc button{width:100%;display:flex;align-items:center;gap:8px;border:0;background:transparent;color:var(--muted);padding:8px 9px;border-radius:8px;text-align:left;font-size:12px;font-weight:700}
-.manual-toc button:hover{background:var(--panel-2);color:var(--text)}
-.manual-toc-num{width:22px;height:22px;border-radius:7px;display:grid;place-items:center;flex:none;background:var(--accent-soft);color:var(--accent-2);font-size:10px;font-weight:900}
-.manual-toc-foot{padding:11px 13px;border-top:1px solid var(--line);background:var(--panel-2);font-size:10px;color:var(--muted)}
-.manual-content{display:grid;gap:16px;min-width:0}
-.manual-section{scroll-margin-top:88px;border:1px solid var(--line);border-radius:15px;background:var(--panel);box-shadow:var(--shadow);overflow:hidden}
-.manual-section.manual-filter-hidden{display:none}
-.manual-section-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:17px 18px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,var(--panel),var(--panel-2))}
-.manual-section-title{display:flex;gap:11px;align-items:flex-start}
-.manual-section-icon{width:35px;height:35px;display:grid;place-items:center;flex:none;border-radius:10px;background:var(--accent-soft);color:var(--accent-2);font-size:17px;font-weight:900}
-.manual-section-head h2{margin:0;font-size:17px}
-.manual-section-head p{margin:3px 0 0;color:var(--muted);font-size:12px}
-.manual-section-body{padding:18px}
-.manual-lead{font-size:14px;margin:0 0 14px}
-.manual-callout{display:flex;gap:11px;padding:13px 14px;border:1px solid var(--line);border-left:4px solid var(--info);border-radius:11px;background:var(--panel-2);margin:12px 0}
-.manual-callout.warning{border-left-color:var(--warning);background:var(--warning-soft)}
-.manual-callout.danger{border-left-color:var(--danger);background:var(--danger-soft)}
-.manual-callout.success{border-left-color:var(--success);background:var(--success-soft)}
-.manual-callout-icon{font-size:18px;line-height:1.1}
-.manual-callout strong{display:block;margin-bottom:2px}
-.manual-callout p{margin:0;font-size:12px;color:color-mix(in srgb,var(--text) 78%,var(--muted))}
-.manual-step-list{display:grid;gap:10px}
-.manual-step{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:11px;align-items:start;padding:13px;border:1px solid var(--line);border-radius:12px;background:var(--panel-2);transition:.16s ease}
-.manual-step:hover{border-color:color-mix(in srgb,var(--accent) 45%,var(--line));transform:translateY(-1px)}
-.manual-step.complete{border-left:4px solid var(--success);background:var(--success-soft)}
-.manual-step input{width:19px;min-height:19px;margin:3px 0 0;accent-color:var(--success)}
-.manual-step-number{display:inline-grid;place-items:center;width:25px;height:25px;border-radius:8px;background:var(--accent);color:white;font-size:11px;font-weight:900;margin-right:7px}
-.manual-step h3{display:flex;align-items:center;margin:0 0 4px;font-size:14px}
-.manual-step p{margin:0;color:var(--muted);font-size:12px}
-.manual-step ul{margin:7px 0 0;padding-left:18px;font-size:11px;color:var(--muted)}
-.manual-step-actions{display:flex;gap:6px;align-items:center}
-.manual-tour{border:1px solid color-mix(in srgb,var(--info) 35%,var(--line));border-radius:13px;background:var(--info-soft);padding:15px;margin-bottom:14px}
-.manual-tour-top{display:flex;justify-content:space-between;align-items:center;gap:12px}
-.manual-tour-step{font-size:11px;font-weight:850;text-transform:uppercase;letter-spacing:.08em;color:var(--info)}
-.manual-tour h3{margin:7px 0 4px;font-size:17px}
-.manual-tour p{margin:0;color:color-mix(in srgb,var(--text) 80%,var(--muted));font-size:12px}
-.manual-tour-checks{display:grid;gap:5px;margin:11px 0 0;padding:0;list-style:none}
-.manual-tour-checks li{display:flex;gap:7px;font-size:12px}
-.manual-tour-checks li::before{content:"✓";color:var(--success);font-weight:900}
-.manual-tour-actions{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-top:14px}
-.manual-interface-grid,.manual-status-grid,.manual-glossary-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.manual-interface-card,.manual-status-card,.manual-glossary-item{padding:13px;border:1px solid var(--line);border-radius:11px;background:var(--panel-2)}
-.manual-interface-card strong,.manual-glossary-item dt{display:block;margin-bottom:4px;font-size:12px}
-.manual-interface-card p,.manual-status-card p,.manual-glossary-item dd{margin:0;color:var(--muted);font-size:11px}
-.manual-status-card{border-left:4px solid var(--line)}
-.manual-status-card.pass{border-left-color:var(--success)}
-.manual-status-card.attention{border-left-color:var(--warning)}
-.manual-status-card.fail{border-left-color:var(--danger)}
-.manual-status-card.inconclusive{border-left-color:var(--info)}
-.manual-module-list{display:grid;gap:9px}
-.manual-module{border:1px solid var(--line);border-radius:12px;background:var(--panel-2);overflow:hidden}
-.manual-module.manual-filter-hidden{display:none}
-.manual-module summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 14px;font-weight:800}
-.manual-module summary::-webkit-details-marker{display:none}
-.manual-module summary::after{content:"＋";font-size:17px;color:var(--muted);transition:.15s}
-.manual-module[open] summary::after{content:"−"}
-.manual-module[open] summary{border-bottom:1px solid var(--line);background:var(--panel)}
-.manual-module-title{display:flex;align-items:center;gap:10px}
-.manual-module-icon{width:30px;height:30px;display:grid;place-items:center;border-radius:9px;background:var(--accent-soft);color:var(--accent-2);font-size:14px}
-.manual-module-title small{display:block;color:var(--muted);font-size:10px;font-weight:600;margin-top:1px}
-.manual-module-body{padding:14px}
-.manual-module-columns{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
-.manual-module-block{padding:11px;border:1px solid var(--line);border-radius:10px;background:var(--panel)}
-.manual-module-block h4{margin:0 0 6px;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
-.manual-module-block ul{margin:0;padding-left:17px;font-size:11px}
-.manual-module-block li{margin:0 0 4px}
-.manual-module-note{margin-top:10px;padding:10px 11px;border-radius:9px;background:var(--warning-soft);font-size:11px}
-.manual-checklist{display:grid;gap:7px;counter-reset:manualcheck}
-.manual-checklist>div{counter-increment:manualcheck;display:flex;gap:9px;padding:10px 11px;border:1px solid var(--line);border-radius:9px;background:var(--panel-2);font-size:12px}
-.manual-checklist>div::before{content:counter(manualcheck);width:21px;height:21px;display:grid;place-items:center;flex:none;border-radius:7px;background:var(--accent);color:white;font-size:10px;font-weight:900}
-.manual-faq{display:grid;gap:8px}
-.manual-faq details{border:1px solid var(--line);border-radius:10px;background:var(--panel-2);overflow:hidden}
-.manual-faq summary{cursor:pointer;padding:12px 13px;font-weight:800;font-size:12px}
-.manual-faq details p{margin:0;padding:0 13px 13px;color:var(--muted);font-size:12px}
-.manual-quiz{display:grid;gap:11px}
-.manual-quiz-question{padding:13px;border:1px solid var(--line);border-radius:11px;background:var(--panel-2)}
-.manual-quiz-question>strong{display:block;margin-bottom:8px;font-size:12px}
-.manual-quiz-option{display:flex;align-items:flex-start;gap:8px;padding:5px 0;font-size:12px;cursor:pointer}
-.manual-quiz-option input{width:16px;min-height:16px;margin-top:1px;accent-color:var(--accent)}
-.manual-quiz-feedback{min-height:18px;margin-top:6px;font-size:11px;font-weight:750}
-.manual-quiz-feedback.ok{color:var(--success)}
-.manual-quiz-feedback.bad{color:var(--danger)}
-.manual-quiz-result{display:none;padding:12px 13px;border-radius:10px;border:1px solid var(--line);font-size:12px}
-.manual-quiz-result.show{display:block}
-.manual-quiz-result.success{background:var(--success-soft);border-color:color-mix(in srgb,var(--success) 35%,var(--line))}
-.manual-quiz-result.attention{background:var(--warning-soft);border-color:color-mix(in srgb,var(--warning) 35%,var(--line))}
-.manual-quiz-result.info{background:var(--info-soft);border-color:color-mix(in srgb,var(--info) 35%,var(--line))}
-.manual-empty-search{display:none;padding:34px;text-align:center;border:1px dashed var(--line);border-radius:13px;background:var(--panel);color:var(--muted)}
-.manual-empty-search.show{display:block}
-.manual-kbd{display:inline-flex;align-items:center;gap:3px}
-.manual-kbd .kbd{font-size:9px}
-@media(max-width:1050px){.manual-layout{grid-template-columns:200px minmax(0,1fr)}.manual-module-columns{grid-template-columns:1fr 1fr}.manual-interface-grid,.manual-status-grid{grid-template-columns:1fr}}
-@media(max-width:780px){.manual-layout{grid-template-columns:1fr}.manual-toc{position:static}.manual-toc nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.manual-progress-card{grid-template-columns:1fr}.manual-progress-value{text-align:left}.manual-search-panel{grid-template-columns:1fr}.manual-search-meta{white-space:normal}.manual-step{grid-template-columns:auto minmax(0,1fr)}.manual-step-actions{grid-column:2}.manual-module-columns,.manual-glossary-grid{grid-template-columns:1fr}.manual-hero{padding:20px}.manual-hero h2{font-size:24px}}
-@media(max-width:480px){.manual-toc nav{grid-template-columns:1fr}.manual-tour-actions{display:grid;grid-template-columns:1fr}.manual-inline-actions{display:grid}.manual-inline-actions .btn{width:100%}}
-@media print{.manual-toc,.manual-search-panel,.manual-hero-actions,.manual-inline-actions,.manual-step-actions,.manual-tour-actions,.manual-quiz .btn{display:none!important}.manual-layout{display:block}.manual-content{display:block}.manual-section{box-shadow:none;margin-bottom:12px;break-inside:avoid-page}.manual-module{break-inside:avoid}.manual-module .manual-module-body{display:block!important}.manual-hero{box-shadow:none}.manual-filter-hidden{display:block!important}}
-
 </style>
 </head>
 
@@ -407,7 +286,6 @@ dialog{border:1px solid var(--line);border-radius:15px;padding:0;background:var(
     <div class="top-actions">
       <button class="btn ghost" data-action="save"><span>Salvar</span> ⌘</button>
       <button class="btn primary" data-action="calculate"><span>Calcular</span> ▶</button>
-      <a id="manualTopBtn" class="btn ghost manual-top-btn" href="#manual" data-action="navigate" data-view="manual" aria-label="Abrir Manual do Usuário" title="Abrir Manual do Usuário"><span>Manual</span> ?</a>
       <button class="icon-btn" data-action="toggle-theme" aria-label="Alternar tema">◐</button>
     </div>
   </header>
@@ -444,37 +322,8 @@ const VIEW_META = {
   budget:['Orçamento','Custos diretos, perdas, ferramentas e instalação.'],
   report:['Relatório','Memória de cálculo, resumo leigo e ficha de instalação.'],
   catalog:['Catálogo','Cadastre produtos e mantenha rastreabilidade das fontes técnicas.'],
-  settings:['Configurações','Critérios de triagem, preferências, testes e manutenção dos dados.'],
-  manual:['Manual do Usuário','Aprenda o fluxo completo do ParaboltPro com roteiro guiado, busca, exemplos e listas de conferência.']
+  settings:['Configurações','Critérios de triagem, preferências, testes e manutenção dos dados.']
 };
-
-const MANUAL_PROGRESS_KEY = 'paraboltpro.manual.progress.v1';
-const MANUAL_STEPS = [
-  {id:'projects',view:'projects',title:'Crie ou abra um projeto',description:'Comece no painel de Projetos, escolha um exemplo existente ou crie um estudo novo.',checks:['Confirme o projeto ativo no seletor superior.','Dê um nome que identifique obra e elemento.','Use Duplicar quando quiser testar uma alternativa sem alterar o original.']},
-  {id:'general',view:'general',title:'Defina dados gerais e método',description:'Registre identificação, responsabilidade, método, norma ou documento técnico e hipóteses da ligação.',checks:['Escolha entre estimativa preliminar, dados do fabricante ou verificação parametrizada.','Informe a natureza e a combinação das ações.','Registre responsável, revisão e observações.']},
-  {id:'concrete',view:'concrete',title:'Caracterize o concreto',description:'Informe resistência, fissuração, dimensões do elemento, armadura e condições de exposição.',checks:['O motor atual calcula apenas substrato de concreto.','Confirme fck, espessura e dimensões do elemento.','Declare concreto fissurado sempre que o cenário exigir.']},
-  {id:'anchor',view:'anchor',title:'Selecione e valide o parabolt',description:'Escolha um produto do catálogo, aplique-o ao projeto e confira dimensões, instalação, resistências e fonte.',checks:['Não substitua produtos apenas pelo mesmo diâmetro.','Leia a ficha, ETA ou avaliação aplicável.','Marque a confirmação de aplicabilidade somente após a conferência.']},
-  {id:'geometry',view:'geometry',title:'Modele chapa e geometria',description:'Defina a chapa, gere a grade, ajuste coordenadas e confira bordas, espaçamentos e espessura.',checks:['A origem das coordenadas fica no centro da chapa.','Arraste os pontos na vista ou edite X e Y na tabela.','Verifique se todos os chumbadores permanecem dentro da chapa e do concreto.']},
-  {id:'loads',view:'loads',title:'Informe os carregamentos',description:'Cadastre tração, compressão, cisalhamentos, momentos, torção e fatores das ações.',checks:['Forças em kN; momentos em kN·m; coordenadas em mm.','Revise sinais e eixos Vx, Vy, Mx, My e Tz.','Indique ações cíclicas, vibração ou sismo quando aplicável.']},
-  {id:'checks',view:'checks',title:'Calcule e analise as verificações',description:'Use Calcular e leia resultado global, pendências, geometria, modos de ruptura e distribuição por chumbador.',checks:['Comece pelos alertas e pendências.','Identifique o modo crítico e a maior utilização.','Resultado inconclusivo não equivale a aprovação.']},
-  {id:'report',view:'report',title:'Emita relatórios e faça backup',description:'Gere memória técnica, resumo leigo ou ficha de instalação; depois exporte os arquivos necessários.',checks:['Revise o conteúdo antes de imprimir em PDF.','Exporte o projeto em JSON e os resultados em CSV.','Mantenha backup completo dos estudos relevantes.']}
-];
-const MANUAL_MODULES = [
-  {view:'projects',icon:'▦',title:'Projetos',summary:'Organização dos estudos locais.',inputs:['Projeto ativo','Nome e elemento','Situação, utilização e custo'],actions:['Novo projeto','Abrir, duplicar, renomear ou excluir','Restaurar exemplos e importar JSON'],attention:'Os dados ficam neste navegador. Faça backup antes de limpar dados, trocar de computador ou usar outro perfil.'},
-  {view:'general',icon:'⌂',title:'Dados gerais',summary:'Identificação, método e hipóteses.',inputs:['Obra, elemento e responsável','Método de cálculo','Norma, ETA, ficha ou relatório','Natureza e combinação das ações'],actions:['Registrar revisão e data','Descrever a ligação','Documentar hipóteses e ambiente'],attention:'O modo preliminar utiliza equações didáticas e configuráveis; não representa verificação normativa completa.'},
-  {view:'concrete',icon:'▧',title:'Concreto',summary:'Substrato, dimensões, fissuração e exposição.',inputs:['fck, idade e densidade','Largura, comprimento e espessura','Condição fissurada ou não fissurada','Armadura e exposição'],actions:['Declarar danos ou deterioração','Informar armadura de confinamento','Registrar umidade e agressividade'],attention:'Alvenaria, blocos, pedra, argamassa e concreto celular aparecem como opções de cadastro, mas estão fora do cálculo de resistência atual.'},
-  {view:'anchor',icon:'⬡',title:'Parabolts',summary:'Produto, instalação, fonte e resistências.',inputs:['Fabricante, linha e código','d, hₑf, hₙₒₘ, h₀ e torque','cmin, smin e hmin','Resistências características e coeficientes'],actions:['Filtrar e aplicar produto do catálogo','Criar produto local','Abrir fonte oficial','Confirmar aplicabilidade'],attention:'Carga última média, carga recomendada e resistência característica não são conceitos intercambiáveis. Respeite a natureza do dado cadastrada.'},
-  {view:'geometry',icon:'⌗',title:'Chapa e geometria',summary:'Arranjo do grupo e distâncias disponíveis.',inputs:['Dimensões e espessura da chapa','Linhas, colunas e espaçamentos','Coordenadas X e Y','Fatores de grupo e atrito'],actions:['Gerar grade regular','Adicionar ou remover pontos','Arrastar chumbadores no desenho','Exportar vista superior em PNG'],attention:'A verificação da chapa é apenas preliminar; flexão, prying, rasgamento, seção líquida e soldas exigem avaliação específica.'},
-  {view:'loads',icon:'⇄',title:'Carregamentos',summary:'Ações resultantes e fatores.',inputs:['Nt, Nc, Vx e Vy','Mx, My e Tz','Fator global e impacto','Ações cíclicas e sísmicas'],actions:['Revisar ações efetivamente distribuídas','Conferir atrito deduzido','Calcular verificações'],attention:'O modelo distribui as ações elasticamente em grupo rígido e não resolve automaticamente chapa flexível, contato não linear ou centro instantâneo.'},
-  {view:'checks',icon:'✓',title:'Verificações',summary:'Resultado, modos de ruptura e interação.',inputs:['Alertas e pendências','Checagens geométricas','Resistências Rk e Rd','Solicitações e utilizações por ponto'],actions:['Identificar modo governante','Examinar equações e substituições','Exportar resultados em CSV','Abrir relatório'],attention:'Leia o resultado junto com os alertas. Uma situação favorável não elimina a validação do projeto e da instalação por profissional habilitado.'},
-  {view:'comparison',icon:'≋',title:'Comparação',summary:'Comparação direta e alternativas.',inputs:['Até cinco produtos','Faixa de diâmetros','Quantidade mínima e máxima','Prioridade de classificação'],actions:['Comparar resistência, utilização, torque e custo','Gerar grades regulares alternativas','Adotar alternativa no projeto','Exportar CSV'],attention:'O assistente faz otimização geométrica simplificada. Toda alternativa adotada deve ser revisada nas telas Parabolts, Chapa e geometria e Verificações.'},
-  {view:'budget',icon:'R$',title:'Orçamento',summary:'Estimativa de custos diretos.',inputs:['Parabolt e acessórios','Broca e consumíveis','Mão de obra, equipamentos e inspeção','Perdas e contingência'],actions:['Ler subtotal, perdas, total e custo por ponto','Exportar composição em CSV'],attention:'Os valores são opcionais e não interferem no resultado técnico.'},
-  {view:'report',icon:'▤',title:'Relatório',summary:'Documentação técnica e de instalação.',inputs:['Memória técnica','Resumo leigo','Ficha de instalação'],actions:['Alternar o tipo de relatório','Exportar projeto JSON','Exportar resultados CSV','Imprimir ou salvar em PDF'],attention:'O relatório reproduz os dados informados. Revise fontes, hipóteses, alertas e identificação do responsável antes da emissão.'},
-  {view:'catalog',icon:'▣',title:'Catálogo',summary:'Produtos e rastreabilidade.',inputs:['Fabricante, linha, código e dimensões','Natureza da capacidade','Fonte e documento técnico','Preço e qualificação'],actions:['Pesquisar e filtrar','Usar produto no projeto','Duplicar item oficial para editar','Importar ou exportar catálogo'],attention:'Itens oficiais são protegidos, mas podem conter dados completos ou parciais. O selo da fonte não garante que o cenário atual esteja abrangido.'},
-  {view:'settings',icon:'⚙',title:'Configurações',summary:'Interface, persistência e autotestes.',inputs:['Modo básico ou avançado','Tema claro ou escuro','Limite de atenção e coeficientes','Parâmetros do modelo preliminar'],actions:['Exportar backup completo','Importar projeto ou catálogo','Restaurar exemplos','Executar autotestes'],attention:'Os autotestes verificam consistência do software, não validam uma metodologia normativa nem substituem revisão independente.'}
-];
-let manualUI = {query:'',tourStep:0};
-
 const DEFAULT_SETTINGS = {
   theme:'light', uiMode:'advanced', attentionLimit:0.80,
   gammaSteel:1.25, gammaConcrete:1.50, gammaInstallation:1.00,
@@ -1194,129 +1043,13 @@ function renderSidebar(){
 function renderTopbar(){
   const select=document.getElementById('projectSelect');select.innerHTML=state.projects.map(p=>`<option value="${p.id}" ${p.id===state.activeProjectId?'selected':''}>${escapeHTML(p.name)}</option>`).join('');
   const c=calcProject(activeProject());document.getElementById('topStatus').innerHTML=statusPill(c.status,activeProject().general.method==='preliminary');document.documentElement.dataset.theme=state.settings.theme||'light';
-  const manualBtn=document.getElementById('manualTopBtn');if(manualBtn){if(state.view==='manual')manualBtn.setAttribute('aria-current','page');else manualBtn.removeAttribute('aria-current')}
 }
 function renderApp(){renderSidebar();renderTopbar();renderMain();saveState(true,false)}
 function renderMain(){
-  const container=document.getElementById('mainView');const renderers={projects:renderProjects,general:renderGeneral,concrete:renderConcrete,anchor:renderAnchor,geometry:renderGeometry,loads:renderLoads,checks:renderChecks,comparison:renderComparison,budget:renderBudget,report:renderReport,catalog:renderCatalog,settings:renderSettings,manual:renderManual};
+  const container=document.getElementById('mainView');const renderers={projects:renderProjects,general:renderGeneral,concrete:renderConcrete,anchor:renderAnchor,geometry:renderGeometry,loads:renderLoads,checks:renderChecks,comparison:renderComparison,budget:renderBudget,report:renderReport,catalog:renderCatalog,settings:renderSettings};
   container.innerHTML=`<div class="page">${renderers[state.view]()}</div>`;document.body.classList.remove('menu-open');
   if(state.view==='geometry')requestAnimationFrame(bindGeometryDrag);
-  if(state.view==='manual')requestAnimationFrame(()=>{applyManualFilter(manualUI.query);updateManualProgressUI();updateManualTour()});
 }
-
-function readManualProgress(){
-  try{const data=JSON.parse(storage.getItem(MANUAL_PROGRESS_KEY)||'[]');return new Set(Array.isArray(data)?data:[])}catch(e){return new Set()}
-}
-function writeManualProgress(set){storage.setItem(MANUAL_PROGRESS_KEY,JSON.stringify([...set]))}
-function setManualStep(id,done){
-  const progress=readManualProgress();
-  if(done)progress.add(id);else progress.delete(id);
-  writeManualProgress(progress);
-}
-function manualProgressData(){
-  const progress=readManualProgress(),done=MANUAL_STEPS.filter(s=>progress.has(s.id)).length,total=MANUAL_STEPS.length;
-  return {progress,done,total,pct:total?Math.round(done/total*100):0};
-}
-function normalizeManualText(value){return String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase()}
-function manualSectionHead(icon,title,description,actions=''){
-  return `<div class="manual-section-head"><div class="manual-section-title"><div class="manual-section-icon">${icon}</div><div><h2>${title}</h2><p>${description}</p></div></div>${actions}</div>`;
-}
-function manualCallout(type,icon,title,text){
-  return `<div class="manual-callout ${type||''}"><div class="manual-callout-icon">${icon}</div><div><strong>${title}</strong><p>${text}</p></div></div>`;
-}
-function manualStepHTML(step,index,progress){
-  const complete=progress.has(step.id);
-  return `<article class="manual-step ${complete?'complete':''}" data-manual-step-card="${step.id}"><input type="checkbox" data-manual-step="${step.id}" aria-label="Marcar etapa ${index+1} como concluída" ${complete?'checked':''}><div><h3><span class="manual-step-number">${index+1}</span>${escapeHTML(step.title)}</h3><p>${escapeHTML(step.description)}</p><ul>${step.checks.map(i=>`<li>${escapeHTML(i)}</li>`).join('')}</ul></div><div class="manual-step-actions"><button class="btn small" data-action="manual-open-view" data-view="${step.view}">Abrir módulo</button></div></article>`;
-}
-function manualModuleHTML(module){
-  const search=[module.title,module.summary,...module.inputs,...module.actions,module.attention].join(' ');
-  return `<details class="manual-module" data-manual-module data-manual-search="${escapeHTML(search)}"><summary><span class="manual-module-title"><span class="manual-module-icon">${module.icon}</span><span>${escapeHTML(module.title)}<small>${escapeHTML(module.summary)}</small></span></span></summary><div class="manual-module-body"><div class="manual-module-columns"><div class="manual-module-block"><h4>O que conferir</h4><ul>${module.inputs.map(i=>`<li>${escapeHTML(i)}</li>`).join('')}</ul></div><div class="manual-module-block"><h4>Principais ações</h4><ul>${module.actions.map(i=>`<li>${escapeHTML(i)}</li>`).join('')}</ul></div><div class="manual-module-block"><h4>Acesso direto</h4><p class="muted" style="font-size:11px;margin:0 0 9px">Abra a tela sem perder os dados do projeto ativo.</p><button class="btn small primary" data-action="manual-open-view" data-view="${module.view}">Abrir ${escapeHTML(module.title)}</button></div></div><div class="manual-module-note"><strong>Atenção:</strong> ${escapeHTML(module.attention)}</div></div></details>`;
-}
-function manualTourHTML(){
-  const i=clamp(manualUI.tourStep,0,MANUAL_STEPS.length-1),step=MANUAL_STEPS[i],progress=readManualProgress(),done=progress.has(step.id);
-  return `<div class="manual-tour-top"><span class="manual-tour-step">Etapa ${i+1} de ${MANUAL_STEPS.length}</span>${done?statusPill('pass'):statusPill('inconclusive')}</div><h3>${escapeHTML(step.title)}</h3><p>${escapeHTML(step.description)}</p><ul class="manual-tour-checks">${step.checks.map(x=>`<li>${escapeHTML(x)}</li>`).join('')}</ul><div class="manual-tour-actions"><div><button class="btn small" data-action="manual-tour-prev" ${i===0?'disabled':''}>← Anterior</button> <button class="btn small" data-action="manual-tour-next" ${i===MANUAL_STEPS.length-1?'disabled':''}>Próxima →</button></div><div><button class="btn small ${done?'':'primary'}" data-action="manual-complete-current">${done?'Desmarcar etapa':'Marcar como concluída'}</button> <button class="btn small primary" data-action="manual-open-view" data-view="${step.view}">Abrir módulo</button></div></div>`;
-}
-function updateManualTour(){
-  const el=document.getElementById('manualTourDynamic');if(el)el.innerHTML=manualTourHTML();
-}
-function updateManualProgressUI(){
-  const data=manualProgressData();
-  document.querySelectorAll('[data-manual-progress-bar]').forEach(el=>el.style.width=`${data.pct}%`);
-  document.querySelectorAll('[data-manual-progress-text]').forEach(el=>el.textContent=`${data.done} de ${data.total} etapas concluídas`);
-  document.querySelectorAll('[data-manual-progress-value]').forEach(el=>el.textContent=`${data.pct}%`);
-  document.querySelectorAll('[data-manual-step-card]').forEach(card=>card.classList.toggle('complete',data.progress.has(card.dataset.manualStepCard)));
-  document.querySelectorAll('[data-manual-step]').forEach(box=>box.checked=data.progress.has(box.dataset.manualStep));
-}
-function applyManualFilter(query){
-  const root=document.getElementById('manualContent');if(!root)return;
-  const terms=normalizeManualText(query).split(/\s+/).filter(Boolean);let visibleSections=0,visibleModules=0;
-  root.querySelectorAll('.manual-section').forEach(section=>{
-    const modules=[...section.querySelectorAll('.manual-module')];
-    let sectionVisible=true;
-    if(modules.length){
-      const sectionKeywords=normalizeManualText(section.dataset.manualKeywords||'');
-      const headingMatch=terms.length&&terms.every(t=>sectionKeywords.includes(t));
-      modules.forEach(module=>{
-        const hay=normalizeManualText((module.dataset.manualSearch||'')+' '+module.textContent),show=!terms.length||headingMatch||terms.every(t=>hay.includes(t));
-        module.classList.toggle('manual-filter-hidden',!show);if(show)visibleModules++;
-      });
-      sectionVisible=!terms.length||headingMatch||modules.some(m=>!m.classList.contains('manual-filter-hidden'));
-    }else{
-      const hay=normalizeManualText((section.dataset.manualKeywords||'')+' '+section.textContent);
-      sectionVisible=!terms.length||terms.every(t=>hay.includes(t));
-    }
-    section.classList.toggle('manual-filter-hidden',!sectionVisible);if(sectionVisible)visibleSections++;
-  });
-  const meta=document.getElementById('manualSearchMeta');if(meta)meta.textContent=terms.length?`${visibleSections} seção(ões) e ${visibleModules} módulo(s) encontrados`:'Pesquise por tela, campo, resultado ou conceito';
-  document.getElementById('manualEmptySearch')?.classList.toggle('show',visibleSections===0);
-}
-function checkManualQuiz(){
-  const answers={q1:'b',q2:'c',q3:'a',q4:'b'},messages={
-    q1:'Mesmo um resultado favorável exige conferência, validação profissional e atendimento ao documento do fabricante.',
-    q2:'Depois de aplicar o produto, confira a fonte e as limitações e só então confirme a aplicabilidade.',
-    q3:'Inconclusivo indica falta de dados, capacidade ou abrangência; não autoriza a instalação.',
-    q4:'A instalação deve seguir broca, profundidade, limpeza, montagem e torque definidos pelo documento técnico.'
-  };
-  let hits=0,answered=0;
-  Object.entries(answers).forEach(([q,correct])=>{
-    const chosen=document.querySelector(`input[name="${q}"]:checked`),feedback=document.getElementById(`${q}Feedback`);
-    if(chosen)answered++;
-    const ok=chosen?.value===correct;if(ok)hits++;
-    if(feedback){feedback.className=`manual-quiz-feedback ${ok?'ok':'bad'}`;feedback.textContent=!chosen?'Selecione uma resposta.':ok?'Correto.':messages[q]}
-  });
-  const result=document.getElementById('manualQuizResult');if(!result)return;
-  const cls=hits===4?'success':hits>=3?'attention':'info';
-  result.className=`manual-quiz-result show ${cls}`;
-  result.innerHTML=answered<4?`Você respondeu ${answered} de 4 perguntas. Complete as demais e confira novamente.`:`Resultado: <strong>${hits}/4</strong>. ${hits===4?'Ótimo: o fluxo essencial foi compreendido.':hits>=3?'Revise a questão indicada antes de usar o programa.':'Releia o roteiro rápido, a interpretação dos resultados e a ficha de instalação.'}`;
-}
-function renderManual(){
-  const pd=manualProgressData(),threshold=pct(state.settings.attentionLimit);
-  const toc=[
-    ['manual-start','1','Visão geral'],['manual-quickstart','2','Roteiro rápido'],['manual-interface','3','Interface'],
-    ['manual-modules','4','Módulos'],['manual-results','5','Resultados'],['manual-catalog-guide','6','Catálogo'],
-    ['manual-installation','7','Instalação'],['manual-files','8','Arquivos e backup'],['manual-faq','9','Dúvidas frequentes'],
-    ['manual-quiz','10','Teste seus conhecimentos'],['manual-glossary','11','Glossário']
-  ];
-  return pageHeader(...VIEW_META.manual,`<button class="btn" data-action="manual-expand-all">Expandir tópicos</button><button class="btn" data-action="manual-print">Imprimir manual</button><button class="btn primary" data-action="manual-start-tour">Iniciar roteiro guiado</button>`)+
-    `<section class="manual-hero" id="manual"><div class="manual-hero-inner"><span class="manual-eyebrow">❔ Ajuda integrada e offline</span><h2>Manual do Usuário — ParaboltPro</h2><p>Guia prático para cadastrar o projeto, selecionar o chumbador, modelar a geometria, informar ações, interpretar verificações e emitir documentação. Use a busca, marque as etapas concluídas e abra cada módulo diretamente pelo manual.</p><div class="manual-chip-row"><span class="manual-chip">Versão ${APP_VERSION}</span><span class="manual-chip">12 módulos</span><span class="manual-chip">Dados locais</span><span class="manual-chip">Sem bibliotecas externas</span></div><div class="manual-hero-actions"><button class="btn primary" data-action="manual-start-tour">▶ Começar passo a passo</button><button class="btn" data-action="manual-open-view" data-view="projects">Abrir meus projetos</button></div></div></section>`+
-    `<section class="manual-progress-card"><div><div class="manual-progress-title"><span>Seu progresso no roteiro essencial</span><span data-manual-progress-text>${pd.done} de ${pd.total} etapas concluídas</span></div><div class="manual-progress-track" aria-label="Progresso do manual"><span data-manual-progress-bar style="width:${pd.pct}%"></span></div></div><div class="manual-progress-value" data-manual-progress-value>${pd.pct}%</div></section>`+
-    `<section class="manual-search-panel no-print"><div class="field"><label for="manualSearch">Pesquisar no manual</label><input id="manualSearch" data-manual-search type="search" value="${escapeHTML(manualUI.query)}" placeholder="Ex.: concreto fissurado, torque, CSV, inconclusivo"></div><button class="btn" data-action="manual-clear-search">Limpar</button><span class="manual-search-meta" id="manualSearchMeta">Pesquise por tela, campo, resultado ou conceito</span></section>`+
-    `<div class="manual-layout"><aside class="manual-toc no-print"><div class="manual-toc-head">Navegação do manual</div><nav>${toc.map(([id,n,label])=>`<button data-action="manual-scroll" data-section="${id}"><span class="manual-toc-num">${n}</span>${label}</button>`).join('')}</nav><div class="manual-toc-foot">Dica: use <span class="manual-kbd"><span class="kbd">Ctrl</span> + <span class="kbd">S</span></span> para salvar imediatamente.</div></aside><div class="manual-content" id="manualContent">`+
-    `<section class="manual-section" id="manual-start" data-manual-keywords="visão geral responsabilidade escopo apoio engenharia offline">${manualSectionHead('1','Visão geral','O que o programa faz e como utilizá-lo com responsabilidade.')}<div class="manual-section-body"><p class="manual-lead">O ParaboltPro apoia estudos de fixações com chumbadores mecânicos em concreto. Ele reúne cadastro do substrato e do produto, editor geométrico, distribuição elástica das ações, verificações por modos de ruptura, comparação, orçamento e relatórios.</p>${manualCallout('danger','⚠','Ferramenta de apoio, não autorização de instalação','Os resultados são preliminares ou condicionados aos dados técnicos cadastrados. O projeto, a escolha do produto, a verificação normativa, a instalação e a responsabilidade técnica permanecem com profissional legalmente habilitado.')}${manualCallout('warning','▲','Três níveis de método','Estimativa preliminar usa coeficientes didáticos; dados do fabricante dependem da completude e aplicabilidade da fonte; verificação parametrizada depende integralmente dos parâmetros informados.')}<div class="manual-interface-grid"><div class="manual-interface-card"><strong>Fluxo recomendado</strong><p>Projeto → Dados gerais → Concreto → Parabolts → Geometria → Carregamentos → Verificações → Relatório.</p></div><div class="manual-interface-card"><strong>Módulos opcionais</strong><p>Comparação, Orçamento, Catálogo e Configurações complementam o fluxo sem substituir as verificações essenciais.</p></div><div class="manual-interface-card"><strong>Persistência local</strong><p>Projetos, catálogo local e preferências são gravados no localStorage do navegador.</p></div><div class="manual-interface-card"><strong>Uso offline</strong><p>O aplicativo funciona em um único arquivo HTML e não depende de conexão para os recursos internos.</p></div></div></div></section>`+
-    `<section class="manual-section" id="manual-quickstart" data-manual-keywords="roteiro rápido passo a passo etapas fluxo projeto cálculo relatório">${manualSectionHead('2','Roteiro rápido','Oito etapas para concluir um estudo com rastreabilidade.')}<div class="manual-section-body"><div class="manual-tour" id="manualTour"><div id="manualTourDynamic">${manualTourHTML()}</div></div><div class="manual-step-list">${MANUAL_STEPS.map((s,i)=>manualStepHTML(s,i,pd.progress)).join('')}</div><div class="manual-inline-actions"><button class="btn" data-action="manual-reset-progress">Reiniciar progresso</button><button class="btn primary" data-action="manual-open-view" data-view="projects">Começar pelos Projetos</button></div></div></section>`+
-    `<section class="manual-section" id="manual-interface" data-manual-keywords="interface barra superior menu lateral salvar calcular tema modo básico avançado">${manualSectionHead('3','Conheça a interface','Barra superior, menu lateral, modos de exibição e comandos.')}<div class="manual-section-body"><div class="manual-interface-grid"><div class="manual-interface-card"><strong>Seletor Projeto</strong><p>Troca o projeto ativo. Todos os campos, cálculos e relatórios passam a usar o projeto selecionado.</p></div><div class="manual-interface-card"><strong>Salvar ⌘</strong><p>Grava imediatamente no navegador. O atalho <span class="manual-kbd"><span class="kbd">Ctrl</span> + <span class="kbd">S</span></span> executa a mesma ação.</p></div><div class="manual-interface-card"><strong>Calcular ▶</strong><p>Atualiza o modelo e abre a tela Verificações para leitura do resultado.</p></div><div class="manual-interface-card"><strong>Manual ?</strong><p>Abre este guia a qualquer momento sem apagar ou alterar o projeto ativo.</p></div><div class="manual-interface-card"><strong>Tema ◐</strong><p>Alterna entre tema claro e escuro. A preferência fica gravada localmente.</p></div><div class="manual-interface-card"><strong>Modo básico/avançado</strong><p>Em Configurações, o modo básico oculta alguns campos avançados; ele não muda o projeto já cadastrado.</p></div></div>${manualCallout('','ℹ','Menu lateral','Os módulos são agrupados em Projeto, Análise e Saídas e dados. Em telas menores, use o botão ☰ para abrir o menu.')}</div></section>`+
-    `<section class="manual-section" id="manual-modules" data-manual-keywords="módulos telas projetos dados concreto parabolts geometria carregamentos verificações comparação orçamento relatório catálogo configurações">${manualSectionHead('4','Manual de cada módulo','Abra os tópicos para ver entradas, ações e cuidados específicos.',`<div class="manual-inline-actions no-print"><button class="btn small" data-action="manual-expand-all">Expandir todos</button><button class="btn small" data-action="manual-collapse-all">Recolher</button></div>`)}<div class="manual-section-body"><div class="manual-module-list">${MANUAL_MODULES.map(manualModuleHTML).join('')}</div></div></section>`+
-    `<section class="manual-section" id="manual-results" data-manual-keywords="resultado utilização aprovado atenção reprovado inconclusivo triagem favorável crítica modos ruptura interação">${manualSectionHead('5','Como interpretar os resultados','Leia situação, utilização, pendências e modo governante em conjunto.')}<div class="manual-section-body"><div class="manual-status-grid"><div class="manual-status-card pass">${statusPill('pass')}<p>Dados suficientes e utilização até o limite de atenção configurado. Ainda exige validação técnica.</p></div><div class="manual-status-card attention">${statusPill('attention')}<p>Utilização acima do limite de atenção atual (${threshold}) e até 100%. Revise margens, hipóteses e execução.</p></div><div class="manual-status-card fail">${statusPill('fail')}<p>Utilização superior a 100% ou falha geométrica/condição incompatível. Não prossiga sem correção.</p></div><div class="manual-status-card inconclusive">${statusPill('inconclusive')}<p>Faltam dados, resistências, confirmação da fonte ou abrangência do cenário. Não equivale a aprovação.</p></div></div>${manualCallout('warning','▲','No modo preliminar, os nomes mudam','Aprovado, atenção, reprovado e inconclusivo aparecem como Triagem favorável, Triagem crítica, Triagem desfavorável e Dados insuficientes. O caráter continua sendo preliminar.')}<h3>Ordem de leitura recomendada</h3><div class="manual-checklist"><div>Leia Alertas e pendências e corrija primeiro as mensagens de perigo.</div><div>Confira Verificações geométricas: posição, borda, espaçamento, espessura, embutimento e furo.</div><div>Localize o modo de ruptura governante: aço à tração, cone, arrancamento, fendilhamento, aço ao cisalhamento, borda ou pry-out.</div><div>Analise a distribuição por chumbador e a interação tração–cisalhamento.</div><div>Revise as equações e substituições antes de emitir a memória técnica.</div></div></div></section>`+
-    `<section class="manual-section" id="manual-catalog-guide" data-manual-keywords="catálogo fabricante produto fonte oficial certificado parcial usuário gtin sku eta aplicar">${manualSectionHead('6','Catálogo e rastreabilidade','Entenda os selos, a natureza dos dados e a aplicação do produto.')}<div class="manual-section-body"><div class="manual-status-grid"><div class="manual-status-card pass"><span class="source-badge certified">🟢 Produto oficial certificado</span><p>Fonte oficial e cadastro marcado como completo para a metodologia incorporada. A aptidão do cenário ainda é verificada separadamente.</p></div><div class="manual-status-card attention"><span class="source-badge official-partial">🟡 Produto oficial parcialmente cadastrado</span><p>Há fonte oficial, mas faltam modos ou parâmetros para concluir automaticamente o dimensionamento.</p></div><div class="manual-status-card inconclusive"><span class="source-badge user">🔵 Produto cadastrado pelo usuário</span><p>Registro local ou importado. Origem, transcrição, atualização e validação são responsabilidade do usuário.</p></div><div class="manual-status-card fail"><strong>Mesmo diâmetro ≠ mesmo produto</strong><p>Embutimento, aço, torque, qualificação, bordas, espaçamentos e resistências podem ser diferentes.</p></div></div><h3>Aplicação segura do catálogo</h3><div class="manual-checklist"><div>Filtre por fabricante, linha, código, artigo, GTIN ou diâmetro.</div><div>Leia a natureza da capacidade: última média, recomendada, característica parcial, matriz completa ou avaliação requerida.</div><div>Abra e confira a fonte oficial e sua edição aplicável.</div><div>Clique em Aplicar produto e revise todos os campos transferidos.</div><div>Marque a confirmação de aplicabilidade somente após verificar concreto, fissuração, ambiente, cargas e limitações.</div></div>${manualCallout('danger','⚠','Não “complete” dados por suposição','Quando uma resistência ou condição não estiver publicada ou incorporada, mantenha o resultado inconclusivo e consulte a avaliação técnica do produto.')}</div></section>`+
-    `<section class="manual-section" id="manual-installation" data-manual-keywords="instalação furo broca limpeza torque inspeção ficha lote montagem">${manualSectionHead('7','Da tela ao campo','Lista de conferência baseada na Ficha de instalação do relatório.')}<div class="manual-section-body"><div class="manual-checklist"><div>Conferir locação, espessura do concreto e interferências com armaduras e instalações.</div><div>Usar broca e equipamento compatíveis com o documento técnico do produto.</div><div>Perfurar perpendicularmente até a profundidade especificada, sem atravessar o elemento.</div><div>Limpar o furo conforme o procedimento do fabricante e remover pó e detritos.</div><div>Introduzir o chumbador sem danificar rosca, porca ou arruela.</div><div>Posicionar a peça, eliminar folgas indevidas e aplicar torque com ferramenta calibrada.</div><div>Registrar produto, lote, profundidade, torque e responsável pela instalação.</div><div>Executar inspeção visual e demais controles previstos no projeto ou documento técnico.</div></div>${manualCallout('warning','▲','A ficha deve acompanhar a execução','No módulo Relatório, escolha Ficha de instalação, revise as dimensões e imprima ou salve em PDF para uso controlado em campo.')}</div></section>`+
-    `<section class="manual-section" id="manual-files" data-manual-keywords="salvar localstorage backup json csv png pdf importar exportar arquivos dados">${manualSectionHead('8','Salvar, importar e exportar','O que fica no navegador e como preservar os estudos.')}<div class="manual-section-body"><div class="manual-interface-grid"><div class="manual-interface-card"><strong>Salvar</strong><p>O botão superior e o atalho Ctrl+S gravam o estado no localStorage deste navegador.</p></div><div class="manual-interface-card"><strong>Projeto JSON</strong><p>Exporta o projeto ativo pelo módulo Relatório. Use para arquivamento e intercâmbio do estudo.</p></div><div class="manual-interface-card"><strong>Backup completo</strong><p>Em Configurações, exporta projetos, catálogo local, preferências e dados compatíveis.</p></div><div class="manual-interface-card"><strong>CSV</strong><p>Verificações, comparação e orçamento podem ser exportados para análise tabular.</p></div><div class="manual-interface-card"><strong>PNG</strong><p>A vista superior da chapa e do grupo pode ser exportada na tela Chapa e geometria.</p></div><div class="manual-interface-card"><strong>PDF</strong><p>Use Imprimir / PDF no Relatório; o navegador gera o arquivo conforme o diálogo de impressão.</p></div></div>${manualCallout('danger','⚠','O navegador não é um arquivo institucional','Limpar dados locais, usar modo privado, trocar de perfil ou computador pode tornar os estudos indisponíveis. Exporte backups periódicos.')}</div></section>`+
-    `<section class="manual-section" id="manual-faq" data-manual-keywords="dúvidas frequentes faq por que como problema inconclusivo aprovado alvenaria">${manualSectionHead('9','Dúvidas frequentes','Respostas rápidas para situações comuns.')}<div class="manual-section-body"><div class="manual-faq"><details><summary>Por que o resultado permanece inconclusivo?</summary><p>Verifique Alertas e pendências. As causas usuais são resistência não cadastrada, fonte não confirmada, produto parcial, concreto ou cenário fora do escopo, fatores de grupo não verificados ou dados geométricos ausentes.</p></details><details><summary>“Aprovado” significa que posso instalar?</summary><p>Não. Significa apenas que, para os dados e critérios processados, não foi encontrada utilização superior aos limites. O projeto, a fonte técnica, a execução e a responsabilidade profissional ainda precisam ser validados.</p></details><details><summary>Posso calcular chumbadores em bloco ou alvenaria?</summary><p>O programa permite registrar outros materiais, mas o motor atual informa que estão fora do escopo de resistência. Use metodologia e produto específicos para o substrato.</p></details><details><summary>Por que um produto oficial aparece como parcial?</summary><p>Porque a fonte pode publicar apenas parte das capacidades ou porque a matriz necessária ainda não foi incorporada. Fonte oficial e cálculo automático completo são condições diferentes.</p></details><details><summary>Como testar sem cadastrar tudo?</summary><p>Na tela Projetos, use Restaurar exemplos. Eles permitem explorar o fluxo e os relatórios sem substituir a conferência de um caso real.</p></details><details><summary>Como comparar alternativas?</summary><p>Selecione até cinco produtos na tela Comparação, defina faixas e prioridade e examine as alternativas geradas. Ao adotar uma opção, revise produto, geometria e verificações.</p></details><details><summary>O orçamento altera o cálculo estrutural?</summary><p>Não. Os custos são opcionais e permanecem separados do resultado técnico.</p></details><details><summary>Como recuperar dados após limpar o navegador?</summary><p>Importe um JSON de projeto ou um backup completo previamente exportado. Sem arquivo de backup, os dados locais apagados podem não ser recuperáveis.</p></details></div></div></section>`+
-    `<section class="manual-section" id="manual-quiz" data-manual-keywords="teste conhecimentos quiz aprendizagem perguntas">${manualSectionHead('10','Teste seus conhecimentos','Quatro perguntas para confirmar o fluxo essencial.')}<div class="manual-section-body"><div class="manual-quiz"><div class="manual-quiz-question"><strong>1. Um resultado “Aprovado” permite instalar o chumbador sem outra conferência?</strong><label class="manual-quiz-option"><input type="radio" name="q1" value="a">Sim, porque a utilização ficou abaixo de 100%.</label><label class="manual-quiz-option"><input type="radio" name="q1" value="b">Não. Ainda é necessária validação profissional, documental e de execução.</label><div class="manual-quiz-feedback" id="q1Feedback"></div></div><div class="manual-quiz-question"><strong>2. O que fazer logo depois de aplicar um produto do catálogo?</strong><label class="manual-quiz-option"><input type="radio" name="q2" value="a">Ir diretamente ao relatório.</label><label class="manual-quiz-option"><input type="radio" name="q2" value="b">Trocar por qualquer produto do mesmo diâmetro.</label><label class="manual-quiz-option"><input type="radio" name="q2" value="c">Conferir fonte e limitações, revisar os campos e confirmar a aplicabilidade.</label><div class="manual-quiz-feedback" id="q2Feedback"></div></div><div class="manual-quiz-question"><strong>3. O que significa “Inconclusivo”?</strong><label class="manual-quiz-option"><input type="radio" name="q3" value="a">Faltam dados ou abrangência; é preciso corrigir pendências antes de concluir.</label><label class="manual-quiz-option"><input type="radio" name="q3" value="b">O chumbador foi aprovado com grande margem.</label><div class="manual-quiz-feedback" id="q3Feedback"></div></div><div class="manual-quiz-question"><strong>4. Qual sequência representa uma instalação controlada?</strong><label class="manual-quiz-option"><input type="radio" name="q4" value="a">Perfurar aproximadamente e apertar até parecer firme.</label><label class="manual-quiz-option"><input type="radio" name="q4" value="b">Conferir locação, broca e profundidade; limpar; montar; aplicar torque especificado; registrar e inspecionar.</label><div class="manual-quiz-feedback" id="q4Feedback"></div></div><button class="btn primary" data-action="manual-check-quiz">Conferir respostas</button><div class="manual-quiz-result" id="manualQuizResult" aria-live="polite"></div></div></div></section>`+
-    `<section class="manual-section" id="manual-glossary" data-manual-keywords="glossário termos fck hef hnom h0 cmin smin hmin rk rd eta pry out">${manualSectionHead('11','Glossário essencial','Símbolos e conceitos usados nas telas e relatórios.')}<div class="manual-section-body"><dl class="manual-glossary-grid"><div class="manual-glossary-item"><dt>fck</dt><dd>Resistência característica à compressão do concreto, em MPa.</dd></div><div class="manual-glossary-item"><dt>d</dt><dd>Diâmetro nominal do chumbador.</dd></div><div class="manual-glossary-item"><dt>hₑf</dt><dd>Embutimento efetivo considerado na resistência.</dd></div><div class="manual-glossary-item"><dt>hₙₒₘ</dt><dd>Embutimento nominal de instalação.</dd></div><div class="manual-glossary-item"><dt>h₀</dt><dd>Profundidade do furo executado no concreto.</dd></div><div class="manual-glossary-item"><dt>cmin / smin / hmin</dt><dd>Borda, espaçamento e espessura mínimos informados para o produto ou método.</dd></div><div class="manual-glossary-item"><dt>Rk</dt><dd>Resistência característica cadastrada ou calculada.</dd></div><div class="manual-glossary-item"><dt>Rd</dt><dd>Resistência de cálculo após os coeficientes aplicáveis.</dd></div><div class="manual-glossary-item"><dt>η — utilização</dt><dd>Razão entre solicitação e resistência; valores acima de 1,00 indicam falha.</dd></div><div class="manual-glossary-item"><dt>Concreto fissurado</dt><dd>Condição que pode reduzir capacidades e exige produto qualificado quando aplicável.</dd></div><div class="manual-glossary-item"><dt>Pry-out</dt><dd>Modo de ruptura do concreto associado ao cisalhamento do chumbador.</dd></div><div class="manual-glossary-item"><dt>ETA / ESR</dt><dd>Avaliação técnica do produto, com escopo, condições, parâmetros e limitações.</dd></div><div class="manual-glossary-item"><dt>Interação N–V</dt><dd>Combinação dos efeitos de tração e cisalhamento.</dd></div><div class="manual-glossary-item"><dt>Modo governante</dt><dd>Verificação com maior utilização ou menor resistência determinante.</dd></div><div class="manual-glossary-item"><dt>ART/RRT</dt><dd>Registro de responsabilidade técnica aplicável ao serviço profissional.</dd></div><div class="manual-glossary-item"><dt>localStorage</dt><dd>Armazenamento local do navegador utilizado pelo aplicativo.</dd></div></dl></div></section>`+
-    `<div class="manual-empty-search" id="manualEmptySearch"><div class="empty-icon">⌕</div><strong>Nenhum tópico encontrado.</strong><p>Tente palavras mais curtas, como “torque”, “concreto”, “CSV” ou “resultado”.</p><button class="btn" data-action="manual-clear-search">Mostrar todo o manual</button></div>`+
-    `</div></div>`;
-}
-
 function renderProjects(){
   const c=calcProject(activeProject()),p=activeProject();
   const metrics=`<div class="grid cols-4"><div class="metric ${c.status}"><div class="metric-label">Situação ativa</div><div class="metric-value" style="font-size:20px">${statusText(c.status,p.general.method==='preliminary')}</div><div class="metric-sub">${escapeHTML(p.name)}</div></div><div class="metric info"><div class="metric-label">Chumbadores</div><div class="metric-value">${p.geometry.anchors.length}</div><div class="metric-sub">${escapeHTML(p.anchor.code||'Sem produto')}</div></div><div class="metric"><div class="metric-label">Utilização máxima</div><div class="metric-value">${c.maxRow?pct(c.maxRow.util):'—'}</div><div class="metric-sub">${c.maxRow?`${c.maxRow.id} · ${modeLabel(c.maxRow.criticalMode)}`:'Sem cálculo'}</div></div><div class="metric"><div class="metric-label">Custo estimado</div><div class="metric-value" style="font-size:22px">${money(c.budget.total)}</div><div class="metric-sub">${money(c.budget.perPoint)} por ponto</div></div></div>`;
@@ -1624,18 +1357,6 @@ function handleAction(action,el){
   switch(action){
     case 'toggle-menu':document.body.classList.toggle('menu-open');break;
     case 'navigate':state.view=el.dataset.view||'projects';renderApp();break;
-    case 'manual-open-view':state.view=el.dataset.view||'projects';renderApp();toast('Módulo aberto. Use o botão Manual para retornar ao guia.');break;
-    case 'manual-scroll':{if(manualUI.query){manualUI.query='';const input=document.getElementById('manualSearch');if(input)input.value='';applyManualFilter('')}document.getElementById(el.dataset.section)?.scrollIntoView({behavior:'smooth',block:'start'});break}
-    case 'manual-clear-search':manualUI.query='';{const input=document.getElementById('manualSearch');if(input)input.value=''}applyManualFilter('');break;
-    case 'manual-expand-all':document.querySelectorAll('#manualContent details').forEach(d=>d.open=true);break;
-    case 'manual-collapse-all':document.querySelectorAll('#manualContent details').forEach(d=>d.open=false);break;
-    case 'manual-start-tour':{const progress=readManualProgress(),first=MANUAL_STEPS.findIndex(s=>!progress.has(s.id));manualUI.tourStep=first>=0?first:0;updateManualTour();document.getElementById('manualTour')?.scrollIntoView({behavior:'smooth',block:'center'});break}
-    case 'manual-tour-prev':manualUI.tourStep=Math.max(0,manualUI.tourStep-1);updateManualTour();break;
-    case 'manual-tour-next':manualUI.tourStep=Math.min(MANUAL_STEPS.length-1,manualUI.tourStep+1);updateManualTour();break;
-    case 'manual-complete-current':{const step=MANUAL_STEPS[manualUI.tourStep],progress=readManualProgress();setManualStep(step.id,!progress.has(step.id));updateManualProgressUI();updateManualTour();break}
-    case 'manual-reset-progress':if(confirm('Reiniciar o progresso do roteiro do manual?')){storage.removeItem(MANUAL_PROGRESS_KEY);manualUI.tourStep=0;updateManualProgressUI();updateManualTour();toast('Progresso do manual reiniciado.')}break;
-    case 'manual-check-quiz':checkManualQuiz();break;
-    case 'manual-print':manualUI.query='';applyManualFilter('');document.querySelectorAll('#manualContent details').forEach(d=>d.open=true);setTimeout(()=>window.print(),80);break;
     case 'save':saveState();break;
     case 'calculate':state.view='checks';renderApp();toast('Verificações atualizadas.');break;
     case 'toggle-theme':state.settings.theme=state.settings.theme==='dark'?'light':'dark';renderApp();break;
@@ -1688,14 +1409,12 @@ function bindGeometryDrag(){
 document.addEventListener('click',ev=>{const el=ev.target.closest('[data-action]');if(el){ev.preventDefault();handleAction(el.dataset.action,el)}});
 document.addEventListener('input',ev=>{
   const el=ev.target,p=activeProject();
-  if(el.matches?.('[data-manual-search]')){manualUI.query=el.value;applyManualFilter(el.value);return}
   if(el.dataset.bind){setPath(p,el.dataset.bind,inputValue(el));queueSave()}
   if(el.dataset.setting){setPath(state.settings,el.dataset.setting,inputValue(el));queueSave()}
   if(el.dataset.anchorField){const a=p.geometry.anchors[Number(el.dataset.index)];if(a)a[el.dataset.anchorField]=el.dataset.anchorField==='id'?el.value:num(el.value);queueSave()}
 });
 document.addEventListener('change',ev=>{
   const el=ev.target,p=activeProject();
-  if(el.matches?.('[data-manual-step]')){setManualStep(el.dataset.manualStep,el.checked);updateManualProgressUI();updateManualTour();return}
   if(el.id==='projectSelect'){state.activeProjectId=el.value;renderApp();return}
   if(el.dataset.compareProduct){const arr=new Set(p.comparison.selected||[]);if(el.checked){if(arr.size>=5){el.checked=false;toast('Selecione no máximo cinco produtos.');return}arr.add(el.dataset.compareProduct)}else arr.delete(el.dataset.compareProduct);p.comparison.selected=[...arr];renderApp();return}
   if(el.dataset.bind||el.dataset.setting||el.dataset.anchorField){renderApp();return}
@@ -1708,7 +1427,7 @@ document.getElementById('projectImportInput').addEventListener('change',async ev
 });
 document.getElementById('catalogImportInput').addEventListener('change',async ev=>{const file=ev.target.files[0];ev.target.value='';if(!file)return;try{const n=importCatalogText(await file.text(),file.name);renderApp();toast(`${n} produto(s) importado(s).`)}catch(e){console.error(e);toast('Falha ao importar catálogo: '+e.message)}});
 document.addEventListener('keydown',ev=>{if((ev.ctrlKey||ev.metaKey)&&ev.key.toLowerCase()==='s'){ev.preventDefault();saveState()}if(ev.key==='Escape')document.body.classList.remove('menu-open');if(ev.key==='Enter'&&ev.target?.matches?.('[data-catalog-filter]')){ev.preventDefault();handleAction('apply-catalog-filters',ev.target)}if(ev.key==='Enter'&&ev.target?.matches?.('[data-anchor-filter]')){ev.preventDefault();handleAction('apply-anchor-filter',ev.target)}});
-function init(){loadState();if(location.hash==='#manual')state.view='manual';renderApp();}
+function init(){loadState();renderApp();}
 init();
 </script>
 <script>

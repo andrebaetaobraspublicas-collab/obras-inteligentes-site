@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <!--
   SolarPro — Geração de Energia Fotovoltaica
-  Revisão 2.3.0 — 20/08/2026
-  Melhorias acumuladas: catálogo técnico rastreável, exemplos calculados com equipamentos reais,
+  Revisão 2.1.0 — 21/07/2026
+  Melhorias: catálogo técnico rastreável, exemplos calculados com equipamentos reais,
   casos publicados por fabricantes, limites assimétricos por MPPT, topologia 2x2 do DS3D,
   migração automática do catálogo demonstrativo e separação entre dados técnicos e preços estimados.
-  Esta revisão acrescenta botão na barra superior e manual didático, pesquisável e interativo.
 -->
 <html lang="pt-BR"><head>
   <meta charset="UTF-8">
@@ -77,138 +76,6 @@
     .toast-wrap{position:fixed;right:18px;bottom:18px;display:grid;gap:8px;z-index:100}.toast{background:#17382b;color:#fff;padding:12px 14px;border-radius:11px;box-shadow:0 12px 30px rgba(0,0,0,.2);font-size:12px;min-width:250px;animation:toastin .2s ease}.toast.error{background:#8f2520}@keyframes toastin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
     .modal-backdrop{position:fixed;inset:0;background:rgba(4,20,13,.55);display:none;align-items:center;justify-content:center;padding:20px;z-index:80}.modal-backdrop.open{display:flex}.modal{width:min(920px,100%);max-height:90vh;overflow:auto;background:#fff;border-radius:18px;box-shadow:0 24px 70px rgba(0,0,0,.25);padding:20px}.modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:15px}.modal-head h3{margin:0}.icon-btn{width:36px;height:36px;border:0;background:#eef4f1;border-radius:9px}
     .mobile-nav{display:none}
-
-
-/* ============ MANUAL DIDÁTICO E INTERATIVO ============ */
-.manual-top-link{text-decoration:none;background:#f0faf5;border-color:#8ed4ae;color:var(--primary-2);white-space:nowrap}
-.manual-top-link:hover{background:#e4f7ed;border-color:#64bd8c}
-.manual-top-link.active{background:var(--primary-2);border-color:var(--primary-2);color:#fff;box-shadow:0 7px 18px rgba(11,93,60,.24)}
-.manual-top-link svg{width:15px;height:15px;flex:none}
-.manual-page{--manual-dark:#123528;--manual-green:#0f7a4d;--manual-soft:#edf8f2;--manual-gold:#f2b705}
-.manual-hero{position:relative;overflow:hidden;display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:28px;align-items:center;padding:30px;border-radius:22px;background:linear-gradient(128deg,#0b291e 0%,#0f6845 58%,#21a36b 100%);color:#fff;box-shadow:0 20px 48px rgba(10,55,37,.22);margin-bottom:20px}
-.manual-hero::before{content:"";position:absolute;width:420px;height:420px;border-radius:50%;right:-190px;top:-230px;background:radial-gradient(circle,rgba(255,255,255,.2),transparent 68%)}
-.manual-hero::after{content:"?";position:absolute;right:270px;bottom:-78px;font-size:260px;line-height:1;font-weight:900;color:rgba(255,255,255,.045);pointer-events:none}
-.manual-hero-content,.manual-hero-progress{position:relative;z-index:1}
-.manual-kicker{display:inline-flex;align-items:center;gap:7px;border:1px solid rgba(255,255,255,.26);background:rgba(255,255,255,.12);border-radius:99px;padding:5px 10px;font-size:10px;font-weight:800;letter-spacing:.09em;text-transform:uppercase}
-.manual-hero h2{font-size:clamp(27px,4vw,40px);line-height:1.08;letter-spacing:-.025em;margin:14px 0 10px}
-.manual-hero p{max-width:780px;margin:0;color:#e4f7ec;font-size:14px;line-height:1.65}
-.manual-hero .toolbar{margin-top:20px}
-.manual-hero .btn{border-color:rgba(255,255,255,.28)}
-.manual-hero .btn.primary{background:#fff;color:var(--primary-2);border-color:#fff}
-.manual-hero .btn.ghost{color:#fff;background:rgba(255,255,255,.09)}
-.manual-hero-progress{padding:18px;border-radius:17px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);backdrop-filter:blur(6px)}
-.manual-hero-progress .manual-progress-number{font-size:34px;font-weight:850;letter-spacing:-.03em;margin:4px 0}
-.manual-hero-progress .manual-progress-label{font-size:11px;color:#d6f1e2;line-height:1.4}
-.manual-progress-track{height:9px;border-radius:99px;background:rgba(255,255,255,.2);overflow:hidden;margin:13px 0 8px}
-.manual-progress-track>span{display:block;width:0;height:100%;border-radius:inherit;background:linear-gradient(90deg,#ffe07a,#fff);transition:width .3s ease}
-.manual-layout{display:grid;grid-template-columns:280px minmax(0,1fr);gap:18px;align-items:start;width:100%;min-width:0}
-.manual-sidebar{position:sticky;top:96px;max-height:calc(100vh - 116px);overflow:auto;box-shadow:none;padding:16px}
-.manual-sidebar h3{font-size:14px;margin:0 0 12px}
-.manual-search-wrap{position:relative}
-.manual-search-wrap input{padding-left:37px;padding-right:38px}
-.manual-search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:15px;pointer-events:none}
-.manual-search-clear{position:absolute;right:7px;top:50%;transform:translateY(-50%);width:28px;height:28px;border:0;border-radius:8px;background:transparent;color:var(--muted);display:grid;place-items:center}
-.manual-search-clear:hover{background:#edf4f0;color:var(--text)}
-.manual-search-status{min-height:30px;margin:7px 2px 10px;color:var(--muted);font-size:10.5px;line-height:1.4}
-.manual-toc{display:grid;gap:4px;margin-top:8px}
-.manual-toc-btn{width:100%;border:0;background:transparent;color:#405148;padding:9px 10px;border-radius:9px;display:flex;align-items:center;gap:9px;text-align:left;font-size:12px;font-weight:700}
-.manual-toc-btn:hover{background:#f1f7f4;color:var(--primary-2)}
-.manual-toc-btn.active{background:var(--manual-soft);color:var(--primary-2)}
-.manual-toc-number{width:23px;height:23px;border-radius:7px;display:grid;place-items:center;background:#e7efeb;font-size:10px;flex:none}
-.manual-toc-btn.active .manual-toc-number{background:var(--primary);color:#fff}
-.manual-side-progress{margin-top:14px;padding:13px;border-radius:12px;background:#f6faf8;border:1px solid var(--border)}
-.manual-side-progress-head{display:flex;justify-content:space-between;gap:10px;align-items:center;font-size:11px;font-weight:800}
-.manual-side-progress .manual-progress-track{background:#dfe9e4;height:7px}
-.manual-side-progress .manual-progress-track>span{background:linear-gradient(90deg,var(--primary),#42b77e)}
-.manual-content{display:grid;grid-template-columns:minmax(0,1fr);gap:18px;min-width:0;width:100%;max-width:100%}
-.manual-section{scroll-margin-top:98px;min-width:0;max-width:100%}
-.manual-section-filtered{display:none!important}
-.manual-section-head{display:flex;gap:13px;align-items:flex-start;margin-bottom:13px;min-width:0}.manual-section-head>div{min-width:0}
-.manual-section-icon{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;flex:none;background:var(--manual-soft);color:var(--primary-2);font-size:19px;font-weight:800}
-.manual-section-head h3{font-size:20px;margin:0 0 4px}
-.manual-section-head p{margin:0;color:var(--muted);font-size:12.5px;line-height:1.55}
-.manual-card{background:#fff;border:1px solid var(--border);border-radius:16px;padding:18px;box-shadow:0 7px 22px rgba(16,48,34,.055)}
-.manual-card h4{font-size:15px;margin:0 0 8px}
-.manual-card p{font-size:12.5px;line-height:1.6;color:#52635a;margin:0}
-.manual-card ul,.manual-card ol{margin:10px 0 0;padding-left:20px;color:#405148;font-size:12.5px;line-height:1.65}
-.manual-card li+li{margin-top:4px}
-.manual-overview-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-.manual-flow-card{position:relative;padding-top:44px}
-.manual-flow-number{position:absolute;top:15px;left:17px;width:24px;height:24px;border-radius:8px;display:grid;place-items:center;background:var(--primary);color:#fff;font-size:11px;font-weight:850}
-.manual-command-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}
-.manual-command{border:1px solid var(--border);border-radius:12px;padding:12px;background:#fbfdfc}
-.manual-command b{display:block;font-size:12px;color:#263c31;margin-bottom:4px}
-.manual-command span{display:block;font-size:10.5px;line-height:1.45;color:var(--muted)}
-.manual-stepper{overflow:hidden;padding:0}
-.manual-step-tabs{display:flex;gap:0;overflow:auto;border-bottom:1px solid var(--border);background:#f6faf8;padding:8px;max-width:100%}
-.manual-step-tab{min-width:104px;border:0;background:transparent;border-radius:10px;padding:9px 8px;color:var(--muted);font-size:10.5px;font-weight:800;display:flex;align-items:center;gap:7px;justify-content:center;white-space:nowrap}
-.manual-step-tab span{width:25px;height:25px;border-radius:8px;background:#e2ebe6;display:grid;place-items:center;color:#43564c;flex:none}
-.manual-step-tab:hover{background:#edf5f1;color:var(--primary-2)}
-.manual-step-tab.active{background:#fff;color:var(--primary-2);box-shadow:0 4px 13px rgba(16,48,34,.09)}
-.manual-step-tab.active span{background:var(--primary);color:#fff}
-.manual-step-tab.done span{background:#dff7e9;color:#067647}
-.manual-step-tab.done span::after{content:"✓"}.manual-step-tab.done span{font-size:0}.manual-step-tab.done span::after{font-size:12px}
-.manual-step-panel{display:none;padding:22px;animation:fade .18s ease}
-.manual-step-panel.active{display:block}
-.manual-step-grid{display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:20px;align-items:start}
-.manual-step-label{display:inline-flex;border-radius:99px;background:#e8f6ee;color:var(--primary-2);padding:4px 9px;font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
-.manual-step-panel h4{font-size:20px;margin:10px 0 7px;color:#183326}
-.manual-step-panel p{font-size:13px;line-height:1.6;color:#52635a;margin:0}
-.manual-step-panel ol{margin:13px 0 0;padding-left:21px;font-size:12.5px;line-height:1.65;color:#34483e}
-.manual-step-panel li+li{margin-top:5px}
-.manual-step-tip{border-radius:13px;background:#f6faf8;border:1px solid var(--border);padding:14px}
-.manual-step-tip b{display:block;font-size:11px;color:var(--primary-2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em}
-.manual-step-tip p{font-size:11.5px;line-height:1.55}
-.manual-step-actions{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-top:18px}
-.manual-complete{display:inline-flex;align-items:center;gap:8px;margin:0 0 0 auto;padding:8px 10px;border-radius:10px;background:#f6faf8;border:1px solid var(--border);color:#33483d;font-size:11px;font-weight:750;cursor:pointer}
-.manual-complete input,.manual-check-item input{width:18px;height:18px;margin:0;accent-color:var(--primary);flex:none}
-.manual-step-controls{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 18px;border-top:1px solid var(--border);background:#fbfdfc}
-.manual-step-counter{font-size:11px;color:var(--muted);font-weight:700}
-.manual-screen-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(245px,1fr));gap:12px}
-.manual-screen-card{display:flex;flex-direction:column;gap:9px;min-height:196px}
-.manual-screen-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
-.manual-screen-icon{width:36px;height:36px;border-radius:11px;background:#edf7f2;color:var(--primary-2);display:grid;place-items:center;font-weight:850;font-size:15px;flex:none}
-.manual-screen-category{font-size:9px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;border-radius:99px;padding:4px 7px;background:#f2f5f4;color:#65756d}
-.manual-screen-card h4{font-size:14px;margin:0}
-.manual-screen-card p{font-size:11.5px;line-height:1.5;flex:1}
-.manual-screen-card .btn{align-self:flex-start}
-.manual-result-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-.manual-result-card{display:grid;grid-template-columns:39px 1fr;gap:12px;align-items:start}
-.manual-result-mark{width:39px;height:39px;border-radius:12px;background:#edf7f2;color:var(--primary-2);display:grid;place-items:center;font-size:17px;font-weight:850}
-.manual-result-card h4{margin:0 0 4px}
-.manual-checklist{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
-.manual-check-item{display:flex;align-items:flex-start;gap:10px;border:1px solid var(--border);border-radius:12px;padding:12px;background:#fbfdfc;cursor:pointer;margin:0}
-.manual-check-item:hover{border-color:#9ed5b7;background:#f4fbf7}
-.manual-check-item span{font-size:11.5px;line-height:1.5;color:#33483d}
-.manual-check-item input:checked+span{text-decoration:line-through;color:#738179}
-.manual-faq{display:grid;gap:8px}
-.manual-faq details{border:1px solid var(--border);border-radius:12px;background:#fff;overflow:hidden}
-.manual-faq summary{cursor:pointer;padding:13px 15px;font-size:12.5px;font-weight:800;color:#2a4034;list-style:none;display:flex;justify-content:space-between;gap:12px}
-.manual-faq summary::-webkit-details-marker{display:none}
-.manual-faq summary::after{content:"+";width:22px;height:22px;border-radius:7px;background:#eef4f1;display:grid;place-items:center;flex:none;color:var(--primary-2)}
-.manual-faq details[open] summary::after{content:"−"}
-.manual-faq details[open] summary{background:#f7fbf9}
-.manual-faq-answer{padding:0 15px 15px;font-size:12px;line-height:1.65;color:#52635a}
-.manual-quiz-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-.manual-quiz-card{border:1px solid var(--border);border-radius:14px;padding:15px;background:#fff}
-.manual-quiz-card h4{font-size:13px;line-height:1.45;margin:0 0 10px}
-.manual-answer-list{display:grid;gap:6px}
-.manual-answer{border:1px solid var(--border);border-radius:9px;background:#fbfdfc;padding:8px 9px;text-align:left;font-size:11px;color:#405148}
-.manual-answer:hover:not(:disabled){border-color:#8acba8;background:#f3faf6}
-.manual-answer.correct{border-color:#6fc492;background:#eaf9f0;color:#12633a;font-weight:800}
-.manual-answer.incorrect{border-color:#e2a39d;background:#fff1f0;color:#942a22}
-.manual-answer:disabled{cursor:default;opacity:.82}
-.manual-quiz-feedback{min-height:34px;margin-top:9px;font-size:10.5px;line-height:1.45;color:var(--muted)}
-.manual-quiz-summary{display:flex;align-items:center;gap:10px;justify-content:flex-end;margin-top:12px;font-size:11px;font-weight:750;color:var(--muted)}
-.manual-no-results{display:none;padding:30px;text-align:center;border:1px dashed #b9c9c0;border-radius:15px;background:#fbfdfc;color:var(--muted)}
-.manual-no-results.show{display:block}
-.manual-filtered-out{display:none!important}
-.manual-keyboard{display:inline-flex;gap:4px;align-items:center}
-.manual-keyboard kbd{font:inherit;font-size:9px;padding:2px 5px;border-radius:5px;border:1px solid #cfdad4;background:#fff;box-shadow:0 1px 0 #cfdad4;color:#405148}
-@media(max-width:1180px){.manual-layout{grid-template-columns:240px minmax(0,1fr)}.manual-overview-grid{grid-template-columns:1fr 1fr}.manual-command-grid{grid-template-columns:1fr 1fr}.manual-quiz-grid{grid-template-columns:1fr}.manual-step-grid{grid-template-columns:1fr}.manual-complete{margin-left:0}}
-@media(max-width:900px){.manual-hero{grid-template-columns:minmax(0,1fr)}.manual-hero-progress{max-width:360px}.manual-layout{grid-template-columns:minmax(0,1fr)}.manual-sidebar{position:static;max-height:none}.manual-toc{grid-template-columns:repeat(3,minmax(0,1fr))}.manual-toc-btn{justify-content:center;text-align:center}.manual-toc-number{display:none}.manual-result-grid,.manual-checklist{grid-template-columns:1fr}}
-@media(max-width:620px){.manual-hero{padding:22px 18px}.manual-overview-grid,.manual-command-grid{grid-template-columns:1fr}.manual-toc{grid-template-columns:1fr 1fr}.manual-step-panel{padding:18px 15px}.manual-step-actions{align-items:stretch}.manual-step-actions .btn,.manual-complete{width:100%;margin-left:0}.manual-step-controls{padding:11px}.manual-step-controls .btn{font-size:11px;padding:7px 9px}.manual-screen-grid{grid-template-columns:1fr}}
-
 
     .solar-fetch-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
     .solar-fetch-actions .btn[disabled]{opacity:.58;cursor:wait;transform:none;box-shadow:none}
@@ -366,10 +233,6 @@
       <button class="btn small primary" id="saveProjectBtn">Salvar</button>
       <button class="btn small hide-md" id="importProjectBtn">Importar</button>
       <button class="btn small hide-md" id="exportProjectBtn">Exportar</button>
-<a class="btn small manual-top-link" id="manualLinkBtn" href="#manual-de-uso" data-go="manual" title="Abrir o manual didático e interativo (Alt+M)" aria-label="Abrir manual de uso do SolarPro">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11v16H6.5A2.5 2.5 0 0 0 4 21.5v-16Z"></path><path d="M20 5.5A2.5 2.5 0 0 0 17.5 3H13v16h4.5a2.5 2.5 0 0 1 2.5 2.5v-16Z"></path></svg>
-  <span>Manual</span>
-</a>
       <button class="btn small" id="printReportBtn">PDF / Imprimir</button>
       <input type="file" id="projectFileInput" accept=".json" class="hidden">
     </div>
@@ -588,330 +451,6 @@
         </div>
         <div class="card mt"><div class="section-title"><h3>Referências técnicas e regulatórias</h3><button class="btn small primary" id="addReferenceBtn">Adicionar referência</button></div><div class="table-wrap"><table><thead><tr><th>Identificação</th><th>Título</th><th>Versão / data</th><th>Âmbito</th><th>Fonte</th><th>Status</th><th></th></tr></thead><tbody id="referencesTable"></tbody></table></div></div>
       </section>
-
-<!-- ============ MANUAL DIDÁTICO E INTERATIVO ============ -->
-<section class="page manual-page" id="manual-de-uso" data-page="manual" aria-labelledby="manualTitle">
-  <div class="manual-hero">
-    <div class="manual-hero-content">
-      <span class="manual-kicker">▣ Manual didático e interativo</span>
-      <h2 id="manualTitle">Aprenda a usar o SolarPro, passo a passo</h2>
-      <p>Consulte o fluxo recomendado, percorra cada etapa do estudo, pesquise assuntos, abra diretamente qualquer tela e marque o que já foi conferido. O progresso do manual fica registrado neste navegador quando o armazenamento local estiver disponível.</p>
-      <div class="toolbar no-print">
-        <button class="btn primary" type="button" data-manual-target="manual-percurso">Iniciar percurso guiado</button>
-        <button class="btn ghost" type="button" data-manual-target="manual-telas">Consultar mapa das telas</button>
-        <button class="btn ghost" type="button" data-go="dashboard">Voltar ao Painel</button>
-      </div>
-    </div>
-    <div class="manual-hero-progress" aria-live="polite">
-      <span class="manual-kicker">Seu progresso</span>
-      <div class="manual-progress-number" id="manualHeroProgressNumber">0%</div>
-      <div class="manual-progress-label" id="manualHeroProgressLabel">Nenhuma verificação concluída.</div>
-      <div class="manual-progress-track" role="progressbar" aria-label="Progresso no manual" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="manualHeroProgress"><span></span></div>
-      <div class="manual-progress-label">Atalho: <span class="manual-keyboard"><kbd>Alt</kbd><span>+</span><kbd>M</kbd></span></div>
-    </div>
-  </div>
-
-  <div class="manual-layout">
-    <aside class="card manual-sidebar no-print" aria-label="Navegação do manual">
-      <h3>Pesquisar no manual</h3>
-      <div class="manual-search-wrap">
-        <span class="manual-search-icon" aria-hidden="true">⌕</span>
-        <input id="manualSearchInput" type="search" placeholder="Ex.: irradiação, payback, catálogo" autocomplete="off" aria-describedby="manualSearchStatus">
-        <button class="manual-search-clear" id="clearManualSearchBtn" type="button" title="Limpar pesquisa" aria-label="Limpar pesquisa">✕</button>
-      </div>
-      <div class="manual-search-status" id="manualSearchStatus" aria-live="polite">Digite um termo para localizar etapas, telas e dúvidas.</div>
-      <nav class="manual-toc">
-        <button class="manual-toc-btn active" type="button" data-manual-target="manual-visao"><span class="manual-toc-number">1</span><span>Visão geral</span></button>
-        <button class="manual-toc-btn" type="button" data-manual-target="manual-percurso"><span class="manual-toc-number">2</span><span>Percurso guiado</span></button>
-        <button class="manual-toc-btn" type="button" data-manual-target="manual-telas"><span class="manual-toc-number">3</span><span>Mapa das telas</span></button>
-        <button class="manual-toc-btn" type="button" data-manual-target="manual-resultados"><span class="manual-toc-number">4</span><span>Resultados</span></button>
-        <button class="manual-toc-btn" type="button" data-manual-target="manual-checklist"><span class="manual-toc-number">5</span><span>Checklist</span></button>
-        <button class="manual-toc-btn" type="button" data-manual-target="manual-faq"><span class="manual-toc-number">6</span><span>Dúvidas frequentes</span></button>
-        <button class="manual-toc-btn" type="button" data-manual-target="manual-quiz"><span class="manual-toc-number">7</span><span>Teste rápido</span></button>
-      </nav>
-      <div class="manual-side-progress">
-        <div class="manual-side-progress-head"><span>Itens conferidos</span><span id="manualSideProgressCount">0/0</span></div>
-        <div class="manual-progress-track" role="progressbar" aria-label="Itens conferidos" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="manualSideProgress"><span></span></div>
-        <button class="btn small ghost" id="manualResetProgressBtn" type="button" style="width:100%;margin-top:8px">Reiniciar progresso</button>
-      </div>
-    </aside>
-
-    <div class="manual-content">
-      <div class="manual-no-results" id="manualNoResults">
-        <strong>Nenhum tópico encontrado.</strong><br>
-        Tente pesquisar outra expressão ou limpe o campo de busca.
-      </div>
-
-      <section class="manual-section" id="manual-visao">
-        <div class="manual-section-head"><span class="manual-section-icon">1</span><div><h3>Visão geral do fluxo</h3><p>Uma sequência simples para transformar dados da unidade consumidora em estudo técnico e econômico preliminar.</p></div></div>
-        <div class="manual-overview-grid">
-          <article class="manual-card manual-flow-card manual-search-item" data-manual-search="começar fluxo dados de entrada projeto consumo localização área">
-            <span class="manual-flow-number">1</span><h4>Defina os dados de entrada</h4><p>Identifique o projeto, informe o consumo, localize a unidade e descreva a área disponível para instalação.</p>
-          </article>
-          <article class="manual-card manual-flow-card manual-search-item" data-manual-search="engenharia catálogo equipamento dimensionamento configuração elétrica geração">
-            <span class="manual-flow-number">2</span><h4>Desenvolva a solução</h4><p>Revise o catálogo, gere recomendações, escolha a arquitetura e confira a compatibilidade elétrica preliminar.</p>
-          </article>
-          <article class="manual-card manual-flow-card manual-search-item" data-manual-search="economia cenário comparador materiais memorial especificação relatório exportar">
-            <span class="manual-flow-number">3</span><h4>Analise e documente</h4><p>Examine geração e viabilidade, compare cenários e produza materiais, memorial, especificação e relatórios.</p>
-          </article>
-        </div>
-        <div class="manual-card mt manual-search-item" data-manual-search="barra superior novo salvar importar exportar pdf imprimir manual backup">
-          <h4>Comandos da barra superior</h4>
-          <div class="manual-command-grid">
-            <div class="manual-command"><b>Novo</b><span>Inicia outro projeto.</span></div>
-            <div class="manual-command"><b>Salvar</b><span>Registra o projeto no armazenamento local do navegador.</span></div>
-            <div class="manual-command"><b>Importar</b><span>Restaura um projeto a partir de arquivo JSON.</span></div>
-            <div class="manual-command"><b>Exportar</b><span>Gera um arquivo JSON para backup ou transferência.</span></div>
-            <div class="manual-command"><b>PDF / Imprimir</b><span>Abre a saída executiva para impressão ou gravação em PDF.</span></div>
-            <div class="manual-command"><b>Manual</b><span>Retorna a este guia a qualquer momento.</span></div>
-          </div>
-        </div>
-        <div class="notice warning mt manual-search-item" data-manual-search="aviso legal preliminar validação profissional art rrt projeto executivo responsabilidade">
-          <strong>Regra de uso responsável:</strong> o SolarPro é uma ferramenta de pré-dimensionamento. Antes de contratar, comprar ou executar, confirme dados locais, fichas técnicas, certificações, requisitos da distribuidora e valide o estudo por profissional legalmente habilitado.
-        </div>
-      </section>
-
-      <section class="manual-section" id="manual-percurso">
-        <div class="manual-section-head"><span class="manual-section-icon">2</span><div><h3>Percurso guiado</h3><p>Avance pelas nove etapas. Use “Abrir esta tela” para executar cada tarefa no próprio sistema.</p></div></div>
-        <div class="manual-card manual-stepper manual-search-item" data-manual-search="percurso passo a passo projeto consumo irradiação área catálogo dimensionamento configuração geração economia relatórios">
-          <div class="manual-step-tabs" role="tablist" aria-label="Etapas do manual">
-            <button class="manual-step-tab active" type="button" role="tab" aria-selected="true" data-manual-step="0" data-manual-step-key="step-project"><span>1</span>Projeto</button>
-            <button class="manual-step-tab" type="button" role="tab" aria-selected="false" data-manual-step="1" data-manual-step-key="step-consumption"><span>2</span>Consumo</button>
-            <button class="manual-step-tab" type="button" role="tab" aria-selected="false" data-manual-step="2" data-manual-step-key="step-solar"><span>3</span>Irradiação</button>
-            <button class="manual-step-tab" type="button" role="tab" aria-selected="false" data-manual-step="3" data-manual-step-key="step-area"><span>4</span>Área</button>
-            <button class="manual-step-tab" type="button" role="tab" aria-selected="false" data-manual-step="4" data-manual-step-key="step-catalogs"><span>5</span>Catálogos</button>
-            <button class="manual-step-tab" type="button" role="tab" aria-selected="false" data-manual-step="5" data-manual-step-key="step-dimensioning"><span>6</span>Dimensionar</button>
-            <button class="manual-step-tab" type="button" role="tab" aria-selected="false" data-manual-step="6" data-manual-step-key="step-configuration"><span>7</span>Configurar</button>
-            <button class="manual-step-tab" type="button" role="tab" aria-selected="false" data-manual-step="7" data-manual-step-key="step-analysis"><span>8</span>Analisar</button>
-            <button class="manual-step-tab" type="button" role="tab" aria-selected="false" data-manual-step="8" data-manual-step-key="step-reports"><span>9</span>Documentar</button>
-          </div>
-
-          <div class="manual-step-panel active" role="tabpanel" data-manual-step-panel="0">
-            <div class="manual-step-grid"><div><span class="manual-step-label">Etapa 1 de 9</span><h4>Identifique o projeto</h4><p>Comece pelos dados que aparecerão nos cálculos e relatórios.</p><ol><li>Clique em <strong>Novo</strong> se desejar iniciar um cadastro limpo.</li><li>Informe nome do projeto, cliente, endereço, município e UF.</li><li>Confira concessionária, classe tarifária, tipo de unidade, ligação, tensão, fases e grupo tarifário.</li><li>Preencha responsável, data, revisão e observações.</li><li>Use <strong>Salvar</strong> para registrar o projeto no navegador.</li></ol></div><aside class="manual-step-tip"><b>Por que esta etapa importa</b><p>Município e UF também alimentam a busca automática de coordenadas e irradiação. Ligação, tensão e fases participam da seleção da solução elétrica.</p></aside></div>
-            <div class="manual-step-actions"><a class="btn primary" href="#page-project" data-go="project">Abrir Dados do projeto</a><label class="manual-complete"><input type="checkbox" data-manual-check="step-project"><span>Concluí esta etapa</span></label></div>
-          </div>
-
-          <div class="manual-step-panel" role="tabpanel" data-manual-step-panel="1">
-            <div class="manual-step-grid"><div><span class="manual-step-label">Etapa 2 de 9</span><h4>Informe o consumo de energia</h4><p>O dimensionamento parte do histórico ou da média simplificada e incorpora cargas futuras.</p><ol><li>Escolha entre <strong>Histórico mensal</strong> e <strong>Média simplificada</strong>.</li><li>Revise tarifa efetiva, fatura média, parcela não compensável e custo de disponibilidade.</li><li>No modo histórico, preencha os 12 meses; valores iguais a zero não entram na média.</li><li>Cadastre cargas futuras com potência, quantidade, horas por dia, dias por mês e utilização.</li><li>Confira o resumo calculado antes de prosseguir.</li></ol></div><aside class="manual-step-tip"><b>Boa prática</b><p>Use dados coerentes com as faturas reais. Cargas futuras devem representar ampliações efetivamente previstas, para não superestimar a potência necessária.</p></aside></div>
-            <div class="manual-step-actions"><a class="btn primary" href="#page-consumption" data-go="consumption">Abrir Consumo de energia</a><label class="manual-complete"><input type="checkbox" data-manual-check="step-consumption"><span>Concluí esta etapa</span></label></div>
-          </div>
-
-          <div class="manual-step-panel" role="tabpanel" data-manual-step-panel="2">
-            <div class="manual-step-grid"><div><span class="manual-step-label">Etapa 3 de 9</span><h4>Obtenha e revise o recurso solar</h4><p>O sistema pode consultar automaticamente a irradiação do município, mantendo os valores editáveis.</p><ol><li>Confirme município e UF em <strong>Dados do projeto</strong>.</li><li>Clique em <strong>Buscar irradiação</strong> ou utilize os dados salvos em cache.</li><li>Confira latitude, longitude, fonte, data/período e série mensal.</li><li>Para maior precisão, selecione coordenadas manuais e informe o ponto real da instalação.</li><li>Revise temperaturas, altitude, orientação, inclinação, compensação, autoconsumo e perdas.</li></ol></div><aside class="manual-step-tip"><b>Rastreabilidade</b><p>A sede municipal é adequada ao pré-dimensionamento. O projeto executivo deve validar o ponto real, sombreamento, horizonte, orientação, inclinação e a fonte solar aplicável.</p></aside></div>
-            <div class="manual-step-actions"><a class="btn primary" href="#page-solar" data-go="solar">Abrir Localização e recurso solar</a><label class="manual-complete"><input type="checkbox" data-manual-check="step-solar"><span>Concluí esta etapa</span></label></div>
-          </div>
-
-          <div class="manual-step-panel" role="tabpanel" data-manual-step-panel="3">
-            <div class="manual-step-grid"><div><span class="manual-step-label">Etapa 4 de 9</span><h4>Descreva a área de instalação</h4><p>Cadastre um ou mais planos de cobertura para limitar fisicamente a solução.</p><ol><li>Clique em <strong>Adicionar plano</strong> para cada água de telhado ou superfície.</li><li>Informe tipo, comprimento, largura e área ocupada por obstáculos.</li><li>Registre orientação, inclinação e carga limite.</li><li>Confira área útil, resumo de ocupação e croqui esquemático.</li><li>Corrija dimensões ou obstáculos antes de dimensionar.</li></ol></div><aside class="manual-step-tip"><b>Limite do croqui</b><p>A representação é indicativa e não substitui levantamento dimensional, projeto de layout, estudo de sombreamento ou avaliação estrutural.</p></aside></div>
-            <div class="manual-step-actions"><a class="btn primary" href="#page-area" data-go="area">Abrir Área de instalação</a><label class="manual-complete"><input type="checkbox" data-manual-check="step-area"><span>Concluí esta etapa</span></label></div>
-          </div>
-
-          <div class="manual-step-panel" role="tabpanel" data-manual-step-panel="4">
-            <div class="manual-step-grid"><div><span class="manual-step-label">Etapa 5 de 9</span><h4>Revise equipamentos e exemplos</h4><p>Antes de selecionar a solução, confira a origem e a aplicabilidade dos dados técnicos.</p><ol><li>Consulte módulos, inversores string e microinversores.</li><li>Abra a fonte, verifique data de consulta, revisão, mercado e status do cadastro.</li><li>Cadastre ou importe equipamentos quando necessário.</li><li>Use os exemplos para compreender arranjos calculados e casos publicados.</li><li>Não trate configuração de referência como obra executada nem preço estimado como cotação.</li></ol></div><aside class="manual-step-tip"><b>Conferência obrigatória</b><p>Confirme o sufixo exato do modelo, mercado, certificações, garantia regional e revisão da ficha antes de especificar ou comprar.</p></aside></div>
-            <div class="manual-step-actions"><a class="btn primary" href="#page-catalogs" data-go="catalogs">Abrir Catálogos</a><a class="btn" href="#page-examples" data-go="examples">Ver Exemplos reais</a><label class="manual-complete"><input type="checkbox" data-manual-check="step-catalogs"><span>Concluí esta etapa</span></label></div>
-          </div>
-
-          <div class="manual-step-panel" role="tabpanel" data-manual-step-panel="5">
-            <div class="manual-step-grid"><div><span class="manual-step-label">Etapa 6 de 9</span><h4>Gere e compare recomendações</h4><p>O motor compara módulos e arquiteturas com base nos dados informados.</p><ol><li>Clique em <strong>Gerar recomendações</strong>.</li><li>Compare as opções de módulo econômico, equilibrado e de maior eficiência.</li><li>Examine alternativas com inversor string e microinversor.</li><li>Confira área, potência, tensão, corrente, faixa MPPT e relação CC/CA.</li><li>Selecione a alternativa mais adequada para continuar.</li></ol></div><aside class="manual-step-tip"><b>Quando revisar</b><p>Se não houver solução compatível, volte aos dados de consumo, área, temperaturas ou catálogo. Não ignore alertas elétricos para forçar uma combinação.</p></aside></div>
-            <div class="manual-step-actions"><a class="btn primary" href="#page-dimensioning" data-go="dimensioning">Abrir Dimensionamento</a><label class="manual-complete"><input type="checkbox" data-manual-check="step-dimensioning"><span>Concluí esta etapa</span></label></div>
-          </div>
-
-          <div class="manual-step-panel" role="tabpanel" data-manual-step-panel="6">
-            <div class="manual-step-grid"><div><span class="manual-step-label">Etapa 7 de 9</span><h4>Valide a configuração elétrica preliminar</h4><p>Confira como os módulos foram agrupados e se os limites dos conversores foram atendidos.</p><ol><li>Use <strong>Configurar automaticamente</strong> para gerar o arranjo.</li><li>Leia a descrição de strings, grupos ou entradas de microinversores.</li><li>Examine todas as verificações técnicas e respectivos alertas.</li><li>Observe o diagrama unifilar simplificado.</li><li>Alterne a arquitetura para comparar string e microinversor, quando pertinente.</li></ol></div><aside class="manual-step-tip"><b>Escopo preliminar</b><p>O diagrama não substitui projeto executivo, coordenação de proteção, cálculo de cabos, curto-circuito, aterramento ou homologação junto à distribuidora.</p></aside></div>
-            <div class="manual-step-actions"><a class="btn primary" href="#page-configuration" data-go="configuration">Abrir Configuração elétrica</a><label class="manual-complete"><input type="checkbox" data-manual-check="step-configuration"><span>Concluí esta etapa</span></label></div>
-          </div>
-
-          <div class="manual-step-panel" role="tabpanel" data-manual-step-panel="7">
-            <div class="manual-step-grid"><div><span class="manual-step-label">Etapa 8 de 9</span><h4>Analise geração e viabilidade</h4><p>Use as telas técnicas e econômicas em conjunto, sem se limitar a um único indicador.</p><ol><li>Na geração, confira produção mensal, autoconsumo, injeção e saldo energético.</li><li>Na análise econômica, revise todos os custos e o cenário selecionado.</li><li>Examine fluxo de caixa, payback, VPL, TIR e custo nivelado de energia.</li><li>Compare cenários tarifários e sensibilidade das premissas.</li><li>Use o comparador para confrontar alternativas técnicas e econômicas.</li></ol></div><aside class="manual-step-tip"><b>Leitura prudente</b><p>Geração, economia e retorno dependem de irradiação, instalação, tarifas, regras de compensação, custos e legislação. Trate-os como estimativas, não garantias.</p></aside></div>
-            <div class="manual-step-actions"><a class="btn primary" href="#page-generation" data-go="generation">Abrir Geração</a><a class="btn" href="#page-economics" data-go="economics">Abrir Análise econômica</a><label class="manual-complete"><input type="checkbox" data-manual-check="step-analysis"><span>Concluí esta etapa</span></label></div>
-          </div>
-
-          <div class="manual-step-panel" role="tabpanel" data-manual-step-panel="8">
-            <div class="manual-step-grid"><div><span class="manual-step-label">Etapa 9 de 9</span><h4>Gere documentos e faça backup</h4><p>Finalize o estudo com saídas revisáveis e preserve os dados do projeto.</p><ol><li>Confira a lista preliminar de materiais e suas premissas.</li><li>Leia o memorial de cálculo e a especificação técnica básica.</li><li>Abra o relatório executivo e utilize PDF / Imprimir.</li><li>Exporte o resumo em Excel/CSV quando necessário.</li><li>Exporte o projeto em JSON e guarde o arquivo como backup.</li></ol></div><aside class="manual-step-tip"><b>Antes de emitir</b><p>Revise entradas, alertas, fontes técnicas, custos, cenários e avisos. Os documentos gerados permanecem preliminares e sujeitos a validação profissional.</p></aside></div>
-            <div class="manual-step-actions"><a class="btn primary" href="#page-reports" data-go="reports">Abrir Relatórios e exportações</a><a class="btn" href="#page-materials" data-go="materials">Ver Lista de materiais</a><label class="manual-complete"><input type="checkbox" data-manual-check="step-reports"><span>Concluí esta etapa</span></label></div>
-          </div>
-
-          <div class="manual-step-controls no-print"><button class="btn small" id="manualPrevStep" type="button">← Etapa anterior</button><span class="manual-step-counter" id="manualStepCounter">Etapa 1 de 9</span><button class="btn small primary" id="manualNextStep" type="button">Próxima etapa →</button></div>
-        </div>
-      </section>
-
-      <section class="manual-section" id="manual-telas">
-        <div class="manual-section-head"><span class="manual-section-icon">3</span><div><h3>Mapa das telas</h3><p>Localize rapidamente cada módulo. Os textos abaixo reproduzem a finalidade indicada no próprio SolarPro.</p></div></div>
-        <div class="manual-screen-grid">
-          <article class="manual-card manual-screen-card manual-search-item" data-manual-search="Painel do projeto Visão consolidada do consumo, dimensionamento, solução técnica, investimento e alertas. Visão geral">
-              <div class="manual-screen-top"><span class="manual-screen-icon" aria-hidden="true">▦</span><span class="manual-screen-category">Visão geral</span></div>
-              <h4>Painel do projeto</h4>
-              <p>Visão consolidada do consumo, dimensionamento, solução técnica, investimento e alertas.</p>
-              <a class="btn small" href="#page-dashboard" data-go="dashboard">Abrir esta tela</a>
-            </article>
-            <article class="manual-card manual-screen-card manual-search-item" data-manual-search="Dados do projeto Identificação da unidade consumidora e parâmetros de conexão usados nos relatórios. Dados de entrada">
-              <div class="manual-screen-top"><span class="manual-screen-icon" aria-hidden="true">⌂</span><span class="manual-screen-category">Dados de entrada</span></div>
-              <h4>Dados do projeto</h4>
-              <p>Identificação da unidade consumidora e parâmetros de conexão usados nos relatórios.</p>
-              <a class="btn small" href="#page-project" data-go="project">Abrir esta tela</a>
-            </article>
-            <article class="manual-card manual-screen-card manual-search-item" data-manual-search="Consumo de energia Informe o histórico mensal ou use o modo simplificado. Cargas futuras entram automaticamente no consumo de projeto. Dados de entrada">
-              <div class="manual-screen-top"><span class="manual-screen-icon" aria-hidden="true">⌁</span><span class="manual-screen-category">Dados de entrada</span></div>
-              <h4>Consumo de energia</h4>
-              <p>Informe o histórico mensal ou use o modo simplificado. Cargas futuras entram automaticamente no consumo de projeto.</p>
-              <a class="btn small" href="#page-consumption" data-go="consumption">Abrir esta tela</a>
-            </article>
-            <article class="manual-card manual-screen-card manual-search-item" data-manual-search="Localização e recurso solar Busque automaticamente a irradiação global horizontal média diária e a série mensal a partir do município e da UF do projeto. Os valores permanecem editáveis. Dados de entrada">
-              <div class="manual-screen-top"><span class="manual-screen-icon" aria-hidden="true">☀</span><span class="manual-screen-category">Dados de entrada</span></div>
-              <h4>Localização e recurso solar</h4>
-              <p>Busque automaticamente a irradiação global horizontal média diária e a série mensal a partir do município e da UF do projeto. Os valores permanecem editáveis.</p>
-              <a class="btn small" href="#page-solar" data-go="solar">Abrir esta tela</a>
-            </article>
-            <article class="manual-card manual-screen-card manual-search-item" data-manual-search="Área de instalação Cadastre um ou mais planos de cobertura. A ocupação considera área útil, obstáculos e fator de espaçamento. Dados de entrada">
-              <div class="manual-screen-top"><span class="manual-screen-icon" aria-hidden="true">▱</span><span class="manual-screen-category">Dados de entrada</span></div>
-              <h4>Área de instalação</h4>
-              <p>Cadastre um ou mais planos de cobertura. A ocupação considera área útil, obstáculos e fator de espaçamento.</p>
-              <a class="btn small" href="#page-area" data-go="area">Abrir esta tela</a>
-            </article>
-            <article class="manual-card manual-screen-card manual-search-item" data-manual-search="Catálogos de equipamentos Consulte, compare, cadastre ou importe equipamentos. O catálogo inicial contém modelos reais com fonte, data de consulta e nível de verificação. Engenharia">
-              <div class="manual-screen-top"><span class="manual-screen-icon" aria-hidden="true">▤</span><span class="manual-screen-category">Engenharia</span></div>
-              <h4>Catálogos de equipamentos</h4>
-              <p>Consulte, compare, cadastre ou importe equipamentos. O catálogo inicial contém modelos reais com fonte, data de consulta e nível de verificação.</p>
-              <a class="btn small" href="#page-catalogs" data-go="catalogs">Abrir esta tela</a>
-            </article>
-            <article class="manual-card manual-screen-card manual-search-item" data-manual-search="Exemplos com equipamentos reais Configurações de referência calculadas pelo SolarPro e casos publicados pelos próprios fabricantes. As configurações calculadas não representam obras executadas. Engenharia">
-              <div class="manual-screen-top"><span class="manual-screen-icon" aria-hidden="true">▣</span><span class="manual-screen-category">Engenharia</span></div>
-              <h4>Exemplos com equipamentos reais</h4>
-              <p>Configurações de referência calculadas pelo SolarPro e casos publicados pelos próprios fabricantes. As configurações calculadas não representam obras executadas.</p>
-              <a class="btn small" href="#page-examples" data-go="examples">Abrir esta tela</a>
-            </article>
-            <article class="manual-card manual-screen-card manual-search-item" data-manual-search="Dimensionamento e seleção automática Compare módulos e arquiteturas. O motor verifica área, potência, tensão, corrente, faixa MPPT e relação CC/CA. Engenharia">
-              <div class="manual-screen-top"><span class="manual-screen-icon" aria-hidden="true">◫</span><span class="manual-screen-category">Engenharia</span></div>
-              <h4>Dimensionamento e seleção automática</h4>
-              <p>Compare módulos e arquiteturas. O motor verifica área, potência, tensão, corrente, faixa MPPT e relação CC/CA.</p>
-              <a class="btn small" href="#page-dimensioning" data-go="dimensioning">Abrir esta tela</a>
-            </article>
-            <article class="manual-card manual-screen-card manual-search-item" data-manual-search="Configuração elétrica preliminar Arranjo sugerido, verificações de compatibilidade e diagrama unifilar simplificado. Engenharia">
-              <div class="manual-screen-top"><span class="manual-screen-icon" aria-hidden="true">⌘</span><span class="manual-screen-category">Engenharia</span></div>
-              <h4>Configuração elétrica preliminar</h4>
-              <p>Arranjo sugerido, verificações de compatibilidade e diagrama unifilar simplificado.</p>
-              <a class="btn small" href="#page-configuration" data-go="configuration">Abrir esta tela</a>
-            </article>
-            <article class="manual-card manual-screen-card manual-search-item" data-manual-search="Geração de energia Produção mensal, produtividade, autoconsumo, injeção e degradação estimada. Engenharia">
-              <div class="manual-screen-top"><span class="manual-screen-icon" aria-hidden="true">↗</span><span class="manual-screen-category">Engenharia</span></div>
-              <h4>Geração de energia</h4>
-              <p>Produção mensal, produtividade, autoconsumo, injeção e degradação estimada.</p>
-              <a class="btn small" href="#page-generation" data-go="generation">Abrir esta tela</a>
-            </article>
-            <article class="manual-card manual-screen-card manual-search-item" data-manual-search="Análise econômica Investimento detalhado, fluxo de caixa, payback, VPL, TIR e custo nivelado de energia. Viabilidade">
-              <div class="manual-screen-top"><span class="manual-screen-icon" aria-hidden="true">R$</span><span class="manual-screen-category">Viabilidade</span></div>
-              <h4>Análise econômica</h4>
-              <p>Investimento detalhado, fluxo de caixa, payback, VPL, TIR e custo nivelado de energia.</p>
-              <a class="btn small" href="#page-economics" data-go="economics">Abrir esta tela</a>
-            </article>
-            <article class="manual-card manual-screen-card manual-search-item" data-manual-search="Cenários tarifários Compare reajuste de tarifa, compensação da energia exportada, inflação, consumo e taxa de desconto. Viabilidade">
-              <div class="manual-screen-top"><span class="manual-screen-icon" aria-hidden="true">≋</span><span class="manual-screen-category">Viabilidade</span></div>
-              <h4>Cenários tarifários</h4>
-              <p>Compare reajuste de tarifa, compensação da energia exportada, inflação, consumo e taxa de desconto.</p>
-              <a class="btn small" href="#page-scenarios" data-go="scenarios">Abrir esta tela</a>
-            </article>
-            <article class="manual-card manual-screen-card manual-search-item" data-manual-search="Comparador de soluções Compare alternativas técnicas e econômicas produzidas pelo catálogo atual. Viabilidade">
-              <div class="manual-screen-top"><span class="manual-screen-icon" aria-hidden="true">⇄</span><span class="manual-screen-category">Viabilidade</span></div>
-              <h4>Comparador de soluções</h4>
-              <p>Compare alternativas técnicas e econômicas produzidas pelo catálogo atual.</p>
-              <a class="btn small" href="#page-comparator" data-go="comparator">Abrir esta tela</a>
-            </article>
-            <article class="manual-card manual-screen-card manual-search-item" data-manual-search="Lista preliminar de materiais Quantitativos indicativos gerados a partir da configuração selecionada e das distâncias informadas. Documentação">
-              <div class="manual-screen-top"><span class="manual-screen-icon" aria-hidden="true">☷</span><span class="manual-screen-category">Documentação</span></div>
-              <h4>Lista preliminar de materiais</h4>
-              <p>Quantitativos indicativos gerados a partir da configuração selecionada e das distâncias informadas.</p>
-              <a class="btn small" href="#page-materials" data-go="materials">Abrir esta tela</a>
-            </article>
-            <article class="manual-card manual-screen-card manual-search-item" data-manual-search="Memorial de cálculo Documento gerado automaticamente com premissas, fórmulas, substituições e verificações. Documentação">
-              <div class="manual-screen-top"><span class="manual-screen-icon" aria-hidden="true">¶</span><span class="manual-screen-category">Documentação</span></div>
-              <h4>Memorial de cálculo</h4>
-              <p>Documento gerado automaticamente com premissas, fórmulas, substituições e verificações.</p>
-              <a class="btn small" href="#page-memorial" data-go="memorial">Abrir esta tela</a>
-            </article>
-            <article class="manual-card manual-screen-card manual-search-item" data-manual-search="Especificação técnica básica Escopo preliminar do fornecimento, instalação, testes, documentação e garantias. Documentação">
-              <div class="manual-screen-top"><span class="manual-screen-icon" aria-hidden="true">✓</span><span class="manual-screen-category">Documentação</span></div>
-              <h4>Especificação técnica básica</h4>
-              <p>Escopo preliminar do fornecimento, instalação, testes, documentação e garantias.</p>
-              <a class="btn small" href="#page-specification" data-go="specification">Abrir esta tela</a>
-            </article>
-            <article class="manual-card manual-screen-card manual-search-item" data-manual-search="Relatórios e exportações Gere saídas técnicas e comerciais a partir do projeto atual. Documentação">
-              <div class="manual-screen-top"><span class="manual-screen-icon" aria-hidden="true">⇩</span><span class="manual-screen-category">Documentação</span></div>
-              <h4>Relatórios e exportações</h4>
-              <p>Gere saídas técnicas e comerciais a partir do projeto atual.</p>
-              <a class="btn small" href="#page-reports" data-go="reports">Abrir esta tela</a>
-            </article>
-            <article class="manual-card manual-screen-card manual-search-item" data-manual-search="Configurações e referências Parâmetros gerais, horizonte de análise, avisos e base regulatória configurável. Administração">
-              <div class="manual-screen-top"><span class="manual-screen-icon" aria-hidden="true">⚙</span><span class="manual-screen-category">Administração</span></div>
-              <h4>Configurações e referências</h4>
-              <p>Parâmetros gerais, horizonte de análise, avisos e base regulatória configurável.</p>
-              <a class="btn small" href="#page-settings" data-go="settings">Abrir esta tela</a>
-            </article>
-        </div>
-      </section>
-
-      <section class="manual-section" id="manual-resultados">
-        <div class="manual-section-head"><span class="manual-section-icon">4</span><div><h3>Como ler os resultados</h3><p>Use os indicadores como um conjunto de evidências e sempre relacione cada saída às premissas de entrada.</p></div></div>
-        <div class="manual-result-grid">
-          <article class="manual-card manual-result-card manual-search-item" data-manual-search="consumo geração mensal anual kwh compensação"><span class="manual-result-mark">kWh</span><div><h4>Consumo e geração</h4><p>Compare o histórico informado com a produção estimada, observando diferenças mensais, autoconsumo, injeção e saldo energético.</p></div></article>
-          <article class="manual-card manual-result-card manual-search-item" data-manual-search="potência necessária instalada kWp módulo arquitetura"><span class="manual-result-mark">kWp</span><div><h4>Potência necessária e instalada</h4><p>A potência necessária decorre das premissas de consumo e recurso solar; a instalada corresponde à combinação efetivamente selecionada no catálogo.</p></div></article>
-          <article class="manual-card manual-result-card manual-search-item" data-manual-search="relação cc ca inversor string microinversor compatibilidade mppt tensão corrente"><span class="manual-result-mark">CC/CA</span><div><h4>Compatibilidade elétrica</h4><p>Não avalie apenas a potência. Leia também os testes de tensão, corrente, faixa MPPT, entradas, strings e relação entre potência CC e CA.</p></div></article>
-          <article class="manual-card manual-result-card manual-search-item" data-manual-search="perdas pr fator desempenho temperatura sujeira sombreamento cabos"><span class="manual-result-mark">PR</span><div><h4>Perdas e desempenho</h4><p>As perdas são combinadas de forma multiplicativa e influenciam diretamente a estimativa de produção. Revise cada parcela conforme o local.</p></div></article>
-          <article class="manual-card manual-result-card manual-search-item" data-manual-search="investimento fluxo caixa payback vpl tir lcoe economia"><span class="manual-result-mark">R$</span><div><h4>Viabilidade econômica</h4><p>Investimento, economia, payback, VPL, TIR e LCOE dependem dos custos, tarifa, compensação, inflação, crescimento do consumo e taxa de desconto.</p></div></article>
-          <article class="manual-card manual-result-card manual-search-item" data-manual-search="alerta status revisar compatível incompatível risco"><span class="manual-result-mark">!</span><div><h4>Status e alertas</h4><p>Alertas sinalizam premissas incompletas ou combinações que exigem revisão. Volte à tela indicada e corrija a causa antes de emitir o estudo.</p></div></article>
-          <article class="manual-card manual-result-card manual-search-item" data-manual-search="fonte fabricante rastreabilidade data consulta revisão mercado status preço estimado"><span class="manual-result-mark">↗</span><div><h4>Rastreabilidade do catálogo</h4><p>Abra as fontes e confira revisão, mercado, certificações e garantia. Preços estimados são editáveis e não constituem cotação de fabricante.</p></div></article>
-          <article class="manual-card manual-result-card manual-search-item" data-manual-search="memorial especificação relatório preliminar projeto executivo art rrt"><span class="manual-result-mark">¶</span><div><h4>Documentação gerada</h4><p>Memorial, especificação, materiais e relatório organizam o pré-dimensionamento, mas permanecem sujeitos à revisão e responsabilidade técnica.</p></div></article>
-        </div>
-      </section>
-
-      <section class="manual-section" id="manual-checklist">
-        <div class="manual-section-head"><span class="manual-section-icon">5</span><div><h3>Checklist antes de concluir</h3><p>Marque cada item somente após conferir os dados no projeto atual.</p></div></div>
-        <div class="manual-card manual-search-item" data-manual-search="checklist conferência final projeto consumo irradiação área catálogo alertas custos documentos backup">
-          <div class="manual-checklist">
-            <label class="manual-check-item"><input type="checkbox" data-manual-check="final-identification"><span>Identificação, ligação, tensão, fases, responsável, data e revisão estão corretos.</span></label>
-            <label class="manual-check-item"><input type="checkbox" data-manual-check="final-consumption"><span>Histórico ou média de consumo, tarifa e cargas futuras foram conferidos.</span></label>
-            <label class="manual-check-item"><input type="checkbox" data-manual-check="final-solar"><span>Coordenadas, fonte solar, série mensal, orientação, inclinação e perdas foram revisadas.</span></label>
-            <label class="manual-check-item"><input type="checkbox" data-manual-check="final-area"><span>Planos de instalação, obstáculos, área útil e carga limite representam a situação real.</span></label>
-            <label class="manual-check-item"><input type="checkbox" data-manual-check="final-catalog"><span>Modelos, fontes, revisões, mercado, certificações, garantias e preços foram verificados.</span></label>
-            <label class="manual-check-item"><input type="checkbox" data-manual-check="final-compatibility"><span>Todos os alertas de tensão, corrente, MPPT, área e relação CC/CA foram avaliados.</span></label>
-            <label class="manual-check-item"><input type="checkbox" data-manual-check="final-economics"><span>Custos, tarifa, compensação, inflação, desconto e cenários econômicos estão justificados.</span></label>
-            <label class="manual-check-item"><input type="checkbox" data-manual-check="final-comparison"><span>Alternativas técnicas e econômicas relevantes foram comparadas.</span></label>
-            <label class="manual-check-item"><input type="checkbox" data-manual-check="final-documents"><span>Materiais, memorial, especificação e relatório foram lidos antes da emissão.</span></label>
-            <label class="manual-check-item"><input type="checkbox" data-manual-check="final-backup"><span>O projeto foi salvo e exportado em JSON para backup ou transferência.</span></label>
-          </div>
-        </div>
-      </section>
-
-      <section class="manual-section" id="manual-faq">
-        <div class="manual-section-head"><span class="manual-section-icon">6</span><div><h3>Dúvidas frequentes</h3><p>Respostas rápidas para as operações mais comuns.</p></div></div>
-        <div class="manual-faq">
-          <details class="manual-search-item" data-manual-search="começar novo projeto limpar dados"><summary>Como começo um projeto novo?</summary><div class="manual-faq-answer">Use <strong>Novo</strong> na barra superior. Em seguida, preencha <strong>Dados do projeto</strong>, informe o consumo e prossiga pelo percurso guiado.</div></details>
-          <details class="manual-search-item" data-manual-search="salvar exportar diferença navegador json backup"><summary>Qual é a diferença entre Salvar e Exportar?</summary><div class="manual-faq-answer"><strong>Salvar</strong> registra o projeto no armazenamento local do navegador e o disponibiliza no seletor superior. <strong>Exportar</strong> cria um arquivo JSON, útil para backup, transferência ou restauração posterior por meio de <strong>Importar</strong>.</div></details>
-          <details class="manual-search-item" data-manual-search="irradiação automática editar coordenada manual nasa cache pvgis"><summary>Posso editar a irradiação obtida automaticamente?</summary><div class="manual-faq-answer">Sim. Os valores permanecem editáveis. Para projeto executivo, use as coordenadas do ponto real e valide a fonte, o sombreamento, o horizonte, a orientação e a inclinação.</div></details>
-          <details class="manual-search-item" data-manual-search="adicionar cadastrar importar equipamento módulo inversor microinversor catálogo"><summary>Posso usar equipamentos que não estão no catálogo inicial?</summary><div class="manual-faq-answer">Sim. As abas de catálogo permitem adicionar equipamentos e importar um catálogo em JSON. Preencha a fonte, data, revisão, mercado e status de verificação.</div></details>
-          <details class="manual-search-item" data-manual-search="exemplo real configuração referência caso fabricante obra executada"><summary>O que significa “configuração de referência”?</summary><div class="manual-faq-answer">É uma combinação calculada pelo SolarPro com modelos reais do catálogo. Ela serve para demonstrar o arranjo e não representa necessariamente uma obra executada. Os “casos publicados” são instalações divulgadas pelos fabricantes e devem ser interpretados conforme a fonte indicada.</div></details>
-          <details class="manual-search-item" data-manual-search="alerta incompatível sem solução corrigir"><summary>O que faço quando aparece um alerta ou não há solução compatível?</summary><div class="manual-faq-answer">Leia a causa indicada e volte às entradas relacionadas: consumo, área, temperaturas, tensão/fases ou catálogo. Gere as recomendações novamente depois da correção; não ignore limites elétricos para forçar uma combinação.</div></details>
-          <details class="manual-search-item" data-manual-search="pdf imprimir relatório memorial especificação"><summary>Como gero um PDF?</summary><div class="manual-faq-answer">Use <strong>PDF / Imprimir</strong> na barra superior para a saída executiva ou os comandos específicos do memorial e da especificação. Na janela de impressão do navegador, selecione a opção de salvar como PDF.</div></details>
-          <details class="manual-search-item" data-manual-search="projeto executivo responsabilidade profissional art rrt substituir"><summary>O SolarPro substitui projeto executivo ou responsabilidade técnica?</summary><div class="manual-faq-answer">Não. O sistema produz estimativas preliminares. Dimensionamento final, inspeção, avaliação estrutural, projeto elétrico, homologação e execução devem ser validados por profissional legalmente habilitado, com a responsabilidade técnica cabível.</div></details>
-        </div>
-      </section>
-
-      <section class="manual-section" id="manual-quiz">
-        <div class="manual-section-head"><span class="manual-section-icon">7</span><div><h3>Teste rápido de aprendizagem</h3><p>Responda às três perguntas para conferir se o fluxo principal ficou claro.</p></div></div>
-        <div class="manual-quiz-grid">
-          <article class="manual-quiz-card manual-search-item" data-manual-search="teste município uf dados projeto" data-correct-answer="project" data-success="Correto. Município e UF são informados em Dados do projeto e alimentam a busca municipal."><h4>1. Em qual tela você informa município e UF?</h4><div class="manual-answer-list"><button class="manual-answer" type="button" data-manual-answer="consumption">Consumo de energia</button><button class="manual-answer" type="button" data-manual-answer="project">Dados do projeto</button><button class="manual-answer" type="button" data-manual-answer="economics">Análise econômica</button></div><div class="manual-quiz-feedback" aria-live="polite"></div></article>
-          <article class="manual-quiz-card manual-search-item" data-manual-search="teste catálogo fonte revisão certificação preço" data-correct-answer="verify" data-success="Correto. A rastreabilidade e a aplicabilidade técnica devem ser confirmadas antes do uso profissional."><h4>2. O que fazer antes de especificar um equipamento do catálogo?</h4><div class="manual-answer-list"><button class="manual-answer" type="button" data-manual-answer="price">Usar apenas o menor preço estimado</button><button class="manual-answer" type="button" data-manual-answer="verify">Conferir fonte, revisão, mercado e certificações</button><button class="manual-answer" type="button" data-manual-answer="skip">Ignorar o status do cadastro</button></div><div class="manual-quiz-feedback" aria-live="polite"></div></article>
-          <article class="manual-quiz-card manual-search-item" data-manual-search="teste payback vpl tir lcoe análise econômica" data-correct-answer="economics" data-success="Correto. Esses indicadores são apresentados na Análise econômica e podem ser comparados nos cenários."><h4>3. Onde você analisa payback, VPL, TIR e LCOE?</h4><div class="manual-answer-list"><button class="manual-answer" type="button" data-manual-answer="area">Área de instalação</button><button class="manual-answer" type="button" data-manual-answer="configuration">Configuração elétrica</button><button class="manual-answer" type="button" data-manual-answer="economics">Análise econômica</button></div><div class="manual-quiz-feedback" aria-live="polite"></div></article>
-        </div>
-        <div class="manual-quiz-summary no-print"><span id="manualQuizScore">0 de 3 perguntas respondidas</span><button class="btn small" id="manualResetQuizBtn" type="button">Refazer teste</button></div>
-      </section>
-
-      <div class="notice warning manual-search-item" data-manual-search="aviso final estudo preliminar validação técnica profissional">
-        <strong>Lembrete final:</strong> os resultados do SolarPro dependem integralmente da qualidade das entradas e das premissas selecionadas. Revise o estudo e submeta-o à validação técnica antes de qualquer decisão de contratação, aquisição ou execução.
-      </div>
-    </div>
-  </div>
-</section>
-<!-- ========== FIM DO MANUAL DIDÁTICO E INTERATIVO ========== -->
     </main>
   </div>
   <nav class="mobile-nav no-print" id="mobileNav"></nav>
@@ -1016,7 +555,7 @@ function defaultState(){
   const demoCons=[520,548,565,610,632,660,685,672,640,600,560,535];
   const irr=[5.85,5.80,5.65,5.40,5.18,5.05,5.15,5.38,5.62,5.85,5.95,5.92];
   return {
-    version:'2.3.0',
+    version:'2.2.0',
     meta:{projectName:'Exemplo técnico SolarPro — Trina + Huawei',clientName:'Cliente de exemplo',address:'',city:'',stateCode:'',responsible:'',studyDate:todayISO(),revision:'R01',notes:'Exemplo inicial com equipamentos reais de catálogo. Irradiação pode ser buscada automaticamente por município/UF; preços e dados locais permanecem editáveis.'},
     project:{utility:'',tariffClass:'Residencial',consumerType:'Residencial',connection:'bi',voltage:'220',phases:'2',tariffGroup:'B'},
     consumption:{mode:'history',tariff:0.98,simpleAverage:600,averageBill:660,nonCompensableMonthly:35,minimumGridKwh:50,months:MONTHS.map((m,i)=>({month:m,kwh:demoCons[i],bill:demoCons[i]*0.98+35,injected:0,credits:0}))},
@@ -1077,7 +616,7 @@ function normalizeState(raw){
     merged.catalogs.inverters=mergeCatalog(merged.catalogs?.inverters,pristine.catalogs.inverters,'inv_demo_');
     merged.catalogs.micros=mergeCatalog(merged.catalogs?.micros,pristine.catalogs.micros,'mic_demo_');
   }
-  merged.version='2.3.0';
+  merged.version='2.2.0';
   if(!['nasa','auto'].includes(merged.solar.irradianceProvider))merged.solar.irradianceProvider='nasa';
   merged.meta.stateCode=String(merged.meta.stateCode||'').trim().toUpperCase();
   merged.meta.city=String(merged.meta.city||'').trim();
@@ -1514,7 +1053,6 @@ function renderNav(){
 function showPage(page,scroll=true){
   activePage=page;
   $$('.page').forEach(el=>el.classList.toggle('active',el.dataset.page===page));
-  $('#manualLinkBtn')?.classList.toggle('active',page==='manual');
   renderNav();
   if(scroll)window.scrollTo({top:0,behavior:'smooth'});
   requestAnimationFrame(()=>renderPageSpecific(page));
@@ -1526,7 +1064,6 @@ function renderPageSpecific(page){
   if(page==='generation'){drawGenerationChart()}
   if(page==='economics'){drawEconomicChart()}
   if(page==='scenarios'){drawScenarioChart()}
-  if(page==='manual'){refreshManualProgress();setManualStep(manualCurrentStep,false)}
 }
 
 function renderDashboard(){
@@ -2061,130 +1598,8 @@ function printSection(section){
 }
 window.addEventListener('afterprint',()=>{$$('.page').forEach(p=>p.classList.remove('print-target'))});
 
-// ============ MANUAL DIDÁTICO E INTERATIVO ============
-const MANUAL_PROGRESS_KEY='solarpro_manual_progress_v1';
-let manualCurrentStep=0;
-let manualProgressCache={};
-
-function normalizeManualText(value=''){
-  return String(value).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
-}
-function loadManualProgress(){
-  try{
-    const raw=localStorage.getItem(MANUAL_PROGRESS_KEY);
-    if(raw)manualProgressCache=JSON.parse(raw);
-    else if(!manualProgressCache||typeof manualProgressCache!=='object'||Array.isArray(manualProgressCache))manualProgressCache={};
-  }catch(e){if(!manualProgressCache||typeof manualProgressCache!=='object'||Array.isArray(manualProgressCache))manualProgressCache={}}
-  if(!manualProgressCache||typeof manualProgressCache!=='object'||Array.isArray(manualProgressCache))manualProgressCache={};
-  return manualProgressCache;
-}
-function saveManualProgress(){
-  try{localStorage.setItem(MANUAL_PROGRESS_KEY,JSON.stringify(manualProgressCache))}catch(e){}
-}
-function refreshManualProgress(){
-  const progress=loadManualProgress();
-  const boxes=$$('[data-manual-check]');
-  const keys=[...new Set(boxes.map(box=>box.dataset.manualCheck).filter(Boolean))];
-  boxes.forEach(box=>{box.checked=!!progress[box.dataset.manualCheck]});
-  const done=keys.filter(key=>!!progress[key]).length,total=keys.length,pct=total?Math.round(done/total*100):0;
-  const heroNumber=$('#manualHeroProgressNumber'),heroLabel=$('#manualHeroProgressLabel'),sideCount=$('#manualSideProgressCount');
-  if(heroNumber)heroNumber.textContent=`${pct}%`;
-  if(heroLabel)heroLabel.textContent=done===0?'Nenhuma verificação concluída.':done===total?'Todas as verificações foram concluídas.':`${done} de ${total} verificações concluídas.`;
-  if(sideCount)sideCount.textContent=`${done}/${total}`;
-  ['manualHeroProgress','manualSideProgress'].forEach(id=>{const bar=$(`#${id}`);if(!bar)return;bar.setAttribute('aria-valuenow',String(pct));const fill=$('span',bar);if(fill)fill.style.width=`${pct}%`});
-  $$('.manual-step-tab').forEach(tab=>tab.classList.toggle('done',!!progress[tab.dataset.manualStepKey]));
-}
-function setManualStep(index,scroll=false){
-  const panels=$$('[data-manual-step-panel]'),tabs=$$('[data-manual-step]');
-  if(!panels.length)return;
-  manualCurrentStep=clamp(n(index),0,panels.length-1);
-  panels.forEach((panel,i)=>panel.classList.toggle('active',i===manualCurrentStep));
-  tabs.forEach((tab,i)=>{const active=i===manualCurrentStep;tab.classList.toggle('active',active);tab.setAttribute('aria-selected',String(active));tab.tabIndex=active?0:-1});
-  const prev=$('#manualPrevStep'),next=$('#manualNextStep'),counter=$('#manualStepCounter');
-  if(prev)prev.disabled=manualCurrentStep===0;
-  if(next){next.disabled=manualCurrentStep===panels.length-1;next.textContent=manualCurrentStep===panels.length-1?'Percurso concluído':'Próxima etapa →'}
-  if(counter)counter.textContent=`Etapa ${manualCurrentStep+1} de ${panels.length}`;
-  const activeTab=tabs[manualCurrentStep],tabStrip=activeTab?.parentElement;
-  if(activeTab&&tabStrip){const left=Math.max(0,activeTab.offsetLeft-(tabStrip.clientWidth-activeTab.offsetWidth)/2);tabStrip.scrollTo({left,behavior:'smooth'})}
-  if(scroll)$('#manual-percurso')?.scrollIntoView({behavior:'smooth',block:'start'});
-}
-function scrollManualTarget(targetId){
-  const search=$('#manualSearchInput');if(search&&search.value){search.value='';filterManual('')}
-  const target=$(`#${targetId}`);if(!target)return;
-  $$('.manual-toc-btn').forEach(btn=>btn.classList.toggle('active',btn.dataset.manualTarget===targetId));
-  target.scrollIntoView({behavior:'smooth',block:'start'});
-}
-function filterManual(value){
-  const q=normalizeManualText(value),items=$$('.manual-search-item'),sections=$$('.manual-section');
-  let visibleItems=0;
-  items.forEach(item=>{
-    const hay=normalizeManualText(`${item.dataset.manualSearch||''} ${item.textContent||''}`);
-    const match=!q||hay.includes(q);
-    item.classList.toggle('manual-filtered-out',!match);
-    if(match)visibleItems++;
-  });
-  let visibleSections=0;
-  sections.forEach(section=>{
-    const children=$$('.manual-search-item',section);
-    const ownMatch=!q||normalizeManualText(section.textContent||'').includes(q);
-    const childMatch=children.some(child=>!child.classList.contains('manual-filtered-out'));
-    const show=!q||(children.length?childMatch:ownMatch);
-    section.classList.toggle('manual-section-filtered',!show);
-    if(show)visibleSections++;
-  });
-  if(q){
-    const matchingPanel=$$('[data-manual-step-panel]').find(panel=>normalizeManualText(panel.textContent||'').includes(q));
-    if(matchingPanel)setManualStep(n(matchingPanel.dataset.manualStepPanel),false);
-  }
-  const status=$('#manualSearchStatus'),noResults=$('#manualNoResults');
-  if(status)status.textContent=q?`${visibleItems} tópico${visibleItems===1?'':'s'} encontrado${visibleItems===1?'':'s'} em ${visibleSections} ${visibleSections===1?'seção':'seções'}.`:'Digite um termo para localizar etapas, telas e dúvidas.';
-  if(noResults)noResults.classList.toggle('show',!!q&&visibleItems===0&&visibleSections===0);
-}
-function answerManualQuiz(button){
-  const card=button.closest('.manual-quiz-card');if(!card||card.dataset.answered)return;
-  card.dataset.answered='true';
-  const correct=card.dataset.correctAnswer,chosen=button.dataset.manualAnswer,isCorrect=chosen===correct;
-  $$('.manual-answer',card).forEach(answer=>{
-    answer.disabled=true;
-    if(answer.dataset.manualAnswer===correct)answer.classList.add('correct');
-    else if(answer===button&&!isCorrect)answer.classList.add('incorrect');
-  });
-  card.dataset.correct=String(isCorrect);
-  const feedback=$('.manual-quiz-feedback',card);
-  if(feedback)feedback.textContent=isCorrect?card.dataset.success:'Resposta incorreta. Observe a alternativa destacada e revise o tópico correspondente.';
-  updateManualQuizScore();
-}
-function updateManualQuizScore(){
-  const cards=$$('.manual-quiz-card'),answered=cards.filter(card=>card.dataset.answered).length,correct=cards.filter(card=>card.dataset.correct==='true').length,score=$('#manualQuizScore');
-  if(score)score.textContent=answered===cards.length?`${correct} de ${cards.length} respostas corretas`:`${answered} de ${cards.length} perguntas respondidas`;
-}
-function resetManualQuiz(){
-  $$('.manual-quiz-card').forEach(card=>{delete card.dataset.answered;delete card.dataset.correct;$$('.manual-answer',card).forEach(answer=>{answer.disabled=false;answer.classList.remove('correct','incorrect')});const feedback=$('.manual-quiz-feedback',card);if(feedback)feedback.textContent=''});
-  updateManualQuizScore();
-}
-function resetManualProgress(){
-  manualProgressCache={};
-  try{localStorage.removeItem(MANUAL_PROGRESS_KEY)}catch(e){}
-  refreshManualProgress();
-  toast('Progresso do manual reiniciado.');
-}
-function initManual(){
-  loadManualProgress();refreshManualProgress();setManualStep(0,false);updateManualQuizScore();
-  $('#manualSearchInput')?.addEventListener('input',e=>filterManual(e.target.value));
-  $('#clearManualSearchBtn')?.addEventListener('click',()=>{const input=$('#manualSearchInput');if(input){input.value='';filterManual('');input.focus()}});
-  $('#manualPrevStep')?.addEventListener('click',()=>setManualStep(manualCurrentStep-1,true));
-  $('#manualNextStep')?.addEventListener('click',()=>setManualStep(manualCurrentStep+1,true));
-  $('#manualResetProgressBtn')?.addEventListener('click',resetManualProgress);
-  $('#manualResetQuizBtn')?.addEventListener('click',resetManualQuiz);
-  document.addEventListener('change',e=>{const box=e.target.closest('[data-manual-check]');if(!box)return;manualProgressCache[box.dataset.manualCheck]=box.checked;saveManualProgress();refreshManualProgress()});
-}
-// ========== FIM DO MANUAL DIDÁTICO E INTERATIVO ==========
-
 function handleClick(e){
-  const manualTarget=e.target.closest('[data-manual-target]');if(manualTarget){scrollManualTarget(manualTarget.dataset.manualTarget);return}
-  const manualStep=e.target.closest('[data-manual-step]');if(manualStep){setManualStep(n(manualStep.dataset.manualStep),true);return}
-  const manualAnswer=e.target.closest('[data-manual-answer]');if(manualAnswer){answerManualQuiz(manualAnswer);return}
-  const go=e.target.closest('[data-go]');if(go){e.preventDefault();showPage(go.dataset.go);return}
+  const go=e.target.closest('[data-go]');if(go){showPage(go.dataset.go);return}
   const selectModule=e.target.closest('[data-select-module]');if(selectModule){state.selection.moduleId=selectModule.dataset.selectModule;recalculate(true);autoSave();toast('Módulo selecionado.');return}
   const selectInv=e.target.closest('[data-select-inverter]');if(selectInv){state.selection.architecture='string';state.selection.inverterId=selectInv.dataset.selectInverter;recalculate(true);autoSave();return}
   const selectMic=e.target.closest('[data-select-micro]');if(selectMic){state.selection.architecture='micro';state.selection.microId=selectMic.dataset.selectMicro;recalculate(true);autoSave();return}
@@ -2259,12 +1674,12 @@ $('#exportSummaryCsvBtn').addEventListener('click',exportSummaryCSV);
 $('#reportExportCatalog').addEventListener('click',exportCatalog);
 $('#closeModalBtn').addEventListener('click',closeModal);
 $('#modalBackdrop').addEventListener('click',e=>{if(e.target===$('#modalBackdrop'))closeModal()});
-window.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();if(e.altKey&&String(e.key).toLowerCase()==='m'){e.preventDefault();showPage('manual')}});
+window.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
 window.addEventListener('resize',()=>renderPageSpecific(activePage));
 
 function init(){
   state=loadInitialState();if(!state.meta.projectId)state.meta.projectId=uid('project');
-  calc=computeSystem(state);renderAll();initManual();showPage(location.hash==='#manual-de-uso'?'manual':'dashboard',false);autoSave();
+  calc=computeSystem(state);renderAll();showPage('dashboard',false);autoSave();
 }
 init();
 </script>

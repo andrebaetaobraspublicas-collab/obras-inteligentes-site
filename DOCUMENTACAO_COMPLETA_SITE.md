@@ -128,12 +128,12 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/circuitopro/` | 287904 bytes | 287904 caracteres |
 | `/reservatoriopro/` | 209145 bytes | 206623 caracteres |
 | `/bombapro/` | 788470 bytes | 779784 caracteres |
-| `/paraboltpro/` | 1147646 bytes | 1147646 caracteres |
+| `/paraboltpro/` | 1203461 bytes | 1183789 caracteres |
 | `/steelpro/` | 229160 bytes | 229160 caracteres |
 | `/cronogramapro/` | 402158 bytes | 402158 caracteres |
 | `/drenapro/` | 185925 bytes | 185925 caracteres |
 | `/taludepro/` | 97674 bytes | 97674 caracteres |
-| `/solarpro/` | 485745 bytes | 485745 caracteres |
+| `/solarpro/` | 557283 bytes | 551659 caracteres |
 | `/pgrcc/` | 67446 bytes | 67446 caracteres |
 | `/ventopro/` | 275065 bytes | 275065 caracteres |
 | `/concretopro/` | 621889 bytes | 621889 caracteres |
@@ -467,9 +467,10 @@ Arquivo: `paraboltpro/index.html`
 
 Ultima inclusao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\ParaboltPro-v2.7.1-exemplos-corrigidos.html`
-- Data: 20/07/2026
-- Alteracao: substituicao integral de `paraboltpro/index.html` pela versao 2.7.1 com exemplos corrigidos.
+- Fonte: `C:\Users\ACER\Documents\Downloads\ParaboltPro_com_manual_interativo.html`
+- Data: 20/08/2026
+- Alteracao: substituicao integral de `paraboltpro/index.html` pela nova versao com manual interativo incorporado.
+- Backup da versao anterior: `C:\Obras Inteligentes\backups\paraboltpro-index-before-manual-interativo-20260820-1739.html`
 
 Observacoes:
 
@@ -562,9 +563,10 @@ Arquivo: `solarpro/index.html`
 
 Ultima inclusao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\SolarPro_Geracao_Fotovoltaica_Irradiacao_Automatica.html`
-- Data: 21/07/2026
-- Alteracao: atualizacao do aplicativo SolarPro para nova versao standalone com irradiacao automatica.
+- Fonte: `C:\Users\ACER\Documents\Downloads\SolarPro_v2.3_manual_interativo.html`
+- Data: 20/08/2026
+- Alteracao: atualizacao do aplicativo SolarPro para a versao 2.3, com manual interativo incorporado.
+- Backup da versao anterior: `C:\Obras Inteligentes\backups\solarpro-index-before-v2-3-manual-interativo-20260820-1739.html`
 
 Observacoes:
 
