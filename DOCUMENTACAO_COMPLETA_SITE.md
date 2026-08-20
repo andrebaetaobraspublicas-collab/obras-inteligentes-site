@@ -107,6 +107,7 @@ Inventario originalmente verificado em 21/07/2026 e atualizado em 18/08/2026 par
 | 58 / OPEX PREDIAL | CriticaOpex | `/criticaopex/` | `C:\Obras Inteligentes\criticaopex\index.html` | existe | 200 |
 | 59 / PMOC | PMOC Manager | `/pmoc-manager/` | `C:\Obras Inteligentes\pmoc-manager\index.html` | existe | 200 |
 | 60 / MOBILIZACAO | MobilizaSICRO | `/mobilizasicro/` | `C:\Obras Inteligentes\mobilizasicro\index.html` | existe | 200 |
+| 61 / ACESSIBILIDADE | AcessCheck | `/acesscheck/` | `C:\Obras Inteligentes\acesscheck\index.html` | existe | 200 |
 
 ## Tamanhos verificados
 
@@ -174,6 +175,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/criticaopex/` | 631053 bytes | 631053 caracteres |
 | `/pmoc-manager/` | 604647 bytes | 604647 caracteres |
 | `/mobilizasicro/` | 1337033 bytes | 1337033 caracteres |
+| `/acesscheck/` | 174234 bytes | 171622 caracteres |
 
 ## Estrutura local principal
 
@@ -1294,6 +1296,25 @@ Observacoes:
 - Backup da home anterior salvo em `C:\Obras Inteligentes\backups\index-before-mobilizasicro-20260818-0725.html`.
 - Validar apos futuras alteracoes se abertura, banco SICRO, servicos, planejamento, rotas, composicoes, cronograma, custos e relatorios continuam carregando corretamente.
 
+### AcessCheck
+
+Rota: `/acesscheck/`  
+Arquivo: `acesscheck/index.html`
+
+Ultima inclusao:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\Animação splash screen acessibilidade.zip`
+- Arquivo publicado: `AcessCheck.html`
+- Data: 20/08/2026
+- Alteracao: inclusao de novo card na home, no filtro `Manutencao Predial`, e publicacao do aplicativo AcessCheck como HTML standalone.
+
+Observacoes:
+
+- Aplicativo de vistoria de acessibilidade conforme NBR 9050, com splash screen, aviso legal, checklist, registro fotografico e emissao de laudo tecnico.
+- Tela inicial do site aponta para `/acesscheck/`.
+- Backup da home anterior salvo em `C:\Obras Inteligentes\backups\index-before-acesscheck-20260820-2034.html`.
+- Validar apos futuras alteracoes se a tela de abertura, aviso legal, checklist de acessibilidade, registro fotografico, armazenamento local e laudos continuam carregando corretamente.
+
 ## Artigos publicados na home
 
 Em 20/07/2026, os tres cards iniciais do bloco `Conteudo` da home foram substituidos por artigos reais enviados em PDF. Em 21/07/2026, foi incluido um quarto artigo. A estrategia adotada foi renderizar cada pagina do PDF como PNG dentro de uma pagina HTML propria, preservando a diagramacao original, tabelas, figuras e paginacao. Cada pagina tambem oferece link para abrir/baixar o PDF original.
@@ -1501,7 +1522,8 @@ $headers=@{ 'User-Agent'='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
   '/recebeobra-pro/',
   '/criticaopex/',
   '/pmoc-manager/',
-  '/mobilizasicro/'
+  '/mobilizasicro/',
+  '/acesscheck/'
 ) | ForEach-Object {
   $url = "https://www.obrasinteligentes.ia.br$_?v=check"
   $r = Invoke-WebRequest -UseBasicParsing -Headers $headers -Uri $url -TimeoutSec 30

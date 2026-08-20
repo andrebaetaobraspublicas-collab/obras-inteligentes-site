@@ -1,0 +1,2591 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AcessCheck &middot; Vistoria de Acessibilidade &mdash; NBR 9050</title>
+<meta name="description" content="Sistema offline de vistoria de acessibilidade em edificações e logradouros públicos, com checklist NBR 9050, registro fotográfico e emissão de laudo técnico.">
+<meta name="theme-color" content="#101418">
+<style>
+/* ============================================================
+   AcessCheck — sistema de design
+   Motivo: piso tátil (alerta = pontos / direcional = linhas)
+   ============================================================ */
+:root{
+  --ink:#101418;          /* grafite de instrumento */
+  --ink-2:#1b2128;
+  --ink-3:#2a333b;
+  --paper:#f5f6f4;
+  --surface:#ffffff;
+  --surface-2:#eceee9;
+  --line:#d3d7d0;
+  --line-strong:#aab1a6;
+  --txt:#151a1e;
+  --txt-2:#4d565e;
+  --txt-3:#79838c;
+  --tatil:#f2b705;        /* amarelo de sinalização tátil */
+  --tatil-deep:#c99202;
+  --ok:#1f7a4d;
+  --ok-bg:#e4f2ea;
+  --nc:#b3261e;
+  --nc-bg:#fbe7e5;
+  --parcial:#9a6100;
+  --parcial-bg:#fdf1dc;
+  --na:#6b7480;
+  --na-bg:#eceef0;
+  --focus:#0a6ed1;
+  --r:10px;
+  --r-sm:6px;
+  --sh:0 1px 2px rgba(16,20,24,.07), 0 4px 14px rgba(16,20,24,.05);
+  --mono:ui-monospace,"SF Mono","Cascadia Mono","Roboto Mono",Menlo,Consolas,monospace;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+html[data-tema="escuro"]{
+  --ink:#05080a;
+  --ink-2:#0c1114;
+  --paper:#0f1417;
+  --surface:#171d21;
+  --surface-2:#1f272c;
+  --line:#2c363c;
+  --line-strong:#414e56;
+  --txt:#e8ecee;
+  --txt-2:#a9b4bb;
+  --txt-3:#7d8a92;
+  --tatil:#ffc61a;
+  --tatil-deep:#e0a800;
+  --ok:#5ec98f;
+  --ok-bg:#14302250;
+  --nc:#ff8a80;
+  --nc-bg:#3a161350;
+  --parcial:#f0b95c;
+  --parcial-bg:#33260c50;
+  --na:#93a0a8;
+  --na-bg:#22292e;
+  --focus:#5aa9f0;
+  --sh:0 1px 2px rgba(0,0,0,.4), 0 6px 18px rgba(0,0,0,.32);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--paper);color:var(--txt);
+  font-family:var(--sans);font-size:15px;line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{margin:0;font-weight:650;letter-spacing:-.015em;line-height:1.22}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px;border-radius:3px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ---------- faixa tátil (signature) ---------- */
+.tatil{height:7px;flex:none;
+  background-image:radial-gradient(circle at center, var(--tatil) 0 2.1px, transparent 2.3px);
+  background-size:9px 7px;background-repeat:repeat-x;background-position:center;
+}
+.tatil--dir{background-image:linear-gradient(90deg,var(--tatil) 0 6px,transparent 6px 11px);background-size:11px 7px}
+
+/* ---------- topo ---------- */
+.topo{position:sticky;top:0;z-index:40;background:var(--ink);color:#fff}
+.topo__barra{display:flex;align-items:center;gap:14px;padding:10px 16px;max-width:1220px;margin:0 auto}
+.marca{display:flex;align-items:baseline;gap:9px;margin-right:auto;min-width:0}
+.marca b{font-size:17px;letter-spacing:-.02em}
+.marca span{font:600 10.5px/1 var(--mono);letter-spacing:.13em;text-transform:uppercase;color:var(--tatil);
+  border:1px solid rgba(242,183,5,.45);padding:4px 6px;border-radius:4px;white-space:nowrap}
+.topo__acoes{display:flex;gap:7px;align-items:center}
+.ib{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.16);color:#fff;
+  border-radius:var(--r-sm);padding:7px 11px;font-size:13px;font-weight:550;cursor:pointer;white-space:nowrap}
+.ib:hover{background:rgba(255,255,255,.17)}
+.ib--dest{background:var(--tatil);border-color:var(--tatil);color:#231a00}
+.ib--dest:hover{background:var(--tatil-deep)}
+
+/* ---------- abas ---------- */
+.abas{background:var(--ink-2);overflow-x:auto;scrollbar-width:none}
+.abas::-webkit-scrollbar{display:none}
+.abas__int{display:flex;gap:2px;max-width:1220px;margin:0 auto;padding:0 10px}
+.aba{background:none;border:0;border-bottom:3px solid transparent;color:#9aa6ae;
+  padding:11px 13px;font-size:13.5px;font-weight:550;cursor:pointer;white-space:nowrap}
+.aba:hover{color:#e6ebee}
+.aba[aria-selected="true"]{color:#fff;border-bottom-color:var(--tatil)}
+
+/* ---------- layout ---------- */
+.wrap{max-width:1220px;margin:0 auto;padding:18px 16px 90px}
+.painel[hidden]{display:none}
+.grade{display:grid;gap:14px}
+@media(min-width:860px){.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}}
+.cartao{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden}
+.cartao__cab{padding:13px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.cartao__cab h3{font-size:14.5px}
+.cartao__corpo{padding:16px}
+.legenda{font-size:12.5px;color:var(--txt-2);margin:5px 0 0}
+
+/* ---------- formulários ---------- */
+.campo{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+.campo label{font-size:12px;font-weight:650;letter-spacing:.02em;color:var(--txt-2);text-transform:uppercase}
+.campo input,.campo select,.campo textarea{
+  background:var(--surface);border:1px solid var(--line-strong);border-radius:var(--r-sm);
+  padding:9px 10px;font-size:14.5px;width:100%}
+.campo input[type=number]{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.campo textarea{min-height:70px;resize:vertical}
+.linha{display:grid;gap:12px}
+@media(min-width:640px){.linha--2{grid-template-columns:1fr 1fr}.linha--3{grid-template-columns:repeat(3,1fr)}}
+
+/* ---------- painel de resumo ---------- */
+.kpis{display:grid;gap:10px;grid-template-columns:repeat(2,1fr)}
+@media(min-width:760px){.kpis{grid-template-columns:repeat(4,1fr)}}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:13px 14px}
+.kpi__v{font:700 27px/1 var(--mono);font-variant-numeric:tabular-nums;letter-spacing:-.03em}
+.kpi__r{font-size:11px;font-weight:650;text-transform:uppercase;letter-spacing:.08em;color:var(--txt-3);margin-top:6px}
+.barra{height:9px;background:var(--surface-2);border-radius:99px;overflow:hidden;margin-top:9px}
+.barra i{display:block;height:100%;background:var(--ok);border-radius:99px;transition:width .35s}
+
+/* ---------- lista de módulos ---------- */
+.mod{border:1px solid var(--line);border-radius:var(--r);background:var(--surface);margin-bottom:11px;overflow:hidden}
+.mod__cab{display:flex;align-items:center;gap:12px;width:100%;text-align:left;
+  background:var(--surface);border:0;padding:13px 15px;cursor:pointer}
+.mod__cab:hover{background:var(--surface-2)}
+.mod__cod{font:700 11px/1 var(--mono);letter-spacing:.1em;color:#231a00;background:var(--tatil);
+  padding:6px 7px;border-radius:4px;flex:none}
+.mod__tit{flex:1;min-width:0;font-size:14.5px;font-weight:650}
+.mod__sub{font-size:12px;color:var(--txt-3);font-weight:450;margin-top:2px;display:block}
+.mod__pct{font:700 15px/1 var(--mono);font-variant-numeric:tabular-nums;flex:none}
+.mod__corpo{border-top:1px solid var(--line)}
+.mod__corpo[hidden]{display:none}
+.secao{padding:6px 15px 2px;background:var(--surface-2);border-bottom:1px solid var(--line);
+  font:650 11.5px/1.4 var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--txt-2)}
+.secao small{display:block;text-transform:none;letter-spacing:0;font-weight:450;color:var(--txt-3);padding-bottom:5px}
+
+/* ---------- item de checklist ---------- */
+.item{border-bottom:1px solid var(--line);padding:12px 15px}
+.item:last-child{border-bottom:0}
+.item--nc{background:var(--nc-bg)}
+.item--p{background:var(--parcial-bg)}
+.item__topo{display:flex;gap:10px;align-items:flex-start}
+.item__id{font:600 10.5px/1.5 var(--mono);color:var(--txt-3);flex:none;padding-top:2px;min-width:52px}
+.item__txt{flex:1;min-width:0}
+.item__t{font-size:14.5px;font-weight:550;display:block}
+.item__ref{font:500 11.5px/1.4 var(--mono);color:var(--txt-3);display:block;margin-top:3px}
+.crit{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+  padding:3px 6px;border-radius:4px;flex:none;border:1px solid}
+.crit--3{color:var(--nc);border-color:var(--nc);background:var(--nc-bg)}
+.crit--2{color:var(--parcial);border-color:var(--parcial);background:var(--parcial-bg)}
+.crit--1{color:var(--txt-3);border-color:var(--line-strong);background:transparent}
+.item__ctrl{display:flex;gap:9px;flex-wrap:wrap;align-items:flex-end;margin-top:10px}
+.medida{display:flex;flex-direction:column;gap:4px}
+.medida label{font-size:10.5px;font-weight:650;text-transform:uppercase;letter-spacing:.05em;color:var(--txt-3)}
+.medida input{width:112px;font-family:var(--mono);font-variant-numeric:tabular-nums;
+  border:1px solid var(--line-strong);border-radius:var(--r-sm);padding:7px 8px;background:var(--surface)}
+.lim{font:500 11.5px/1.5 var(--mono);color:var(--txt-2);align-self:center;padding-bottom:7px}
+.calcout{font:700 15px/1 var(--mono);font-variant-numeric:tabular-nums;align-self:center;padding-bottom:6px}
+.status{display:flex;gap:0;border:1px solid var(--line-strong);border-radius:var(--r-sm);overflow:hidden}
+.status button{background:var(--surface);border:0;border-right:1px solid var(--line-strong);
+  padding:7px 10px;font-size:12px;font-weight:650;cursor:pointer;color:var(--txt-2)}
+.status button:last-child{border-right:0}
+.status button[aria-pressed="true"]{color:#fff}
+.status button[data-s="C"][aria-pressed="true"]{background:var(--ok)}
+.status button[data-s="P"][aria-pressed="true"]{background:var(--parcial)}
+.status button[data-s="NC"][aria-pressed="true"]{background:var(--nc)}
+.status button[data-s="NA"][aria-pressed="true"]{background:var(--na)}
+.item__extra{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.bt{background:var(--surface-2);border:1px solid var(--line-strong);border-radius:var(--r-sm);
+  padding:7px 11px;font-size:12.5px;font-weight:600;cursor:pointer}
+.bt:hover{background:var(--line)}
+.bt--p{background:var(--ink);color:#fff;border-color:var(--ink)}
+.bt--p:hover{background:var(--ink-2)}
+.bt--d{background:transparent;border-color:var(--nc);color:var(--nc)}
+.tag{font:600 11px/1 var(--mono);padding:5px 7px;border-radius:4px;background:var(--surface-2);color:var(--txt-2)}
+.obs{width:100%;margin-top:9px;border:1px solid var(--line);border-radius:var(--r-sm);
+  padding:8px 9px;font-size:13.5px;min-height:56px;background:var(--surface);resize:vertical}
+.obs[hidden]{display:none}
+.aviso{margin-top:8px;padding:8px 10px;border-radius:var(--r-sm);font-size:12.5px;font-weight:550;
+  border-left:3px solid var(--nc);background:var(--nc-bg);color:var(--nc)}
+
+/* ---------- fotos ---------- */
+.fotos{display:flex;gap:8px;flex-wrap:wrap;margin-top:9px}
+.foto{position:relative;width:96px;height:96px;border-radius:var(--r-sm);overflow:hidden;
+  border:1px solid var(--line-strong);background:var(--surface-2)}
+.foto img{width:100%;height:100%;object-fit:cover;display:block;cursor:zoom-in}
+.foto button{position:absolute;top:3px;right:3px;width:22px;height:22px;border-radius:50%;
+  border:0;background:rgba(0,0,0,.68);color:#fff;font-size:13px;line-height:1;cursor:pointer}
+.foto__geo{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,.62);color:#fff;
+  font:500 9px/1.3 var(--mono);padding:2px 3px;text-align:center}
+
+/* ---------- tabela ---------- */
+.tab{width:100%;border-collapse:collapse;font-size:13px}
+.tab th,.tab td{border-bottom:1px solid var(--line);padding:8px 9px;text-align:left;vertical-align:top}
+.tab th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--txt-3);
+  background:var(--surface-2);position:sticky;top:0}
+.tab td.n{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.pill{display:inline-block;font:700 10.5px/1 var(--mono);padding:4px 6px;border-radius:4px}
+.pill--C{background:var(--ok-bg);color:var(--ok)}
+.pill--NC{background:var(--nc-bg);color:var(--nc)}
+.pill--P{background:var(--parcial-bg);color:var(--parcial)}
+.pill--NA{background:var(--na-bg);color:var(--na)}
+.pill--{background:var(--surface-2);color:var(--txt-3)}
+
+/* ---------- rodapé fixo ---------- */
+.rodape{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--ink);color:#fff;
+  display:flex;align-items:center;gap:12px;padding:9px 16px;padding-bottom:calc(9px + env(safe-area-inset-bottom))}
+.rodape__i{font:600 12px/1 var(--mono);color:#c3ccd2}
+.rodape__i b{color:var(--tatil)}
+.rodape__acoes{margin-left:auto;display:flex;gap:7px}
+
+/* ---------- diálogo ---------- */
+dialog{border:1px solid var(--line);border-radius:var(--r);padding:0;max-width:min(680px,94vw);
+  background:var(--surface);color:var(--txt);box-shadow:0 20px 60px rgba(0,0,0,.35)}
+dialog::backdrop{background:rgba(6,10,12,.72)}
+.dlg__cab{padding:13px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px}
+.dlg__cab h3{flex:1;font-size:15px}
+.dlg__corpo{padding:16px;max-height:66vh;overflow:auto}
+.dlg__pe{padding:12px 16px;border-top:1px solid var(--line);display:flex;gap:8px;justify-content:flex-end}
+#dlgFoto video,#dlgFoto canvas{width:100%;border-radius:var(--r-sm);background:#000;display:block}
+
+/* ---------- laudo ---------- */
+.laudo{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:26px}
+.laudo h2{font-size:19px;margin:22px 0 9px;padding-bottom:6px;border-bottom:2px solid var(--tatil)}
+.laudo h3{font-size:14.5px;margin:16px 0 7px}
+.laudo p{margin:8px 0;font-size:14px}
+.laudo__cab{text-align:center;border-bottom:3px double var(--line-strong);padding-bottom:16px}
+.laudo__cab h1{font-size:22px;letter-spacing:.01em}
+.laudo__cab p{font:600 12px/1.5 var(--mono);color:var(--txt-2);margin:6px 0 0}
+.laudo table{width:100%;border-collapse:collapse;font-size:12.5px;margin:10px 0}
+.laudo th,.laudo td{border:1px solid var(--line-strong);padding:6px 8px;text-align:left}
+.laudo th{background:var(--surface-2);font-size:11px;text-transform:uppercase;letter-spacing:.05em}
+.laudo__nc{border-left:4px solid var(--nc);background:var(--nc-bg);padding:11px 13px;margin:10px 0;border-radius:0 var(--r-sm) var(--r-sm) 0}
+.laudo__nc b{display:block;font-size:13.5px}
+.laudo__nc p{margin:5px 0 0;font-size:12.5px}
+.laudo__ass{margin-top:44px;text-align:center}
+.laudo__ass hr{border:0;border-top:1px solid var(--txt);width:280px;margin:0 auto 6px}
+.laudo__fotos{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:11px;margin:10px 0}
+.laudo__fotos figure{margin:0;border:1px solid var(--line);border-radius:var(--r-sm);overflow:hidden}
+.laudo__fotos img{width:100%;height:135px;object-fit:cover;display:block}
+.laudo__fotos figcaption{font:500 10.5px/1.4 var(--mono);padding:5px 6px;color:var(--txt-2);background:var(--surface-2)}
+
+.vazio{padding:40px 20px;text-align:center;color:var(--txt-3);font-size:14px}
+.aviso-norma{border-left:3px solid var(--tatil);background:var(--surface-2);padding:11px 13px;
+  border-radius:0 var(--r-sm) var(--r-sm) 0;font-size:13px;color:var(--txt-2);margin-bottom:14px}
+.busca{width:100%;padding:10px 12px;border:1px solid var(--line-strong);border-radius:var(--r-sm);
+  background:var(--surface);margin-bottom:12px;font-size:14.5px}
+.filtros{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.filtros button{background:var(--surface);border:1px solid var(--line-strong);border-radius:99px;
+  padding:6px 12px;font-size:12.5px;font-weight:600;cursor:pointer;color:var(--txt-2)}
+.filtros button[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+
+@media print{
+  .topo,.abas,.rodape,.naoimprime{display:none!important}
+  body{background:#fff;font-size:11pt}
+  .wrap{padding:0;max-width:none}
+  .laudo{border:0;padding:0;box-shadow:none}
+  .laudo h2{page-break-after:avoid}
+  .laudo__nc{page-break-inside:avoid}
+  .laudo__fotos figure{page-break-inside:avoid}
+}
+</style>
+
+<style id="aca-css">
+#ac-abertura{position:fixed;inset:0;z-index:9999;font-family:var(--sans)}
+.aca-splash{position:absolute;inset:0;transition:opacity .6s ease}
+.aca-bg{position:absolute;inset:0;background:radial-gradient(125% 105% at 50% 6%,#ffffff 0%,#eceee9 48%,#cfd4cd 100%)}
+.aca-vig{position:absolute;inset:0;background:radial-gradient(120% 90% at 50% 120%,rgba(16,20,24,.28),transparent 55%);mix-blend-mode:multiply}
+#acaCanvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.aca-title{position:absolute;left:48px;top:50%;transform:translateY(-42%);opacity:0;transition:opacity .7s ease,transform .7s cubic-bezier(.2,.7,.2,1);text-shadow:0 1px 30px rgba(255,255,255,.6);z-index:4}
+.aca-title.on{opacity:1;transform:translateY(-50%)}
+.aca-kick{display:flex;align-items:center;gap:11px}
+.aca-dots{display:flex;gap:5px}
+.aca-dots i{width:8px;height:8px;border-radius:50%;background:#f2b705;display:block}
+.aca-kick>span:last-child{font:600 11px/1 var(--mono);letter-spacing:.24em;text-transform:uppercase;color:#c99202}
+.aca-title h1{margin:9px 0 0;font-size:clamp(42px,7vw,86px);font-weight:680;letter-spacing:-.03em;color:#101418;line-height:.95}
+.aca-title p{margin:12px 0 0;font:550 14px/1.4 var(--mono);letter-spacing:.06em;color:#4d565e}
+.aca-skip{position:absolute;right:22px;bottom:22px;z-index:5;background:rgba(16,20,24,.06);border:1px solid rgba(16,20,24,.16);color:#4d565e;border-radius:7px;padding:9px 16px;font-size:13px;font-weight:600;cursor:pointer;backdrop-filter:blur(4px)}
+.aca-loading{position:absolute;left:22px;bottom:22px;z-index:5;display:flex;align-items:center;gap:9px;font:600 11px/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:#79838c;transition:opacity .4s ease}
+.aca-pd{width:7px;height:7px;border-radius:50%;background:#f2b705;animation:aca-pulse 1.1s ease-in-out infinite}
+@keyframes aca-pulse{0%,100%{opacity:.55}50%{opacity:1}}
+.aca-legal{position:absolute;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;pointer-events:none;transition:opacity .55s ease .15s}
+.aca-legal.on{opacity:1;pointer-events:auto}
+.aca-legal-bg{position:absolute;inset:0;background:linear-gradient(180deg,#101418,#1b2128)}
+.aca-legal-bg::after{content:"";position:absolute;inset:0;background:radial-gradient(80% 60% at 50% -10%,rgba(242,183,5,.10),transparent 60%)}
+.aca-card{position:relative;display:flex;flex-direction:column;width:min(680px,100%);max-height:min(88vh,760px);background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 24px 70px rgba(0,0,0,.5);transform:translateY(18px) scale(.98);transition:transform .55s cubic-bezier(.2,.8,.2,1) .15s}
+.aca-legal.on .aca-card{transform:none}
+.aca-tatil{height:7px;flex:none;background-image:radial-gradient(circle at center,#f2b705 0 2.1px,transparent 2.3px);background-size:9px 7px;background-repeat:repeat-x;background-position:center}
+.aca-head{padding:22px 28px 4px}
+.aca-head .k{font:600 10.5px/1 var(--mono);letter-spacing:.22em;text-transform:uppercase;color:#c99202}
+.aca-head h2{margin:8px 0 0;font-size:23px;font-weight:660;letter-spacing:-.02em;color:#101418}
+.aca-head .s{margin:7px 0 0;font-size:13.5px;color:#4d565e}
+.aca-terms{margin:14px 24px 0;overflow:auto;flex:1 1 auto;min-height:0}
+.aca-terms ol{margin:0;padding:0 6px 0 20px;display:flex;flex-direction:column;gap:14px;font-size:13.5px;line-height:1.5;color:#2a333b}
+.aca-terms b{color:#101418}
+.aca-foot{padding:16px 28px 22px;border-top:1px solid #d3d7d0;flex:none}
+.aca-chk{display:flex;gap:11px;align-items:flex-start;cursor:pointer;user-select:none}
+.aca-chk input{width:20px;height:20px;flex:none;margin-top:1px;accent-color:#c99202;cursor:pointer}
+.aca-chk span{font-size:13.5px;line-height:1.45;color:#2a333b}
+.aca-warn{overflow:hidden;color:#b3261e;font-size:12.5px;font-weight:600;max-height:0;opacity:0;transition:all .3s ease}
+.aca-warn.on{max-height:44px;opacity:1;margin-top:10px}
+.aca-btns{display:flex;gap:10px;margin-top:16px}
+.aca-btns button{border-radius:8px;padding:12px 18px;font-size:14px;font-weight:600;cursor:pointer}
+.aca-dec{flex:none;background:#eceee9;border:1px solid #d3d7d0;color:#4d565e}
+.aca-ent{flex:1;font-weight:680;background:#e0e2dd;border:1px solid #d3d7d0;color:#a2a89f;cursor:not-allowed;transition:all .25s ease}
+.aca-ent.ok{background:#f2b705;border-color:#c99202;color:#231a00;cursor:pointer}
+</style>
+</head>
+<body>
+
+<div id="ac-abertura">
+  <div class="aca-splash" id="acaSplash">
+    <div class="aca-bg"></div>
+    <div class="aca-vig"></div>
+    <canvas id="acaCanvas"></canvas>
+    <div class="aca-title" id="acaTitle">
+      <div class="aca-kick"><span class="aca-dots"><i></i><i></i><i></i></span><span>Vistoria de Acessibilidade</span></div>
+      <h1>AcessCheck</h1>
+      <p>ABNT NBR 9050 &middot; Edifica&ccedil;&otilde;es de uso coletivo</p>
+    </div>
+    <button class="aca-skip" id="acaSkip" type="button">Pular</button>
+    <div class="aca-loading" id="acaLoading"><span class="aca-pd"></span>Carregando ambiente</div>
+  </div>
+  <div class="aca-legal" id="acaLegal">
+    <div class="aca-legal-bg"></div>
+    <div class="aca-card">
+      <div class="aca-tatil"></div>
+      <div class="aca-head">
+        <div class="k">Antes de prosseguir</div>
+        <h2>Aviso legal e termos de uso</h2>
+        <p class="s">Leia atentamente. &Eacute; necess&aacute;rio concordar para acessar o sistema.</p>
+      </div>
+      <div class="aca-terms">
+        <ol>
+          <li><b>Natureza da ferramenta.</b> O AcessCheck &eacute; um instrumento de apoio &agrave; vistoria de acessibilidade conforme a ABNT NBR 9050:2020, a Lei n&ordm; 13.146/2015 (LBI) e o Decreto n&ordm; 5.296/2004. Os checklists e c&aacute;lculos s&atilde;o referenciais e <b>n&atilde;o substituem</b> o julgamento t&eacute;cnico do profissional habilitado.</li>
+          <li><b>Responsabilidade t&eacute;cnica.</b> O laudo e demais documentos gerados s&atilde;o de responsabilidade exclusiva do profissional legalmente habilitado (CREA/CAU) que assina a vistoria. Os desenvolvedores n&atilde;o respondem por medi&ccedil;&otilde;es, conclus&otilde;es ou decis&otilde;es deles decorrentes.</li>
+          <li><b>Precis&atilde;o dos dados.</b> Medi&ccedil;&otilde;es em campo devem ser conferidas com instrumentos calibrados. Valores e enquadramentos apresentados s&atilde;o orientativos e podem exigir verifica&ccedil;&atilde;o.</li>
+          <li><b>Privacidade e dados (LGPD).</b> Registros fotogr&aacute;ficos e informa&ccedil;&otilde;es s&atilde;o armazenados localmente no dispositivo. O usu&aacute;rio &eacute; respons&aacute;vel pelo consentimento dos titulares e pela guarda dos dados, nos termos da Lei n&ordm; 13.709/2018.</li>
+          <li><b>Uso offline e backups.</b> O sistema opera sem conex&atilde;o. A realiza&ccedil;&atilde;o e a integridade de backups s&atilde;o de responsabilidade do usu&aacute;rio.</li>
+          <li><b>Concord&acirc;ncia.</b> Ao prosseguir, voc&ecirc; declara ter lido, compreendido e aceito integralmente estes termos.</li>
+        </ol>
+      </div>
+      <div class="aca-foot">
+        <label class="aca-chk"><input type="checkbox" id="acaChk"><span>Li e concordo com os termos acima e reconhe&ccedil;o que a responsabilidade t&eacute;cnica da vistoria &eacute; do profissional habilitado.</span></label>
+        <div class="aca-warn" id="acaWarn">&Eacute; necess&aacute;rio aceitar os termos para utilizar o sistema.</div>
+        <div class="aca-btns">
+          <button type="button" class="aca-dec" id="acaDecline">Recusar</button>
+          <button type="button" class="aca-ent" id="acaEnter" disabled>Concordar e acessar o sistema</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<header class="topo">
+  <div class="topo__barra">
+    <div class="marca"><b>AcessCheck</b><span>NBR 9050</span></div>
+    <div class="topo__acoes">
+      <button class="ib" id="btTema" title="Alternar tema claro/escuro">Tema</button>
+      <button class="ib" id="btImportar">Abrir</button>
+      <button class="ib ib--dest" id="btSalvar">Salvar arquivo</button>
+    </div>
+  </div>
+  <div class="tatil" aria-hidden="true"></div>
+  <nav class="abas" role="tablist" aria-label="Seções do sistema">
+    <div class="abas__int">
+      <button class="aba" role="tab" data-p="pIdent" aria-selected="true">Identificação</button>
+      <button class="aba" role="tab" data-p="pVistoria" aria-selected="false">Vistoria</button>
+      <button class="aba" role="tab" data-p="pNC" aria-selected="false">Não conformidades</button>
+      <button class="aba" role="tab" data-p="pFotos" aria-selected="false">Registro fotográfico</button>
+      <button class="aba" role="tab" data-p="pParam" aria-selected="false">Parâmetros normativos</button>
+      <button class="aba" role="tab" data-p="pLaudo" aria-selected="false">Laudo</button>
+      <button class="aba" role="tab" data-p="pDados" aria-selected="false">Vistorias salvas</button>
+    </div>
+  </nav>
+</header>
+
+<main class="wrap">
+
+<!-- ===================== IDENTIFICAÇÃO ===================== -->
+<section class="painel" id="pIdent" role="tabpanel">
+  <div class="aviso-norma">
+    Os limites dimensionais embutidos são referências de trabalho. Confira-os na edição vigente da
+    ABNT NBR 9050 antes de emitir o laudo — a aba <b>Parâmetros normativos</b> permite ajustar cada valor.
+  </div>
+  <div class="grade g2">
+    <div class="cartao">
+      <div class="cartao__cab"><h3>Objeto da vistoria</h3></div>
+      <div class="cartao__corpo">
+        <div class="campo"><label for="fObjeto">Denominação da edificação ou logradouro</label>
+          <input id="fObjeto" data-id="objeto" placeholder="Ex.: Escola Municipal Rui Barbosa"></div>
+        <div class="linha linha-2">
+          <div class="campo"><label for="fTipo">Tipologia</label>
+            <select id="fTipo" data-id="tipo">
+              <option>Edificação administrativa</option><option>Edificação educacional</option>
+              <option>Edificação de saúde</option><option>Edificação cultural</option>
+              <option>Edificação esportiva ou de lazer</option><option>Edificação comercial</option>
+              <option>Edificação de hospedagem</option><option>Habitação de interesse social</option>
+              <option>Terminal de transporte</option><option>Logradouro público / praça</option>
+              <option>Parque urbano</option><option>Outra</option>
+            </select></div>
+          <div class="campo"><label for="fUso">Regime de uso</label>
+            <select id="fUso" data-id="uso">
+              <option>Público</option><option>Privado de uso coletivo</option><option>Privado de uso restrito</option>
+            </select></div>
+        </div>
+        <div class="campo"><label for="fEnd">Endereço</label>
+          <input id="fEnd" data-id="endereco" placeholder="Logradouro, número, bairro"></div>
+        <div class="linha linha--3">
+          <div class="campo"><label for="fMun">Município</label><input id="fMun" data-id="municipio"></div>
+          <div class="campo"><label for="fUF">UF</label><input id="fUF" data-id="uf" maxlength="2" style="text-transform:uppercase"></div>
+          <div class="campo"><label for="fCep">CEP</label><input id="fCep" data-id="cep" inputmode="numeric"></div>
+        </div>
+        <div class="linha linha--3">
+          <div class="campo"><label for="fArea">Área construída (m²)</label><input id="fArea" data-id="area" type="number" step="0.01"></div>
+          <div class="campo"><label for="fPav">Pavimentos</label><input id="fPav" data-id="pavimentos" type="number" step="1"></div>
+          <div class="campo"><label for="fAno">Ano de construção</label><input id="fAno" data-id="ano" type="number" step="1"></div>
+        </div>
+        <div class="campo"><label for="fCoord">Coordenadas (WGS-84)</label>
+          <div style="display:flex;gap:8px"><input id="fCoord" data-id="coord" placeholder="lat, lon" style="flex:1">
+          <button class="bt" id="btGeo" type="button">Capturar GPS</button></div></div>
+      </div>
+    </div>
+
+    <div class="cartao">
+      <div class="cartao__cab"><h3>Responsáveis</h3></div>
+      <div class="cartao__corpo">
+        <div class="campo"><label for="fResp">Responsável pelo imóvel / órgão gestor</label>
+          <input id="fResp" data-id="responsavel"></div>
+        <div class="linha linha--2">
+          <div class="campo"><label for="fCnpj">CNPJ / CPF</label><input id="fCnpj" data-id="cnpj"></div>
+          <div class="campo"><label for="fContato">Contato</label><input id="fContato" data-id="contato"></div>
+        </div>
+        <div class="tatil tatil--dir" aria-hidden="true" style="margin:16px 0"></div>
+        <div class="campo"><label for="fVist">Responsável técnico pela vistoria</label>
+          <input id="fVist" data-id="vistoriador"></div>
+        <div class="linha linha--2">
+          <div class="campo"><label for="fCargo">Cargo / função</label><input id="fCargo" data-id="cargo"
+            placeholder="Ex.: Auditor Federal de Controle Externo"></div>
+          <div class="campo"><label for="fCrea">Registro profissional (CREA/CAU)</label><input id="fCrea" data-id="crea"></div>
+        </div>
+        <div class="linha linha--2">
+          <div class="campo"><label for="fData">Data da vistoria</label><input id="fData" data-id="data" type="date"></div>
+          <div class="campo"><label for="fProc">Processo / OS</label><input id="fProc" data-id="processo"></div>
+        </div>
+        <div class="campo"><label for="fAcomp">Acompanhantes na vistoria</label>
+          <textarea id="fAcomp" data-id="acompanhantes" placeholder="Nome, função e vínculo de quem acompanhou"></textarea></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cartao" style="margin-top:14px">
+    <div class="cartao__cab"><h3>Escopo — módulos aplicáveis</h3>
+      <button class="bt" id="btTodosMod" style="margin-left:auto">Marcar todos</button>
+      <button class="bt" id="btNenhumMod">Desmarcar todos</button></div>
+    <div class="cartao__corpo" id="escopoMods"></div>
+  </div>
+</section>
+
+<!-- ===================== VISTORIA ===================== -->
+<section class="painel" id="pVistoria" role="tabpanel" hidden>
+  <div class="kpis" id="kpis"></div>
+  <div style="margin-top:16px">
+    <input class="busca" id="busca" placeholder="Buscar item, referência normativa ou palavra-chave…" aria-label="Buscar itens">
+    <div class="filtros" id="filtros">
+      <button data-f="todos" aria-pressed="true">Todos</button>
+      <button data-f="pend" aria-pressed="false">Pendentes</button>
+      <button data-f="NC" aria-pressed="false">Não conformes</button>
+      <button data-f="P" aria-pressed="false">Parciais</button>
+      <button data-f="C" aria-pressed="false">Conformes</button>
+      <button data-f="crit" aria-pressed="false">Só críticos</button>
+      <button data-f="semfoto" aria-pressed="false">NC sem foto</button>
+    </div>
+  </div>
+  <div id="listaMods"></div>
+</section>
+
+<!-- ===================== NÃO CONFORMIDADES ===================== -->
+<section class="painel" id="pNC" role="tabpanel" hidden>
+  <div class="cartao">
+    <div class="cartao__cab"><h3>Plano de adequação</h3>
+      <span class="tag" id="tagNC">0 apontamentos</span>
+      <button class="bt" id="btCsv" style="margin-left:auto">Exportar CSV</button></div>
+    <div class="cartao__corpo" style="padding:0;overflow-x:auto"><div id="tabelaNC"></div></div>
+  </div>
+</section>
+
+<!-- ===================== FOTOS ===================== -->
+<section class="painel" id="pFotos" role="tabpanel" hidden>
+  <div class="cartao">
+    <div class="cartao__cab"><h3>Registro fotográfico</h3><span class="tag" id="tagFotos">0 imagens</span></div>
+    <div class="cartao__corpo"><div id="galeria"></div></div>
+  </div>
+</section>
+
+<!-- ===================== PARÂMETROS ===================== -->
+<section class="painel" id="pParam" role="tabpanel" hidden>
+  <div class="aviso-norma">
+    Ajuste os limites conforme a edição vigente da norma ou exigência de legislação municipal mais restritiva.
+    A alteração recalcula imediatamente todos os itens já preenchidos.
+  </div>
+  <div class="cartao">
+    <div class="cartao__cab"><h3>Limites dimensionais</h3>
+      <button class="bt" id="btRestaurar" style="margin-left:auto">Restaurar padrões</button></div>
+    <div class="cartao__corpo" style="padding:0;overflow-x:auto"><div id="tabelaParam"></div></div>
+  </div>
+</section>
+
+<!-- ===================== LAUDO ===================== -->
+<section class="painel" id="pLaudo" role="tabpanel" hidden>
+  <div class="cartao naoimprime" style="margin-bottom:14px">
+    <div class="cartao__cab"><h3>Emissão</h3></div>
+    <div class="cartao__corpo">
+      <div class="linha linha--3">
+        <div class="campo"><label for="fLaudoNum">Número do laudo</label><input id="fLaudoNum" data-id="laudoNum"></div>
+        <div class="campo"><label for="fLaudoLocal">Local de emissão</label><input id="fLaudoLocal" data-id="laudoLocal"></div>
+        <div class="campo"><label for="fLaudoData">Data de emissão</label><input id="fLaudoData" data-id="laudoData" type="date"></div>
+      </div>
+      <div class="campo"><label for="fMetodo">Metodologia empregada</label>
+        <textarea id="fMetodo" data-id="metodologia"></textarea></div>
+      <div class="campo"><label for="fConcl">Considerações finais do responsável técnico</label>
+        <textarea id="fConcl" data-id="conclusao" style="min-height:110px"></textarea></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="bt bt--p" id="btGerar">Gerar laudo</button>
+        <button class="bt" id="btImprimir">Imprimir / salvar PDF</button>
+        <button class="bt" id="btHtml">Baixar HTML</button>
+        <label style="display:flex;align-items:center;gap:6px;font-size:13px;margin-left:6px">
+          <input type="checkbox" id="ckFotosLaudo" checked> Incluir fotos</label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:13px">
+          <input type="checkbox" id="ckConformes"> Listar itens conformes</label>
+      </div>
+    </div>
+  </div>
+  <div id="saidaLaudo"><div class="vazio">Preencha a vistoria e clique em <b>Gerar laudo</b>.</div></div>
+</section>
+
+<!-- ===================== DADOS ===================== -->
+<section class="painel" id="pDados" role="tabpanel" hidden>
+  <div class="grade g2">
+    <div class="cartao">
+      <div class="cartao__cab"><h3>Vistorias no dispositivo</h3>
+        <button class="bt bt--p" id="btNova" style="margin-left:auto">Nova vistoria</button></div>
+      <div class="cartao__corpo" style="padding:0"><div id="listaVistorias"></div></div>
+    </div>
+    <div class="cartao">
+      <div class="cartao__cab"><h3>Manutenção</h3></div>
+      <div class="cartao__corpo">
+        <p class="legenda" id="infoArmaz"></p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+          <button class="bt" id="btDup">Duplicar vistoria atual</button>
+          <button class="bt bt--d" id="btLimpar">Apagar vistoria atual</button>
+        </div>
+        <div class="tatil tatil--dir" aria-hidden="true" style="margin:18px 0"></div>
+        <h4 style="font-size:13px;margin-bottom:6px">Normas de referência</h4>
+        <p class="legenda" id="listaNormas"></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="rodape">
+  <span class="rodape__i">Conformidade <b id="rdPct">—</b></span>
+  <span class="rodape__i">Avaliados <b id="rdAval">0/0</b></span>
+  <span class="rodape__i" id="rdSalvo">—</span>
+  <span class="rodape__acoes">
+    <button class="ib" id="btIrVist">Vistoria</button>
+    <button class="ib ib--dest" id="btIrLaudo">Laudo</button>
+  </span>
+</footer>
+
+<dialog id="dlgFoto">
+  <div class="dlg__cab"><h3>Capturar imagem</h3><button class="bt" data-fechar>Fechar</button></div>
+  <div class="dlg__corpo">
+    <video id="video" playsinline autoplay muted></video>
+    <canvas id="canvas" hidden></canvas>
+    <p class="legenda" id="geoInfo">Coordenadas serão anexadas se o GPS estiver disponível.</p>
+    <div class="campo" style="margin-top:10px"><label for="fLegenda">Legenda da imagem</label>
+      <input id="fLegenda" placeholder="Ex.: rampa de acesso principal — declividade medida"></div>
+  </div>
+  <div class="dlg__pe">
+    <label class="bt" style="cursor:pointer">Escolher arquivo
+      <input type="file" id="inpArquivo" accept="image/*" hidden multiple></label>
+    <button class="bt bt--p" id="btDisparar">Fotografar</button>
+  </div>
+</dialog>
+
+<dialog id="dlgVer">
+  <div class="dlg__cab"><h3 id="verTit">Imagem</h3><button class="bt" data-fechar>Fechar</button></div>
+  <div class="dlg__corpo"><img id="verImg" alt="" style="width:100%;border-radius:6px"><p class="legenda" id="verMeta"></p></div>
+</dialog>
+
+<input type="file" id="inpJson" accept=".json,application/json" hidden>
+<script>
+/* ============================================================================
+   AcessCheck — base normativa
+   Referências: ABNT NBR 9050:2020, NBR 9077, NBR 16537, NBR NM 313,
+   NBR 15655-1/2, NBR 14718, Lei 10.098/2000, Decreto 5.296/2004.
+   ATENÇÃO: valores conferíveis e editáveis na aba "Parâmetros normativos".
+   ========================================================================== */
+
+var NORMAS = [
+  "ABNT NBR 9050:2020 — Acessibilidade a edificações, mobiliário, espaços e equipamentos urbanos",
+  "ABNT NBR 16537:2016 — Sinalização tátil no piso: diretrizes para elaboração de projetos e instalação",
+  "ABNT NBR 9077:2001 — Saídas de emergência em edifícios",
+  "ABNT NBR NM 313:2007 — Elevadores de passageiros: requisitos de segurança para acessibilidade",
+  "ABNT NBR 15655-1/2 — Plataformas de elevação motorizadas para pessoas com mobilidade reduzida",
+  "ABNT NBR 14718:2019 — Guarda-corpos para edificação",
+  "ABNT NBR 16001 / NBR 15599:2008 — Acessibilidade na comunicação e prestação de serviços",
+  "Lei 10.098/2000 e Decreto 5.296/2004 — Normas gerais de acessibilidade",
+  "Lei 13.146/2015 — Lei Brasileira de Inclusão da Pessoa com Deficiência"
+];
+
+/* --- Parâmetros dimensionais (editáveis) ---------------------------------- */
+var PAD = {
+  faixaLivre:      {rot:"Largura mínima da faixa livre do passeio",           v:1.20, un:"m",  ref:"NBR 9050 — 6.12"},
+  faixaLivreRec:   {rot:"Largura recomendada da faixa livre",                 v:1.50, un:"m",  ref:"NBR 9050 — 6.12"},
+  alturaLivre:     {rot:"Altura livre mínima de circulação",                  v:2.10, un:"m",  ref:"NBR 9050 — 4.3"},
+  inclTransv:      {rot:"Inclinação transversal máxima (passeio)",            v:3.00, un:"%",  ref:"NBR 9050 — 6.12"},
+  inclLongPass:    {rot:"Inclinação longitudinal máxima antes de virar rampa", v:5.00, un:"%",  ref:"NBR 9050 — 6.6"},
+  desnivelLivre:   {rot:"Desnível máximo tratável sem rampa",                 v:0.005,un:"m",  ref:"NBR 9050 — 6.1.3"},
+  desnivelChanfro: {rot:"Desnível máximo com chanfro 1:2",                    v:0.020,un:"m",  ref:"NBR 9050 — 6.1.3"},
+  inclRampa:       {rot:"Inclinação máxima de rampa",                         v:8.33, un:"%",  ref:"NBR 9050 — 6.6"},
+  larguraRampa:    {rot:"Largura mínima de rampa",                            v:1.20, un:"m",  ref:"NBR 9050 — 6.6"},
+  larguraRampaRec: {rot:"Largura recomendada de rampa",                       v:1.50, un:"m",  ref:"NBR 9050 — 6.6"},
+  patamar:         {rot:"Comprimento mínimo de patamar de rampa",             v:1.20, un:"m",  ref:"NBR 9050 — 6.6"},
+  segmentoRampa:   {rot:"Desnível máximo por segmento de rampa (i>6,25%)",    v:1.00, un:"m",  ref:"NBR 9050 — 6.6, tabela"},
+  espelho:         {rot:"Altura máxima do espelho do degrau",                 v:0.18, un:"m",  ref:"NBR 9050 — 6.8"},
+  espelhoMin:      {rot:"Altura mínima do espelho do degrau",                 v:0.16, un:"m",  ref:"NBR 9050 — 6.8"},
+  pisoDegrau:      {rot:"Largura mínima do piso do degrau",                   v:0.28, un:"m",  ref:"NBR 9050 — 6.8"},
+  pisoDegrauMax:   {rot:"Largura máxima do piso do degrau",                   v:0.32, un:"m",  ref:"NBR 9050 — 6.8"},
+  larguraEscada:   {rot:"Largura mínima de escada",                           v:1.20, un:"m",  ref:"NBR 9050 — 6.8"},
+  desnivelEscada:  {rot:"Desnível máximo entre patamares de escada",          v:3.20, un:"m",  ref:"NBR 9050 — 6.8"},
+  corrimaoAlto:    {rot:"Altura do corrimão superior",                        v:0.92, un:"m",  ref:"NBR 9050 — 6.9"},
+  corrimaoBaixo:   {rot:"Altura do corrimão inferior",                        v:0.70, un:"m",  ref:"NBR 9050 — 6.9"},
+  corrimaoDMin:    {rot:"Diâmetro mínimo do corrimão",                        v:0.030,un:"m",  ref:"NBR 9050 — 6.9"},
+  corrimaoDMax:    {rot:"Diâmetro máximo do corrimão",                        v:0.045,un:"m",  ref:"NBR 9050 — 6.9"},
+  corrimaoAfast:   {rot:"Afastamento mínimo do corrimão à parede",            v:0.040,un:"m",  ref:"NBR 9050 — 6.9"},
+  corrimaoProl:    {rot:"Prolongamento mínimo do corrimão nas extremidades",  v:0.30, un:"m",  ref:"NBR 9050 — 6.9"},
+  guardaCorpo:     {rot:"Altura mínima de guarda-corpo",                      v:1.10, un:"m",  ref:"NBR 14718"},
+  tatilAlertaL:    {rot:"Largura mínima da sinalização tátil de alerta",      v:0.25, un:"m",  ref:"NBR 16537"},
+  tatilDirL:       {rot:"Largura mínima da sinalização tátil direcional",     v:0.20, un:"m",  ref:"NBR 16537"},
+  vaoPorta:        {rot:"Vão livre mínimo de porta",                          v:0.80, un:"m",  ref:"NBR 9050 — 6.11"},
+  alturaPorta:     {rot:"Altura livre mínima de porta",                       v:2.10, un:"m",  ref:"NBR 9050 — 6.11"},
+  macanetaMin:     {rot:"Altura mínima de maçaneta",                          v:0.80, un:"m",  ref:"NBR 9050 — 6.11"},
+  macanetaMax:     {rot:"Altura máxima de maçaneta",                          v:1.10, un:"m",  ref:"NBR 9050 — 6.11"},
+  forcaPorta:      {rot:"Força máxima para abertura de porta",                v:36,   un:"N",  ref:"NBR 9050 — 6.11"},
+  puxadorH:        {rot:"Comprimento mínimo do puxador horizontal",           v:0.40, un:"m",  ref:"NBR 9050 — 6.11"},
+  mrLarg:          {rot:"Módulo de referência — largura",                     v:0.80, un:"m",  ref:"NBR 9050 — 4.2"},
+  mrComp:          {rot:"Módulo de referência — comprimento",                 v:1.20, un:"m",  ref:"NBR 9050 — 4.2"},
+  giro90:          {rot:"Área de manobra — rotação de 90°",                   v:1.20, un:"m",  ref:"NBR 9050 — 4.3"},
+  giro180:         {rot:"Área de manobra — rotação de 180° (menor dimensão)", v:1.20, un:"m",  ref:"NBR 9050 — 4.3"},
+  giro360:         {rot:"Área de manobra — rotação de 360° (diâmetro)",       v:1.50, un:"m",  ref:"NBR 9050 — 4.3"},
+  alcanceMin:      {rot:"Alcance manual frontal — altura mínima confortável", v:0.40, un:"m",  ref:"NBR 9050 — 4.6"},
+  alcanceMax:      {rot:"Alcance manual frontal — altura máxima confortável", v:1.20, un:"m",  ref:"NBR 9050 — 4.6"},
+  cabineElevL:     {rot:"Cabine de elevador — largura mínima",                v:1.10, un:"m",  ref:"NBR NM 313"},
+  cabineElevC:     {rot:"Cabine de elevador — profundidade mínima",           v:1.40, un:"m",  ref:"NBR NM 313"},
+  portaElev:       {rot:"Vão livre mínimo da porta do elevador",              v:0.80, un:"m",  ref:"NBR NM 313"},
+  botoeiraElev:    {rot:"Altura máxima da botoeira de elevador",              v:1.35, un:"m",  ref:"NBR NM 313"},
+  nivelamentoElev: {rot:"Desnível máximo cabine/pavimento",                   v:0.020,un:"m",  ref:"NBR NM 313"},
+  vaoElev:         {rot:"Vão máximo entre cabine e pavimento",                v:0.035,un:"m",  ref:"NBR NM 313"},
+  sanitarioGiro:   {rot:"Área de manobra no sanitário acessível",             v:1.50, un:"m",  ref:"NBR 9050 — 7.4"},
+  baciaAltura:     {rot:"Altura da bacia sanitária (com assento)",            v:0.46, un:"m",  ref:"NBR 9050 — 7.4"},
+  baciaAlturaMin:  {rot:"Altura mínima da bacia sanitária",                   v:0.43, un:"m",  ref:"NBR 9050 — 7.4"},
+  barraComp:       {rot:"Comprimento mínimo das barras de apoio",             v:0.80, un:"m",  ref:"NBR 9050 — 7.4"},
+  barraAltura:     {rot:"Altura das barras de apoio junto à bacia",           v:0.75, un:"m",  ref:"NBR 9050 — 7.4"},
+  barraDMin:       {rot:"Diâmetro mínimo da barra de apoio",                  v:0.030,un:"m",  ref:"NBR 9050 — 6.9"},
+  barraDMax:       {rot:"Diâmetro máximo da barra de apoio",                  v:0.045,un:"m",  ref:"NBR 9050 — 6.9"},
+  lavatorioAlt:    {rot:"Altura máxima da borda do lavatório",                v:0.80, un:"m",  ref:"NBR 9050 — 7.4"},
+  lavatorioLivre:  {rot:"Altura livre mínima sob o lavatório",                v:0.73, un:"m",  ref:"NBR 9050 — 7.4"},
+  espelhoBanh:     {rot:"Altura máxima da borda inferior do espelho",         v:0.90, un:"m",  ref:"NBR 9050 — 7.4"},
+  mictorioAlt:     {rot:"Altura máxima da borda do mictório acessível",       v:0.60, un:"m",  ref:"NBR 9050 — 7.4"},
+  duchaAssento:    {rot:"Altura do assento articulado do boxe",               v:0.46, un:"m",  ref:"NBR 9050 — 7.4"},
+  balcaoAlt:       {rot:"Altura máxima da superfície do balcão acessível",    v:0.90, un:"m",  ref:"NBR 9050 — 9.2"},
+  balcaoLivre:     {rot:"Altura livre mínima sob o balcão",                   v:0.73, un:"m",  ref:"NBR 9050 — 9.2"},
+  balcaoLarg:      {rot:"Largura mínima do trecho acessível do balcão",       v:0.90, un:"m",  ref:"NBR 9050 — 9.2"},
+  balcaoProf:      {rot:"Profundidade livre mínima sob o balcão",             v:0.30, un:"m",  ref:"NBR 9050 — 9.2"},
+  bebedouroAlt:    {rot:"Altura máxima do bico do bebedouro acessível",       v:0.90, un:"m",  ref:"NBR 9050 — 9.4"},
+  telefoneAlt:     {rot:"Altura máxima do telefone acessível",                v:1.20, un:"m",  ref:"NBR 9050 — 9.3"},
+  comandoMin:      {rot:"Altura mínima de comandos e interruptores",          v:0.60, un:"m",  ref:"NBR 9050 — 4.6"},
+  comandoMax:      {rot:"Altura máxima de comandos e interruptores",          v:1.00, un:"m",  ref:"NBR 9050 — 4.6"},
+  vagaPCDpct:      {rot:"Percentual mínimo de vagas para PCD",                v:2.00, un:"%",  ref:"NBR 9050 — 6.14 / Dec. 5.296"},
+  vagaIdosoPct:    {rot:"Percentual mínimo de vagas para idosos",             v:5.00, un:"%",  ref:"Lei 10.741/2003"},
+  vagaFaixa:       {rot:"Faixa adicional de circulação da vaga PCD",          v:1.20, un:"m",  ref:"NBR 9050 — 6.14"},
+  vagaIncl:        {rot:"Inclinação máxima da vaga acessível",                v:3.00, un:"%",  ref:"NBR 9050 — 6.14"},
+  vagaDist:        {rot:"Distância máxima da vaga PCD ao acesso",             v:50.0, un:"m",  ref:"NBR 9050 — 6.14"},
+  peDireitoGar:    {rot:"Altura livre mínima em garagem com vaga acessível",  v:2.20, un:"m",  ref:"NBR 9050 — 6.14"},
+  assentoPCRpct:   {rot:"Percentual mínimo de espaços para P.C.R. em auditório", v:1.00, un:"%", ref:"NBR 9050 — 8.2"},
+  assentoObesoPct: {rot:"Percentual mínimo de assentos para pessoa obesa",    v:1.00, un:"%",  ref:"NBR 9050 — 8.2"},
+  quartoAcessPct:  {rot:"Percentual mínimo de dormitórios acessíveis (hospedagem)", v:5.00, un:"%", ref:"NBR 9050 — 8.5"},
+  contraste:       {rot:"Contraste mínimo entre sinalização e fundo (LRV)",   v:70.0, un:"%",  ref:"NBR 9050 — 5.2"},
+  areaResgate:     {rot:"Área de resgate — módulos de referência por pavimento", v:1, un:"un", ref:"NBR 9050 — 6.10"}
+};
+
+/* --- Fórmulas de campo ---------------------------------------------------- */
+var CALCS = {
+  incl: {rot:"Inclinação", un:"%", campos:[{k:"h",rot:"Desnível (m)"},{k:"c",rot:"Projeção horizontal (m)"}],
+    fn:function(v){ return v.c > 0 ? (v.h / v.c) * 100 : null; }},
+  blondel: {rot:"p + 2e", un:"m", campos:[{k:"p",rot:"Piso (m)"},{k:"e",rot:"Espelho (m)"}],
+    fn:function(v){ return (v.p != null && v.e != null) ? v.p + 2 * v.e : null; }},
+  proporcao: {rot:"Percentual", un:"%", campos:[{k:"a",rot:"Quantidade existente"},{k:"b",rot:"Total"}],
+    fn:function(v){ return v.b > 0 ? (v.a / v.b) * 100 : null; }},
+  area: {rot:"Área", un:"m²", campos:[{k:"a",rot:"Largura (m)"},{k:"b",rot:"Comprimento (m)"}],
+    fn:function(v){ return (v.a != null && v.b != null) ? v.a * v.b : null; }}
+};
+
+/* --- Checklist: módulos A a E --------------------------------------------- */
+var CHECKLIST = [
+{
+ cod:"A", tit:"Rota acessível e circulação", sub:"Passeios, travessias, rampas, escadas e corredores",
+ secoes:[
+  {tit:"A.1 — Calçadas e passeios públicos", nota:"Faixa livre desobstruída, contínua e identificável.", itens:[
+   {id:"A1.01", t:"Existe rota acessível contínua ligando o passeio ao acesso principal da edificação", ref:"NBR 9050 — 6.1", tipo:"sim", crit:3,
+    rec:"Implantar rota acessível contínua, sem degraus ou obstáculos, entre o logradouro e a entrada principal."},
+   {id:"A1.02", t:"Largura da faixa livre (passeio) medida no trecho mais estreito", ref:"NBR 9050 — 6.12", tipo:"num", un:"m", lim:{min:"faixaLivre"}, crit:3,
+    rec:"Alargar a faixa livre ou remanejar interferências até atingir a largura mínima normativa."},
+   {id:"A1.03", t:"Altura livre da faixa de circulação (sem obstáculos suspensos)", ref:"NBR 9050 — 6.12", tipo:"num", un:"m", lim:{min:"alturaLivre"}, crit:3,
+    rec:"Remover ou elevar toldos, galhos, placas e demais elementos suspensos abaixo da altura livre mínima."},
+   {id:"A1.04", t:"Inclinação transversal do passeio", ref:"NBR 9050 — 6.12", tipo:"num", un:"%", lim:{max:"inclTransv"}, crit:2,
+    rec:"Reconstruir o passeio com caimento transversal dentro do limite, mantendo a drenagem superficial."},
+   {id:"A1.05", t:"Inclinação longitudinal do passeio", ref:"NBR 9050 — 6.12", tipo:"num", un:"%", lim:{max:"inclLongPass"}, crit:2,
+    ajuda:"Acima do limite, o trecho deve atender aos requisitos de rampa.",
+    rec:"Tratar o trecho como rampa, com patamares, corrimãos e sinalização tátil, ou reconformar o greide."},
+   {id:"A1.06", t:"Piso firme, estável e antiderrapante sob qualquer condição climática", ref:"NBR 9050 — 6.3", tipo:"sim", crit:3,
+    rec:"Substituir o revestimento por piso com coeficiente de atrito adequado e assentamento regular."},
+   {id:"A1.07", t:"Maior desnível pontual (ressalto) medido na faixa livre", ref:"NBR 9050 — 6.1.3", tipo:"num", un:"m", lim:{max:"desnivelLivre"}, crit:3,
+    ajuda:"Entre 5 mm e 20 mm exige chanfro na proporção 1:2; acima disso, rampa.",
+    rec:"Regularizar o piso, eliminando ressaltos; desníveis entre 5 e 20 mm devem receber chanfro 1:2."},
+   {id:"A1.08", t:"Ausência de tampas, grelhas e juntas com vãos que retenham rodas ou bengalas", ref:"NBR 9050 — 6.3", tipo:"sim", crit:2,
+    rec:"Substituir grelhas e tampas por modelos com vãos máximos de 15 mm, instalados no sentido transversal ao deslocamento."},
+   {id:"A1.09", t:"Mobiliário urbano, postes e vegetação fora da faixa livre", ref:"NBR 9050 — 6.12", tipo:"sim", crit:3,
+    rec:"Remanejar o mobiliário urbano para a faixa de serviço, liberando integralmente a faixa livre."},
+   {id:"A1.10", t:"Ausência de degraus isolados na rota acessível", ref:"NBR 9050 — 6.1.3", tipo:"sim", crit:3,
+    rec:"Substituir degraus isolados por rampa ou reconformação do piso."},
+   {id:"A1.11", t:"Continuidade do passeio nas testadas dos lotes (sem soleiras e rebaixos particulares)", ref:"NBR 9050 — 6.12", tipo:"sim", crit:2,
+    rec:"Notificar os proprietários lindeiros para a adequação das testadas, restabelecendo a continuidade da faixa livre."},
+   {id:"A1.12", t:"Drenagem adequada, sem empoçamento na faixa livre", ref:"NBR 9050 — 6.12", tipo:"sim", crit:1,
+    rec:"Corrigir caimentos e implantar dispositivos de drenagem superficial."}
+  ]},
+  {tit:"A.2 — Travessias e rebaixamento de calçada", nota:"Continuidade da rota entre passeio e leito carroçável.", itens:[
+   {id:"A2.01", t:"Existência de rebaixamento de calçada alinhado às faixas de travessia", ref:"NBR 9050 — 6.12.3", tipo:"sim", crit:3,
+    rec:"Implantar rebaixamento de calçada alinhado à faixa de travessia, em ambos os lados da via."},
+   {id:"A2.02", t:"Inclinação da rampa central do rebaixamento", ref:"NBR 9050 — 6.12.3", tipo:"calc", calc:"incl", lim:{max:"inclRampa"}, crit:3,
+    rec:"Reconstruir o rebaixamento com inclinação dentro do limite normativo."},
+   {id:"A2.03", t:"Largura do rebaixamento", ref:"NBR 9050 — 6.12.3", tipo:"num", un:"m", lim:{min:"larguraRampa"}, crit:2,
+    rec:"Ampliar a largura do rebaixamento para no mínimo o valor normativo."},
+   {id:"A2.04", t:"Desnível entre o rebaixamento e o leito carroçável", ref:"NBR 9050 — 6.12.3", tipo:"num", un:"m", lim:{max:"desnivelLivre"}, crit:3,
+    rec:"Eliminar o desnível remanescente entre a rampa de rebaixamento e o pavimento da via."},
+   {id:"A2.05", t:"Abas laterais do rebaixamento executadas com inclinação adequada", ref:"NBR 9050 — 6.12.3", tipo:"sim", crit:2,
+    rec:"Executar abas laterais com inclinação máxima de 10%, evitando arestas vivas."},
+   {id:"A2.06", t:"Sinalização tátil de alerta no rebaixamento", ref:"NBR 16537 — 6.2", tipo:"sim", crit:3,
+    rec:"Instalar sinalização tátil de alerta na borda do rebaixamento, com largura e cor contrastante conforme norma."},
+   {id:"A2.07", t:"Faixa de travessia demarcada e coincidente com a rota acessível", ref:"NBR 9050 — 6.12.3", tipo:"sim", crit:2,
+    rec:"Redemarcar a faixa de travessia em alinhamento com os rebaixamentos."},
+   {id:"A2.08", t:"Semáforo com sinalização sonora ou vibratória para pedestres", ref:"NBR 9050 — 6.12.5", tipo:"sim", crit:2, na:true,
+    rec:"Instalar dispositivo sonoro/vibratório nos semáforos de pedestres da rota acessível."},
+   {id:"A2.09", t:"Tempo de travessia compatível com velocidade de 0,4 m/s", ref:"NBR 9050 — 6.12.5", tipo:"sim", crit:2, na:true,
+    rec:"Reprogramar o ciclo semafórico considerando a velocidade de deslocamento de pessoas com mobilidade reduzida."}
+  ]},
+  {tit:"A.3 — Rampas", nota:"Verificar cada lance separadamente e registrar o mais desfavorável.", itens:[
+   {id:"A3.01", t:"Inclinação do lance mais desfavorável", ref:"NBR 9050 — 6.6", tipo:"calc", calc:"incl", lim:{max:"inclRampa"}, crit:3,
+    ajuda:"Informe o desnível vencido e a projeção horizontal do lance.",
+    rec:"Reconstruir a rampa com inclinação máxima normativa, ampliando o desenvolvimento horizontal ou instalando equipamento de transposição."},
+   {id:"A3.02", t:"Largura livre da rampa", ref:"NBR 9050 — 6.6", tipo:"num", un:"m", lim:{min:"larguraRampa"}, crit:3,
+    rec:"Ampliar a largura livre da rampa, descontando corrimãos e obstáculos."},
+   {id:"A3.03", t:"Desnível vencido por segmento entre patamares", ref:"NBR 9050 — 6.6", tipo:"num", un:"m", lim:{max:"segmentoRampa"}, crit:2,
+    rec:"Inserir patamares intermediários de modo a limitar o desnível de cada segmento."},
+   {id:"A3.04", t:"Comprimento dos patamares intermediários", ref:"NBR 9050 — 6.6", tipo:"num", un:"m", lim:{min:"patamar"}, crit:2,
+    rec:"Ampliar os patamares intermediários para o comprimento mínimo normativo, no sentido do deslocamento."},
+   {id:"A3.05", t:"Patamares no início e no término da rampa, fora da área de circulação", ref:"NBR 9050 — 6.6", tipo:"sim", crit:3,
+    rec:"Executar patamares de início e término com dimensão mínima normativa, livres da circulação transversal."},
+   {id:"A3.06", t:"Inclinação transversal da rampa", ref:"NBR 9050 — 6.6", tipo:"num", un:"%", lim:{max:"inclTransv"}, crit:2,
+    rec:"Corrigir o caimento transversal da rampa."},
+   {id:"A3.07", t:"Corrimãos em ambos os lados, em duas alturas", ref:"NBR 9050 — 6.9", tipo:"sim", crit:3,
+    rec:"Instalar corrimãos duplos contínuos em ambos os lados da rampa."},
+   {id:"A3.08", t:"Guarda-corpo nas laterais com desnível", ref:"NBR 14718", tipo:"sim", crit:3, na:true,
+    rec:"Instalar guarda-corpo com altura e resistência conforme NBR 14718."},
+   {id:"A3.09", t:"Sinalização tátil de alerta no início e no término da rampa", ref:"NBR 16537 — 6.2", tipo:"sim", crit:2,
+    rec:"Instalar sinalização tátil de alerta nos patamares de início e término, com cor contrastante."},
+   {id:"A3.10", t:"Rodapé ou guia de balizamento lateral", ref:"NBR 9050 — 6.6", tipo:"sim", crit:2,
+    rec:"Instalar guia de balizamento com altura mínima de 0,05 m ao longo das laterais desprotegidas."},
+   {id:"A3.11", t:"Piso da rampa antiderrapante, inclusive quando molhado", ref:"NBR 9050 — 6.3", tipo:"sim", crit:3,
+    rec:"Aplicar revestimento antiderrapante compatível com a exposição à intempérie."},
+   {id:"A3.12", t:"Rampa protegida de intempéries ou com sistema de drenagem", ref:"NBR 9050 — 6.6", tipo:"sim", crit:1, na:true,
+    rec:"Prever cobertura ou drenagem que impeça acúmulo de água na superfície da rampa."}
+  ]},
+  {tit:"A.4 — Escadas fixas e degraus", nota:"Escada não substitui rampa: deve haver rota acessível alternativa.", itens:[
+   {id:"A4.01", t:"Existe rota acessível alternativa à escada (rampa, elevador ou plataforma)", ref:"NBR 9050 — 6.1", tipo:"sim", crit:3,
+    rec:"Implantar meio alternativo acessível de transposição do desnível."},
+   {id:"A4.02", t:"Altura do espelho", ref:"NBR 9050 — 6.8", tipo:"num", un:"m", lim:{min:"espelhoMin", max:"espelho"}, crit:2,
+    rec:"Reconstruir os degraus com espelho dentro da faixa normativa."},
+   {id:"A4.03", t:"Largura do piso do degrau", ref:"NBR 9050 — 6.8", tipo:"num", un:"m", lim:{min:"pisoDegrau", max:"pisoDegrauMax"}, crit:2,
+    rec:"Reconstruir os degraus com piso dentro da faixa normativa."},
+   {id:"A4.04", t:"Verificação da relação de Blondel (p + 2e)", ref:"NBR 9050 — 6.8", tipo:"calc", calc:"blondel", lim:{min:0.63, max:0.65}, crit:2,
+    rec:"Redimensionar piso e espelho de modo a satisfazer 0,63 m ≤ p + 2e ≤ 0,65 m."},
+   {id:"A4.05", t:"Uniformidade de pisos e espelhos em todo o lance", ref:"NBR 9050 — 6.8", tipo:"sim", crit:3,
+    rec:"Regularizar os degraus, eliminando variações dimensionais entre eles."},
+   {id:"A4.06", t:"Largura livre da escada", ref:"NBR 9050 — 6.8", tipo:"num", un:"m", lim:{min:"larguraEscada"}, crit:2,
+    rec:"Ampliar a largura livre da escada."},
+   {id:"A4.07", t:"Desnível máximo entre patamares", ref:"NBR 9050 — 6.8", tipo:"num", un:"m", lim:{max:"desnivelEscada"}, crit:2,
+    rec:"Inserir patamares intermediários limitando o desnível de cada lance."},
+   {id:"A4.08", t:"Ausência de espelhos vazados e de bocel superior a 0,015 m", ref:"NBR 9050 — 6.8", tipo:"sim", crit:2,
+    rec:"Fechar espelhos vazados e reduzir o bocel para no máximo 15 mm."},
+   {id:"A4.09", t:"Sinalização visual contrastante na borda do piso de cada degrau", ref:"NBR 9050 — 5.4", tipo:"sim", crit:2,
+    rec:"Aplicar faixa contrastante com 0,03 m a 0,05 m de largura no bordo de cada degrau."},
+   {id:"A4.10", t:"Sinalização tátil de alerta no início e no término da escada", ref:"NBR 16537 — 6.2", tipo:"sim", crit:3,
+    rec:"Instalar sinalização tátil de alerta antes do primeiro e após o último degrau."},
+   {id:"A4.11", t:"Corrimãos em ambos os lados, em duas alturas", ref:"NBR 9050 — 6.9", tipo:"sim", crit:3,
+    rec:"Instalar corrimãos duplos contínuos em ambos os lados."},
+   {id:"A4.12", t:"Corrimão intermediário em escada com largura superior a 2,40 m", ref:"NBR 9050 — 6.9", tipo:"sim", crit:1, na:true,
+    rec:"Instalar corrimão intermediário dividindo a largura da escada."},
+   {id:"A4.13", t:"Área sob a escada com pé-direito inferior a 2,10 m protegida ou sinalizada", ref:"NBR 9050 — 6.8", tipo:"sim", crit:2, na:true,
+    rec:"Enclausurar ou balizar a área sob a escada com desnível inferior à altura livre mínima."}
+  ]},
+  {tit:"A.5 — Corrimãos e guarda-corpos", itens:[
+   {id:"A5.01", t:"Altura do corrimão superior (face superior da barra)", ref:"NBR 9050 — 6.9", tipo:"num", un:"m", lim:{min:0.90, max:0.94}, crit:2,
+    rec:"Reposicionar o corrimão superior na altura normativa medida a partir do piso."},
+   {id:"A5.02", t:"Altura do corrimão inferior", ref:"NBR 9050 — 6.9", tipo:"num", un:"m", lim:{min:0.68, max:0.72}, crit:2,
+    rec:"Instalar ou reposicionar o corrimão inferior na altura normativa."},
+   {id:"A5.03", t:"Diâmetro da seção do corrimão", ref:"NBR 9050 — 6.9", tipo:"num", un:"m", lim:{min:"corrimaoDMin", max:"corrimaoDMax"}, crit:2,
+    rec:"Substituir o corrimão por seção circular dentro da faixa normativa."},
+   {id:"A5.04", t:"Afastamento entre corrimão e parede", ref:"NBR 9050 — 6.9", tipo:"num", un:"m", lim:{min:"corrimaoAfast"}, crit:2,
+    rec:"Reinstalar o corrimão respeitando o afastamento mínimo em relação à parede."},
+   {id:"A5.05", t:"Prolongamento nas extremidades, sem interferir na circulação", ref:"NBR 9050 — 6.9", tipo:"num", un:"m", lim:{min:"corrimaoProl"}, crit:2,
+    rec:"Prolongar o corrimão nas extremidades e arrematá-lo com curvatura junto ao piso ou à parede."},
+   {id:"A5.06", t:"Corrimão contínuo, sem interrupção nos patamares", ref:"NBR 9050 — 6.9", tipo:"sim", crit:2,
+    rec:"Tornar o corrimão contínuo ao longo de todo o percurso, inclusive nos patamares."},
+   {id:"A5.07", t:"Fixação firme, sem rotação da barra e sem arestas cortantes", ref:"NBR 9050 — 6.9", tipo:"sim", crit:3,
+    rec:"Refazer a fixação do corrimão e eliminar arestas."},
+   {id:"A5.08", t:"Altura do guarda-corpo", ref:"NBR 14718", tipo:"num", un:"m", lim:{min:"guardaCorpo"}, crit:3, na:true,
+    rec:"Substituir ou complementar o guarda-corpo até a altura mínima normativa."},
+   {id:"A5.09", t:"Guarda-corpo sem elementos escaláveis e com vãos que impeçam a passagem de esfera de 0,11 m", ref:"NBR 14718", tipo:"sim", crit:3, na:true,
+    rec:"Substituir o preenchimento do guarda-corpo por solução não escalável com vãos conformes."}
+  ]},
+  {tit:"A.6 — Sinalização tátil no piso", nota:"Alerta = relevo tronco-cônico; direcional = relevo linear.", itens:[
+   {id:"A6.01", t:"Sinalização tátil direcional implantada nos trechos sem linha-guia natural", ref:"NBR 16537 — 6.3", tipo:"sim", crit:3,
+    rec:"Implantar sinalização tátil direcional contínua nos trechos desprovidos de elemento que sirva de linha-guia."},
+   {id:"A6.02", t:"Largura da faixa direcional", ref:"NBR 16537 — 5", tipo:"num", un:"m", lim:{min:"tatilDirL"}, crit:2,
+    rec:"Ajustar a largura da faixa tátil direcional aos limites normativos."},
+   {id:"A6.03", t:"Largura da sinalização tátil de alerta", ref:"NBR 16537 — 5", tipo:"num", un:"m", lim:{min:"tatilAlertaL"}, crit:2,
+    rec:"Ajustar a largura da sinalização tátil de alerta aos limites normativos."},
+   {id:"A6.04", t:"Contraste visual entre a sinalização tátil e o piso adjacente", ref:"NBR 16537 — 5.3", tipo:"sim", crit:2,
+    rec:"Substituir a sinalização por modelo com contraste de luminância adequado em relação ao piso adjacente."},
+   {id:"A6.05", t:"Alerta em todos os desníveis, obstáculos suspensos e mudanças de direção", ref:"NBR 16537 — 6.2", tipo:"sim", crit:3,
+    rec:"Complementar a sinalização de alerta nos pontos de risco não sinalizados."},
+   {id:"A6.06", t:"Sinalização íntegra, sem placas soltas, quebradas ou desalinhadas", ref:"NBR 16537 — 7", tipo:"sim", crit:2,
+    rec:"Substituir os elementos danificados e realinhar o assentamento."},
+   {id:"A6.07", t:"Sinalização conduz efetivamente aos pontos de interesse (recepção, sanitários, elevadores)", ref:"NBR 16537 — 6.3", tipo:"sim", crit:2,
+    rec:"Reprojetar o traçado da sinalização tátil de modo a conectar os principais pontos de interesse."}
+  ]},
+  {tit:"A.7 — Circulação interna", itens:[
+   {id:"A7.01", t:"Largura livre dos corredores de uso comum (trecho mais estreito)", ref:"NBR 9050 — 6.5", tipo:"num", un:"m", lim:{min:1.20}, crit:3,
+    ajuda:"1,50 m para corredores com mais de 10 m; 1,20 m até 10 m; 0,90 m para trechos curtos.",
+    rec:"Ampliar a largura livre do corredor conforme a extensão do trecho."},
+   {id:"A7.02", t:"Altura livre da circulação interna", ref:"NBR 9050 — 4.3", tipo:"num", un:"m", lim:{min:"alturaLivre"}, crit:3,
+    rec:"Elevar ou remover elementos suspensos que reduzam a altura livre."},
+   {id:"A7.03", t:"Área de manobra para rotação de 360° nos pontos de retorno", ref:"NBR 9050 — 4.3", tipo:"num", un:"m", lim:{min:"giro360"}, crit:2,
+    rec:"Reservar área de manobra com diâmetro mínimo normativo nos pontos de retorno."},
+   {id:"A7.04", t:"Objetos salientes entre 0,60 m e 2,10 m com projeção máxima de 0,10 m", ref:"NBR 9050 — 6.4", tipo:"sim", crit:2,
+    rec:"Rebaixar, recuar ou balizar os elementos salientes que avancem sobre a circulação."},
+   {id:"A7.05", t:"Ausência de tapetes soltos, capachos altos e forrações instáveis", ref:"NBR 9050 — 6.3", tipo:"sim", crit:2,
+    rec:"Fixar ou substituir as forrações por modelo embutido com desnível máximo de 5 mm."},
+   {id:"A7.06", t:"Iluminação da circulação suficiente e uniforme", ref:"NBR 9050 — 6.3 / NBR ISO 8995-1", tipo:"num", un:"lux", lim:{min:150}, crit:1,
+    rec:"Reforçar a iluminação artificial das rotas de circulação."},
+   {id:"A7.07", t:"Portas e mobiliário não reduzem a largura livre quando abertos", ref:"NBR 9050 — 6.5", tipo:"sim", crit:2,
+    rec:"Alterar o sentido de abertura das portas ou remanejar o mobiliário."}
+  ]}
+ ]
+},
+{
+ cod:"B", tit:"Acessos, portas e vãos", sub:"Entradas, portas internas, dispositivos de controle de acesso",
+ secoes:[
+  {tit:"B.1 — Entrada principal", itens:[
+   {id:"B1.01", t:"A entrada principal é acessível (sem necessidade de entrada segregada)", ref:"NBR 9050 — 6.11", tipo:"sim", crit:3,
+    rec:"Adequar a entrada principal, evitando o uso de acesso secundário exclusivo para pessoas com deficiência."},
+   {id:"B1.02", t:"Vão livre da porta de entrada", ref:"NBR 9050 — 6.11", tipo:"num", un:"m", lim:{min:"vaoPorta"}, crit:3,
+    ajuda:"Medir com a folha aberta a 90°, entre a face da folha e o batente oposto.",
+    rec:"Substituir a folha ou o conjunto para obter o vão livre mínimo normativo."},
+   {id:"B1.03", t:"Altura livre do vão", ref:"NBR 9050 — 6.11", tipo:"num", un:"m", lim:{min:"alturaPorta"}, crit:2,
+    rec:"Ajustar o vão para a altura livre mínima normativa."},
+   {id:"B1.04", t:"Desnível na soleira", ref:"NBR 9050 — 6.1.3", tipo:"num", un:"m", lim:{max:"desnivelLivre"}, crit:3,
+    rec:"Eliminar o desnível da soleira ou tratá-lo com chanfro/rampa conforme a magnitude."},
+   {id:"B1.05", t:"Área de aproximação da porta compatível com o sentido de abertura", ref:"NBR 9050 — 6.11", tipo:"sim", crit:3,
+    rec:"Reservar área de aproximação livre conforme o sentido de abertura da porta."},
+   {id:"B1.06", t:"Cobertura ou proteção sobre a área de aproximação", ref:"NBR 9050 — 6.11", tipo:"sim", crit:1, na:true,
+    rec:"Prever cobertura sobre a área de espera junto ao acesso principal."},
+   {id:"B1.07", t:"Sinalização de identificação do acesso acessível (SIA)", ref:"NBR 9050 — 5.5", tipo:"sim", crit:2,
+    rec:"Instalar o Símbolo Internacional de Acesso na entrada e na sinalização direcional."}
+  ]},
+  {tit:"B.2 — Portas internas", itens:[
+   {id:"B2.01", t:"Vão livre das portas dos ambientes de uso comum (menor medido)", ref:"NBR 9050 — 6.11", tipo:"num", un:"m", lim:{min:"vaoPorta"}, crit:3,
+    rec:"Substituir as folhas com vão livre inferior ao mínimo normativo."},
+   {id:"B2.02", t:"Altura das maçanetas", ref:"NBR 9050 — 6.11", tipo:"num", un:"m", lim:{min:"macanetaMin", max:"macanetaMax"}, crit:2,
+    rec:"Reposicionar as maçanetas dentro da faixa de altura normativa."},
+   {id:"B2.03", t:"Maçanetas do tipo alavanca, sem exigir preensão ou torção do punho", ref:"NBR 9050 — 6.11", tipo:"sim", crit:3,
+    rec:"Substituir maçanetas de bola ou trinco por modelo tipo alavanca."},
+   {id:"B2.04", t:"Força necessária para abertura da porta", ref:"NBR 9050 — 6.11", tipo:"num", un:"N", lim:{max:"forcaPorta"}, crit:2,
+    rec:"Regular molas e dobradiças de modo a reduzir a força de abertura ao limite normativo."},
+   {id:"B2.05", t:"Revestimento resistente a impacto até 0,40 m do piso", ref:"NBR 9050 — 6.11", tipo:"sim", crit:1,
+    rec:"Aplicar proteção resistente a impacto na parte inferior das folhas."},
+   {id:"B2.06", t:"Puxador horizontal complementar nas portas de correr", ref:"NBR 9050 — 6.11", tipo:"sim", crit:1, na:true,
+    rec:"Instalar puxador horizontal com comprimento mínimo normativo nas portas de correr."},
+   {id:"B2.07", t:"Portas de vidro com faixa de sinalização visual contrastante", ref:"NBR 9050 — 5.4", tipo:"sim", crit:2, na:true,
+    rec:"Aplicar faixas de sinalização visual nas superfícies envidraçadas, nas alturas normativas."},
+   {id:"B2.08", t:"Ausência de porta com mola de retorno em sanitário acessível", ref:"NBR 9050 — 7.4", tipo:"sim", crit:2, na:true,
+    rec:"Remover a mola de retorno ou substituí-la por dispositivo de fechamento suave."}
+  ]},
+  {tit:"B.3 — Controle de acesso e portas especiais", itens:[
+   {id:"B3.01", t:"Existe passagem acessível alternativa às catracas ou torniquetes", ref:"NBR 9050 — 6.11", tipo:"sim", crit:3, na:true,
+    rec:"Instalar portão ou catraca acessível com vão livre mínimo normativo junto ao controle de acesso."},
+   {id:"B3.02", t:"Vão livre da passagem acessível no controle de acesso", ref:"NBR 9050 — 6.11", tipo:"num", un:"m", lim:{min:"vaoPorta"}, crit:3, na:true,
+    rec:"Ampliar o vão livre da passagem acessível."},
+   {id:"B3.03", t:"Portas giratórias sempre acompanhadas de porta convencional acessível", ref:"NBR 9050 — 6.11", tipo:"sim", crit:3, na:true,
+    rec:"Instalar porta convencional acessível ao lado da porta giratória."},
+   {id:"B3.04", t:"Portas automáticas com tempo de abertura e sensores adequados", ref:"NBR 9050 — 6.11", tipo:"sim", crit:2, na:true,
+    rec:"Regular o tempo de permanência aberta e a sensibilidade dos sensores das portas automáticas."},
+   {id:"B3.05", t:"Dispositivos de acionamento (leitores, botoeiras) na faixa de alcance", ref:"NBR 9050 — 4.6", tipo:"num", un:"m", lim:{min:"comandoMin", max:"comandoMax"}, crit:2, na:true,
+    rec:"Reposicionar os dispositivos de acionamento dentro da faixa de alcance manual."},
+   {id:"B3.06", t:"Detector de metais e revista com procedimento acessível", ref:"NBR 9050 — 6.11", tipo:"sim", crit:1, na:true,
+    rec:"Estabelecer procedimento alternativo de revista para pessoas com deficiência ou mobilidade reduzida."}
+  ]}
+ ]
+},
+{
+ cod:"C", tit:"Circulação vertical mecanizada", sub:"Elevadores, plataformas elevatórias e escadas rolantes",
+ secoes:[
+  {tit:"C.1 — Elevador de passageiros", itens:[
+   {id:"C1.01", t:"Edificação com mais de um pavimento dispõe de elevador ou equipamento acessível", ref:"NBR 9050 — 6.7 / Dec. 5.296", tipo:"sim", crit:3,
+    rec:"Instalar elevador ou plataforma elevatória atendendo a todos os pavimentos de uso público."},
+   {id:"C1.02", t:"Largura interna da cabine", ref:"NBR NM 313", tipo:"num", un:"m", lim:{min:"cabineElevL"}, crit:3,
+    rec:"Substituir a cabine por modelo com dimensões internas conformes."},
+   {id:"C1.03", t:"Profundidade interna da cabine", ref:"NBR NM 313", tipo:"num", un:"m", lim:{min:"cabineElevC"}, crit:3,
+    rec:"Substituir a cabine por modelo com dimensões internas conformes."},
+   {id:"C1.04", t:"Vão livre da porta do elevador", ref:"NBR NM 313", tipo:"num", un:"m", lim:{min:"portaElev"}, crit:3,
+    rec:"Substituir o conjunto de portas para obter o vão livre mínimo."},
+   {id:"C1.05", t:"Altura máxima da botoeira interna", ref:"NBR NM 313", tipo:"num", un:"m", lim:{max:"botoeiraElev"}, crit:2,
+    rec:"Reposicionar a botoeira dentro da faixa de alcance."},
+   {id:"C1.06", t:"Botões com identificação em relevo e Braille", ref:"NBR NM 313", tipo:"sim", crit:3,
+    rec:"Substituir a botoeira por modelo com caracteres em relevo e Braille."},
+   {id:"C1.07", t:"Sinalização sonora de chegada e de sentido de deslocamento", ref:"NBR NM 313", tipo:"sim", crit:3,
+    rec:"Instalar sinalização sonora de chegada e indicação verbal de pavimento."},
+   {id:"C1.08", t:"Indicação visual de pavimento dentro e fora da cabine", ref:"NBR NM 313", tipo:"sim", crit:2,
+    rec:"Instalar indicadores visuais de posição na cabine e nos pavimentos."},
+   {id:"C1.09", t:"Desnível entre o piso da cabine e o do pavimento", ref:"NBR NM 313", tipo:"num", un:"m", lim:{max:"nivelamentoElev"}, crit:3,
+    rec:"Ajustar o sistema de nivelamento automático da cabine."},
+   {id:"C1.10", t:"Vão horizontal entre a cabine e o pavimento", ref:"NBR NM 313", tipo:"num", un:"m", lim:{max:"vaoElev"}, crit:3,
+    rec:"Reduzir o vão entre a soleira da cabine e a do pavimento."},
+   {id:"C1.11", t:"Barra de apoio interna e espelho na parede oposta à porta", ref:"NBR NM 313", tipo:"sim", crit:2,
+    rec:"Instalar barra de apoio e espelho conforme requisitos de acessibilidade da cabine."},
+   {id:"C1.12", t:"Sensor de reabertura de porta sem contato físico", ref:"NBR NM 313", tipo:"sim", crit:3,
+    rec:"Instalar cortina de luz ou sensor infravermelho de reabertura."},
+   {id:"C1.13", t:"Botoeira externa na faixa de alcance e com Braille", ref:"NBR NM 313", tipo:"num", un:"m", lim:{min:"comandoMin", max:"botoeiraElev"}, crit:2,
+    rec:"Reposicionar a botoeira externa e complementar a identificação em relevo e Braille."},
+   {id:"C1.14", t:"Sistema de comunicação de emergência com recurso visual e sonoro", ref:"NBR NM 313", tipo:"sim", crit:3,
+    rec:"Instalar interfone de emergência com sinalização luminosa de chamada atendida."},
+   {id:"C1.15", t:"Sinalização tátil de alerta no piso, em frente à porta do elevador", ref:"NBR 16537", tipo:"sim", crit:2,
+    rec:"Instalar sinalização tátil de alerta em frente às portas de pavimento."}
+  ]},
+  {tit:"C.2 — Plataforma elevatória", itens:[
+   {id:"C2.01", t:"Plataforma instalada apenas onde admitida, com projeto e ART/RRT", ref:"NBR 15655", tipo:"sim", crit:2, na:true,
+    rec:"Regularizar a instalação com projeto e responsabilidade técnica registrada."},
+   {id:"C2.02", t:"Dimensões da plataforma compatíveis com o módulo de referência", ref:"NBR 15655", tipo:"calc", calc:"area", lim:{min:0.96}, crit:3, na:true,
+    ajuda:"Área mínima equivalente ao módulo de referência 0,80 m × 1,20 m.",
+    rec:"Substituir a plataforma por modelo com dimensões compatíveis com o módulo de referência."},
+   {id:"C2.03", t:"Comando de operação acessível e de fácil acionamento", ref:"NBR 15655", tipo:"sim", crit:2, na:true,
+    rec:"Substituir os comandos por dispositivos acessíveis dentro da faixa de alcance."},
+   {id:"C2.04", t:"Equipamento em funcionamento, com manutenção em dia e sem chave de bloqueio", ref:"NBR 15655", tipo:"sim", crit:3, na:true,
+    rec:"Restabelecer o funcionamento contínuo e o plano de manutenção do equipamento."},
+   {id:"C2.05", t:"Uso autônomo, sem necessidade de operador", ref:"NBR 9050 — 6.7", tipo:"sim", crit:3, na:true,
+    rec:"Adequar o equipamento para uso autônomo pela pessoa com deficiência."},
+   {id:"C2.06", t:"Dispositivos de segurança (sensores, guarda-corpo, parada de emergência) operantes", ref:"NBR 15655", tipo:"sim", crit:3, na:true,
+    rec:"Recompor e testar os dispositivos de segurança da plataforma."}
+  ]},
+  {tit:"C.3 — Escadas e esteiras rolantes", itens:[
+   {id:"C3.01", t:"Escada rolante acompanhada de rota acessível alternativa", ref:"NBR 9050 — 6.7", tipo:"sim", crit:3, na:true,
+    rec:"Prover elevador ou rampa como alternativa acessível à escada rolante."},
+   {id:"C3.02", t:"Sinalização tátil de alerta no embarque e desembarque", ref:"NBR 16537", tipo:"sim", crit:2, na:true,
+    rec:"Instalar sinalização tátil de alerta nas extremidades do equipamento."},
+   {id:"C3.03", t:"Sinalização visual contrastante nos degraus e nas bordas", ref:"NBR 9050 — 5.4", tipo:"sim", crit:1, na:true,
+    rec:"Aplicar sinalização contrastante nas bordas dos degraus do equipamento."}
+  ]}
+ ]
+},
+{
+ cod:"D", tit:"Sanitários, vestiários e fraldários", sub:"Peças, barras de apoio, áreas de manobra e transferência",
+ secoes:[
+  {tit:"D.1 — Sanitário acessível — implantação", itens:[
+   {id:"D1.01", t:"Existe ao menos um sanitário acessível por pavimento de uso público", ref:"NBR 9050 — 7.4", tipo:"sim", crit:3,
+    rec:"Implantar sanitário acessível em cada pavimento acessível ao público."},
+   {id:"D1.02", t:"Sanitário acessível localizado na rota acessível e próximo à circulação principal", ref:"NBR 9050 — 7.4", tipo:"sim", crit:2,
+    rec:"Reposicionar ou sinalizar o sanitário acessível de modo a integrá-lo à rota acessível."},
+   {id:"D1.03", t:"Sanitário mantém-se destrancado e livre de uso como depósito", ref:"NBR 9050 — 7.4", tipo:"sim", crit:3,
+    rec:"Manter o sanitário acessível permanentemente disponível e desimpedido."},
+   {id:"D1.04", t:"Sinalização de identificação com SIA, caractere em relevo e Braille", ref:"NBR 9050 — 5.5", tipo:"sim", crit:2,
+    rec:"Instalar placa de identificação com símbolo, relevo e Braille junto ao batente da porta."},
+   {id:"D1.05", t:"Vão livre da porta do sanitário", ref:"NBR 9050 — 7.4", tipo:"num", un:"m", lim:{min:"vaoPorta"}, crit:3,
+    rec:"Substituir a folha para obter o vão livre mínimo."},
+   {id:"D1.06", t:"Porta com abertura para fora ou de correr", ref:"NBR 9050 — 7.4", tipo:"sim", crit:2,
+    rec:"Inverter o sentido de abertura da porta ou substituí-la por porta de correr."},
+   {id:"D1.07", t:"Fecho de acionamento simples, destravável pelo lado externo em emergência", ref:"NBR 9050 — 7.4", tipo:"sim", crit:2,
+    rec:"Substituir o fecho por modelo tipo alavanca com destravamento externo."},
+   {id:"D1.08", t:"Área de manobra com rotação de 360° livre de obstáculos", ref:"NBR 9050 — 7.4", tipo:"num", un:"m", lim:{min:"sanitarioGiro"}, crit:3,
+    rec:"Reorganizar as peças ou ampliar o compartimento para acomodar a área de manobra."},
+   {id:"D1.09", t:"Piso antiderrapante e ausência de desnível na soleira", ref:"NBR 9050 — 6.3", tipo:"sim", crit:3,
+    rec:"Substituir o revestimento por piso antiderrapante e regularizar a soleira."}
+  ]},
+  {tit:"D.2 — Bacia sanitária e barras de apoio", itens:[
+   {id:"D2.01", t:"Altura da bacia sanitária, incluído o assento", ref:"NBR 9050 — 7.4", tipo:"num", un:"m", lim:{min:"baciaAlturaMin", max:"baciaAltura"}, crit:3,
+    rec:"Substituir a bacia ou instalar assento elevado para atingir a altura normativa."},
+   {id:"D2.02", t:"Área de transferência lateral livre junto à bacia", ref:"NBR 9050 — 7.4", tipo:"num", un:"m", lim:{min:"mrLarg"}, crit:3,
+    rec:"Liberar a área de transferência lateral, removendo obstáculos junto à bacia."},
+   {id:"D2.03", t:"Barra de apoio na parede lateral à bacia", ref:"NBR 9050 — 7.4", tipo:"sim", crit:3,
+    rec:"Instalar barra de apoio horizontal na parede lateral, no comprimento e altura normativos."},
+   {id:"D2.04", t:"Barra de apoio na parede de fundo", ref:"NBR 9050 — 7.4", tipo:"sim", crit:3,
+    rec:"Instalar barra de apoio na parede de fundo conforme posicionamento normativo."},
+   {id:"D2.05", t:"Comprimento das barras de apoio", ref:"NBR 9050 — 7.4", tipo:"num", un:"m", lim:{min:"barraComp"}, crit:2,
+    rec:"Substituir as barras por modelos com comprimento mínimo normativo."},
+   {id:"D2.06", t:"Altura de instalação das barras junto à bacia", ref:"NBR 9050 — 7.4", tipo:"num", un:"m", lim:{min:0.73, max:0.77}, crit:2,
+    rec:"Reposicionar as barras na altura normativa medida a partir do piso acabado."},
+   {id:"D2.07", t:"Diâmetro das barras de apoio", ref:"NBR 9050 — 6.9", tipo:"num", un:"m", lim:{min:"barraDMin", max:"barraDMax"}, crit:2,
+    rec:"Substituir as barras por seção circular dentro da faixa normativa."},
+   {id:"D2.08", t:"Fixação das barras resistente a esforço mínimo de 1,5 kN, sem rotação", ref:"NBR 9050 — 6.9", tipo:"sim", crit:3,
+    rec:"Refazer a fixação das barras com sistema estrutural adequado ao esforço normativo."},
+   {id:"D2.09", t:"Barra de apoio junto à porta, pelo lado interno", ref:"NBR 9050 — 7.4", tipo:"sim", crit:2,
+    rec:"Instalar barra de apoio vertical/horizontal junto à porta, pelo lado interno."},
+   {id:"D2.10", t:"Acionamento da descarga na faixa de alcance, do lado da transferência", ref:"NBR 9050 — 7.4", tipo:"num", un:"m", lim:{min:"comandoMin", max:"comandoMax"}, crit:2,
+    rec:"Reposicionar o acionamento da descarga dentro da faixa de alcance manual."},
+   {id:"D2.11", t:"Papeleira posicionada na faixa de alcance, sem interferir na barra", ref:"NBR 9050 — 7.4", tipo:"sim", crit:2,
+    rec:"Reposicionar a papeleira conforme o posicionamento normativo."}
+  ]},
+  {tit:"D.3 — Lavatório e acessórios", itens:[
+   {id:"D3.01", t:"Altura da borda superior do lavatório", ref:"NBR 9050 — 7.4", tipo:"num", un:"m", lim:{min:0.78, max:"lavatorioAlt"}, crit:2,
+    rec:"Reinstalar o lavatório na altura normativa."},
+   {id:"D3.02", t:"Altura livre sob o lavatório para aproximação frontal", ref:"NBR 9050 — 7.4", tipo:"num", un:"m", lim:{min:"lavatorioLivre"}, crit:3,
+    rec:"Remover coluna, armário ou tubulação aparente que impeça a aproximação frontal."},
+   {id:"D3.03", t:"Sifão e tubulações protegidos ou afastados da área de aproximação", ref:"NBR 9050 — 7.4", tipo:"sim", crit:2,
+    rec:"Isolar termicamente e recuar as tubulações sob o lavatório."},
+   {id:"D3.04", t:"Torneira com acionamento por alavanca, sensor ou pressão", ref:"NBR 9050 — 7.4", tipo:"sim", crit:2,
+    rec:"Substituir a torneira por modelo que dispense preensão e torção do punho."},
+   {id:"D3.05", t:"Altura da borda inferior do espelho", ref:"NBR 9050 — 7.4", tipo:"num", un:"m", lim:{max:"espelhoBanh"}, crit:1,
+    rec:"Rebaixar o espelho ou substituí-lo por modelo de maior altura útil."},
+   {id:"D3.06", t:"Saboneteira, toalheiro e secador na faixa de alcance", ref:"NBR 9050 — 4.6", tipo:"num", un:"m", lim:{min:"alcanceMin", max:"alcanceMax"}, crit:2,
+    rec:"Reposicionar os acessórios dentro da faixa de alcance manual."},
+   {id:"D3.07", t:"Lixeira acessível e que não obstrua a área de manobra", ref:"NBR 9050 — 7.4", tipo:"sim", crit:1,
+    rec:"Substituir ou reposicionar a lixeira de modo a liberar a área de manobra."}
+  ]},
+  {tit:"D.4 — Mictórios e sanitários de uso comum", itens:[
+   {id:"D4.01", t:"Ao menos um mictório acessível instalado", ref:"NBR 9050 — 7.4", tipo:"sim", crit:2, na:true,
+    rec:"Instalar mictório acessível com barras de apoio no conjunto sanitário masculino."},
+   {id:"D4.02", t:"Altura da borda do mictório acessível", ref:"NBR 9050 — 7.4", tipo:"num", un:"m", lim:{max:"mictorioAlt"}, crit:2, na:true,
+    rec:"Reinstalar o mictório acessível na altura normativa."},
+   {id:"D4.03", t:"Barras de apoio verticais junto ao mictório acessível", ref:"NBR 9050 — 7.4", tipo:"sim", crit:2, na:true,
+    rec:"Instalar barras de apoio verticais laterais ao mictório acessível."},
+   {id:"D4.04", t:"Ao menos uma cabine de uso comum com dimensões e barras ampliadas", ref:"NBR 9050 — 7.4", tipo:"sim", crit:2, na:true,
+    rec:"Adequar uma cabine do sanitário coletivo com dimensões e barras para pessoa com mobilidade reduzida."},
+   {id:"D4.05", t:"Cabides, ganchos e prateleiras dentro da faixa de alcance", ref:"NBR 9050 — 4.6", tipo:"num", un:"m", lim:{max:"alcanceMax"}, crit:1,
+    rec:"Reposicionar ganchos e prateleiras dentro da faixa de alcance manual."}
+  ]},
+  {tit:"D.5 — Boxes, vestiários e fraldários", itens:[
+   {id:"D5.01", t:"Boxe de chuveiro acessível com área de manobra e transferência", ref:"NBR 9050 — 7.4", tipo:"sim", crit:2, na:true,
+    rec:"Adequar o boxe acessível com dimensões de manobra e área de transferência normativas."},
+   {id:"D5.02", t:"Assento articulado no boxe, com altura normativa", ref:"NBR 9050 — 7.4", tipo:"num", un:"m", lim:{min:0.43, max:"duchaAssento"}, crit:2, na:true,
+    rec:"Instalar assento articulado retrátil na altura normativa, com resistência estrutural adequada."},
+   {id:"D5.03", t:"Barras de apoio no boxe, em posição compatível com a transferência", ref:"NBR 9050 — 7.4", tipo:"sim", crit:2, na:true,
+    rec:"Instalar barras de apoio no boxe conforme o posicionamento normativo."},
+   {id:"D5.04", t:"Registro e ducha manual na faixa de alcance", ref:"NBR 9050 — 4.6", tipo:"num", un:"m", lim:{min:"comandoMin", max:"alcanceMax"}, crit:2, na:true,
+    rec:"Reposicionar registro e ducha manual dentro da faixa de alcance."},
+   {id:"D5.05", t:"Ausência de desnível na entrada do boxe, com ralo linear ou caimento", ref:"NBR 9050 — 7.4", tipo:"sim", crit:2, na:true,
+    rec:"Eliminar o degrau de entrada do boxe, adotando caimento e ralo linear."},
+   {id:"D5.06", t:"Vestiário com banco, área de manobra e armário acessíveis", ref:"NBR 9050 — 7.4", tipo:"sim", crit:2, na:true,
+    rec:"Adequar ao menos um vestiário com banco, área de manobra e armário na faixa de alcance."},
+   {id:"D5.07", t:"Fraldário acessível disponível em sanitário de ambos os sexos", ref:"NBR 9050 — 7.4", tipo:"sim", crit:1, na:true,
+    rec:"Instalar trocador acessível em sanitários masculino e feminino ou em sanitário familiar."}
+  ]}
+ ]
+},
+{
+ cod:"E", tit:"Mobiliário, equipamentos e atendimento", sub:"Balcões, bebedouros, autoatendimento e comandos",
+ secoes:[
+  {tit:"E.1 — Balcões e guichês de atendimento", itens:[
+   {id:"E1.01", t:"Existe posto de atendimento acessível em cada setor de atendimento ao público", ref:"NBR 9050 — 9.2", tipo:"sim", crit:3,
+    rec:"Adequar ao menos um posto de atendimento por setor às condições de acessibilidade."},
+   {id:"E1.02", t:"Altura da superfície do balcão acessível", ref:"NBR 9050 — 9.2", tipo:"num", un:"m", lim:{max:"balcaoAlt"}, crit:3,
+    rec:"Rebaixar o trecho acessível do balcão para a altura normativa."},
+   {id:"E1.03", t:"Altura livre sob o balcão", ref:"NBR 9050 — 9.2", tipo:"num", un:"m", lim:{min:"balcaoLivre"}, crit:3,
+    rec:"Liberar altura sob o balcão para aproximação frontal da cadeira de rodas."},
+   {id:"E1.04", t:"Profundidade livre sob o balcão", ref:"NBR 9050 — 9.2", tipo:"num", un:"m", lim:{min:"balcaoProf"}, crit:2,
+    rec:"Ampliar a profundidade livre sob a superfície do balcão."},
+   {id:"E1.05", t:"Largura do trecho acessível do balcão", ref:"NBR 9050 — 9.2", tipo:"num", un:"m", lim:{min:"balcaoLarg"}, crit:2,
+    rec:"Ampliar a extensão do trecho rebaixado do balcão."},
+   {id:"E1.06", t:"Identificação do posto acessível com sinalização visual", ref:"NBR 9050 — 5.5", tipo:"sim", crit:1,
+    rec:"Sinalizar o posto de atendimento acessível com o Símbolo Internacional de Acesso."},
+   {id:"E1.07", t:"Assentos reservados na área de espera, com espaço para P.C.R.", ref:"NBR 9050 — 8.2", tipo:"sim", crit:2,
+    rec:"Reservar e sinalizar assentos e espaços para cadeira de rodas na área de espera."},
+   {id:"E1.08", t:"Sistema de senha com chamada visual e sonora simultâneas", ref:"NBR 9050 — 9.2", tipo:"sim", crit:2, na:true,
+    rec:"Adequar o sistema de senhas para emitir chamada visual e sonora simultâneas."}
+  ]},
+  {tit:"E.2 — Bebedouros", itens:[
+   {id:"E2.01", t:"Existe bebedouro acessível em cada conjunto de bebedouros", ref:"NBR 9050 — 9.4", tipo:"sim", crit:2,
+    rec:"Instalar ao menos um bebedouro acessível por conjunto."},
+   {id:"E2.02", t:"Altura do bico do bebedouro acessível", ref:"NBR 9050 — 9.4", tipo:"num", un:"m", lim:{max:"bebedouroAlt"}, crit:2,
+    rec:"Reinstalar o bebedouro acessível na altura normativa."},
+   {id:"E2.03", t:"Altura livre inferior para aproximação frontal", ref:"NBR 9050 — 9.4", tipo:"num", un:"m", lim:{min:0.73}, crit:2,
+    rec:"Substituir o modelo por bebedouro que permita aproximação frontal."},
+   {id:"E2.04", t:"Acionamento frontal, sem exigir preensão ou torção", ref:"NBR 9050 — 9.4", tipo:"sim", crit:2,
+    rec:"Substituir o acionamento por botão frontal ou sensor."},
+   {id:"E2.05", t:"Dispositivo para enchimento de copo ou recipiente", ref:"NBR 9050 — 9.4", tipo:"sim", crit:1,
+    rec:"Instalar bica ou torneira complementar para enchimento de recipientes."}
+  ]},
+  {tit:"E.3 — Autoatendimento, telefones e caixas", itens:[
+   {id:"E3.01", t:"Existe terminal de autoatendimento acessível", ref:"NBR 9050 — 9.3 / NBR 15250", tipo:"sim", crit:2, na:true,
+    rec:"Instalar ao menos um terminal de autoatendimento acessível por conjunto."},
+   {id:"E3.02", t:"Altura dos comandos do terminal", ref:"NBR 9050 — 4.6", tipo:"num", un:"m", lim:{min:"alcanceMin", max:"alcanceMax"}, crit:2, na:true,
+    rec:"Reposicionar os comandos do terminal dentro da faixa de alcance manual."},
+   {id:"E3.03", t:"Área de aproximação frontal livre em frente ao terminal", ref:"NBR 9050 — 4.3", tipo:"sim", crit:2, na:true,
+    rec:"Liberar área de aproximação equivalente ao módulo de referência em frente ao equipamento."},
+   {id:"E3.04", t:"Recursos de acessibilidade no terminal (áudio, alto contraste, teclado tátil)", ref:"NBR 15250", tipo:"sim", crit:2, na:true,
+    rec:"Habilitar os recursos de acessibilidade do terminal, incluindo saída de áudio com fone."},
+   {id:"E3.05", t:"Telefone acessível instalado na altura normativa", ref:"NBR 9050 — 9.3", tipo:"num", un:"m", lim:{max:"telefoneAlt"}, crit:1, na:true,
+    rec:"Reinstalar o telefone acessível na altura normativa, com área de aproximação livre."},
+   {id:"E3.06", t:"Telefone com amplificação sonora ou compatível com aparelho auditivo", ref:"NBR 9050 — 9.3", tipo:"sim", crit:1, na:true,
+    rec:"Substituir o aparelho por modelo com controle de volume e compatibilidade indutiva."}
+  ]},
+  {tit:"E.4 — Comandos, mobiliário e superfícies de trabalho", itens:[
+   {id:"E4.01", t:"Interruptores, tomadas e comandos na faixa de alcance", ref:"NBR 9050 — 4.6", tipo:"num", un:"m", lim:{min:"comandoMin", max:"comandoMax"}, crit:2,
+    rec:"Reposicionar interruptores e comandos dentro da faixa de alcance manual."},
+   {id:"E4.02", t:"Mesas e superfícies de trabalho com altura livre inferior adequada", ref:"NBR 9050 — 9.5", tipo:"num", un:"m", lim:{min:0.73}, crit:2,
+    rec:"Substituir ou adaptar mesas para permitir aproximação frontal da cadeira de rodas."},
+   {id:"E4.03", t:"Percentual mínimo de mesas acessíveis em áreas de refeição/estudo", ref:"NBR 9050 — 9.5", tipo:"calc", calc:"proporcao", lim:{min:5}, crit:2, na:true,
+    rec:"Adequar o percentual mínimo de mesas acessíveis, distribuídas pelo ambiente."},
+   {id:"E4.04", t:"Armários, escaninhos e prateleiras de uso público na faixa de alcance", ref:"NBR 9050 — 4.6", tipo:"num", un:"m", lim:{max:"alcanceMax"}, crit:1,
+    rec:"Reservar posições de armário dentro da faixa de alcance manual."},
+   {id:"E4.05", t:"Mobiliário fixo não invade a faixa livre de circulação", ref:"NBR 9050 — 6.5", tipo:"sim", crit:2,
+    rec:"Remanejar o mobiliário de modo a preservar a faixa livre de circulação."},
+   {id:"E4.06", t:"Elementos com projeção lateral balizados no piso", ref:"NBR 9050 — 6.4", tipo:"sim", crit:2,
+    rec:"Instalar balizamento detectável por bengala sob os elementos suspensos."}
+  ]}
+ ]
+}
+];
+</script>
+<script>
+CHECKLIST.push(
+{
+ cod:"F", tit:"Sinalização e comunicação", sub:"Visual, tátil, sonora e atendimento acessível",
+ secoes:[
+  {tit:"F.1 — Sinalização visual", itens:[
+   {id:"F1.01", t:"Sinalização de orientação (wayfinding) implantada nos pontos de decisão", ref:"NBR 9050 — 5.6", tipo:"sim", crit:2,
+    rec:"Implantar sistema de sinalização direcional nos pontos de decisão do percurso."},
+   {id:"F1.02", t:"Contraste de luminância entre caractere e fundo da placa", ref:"NBR 9050 — 5.2", tipo:"num", un:"%", lim:{min:"contraste"}, crit:2,
+    rec:"Substituir a sinalização por modelo com contraste de luminância adequado."},
+   {id:"F1.03", t:"Tipografia sem serifa, sem itálico e sem caixa alta integral em textos longos", ref:"NBR 9050 — 5.2", tipo:"sim", crit:1,
+    rec:"Refazer a sinalização com família tipográfica não serifada e composição legível."},
+   {id:"F1.04", t:"Altura de instalação da sinalização compatível com a distância de leitura", ref:"NBR 9050 — 5.2", tipo:"sim", crit:1,
+    rec:"Reposicionar as placas conforme a relação entre altura do caractere e distância de leitura."},
+   {id:"F1.05", t:"Superfície da placa sem reflexo que prejudique a leitura", ref:"NBR 9050 — 5.2", tipo:"sim", crit:1,
+    rec:"Substituir o acabamento da placa por superfície fosca."},
+   {id:"F1.06", t:"Sinalização de emergência e rotas de fuga visível e íntegra", ref:"NBR 13434", tipo:"sim", crit:3,
+    rec:"Recompor a sinalização de emergência conforme a norma de segurança contra incêndio."}
+  ]},
+  {tit:"F.2 — Sinalização tátil e em Braille", itens:[
+   {id:"F2.01", t:"Identificação em relevo e Braille nas portas dos ambientes de uso público", ref:"NBR 9050 — 5.3", tipo:"sim", crit:2,
+    rec:"Instalar placas com caracteres em relevo e Braille junto ao batente, do lado da maçaneta."},
+   {id:"F2.02", t:"Altura de instalação das placas táteis", ref:"NBR 9050 — 5.3", tipo:"num", un:"m", lim:{min:0.90, max:1.10}, crit:1,
+    rec:"Reposicionar as placas táteis na faixa de altura normativa."},
+   {id:"F2.03", t:"Corrimãos com identificação em Braille dos pavimentos", ref:"NBR 9050 — 6.9", tipo:"sim", crit:1, na:true,
+    rec:"Instalar anéis ou placas em Braille nos corrimãos, identificando o pavimento."},
+   {id:"F2.04", t:"Mapa tátil ou planta de orientação na entrada principal", ref:"NBR 9050 — 5.6", tipo:"sim", crit:1, na:true,
+    rec:"Instalar mapa tátil de orientação junto ao acesso principal."},
+   {id:"F2.05", t:"Braille executado conforme grafia e dimensões normativas", ref:"NBR 9050 — 5.3", tipo:"sim", crit:2,
+    rec:"Refazer a inscrição em Braille conforme padrão dimensional e grafia da língua portuguesa."}
+  ]},
+  {tit:"F.3 — Comunicação sonora e atendimento", itens:[
+   {id:"F3.01", t:"Sistema de alarme com sinalização visual (luminosa) além da sonora", ref:"NBR 9050 — 6.10", tipo:"sim", crit:3,
+    rec:"Instalar dispositivos de alarme visual nos ambientes de uso público e sanitários."},
+   {id:"F3.02", t:"Avisos e chamadas ao público emitidos de forma visual e sonora", ref:"NBR 15599", tipo:"sim", crit:2,
+    rec:"Adequar o sistema de avisos para transmissão simultânea visual e sonora."},
+   {id:"F3.03", t:"Disponibilidade de atendimento em Libras ou de intérprete", ref:"Lei 13.146/2015 / Dec. 5.626", tipo:"sim", crit:2,
+    rec:"Prover atendimento em Libras presencial ou por central de intermediação."},
+   {id:"F3.04", t:"Equipe capacitada para atendimento a pessoas com deficiência", ref:"Lei 13.146/2015", tipo:"sim", crit:2,
+    rec:"Capacitar a equipe de atendimento em acessibilidade atitudinal e comunicacional."},
+   {id:"F3.05", t:"Sistema de laço de indução magnética em auditórios e balcões", ref:"NBR 15599", tipo:"sim", crit:1, na:true,
+    rec:"Instalar sistema de laço de indução magnética nos pontos de atendimento e auditórios."},
+   {id:"F3.06", t:"Documentos e formulários disponíveis em formato acessível", ref:"Lei 13.146/2015", tipo:"sim", crit:1,
+    rec:"Disponibilizar versões acessíveis dos documentos de atendimento ao público."}
+  ]}
+ ]
+},
+{
+ cod:"G", tit:"Estacionamento e embarque", sub:"Vagas reservadas, rota até o acesso e áreas de embarque",
+ secoes:[
+  {tit:"G.1 — Vagas reservadas para pessoa com deficiência", itens:[
+   {id:"G1.01", t:"Percentual de vagas reservadas para PCD em relação ao total", ref:"NBR 9050 — 6.14 / Dec. 5.296", tipo:"calc", calc:"proporcao", lim:{min:"vagaPCDpct"}, crit:3,
+    ajuda:"Informe a quantidade de vagas PCD existentes e o total de vagas. Mínimo de uma vaga sempre.",
+    rec:"Demarcar vagas reservadas até atingir o percentual mínimo, observado o mínimo de uma vaga."},
+   {id:"G1.02", t:"Faixa adicional de circulação junto à vaga PCD", ref:"NBR 9050 — 6.14", tipo:"num", un:"m", lim:{min:"vagaFaixa"}, crit:3,
+    rec:"Demarcar faixa adicional de circulação com largura mínima normativa, compartilhável entre duas vagas."},
+   {id:"G1.03", t:"Inclinação da vaga e da faixa de circulação", ref:"NBR 9050 — 6.14", tipo:"num", un:"%", lim:{max:"vagaIncl"}, crit:2,
+    rec:"Reconformar o pavimento da vaga reservada para atender à inclinação máxima."},
+   {id:"G1.04", t:"Sinalização horizontal com o Símbolo Internacional de Acesso", ref:"NBR 9050 — 6.14", tipo:"sim", crit:2,
+    rec:"Executar a sinalização horizontal da vaga com o SIA, conforme dimensões normativas."},
+   {id:"G1.05", t:"Sinalização vertical de identificação da vaga", ref:"NBR 9050 — 6.14", tipo:"sim", crit:2,
+    rec:"Instalar placa de sinalização vertical identificando a vaga reservada."},
+   {id:"G1.06", t:"Distância entre a vaga e o acesso acessível da edificação", ref:"NBR 9050 — 6.14", tipo:"num", un:"m", lim:{max:"vagaDist"}, crit:2,
+    rec:"Realocar as vagas reservadas para posição mais próxima ao acesso acessível."},
+   {id:"G1.07", t:"Rota acessível contínua entre a vaga e o acesso, sem cruzar área de manobra", ref:"NBR 9050 — 6.14", tipo:"sim", crit:3,
+    rec:"Implantar rota acessível protegida entre as vagas reservadas e o acesso à edificação."},
+   {id:"G1.08", t:"Altura livre no acesso e no percurso da garagem coberta", ref:"NBR 9050 — 6.14", tipo:"num", un:"m", lim:{min:"peDireitoGar"}, crit:2, na:true,
+    rec:"Garantir altura livre compatível com veículo adaptado no percurso até a vaga."},
+   {id:"G1.09", t:"Piso da vaga firme, regular e antiderrapante", ref:"NBR 9050 — 6.3", tipo:"sim", crit:2,
+    rec:"Recompor o pavimento da vaga reservada."}
+  ]},
+  {tit:"G.2 — Vagas para idosos e demais reservas", itens:[
+   {id:"G2.01", t:"Percentual de vagas reservadas para idosos", ref:"Lei 10.741/2003", tipo:"calc", calc:"proporcao", lim:{min:"vagaIdosoPct"}, crit:2,
+    rec:"Demarcar vagas reservadas para idosos até atingir o percentual legal."},
+   {id:"G2.02", t:"Vagas para idosos próximas ao acesso e devidamente sinalizadas", ref:"Lei 10.741/2003", tipo:"sim", crit:1,
+    rec:"Reposicionar e sinalizar as vagas destinadas a idosos."},
+   {id:"G2.03", t:"Fiscalização efetiva do uso indevido das vagas reservadas", ref:"Dec. 5.296/2004", tipo:"sim", crit:1,
+    rec:"Instituir rotina de fiscalização do uso das vagas reservadas."}
+  ]},
+  {tit:"G.3 — Embarque e desembarque", itens:[
+   {id:"G3.01", t:"Área de embarque/desembarque junto ao acesso principal", ref:"NBR 9050 — 6.13", tipo:"sim", crit:2, na:true,
+    rec:"Implantar área de embarque e desembarque acessível junto ao acesso principal."},
+   {id:"G3.02", t:"Faixa de embarque com largura mínima ao lado do veículo", ref:"NBR 9050 — 6.13", tipo:"num", un:"m", lim:{min:1.20}, crit:2, na:true,
+    rec:"Ampliar a faixa de embarque lateral ao veículo."},
+   {id:"G3.03", t:"Área de embarque nivelada com o passeio ou provida de rebaixamento", ref:"NBR 9050 — 6.13", tipo:"sim", crit:2, na:true,
+    rec:"Nivelar a área de embarque ou implantar rebaixamento com sinalização tátil."},
+   {id:"G3.04", t:"Área de embarque coberta e sinalizada", ref:"NBR 9050 — 6.13", tipo:"sim", crit:1, na:true,
+    rec:"Prever cobertura e sinalização da área de embarque e desembarque."}
+  ]}
+ ]
+},
+{
+ cod:"H", tit:"Ambientes de uso específico", sub:"Auditórios, ensino, saúde, hospedagem, alimentação e lazer",
+ secoes:[
+  {tit:"H.1 — Auditórios, salas de espetáculo e de reunião", itens:[
+   {id:"H1.01", t:"Percentual de espaços reservados para pessoa em cadeira de rodas (P.C.R.)", ref:"NBR 9050 — 8.2", tipo:"calc", calc:"proporcao", lim:{min:"assentoPCRpct"}, crit:3, na:true,
+    rec:"Reservar espaços para P.C.R. até atingir o percentual normativo, com o mínimo de um espaço."},
+   {id:"H1.02", t:"Espaços para P.C.R. distribuídos e com opções de campo visual", ref:"NBR 9050 — 8.2", tipo:"sim", crit:2, na:true,
+    rec:"Redistribuir os espaços reservados por diferentes setores e faixas de preço."},
+   {id:"H1.03", t:"Assentos para pessoa obesa em percentual mínimo", ref:"NBR 9050 — 8.2", tipo:"calc", calc:"proporcao", lim:{min:"assentoObesoPct"}, crit:2, na:true,
+    rec:"Instalar assentos para pessoa obesa conforme percentual normativo."},
+   {id:"H1.04", t:"Assentos para pessoa com mobilidade reduzida junto às rotas de acesso", ref:"NBR 9050 — 8.2", tipo:"sim", crit:2, na:true,
+    rec:"Reservar e sinalizar assentos para pessoas com mobilidade reduzida próximos aos acessos."},
+   {id:"H1.05", t:"Assento para acompanhante ao lado de cada espaço de P.C.R.", ref:"NBR 9050 — 8.2", tipo:"sim", crit:2, na:true,
+    rec:"Prever assento para acompanhante contíguo a cada espaço reservado."},
+   {id:"H1.06", t:"Rota acessível até o palco, púlpito ou mesa diretora", ref:"NBR 9050 — 8.2", tipo:"sim", crit:3, na:true,
+    rec:"Implantar rampa ou plataforma que torne o palco acessível."},
+   {id:"H1.07", t:"Recursos de comunicação acessível (legendagem, Libras, audiodescrição)", ref:"NBR 15599 / Lei 13.146", tipo:"sim", crit:2, na:true,
+    rec:"Prever recursos de comunicação acessível nas atividades realizadas no ambiente."}
+  ]},
+  {tit:"H.2 — Ensino, bibliotecas e centros culturais", itens:[
+   {id:"H2.01", t:"Salas de aula com rota acessível e área de manobra entre o mobiliário", ref:"NBR 9050 — 8.4", tipo:"sim", crit:3, na:true,
+    rec:"Reorganizar o mobiliário das salas de modo a garantir rota e área de manobra."},
+   {id:"H2.02", t:"Mesas acessíveis distribuídas nas salas de aula", ref:"NBR 9050 — 8.4", tipo:"sim", crit:2, na:true,
+    rec:"Prover mesas acessíveis em número e distribuição adequados."},
+   {id:"H2.03", t:"Lousa e mural com altura compatível com o alcance", ref:"NBR 9050 — 8.4", tipo:"num", un:"m", lim:{max:"alcanceMax"}, crit:1, na:true,
+    rec:"Rebaixar parte da lousa e dos murais para a faixa de alcance."},
+   {id:"H2.04", t:"Corredores entre estantes de biblioteca com largura acessível", ref:"NBR 9050 — 8.4", tipo:"num", un:"m", lim:{min:0.90}, crit:2, na:true,
+    rec:"Ampliar o espaçamento entre estantes para permitir circulação em cadeira de rodas."},
+   {id:"H2.05", t:"Terminais de consulta acessíveis na biblioteca", ref:"NBR 9050 — 8.4", tipo:"sim", crit:1, na:true,
+    rec:"Adequar terminais de consulta às condições de aproximação e alcance."},
+   {id:"H2.06", t:"Acervo acessível (Braille, digital acessível, audiolivro)", ref:"Lei 13.146/2015", tipo:"sim", crit:1, na:true,
+    rec:"Constituir acervo em formatos acessíveis."}
+  ]},
+  {tit:"H.3 — Alimentação e comércio", itens:[
+   {id:"H3.01", t:"Percentual de mesas acessíveis distribuídas no salão", ref:"NBR 9050 — 9.5", tipo:"calc", calc:"proporcao", lim:{min:5}, crit:2, na:true,
+    rec:"Adequar mesas acessíveis em quantidade e distribuição normativas."},
+   {id:"H3.02", t:"Balcão de autosserviço com altura acessível", ref:"NBR 9050 — 9.5", tipo:"num", un:"m", lim:{max:0.95}, crit:2, na:true,
+    rec:"Rebaixar trecho do balcão de autosserviço ou prover atendimento assistido."},
+   {id:"H3.03", t:"Circulação entre mesas com largura livre acessível", ref:"NBR 9050 — 6.5", tipo:"num", un:"m", lim:{min:0.90}, crit:2, na:true,
+    rec:"Reorganizar o layout do salão liberando faixas de circulação acessíveis."},
+   {id:"H3.04", t:"Cardápio disponível em formato acessível", ref:"Lei 13.146/2015", tipo:"sim", crit:1, na:true,
+    rec:"Disponibilizar cardápio em Braille, ampliado ou digital acessível."},
+   {id:"H3.05", t:"Caixas e filas com passagem acessível", ref:"NBR 9050 — 9.2", tipo:"sim", crit:2, na:true,
+    rec:"Prover ao menos um caixa com passagem e balcão acessíveis."}
+  ]},
+  {tit:"H.4 — Hospedagem e saúde", itens:[
+   {id:"H4.01", t:"Percentual de dormitórios acessíveis no meio de hospedagem", ref:"NBR 9050 — 8.5", tipo:"calc", calc:"proporcao", lim:{min:"quartoAcessPct"}, crit:3, na:true,
+    rec:"Adequar dormitórios acessíveis até o percentual normativo, com o mínimo de uma unidade."},
+   {id:"H4.02", t:"Dormitório acessível com área de manobra e transferência junto à cama", ref:"NBR 9050 — 8.5", tipo:"sim", crit:3, na:true,
+    rec:"Reorganizar o dormitório garantindo área de manobra e faixa de transferência lateral."},
+   {id:"H4.03", t:"Banheiro do dormitório acessível conforme requisitos do módulo D", ref:"NBR 9050 — 7.4", tipo:"sim", crit:3, na:true,
+    rec:"Adequar o banheiro do dormitório acessível aos requisitos de sanitário acessível."},
+   {id:"H4.04", t:"Consultórios e leitos com rota acessível e área de aproximação", ref:"NBR 9050 — 8.6", tipo:"sim", crit:3, na:true,
+    rec:"Adequar consultórios e enfermarias às condições de aproximação e manobra."},
+   {id:"H4.05", t:"Equipamentos de saúde com altura ajustável ou transferência assistida", ref:"NBR 9050 — 8.6", tipo:"sim", crit:2, na:true,
+    rec:"Prover equipamentos com regulagem de altura ou dispositivos de transferência."},
+   {id:"H4.06", t:"Recepção e triagem com posto de atendimento acessível", ref:"NBR 9050 — 9.2", tipo:"sim", crit:2, na:true,
+    rec:"Adequar posto acessível na recepção e triagem."}
+  ]},
+  {tit:"H.5 — Esporte, lazer e piscinas", itens:[
+   {id:"H5.01", t:"Rota acessível até quadras, arquibancadas e áreas de prática", ref:"NBR 9050 — 8.3", tipo:"sim", crit:3, na:true,
+    rec:"Implantar rota acessível até as áreas de prática e assistência esportiva."},
+   {id:"H5.02", t:"Espaços para P.C.R. em arquibancadas, distribuídos e com campo visual", ref:"NBR 9050 — 8.2", tipo:"sim", crit:2, na:true,
+    rec:"Reservar espaços para P.C.R. em arquibancadas, com acompanhante e campo visual adequado."},
+   {id:"H5.03", t:"Piscina com meio acessível de transferência (rampa, escada com barras ou elevador)", ref:"NBR 9050 — 8.3", tipo:"sim", crit:2, na:true,
+    rec:"Instalar dispositivo de acesso à piscina compatível com transferência autônoma ou assistida."},
+   {id:"H5.04", t:"Borda de piscina antiderrapante e sem arestas", ref:"NBR 9050 — 8.3", tipo:"sim", crit:2, na:true,
+    rec:"Recompor o revestimento da borda com material antiderrapante e bordas arredondadas."},
+   {id:"H5.05", t:"Equipamentos de recreação infantil acessíveis e inclusivos", ref:"NBR 16860 / NBR 9050 — 8.3", tipo:"sim", crit:1, na:true,
+    rec:"Prever brinquedos e piso acessível no playground, permitindo brincadeira integrada."}
+  ]}
+ ]
+},
+{
+ cod:"I", tit:"Logradouros públicos e mobiliário urbano", sub:"Praças, parques, pontos de parada e interferências na via",
+ secoes:[
+  {tit:"I.1 — Praças, parques e áreas verdes", itens:[
+   {id:"I1.01", t:"Rota acessível interligando os acessos aos principais atrativos do espaço", ref:"NBR 9050 — 6.12", tipo:"sim", crit:3, na:true,
+    rec:"Implantar rota acessível conectando acessos, sanitários, quiosques e áreas de estar."},
+   {id:"I1.02", t:"Largura livre dos caminhos internos", ref:"NBR 9050 — 6.12", tipo:"num", un:"m", lim:{min:"faixaLivre"}, crit:2, na:true,
+    rec:"Ampliar a largura dos caminhos internos."},
+   {id:"I1.03", t:"Revestimento dos caminhos firme e estável (sem saibro solto ou grama)", ref:"NBR 9050 — 6.3", tipo:"sim", crit:3, na:true,
+    rec:"Substituir o revestimento por piso firme, estável e antiderrapante na rota acessível."},
+   {id:"I1.04", t:"Ausência de raízes aflorantes e deformações no piso da rota", ref:"NBR 9050 — 6.3", tipo:"sim", crit:2, na:true,
+    rec:"Recompor os trechos deformados por raízes, com solução compatível com a arborização."},
+   {id:"I1.05", t:"Bancos com encosto e apoio de braço, com espaço lateral para P.C.R.", ref:"NBR 9050 — 9.6", tipo:"sim", crit:2, na:true,
+    rec:"Substituir ou complementar bancos e reservar espaço lateral livre para cadeira de rodas."},
+   {id:"I1.06", t:"Sanitário público do parque atende aos requisitos de acessibilidade", ref:"NBR 9050 — 7.4", tipo:"sim", crit:3, na:true,
+    rec:"Adequar o sanitário público aos requisitos do módulo de sanitários acessíveis."},
+   {id:"I1.07", t:"Iluminação adequada nos percursos", ref:"NBR 9050 — 6.12", tipo:"sim", crit:1, na:true,
+    rec:"Reforçar a iluminação pública ao longo dos percursos acessíveis."}
+  ]},
+  {tit:"I.2 — Mobiliário urbano", itens:[
+   {id:"I2.01", t:"Mobiliário urbano posicionado fora da faixa livre de circulação", ref:"NBR 9050 — 9.6", tipo:"sim", crit:3, na:true,
+    rec:"Remanejar o mobiliário urbano para a faixa de serviço do passeio."},
+   {id:"I2.02", t:"Elementos suspensos (toldos, placas, telefones) com balizamento no piso", ref:"NBR 9050 — 6.4", tipo:"sim", crit:2, na:true,
+    rec:"Instalar balizamento detectável por bengala sob os elementos suspensos."},
+   {id:"I2.03", t:"Lixeiras, floreiras e caixas com aproximação e alcance acessíveis", ref:"NBR 9050 — 9.6", tipo:"sim", crit:1, na:true,
+    rec:"Reposicionar o mobiliário garantindo aproximação e alcance manual."},
+   {id:"I2.04", t:"Bancas, quiosques e feiras com atendimento acessível", ref:"NBR 9050 — 9.6", tipo:"sim", crit:1, na:true,
+    rec:"Adequar o mobiliário comercial de rua a condições acessíveis de atendimento."}
+  ]},
+  {tit:"I.3 — Pontos de parada e transporte", itens:[
+   {id:"I3.01", t:"Ponto de parada com área de embarque nivelada e faixa livre preservada", ref:"NBR 9050 — 10", tipo:"sim", crit:3, na:true,
+    rec:"Adequar o ponto de parada com área de embarque acessível e faixa livre desobstruída."},
+   {id:"I3.02", t:"Sinalização tátil de alerta e direcional no ponto de parada", ref:"NBR 16537", tipo:"sim", crit:2, na:true,
+    rec:"Implantar sinalização tátil de alerta e direcional no ponto de parada."},
+   {id:"I3.03", t:"Abrigo com espaço reservado para P.C.R. e assentos preferenciais", ref:"NBR 9050 — 10", tipo:"sim", crit:2, na:true,
+    rec:"Adequar o abrigo com espaço reservado e assentos preferenciais sinalizados."},
+   {id:"I3.04", t:"Informação de linhas e itinerários em formato visual, tátil e sonoro", ref:"NBR 9050 — 10 / NBR 15599", tipo:"sim", crit:1, na:true,
+    rec:"Disponibilizar a informação operacional em formatos acessíveis."}
+  ]},
+  {tit:"I.4 — Obras e interferências temporárias", itens:[
+   {id:"I4.01", t:"Rota acessível provisória implantada durante a obra", ref:"NBR 9050 — 6.12", tipo:"sim", crit:3, na:true,
+    rec:"Implantar desvio acessível sinalizado durante a execução da obra."},
+   {id:"I4.02", t:"Tapumes e barreiras sinalizados e detectáveis por bengala", ref:"NBR 9050 — 6.4", tipo:"sim", crit:2, na:true,
+    rec:"Executar o fechamento da obra com elementos contínuos detectáveis desde o piso."},
+   {id:"I4.03", t:"Materiais e caçambas fora da faixa livre de circulação", ref:"NBR 9050 — 6.12", tipo:"sim", crit:2, na:true,
+    rec:"Remover materiais e equipamentos da faixa livre e do desvio provisório."}
+  ]}
+ ]
+},
+{
+ cod:"J", tit:"Segurança e emergência", sub:"Rotas de fuga, áreas de resgate e alarme",
+ secoes:[
+  {tit:"J.1 — Rota de fuga acessível", itens:[
+   {id:"J1.01", t:"Rota de saída de emergência acessível a partir de cada pavimento", ref:"NBR 9050 — 6.10 / NBR 9077", tipo:"sim", crit:3,
+    rec:"Definir e adequar rota de fuga acessível a partir de cada pavimento de uso público."},
+   {id:"J1.02", t:"Largura livre da rota de fuga compatível com a passagem de cadeira de rodas", ref:"NBR 9077", tipo:"num", un:"m", lim:{min:1.20}, crit:3,
+    rec:"Ampliar a largura livre da rota de fuga."},
+   {id:"J1.03", t:"Portas corta-fogo com força de abertura compatível", ref:"NBR 9050 — 6.11", tipo:"num", un:"N", lim:{max:"forcaPorta"}, crit:2,
+    rec:"Regular ou substituir os dispositivos de fechamento das portas corta-fogo."},
+   {id:"J1.04", t:"Rota de fuga livre de obstáculos e materiais estocados", ref:"NBR 9077", tipo:"sim", crit:3,
+    rec:"Desobstruir permanentemente a rota de fuga."},
+   {id:"J1.05", t:"Barras antipânico na faixa de alcance", ref:"NBR 11785", tipo:"num", un:"m", lim:{min:0.80, max:1.20}, crit:2, na:true,
+    rec:"Reposicionar as barras antipânico dentro da faixa de alcance manual."}
+  ]},
+  {tit:"J.2 — Área de resgate", itens:[
+   {id:"J2.01", t:"Área de resgate implantada em cada pavimento com desnível", ref:"NBR 9050 — 6.10", tipo:"sim", crit:3, na:true,
+    rec:"Implantar área de resgate em antecâmara, escada enclausurada ou espaço protegido equivalente."},
+   {id:"J2.02", t:"Área de resgate dimensionada em módulos de referência", ref:"NBR 9050 — 6.10", tipo:"num", un:"un", lim:{min:"areaResgate"}, crit:2, na:true,
+    ajuda:"Informe a quantidade de módulos de referência (0,80 × 1,20 m) disponíveis.",
+    rec:"Ampliar a área de resgate de modo a acomodar o número de módulos exigido."},
+   {id:"J2.03", t:"Área de resgate não reduz a largura da rota de fuga", ref:"NBR 9050 — 6.10", tipo:"sim", crit:3, na:true,
+    rec:"Reposicionar a área de resgate de modo a preservar a largura da rota de fuga."},
+   {id:"J2.04", t:"Sinalização da área de resgate com o SIA", ref:"NBR 9050 — 5.5", tipo:"sim", crit:2, na:true,
+    rec:"Sinalizar a área de resgate com o Símbolo Internacional de Acesso."},
+   {id:"J2.05", t:"Dispositivo de comunicação de emergência na área de resgate", ref:"NBR 9050 — 6.10", tipo:"sim", crit:2, na:true,
+    rec:"Instalar interfone ou dispositivo equivalente de comunicação com a brigada."}
+  ]},
+  {tit:"J.3 — Alarme, sinalização e procedimentos", itens:[
+   {id:"J3.01", t:"Alarme de incêndio com sinalização luminosa nos ambientes de uso público", ref:"NBR 9050 — 6.10 / NBR 17240", tipo:"sim", crit:3,
+    rec:"Instalar dispositivos de alarme visual, inclusive em sanitários e ambientes isolados."},
+   {id:"J3.02", t:"Acionadores manuais de alarme na faixa de alcance", ref:"NBR 17240", tipo:"num", un:"m", lim:{min:0.80, max:1.35}, crit:2,
+    rec:"Reposicionar os acionadores manuais dentro da faixa de alcance."},
+   {id:"J3.03", t:"Plano de abandono contempla pessoas com deficiência", ref:"NBR 9050 — 6.10", tipo:"sim", crit:3,
+    rec:"Revisar o plano de emergência incluindo procedimentos de evacuação assistida."},
+   {id:"J3.04", t:"Brigada treinada para evacuação de pessoas com deficiência", ref:"NBR 14276", tipo:"sim", crit:2,
+    rec:"Capacitar a brigada de incêndio em técnicas de evacuação assistida."},
+   {id:"J3.05", t:"Iluminação de emergência atende à rota acessível", ref:"NBR 10898", tipo:"sim", crit:2,
+    rec:"Complementar a iluminação de emergência ao longo de toda a rota acessível."}
+  ]}
+ ]
+}
+);
+</script>
+<script>
+/* ============================================================================
+   NÚCLEO — funções puras (testáveis fora do navegador)
+   ========================================================================== */
+var Core = (function(){
+
+  function num(x){
+    if (x === null || x === undefined || x === "") return null;
+    var n = typeof x === "number" ? x : parseFloat(String(x).replace(",", "."));
+    return isFinite(n) ? n : null;
+  }
+
+  /* Resolve os limites do item: aceita chave de parâmetro ou literal numérico */
+  function limites(item, params){
+    var P = params || PAD;
+    function r(x){
+      if (x === undefined || x === null) return null;
+      if (typeof x === "number") return x;
+      var p = P[x];
+      if (!p) return null;
+      return num(p.v);
+    }
+    var l = item.lim || {};
+    return { min: r(l.min), max: r(l.max) };
+  }
+
+  /* Executa a fórmula do item do tipo "calc" */
+  function calcular(item, dado){
+    if (item.tipo !== "calc") return null;
+    var def = CALCS[item.calc];
+    if (!def) return null;
+    var v = {}, ok = false;
+    for (var i = 0; i < def.campos.length; i++){
+      var k = def.campos[i].k;
+      var n = num(dado && dado.c ? dado.c[k] : null);
+      if (n === null) return null;
+      v[k] = n; ok = true;
+    }
+    if (!ok) return null;
+    var res = def.fn(v);
+    return (res === null || !isFinite(res)) ? null : res;
+  }
+
+  /* Valor numérico efetivo do item (medido ou calculado) */
+  function valor(item, dado){
+    if (item.tipo === "calc") return calcular(item, dado);
+    if (item.tipo === "num") return num(dado ? dado.v : null);
+    return null;
+  }
+
+  /* Avaliação automática por comparação com os limites.
+     Retorna "C", "NC" ou "" (sem medida informada). */
+  function avaliarAuto(item, dado, params){
+    if (item.tipo !== "num" && item.tipo !== "calc") return "";
+    var v = valor(item, dado);
+    if (v === null) return "";
+    var L = limites(item, params);
+    var tol = 1e-9;
+    if (L.min !== null && v < L.min - tol) return "NC";
+    if (L.max !== null && v > L.max + tol) return "NC";
+    return "C";
+  }
+
+  /* Situação final: prevalece a marcação manual do vistoriador, se houver */
+  function situacao(item, dado, params){
+    if (dado && dado.s) return dado.s;
+    return avaliarAuto(item, dado, params);
+  }
+
+  /* Texto descritivo do limite, para exibição e laudo */
+  function textoLimite(item, params){
+    var L = limites(item, params);
+    var un = item.tipo === "calc" ? (CALCS[item.calc] ? CALCS[item.calc].un : "") : (item.un || "");
+    function f(n){ return formatar(n, un); }
+    if (L.min !== null && L.max !== null){
+      if (L.min === L.max) return "= " + f(L.min);
+      return "de " + f(L.min) + " a " + f(L.max);
+    }
+    if (L.min !== null) return "mín. " + f(L.min);
+    if (L.max !== null) return "máx. " + f(L.max);
+    return "—";
+  }
+
+  function formatar(n, un){
+    if (n === null || n === undefined) return "—";
+    var casas = (un === "%" || un === "N" || un === "lux" || un === "un") ? 2 : 3;
+    if (un === "un") casas = 0;
+    var s = Number(n).toFixed(casas);
+    s = s.replace(/(\.\d*?)0+$/, "$1").replace(/\.$/, "");
+    return s.replace(".", ",") + (un ? " " + un : "");
+  }
+
+  /* Percorre o checklist aplicando o escopo selecionado */
+  function itensNoEscopo(escopo){
+    var out = [];
+    for (var m = 0; m < CHECKLIST.length; m++){
+      var mod = CHECKLIST[m];
+      if (escopo && escopo[mod.cod] === false) continue;
+      for (var s = 0; s < mod.secoes.length; s++){
+        var sec = mod.secoes[s];
+        for (var i = 0; i < sec.itens.length; i++){
+          out.push({ mod: mod, sec: sec, item: sec.itens[i] });
+        }
+      }
+    }
+    return out;
+  }
+
+  /* Índice de conformidade ponderado: parciais valem meio ponto.
+     Itens "não aplicável" e não avaliados ficam fora da base de cálculo. */
+  function indice(cont){
+    var base = cont.C + cont.P + cont.NC;
+    if (base === 0) return null;
+    return ((cont.C + 0.5 * cont.P) / base) * 100;
+  }
+
+  function contadorVazio(){ return {C:0, NC:0, P:0, NA:0, pend:0, total:0, critNC:0}; }
+
+  function acumular(cont, st, crit){
+    cont.total++;
+    if (st === "C") cont.C++;
+    else if (st === "NC"){ cont.NC++; if (crit === 3) cont.critNC++; }
+    else if (st === "P"){ cont.P++; if (crit === 3) cont.critNC++; }
+    else if (st === "NA") cont.NA++;
+    else cont.pend++;
+    return cont;
+  }
+
+  /* Resumo geral e por módulo */
+  function resumo(dados, escopo, params){
+    var geral = contadorVazio(), porMod = {}, lista = itensNoEscopo(escopo);
+    for (var i = 0; i < lista.length; i++){
+      var it = lista[i].item, cod = lista[i].mod.cod;
+      if (!porMod[cod]) porMod[cod] = contadorVazio();
+      var st = situacao(it, dados[it.id], params);
+      acumular(geral, st, it.crit);
+      acumular(porMod[cod], st, it.crit);
+    }
+    geral.indice = indice(geral);
+    for (var k in porMod){ if (porMod.hasOwnProperty(k)) porMod[k].indice = indice(porMod[k]); }
+    return { geral: geral, modulos: porMod };
+  }
+
+  /* Classificação da edificação/logradouro.
+     Não conformidade em item crítico impede a classificação superior. */
+  function classificar(cont){
+    if (cont.indice === null) return {rot:"Não avaliado", cor:"na"};
+    if (cont.critNC > 0 && cont.indice >= 80) return {rot:"Parcialmente acessível (com restrição crítica)", cor:"p"};
+    if (cont.indice >= 95) return {rot:"Acessível", cor:"c"};
+    if (cont.indice >= 80) return {rot:"Parcialmente acessível", cor:"p"};
+    if (cont.indice >= 50) return {rot:"Predominantemente inacessível", cor:"nc"};
+    return {rot:"Inacessível", cor:"nc"};
+  }
+
+  /* Prioridade de adequação a partir da criticidade e da situação */
+  function prioridade(item, st){
+    if (st !== "NC" && st !== "P") return null;
+    var base = item.crit === 3 ? 1 : (item.crit === 2 ? 2 : 3);
+    if (st === "P") base = Math.min(3, base + 1);
+    return ["Imediata", "Alta", "Média"][base - 1] || "Média";
+  }
+
+  /* Lista de apontamentos, ordenada por prioridade */
+  function apontamentos(dados, escopo, params){
+    var lista = itensNoEscopo(escopo), out = [];
+    var ordem = {"Imediata":0, "Alta":1, "Média":2};
+    for (var i = 0; i < lista.length; i++){
+      var it = lista[i].item, d = dados[it.id];
+      var st = situacao(it, d, params);
+      if (st !== "NC" && st !== "P") continue;
+      out.push({
+        id: it.id, item: it, modulo: lista[i].mod, secao: lista[i].sec,
+        status: st, prioridade: prioridade(it, st),
+        valor: valor(it, d), limite: textoLimite(it, params),
+        obs: (d && d.obs) || "", fotos: (d && d.fotos) || []
+      });
+    }
+    out.sort(function(a,b){
+      var da = ordem[a.prioridade], db = ordem[b.prioridade];
+      if (da !== db) return da - db;
+      return a.id < b.id ? -1 : 1;
+    });
+    return out;
+  }
+
+  function csv(aps){
+    var linhas = [["Item","Modulo","Secao","Descricao","Referencia","Situacao","Prioridade","Medido","Limite","Observacao","Recomendacao","Fotos"]];
+    for (var i = 0; i < aps.length; i++){
+      var a = aps[i];
+      var un = a.item.tipo === "calc" ? (CALCS[a.item.calc] ? CALCS[a.item.calc].un : "") : (a.item.un || "");
+      linhas.push([a.id, a.modulo.cod + " - " + a.modulo.tit, a.secao.tit, a.item.t, a.item.ref,
+        a.status === "NC" ? "Nao conforme" : "Parcialmente conforme", a.prioridade,
+        a.valor === null ? "" : formatar(a.valor, un), a.limite, a.obs, a.item.rec || "", a.fotos.length]);
+    }
+    return linhas.map(function(l){
+      return l.map(function(c){ return '"' + String(c === null || c === undefined ? "" : c).replace(/"/g, '""') + '"'; }).join(";");
+    }).join("\r\n");
+  }
+
+  return {
+    num:num, limites:limites, calcular:calcular, valor:valor,
+    avaliarAuto:avaliarAuto, situacao:situacao, textoLimite:textoLimite,
+    formatar:formatar, itensNoEscopo:itensNoEscopo, resumo:resumo,
+    indice:indice, classificar:classificar, prioridade:prioridade,
+    apontamentos:apontamentos, csv:csv
+  };
+})();
+
+/* ============================================================================
+   ARMAZENAMENTO
+   ========================================================================== */
+var CHAVE = "acesscheck.v1";
+
+function novaVistoria(){
+  var hoje = new Date().toISOString().slice(0,10);
+  var esc = {};
+  for (var i = 0; i < CHECKLIST.length; i++) esc[CHECKLIST[i].cod] = true;
+  return {
+    id: "V" + Date.now().toString(36).toUpperCase(),
+    criadoEm: new Date().toISOString(),
+    atualizadoEm: new Date().toISOString(),
+    meta: { data: hoje, laudoData: hoje, uf: "",
+      metodologia: "Vistoria in loco com inspeção visual e medições diretas por trena, nível digital e inclinômetro, "
+        + "confrontadas com os parâmetros da ABNT NBR 9050 e normas correlatas. Os registros fotográficos integram este laudo." },
+    escopo: esc, itens: {}, fotos: {}, params: {}
+  };
+}
+
+var Store = {
+  ler: function(){
+    try {
+      var raw = localStorage.getItem(CHAVE);
+      if (!raw) return { atual: null, vistorias: {} };
+      var o = JSON.parse(raw);
+      return (o && o.vistorias) ? o : { atual: null, vistorias: {} };
+    } catch(e){ return { atual: null, vistorias: {} }; }
+  },
+  gravar: function(base){
+    try { localStorage.setItem(CHAVE, JSON.stringify(base)); return true; }
+    catch(e){ return false; }
+  },
+  tamanho: function(){
+    try { var raw = localStorage.getItem(CHAVE) || ""; return raw.length; } catch(e){ return 0; }
+  }
+};
+
+/* Fotos em IndexedDB — mantém o localStorage leve */
+var Fotos = (function(){
+  var db = null, memoria = {}, pronto = false;
+  function abrir(){
+    return new Promise(function(res){
+      if (pronto) return res(db);
+      if (typeof indexedDB === "undefined"){ pronto = true; return res(null); }
+      var req = indexedDB.open("acesscheck-fotos", 1);
+      req.onupgradeneeded = function(e){
+        var d = e.target.result;
+        if (!d.objectStoreNames.contains("fotos")) d.createObjectStore("fotos", {keyPath:"id"});
+      };
+      req.onsuccess = function(e){ db = e.target.result; pronto = true; res(db); };
+      req.onerror = function(){ pronto = true; res(null); };
+    });
+  }
+  return {
+    gravar: function(id, dataUrl){
+      memoria[id] = dataUrl;
+      return abrir().then(function(d){
+        if (!d) return;
+        try { d.transaction("fotos","readwrite").objectStore("fotos").put({id:id, d:dataUrl}); } catch(e){}
+      });
+    },
+    ler: function(id){
+      if (memoria[id]) return Promise.resolve(memoria[id]);
+      return abrir().then(function(d){
+        if (!d) return null;
+        return new Promise(function(res){
+          try {
+            var r = d.transaction("fotos","readonly").objectStore("fotos").get(id);
+            r.onsuccess = function(){ var v = r.result ? r.result.d : null; if (v) memoria[id] = v; res(v); };
+            r.onerror = function(){ res(null); };
+          } catch(e){ res(null); }
+        });
+      });
+    },
+    apagar: function(id){
+      delete memoria[id];
+      return abrir().then(function(d){
+        if (!d) return;
+        try { d.transaction("fotos","readwrite").objectStore("fotos").delete(id); } catch(e){}
+      });
+    },
+    cache: memoria
+  };
+})();
+</script>
+<script>
+(function(){
+"use strict";
+if (typeof document === "undefined") return;   /* ambiente de teste */
+
+var $  = function(s, r){ return (r||document).querySelector(s); };
+var $$ = function(s, r){ return Array.prototype.slice.call((r||document).querySelectorAll(s)); };
+var esc = function(s){ return String(s==null?"":s).replace(/[&<>"']/g, function(c){
+  return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); };
+
+var BASE = Store.ler();
+var V = null;
+var filtro = "todos", termo = "", itemFoco = null, abertos = {};
+
+/* ---------- parâmetros efetivos ---------- */
+function params(){
+  var P = {};
+  for (var k in PAD){ if (!PAD.hasOwnProperty(k)) continue;
+    var over = V && V.params && V.params[k];
+    P[k] = { rot: PAD[k].rot, un: PAD[k].un, ref: PAD[k].ref,
+             v: (over === undefined || over === null || over === "") ? PAD[k].v : Number(over) };
+  }
+  return P;
+}
+function dado(id){ if (!V.itens[id]) V.itens[id] = { v:null, c:{}, s:"", obs:"", fotos:[] }; return V.itens[id]; }
+
+/* ---------- persistência ---------- */
+var timer = null;
+function salvar(imediato){
+  clearTimeout(timer);
+  var faz = function(){
+    V.atualizadoEm = new Date().toISOString();
+    BASE.vistorias[V.id] = V; BASE.atual = V.id;
+    var ok = Store.gravar(BASE);
+    $("#rdSalvo").innerHTML = ok
+      ? "Salvo <b>" + new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"}) + "</b>"
+      : "<b style='color:#ff8a80'>Falha ao salvar — armazenamento cheio</b>";
+  };
+  if (imediato) faz(); else timer = setTimeout(faz, 500);
+}
+
+/* ---------- abas ---------- */
+$$(".aba").forEach(function(b){
+  b.addEventListener("click", function(){
+    $$(".aba").forEach(function(x){ x.setAttribute("aria-selected", x===b ? "true":"false"); });
+    $$(".painel").forEach(function(p){ p.hidden = (p.id !== b.dataset.p); });
+    if (b.dataset.p === "pNC") renderNC();
+    if (b.dataset.p === "pFotos") renderGaleria();
+    if (b.dataset.p === "pParam") renderParams();
+    if (b.dataset.p === "pDados") renderVistorias();
+    window.scrollTo(0,0);
+  });
+});
+function irPara(id){ var b = $('.aba[data-p="'+id+'"]'); if (b) b.click(); }
+$("#btIrVist").addEventListener("click", function(){ irPara("pVistoria"); });
+$("#btIrLaudo").addEventListener("click", function(){ irPara("pLaudo"); });
+
+/* ---------- tema ---------- */
+var tema = (function(){ try { return localStorage.getItem("acesscheck.tema"); } catch(e){ return null; } })()
+        || (window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches ? "escuro" : "claro");
+function aplicarTema(t){
+  document.documentElement.setAttribute("data-tema", t);
+  try { localStorage.setItem("acesscheck.tema", t); } catch(e){}
+}
+aplicarTema(tema);
+$("#btTema").addEventListener("click", function(){
+  tema = (document.documentElement.getAttribute("data-tema") === "escuro") ? "claro" : "escuro";
+  aplicarTema(tema);
+});
+
+/* ---------- identificação ---------- */
+function ligarCampos(){
+  $$("[data-id]").forEach(function(el){
+    var k = el.dataset.id;
+    el.value = (V.meta[k] === undefined || V.meta[k] === null) ? "" : V.meta[k];
+    el.addEventListener("input", function(){ V.meta[k] = el.value; salvar(); });
+  });
+}
+$("#btGeo").addEventListener("click", function(){
+  if (!navigator.geolocation) return alert("O dispositivo não fornece geolocalização.");
+  $("#btGeo").textContent = "Localizando…";
+  navigator.geolocation.getCurrentPosition(function(p){
+    var t = p.coords.latitude.toFixed(6) + ", " + p.coords.longitude.toFixed(6);
+    $("#fCoord").value = t; V.meta.coord = t; salvar(true);
+    $("#btGeo").textContent = "Capturar GPS";
+  }, function(){ $("#btGeo").textContent = "Capturar GPS"; alert("Não foi possível obter a posição."); },
+  {enableHighAccuracy:true, timeout:12000});
+});
+
+/* ---------- escopo ---------- */
+function renderEscopo(){
+  var h = '<div class="grade g2">';
+  CHECKLIST.forEach(function(m){
+    var n = 0; m.secoes.forEach(function(s){ n += s.itens.length; });
+    h += '<label style="display:flex;gap:10px;align-items:flex-start;padding:9px;border:1px solid var(--line);border-radius:8px;cursor:pointer">'
+      + '<input type="checkbox" data-esc="'+m.cod+'" '+(V.escopo[m.cod]!==false?"checked":"")+' style="margin-top:3px">'
+      + '<span><b style="font-size:13.5px">'+m.cod+' — '+esc(m.tit)+'</b>'
+      + '<span style="display:block;font-size:12px;color:var(--txt-3)">'+esc(m.sub)+' · '+n+' itens</span></span></label>';
+  });
+  $("#escopoMods").innerHTML = h + '</div>';
+  $$("[data-esc]").forEach(function(c){
+    c.addEventListener("change", function(){ V.escopo[c.dataset.esc] = c.checked; salvar(); renderVistoria(); });
+  });
+}
+$("#btTodosMod").addEventListener("click", function(){ CHECKLIST.forEach(function(m){ V.escopo[m.cod]=true; }); renderEscopo(); salvar(); renderVistoria(); });
+$("#btNenhumMod").addEventListener("click", function(){ CHECKLIST.forEach(function(m){ V.escopo[m.cod]=false; }); renderEscopo(); salvar(); renderVistoria(); });
+
+/* ---------- KPIs ---------- */
+function renderKPIs(){
+  var P = params(), r = Core.resumo(V.itens, V.escopo, P), g = r.geral, cl = Core.classificar(g);
+  var pct = g.indice === null ? "—" : g.indice.toFixed(1).replace(".", ",") + "%";
+  $("#kpis").innerHTML =
+     kpi(pct, "Índice de conformidade", g.indice)
+   + kpi(g.C + "/" + (g.total - g.NA), "Itens conformes", null)
+   + kpi(String(g.NC), "Não conformidades", null)
+   + kpi(String(g.critNC), "Restrições críticas", null);
+  $("#rdPct").textContent = pct;
+  $("#rdAval").textContent = (g.total - g.pend) + "/" + g.total;
+  var el = document.createElement("div");
+  el.className = "kpi"; el.style.gridColumn = "1 / -1";
+  el.innerHTML = '<div class="kpi__r">Classificação</div><div style="font-size:17px;font-weight:700;margin-top:4px">'
+    + esc(cl.rot) + '</div>';
+  $("#kpis").appendChild(el);
+  return r;
+}
+function kpi(v, r, pct){
+  var b = pct === null || pct === undefined ? "" :
+    '<div class="barra"><i style="width:'+Math.max(0,Math.min(100,pct||0))+'%;background:'
+    + (pct>=95?"var(--ok)":pct>=80?"var(--parcial)":"var(--nc)") + '"></i></div>';
+  return '<div class="kpi"><div class="kpi__v">'+esc(v)+'</div><div class="kpi__r">'+esc(r)+'</div>'+b+'</div>';
+}
+
+/* ---------- vistoria ---------- */
+function passaFiltro(item, st, d){
+  if (termo){
+    var t = (item.id + " " + item.t + " " + item.ref).toLowerCase();
+    if (t.indexOf(termo) === -1) return false;
+  }
+  if (filtro === "todos") return true;
+  if (filtro === "pend") return !st;
+  if (filtro === "crit") return item.crit === 3;
+  if (filtro === "semfoto") return (st === "NC" || st === "P") && (!d || !d.fotos || !d.fotos.length);
+  return st === filtro;
+}
+
+function renderVistoria(){
+  var P = params(), r = renderKPIs(), h = "";
+  CHECKLIST.forEach(function(m){
+    if (V.escopo[m.cod] === false) return;
+    var c = r.modulos[m.cod] || {}, ind = c.indice;
+    var cor = ind === null ? "var(--txt-3)" : ind>=95?"var(--ok)":ind>=80?"var(--parcial)":"var(--nc)";
+    var corpo = "", visiveis = 0;
+    m.secoes.forEach(function(s){
+      var itens = "";
+      s.itens.forEach(function(it){
+        var d = V.itens[it.id], st = Core.situacao(it, d, P);
+        if (!passaFiltro(it, st, d)) return;
+        visiveis++; itens += renderItem(it, d, st, P);
+      });
+      if (itens) corpo += '<div class="secao">'+esc(s.tit)+(s.nota?'<small>'+esc(s.nota)+'</small>':'')+'</div>'+itens;
+    });
+    if (!corpo) return;
+    var aberto = abertos[m.cod] !== false;
+    h += '<div class="mod"><button class="mod__cab" data-mod="'+m.cod+'" aria-expanded="'+aberto+'">'
+       + '<span class="mod__cod">'+m.cod+'</span>'
+       + '<span class="mod__tit">'+esc(m.tit)+'<span class="mod__sub">'+visiveis+' de '+c.total+' itens · '
+       + (c.NC||0)+' NC · '+(c.pend||0)+' pendentes</span></span>'
+       + '<span class="mod__pct" style="color:'+cor+'">'+(ind===null?"—":ind.toFixed(0)+"%")+'</span></button>'
+       + '<div class="mod__corpo" '+(aberto?"":"hidden")+'>'+corpo+'</div></div>';
+  });
+  $("#listaMods").innerHTML = h || '<div class="vazio">Nenhum item corresponde ao filtro.</div>';
+}
+
+function renderItem(it, d, st, P){
+  var un = it.tipo === "calc" ? (CALCS[it.calc] ? CALCS[it.calc].un : "") : (it.un || "");
+  var cls = st === "NC" ? " item--nc" : (st === "P" ? " item--p" : "");
+  var h = '<div class="item'+cls+'" data-item="'+it.id+'"><div class="item__topo">'
+    + '<span class="item__id">'+it.id+'</span><span class="item__txt">'
+    + '<span class="item__t">'+esc(it.t)+'</span>'
+    + '<span class="item__ref">'+esc(it.ref)+(it.ajuda?' · '+esc(it.ajuda):'')+'</span></span>'
+    + '<span class="crit crit--'+it.crit+'">'+(it.crit===3?"Crítico":it.crit===2?"Relevante":"Desejável")+'</span></div>';
+
+  h += '<div class="item__ctrl">';
+  if (it.tipo === "num"){
+    h += '<div class="medida"><label>Medido ('+esc(un)+')</label>'
+       + '<input type="number" step="0.001" inputmode="decimal" data-v="'+it.id+'" value="'+(d&&d.v!=null?esc(d.v):'')+'"></div>'
+       + '<span class="lim">Limite: '+esc(Core.textoLimite(it, P))+'</span>';
+  } else if (it.tipo === "calc"){
+    var def = CALCS[it.calc];
+    def.campos.forEach(function(c){
+      var val = d && d.c && d.c[c.k] != null ? d.c[c.k] : "";
+      h += '<div class="medida"><label>'+esc(c.rot)+'</label>'
+         + '<input type="number" step="0.001" inputmode="decimal" data-c="'+it.id+'" data-k="'+c.k+'" value="'+esc(val)+'"></div>';
+    });
+    var vc = Core.calcular(it, d);
+    var auto = Core.avaliarAuto(it, d, P);
+    h += '<span class="calcout" style="color:'+(auto==="NC"?"var(--nc)":auto==="C"?"var(--ok)":"var(--txt-3)")+'">'
+       + esc(def.rot)+' = '+esc(Core.formatar(vc, def.un))+'</span>'
+       + '<span class="lim">Limite: '+esc(Core.textoLimite(it, P))+'</span>';
+  }
+  var sit = (d && d.s) || "";
+  h += '<span class="status" role="group" aria-label="Situação do item '+it.id+'">'
+     + bs(it.id,"C","Conforme",sit) + bs(it.id,"P","Parcial",sit) + bs(it.id,"NC","Não conforme",sit)
+     + (it.na === false ? "" : bs(it.id,"NA","N/A",sit)) + '</span></div>';
+
+  if ((it.tipo === "num" || it.tipo === "calc") && !sit){
+    var a = Core.avaliarAuto(it, d, P);
+    if (a) h += '<div class="aviso" style="border-left-color:'+(a==="NC"?"var(--nc)":"var(--ok)")
+      + ';background:'+(a==="NC"?"var(--nc-bg)":"var(--ok-bg)")+';color:'+(a==="NC"?"var(--nc)":"var(--ok)")+'">'
+      + (a==="NC" ? "Medida fora do limite normativo — classificada automaticamente como não conforme."
+                  : "Medida dentro do limite normativo.") + '</div>';
+  }
+  if (st === "NC" || st === "P"){
+    h += '<div class="aviso"><b>Adequação:</b> '+esc(it.rec||"Adequar o elemento aos parâmetros normativos.")+'</div>';
+  }
+
+  h += '<div class="item__extra">'
+     + '<button class="bt" data-foto="'+it.id+'">Anexar foto</button>'
+     + '<button class="bt" data-obs="'+it.id+'">Observação</button>';
+  if (d && d.obs) h += '<span class="tag">obs.</span>';
+  h += '</div>';
+  h += '<div class="fotos" data-fotos="'+it.id+'"></div>';
+  h += '<textarea class="obs" data-obstxt="'+it.id+'" placeholder="Constatação, localização exata do elemento, condições da medição…" '
+     + ((d && d.obs) ? '' : 'hidden') + '>'+esc(d && d.obs ? d.obs : "")+'</textarea>';
+  return h + '</div>';
+}
+function bs(id, s, rot, atual){
+  return '<button data-s="'+s+'" data-set="'+id+'" aria-pressed="'+(atual===s?"true":"false")+'">'+rot+'</button>';
+}
+
+/* ---------- eventos da lista ---------- */
+$("#listaMods").addEventListener("click", function(e){
+  var t = e.target.closest("button"); if (!t) return;
+  if (t.dataset.mod){
+    var c = t.parentNode.querySelector(".mod__corpo");
+    var ab = c.hidden; c.hidden = !ab; t.setAttribute("aria-expanded", ab);
+    abertos[t.dataset.mod] = ab; return;
+  }
+  if (t.dataset.set){
+    var d = dado(t.dataset.set);
+    d.s = (d.s === t.dataset.s) ? "" : t.dataset.s;
+    salvar(); renderVistoria(); return;
+  }
+  if (t.dataset.obs){
+    var ta = $('[data-obstxt="'+t.dataset.obs+'"]');
+    ta.hidden = !ta.hidden; if (!ta.hidden) ta.focus(); return;
+  }
+  if (t.dataset.foto){ abrirCamera(t.dataset.foto); return; }
+});
+$("#listaMods").addEventListener("input", function(e){
+  var el = e.target;
+  if (el.dataset.v !== undefined && el.dataset.v){
+    var d = dado(el.dataset.v); d.v = el.value === "" ? null : Core.num(el.value);
+    salvar(); atualizarLinha(el.dataset.v); return;
+  }
+  if (el.dataset.c){
+    var d2 = dado(el.dataset.c); d2.c = d2.c || {};
+    d2.c[el.dataset.k] = el.value === "" ? null : Core.num(el.value);
+    salvar(); atualizarLinha(el.dataset.c); return;
+  }
+  if (el.dataset.obstxt){ dado(el.dataset.obstxt).obs = el.value; salvar(); return; }
+});
+
+/* Atualiza somente o item alterado, preservando o foco do campo */
+function atualizarLinha(id){
+  var P = params(), it = null;
+  Core.itensNoEscopo(V.escopo).forEach(function(x){ if (x.item.id === id) it = x.item; });
+  if (!it) return;
+  var d = V.itens[id], st = Core.situacao(it, d, P), no = $('[data-item="'+id+'"]');
+  if (!no) return;
+  var ativo = document.activeElement, sel = null;
+  if (ativo && no.contains(ativo)) sel = ativo.dataset.k ? '[data-c="'+id+'"][data-k="'+ativo.dataset.k+'"]' : '[data-v="'+id+'"]';
+  no.outerHTML = renderItem(it, d, st, P);
+  renderFotosItem(id);
+  if (sel){ var n = $(sel); if (n){ n.focus(); try { n.setSelectionRange(n.value.length, n.value.length); } catch(e){} } }
+  renderKPIs();
+}
+
+/* ---------- filtros e busca ---------- */
+$("#filtros").addEventListener("click", function(e){
+  var b = e.target.closest("button"); if (!b) return;
+  filtro = b.dataset.f;
+  $$("#filtros button").forEach(function(x){ x.setAttribute("aria-pressed", x===b?"true":"false"); });
+  renderVistoria();
+});
+$("#busca").addEventListener("input", function(e){ termo = e.target.value.trim().toLowerCase(); renderVistoria(); });
+
+/* ---------- fotos ---------- */
+var stream = null;
+function abrirCamera(id){
+  itemFoco = id;
+  $("#fLegenda").value = "";
+  var dlg = $("#dlgFoto"); dlg.showModal();
+  if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia){
+    navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:"environment"}}})
+      .then(function(s){ stream = s; $("#video").srcObject = s; $("#video").hidden = false; })
+      .catch(function(){ $("#video").hidden = true; $("#btDisparar").disabled = true;
+        $("#geoInfo").textContent = "Câmera indisponível neste dispositivo. Use “Escolher arquivo”."; });
+  } else { $("#video").hidden = true; $("#btDisparar").disabled = true; }
+}
+function fecharCamera(){
+  if (stream){ stream.getTracks().forEach(function(t){ t.stop(); }); stream = null; }
+  $("#video").srcObject = null; $("#btDisparar").disabled = false;
+  var d = $("#dlgFoto"); if (d.open) d.close();
+}
+$$("[data-fechar]").forEach(function(b){ b.addEventListener("click", function(){ fecharCamera(); $("#dlgVer").close(); }); });
+$("#dlgFoto").addEventListener("close", fecharCamera);
+
+$("#btDisparar").addEventListener("click", function(){
+  var v = $("#video"), cv = $("#canvas");
+  if (!v.videoWidth) return;
+  var esc2 = Math.min(1, 1600 / Math.max(v.videoWidth, v.videoHeight));
+  cv.width = Math.round(v.videoWidth * esc2); cv.height = Math.round(v.videoHeight * esc2);
+  cv.getContext("2d").drawImage(v, 0, 0, cv.width, cv.height);
+  registrar(cv.toDataURL("image/jpeg", 0.62));
+});
+$("#inpArquivo").addEventListener("change", function(e){
+  var arqs = Array.prototype.slice.call(e.target.files || []);
+  arqs.forEach(function(f){
+    var fr = new FileReader();
+    fr.onload = function(){ comprimir(fr.result, function(d){ registrar(d, true); }); };
+    fr.readAsDataURL(f);
+  });
+  e.target.value = "";
+});
+function comprimir(dataUrl, cb){
+  var img = new Image();
+  img.onload = function(){
+    var e2 = Math.min(1, 1600 / Math.max(img.width, img.height));
+    var cv = document.createElement("canvas");
+    cv.width = Math.round(img.width * e2); cv.height = Math.round(img.height * e2);
+    cv.getContext("2d").drawImage(img, 0, 0, cv.width, cv.height);
+    cb(cv.toDataURL("image/jpeg", 0.62));
+  };
+  img.onerror = function(){ cb(dataUrl); };
+  img.src = dataUrl;
+}
+function registrar(dataUrl, manterAberto){
+  var fid = "F" + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+  var reg = { id: fid, item: itemFoco, ts: new Date().toISOString(),
+              legenda: $("#fLegenda").value || "", lat: null, lon: null };
+  var grava = function(){
+    Fotos.gravar(fid, dataUrl).then(function(){
+      V.fotos[fid] = reg;
+      var d = dado(itemFoco); d.fotos = d.fotos || []; d.fotos.push(fid);
+      salvar(true); renderFotosItem(itemFoco);
+      if (!manterAberto) fecharCamera();
+    });
+  };
+  if (navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(function(p){
+      reg.lat = +p.coords.latitude.toFixed(6); reg.lon = +p.coords.longitude.toFixed(6); grava();
+    }, grava, {timeout:6000, maximumAge:60000});
+  } else grava();
+}
+function renderFotosItem(id){
+  var cx = $('[data-fotos="'+id+'"]'); if (!cx) return;
+  var d = V.itens[id]; if (!d || !d.fotos || !d.fotos.length){ cx.innerHTML = ""; return; }
+  cx.innerHTML = d.fotos.map(function(f){
+    var r = V.fotos[f] || {};
+    return '<figure class="foto" data-f="'+f+'"><img alt="'+esc(r.legenda||"Registro fotográfico")+'" data-src="'+f+'">'
+      + (r.lat!=null ? '<span class="foto__geo">'+r.lat.toFixed(4)+' '+r.lon.toFixed(4)+'</span>' : '')
+      + '<button data-del="'+f+'" title="Remover">&times;</button></figure>';
+  }).join("");
+  cx.querySelectorAll("img[data-src]").forEach(function(im){
+    Fotos.ler(im.dataset.src).then(function(u){ if (u) im.src = u; });
+    im.addEventListener("click", function(){ verFoto(im.dataset.src); });
+  });
+  cx.querySelectorAll("[data-del]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var f = b.dataset.del;
+      if (!confirm("Remover esta imagem do item?")) return;
+      Fotos.apagar(f); delete V.fotos[f];
+      d.fotos = d.fotos.filter(function(x){ return x !== f; });
+      salvar(true); renderFotosItem(id);
+    });
+  });
+}
+function verFoto(f){
+  var r = V.fotos[f] || {};
+  $("#verTit").textContent = r.item ? "Registro — item " + r.item : "Registro fotográfico";
+  $("#verMeta").textContent = (r.legenda ? r.legenda + " · " : "")
+    + new Date(r.ts).toLocaleString("pt-BR") + (r.lat!=null ? " · " + r.lat + ", " + r.lon : "");
+  Fotos.ler(f).then(function(u){ $("#verImg").src = u || ""; $("#dlgVer").showModal(); });
+}
+function renderTodasFotos(){ Object.keys(V.itens).forEach(renderFotosItem); }
+
+function renderGaleria(){
+  var ids = Object.keys(V.fotos);
+  $("#tagFotos").textContent = ids.length + (ids.length===1?" imagem":" imagens");
+  if (!ids.length){ $("#galeria").innerHTML = '<div class="vazio">Nenhuma imagem registrada.</div>'; return; }
+  ids.sort(function(a,b){ return (V.fotos[a].item||"") < (V.fotos[b].item||"") ? -1 : 1; });
+  $("#galeria").innerHTML = '<div class="laudo__fotos">' + ids.map(function(f){
+    var r = V.fotos[f];
+    return '<figure><img data-src="'+f+'" alt=""><figcaption><b>'+esc(r.item||"—")+'</b> · '
+      + esc(r.legenda||"sem legenda") + '<br>' + new Date(r.ts).toLocaleString("pt-BR")
+      + (r.lat!=null ? '<br>'+r.lat+', '+r.lon : '') + '</figcaption></figure>';
+  }).join("") + '</div>';
+  $$("#galeria img[data-src]").forEach(function(im){
+    Fotos.ler(im.dataset.src).then(function(u){ if (u) im.src = u; });
+    im.addEventListener("click", function(){ verFoto(im.dataset.src); });
+  });
+}
+
+/* ---------- não conformidades ---------- */
+function renderNC(){
+  var aps = Core.apontamentos(V.itens, V.escopo, params());
+  $("#tagNC").textContent = aps.length + (aps.length===1?" apontamento":" apontamentos");
+  if (!aps.length){ $("#tabelaNC").innerHTML = '<div class="vazio">Nenhuma não conformidade registrada.</div>'; return; }
+  var h = '<table class="tab"><thead><tr><th>Item</th><th>Descrição</th><th>Situação</th><th>Prioridade</th>'
+        + '<th>Medido</th><th>Limite</th><th>Adequação</th><th>Fotos</th></tr></thead><tbody>';
+  aps.forEach(function(a){
+    var un = a.item.tipo === "calc" ? (CALCS[a.item.calc]?CALCS[a.item.calc].un:"") : (a.item.un||"");
+    h += '<tr><td class="n"><b>'+a.id+'</b><br><span style="color:var(--txt-3)">'+esc(a.modulo.cod)+'</span></td>'
+      + '<td>'+esc(a.item.t)+'<br><span style="font-size:11.5px;color:var(--txt-3)">'+esc(a.item.ref)+'</span>'
+      + (a.obs?'<br><span style="font-size:11.5px">Obs.: '+esc(a.obs)+'</span>':'')+'</td>'
+      + '<td><span class="pill pill--'+a.status+'">'+(a.status==="NC"?"NÃO CONFORME":"PARCIAL")+'</span></td>'
+      + '<td>'+esc(a.prioridade)+'</td>'
+      + '<td class="n">'+(a.valor===null?"—":esc(Core.formatar(a.valor, un)))+'</td>'
+      + '<td class="n">'+esc(a.limite)+'</td>'
+      + '<td style="font-size:12.5px">'+esc(a.item.rec||"")+'</td>'
+      + '<td class="n">'+a.fotos.length+'</td></tr>';
+  });
+  $("#tabelaNC").innerHTML = h + '</tbody></table>';
+}
+$("#btCsv").addEventListener("click", function(){
+  baixar(Core.csv(Core.apontamentos(V.itens, V.escopo, params())),
+    "apontamentos-" + (V.meta.objeto||"vistoria").replace(/[^\w]+/g,"-").toLowerCase() + ".csv",
+    "text/csv;charset=utf-8");
+});
+
+/* ---------- parâmetros ---------- */
+function renderParams(){
+  var P = params();
+  var h = '<table class="tab"><thead><tr><th>Parâmetro</th><th>Valor adotado</th><th>Un.</th><th>Padrão</th><th>Referência</th></tr></thead><tbody>';
+  Object.keys(PAD).forEach(function(k){
+    var alt = Number(P[k].v) !== Number(PAD[k].v);
+    h += '<tr><td>'+esc(PAD[k].rot)+'</td>'
+      + '<td class="n"><input type="number" step="0.001" data-par="'+k+'" value="'+esc(P[k].v)+'" '
+      + 'style="width:108px;font-family:var(--mono);padding:5px 6px;border:1px solid var(--line-strong);border-radius:6px;background:var(--surface)'
+      + (alt?';border-color:var(--parcial);font-weight:700':'')+'"></td>'
+      + '<td class="n">'+esc(PAD[k].un)+'</td>'
+      + '<td class="n" style="color:var(--txt-3)">'+esc(PAD[k].v)+'</td>'
+      + '<td style="font-size:11.5px;color:var(--txt-2)">'+esc(PAD[k].ref)+'</td></tr>';
+  });
+  $("#tabelaParam").innerHTML = h + '</tbody></table>';
+  $$("[data-par]").forEach(function(i){
+    i.addEventListener("input", function(){
+      V.params = V.params || {};
+      if (i.value === "" || Number(i.value) === Number(PAD[i.dataset.par].v)) delete V.params[i.dataset.par];
+      else V.params[i.dataset.par] = Number(i.value);
+      salvar(); renderVistoria();
+    });
+  });
+}
+$("#btRestaurar").addEventListener("click", function(){
+  if (!confirm("Restaurar todos os parâmetros aos valores padrão?")) return;
+  V.params = {}; salvar(true); renderParams(); renderVistoria();
+});
+
+/* ---------- vistorias salvas ---------- */
+function renderVistorias(){
+  var ids = Object.keys(BASE.vistorias);
+  $("#infoArmaz").textContent = "Ocupação do armazenamento local: "
+    + (Store.tamanho()/1024).toFixed(1) + " KB · " + ids.length + " vistoria(s). "
+    + "As imagens ficam em base separada e são incluídas no arquivo exportado.";
+  $("#listaNormas").innerHTML = NORMAS.map(function(n){ return "• " + esc(n); }).join("<br>");
+  if (!ids.length){ $("#listaVistorias").innerHTML = '<div class="vazio">Nenhuma vistoria salva.</div>'; return; }
+  ids.sort(function(a,b){ return BASE.vistorias[b].atualizadoEm < BASE.vistorias[a].atualizadoEm ? -1 : 1; });
+  $("#listaVistorias").innerHTML = ids.map(function(id){
+    var v = BASE.vistorias[id], at = id === V.id;
+    var r = Core.resumo(v.itens||{}, v.escopo||{}, PAD);
+    return '<div class="item" style="cursor:pointer" data-abrir="'+id+'">'
+      + '<div class="item__topo"><span class="item__txt"><span class="item__t">'
+      + esc(v.meta.objeto || "(sem denominação)") + (at?' <span class="tag">atual</span>':'') + '</span>'
+      + '<span class="item__ref">'+esc(v.meta.municipio||"—")+' · '
+      + new Date(v.atualizadoEm).toLocaleString("pt-BR") + ' · '
+      + (r.geral.indice===null?"não avaliada":r.geral.indice.toFixed(0)+"% de conformidade")
+      + ' · '+Object.keys(v.fotos||{}).length+' fotos</span></span></div></div>';
+  }).join("");
+  $$("[data-abrir]").forEach(function(n){
+    n.addEventListener("click", function(){
+      var id = n.dataset.abrir; if (id === V.id) return;
+      V = BASE.vistorias[id]; BASE.atual = id; Store.gravar(BASE); iniciar();
+      irPara("pVistoria");
+    });
+  });
+}
+$("#btNova").addEventListener("click", function(){
+  if (!confirm("Iniciar uma nova vistoria? A atual permanece salva no dispositivo.")) return;
+  V = novaVistoria(); salvar(true); iniciar(); irPara("pIdent");
+});
+$("#btDup").addEventListener("click", function(){
+  var c = JSON.parse(JSON.stringify(V));
+  c.id = "V" + Date.now().toString(36).toUpperCase();
+  c.meta.objeto = (c.meta.objeto||"") + " (cópia)";
+  c.criadoEm = c.atualizadoEm = new Date().toISOString();
+  V = c; salvar(true); iniciar(); renderVistorias();
+});
+$("#btLimpar").addEventListener("click", function(){
+  if (!confirm("Apagar definitivamente a vistoria atual e suas imagens?")) return;
+  Object.keys(V.fotos).forEach(function(f){ Fotos.apagar(f); });
+  delete BASE.vistorias[V.id]; BASE.atual = null; Store.gravar(BASE);
+  V = novaVistoria(); salvar(true); iniciar(); renderVistorias();
+});
+
+/* ---------- arquivo ---------- */
+function baixar(txt, nome, tipo){
+  var b = new Blob([txt], {type: tipo || "application/json"});
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(b); a.download = nome; a.click();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); }, 4000);
+}
+$("#btSalvar").addEventListener("click", function(){
+  var ids = Object.keys(V.fotos);
+  Promise.all(ids.map(function(f){ return Fotos.ler(f).then(function(u){ return [f,u]; }); }))
+   .then(function(pares){
+     var img = {}; pares.forEach(function(p){ if (p[1]) img[p[0]] = p[1]; });
+     baixar(JSON.stringify({formato:"acesscheck.v1", vistoria:V, imagens:img}, null, 1),
+       "vistoria-" + (V.meta.objeto||"acessibilidade").replace(/[^\w]+/g,"-").toLowerCase() + ".json");
+   });
+});
+$("#btImportar").addEventListener("click", function(){ $("#inpJson").click(); });
+$("#inpJson").addEventListener("change", function(e){
+  var f = e.target.files[0]; if (!f) return;
+  var fr = new FileReader();
+  fr.onload = function(){
+    try {
+      var o = JSON.parse(fr.result);
+      if (!o.vistoria) throw new Error("estrutura");
+      var novos = o.vistoria;
+      novos.id = novos.id || ("V" + Date.now().toString(36).toUpperCase());
+      var img = o.imagens || {};
+      Promise.all(Object.keys(img).map(function(k){ return Fotos.gravar(k, img[k]); }))
+        .then(function(){ V = novos; salvar(true); iniciar(); irPara("pVistoria"); });
+    } catch(err){ alert("Arquivo inválido ou incompatível com o formato do sistema."); }
+  };
+  fr.readAsText(f); e.target.value = "";
+});
+
+/* ---------- inicialização ---------- */
+function iniciar(){
+  ligarCampos(); renderEscopo(); renderVistoria(); renderTodasFotos();
+  $("#rdSalvo").textContent = "Vistoria " + V.id;
+}
+if (BASE.atual && BASE.vistorias[BASE.atual]) V = BASE.vistorias[BASE.atual];
+else { V = novaVistoria(); BASE.vistorias[V.id] = V; BASE.atual = V.id; Store.gravar(BASE); }
+if (!V.params) V.params = {};
+if (!V.fotos) V.fotos = {};
+if (!V.itens) V.itens = {};
+iniciar();
+
+window.__app = { get V(){ return V; }, params: params, salvar: salvar, renderVistoria: renderVistoria };
+})();
+</script>
+<script>
+(function(){
+"use strict";
+if (typeof document === "undefined") return;
+
+var $ = function(s){ return document.querySelector(s); };
+var esc = function(s){ return String(s==null?"":s).replace(/[&<>"']/g, function(c){
+  return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); };
+function dt(s){ if(!s) return "—"; var d = new Date(s + (s.length===10?"T12:00:00":"")); 
+  return isNaN(d) ? esc(s) : d.toLocaleDateString("pt-BR"); }
+function un(it){ return it.tipo === "calc" ? (CALCS[it.calc]?CALCS[it.calc].un:"") : (it.un||""); }
+
+function montar(){
+  var V = window.__app.V, P = window.__app.params(), M = V.meta;
+  var r = Core.resumo(V.itens, V.escopo, P), g = r.geral, cl = Core.classificar(g);
+  var aps = Core.apontamentos(V.itens, V.escopo, P);
+  var comFotos = $("#ckFotosLaudo").checked, comConformes = $("#ckConformes").checked;
+
+  var h = '<div class="laudo"><div class="laudo__cab">'
+    + '<h1>LAUDO TÉCNICO DE ACESSIBILIDADE</h1>'
+    + '<p>' + esc(M.laudoNum ? "Nº " + M.laudoNum : "Sem numeração") + ' · Emitido em ' + dt(M.laudoData)
+    + (M.processo ? ' · Processo ' + esc(M.processo) : '') + '</p></div>';
+
+  /* 1. Objeto */
+  h += '<h2>1. Objeto e identificação</h2><table><tbody>'
+    + lin("Denominação", M.objeto) + lin("Tipologia", M.tipo) + lin("Regime de uso", M.uso)
+    + lin("Endereço", [M.endereco, M.municipio, M.uf, M.cep].filter(Boolean).join(" — "))
+    + lin("Coordenadas", M.coord) + lin("Área construída", M.area ? M.area + " m²" : "")
+    + lin("Pavimentos", M.pavimentos) + lin("Ano de construção", M.ano)
+    + lin("Responsável pelo imóvel", M.responsavel) + lin("CNPJ/CPF", M.cnpj)
+    + lin("Data da vistoria", dt(M.data)) + lin("Acompanhantes", M.acompanhantes)
+    + '</tbody></table>';
+
+  /* 2. Metodologia */
+  h += '<h2>2. Metodologia</h2><p>' + esc(M.metodologia || "—") + '</p>'
+    + '<p>Foram verificados <b>' + g.total + '</b> itens de conformidade distribuídos em <b>'
+    + Object.keys(r.modulos).length + '</b> módulos temáticos, dos quais <b>' + (g.total - g.pend)
+    + '</b> foram avaliados e <b>' + g.NA + '</b> classificados como não aplicáveis ao objeto. '
+    + 'O índice de conformidade pondera integralmente os itens conformes e pela metade os parcialmente conformes, '
+    + 'excluindo da base de cálculo os itens não aplicáveis.</p>';
+
+  h += '<h3>2.1 Normas e diplomas de referência</h3><ul style="font-size:12.5px;margin:6px 0 0;padding-left:18px">'
+    + NORMAS.map(function(n){ return "<li>" + esc(n) + "</li>"; }).join("") + '</ul>';
+
+  var alt = Object.keys(V.params || {});
+  if (alt.length){
+    h += '<h3>2.2 Parâmetros ajustados pelo responsável técnico</h3><table><thead><tr>'
+      + '<th>Parâmetro</th><th>Adotado</th><th>Padrão</th><th>Referência</th></tr></thead><tbody>';
+    alt.forEach(function(k){
+      h += '<tr><td>'+esc(PAD[k].rot)+'</td><td>'+esc(V.params[k])+' '+esc(PAD[k].un)+'</td>'
+        + '<td>'+esc(PAD[k].v)+' '+esc(PAD[k].un)+'</td><td>'+esc(PAD[k].ref)+'</td></tr>';
+    });
+    h += '</tbody></table>';
+  }
+
+  /* 3. Resultado */
+  h += '<h2>3. Resultado consolidado</h2><table><thead><tr>'
+    + '<th>Módulo</th><th>Itens</th><th>Conf.</th><th>Parc.</th><th>N.C.</th><th>N/A</th><th>Pend.</th><th>Índice</th></tr></thead><tbody>';
+  CHECKLIST.forEach(function(m){
+    var c = r.modulos[m.cod]; if (!c) return;
+    h += '<tr><td><b>'+m.cod+'</b> — '+esc(m.tit)+'</td><td>'+c.total+'</td><td>'+c.C+'</td><td>'+c.P+'</td>'
+      + '<td>'+c.NC+'</td><td>'+c.NA+'</td><td>'+c.pend+'</td>'
+      + '<td><b>'+(c.indice===null?"—":c.indice.toFixed(1).replace(".",",")+"%")+'</b></td></tr>';
+  });
+  h += '<tr style="background:var(--surface-2)"><td><b>TOTAL</b></td><td><b>'+g.total+'</b></td><td><b>'+g.C
+    + '</b></td><td><b>'+g.P+'</b></td><td><b>'+g.NC+'</b></td><td><b>'+g.NA+'</b></td><td><b>'+g.pend
+    + '</b></td><td><b>'+(g.indice===null?"—":g.indice.toFixed(1).replace(".",",")+"%")+'</b></td></tr>'
+    + '</tbody></table>';
+
+  h += '<p><b>Classificação atribuída:</b> ' + esc(cl.rot) + '. '
+    + (g.critNC > 0
+       ? 'Foram identificadas <b>' + g.critNC + '</b> restrições em itens classificados como críticos, '
+         + 'que comprometem a utilização autônoma e segura por pessoas com deficiência ou mobilidade reduzida.'
+       : 'Não foram identificadas restrições em itens classificados como críticos.') + '</p>';
+
+  /* 4. Apontamentos */
+  h += '<h2>4. Não conformidades e plano de adequação</h2>';
+  if (!aps.length){
+    h += '<p>Não foram registradas não conformidades nos módulos avaliados.</p>';
+  } else {
+    ["Imediata","Alta","Média"].forEach(function(pri){
+      var sub = aps.filter(function(a){ return a.prioridade === pri; });
+      if (!sub.length) return;
+      h += '<h3>4.' + (["Imediata","Alta","Média"].indexOf(pri)+1) + ' Prioridade ' + pri
+         + ' <span style="font-weight:400;color:var(--txt-3)">(' + sub.length + ' apontamentos)</span></h3>';
+      sub.forEach(function(a){
+        var med = a.valor === null ? null : Core.formatar(a.valor, un(a.item));
+        h += '<div class="laudo__nc"><b>' + a.id + ' — ' + esc(a.item.t) + '</b>'
+          + '<p><b>Referência:</b> ' + esc(a.item.ref)
+          + ' · <b>Situação:</b> ' + (a.status === "NC" ? "não conforme" : "parcialmente conforme")
+          + (med ? ' · <b>Medido:</b> ' + esc(med) + ' · <b>Exigido:</b> ' + esc(a.limite) : '')
+          + '</p>'
+          + (a.obs ? '<p><b>Constatação:</b> ' + esc(a.obs) + '</p>' : '')
+          + '<p><b>Providência:</b> ' + esc(a.item.rec || "Adequar aos parâmetros normativos.") + '</p>';
+        if (comFotos && a.fotos.length){
+          h += '<div class="laudo__fotos">' + a.fotos.map(function(f){
+            var reg = V.fotos[f] || {};
+            return '<figure><img data-src="'+f+'" alt=""><figcaption>' + esc(a.id) + ' · '
+              + esc(reg.legenda || "registro de vistoria")
+              + (reg.lat != null ? ' · ' + reg.lat + ', ' + reg.lon : '') + '</figcaption></figure>';
+          }).join("") + '</div>';
+        }
+        h += '</div>';
+      });
+    });
+  }
+
+  /* 5. Itens conformes (opcional) */
+  if (comConformes){
+    h += '<h2>5. Itens verificados e considerados conformes</h2><table><thead><tr>'
+      + '<th>Item</th><th>Descrição</th><th>Referência</th><th>Medido</th></tr></thead><tbody>';
+    Core.itensNoEscopo(V.escopo).forEach(function(x){
+      var d = V.itens[x.item.id];
+      if (Core.situacao(x.item, d, P) !== "C") return;
+      var v = Core.valor(x.item, d);
+      h += '<tr><td>'+x.item.id+'</td><td>'+esc(x.item.t)+'</td><td>'+esc(x.item.ref)+'</td>'
+        + '<td>'+(v===null?"—":esc(Core.formatar(v, un(x.item))))+'</td></tr>';
+    });
+    h += '</tbody></table>';
+  }
+
+  /* 6. Registro fotográfico geral */
+  var soltas = Object.keys(V.fotos).filter(function(f){
+    return !aps.some(function(a){ return a.fotos.indexOf(f) > -1; });
+  });
+  if (comFotos && soltas.length){
+    h += '<h2>' + (comConformes ? 6 : 5) + '. Registro fotográfico complementar</h2><div class="laudo__fotos">'
+      + soltas.map(function(f){
+          var reg = V.fotos[f] || {};
+          return '<figure><img data-src="'+f+'" alt=""><figcaption>' + esc(reg.item || "—") + ' · '
+            + esc(reg.legenda || "registro de vistoria") + '</figcaption></figure>';
+        }).join("") + '</div>';
+  }
+
+  /* 7. Conclusão */
+  var nSec = (comConformes ? 1 : 0) + (comFotos && soltas.length ? 1 : 0) + 5;
+  h += '<h2>' + nSec + '. Conclusão</h2>';
+  h += '<p>Da vistoria realizada em ' + dt(M.data) + ' no imóvel/logradouro denominado <b>'
+    + esc(M.objeto || "—") + '</b>, resulta índice de conformidade de <b>'
+    + (g.indice === null ? "—" : g.indice.toFixed(1).replace(".", ",") + "%") + '</b> em relação aos '
+    + 'parâmetros da ABNT NBR 9050 e normas correlatas, classificando-se o objeto como <b>'
+    + esc(cl.rot) + '</b>.</p>';
+  if (aps.length){
+    var im = aps.filter(function(a){ return a.prioridade === "Imediata"; }).length;
+    h += '<p>Registram-se ' + aps.length + ' apontamentos, dos quais ' + im
+      + ' demandam providência imediata por comprometerem a segurança ou impedirem o uso autônomo. '
+      + 'As medidas de adequação constam do item 4 deste laudo.</p>';
+  }
+  if (M.conclusao) h += '<p>' + esc(M.conclusao).replace(/\n/g, "<br>") + '</p>';
+
+  h += '<div class="laudo__ass"><p style="font:600 12px/1.5 var(--mono)">'
+    + esc(M.laudoLocal || M.municipio || "—") + ', ' + dt(M.laudoData) + '</p>'
+    + '<hr><p style="margin:0"><b>' + esc(M.vistoriador || "—") + '</b></p>'
+    + '<p style="margin:2px 0 0;font-size:12.5px">' + esc(M.cargo || "") + '</p>'
+    + '<p style="margin:2px 0 0;font-size:12.5px">' + esc(M.crea ? "Registro " + M.crea : "") + '</p></div>';
+
+  h += '<p style="margin-top:26px;font-size:11px;color:var(--txt-3);border-top:1px solid var(--line);padding-top:9px">'
+    + 'Laudo gerado por AcessCheck a partir de checklist estruturado. Os parâmetros normativos adotados constam do item 2 '
+    + 'e são de responsabilidade do profissional signatário, a quem cabe conferi-los junto ao texto vigente das normas citadas.'
+    + '</p></div>';
+  return h;
+}
+function lin(r, v){ return v ? '<tr><th style="width:32%">'+esc(r)+'</th><td>'+esc(v)+'</td></tr>' : ''; }
+
+function carregarImagens(raiz){
+  raiz.querySelectorAll("img[data-src]").forEach(function(im){
+    Fotos.ler(im.dataset.src).then(function(u){ if (u) im.src = u; });
+  });
+}
+
+$("#btGerar").addEventListener("click", function(){
+  $("#saidaLaudo").innerHTML = montar();
+  carregarImagens($("#saidaLaudo"));
+  if ($("#saidaLaudo").scrollIntoView) $("#saidaLaudo").scrollIntoView({behavior:"smooth", block:"start"});
+});
+$("#btImprimir").addEventListener("click", function(){
+  if (!$("#saidaLaudo").querySelector(".laudo")) $("#btGerar").click();
+  setTimeout(function(){ window.print(); }, 500);
+});
+$("#btHtml").addEventListener("click", function(){
+  if (!$("#saidaLaudo").querySelector(".laudo")) $("#btGerar").click();
+  setTimeout(function(){
+    var V = window.__app.V;
+    var clone = $("#saidaLaudo").cloneNode(true);
+    var imgs = clone.querySelectorAll("img[data-src]");
+    Promise.all(Array.prototype.map.call(imgs, function(im){
+      return Fotos.ler(im.dataset.src).then(function(u){ if (u) im.setAttribute("src", u); im.removeAttribute("data-src"); });
+    })).then(function(){
+      var css = document.querySelector("style").textContent;
+      var doc = '<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8">'
+        + '<meta name="viewport" content="width=device-width,initial-scale=1">'
+        + '<title>Laudo de acessibilidade — ' + esc(V.meta.objeto || "") + '</title>'
+        + '<style>' + css + '</style></head><body style="padding:20px;max-width:920px;margin:0 auto">'
+        + clone.innerHTML + '</body></html>';
+      var b = new Blob([doc], {type:"text/html;charset=utf-8"});
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(b);
+      a.download = "laudo-acessibilidade-" + (V.meta.objeto||"vistoria").replace(/[^\w]+/g,"-").toLowerCase() + ".html";
+      a.click();
+      setTimeout(function(){ URL.revokeObjectURL(a.href); }, 4000);
+    });
+  }, 600);
+});
+})();
+</script>
+<script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script>
+<script>
+(function(){
+  var overlay=document.getElementById('ac-abertura'); if(!overlay) return;
+  var DUR=4000;
+  var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var agreed=false; try{ agreed=!!localStorage.getItem('acesscheck_termos_v1'); }catch(e){}
+  document.body.style.overflow='hidden';
+  var splash=document.getElementById('acaSplash');
+  var titleEl=document.getElementById('acaTitle');
+  var loadingEl=document.getElementById('acaLoading');
+  var legalEl=document.getElementById('acaLegal');
+  var skipBtn=document.getElementById('acaSkip');
+  var chk=document.getElementById('acaChk');
+  var warn=document.getElementById('acaWarn');
+  var entBtn=document.getElementById('acaEnter');
+  var decBtn=document.getElementById('acaDecline');
+  var advanced=false, finished=false;
+
+  function initScene(){
+    var THREE=window.THREE; var canvas=document.getElementById('acaCanvas');
+    if(!THREE||!canvas) return null;
+    var W=window.innerWidth,H=window.innerHeight;
+    var renderer=new THREE.WebGLRenderer({canvas:canvas,antialias:true,alpha:true});
+    renderer.setPixelRatio(Math.min(2,window.devicePixelRatio||1));
+    renderer.setSize(W,H,false);
+    renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+    renderer.outputEncoding=THREE.sRGBEncoding; renderer.toneMapping=THREE.ACESFilmicToneMapping; renderer.toneMappingExposure=1.08;
+    var scene=new THREE.Scene(); scene.fog=new THREE.Fog(0xe4e7e1,12,27);
+    var camera=new THREE.PerspectiveCamera(38,W/H,0.1,100);
+    var camStart=new THREE.Vector3(3.0,1.05,5.2),camEnd=new THREE.Vector3(4.7,3.05,5.9),camTarget=new THREE.Vector3(0,0.75,-0.1);
+    scene.add(new THREE.HemisphereLight(0xffffff,0x6b7480,0.55));
+    var key=new THREE.DirectionalLight(0xfff4e0,2.0); key.position.set(-6,9,6); key.castShadow=true;
+    key.shadow.mapSize.set(2048,2048); key.shadow.camera.near=1; key.shadow.camera.far=30;
+    key.shadow.camera.left=-9; key.shadow.camera.right=9; key.shadow.camera.top=9; key.shadow.camera.bottom=-9; key.shadow.bias=-0.0004; key.shadow.radius=4; scene.add(key);
+    var fill=new THREE.DirectionalLight(0xdfe8ff,0.5); fill.position.set(7,4,3); scene.add(fill);
+    function M(c,r,m){return new THREE.MeshStandardMaterial({color:c,roughness:r,metalness:m||0});}
+    var ground=new THREE.Mesh(new THREE.CircleGeometry(11,64),M(0xe6e8e2,0.97,0)); ground.rotation.x=-Math.PI/2; ground.receiveShadow=true; scene.add(ground);
+    var bGroup=new THREE.Group(); scene.add(bGroup);
+    var plinth=new THREE.Mesh(new THREE.BoxGeometry(3.4,0.5,2.6),M(0x2a333b,0.85,0.05)); plinth.position.set(0,0.25,-1.5); plinth.castShadow=plinth.receiveShadow=true; bGroup.add(plinth);
+    var body=new THREE.Mesh(new THREE.BoxGeometry(3.0,2.4,2.2),M(0xccd1c9,0.8,0)); body.position.set(0,1.7,-1.5); body.castShadow=body.receiveShadow=true; bGroup.add(body);
+    var recess=new THREE.Mesh(new THREE.BoxGeometry(1.15,1.55,0.4),M(0x151a1e,0.9,0)); recess.position.set(0,1.08,-0.42); bGroup.add(recess);
+    var door=new THREE.Mesh(new THREE.BoxGeometry(1.0,1.4,0.06),new THREE.MeshStandardMaterial({color:0x2f5d78,roughness:0.15,metalness:0.4})); door.position.set(0,1.05,-0.36); bGroup.add(door);
+    var winMat=new THREE.MeshStandardMaterial({color:0x33454f,roughness:0.2,metalness:0.3});
+    [-1.0,1.0].forEach(function(x){ var w=new THREE.Mesh(new THREE.BoxGeometry(0.7,0.9,0.05),winMat); w.position.set(x,1.55,-0.41); bGroup.add(w); });
+    var plate=new THREE.Mesh(new THREE.BoxGeometry(0.34,0.34,0.05),M(0xf2b705,0.5,0.1)); plate.position.set(0.95,2.15,-0.41); bGroup.add(plate);
+    var platform=new THREE.Mesh(new THREE.BoxGeometry(1.9,0.14,1.0),M(0xd8dbd4,0.9,0)); platform.position.set(0,0.6,0.35); platform.castShadow=platform.receiveShadow=true; bGroup.add(platform);
+    var rampAngle=0.24,rampLen=2.55;
+    var ramp=new THREE.Group(); ramp.position.set(0,0.02,0.85); ramp.rotation.x=-rampAngle; scene.add(ramp);
+    var deckGeo=new THREE.BoxGeometry(1.45,0.12,rampLen); deckGeo.translate(0,0,rampLen/2);
+    var deck=new THREE.Mesh(deckGeo,M(0xd3d7d0,0.85,0)); deck.castShadow=deck.receiveShadow=true; ramp.add(deck);
+    [-0.73,0.73].forEach(function(x){ var skg=new THREE.BoxGeometry(0.08,0.22,rampLen); skg.translate(0,0,rampLen/2); var sk=new THREE.Mesh(skg,M(0x2a333b,0.85,0.05)); sk.position.set(x,-0.02,0); sk.castShadow=true; ramp.add(sk); });
+    var railMat=M(0x9aa0a6,0.3,0.85); var railGrp=new THREE.Group(); ramp.add(railGrp);
+    [-0.66,0.66].forEach(function(x){
+      var rg=new THREE.CylinderGeometry(0.035,0.035,rampLen,16); rg.rotateX(Math.PI/2); rg.translate(0,0,rampLen/2);
+      var rail=new THREE.Mesh(rg,railMat); rail.position.set(x,0.92,0); rail.castShadow=true; railGrp.add(rail);
+      var rail2=rail.clone(); rail2.position.set(x,0.6,0); railGrp.add(rail2);
+      for(var i=0;i<=3;i++){ var p=new THREE.Mesh(new THREE.CylinderGeometry(0.032,0.032,0.95,12),railMat); p.position.set(x,0.5,0.35+i*(rampLen-0.6)/3); p.castShadow=true; railGrp.add(p); }
+    });
+    var domes=[]; var domeGeo=new THREE.CylinderGeometry(0.075,0.1,0.05,16);
+    var domeMat=new THREE.MeshStandardMaterial({color:0xf2b705,roughness:0.55,metalness:0.05,emissive:new THREE.Color(0xf2b705),emissiveIntensity:0.12});
+    var cols=7,rows=3,sp=0.26;
+    for(var r=0;r<rows;r++) for(var c=0;c<cols;c++){ var d=new THREE.Mesh(domeGeo,domeMat); d.position.set((c-(cols-1)/2)*sp,0.03,2.35+r*sp); d.castShadow=true; d.scale.setScalar(0.0001); d._delay=(c+r*0.6)*0.045; scene.add(d); domes.push(d); }
+    var bar=new THREE.Mesh(new THREE.BoxGeometry(0.5,0.04,0.08),domeMat); bar.position.set(0,0.02,1.95); bar.castShadow=true; bar.scale.setScalar(0.0001); bar._delay=0.5; scene.add(bar); domes.push(bar);
+    bGroup.scale.y=0.0001; ramp.scale.z=0.0001; railGrp.scale.y=0.0001;
+    function onResize(){ W=window.innerWidth; H=window.innerHeight; renderer.setSize(W,H,false); camera.aspect=W/H; camera.updateProjectionMatrix(); }
+    window.addEventListener('resize',onResize);
+    var clampf=function(x){return Math.max(0,Math.min(1,x));};
+    var smooth=function(x){x=clampf(x);return x*x*(3-2*x);};
+    var back=function(x){x=clampf(x);var c1=1.6,c3=c1+1;return 1+c3*Math.pow(x-1,3)+c1*Math.pow(x-1,2);};
+    var dur=DUR/1000,spd=dur/4,t0=performance.now(),stopped=false,rafId=null;
+    function frame(){
+      var t=(performance.now()-t0)/1000; if(reduced) t=dur;
+      bGroup.scale.y=Math.max(0.0001,smooth((t-0.15)/(0.9*spd)));
+      ramp.scale.z=Math.max(0.0001,smooth((t-0.7*spd)/(0.9*spd)));
+      railGrp.scale.y=Math.max(0.0001,smooth((t-1.5*spd)/(0.7*spd)));
+      domes.forEach(function(d){ d.scale.setScalar(Math.max(0.0001,back((t-1.7*spd-d._delay)/(0.55*spd)))); });
+      var cp=smooth(t/(3.3*spd));
+      camera.position.lerpVectors(camStart,camEnd,cp);
+      var sway=Math.max(0,t-3.0*spd)*0.5;
+      camera.position.x+=Math.sin(sway)*0.12*cp; camera.position.y+=Math.sin(sway*0.7)*0.05*cp;
+      camera.lookAt(camTarget);
+      renderer.render(scene,camera);
+      if(!reduced && !stopped) rafId=requestAnimationFrame(frame);
+    }
+    frame();
+    return { stop:function(){ stopped=true; if(rafId) cancelAnimationFrame(rafId); window.removeEventListener('resize',onResize); try{renderer.dispose();}catch(e){} } };
+  }
+
+  var scene3d=initScene();
+
+  function showTitle(){ titleEl.classList.add('on'); loadingEl.style.opacity=0; }
+  function goLegal(){
+    if(advanced||finished) return; advanced=true; showTitle();
+    if(agreed){ finish(); return; }
+    splash.style.opacity=0; splash.style.pointerEvents='none';
+    legalEl.classList.add('on');
+  }
+  function finish(){
+    if(finished) return; finished=true;
+    if(scene3d&&scene3d.stop) scene3d.stop();
+    splash.style.opacity=0; legalEl.classList.remove('on');
+    overlay.style.transition='opacity .55s ease'; overlay.style.opacity=0;
+    document.body.style.overflow='';
+    setTimeout(function(){ if(overlay.parentNode) overlay.parentNode.removeChild(overlay); },600);
+  }
+
+  skipBtn.textContent = reduced ? 'Continuar' : 'Pular';
+  skipBtn.addEventListener('click',goLegal);
+  chk.addEventListener('change',function(){ entBtn.classList.toggle('ok',chk.checked); entBtn.disabled=!chk.checked; warn.classList.remove('on'); });
+  decBtn.addEventListener('click',function(){ warn.classList.add('on'); });
+  entBtn.addEventListener('click',function(){ if(!chk.checked){ warn.classList.add('on'); return; } try{ localStorage.setItem('acesscheck_termos_v1',new Date().toISOString()); }catch(e){} finish(); });
+
+  if(reduced){ showTitle(); }
+  else { setTimeout(showTitle,Math.max(400,DUR*0.58)); setTimeout(goLegal,DUR); }
+})();
+</script>
+</body>
+</html>
