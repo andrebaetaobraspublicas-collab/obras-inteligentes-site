@@ -129,7 +129,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/reservatoriopro/` | 209145 bytes | 206623 caracteres |
 | `/bombapro/` | 788470 bytes | 779784 caracteres |
 | `/paraboltpro/` | 1203461 bytes | 1183789 caracteres |
-| `/steelpro/` | 229160 bytes | 229160 caracteres |
+| `/steelpro/` | 278012 bytes | 275650 caracteres |
 | `/cronogramapro/` | 402158 bytes | 402158 caracteres |
 | `/drenapro/` | 185925 bytes | 185925 caracteres |
 | `/taludepro/` | 97674 bytes | 97674 caracteres |
@@ -138,7 +138,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/ventopro/` | 275065 bytes | 275065 caracteres |
 | `/concretopro/` | 621889 bytes | 621889 caracteres |
 | `/aterramentopro/` | 324591 bytes | 324591 caracteres |
-| `/parafusopro/` | 223926 bytes | 223926 caracteres |
+| `/parafusopro/` | 292299 bytes | 288543 caracteres |
 | `/risco-cambial/` | 68775 bytes | 68775 caracteres |
 | `/protendpro/` | 915441 bytes | 915441 caracteres |
 | `/eventogramapro/` | 728843 bytes | 728843 caracteres |
@@ -485,9 +485,10 @@ Arquivo: `steelpro/index.html`
 
 Ultima inclusao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\SteelPro - offline (1).html`
-- Data: 20/07/2026
-- Alteracao: inclusao de novo card na home e publicacao do aplicativo como HTML standalone.
+- Fonte: `C:\Users\ACER\Documents\Downloads\SteelPro_v1.1_Manual_Interativo.html`
+- Data: 20/08/2026
+- Alteracao: substituicao integral de `steelpro/index.html` pela versao 1.1, com manual interativo incorporado.
+- Backup da versao anterior: `C:\Obras Inteligentes\backups\steelpro-index-before-v1-1-manual-interativo-20260820-1930.html`
 
 Observacoes:
 
@@ -649,9 +650,10 @@ Arquivo: `parafusopro/index.html`
 
 Ultima inclusao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\ParafusoPro - Calculadora de Parafusos.html`
-- Data: 22/07/2026
-- Alteracao: inclusao de novo card na home e publicacao do aplicativo como HTML standalone.
+- Fonte: `C:\Users\ACER\Documents\Downloads\ParafusoPro_com_Manual_Interativo.html`
+- Data: 20/08/2026
+- Alteracao: substituicao integral de `parafusopro/index.html` pela nova versao com manual interativo incorporado.
+- Backup da versao anterior: `C:\Obras Inteligentes\backups\parafusopro-index-before-manual-interativo-20260820-1930.html`
 
 Observacoes:
 
