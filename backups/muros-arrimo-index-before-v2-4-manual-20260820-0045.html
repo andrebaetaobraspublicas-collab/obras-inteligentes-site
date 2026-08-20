@@ -174,7 +174,7 @@ svg{max-width:100%;height:auto;display:block}
   *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
   html,body{width:auto!important;min-height:0!important;background:#fff!important;color:#000!important;overflow:visible!important;font-size:10.5pt!important;line-height:1.45!important}
   #splash-overlay,header,.tabs,.footer,#validation-errors,
-  #panel-proj,#panel-geo,#panel-mat,#panel-calc,#panel-res,#panel-glob,#panel-man,
+  #panel-proj,#panel-geo,#panel-mat,#panel-calc,#panel-res,#panel-glob,
   #panel-rel>.card:nth-of-type(2),#report-actions,
   #panel-rel>.card:first-child>.card-hd{display:none!important}
   .container{display:block!important;max-width:none!important;width:100%!important;margin:0!important;padding:0!important}
@@ -343,35 +343,6 @@ svg{max-width:100%;height:auto;display:block}
 @media print{#panel-opt{display:none!important}}
 </style>
 
-
-
-<style id="arrimo-manual-styles">
-/* ===== ArrimoCalc — Manual didático e interativo ===== */
-#panel-man{--manual-blue:#315f78;--manual-blue-bg:#e7f0f5;--manual-green:#3f7d4e}
-.manual-hero{position:relative;overflow:hidden;background:linear-gradient(135deg,var(--stone),var(--stone-2));color:var(--paper);border-radius:16px;padding:26px 28px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;gap:22px;flex-wrap:wrap;box-shadow:var(--shadow)}
-.manual-hero:after{content:"?";position:absolute;right:26px;top:-44px;font-size:190px;line-height:1;font-weight:900;color:rgba(201,169,98,.08);pointer-events:none}
-.manual-hero-copy{position:relative;z-index:1;max-width:820px}.manual-kicker{display:block;color:var(--sand);font-size:10px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;margin-bottom:7px}.manual-hero h2{font-size:25px;color:var(--paper);margin-bottom:7px}.manual-hero p{font-size:13px;color:#ded5c3;max-width:760px}.manual-hero-actions{position:relative;z-index:1;display:flex;gap:8px;flex-wrap:wrap}.manual-hero-actions .btn{justify-content:center}
-.manual-searchbox{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:20px;box-shadow:var(--shadow);display:grid;grid-template-columns:minmax(220px,1fr) auto auto;gap:9px;align-items:center}.manual-search-input{position:relative}.manual-search-input span{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:15px;pointer-events:none}.manual-search-input input{padding-left:38px;background:var(--paper);font-size:13px}.manual-search-status{font-size:11px;color:var(--ink-soft);min-width:145px;text-align:right}
-.manual-layout{display:grid;grid-template-columns:250px minmax(0,1fr);gap:20px;align-items:start}.manual-index{position:sticky;top:112px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:15px;box-shadow:var(--shadow);max-height:calc(100vh - 138px);overflow:auto}.manual-index-title{font-size:10px;font-weight:800;color:var(--ink-soft);letter-spacing:.08em;text-transform:uppercase;margin:2px 4px 9px}.manual-index button{width:100%;border:0;background:transparent;color:var(--ink-soft);font:600 12px inherit;text-align:left;padding:9px 10px;border-radius:7px;cursor:pointer;display:flex;align-items:center;gap:8px;transition:.15s}.manual-index button:hover,.manual-index button:focus-visible{background:var(--paper-2);color:var(--stone);outline:none}.manual-index button span:first-child{width:20px;text-align:center}.manual-index .manual-index-sep{height:1px;background:var(--line);margin:9px 4px}
-.manual-main{min-width:0}.manual-section{scroll-margin-top:125px;margin-bottom:22px}.manual-section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--line)}.manual-section-head h2{font-size:17px;color:var(--stone);display:flex;align-items:center;gap:8px}.manual-section-head p{font-size:11px;color:var(--ink-soft);max-width:620px}.manual-section-actions{display:flex;gap:6px;flex-wrap:wrap}
-.manual-overview-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.manual-overview{background:#fff;border:1px solid var(--line);border-radius:11px;padding:16px;box-shadow:var(--shadow)}.manual-overview .manual-overview-icon{font-size:24px;margin-bottom:8px}.manual-overview h3{font-size:13px;color:var(--stone);margin-bottom:5px}.manual-overview p{font-size:11.5px;color:var(--ink-soft)}
-.manual-callout{display:flex;gap:10px;align-items:flex-start;padding:13px 15px;border-radius:9px;border:1px solid #b9d3e3;background:#e3edf4;color:#2c526b;font-size:12px;margin-top:12px}.manual-callout.warn{border-color:#e5d09a;background:var(--warn-bg);color:#7a5c14}.manual-callout.ok{border-color:#b6d6bd;background:var(--ok-bg);color:#2e5c39}.manual-callout.bad{border-color:#e0b5a8;background:var(--bad-bg);color:#8a3320}.manual-callout>span:first-child{font-size:17px;line-height:1.2}
-.manual-progress-card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;box-shadow:var(--shadow);margin-bottom:12px}.manual-progress-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:9px}.manual-progress-head b{font-size:13px}.manual-progress-head span{font-size:11px;color:var(--ink-soft)}.manual-progress-track{height:10px;background:var(--paper-2);border:1px solid var(--line);border-radius:8px;overflow:hidden}.manual-progress-track>div{height:100%;width:0;background:linear-gradient(90deg,var(--sand-dk),var(--sand));transition:width .25s ease}
-.manual-steps{display:flex;flex-direction:column;gap:9px}.manual-step{display:grid;grid-template-columns:42px minmax(0,1fr) auto;gap:12px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:11px;padding:13px 14px;transition:.18s;box-shadow:0 1px 2px rgba(43,39,35,.04)}.manual-step.done{border-color:#b6d6bd;background:linear-gradient(90deg,var(--ok-bg),#fff 38%)}.manual-step-check{appearance:none;width:27px;height:27px;border:2px solid var(--line);border-radius:50%;display:grid;place-content:center;cursor:pointer;background:#fff}.manual-step-check:before{content:"✓";font-weight:900;font-size:15px;color:#fff;transform:scale(0);transition:.12s}.manual-step-check:checked{background:var(--ok);border-color:var(--ok)}.manual-step-check:checked:before{transform:scale(1)}.manual-step-copy h3{font-size:13px;color:var(--stone);margin-bottom:3px}.manual-step-copy p{font-size:11.5px;color:var(--ink-soft)}.manual-step-actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
-.manual-type-buttons{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}.manual-type-btn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:12px 9px;cursor:pointer;font:700 12px inherit;color:var(--ink-soft);transition:.15s}.manual-type-btn span{display:block;font-size:22px;margin-bottom:4px}.manual-type-btn:hover{border-color:var(--sand);color:var(--stone)}.manual-type-btn.active{background:var(--paper-2);border-color:var(--sand-dk);box-shadow:inset 0 0 0 1px var(--sand);color:var(--stone)}.manual-type-content{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px;box-shadow:var(--shadow)}.manual-type-content h3{font-size:16px;color:var(--stone);margin-bottom:5px}.manual-type-content>p{font-size:12px;color:var(--ink-soft);margin-bottom:13px}.manual-type-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.manual-type-box{background:var(--paper);border:1px solid var(--line);border-radius:9px;padding:12px}.manual-type-box h4{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--sand-dk);margin-bottom:6px}.manual-type-box ul{padding-left:17px;font-size:11.5px;color:var(--ink-soft)}.manual-type-box li+li{margin-top:4px}
-.manual-topics{display:flex;flex-direction:column;gap:9px}.manual-topic{background:#fff;border:1px solid var(--line);border-radius:11px;box-shadow:0 1px 2px rgba(43,39,35,.05);overflow:hidden}.manual-topic[hidden]{display:none!important}.manual-topic summary{list-style:none;cursor:pointer;padding:15px 16px;display:flex;align-items:center;gap:10px;font-size:13px;font-weight:750;color:var(--stone);background:#fff}.manual-topic summary::-webkit-details-marker{display:none}.manual-topic summary:after{content:"＋";margin-left:auto;color:var(--sand-dk);font-size:18px;font-weight:400}.manual-topic[open] summary{background:var(--paper-2);border-bottom:1px solid var(--line)}.manual-topic[open] summary:after{content:"−"}.manual-topic-number{display:inline-flex;width:27px;height:27px;border-radius:50%;align-items:center;justify-content:center;background:var(--paper-2);color:var(--ink-soft);font-size:10px;font-weight:800;flex-shrink:0}.manual-topic[open] .manual-topic-number{background:var(--sand);color:var(--stone)}.manual-topic-body{padding:16px}.manual-topic-body p{font-size:12px;color:var(--ink-soft);margin-bottom:10px}.manual-topic-body h4{font-size:12px;color:var(--stone);margin:12px 0 6px}.manual-topic-body ul,.manual-topic-body ol{padding-left:20px;font-size:12px;color:var(--ink-soft)}.manual-topic-body li+li{margin-top:5px}.manual-topic-footer{display:flex;gap:7px;flex-wrap:wrap;margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
-.manual-check-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.manual-check{display:flex;gap:10px;align-items:flex-start;background:#fff;border:1px solid var(--line);border-radius:9px;padding:12px}.manual-check span:first-child{font-size:18px}.manual-check b{display:block;font-size:12px;color:var(--stone);margin-bottom:2px}.manual-check small{display:block;font-size:10.8px;color:var(--ink-soft);line-height:1.45}
-.manual-result-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.manual-result-card{background:#fff;border:1px solid var(--line);border-top:4px solid var(--line);border-radius:10px;padding:14px}.manual-result-card.ok{border-top-color:var(--ok)}.manual-result-card.warn{border-top-color:var(--warn)}.manual-result-card.bad{border-top-color:var(--bad)}.manual-result-card h3{font-size:12px;margin-bottom:5px}.manual-result-card p{font-size:11px;color:var(--ink-soft)}
-.manual-help-table{overflow-x:auto;border:1px solid var(--line);border-radius:10px}.manual-help-table table{min-width:720px;background:#fff}.manual-help-table td:first-child{font-weight:700;color:var(--stone);width:27%}
-.manual-glossary-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.manual-term{background:#fff;border:1px solid var(--line);border-radius:9px;padding:12px 13px}.manual-term b{display:block;font-size:12px;color:var(--stone);margin-bottom:3px}.manual-term p{font-size:11px;color:var(--ink-soft)}
-.manual-no-results{display:none;text-align:center;background:#fff;border:1px dashed var(--line);border-radius:11px;padding:30px 16px;color:var(--ink-soft);margin:12px 0}.manual-no-results.show{display:block}.manual-no-results b{display:block;color:var(--stone);margin-bottom:4px}
-.manual-tour-card{position:fixed;right:22px;bottom:22px;z-index:10010;width:min(390px,calc(100vw - 30px));background:#fff;border:1px solid var(--line);border-top:5px solid var(--sand);border-radius:13px;padding:16px;box-shadow:0 22px 60px rgba(20,18,15,.32);display:none}.manual-tour-card.show{display:block;animation:fade .2s ease}.manual-tour-card .manual-tour-kicker{font-size:9px;color:var(--sand-dk);text-transform:uppercase;letter-spacing:.1em;font-weight:800}.manual-tour-card h3{font-size:15px;color:var(--stone);margin:3px 0 5px}.manual-tour-card p{font-size:11.5px;color:var(--ink-soft);line-height:1.55}.manual-tour-bar{height:5px;background:var(--paper-2);border-radius:4px;overflow:hidden;margin:11px 0}.manual-tour-bar>div{height:100%;background:var(--sand-dk);transition:width .2s}.manual-tour-actions{display:flex;justify-content:space-between;gap:7px;flex-wrap:wrap}.manual-tour-actions>div{display:flex;gap:6px}.manual-tour-focus{outline:4px solid var(--sand)!important;outline-offset:4px!important;box-shadow:0 0 0 8px rgba(201,169,98,.22)!important;animation:manualPulse 1.25s ease-in-out infinite alternate}.manual-tour-close{position:absolute;right:10px;top:8px;border:0;background:transparent;color:var(--ink-soft);font-size:18px;cursor:pointer}
-@keyframes manualPulse{from{outline-color:var(--sand)}to{outline-color:var(--sand-dk)}}
-@media(max-width:1060px){.manual-layout{grid-template-columns:1fr}.manual-index{position:static;max-height:none;display:grid;grid-template-columns:repeat(3,1fr);gap:3px}.manual-index-title,.manual-index-sep{display:none}.manual-index button{height:100%}.manual-overview-grid,.manual-type-grid,.manual-result-grid{grid-template-columns:1fr 1fr}.manual-type-buttons{grid-template-columns:1fr 1fr}}
-@media(max-width:700px){.manual-hero{padding:21px 18px}.manual-hero h2{font-size:21px}.manual-searchbox{grid-template-columns:1fr}.manual-search-status{text-align:left}.manual-index{grid-template-columns:1fr 1fr}.manual-overview-grid,.manual-type-grid,.manual-result-grid,.manual-check-grid,.manual-glossary-grid{grid-template-columns:1fr}.manual-step{grid-template-columns:38px 1fr}.manual-step-actions{grid-column:1/-1;justify-content:flex-start;padding-left:50px}.manual-section-head{align-items:flex-start;flex-direction:column}.manual-tour-card{right:15px;bottom:15px}.manual-type-buttons{grid-template-columns:1fr 1fr}}
-@media print{#panel-man,.manual-tour-card{display:none!important}}
-</style>
-
 </head>
 <body>
 
@@ -505,7 +476,6 @@ svg{max-width:100%;height:auto;display:block}
     <button class="tab" data-tab="res"><span class="n">5</span>Resultados</button>
     <button class="tab" data-tab="glob"><span class="n">6</span>Estab. Global</button>
     <button class="tab" data-tab="rel"><span class="n">8</span>Relatório</button>
-    <button class="tab" data-tab="man"><span class="n">9</span>Manual</button>
   </div>
   <div id="validation-errors" class="alert alert-bad" role="alert" aria-live="assertive"></div>
 
@@ -1031,176 +1001,6 @@ svg{max-width:100%;height:auto;display:block}
       <div id="saved-projects" class="saved-list"></div>
     </div>
   </div>
-
-  <!-- ============ TAB 9: MANUAL ============ -->
-  <div class="panel" id="panel-man">
-    <div class="manual-hero" id="manual-top">
-      <div class="manual-hero-copy">
-        <span class="manual-kicker">ArrimoCalc v2.4 · guia incorporado</span>
-        <h2>Manual didático e interativo</h2>
-        <p>Um roteiro completo para cadastrar o projeto, escolher a tipologia, definir as condições geotécnicas, executar as verificações, interpretar os resultados, comparar alternativas e emitir o memorial técnico.</p>
-      </div>
-      <div class="manual-hero-actions">
-        <button type="button" class="btn btn-sand" onclick="manualTourStart()">▶ Iniciar visita guiada</button>
-        <button type="button" class="btn btn-ghost" onclick="manualLoadExample()">⚡ Carregar exemplo completo</button>
-      </div>
-    </div>
-
-    <div class="manual-searchbox" role="search">
-      <div class="manual-search-input"><span>🔎</span><input type="search" id="manual-search" placeholder="Pesquisar no manual: água, gabião, FS, relatório, otimização..." oninput="manualFilter()" aria-label="Pesquisar no manual"></div>
-      <div id="manual-search-status" class="manual-search-status">Digite para localizar um assunto</div>
-      <button type="button" class="mini-btn" onclick="manualClearSearch()">Limpar pesquisa</button>
-    </div>
-
-    <div class="manual-layout">
-      <aside class="manual-index" aria-label="Índice do manual">
-        <div class="manual-index-title">Navegação do manual</div>
-        <button type="button" onclick="manualScroll('manual-inicio')"><span>🏁</span><span>Comece por aqui</span></button>
-        <button type="button" onclick="manualScroll('manual-roteiro')"><span>🧭</span><span>Roteiro em 8 etapas</span></button>
-        <button type="button" onclick="manualScroll('manual-tipologias')"><span>🧱</span><span>Escolha da tipologia</span></button>
-        <button type="button" onclick="manualScroll('manual-abas')"><span>🗂️</span><span>Manual por aba</span></button>
-        <button type="button" onclick="manualScroll('manual-interpretacao')"><span>📊</span><span>Interpretar resultados</span></button>
-        <button type="button" onclick="manualScroll('manual-checklist')"><span>✅</span><span>Checklist técnico</span></button>
-        <button type="button" onclick="manualScroll('manual-problemas')"><span>🛠️</span><span>Solução de problemas</span></button>
-        <button type="button" onclick="manualScroll('manual-glossario')"><span>📚</span><span>Glossário</span></button>
-        <div class="manual-index-sep"></div>
-        <button type="button" onclick="manualExpandAll(true)"><span>＋</span><span>Expandir tópicos</span></button>
-        <button type="button" onclick="manualExpandAll(false)"><span>−</span><span>Recolher tópicos</span></button>
-      </aside>
-
-      <main class="manual-main">
-        <section class="manual-section" id="manual-inicio">
-          <div class="manual-section-head"><div><h2>🏁 Comece por aqui</h2><p>O sistema organiza o estudo em entradas, cálculos, verificações específicas, estabilidade global, otimização e documentação.</p></div></div>
-          <div class="manual-overview-grid">
-            <div class="manual-overview manual-topic" data-search="objetivo escopo anteprojeto funcionamento"><div class="manual-overview-icon">🎯</div><h3>Finalidade</h3><p>Apoiar estudos preliminares e anteprojetos de muros de gravidade, gabiões, muros em balanço e cortinas atirantadas.</p></div>
-            <div class="manual-overview manual-topic" data-search="fluxo ordem preencher calcular resultado"><div class="manual-overview-icon">🧭</div><h3>Fluxo recomendado</h3><p>Projeto → Geotecnia → Materiais → Calcular → Resultados → Estabilidade global → Otimização → Relatório.</p></div>
-            <div class="manual-overview manual-topic" data-search="offline local navegador privacidade salvar dados"><div class="manual-overview-icon">🔒</div><h3>Operação local</h3><p>Os cálculos e os projetos salvos permanecem no navegador deste dispositivo. Não há envio automático dos dados a servidores.</p></div>
-          </div>
-          <div class="manual-callout warn"><span>⚠️</span><span><b>Limite de uso:</b> um resultado classificado como “ATENDE” significa apenas que os critérios implementados foram satisfeitos para os dados informados. O projeto executivo exige investigação geotécnica, análise das condições reais, conferência das normas vigentes e responsabilidade técnica.</span></div>
-        </section>
-
-        <section class="manual-section" id="manual-roteiro">
-          <div class="manual-section-head"><div><h2>🧭 Roteiro guiado em 8 etapas</h2><p>Marque as etapas concluídas. O progresso fica salvo localmente neste navegador.</p></div><div class="manual-section-actions"><button type="button" class="mini-btn" onclick="manualResetProgress()">↺ Zerar progresso</button></div></div>
-          <div class="manual-progress-card">
-            <div class="manual-progress-head"><b>Seu progresso no primeiro estudo</b><span id="manual-progress-text">0 de 8 etapas concluídas</span></div>
-            <div class="manual-progress-track" aria-hidden="true"><div id="manual-progress-bar"></div></div>
-          </div>
-          <div class="manual-steps">
-            <div class="manual-step" data-manual-step-card="1"><input class="manual-step-check" type="checkbox" id="manual-step-1" data-manual-step="1" onchange="manualUpdateProgress()" aria-label="Etapa 1 concluída"><div class="manual-step-copy"><h3>1. Identifique o projeto e selecione a tipologia</h3><p>Informe nome, responsável, processo e local. Escolha gravidade, gabião, balanço ou atirantado e preencha a geometria comum e específica.</p></div><div class="manual-step-actions"><button type="button" class="mini-btn" onclick="manualGo('proj',1)">Abrir aba 01</button></div></div>
-            <div class="manual-step" data-manual-step-card="2"><input class="manual-step-check" type="checkbox" id="manual-step-2" data-manual-step="2" onchange="manualUpdateProgress()" aria-label="Etapa 2 concluída"><div class="manual-step-copy"><h3>2. Defina solo, água e critérios de segurança</h3><p>Cadastre o maciço arrimado, o solo de fundação, o nível d’água, a drenagem, as resistências mobilizadas e os fatores mínimos.</p></div><div class="manual-step-actions"><button type="button" class="mini-btn" onclick="manualGo('geo',2)">Abrir aba 02</button></div></div>
-            <div class="manual-step" data-manual-step-card="3"><input class="manual-step-check" type="checkbox" id="manual-step-3" data-manual-step="3" onchange="manualUpdateProgress()" aria-label="Etapa 3 concluída"><div class="manual-step-copy"><h3>3. Informe os materiais</h3><p>Defina peso específico e resistência do material. Para concreto armado, confira fck, fyk, cobrimento e coeficientes.</p></div><div class="manual-step-actions"><button type="button" class="mini-btn" onclick="manualGo('mat',3)">Abrir aba 03</button></div></div>
-            <div class="manual-step" data-manual-step-card="4"><input class="manual-step-check" type="checkbox" id="manual-step-4" data-manual-step="4" onchange="manualUpdateProgress()" aria-label="Etapa 4 concluída"><div class="manual-step-copy"><h3>4. Execute o cálculo e leia a memória</h3><p>Use o botão “Calcular”. Corrija os campos destacados, se houver, e examine hipóteses, fórmulas, forças, momentos e verificações.</p></div><div class="manual-step-actions"><button type="button" class="mini-btn" onclick="manualRunCalculation(4)">▶ Calcular agora</button><button type="button" class="mini-btn" onclick="manualGo('calc')">Abrir aba 04</button></div></div>
-            <div class="manual-step" data-manual-step-card="5"><input class="manual-step-check" type="checkbox" id="manual-step-5" data-manual-step="5" onchange="manualUpdateProgress()" aria-label="Etapa 5 concluída"><div class="manual-step-copy"><h3>5. Interprete o resultado integrado</h3><p>Verifique os fatores de segurança, as tensões na base, os diagramas e os critérios específicos da tipologia. Não se limite ao selo geral.</p></div><div class="manual-step-actions"><button type="button" class="mini-btn" onclick="manualGo('res',5)">Abrir aba 05</button></div></div>
-            <div class="manual-step" data-manual-step-card="6"><input class="manual-step-check" type="checkbox" id="manual-step-6" data-manual-step="6" onchange="manualUpdateProgress()" aria-label="Etapa 6 concluída"><div class="manual-step-copy"><h3>6. Pesquise a superfície crítica global</h3><p>Defina método, estratigrafia, água e reforços. Execute a busca e compare o FS crítico com o mínimo informado.</p></div><div class="manual-step-actions"><button type="button" class="mini-btn" onclick="manualGo('glob',6)">Abrir aba 06</button></div></div>
-            <div class="manual-step" data-manual-step-card="7"><input class="manual-step-check" type="checkbox" id="manual-step-7" data-manual-step="7" onchange="manualUpdateProgress()" aria-label="Etapa 7 concluída"><div class="manual-step-copy"><h3>7. Compare alternativas e premissas econômicas</h3><p>Na Otimização, substitua custos, emissões e produtividades ilustrativos; escolha objetivo e escopo; depois examine admissibilidade e Pareto.</p></div><div class="manual-step-actions"><button type="button" class="mini-btn" onclick="manualGo('opt',7)">Abrir aba 07</button></div></div>
-            <div class="manual-step" data-manual-step-card="8"><input class="manual-step-check" type="checkbox" id="manual-step-8" data-manual-step="8" onchange="manualUpdateProgress()" aria-label="Etapa 8 concluída"><div class="manual-step-copy"><h3>8. Salve e emita o memorial</h3><p>Salve o projeto no navegador e gere a versão para impressão/PDF, o memorial em TXT ou os dados completos em JSON.</p></div><div class="manual-step-actions"><button type="button" class="mini-btn" onclick="manualGo('rel',8)">Abrir aba 08</button></div></div>
-          </div>
-        </section>
-
-        <section class="manual-section" id="manual-tipologias">
-          <div class="manual-section-head"><div><h2>🧱 Escolha assistida da tipologia</h2><p>Selecione uma solução para visualizar os campos decisivos, as verificações implementadas e os cuidados de interpretação.</p></div></div>
-          <div class="manual-type-buttons" role="tablist" aria-label="Tipologias de contenção">
-            <button type="button" class="manual-type-btn active" data-manual-type="gravidade" onclick="manualChooseType('gravidade')"><span>🧱</span>Gravidade</button>
-            <button type="button" class="manual-type-btn" data-manual-type="gabiao" onclick="manualChooseType('gabiao')"><span>🪨</span>Gabião</button>
-            <button type="button" class="manual-type-btn" data-manual-type="balanco" onclick="manualChooseType('balanco')"><span>🏗️</span>Balanço</button>
-            <button type="button" class="manual-type-btn" data-manual-type="atirantado" onclick="manualChooseType('atirantado')"><span>⚓</span>Atirantado</button>
-          </div>
-          <div id="manual-type-content" class="manual-type-content manual-topic" data-search="tipologia gravidade gabião balanço atirantado escolha">
-            <h3>🧱 Muro de gravidade</h3><p>Solução maciça que mobiliza principalmente o peso próprio e os pesos sobre a base.</p>
-            <div class="manual-type-grid"><div class="manual-type-box"><h4>Use o módulo para</h4><ul><li>Definir seção trapezoidal, retangular ou ciclópica.</li><li>Avaliar chave de cisalhamento.</li><li>Estudar estabilidade externa e interna.</li></ul></div><div class="manual-type-box"><h4>Campos críticos</h4><ul><li>H, B, pé, talão, espessuras e sapata.</li><li>Peso específico e fck.</li><li>Atrito e mobilização na base.</li></ul></div><div class="manual-type-box"><h4>Confira no resultado</h4><ul><li>Deslizamento, tombamento e capacidade.</li><li>Compressões na junta corpo–base.</li><li>FS interno e efeito da chave.</li></ul></div></div>
-          </div>
-        </section>
-
-        <section class="manual-section" id="manual-abas">
-          <div class="manual-section-head"><div><h2>🗂️ Manual por aba</h2><p>Abra os tópicos conforme a etapa em que estiver trabalhando.</p></div><div class="manual-section-actions"><button type="button" class="mini-btn" onclick="manualExpandAll(true)">Expandir tudo</button><button type="button" class="mini-btn" onclick="manualExpandAll(false)">Recolher</button></div></div>
-          <div class="manual-topics">
-            <details class="manual-topic" data-search="aba 1 projeto identificação tipologia geometria gravidade gabião balanço atirantado"><summary><span class="manual-topic-number">01</span>Projeto, tipologia e geometria</summary><div class="manual-topic-body"><p>Esta aba define a solução estrutural e a geometria que alimentará todos os motores.</p><h4>Procedimento recomendado</h4><ol><li>Preencha a identificação para rastreabilidade do memorial.</li><li>Selecione a tipologia antes de ajustar os campos específicos.</li><li>Informe a geometria comum; nas tipologias de gabião e atirantada, os editores específicos passam a comandar parte dessas dimensões.</li><li>Use os exemplos por tipologia para compreender a estrutura dos dados, não como valores de projeto.</li></ol><h4>Pontos de atenção</h4><ul><li>As dimensões são, em regra, processadas por metro linear de contenção.</li><li>Campos incompatíveis são destacados e a aba correspondente é aberta automaticamente.</li><li>Alterar dados após calcular invalida resultados anteriores.</li></ul><div class="manual-topic-footer"><button type="button" class="mini-btn" onclick="manualGo('proj')">Abrir Projeto</button></div></div></details>
-
-            <details class="manual-topic" data-search="aba 2 geotecnia solo fundação água drenagem empuxo rankine coulomb coesão fatores segurança"><summary><span class="manual-topic-number">02</span>Geotecnia, água e fatores de segurança</summary><div class="manual-topic-body"><p>Cadastre parâmetros do solo arrimado e da fundação com base em investigação geotécnica apropriada.</p><h4>Solo arrimado</h4><ul><li>γ natural e saturado, φ′ e c′ controlam as tensões e o empuxo.</li><li>Rankine é a opção de resultante horizontal; Coulomb incorpora o atrito muro–solo informado.</li><li>Ao considerar coesão, o sistema corta pressões de tração e estima a fissura correspondente.</li></ul><h4>Água e drenagem</h4><ul><li>O nível d’água é medido a partir do topo para baixo.</li><li>A água é tratada separadamente das tensões efetivas.</li><li>A eficiência de drenagem reduz a parcela hidrostática no modelo; ela deve representar uma condição justificável e mantida ao longo da vida útil.</li></ul><h4>Resistências mobilizadas</h4><ul><li>Reduza ou zere o passivo quando o solo frontal puder ser removido, erodido ou escavado no futuro.</li><li>A mobilização da coesão na base deve ser coerente com a interface e o nível de segurança adotado.</li></ul><div class="manual-topic-footer"><button type="button" class="mini-btn" onclick="manualGo('geo')">Abrir Geotecnia</button></div></div></details>
-
-            <details class="manual-topic" data-search="aba 3 materiais concreto aço fck fyk cobrimento coeficientes gabião pedra"><summary><span class="manual-topic-number">03</span>Materiais</summary><div class="manual-topic-body"><p>Os materiais afetam pesos estabilizantes, resistências e, nas tipologias de concreto armado, o dimensionamento preliminar.</p><ul><li>Confira o peso específico efetivamente representativo do material.</li><li>Para gravidade, o fck participa do limite preliminar de compressão do corpo.</li><li>Para balanço e atirantado, fck, fyk, cobrimento, γc, γs e γf alimentam as verificações estruturais.</li><li>No gabião, a massa aparente é obtida a partir do peso da pedra e da porosidade informados na configuração específica.</li></ul><div class="manual-topic-footer"><button type="button" class="mini-btn" onclick="manualGo('mat')">Abrir Materiais</button></div></div></details>
-
-            <details class="manual-topic" data-search="aba 4 cálculos memória fórmula força momento empuxo pressão"><summary><span class="manual-topic-number">04</span>Memória de cálculos</summary><div class="manual-topic-body"><p>A aba apresenta como o sistema chegou aos resultados. Use-a para conferir coerência física e rastrear as grandezas determinantes.</p><ul><li>Examine Ka, o perfil de pressões, a força resultante e o braço de aplicação.</li><li>Confira ações verticais e horizontais, momentos estabilizantes e desestabilizantes.</li><li>Compare as expressões exibidas com os dados de entrada e com cálculos independentes.</li><li>Nas tipologias específicas, são mostrados cálculos de juntas, elementos de concreto ou tirantes.</li></ul><div class="manual-topic-footer"><button type="button" class="mini-btn" onclick="manualGo('calc')">Abrir Cálculos</button><button type="button" class="mini-btn" onclick="manualRunCalculation()">Recalcular</button></div></div></details>
-
-            <details class="manual-topic" data-search="aba 5 resultados fs deslizamento tombamento capacidade carga tensão base diagramas"><summary><span class="manual-topic-number">05</span>Resultados e diagramas</summary><div class="manual-topic-body"><p>O quadro inicial integra os critérios comuns e específicos, mas cada indicador precisa ser lido individualmente.</p><ul><li><b>FS de deslizamento:</b> relação entre as resistências mobilizadas e a ação horizontal.</li><li><b>FS de tombamento:</b> relação entre momentos estabilizantes e de tombamento.</li><li><b>Capacidade de carga e contato:</b> verifique B′, posição da resultante, qmáx, qmín e qadm.</li><li><b>Critérios específicos:</b> juntas do gabião, seções de concreto armado, tirantes, ficha e deslocamentos, conforme a tipologia.</li><li><b>Sensibilidade:</b> use a variação da altura para identificar a robustez do cenário, sem tratá-la como otimização automática.</li></ul><div class="manual-topic-footer"><button type="button" class="mini-btn" onclick="manualGo('res')">Abrir Resultados</button></div></div></details>
-
-            <details class="manual-topic" data-search="aba 6 estabilidade global bishop fellenius janbu superfície circular não circular estratigrafia linha freática reforços"><summary><span class="manual-topic-number">06</span>Estabilidade global</summary><div class="manual-topic-body"><p>Esta análise avalia mecanismos que envolvem o muro e uma parcela mais ampla do maciço.</p><ol><li>Escolha o método e a família de superfícies.</li><li>Defina número de fatias, FS mínimo, inclinação e profundidade de busca.</li><li>Cadastre as camadas horizontais e o modelo de poropressão.</li><li>Informe a origem e a eficiência dos reforços, quando aplicável.</li><li>Execute a busca e examine a superfície crítica, as fatias e as alternativas próximas.</li></ol><div class="manual-callout warn"><span>⚠️</span><span>Qualquer alteração em geometria, solo, água ou reforços torna a análise global anterior desatualizada. Execute novamente a busca antes de concluir o estudo.</span></div><div class="manual-topic-footer"><button type="button" class="mini-btn" onclick="manualGo('glob')">Abrir Estab. Global</button></div></div></details>
-
-            <details class="manual-topic" data-search="aba 7 otimização custo carbono prazo ocupação pareto alternativas tipologias"><summary><span class="manual-topic-number">07</span>Otimização técnico-econômica</summary><div class="manual-topic-body"><p>O módulo gera alternativas paramétricas e as classifica por critérios técnicos, custo, carbono, ocupação e prazo relativo.</p><ol><li>Escolha otimizar a tipologia atual ou comparar as quatro soluções.</li><li>Substitua obrigatoriamente os valores ilustrativos de custos, emissões e produtividades.</li><li>Defina a função-objetivo, os pesos e as restrições.</li><li>Execute a busca e filtre alternativas admissíveis.</li><li>Examine o gráfico de Pareto, a composição e a reserva mínima.</li><li>Ao aplicar uma alternativa, recalcule os resultados e a estabilidade global.</li></ol><div class="manual-callout"><span>ℹ️</span><span>A classificação é paramétrica. Ela não substitui orçamento analítico, cotação, planejamento executivo nem análise de ciclo de vida.</span></div><div class="manual-topic-footer"><button type="button" class="mini-btn" onclick="manualGo('opt')">Abrir Otimização</button></div></div></details>
-
-            <details class="manual-topic" data-search="aba 8 relatório memorial pdf imprimir txt json salvar projeto localStorage"><summary><span class="manual-topic-number">08</span>Relatório, exportações e projetos salvos</summary><div class="manual-topic-body"><p>O memorial reúne entradas, hipóteses, cálculos, resultados, estabilidade global atual e, quando vigente, a otimização.</p><ul><li>Use “Gerar PDF / Imprimir” e selecione o destino PDF do navegador.</li><li>O arquivo TXT fornece uma memória textual detalhada.</li><li>O JSON preserva dados estruturados para auditoria, intercâmbio ou desenvolvimento posterior.</li><li>“Salvar” armazena o projeto no navegador atual; limpar dados do navegador, trocar de computador ou usar outro perfil pode tornar o projeto indisponível.</li></ul><div class="manual-topic-footer"><button type="button" class="mini-btn" onclick="manualGo('rel')">Abrir Relatório</button><button type="button" class="mini-btn" onclick="saveProject()">Salvar projeto atual</button></div></div></details>
-          </div>
-        </section>
-
-        <section class="manual-section" id="manual-interpretacao">
-          <div class="manual-section-head"><div><h2>📊 Como interpretar os resultados</h2><p>Leia a cadeia de evidências, e não apenas a cor ou a conclusão resumida.</p></div></div>
-          <div class="manual-result-grid">
-            <div class="manual-result-card ok manual-topic" data-search="atende verde resultado conformidade"><h3>✓ “ATENDE”</h3><p>O valor calculado satisfaz o limite informado na verificação implementada. Confirme dados, método, combinação e validade da hipótese.</p></div>
-            <div class="manual-result-card warn manual-topic" data-search="rever amarelo alerta hipótese"><h3>⚠ “REVER”</h3><p>Há critério insuficiente, hipótese frágil ou informação que exige confirmação. Identifique o indicador governante antes de alterar dimensões.</p></div>
-            <div class="manual-result-card bad manual-topic" data-search="não atende vermelho falha instável"><h3>✕ “NÃO ATENDE”</h3><p>Uma ou mais verificações falharam. Revise geometria, água, parâmetros, resistências mobilizadas, materiais e concepção.</p></div>
-          </div>
-          <div class="manual-help-table" style="margin-top:12px"><table><thead><tr><th>Indicador</th><th>O que representa</th><th>Como conferir</th></tr></thead><tbody>
-            <tr><td>FS deslizamento</td><td>Reserva contra o movimento horizontal da base ou da interface analisada.</td><td>Confira N efetiva, atrito, coesão mobilizada, passivo, água e chave.</td></tr>
-            <tr><td>FS tombamento</td><td>Relação entre momentos estabilizantes e desestabilizantes.</td><td>Verifique braços, pesos, subpressão e posição das resultantes.</td></tr>
-            <tr><td>FS capacidade</td><td>Relação entre capacidade última estimada e tensão máxima de contato.</td><td>Examine B′, qmáx, parâmetros de fundação e embutimento.</td></tr>
-            <tr><td>Resultante e B′</td><td>Posição da força normal e comprimento efetivo de contato.</td><td>Valores fora da base ou B′ não positivo invalidam a avaliação usual de contato.</td></tr>
-            <tr><td>FS global</td><td>Reserva do mecanismo crítico do maciço pesquisado.</td><td>Confira método, superfícies, camadas, água, reforços e cobertura da busca.</td></tr>
-            <tr><td>Reserva específica</td><td>Critério próprio da tipologia: junta, seção, tirante, ficha ou deslocamento.</td><td>Abra os detalhes do motor específico e identifique o menor índice.</td></tr>
-          </tbody></table></div>
-          <div class="manual-callout"><span>💡</span><span><b>Boa prática:</b> faça ao menos uma conferência independente das grandezas principais e teste cenários de água, perda do passivo, variação de parâmetros e condições construtivas.</span></div>
-        </section>
-
-        <section class="manual-section" id="manual-checklist">
-          <div class="manual-section-head"><div><h2>✅ Checklist antes de concluir</h2><p>Use esta lista como lembrete mínimo de consistência.</p></div><div class="manual-section-actions"><button type="button" class="mini-btn" onclick="manualCopyChecklist()">⧉ Copiar checklist</button></div></div>
-          <div class="manual-check-grid">
-            <div class="manual-check manual-topic" data-search="sondagem investigação solo"><span>🗺️</span><div><b>Investigação geotécnica</b><small>Parâmetros, camadas e nível d’água possuem suporte em sondagens, ensaios e interpretação profissional.</small></div></div>
-            <div class="manual-check manual-topic" data-search="geometria levantamento interferências"><span>📐</span><div><b>Geometria e implantação</b><small>Cotas, limites, vizinhança, interferências, escavações e espaço construtivo foram confirmados.</small></div></div>
-            <div class="manual-check manual-topic" data-search="água drenagem subpressão manutenção"><span>💧</span><div><b>Água e drenagem</b><small>Foram avaliados cenário desfavorável, entupimento, manutenção, descarga e subpressão.</small></div></div>
-            <div class="manual-check manual-topic" data-search="passivo coesão resistências mobilização"><span>🛡️</span><div><b>Resistências mobilizáveis</b><small>Passivo e coesão não foram usados além do que pode permanecer disponível durante a vida útil.</small></div></div>
-            <div class="manual-check manual-topic" data-search="combinação sobrecarga vizinhança construção"><span>🏢</span><div><b>Ações e combinações</b><small>Sobrecargas, edificações vizinhas, tráfego, equipamentos e etapas de construção foram representados.</small></div></div>
-            <div class="manual-check manual-topic" data-search="estabilidade global superfície crítica"><span>🌐</span><div><b>Estabilidade global atualizada</b><small>A busca foi refeita após a última alteração e cobriu famílias compatíveis com o problema.</small></div></div>
-            <div class="manual-check manual-topic" data-search="estrutural detalhamento durabilidade"><span>🔩</span><div><b>Projeto estrutural e durabilidade</b><small>Armaduras, juntas, ancoragens, malhas, proteção, fissuração e detalhes serão verificados integralmente.</small></div></div>
-            <div class="manual-check manual-topic" data-search="responsabilidade art revisão"><span>✍️</span><div><b>Revisão e responsabilidade técnica</b><small>Entradas, hipóteses e resultados foram revisados e serão assumidos por profissional habilitado.</small></div></div>
-          </div>
-        </section>
-
-        <section class="manual-section" id="manual-problemas">
-          <div class="manual-section-head"><div><h2>🛠️ Solução de problemas frequentes</h2><p>Abra a situação que mais se aproxima do comportamento observado.</p></div></div>
-          <div class="manual-topics">
-            <details class="manual-topic" data-search="não calcula campos vermelhos validação erro"><summary><span class="manual-topic-number">!</span>O sistema não calcula e destaca campos</summary><div class="manual-topic-body"><p>Leia a caixa de validação no topo. O sistema abre a aba do primeiro campo incompatível. Corrija os valores destacados e execute novamente.</p><ul><li>Confira separador decimal e unidade.</li><li>Verifique relações geométricas, como pé + espessura inferior ≤ B.</li><li>Em água, confirme que o N.A. está dentro da altura analisada.</li><li>Em tirantes, use profundidades crescentes e dentro da escavação.</li></ul></div></details>
-            <details class="manual-topic" data-search="resultado sumiu desatualizado alteração"><summary><span class="manual-topic-number">!</span>Os resultados desapareceram após uma alteração</summary><div class="manual-topic-body"><p>Esse comportamento é intencional: entradas alteradas invalidam resultados anteriores. Clique em “Calcular” novamente. Parâmetros globais exigem nova busca da superfície crítica.</p></div></details>
-            <details class="manual-topic" data-search="estabilidade global antiga desatualizada"><summary><span class="manual-topic-number">!</span>A estabilidade global não aparece no relatório</summary><div class="manual-topic-body"><p>A análise só integra o memorial quando sua assinatura corresponde aos dados atuais. Abra “Estab. Global”, execute a busca novamente e depois retorne ao relatório.</p></div></details>
-            <details class="manual-topic" data-search="otimização valores custo carbono ilustrativo"><summary><span class="manual-topic-number">!</span>A otimização apresenta custos ou carbono inesperados</summary><div class="manual-topic-body"><p>Os valores iniciais são ilustrativos. Revise extensão, custos unitários, indiretos, mobilização, fatores de emissão e produtividades. Examine também os quantitativos paramétricos de cada alternativa.</p></div></details>
-            <details class="manual-topic" data-search="projeto salvo não aparece localStorage navegador"><summary><span class="manual-topic-number">!</span>Um projeto salvo não aparece em outro computador</summary><div class="manual-topic-body"><p>O salvamento utiliza armazenamento local do navegador. Para transportar ou arquivar dados, gere o JSON e mantenha também o memorial em PDF/TXT.</p></div></details>
-            <details class="manual-topic" data-search="pdf imprimir relatório vazio"><summary><span class="manual-topic-number">!</span>O relatório ou o PDF está vazio</summary><div class="manual-topic-body"><p>Execute primeiro o cálculo. Para incluir estabilidade global e otimização, execute esses módulos com os dados atuais antes de imprimir. Na janela do navegador, selecione “Salvar como PDF”.</p></div></details>
-            <details class="manual-topic" data-search="fs muito alto infinito incoerente"><summary><span class="manual-topic-number">!</span>Um FS está muito alto ou aparece como infinito</summary><div class="manual-topic-body"><p>Isso pode ocorrer quando a ação solicitante calculada é nula ou muito pequena. Não interprete automaticamente como segurança elevada: confira unidades, sobrecarga, água, altura, empuxo, geometria e resistências mobilizadas.</p></div></details>
-          </div>
-        </section>
-
-        <section class="manual-section" id="manual-glossario">
-          <div class="manual-section-head"><div><h2>📚 Glossário essencial</h2><p>Os termos também podem ser localizados pela pesquisa geral do manual.</p></div></div>
-          <div class="manual-glossary-grid">
-            <div class="manual-term manual-topic" data-search="ka coeficiente empuxo ativo"><b>K<sub>a</sub> — coeficiente de empuxo ativo</b><p>Relaciona o estado de tensões verticais à pressão lateral ativa no modelo adotado.</p></div>
-            <div class="manual-term manual-topic" data-search="kp coeficiente empuxo passivo"><b>K<sub>p</sub> — coeficiente de empuxo passivo</b><p>Representa a resistência lateral passiva potencial do solo à frente.</p></div>
-            <div class="manual-term manual-topic" data-search="eh empuxo horizontal"><b>E<sub>h</sub> — ação horizontal</b><p>Resultante horizontal integrada do solo, sobrecarga e água, conforme as opções escolhidas.</p></div>
-            <div class="manual-term manual-topic" data-search="fs fator segurança"><b>FS — fator de segurança</b><p>Relação entre capacidade/resistência e demanda para o mecanismo examinado.</p></div>
-            <div class="manual-term manual-topic" data-search="na nível água lençol"><b>N.A. — nível d’água</b><p>Posição adotada para separar trechos secos e submersos e calcular pressões hidrostáticas.</p></div>
-            <div class="manual-term manual-topic" data-search="ru poropressão"><b>r<sub>u</sub> — coeficiente de poropressão</b><p>Representação simplificada da pressão neutra em relação à tensão vertical total.</p></div>
-            <div class="manual-term manual-topic" data-search="b efetiva contato"><b>B′ — largura efetiva</b><p>Largura de contato associada à excentricidade da resultante usada na capacidade de carga.</p></div>
-            <div class="manual-term manual-topic" data-search="excentricidade e resultante"><b>e — excentricidade</b><p>Distância entre a resultante normal e o centro geométrico da base.</p></div>
-            <div class="manual-term manual-topic" data-search="qmax qadm tensão"><b>q<sub>máx</sub> e q<sub>adm</sub></b><p>Tensão máxima de contato e tensão admissível derivada do modelo de capacidade de carga.</p></div>
-            <div class="manual-term manual-topic" data-search="elu els concreto"><b>ELU e ELS</b><p>Estados-limite último e de serviço usados nas verificações estruturais avançadas.</p></div>
-            <div class="manual-term manual-topic" data-search="pareto otimização"><b>Fronteira de Pareto</b><p>Alternativas não dominadas simultaneamente nos critérios comparados, como custo e carbono.</p></div>
-            <div class="manual-term manual-topic" data-search="assinatura resultado atual desatualizado"><b>Resultado vigente</b><p>Resultado cuja combinação de entradas coincide com os dados atualmente exibidos na tela.</p></div>
-          </div>
-        </section>
-
-        <div id="manual-no-results" class="manual-no-results"><b>Nenhum tópico encontrado</b><span>Tente uma palavra mais ampla, como “água”, “resultado”, “gabião” ou “relatório”.</span></div>
-        <div class="manual-callout bad"><span>⛔</span><span><b>Responsabilidade profissional:</b> este manual explica o uso do aplicativo, mas não transforma o aplicativo em projeto executivo nem substitui julgamento de engenharia, investigação geotécnica, detalhamento, revisão independente e ART.</span></div>
-      </main>
-    </div>
-  </div>
-
 </div>
 
 <div class="footer">
@@ -4185,7 +3985,7 @@ function bindV2Inputs(){
   });
   const globalIds=new Set(['gl_nfat','gl_fsmin','gl_slope','gl_ru','gl_sobre']);
   document.querySelectorAll('.container input,.container select,.container textarea').forEach(el=>{
-    if(el.closest('#model-config-card')||el.closest('#panel-opt')||el.closest('#panel-man')||el.name==='tipo') return;
+    if(el.closest('#model-config-card')||el.closest('#panel-opt')||el.name==='tipo') return;
     el.addEventListener('change',()=>{
       const globalOnly=globalIds.has(el.id)||['metodo','refino','freatica'].includes(el.name);
       invalidateV2(globalOnly);
@@ -5404,117 +5204,6 @@ renderSaved();
 
 })();
 
-</script>
-
-
-
-<script id="arrimo-manual-script">
-(function(){
-'use strict';
-const MANUAL_PROGRESS_KEY='arrimocalc_manual_progress_v1';
-const MANUAL_TYPES={
-  gravidade:{icon:'🧱',title:'Muro de gravidade',intro:'Solução maciça que mobiliza principalmente o peso próprio e os pesos sobre a base.',use:['Definir seção trapezoidal, retangular ou ciclópica.','Avaliar chave de cisalhamento.','Estudar estabilidade externa e interna.'],fields:['H, B, pé, talão, espessuras e sapata.','Peso específico e fck.','Atrito, passivo e coesão mobilizada.'],checks:['Deslizamento, tombamento e capacidade.','Compressões na junta corpo–base.','FS interno e efeito da chave.']},
-  gabiao:{icon:'🪨',title:'Muro de gabião escalonado',intro:'Solução drenante montada por fiadas de caixas, com peso aparente dependente da pedra, porosidade e condição de submersão.',use:['Editar até seis fiadas da base ao topo.','Representar recuos, filtro, amarração e socavamento.','Verificar cada interface entre caixas.'],fields:['Altura, largura e recuo de cada fiada.','γ da pedra, porosidade e atrito entre caixas.','Filtro, amarração, malha e socavamento.'],checks:['Estabilidade externa do conjunto.','Deslizamento e tombamento em cada junta.','Contato, indicador da malha e efeito da água.']},
-  balanco:{icon:'🏗️',title:'Muro de concreto armado em balanço',intro:'Solução em L/T cuja estabilidade externa é combinada com verificações preliminares do fuste, pé, talão e chave.',use:['Estudar proporções de base e fuste.','Dimensionar faixas de concreto armado.','Avaliar ELU, ELS, fissuração, flecha e ancoragem.'],fields:['H, B, pé, talão, sapata, espessuras e mísula.','fck, fyk, cobrimento e coeficientes.','Parâmetros avançados de fissuração, espaçamento e aderência.'],checks:['Estabilidade externa e tensões da base.','Mrd/Md e VRd/Vd dos elementos.','Fissuração, deformação, ancoragem e quantitativos preliminares.']},
-  atirantado:{icon:'⚓',title:'Cortina atirantada',intro:'Solução para escavações e contenções profundas, com distribuição por etapas, tirantes, ficha e interação solo–estrutura simplificada.',use:['Editar até quatro linhas de tirantes.','Avaliar aço, bulbo, comprimentos e protensão.','Representar estágios de escavação e deslocamentos da cortina.'],fields:['Altura escavada, ficha, espessura e sistema.','Profundidade, ângulo, comprimentos e espaçamento dos tirantes.','Aderência, perdas, rigidez, molas do solo e sequência.'],checks:['FS do aço e do bulbo.','Comprimentos livre e ancorado.','Ficha/passivo, flexão, fissuração, deslocamento e estágios.']}
-};
-
-function manualNormalize(value){return String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();}
-function manualSafeTab(tab){
-  if(tab==='opt'&&typeof installOptimizationUIV24==='function') installOptimizationUIV24();
-  const button=document.querySelector(`.tab[data-tab="${tab}"]`),panel=document.getElementById('panel-'+tab);
-  if(!button||!panel) return false;
-  goTab(tab);return true;
-}
-window.manualScroll=function(id){const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});};
-window.manualGo=function(tab,step){if(step)manualMarkStep(step);if(manualSafeTab(tab))window.scrollTo({top:0,behavior:'smooth'});};
-window.manualRunCalculation=function(step){if(step)manualMarkStep(step);const result=runCalc();if(result)manualMarkStep(5);};
-window.manualLoadExample=function(){
-  if(!window.confirm('O exemplo substituirá os valores atualmente preenchidos. Deseja continuar?'))return;
-  loadDemo();manualMarkStep(1);manualMarkStep(2);manualMarkStep(3);manualMarkStep(4);manualMarkStep(5);
-};
-
-window.manualFilter=function(){
-  const input=document.getElementById('manual-search'),status=document.getElementById('manual-search-status'),empty=document.getElementById('manual-no-results');
-  if(!input)return;const q=manualNormalize(input.value.trim());let visible=0;
-  document.querySelectorAll('#panel-man .manual-topic').forEach(el=>{
-    const hay=manualNormalize((el.dataset.search||'')+' '+el.textContent),match=!q||hay.includes(q);
-    el.hidden=!match;if(match){visible++;if(q&&el.tagName==='DETAILS')el.open=true;}
-  });
-  if(status)status.textContent=q?`${visible} tópico${visible===1?'':'s'} encontrado${visible===1?'':'s'}`:'Digite para localizar um assunto';
-  if(empty)empty.classList.toggle('show',Boolean(q)&&visible===0);
-};
-window.manualClearSearch=function(){const input=document.getElementById('manual-search');if(input){input.value='';manualFilter();input.focus();}};
-window.manualExpandAll=function(open){document.querySelectorAll('#panel-man details.manual-topic:not([hidden])').forEach(el=>el.open=open);};
-
-window.manualChooseType=function(type){
-  const data=MANUAL_TYPES[type]||MANUAL_TYPES.gravidade,host=document.getElementById('manual-type-content');
-  document.querySelectorAll('[data-manual-type]').forEach(btn=>{const active=btn.dataset.manualType===type;btn.classList.toggle('active',active);btn.setAttribute('aria-selected',active?'true':'false');});
-  if(!host)return;const list=items=>`<ul>${items.map(x=>`<li>${x}</li>`).join('')}</ul>`;
-  host.innerHTML=`<h3>${data.icon} ${data.title}</h3><p>${data.intro}</p><div class="manual-type-grid"><div class="manual-type-box"><h4>Use o módulo para</h4>${list(data.use)}</div><div class="manual-type-box"><h4>Campos críticos</h4>${list(data.fields)}</div><div class="manual-type-box"><h4>Confira no resultado</h4>${list(data.checks)}</div></div><div class="manual-topic-footer"><button type="button" class="mini-btn" onclick="manualSelectProjectType('${type}')">Selecionar esta tipologia no projeto</button><button type="button" class="mini-btn" onclick="manualGo('proj')">Abrir aba Projeto</button></div>`;
-};
-window.manualSelectProjectType=function(type){
-  const radio=document.querySelector(`input[name="tipo"][value="${type}"]`);if(radio){radio.checked=true;radio.dispatchEvent(new Event('change',{bubbles:true}));manualMarkStep(1);manualGo('proj');}
-};
-
-function manualProgressChecks(){return [...document.querySelectorAll('#panel-man [data-manual-step]')];}
-window.manualUpdateProgress=function(save=true){
-  const checks=manualProgressChecks(),done=checks.filter(x=>x.checked).length,total=checks.length||8;
-  checks.forEach(ch=>document.querySelector(`[data-manual-step-card="${ch.dataset.manualStep}"]`)?.classList.toggle('done',ch.checked));
-  const text=document.getElementById('manual-progress-text'),bar=document.getElementById('manual-progress-bar');
-  if(text)text.textContent=`${done} de ${total} etapas concluídas`;if(bar)bar.style.width=`${100*done/total}%`;
-  if(save){try{localStorage.setItem(MANUAL_PROGRESS_KEY,JSON.stringify(checks.filter(x=>x.checked).map(x=>x.dataset.manualStep)));}catch(e){/* armazenamento indisponível */}}
-};
-window.manualMarkStep=function(step){const ch=document.querySelector(`#panel-man [data-manual-step="${step}"]`);if(ch){ch.checked=true;manualUpdateProgress();}};
-window.manualResetProgress=function(){manualProgressChecks().forEach(x=>x.checked=false);manualUpdateProgress();};
-function manualRestoreProgress(){
-  try{const saved=JSON.parse(localStorage.getItem(MANUAL_PROGRESS_KEY)||'[]');manualProgressChecks().forEach(x=>x.checked=saved.includes(x.dataset.manualStep));}catch(e){manualProgressChecks().forEach(x=>x.checked=false);}manualUpdateProgress(false);
-}
-
-window.manualCopyChecklist=function(){
-  const text=`CHECKLIST — ARRIMOCALC\n\n[ ] Investigação geotécnica e nível d'água confirmados\n[ ] Geometria, implantação e interferências verificadas\n[ ] Cenários de água, drenagem e subpressão avaliados\n[ ] Passivo e coesão limitados à parcela efetivamente disponível\n[ ] Sobrecargas, vizinhança e etapas construtivas representadas\n[ ] Estabilidade global refeita após a última alteração\n[ ] Projeto estrutural, durabilidade e detalhes verificados\n[ ] Entradas, hipóteses, relatório e ART revisados pelo responsável técnico`;
-  const done=()=>{const status=document.getElementById('manual-search-status');if(status)status.textContent='Checklist copiado para a área de transferência';};
-  if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(text).then(done).catch(()=>manualFallbackCopy(text,done));}else manualFallbackCopy(text,done);
-};
-function manualFallbackCopy(text,done){const ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');done();}catch(e){window.prompt('Copie o checklist:',text);}ta.remove();}
-
-const MANUAL_TOUR_STEPS=[
-  {tab:'proj',selector:'#panel-proj .card',title:'1. Projeto e tipologia',text:'Comece pela identificação, escolha da solução e geometria. Os campos específicos mudam conforme a tipologia selecionada.'},
-  {tab:'geo',selector:'#panel-geo .card',title:'2. Geotecnia e água',text:'Cadastre o solo arrimado e a fundação. Dê atenção especial ao nível d’água, à drenagem e às parcelas de resistência realmente mobilizáveis.'},
-  {tab:'mat',selector:'#panel-mat .card',title:'3. Materiais',text:'Confira pesos específicos e resistências. Nas soluções de concreto armado, estes dados alimentam as verificações estruturais.'},
-  {tab:'calc',selector:'header .btn-sand',title:'4. Executar o cálculo',text:'O botão Calcular valida as entradas, processa o motor específico e preenche Cálculos, Resultados e Relatório.'},
-  {tab:'res',selector:'#panel-res',title:'5. Resultados',text:'Leia todos os fatores, tensões, diagramas e critérios específicos. O selo geral não substitui a análise de cada indicador.'},
-  {tab:'glob',selector:'#panel-glob .card',title:'6. Estabilidade global',text:'Defina método, estratigrafia, água e reforços. Depois pesquise a superfície crítica e examine a cobertura da busca.'},
-  {tab:'opt',selector:'#panel-opt .opt-hero',title:'7. Otimização',text:'Substitua as premissas ilustrativas e compare alternativas. Uma solução aplicada deve ser recalculada, inclusive na estabilidade global.'},
-  {tab:'rel',selector:'#panel-rel .card',title:'8. Relatório e salvamento',text:'Emita o memorial, exporte dados e salve o projeto localmente. O relatório só incorpora análises vigentes.'},
-  {tab:'man',selector:'#panel-man .manual-hero',title:'9. Manual',text:'Use a pesquisa, o roteiro, os tópicos por aba, o checklist e o glossário sempre que precisar revisar o fluxo.'}
-];
-let manualTourIndex=0,manualTourTarget=null;
-function manualTourCard(){
-  let card=document.getElementById('manual-tour-card');if(card)return card;
-  card=document.createElement('div');card.id='manual-tour-card';card.className='manual-tour-card';card.setAttribute('role','dialog');card.setAttribute('aria-live','polite');
-  card.innerHTML=`<button type="button" class="manual-tour-close" onclick="manualTourEnd()" aria-label="Encerrar visita">×</button><div class="manual-tour-kicker" id="manual-tour-kicker"></div><h3 id="manual-tour-title"></h3><p id="manual-tour-text"></p><div class="manual-tour-bar"><div id="manual-tour-progress"></div></div><div class="manual-tour-actions"><button type="button" class="mini-btn" onclick="manualTourEnd()">Encerrar</button><div><button type="button" class="mini-btn" id="manual-tour-prev" onclick="manualTourPrev()">← Anterior</button><button type="button" class="btn btn-sand" id="manual-tour-next" onclick="manualTourNext()">Próxima →</button></div></div>`;
-  document.body.appendChild(card);return card;
-}
-function manualTourRender(){
-  const step=MANUAL_TOUR_STEPS[manualTourIndex];if(!step)return manualTourEnd();
-  if(manualTourTarget)manualTourTarget.classList.remove('manual-tour-focus');manualTourTarget=null;
-  manualSafeTab(step.tab);const card=manualTourCard();card.classList.add('show');
-  document.getElementById('manual-tour-kicker').textContent=`Visita guiada · ${manualTourIndex+1} de ${MANUAL_TOUR_STEPS.length}`;
-  document.getElementById('manual-tour-title').textContent=step.title;document.getElementById('manual-tour-text').textContent=step.text;
-  document.getElementById('manual-tour-progress').style.width=`${100*(manualTourIndex+1)/MANUAL_TOUR_STEPS.length}%`;
-  document.getElementById('manual-tour-prev').disabled=manualTourIndex===0;document.getElementById('manual-tour-next').textContent=manualTourIndex===MANUAL_TOUR_STEPS.length-1?'Concluir ✓':'Próxima →';
-  window.setTimeout(()=>{manualTourTarget=document.querySelector(step.selector);if(manualTourTarget){manualTourTarget.classList.add('manual-tour-focus');manualTourTarget.scrollIntoView({behavior:'smooth',block:'center'});}},80);
-}
-window.manualTourStart=function(){manualTourIndex=0;manualTourRender();};
-window.manualTourNext=function(){if(manualTourIndex>=MANUAL_TOUR_STEPS.length-1)return manualTourEnd();manualTourIndex++;manualTourRender();};
-window.manualTourPrev=function(){if(manualTourIndex>0){manualTourIndex--;manualTourRender();}};
-window.manualTourEnd=function(){if(manualTourTarget)manualTourTarget.classList.remove('manual-tour-focus');manualTourTarget=null;document.getElementById('manual-tour-card')?.classList.remove('show');manualSafeTab('man');document.getElementById('manual-top')?.scrollIntoView({behavior:'smooth',block:'start'});};
-
-document.addEventListener('keydown',event=>{const card=document.getElementById('manual-tour-card');if(!card?.classList.contains('show'))return;if(event.key==='Escape')manualTourEnd();if(event.key==='ArrowRight')manualTourNext();if(event.key==='ArrowLeft')manualTourPrev();});
-function initManual(){manualRestoreProgress();manualChooseType('gravidade');manualFilter();}
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initManual,{once:true});else initManual();
-})();
 </script>
 
 </body>

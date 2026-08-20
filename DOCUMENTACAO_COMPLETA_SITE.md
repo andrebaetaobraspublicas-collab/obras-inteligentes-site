@@ -117,12 +117,12 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/manutencao/` | 278361 bytes | 274136 caracteres |
 | `/fiscalizacao/` | 354221 bytes | 354221 caracteres |
 | `/estrutural/` | 989496 bytes | 989496 caracteres |
-| `/pavimentos/` | 187093 bytes | 187093 caracteres |
+| `/pavimentos/` | 271969 bytes | 271969 caracteres |
 | `/riscos/` | 582771 bytes | 582771 caracteres |
 | `/administracao-canteiro/` | 480651 bytes | 480651 caracteres |
 | `/memorial-descritivo/` | 6349 bytes | 6349 caracteres |
 | `/sispav-reabilitacao/` | 147360 bytes | 147360 caracteres |
-| `/muros-arrimo/` | 466334 bytes | 466334 caracteres |
+| `/muros-arrimo/` | 527416 bytes | 527416 caracteres |
 | `/casa-parametrica/` | 38883 bytes | 38883 caracteres |
 | `/termopro/` | 475675 bytes | 475675 caracteres |
 | `/circuitopro/` | 236513 bytes | 236513 caracteres |
@@ -266,6 +266,8 @@ Observacoes:
 - Relatorios devem conter aviso resumido de responsabilidade tecnica.
 - Em 16/08/2026, foi atualizada com nova versao enviada como `index (31).html`, incorporando recursos de orcamento detalhado SINAPI.
 - Backup anterior salvo em `C:\Obras Inteligentes\backups\pavimentos-index-before-update-20260816-20260816-135250.html`.
+- Em 20/08/2026, foi atualizada com nova versao enviada como `index (32).html`.
+- Backup anterior salvo em `C:\Obras Inteligentes\backups\pavimentos-index-before-update-20260820-0045.html`.
 
 ### Mapa & Matriz de Riscos
 
@@ -321,6 +323,8 @@ Ultima atualizacao:
 - Data: 06/08/2026
 - Alteracao: substituicao integral de `muros-arrimo/index.html` pela versao ArrimoCalc v2.4.
 - Commit historico de inclusao: `a3ee841` - `Adiciona calculadora de muros de arrimo`.
+- Em 20/08/2026, foi atualizado com a nova versao `ArrimoCalc_v2.4_com_manual_interativo.html`, com manual interativo incorporado.
+- Backup anterior salvo em `C:\Obras Inteligentes\backups\muros-arrimo-index-before-v2-4-manual-20260820-0045.html`.
 
 ### Casa Parametrica
 
