@@ -124,7 +124,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/sispav-reabilitacao/` | 147360 bytes | 147360 caracteres |
 | `/muros-arrimo/` | 527416 bytes | 527416 caracteres |
 | `/casa-parametrica/` | 38883 bytes | 38883 caracteres |
-| `/termopro/` | 475675 bytes | 475675 caracteres |
+| `/termopro/` | 550398 bytes | 550398 caracteres |
 | `/circuitopro/` | 236513 bytes | 236513 caracteres |
 | `/reservatoriopro/` | 161199 bytes | 161199 caracteres |
 | `/bombapro/` | 737818 bytes | 737818 caracteres |
@@ -397,6 +397,8 @@ Ultima versao publicada:
 - Fonte: `C:\Users\ACER\Documents\Downloads\TermoPro_v3.7_rede_ramificada_balanceamento.html`
 - Data: 02/08/2026
 - Alteracao: substituicao integral de `termopro/index.html` pela versao TermoPro 3.7, com rede ramificada e balanceamento.
+- Em 20/08/2026, foi atualizado com a nova versao `TermoPro_3.7_manual_interativo (1).html`, com manual interativo incorporado.
+- Backup anterior salvo em `C:\Obras Inteligentes\backups\termopro-index-before-3-7-manual-20260820-0715.html`.
 
 Observacoes:
 
