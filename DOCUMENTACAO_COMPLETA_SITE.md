@@ -127,7 +127,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/termopro/` | 550398 bytes | 550398 caracteres |
 | `/circuitopro/` | 287904 bytes | 287904 caracteres |
 | `/reservatoriopro/` | 209145 bytes | 206623 caracteres |
-| `/bombapro/` | 737818 bytes | 737818 caracteres |
+| `/bombapro/` | 788470 bytes | 779784 caracteres |
 | `/paraboltpro/` | 1147646 bytes | 1147646 caracteres |
 | `/steelpro/` | 229160 bytes | 229160 caracteres |
 | `/cronogramapro/` | 402158 bytes | 402158 caracteres |
@@ -448,9 +448,10 @@ Arquivo: `bombapro/index.html`
 
 Ultima atualizacao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\BombaPro_v3.5_otimizacao_memoria.html`
-- Data: 02/08/2026
-- Alteracao: substituicao integral de `bombapro/index.html` pela versao BombaPro 3.5, com otimizacao tecnico-economica e documentacao profissional.
+- Fonte: `C:\Users\ACER\Documents\Downloads\BombaPro_3.5_com_manual_interativo (1).html`
+- Data: 20/08/2026
+- Alteracao: substituicao integral de `bombapro/index.html` pela versao BombaPro 3.5, com manual interativo incorporado.
+- Backup da versao anterior: `C:\Obras Inteligentes\backups\bombapro-index-before-v3-5-manual-interativo-20260820-1214.html`
 
 Observacoes:
 
