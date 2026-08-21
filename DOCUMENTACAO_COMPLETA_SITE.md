@@ -119,7 +119,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/fiscalizacao/` | 354221 bytes | 354221 caracteres |
 | `/estrutural/` | 989496 bytes | 989496 caracteres |
 | `/pavimentos/` | 271969 bytes | 271969 caracteres |
-| `/riscos/` | 418044 bytes | 412789 caracteres |
+| `/riscos/` | 963063 bytes | 940336 caracteres |
 | `/administracao-canteiro/` | 480651 bytes | 480651 caracteres |
 | `/memorial-descritivo/` | 6349 bytes | 6349 caracteres |
 | `/sispav-reabilitacao/` | 147360 bytes | 147360 caracteres |
@@ -287,6 +287,8 @@ Observacoes:
 - Em 21/07/2026, recebeu tela inicial com aviso de uso demonstrativo, isencao de responsabilidade e botao de concordancia antes de iniciar a abertura do sistema.
 - Em 21/08/2026, foi atualizado com a nova versao `Mapa_Matriz_Riscos_Pro_v4_5_Unificado.html`, identificada como v4.5, com quantificacao profissional em arquivo unificado.
 - Backup da versao anterior: `C:\Obras Inteligentes\backups\riscos-index-before-v4-5-unificado-20260821-0747.html`
+- Em 21/08/2026, foi atualizado novamente com a nova versao `Mapa_Matriz_Riscos_Pro_v4_6_DNIT_CBIC_Consolidado.html`, identificada como v4.6, com bibliotecas DNIT/CBIC e consolidacao.
+- Backup da versao anterior: `C:\Obras Inteligentes\backups\riscos-index-before-v4-6-dnit-cbic-20260821-1012.html`
 
 ### Administracao Local e Canteiro de Obra
 
