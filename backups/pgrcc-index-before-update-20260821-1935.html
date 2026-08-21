@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Calculadora de Resíduos de Construção Civil e Gerador de PGRCC</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #1e4457; display: flex; align-items: center; justify-content: center; min-height: 100vh; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
+    #__bundler_loading { position: fixed; bottom: 20px; right: 20px; font: 13px/1.4 -apple-system, BlinkMacSystemFont, sans-serif; color: #666; background: #fff; padding: 8px 14px; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.12); z-index: 10000; }
+    #__bundler_thumbnail { position: fixed; inset: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #1e4457; z-index: 9999; }
+    #__bundler_thumbnail svg { width: 100%; height: 100%; object-fit: contain; }
+    #__bundler_placeholder { color: #999; font-size: 14px; }
+  </style>
+  <noscript>
+    <style>#__bundler_loading { display: none; }</style>
+    <div style="position:fixed;bottom:12px;left:12px;font:13px/1.4 -apple-system,BlinkMacSystemFont,sans-serif;color:#999;background:rgba(255,255,255,0.9);padding:6px 12px;border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,0.08);z-index:10000;">
+      This page requires JavaScript to display.
+    </div>
+  </noscript>
+</head>
+<body>
+  <div id="__bundler_thumbnail">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#1e4457"></rect>
+    <g transform="translate(600 400)" fill="none" stroke="#b5622f" stroke-width="16" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M-150 150h300"></path><path d="M-115 150V-30l115-85 115 85v180"></path><path d="M-50 150v-95h100v95"></path>
+    </g>
+  </svg>
+</div>
+  <div id="__bundler_loading">Unpacking...</div>
+
+  <script>
+    
+document.addEventListener('DOMContentLoaded', async function() {
+  const loading = document.getElementById('__bundler_loading');
+  function setStatus(msg) { if (loading) loading.textContent = msg; }
+
+  const FONT_MIME = /^(font[/]|application[/](x-)?font-|application[/]vnd\.ms-fontobject)/i;
+  const MIME_TOKEN = /^[\w.+-]+[/][\w.+-]+$/;
+  function toBase64(bytes) {
+    let bin = '';
+    for (let i = 0; i < bytes.length; i += 0x8000) {
+      bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+    }
+    return btoa(bin);
+  }
+
+  // Error sink persists across replaceWith since it's on window, not the DOM.
+  window.addEventListener('error', function(e) {
+    // Failed resource loads (CSP-blocked links, scripts, images) fire plain
+    // events at the element — warn only; real JS errors carry message/error.
+    if (!e.message && !e.error && e.target && e.target !== window) {
+      console.warn('[bundle] resource failed to load:',
+        e.target.tagName, String(e.target.src || e.target.href || ''));
+      return;
+    }
+    var p = document.body || document.documentElement;
+    var d = document.getElementById('__bundler_err') || p.appendChild(document.createElement('div'));
+    d.id = '__bundler_err';
+    d.style.cssText = 'position:fixed;bottom:12px;left:12px;right:12px;font:12px/1.4 ui-monospace,monospace;background:#2a1215;color:#ff8a80;padding:10px 14px;border-radius:8px;border:1px solid #5c2b2e;z-index:99999;white-space:pre-wrap;max-height:40vh;overflow:auto';
+    d.textContent = (d.textContent ? d.textContent + String.fromCharCode(10) : '') +
+      '[bundle] ' + (e.message || e.type) +
+      (e.filename ? ' (' + e.filename.slice(0, 60) + ':' + e.lineno + ')' : '');
+  }, true);
+
+  try {
+    const manifestEl = document.querySelector('script[type="__bundler/manifest"]');
+    const templateEl = document.querySelector('script[type="__bundler/template"]');
+    if (!manifestEl || !templateEl) {
+      setStatus('Error: missing bundle data');
+      console.error('[bundler] Missing script tags — manifestEl:', !!manifestEl, 'templateEl:', !!templateEl);
+      return;
+    }
+
+    const manifest = JSON.parse(manifestEl.textContent);
+    let template = JSON.parse(templateEl.textContent);
+
+    // Nested page bundles (iframe targets). Each ships ONCE, in the ROOT
+    // document's manifest; frame srcs carry an about:blank#<uuid> marker
+    // instead of a substitutable uuid. Every document mints the blobs for
+    // its OWN frames — from local text at the root, or text obtained from
+    // its DIRECT parent over the relay protocol below — so each frame
+    // navigation stays same-origin with its initiator and a deduped page
+    // loads at any depth on any host, including a file:// download's
+    // opaque origins (where a blob minted by one document cannot be
+    // navigated to by another).
+    const pageOrderEl = document.querySelector('script[type="__bundler/page_order"]');
+    const pageOrder = pageOrderEl ? JSON.parse(pageOrderEl.textContent) : [];
+    const pageSet = new Set(pageOrder);
+    const pageTexts = {};
+
+    // ── Nested-page text protocol (parent-chain relay) ──
+    // Page bundles ship once, in the ROOT document's manifest. Every
+    // document mints the blobs for its OWN frames, obtaining page text
+    // through a strict parent-chain relay: a document only ever SENDS to
+    // its direct parent (which, for every document the publisher's own
+    // runtime minted, is another publisher document) and only ACCEPTS
+    // text from that direct parent; requests from below are honored only
+    // for the document's own child frames, and the ROOT never sends
+    // upward at all. That last rule is load-bearing: the artifact host's
+    // frame-ancestors allows claude.ai (and friends) to frame an
+    // artifact, so window.top can be a FOREIGN document — a top-addressed
+    // protocol would hand page uuids to that ancestor and accept forged
+    // "page text" from it, minting attacker HTML as an artifact-origin
+    // blob document. The chain never touches the ancestor: requests stop
+    // at the root, replies are origin-addressed per hop (never '*' when
+    // an origin exists), and both directions are origin-gated (on https
+    // a foreign sender's origin can never equal this document's; in
+    // opaque contexts — file:// — everything serializes as 'null', where
+    // an embedded EXTERNAL frame still fails the gate by carrying its
+    // own real origin, and a sandboxed child of such a frame is excluded
+    // by the own-child-frames check plus uuid unguessability). Shape is
+    // deny-by-default: one request form, one reply form, no error
+    // replies.
+    // window.origin is the SERIALIZED SECURITY origin ('null' in opaque
+    // contexts such as a sandboxed preview iframe) — location.origin is
+    // computed from the URL and stays 'https://…' even when the document
+    // is sandboxed, which would misgate every opaque chain.
+    const OWN_TARGET = /^https?:[/][/]/.test(window.origin || '')
+      ? window.origin
+      : '*';
+    function trustedOrigin(e) {
+      if (e.origin === window.origin) return true; // https chains; opaque==opaque
+      // file:// trees: Chrome serializes the file document's origin as
+      // 'file://' while the blob: documents it mints serialize as 'null',
+      // so the two legitimate shapes can never string-match — accept the
+      // pair in both directions. https origins never serialize as either,
+      // and sender identity (own child frame / direct parent) is checked
+      // separately.
+      return (
+        (e.origin === 'null' &&
+          (window.origin === 'file://' ||
+            window.location.protocol === 'file:')) ||
+        (/^file:/.test(e.origin) && window.origin === 'null')
+      );
+    }
+    // Non-empty only in the root document (nested bundles ship an empty
+    // island), so it doubles as the root marker: the root answers from
+    // local text and treats a miss as authoritative — never relaying to
+    // its (possibly foreign) parent.
+    const isPageRoot = pageOrder.length > 0;
+    const blobUrls = {};
+    const resourceBlobs = {};
+    const UUID_SHAPE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
+    const pendingFrames = {}; // uuid -> [{el, frag}] awaiting text for own frames
+    const pendingRelays = {}; // uuid -> [childWindow] awaiting text to pass down
+    function mountPage(el, frag, text) {
+      const pageBlob = new Blob([text], { type: 'text/html' });
+      const u = URL.createObjectURL(pageBlob);
+      resourceBlobs[u] = pageBlob;
+      el.src = u + frag;
+    }
+    function deliverPage(uuid, text) {
+      const frames = pendingFrames[uuid];
+      delete pendingFrames[uuid];
+      if (frames) for (const f of frames) mountPage(f.el, f.frag, text);
+      const relays = pendingRelays[uuid];
+      delete pendingRelays[uuid];
+      if (relays) {
+        for (const cw of relays) {
+          try { cw.postMessage({ __bundler_page: uuid, __bundler_text: text }, OWN_TARGET); } catch (err) { /* gone */ }
+        }
+      }
+    }
+    function ownFrameWindows() {
+      const out = [];
+      for (const f of Array.from(document.querySelectorAll('iframe'))) {
+        try { if (f.contentWindow) out.push(f.contentWindow); } catch (err) { /* detached */ }
+      }
+      return out;
+    }
+    window.addEventListener('message', function (e) {
+      const d = e.data;
+      if (!d || typeof d !== 'object' || !e.source) return;
+      // Origin gate first; the structural checks below (own-child-frames
+      // for requests, direct-parent + solicited-uuid for replies, the
+      // root's never-relay rule) are what hold in fully opaque chains
+      // where origin strings can't discriminate — a sandboxed root's
+      // FOREIGN wrapper still fails all three even though both serialize
+      // as real-vs-'null' rather than matching.
+      if (!trustedOrigin(e)) return;
+      if (typeof d.__bundler_need === 'string' && UUID_SHAPE.test(d.__bundler_need)) {
+        // Requests are honored only for this document's own child frames.
+        if (ownFrameWindows().indexOf(e.source) < 0) return;
+        const uuid = d.__bundler_need;
+        const text = pageTexts[uuid];
+        if (typeof text === 'string') {
+          try { e.source.postMessage({ __bundler_page: uuid, __bundler_text: text }, OWN_TARGET); } catch (err) { /* gone */ }
+          return;
+        }
+        if (isPageRoot || window.parent === window) return; // authoritative miss
+        const waiting = pendingRelays[uuid];
+        if (waiting) {
+          if (waiting.indexOf(e.source) < 0) waiting.push(e.source);
+          return;
+        }
+        // Never-answered uuids would otherwise accumulate forever under a
+        // request spray; past the cap (far above any real page count) new
+        // relays are dropped rather than remembered.
+        if (Object.keys(pendingRelays).length >= 128) return;
+        pendingRelays[uuid] = [e.source];
+        window.parent.postMessage({ __bundler_need: uuid }, OWN_TARGET);
+      } else if (
+        typeof d.__bundler_page === 'string' &&
+        UUID_SHAPE.test(d.__bundler_page) &&
+        typeof d.__bundler_text === 'string'
+      ) {
+        // The shape test is load-bearing beyond tidiness: the solicited
+        // check below uses the in operator, which matches prototype keys
+        // ('__proto__', 'constructor') — an unshaped key would reach
+        // deliverPage and throw, painting the error banner.
+        // Text is accepted only from the direct parent — the document
+        // that minted this one.
+        if (e.source !== window.parent || window.parent === window) return;
+        if (!(d.__bundler_page in pendingFrames) && !(d.__bundler_page in pendingRelays)) return;
+        deliverPage(d.__bundler_page, d.__bundler_text);
+      }
+    });
+
+    const uuids = Object.keys(manifest);
+    setStatus('Unpacking ' + uuids.length + ' assets...');
+
+    await Promise.all(uuids.map(async (uuid) => {
+      const entry = manifest[uuid];
+      try {
+        const binaryStr = atob(entry.data);
+        const bytes = new Uint8Array(binaryStr.length);
+        for (let i = 0; i < binaryStr.length; i++) bytes[i] = binaryStr.charCodeAt(i);
+
+        let finalBytes = bytes;
+        if (entry.compressed) {
+          if (typeof DecompressionStream !== 'undefined') {
+            const ds = new DecompressionStream('gzip');
+            const writer = ds.writable.getWriter();
+            const reader = ds.readable.getReader();
+            writer.write(bytes);
+            writer.close();
+            const chunks = [];
+            let totalLen = 0;
+            while (true) {
+              const { done, value } = await reader.read();
+              if (done) break;
+              chunks.push(value);
+              totalLen += value.length;
+            }
+            finalBytes = new Uint8Array(totalLen);
+            let offset = 0;
+            for (const chunk of chunks) { finalBytes.set(chunk, offset); offset += chunk.length; }
+          } else {
+            console.warn('DecompressionStream not available, asset ' + uuid + ' may not render');
+          }
+        }
+
+        if (pageSet.has(uuid)) {
+          pageTexts[uuid] = new TextDecoder().decode(finalBytes);
+          return;
+        }
+        if (FONT_MIME.test(entry.mime) && MIME_TOKEN.test(entry.mime)) {
+          // Strict artifact hosts allow font-src data: but not blob:.
+          blobUrls[uuid] = 'data:' + entry.mime + ';base64,' +
+            (entry.compressed ? toBase64(finalBytes) : entry.data);
+        } else {
+          const blob = new Blob([finalBytes], { type: entry.mime });
+          blobUrls[uuid] = URL.createObjectURL(blob);
+          resourceBlobs[blobUrls[uuid]] = blob;
+        }
+      } catch (err) {
+        console.error('Failed to decode asset ' + uuid + ':', err);
+        const blob = new Blob([], { type: entry.mime });
+        blobUrls[uuid] = URL.createObjectURL(blob);
+        resourceBlobs[blobUrls[uuid]] = blob;
+      }
+    }));
+
+    const extResEl = document.querySelector('script[type="__bundler/ext_resources"]');
+    const extResources = extResEl ? JSON.parse(extResEl.textContent) : [];
+    const resourceMap = {};
+    for (const entry of extResources) {
+      if (blobUrls[entry.uuid]) resourceMap[entry.id] = blobUrls[entry.uuid];
+    }
+
+    // Artifact-host CSP (connect-src 'self') refuses fetch() of blob: URLs —
+    // consumers read these Blobs directly. Survives the swap like the error sink.
+    window.__resourceBlobs = resourceBlobs;
+
+    setStatus('Rendering...');
+    // Page uuids have no blob here — they ride inside about:blank#<uuid>
+    // frame markers the pass below resolves after the swap.
+    for (const uuid of uuids) {
+      if (pageSet.has(uuid)) continue;
+      template = template.split(uuid).join(blobUrls[uuid]);
+    }
+
+    // Strip integrity + crossorigin — blob URLs from a file:// document inherit
+    // a null origin, so crossorigin forces a CORS fetch that SRI then rejects.
+    // The manifest bytes are ours; SRI protects against CDN compromise, not this.
+    template = template.replace(/\s+integrity="[^"]*"/gi, '').replace(/\s+crossorigin="[^"]*"/gi, '');
+
+    const resourceScript = '<script>window.__resources = ' +
+      JSON.stringify(resourceMap).replace(/<\//g, '<\\/') +
+      ';</' + 'script>';
+    // Inject after <head> so the DOCTYPE stays first; prepending the script
+    // would push the parser into quirks mode. DOMParser always emits a <head>
+    // (synthesizing one if the source HTML omitted it) but may carry
+    // attributes through, so match the full opening tag. slice() rather than
+    // replace() keeps us clear of $-pattern substitution in resourceScript.
+    const headOpen = template.match(/<head[^>]*>/i);
+    if (headOpen) {
+      const i = headOpen.index + headOpen[0].length;
+      template = template.slice(0, i) + resourceScript + template.slice(i);
+    }
+
+    // Parse the template and swap the root element. Scripts inserted via
+    // DOMParser/replaceWith are inert per spec — re-create each with
+    // createElement so they execute, awaiting onload for src scripts to
+    // preserve ordering (React before ReactDOM before Babel before text/babel).
+    const doc = new DOMParser().parseFromString(template, 'text/html');
+    document.documentElement.replaceWith(doc.documentElement);
+
+    // Resolve page-frame markers: mint this document's own blob for each
+    // framed page — from local text when this is the root, otherwise by
+    // asking the direct parent over the relay protocol above. An
+    // unanswered request leaves the frame on about:blank, the same
+    // degraded state as a refused embed.
+    {
+      const MARKER = /^about:blank#([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})(#.*)?$/;
+      const needed = [];
+      for (const el of Array.from(document.querySelectorAll('iframe'))) {
+        const m = MARKER.exec(el.getAttribute('src') || '');
+        if (!m) continue;
+        const text = pageTexts[m[1]];
+        if (typeof text === 'string') {
+          mountPage(el, m[2] || '', text);
+        } else if (window.parent !== window && !isPageRoot) {
+          const had = pendingFrames[m[1]];
+          (pendingFrames[m[1]] = had || []).push({ el: el, frag: m[2] || '' });
+          if (!had) needed.push(m[1]);
+        }
+      }
+      for (const uuid of needed) {
+        window.parent.postMessage({ __bundler_need: uuid }, OWN_TARGET);
+      }
+    }
+
+    const dead = Array.from(document.scripts);
+    for (const old of dead) {
+      const s = document.createElement('script');
+      for (const a of old.attributes) s.setAttribute(a.name, a.value);
+      s.textContent = old.textContent;
+      // text/babel scripts with a src: read and inline. transformScriptTags
+      // does XHR against the src, but blob:null/ from a file:// origin is
+      // silently dropped. Inlining makes it a plain inline babel script,
+      // which transformScriptTags handles unconditionally.
+      if ((s.type === 'text/babel' || s.type === 'text/jsx') && s.src) {
+        const pre = resourceBlobs[s.src.split('#')[0]];
+        s.textContent = pre ? await pre.text() : await (await fetch(s.src)).text();
+        s.removeAttribute('src');
+      }
+      const p = s.src ? new Promise(function(r) { s.onload = s.onerror = r; }) : null;
+      old.replaceWith(s);
+      if (p) await p;
+    }
+    // Babel standalone auto-transforms type=text/babel on DOMContentLoaded,
+    // which fired before we swapped the document. Trigger manually if present.
+    if (window.Babel && typeof window.Babel.transformScriptTags === 'function') {
+      window.Babel.transformScriptTags();
+    }
+  } catch (err) {
+    setStatus('Error unpacking: ' + err.message);
+    console.error('Bundle unpack error:', err);
+  }
+});
+
+  </script>
+
+  <script type="__bundler/manifest">
+{}
+  </script>
+
+  <script type="__bundler/ext_resources">
+[]
+  </script>
+
+  <script type="__bundler/page_order">
+[]
+  </script>
+
+  <script type="__bundler/template">
+"<!DOCTYPE html>\n<html lang=\"pt-BR\"><head>\n<meta charset=\"UTF-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n<title>Calculadora de Resíduos de Construção Civil e Gerador de PGRCC<\u002Ftitle>\n<style>\n:root{\n  --ink:#1a2230;\n  --ink-soft:#4a5568;\n  --paper:#f2efe6;\n  --paper-2:#e8e3d5;\n  --line:#d4cdba;\n  --steel:#2d5f7c;\n  --steel-dark:#1e4457;\n  --clay:#b5622f;\n  /* Classe A - agregado cinza-concreto */\n  --A:#6b7280; --A-bg:#eceef1;\n  /* Classe B - recicláveis, verde-industrial */\n  --B:#4d7c4a; --B-bg:#e9f0e8;\n  /* Classe C - âmbar, sem tecnologia viável */\n  --C:#b08420; --C-bg:#f6efdd;\n  /* Classe D - perigoso, vermelho-alerta */\n  --D:#a8352f; --D-bg:#f6e6e5;\n  --ok:#2f6d4f; --warn:#a8352f;\n  --shadow:0 1px 2px rgba(26,34,48,.06),0 8px 24px rgba(26,34,48,.06);\n}\n*{box-sizing:border-box;margin:0;padding:0}\nhtml{scroll-behavior:smooth}\nbody{\n  font-family:\"Segoe UI\",-apple-system,BlinkMacSystemFont,Roboto,sans-serif;\n  background:var(--paper);\n  color:var(--ink);\n  line-height:1.5;\n  -webkit-font-smoothing:antialiased;\n}\n.mono{font-family:\"SF Mono\",ui-monospace,\"Cascadia Code\",Consolas,monospace;font-variant-numeric:tabular-nums}\n\n/* ---------- Header ---------- */\nheader{\n  background:var(--steel-dark);\n  color:#f2efe6;\n  border-bottom:3px solid var(--clay);\n}\n.hwrap{max-width:1180px;margin:0 auto;padding:22px 28px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}\n.brand{display:flex;align-items:center;gap:16px}\n.logo{\n  width:52px;height:52px;flex-shrink:0;\n  border:2px solid var(--clay);\n  display:grid;place-items:center;\n  background:rgba(181,98,47,.12);\n}\n.logo svg{width:30px;height:30px}\n.brand h1{font-size:1.28rem;font-weight:700;letter-spacing:.2px;line-height:1.15}\n.brand .sub{font-size:.72rem;letter-spacing:2px;text-transform:uppercase;color:#b9c7d1;margin-top:3px}\n.hmeta{text-align:right;font-size:.72rem;color:#b9c7d1;letter-spacing:.3px}\n.hmeta strong{color:#f2efe6;font-weight:600}\n\n/* ---------- Layout ---------- */\nmain{max-width:1180px;margin:0 auto;padding:26px 28px 80px}\n.grid{display:grid;grid-template-columns:1fr 1fr;gap:26px}\n@media(max-width:920px){.grid{grid-template-columns:1fr}}\n\n.card{\n  background:#fbf9f3;\n  border:1px solid var(--line);\n  box-shadow:var(--shadow);\n}\n.card-h{\n  padding:14px 20px;\n  border-bottom:1px solid var(--line);\n  background:var(--paper-2);\n  display:flex;align-items:center;gap:11px;\n}\n.card-h .n{\n  font-family:\"SF Mono\",ui-monospace,monospace;\n  font-size:.78rem;font-weight:700;\n  color:#fff;background:var(--steel);\n  width:26px;height:26px;display:grid;place-items:center;flex-shrink:0;\n}\n.card-h h2{font-size:.98rem;font-weight:700;letter-spacing:.2px}\n.card-h .hint{font-size:.72rem;color:var(--ink-soft);margin-left:auto}\n.card-b{padding:20px}\n\n/* ---------- Tabs ---------- */\n.tabs{display:flex;gap:0;border:1px solid var(--line);margin-bottom:20px;background:var(--paper-2)}\n.tab{\n  flex:1;padding:12px 10px;text-align:center;cursor:pointer;\n  font-size:.82rem;font-weight:600;color:var(--ink-soft);\n  border-right:1px solid var(--line);transition:.15s;user-select:none;\n}\n.tab:last-child{border-right:none}\n.tab.on{background:var(--steel);color:#fff}\n.tab:not(.on):hover{background:#efe9db}\n\n/* ---------- Forms ---------- */\n.field{margin-bottom:15px}\n.field label{display:block;font-size:.76rem;font-weight:600;color:var(--ink-soft);margin-bottom:5px;letter-spacing:.2px}\n.field label .u{color:var(--clay);font-weight:700}\ninput[type=text],input[type=number],select,textarea{\n  width:100%;padding:9px 11px;font-size:.9rem;\n  border:1px solid var(--line);background:#fff;color:var(--ink);\n  font-family:inherit;transition:.15s;\n}\ninput:focus,select:focus,textarea:focus{outline:none;border-color:var(--steel);box-shadow:0 0 0 3px rgba(45,95,124,.12)}\ninput.mono{font-family:\"SF Mono\",ui-monospace,monospace}\n.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}\n.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}\n@media(max-width:520px){.row2,.row3{grid-template-columns:1fr}}\n.hlp{font-size:.7rem;color:var(--ink-soft);margin-top:4px;line-height:1.35}\n\n.matgrid{display:grid;grid-template-columns:1fr auto;gap:10px 14px;align-items:center}\n.matgrid .ml{font-size:.82rem;font-weight:500}\n.matgrid .ml .cls{font-size:.64rem;font-weight:700;padding:1px 6px;margin-left:6px;color:#fff;letter-spacing:.5px}\n.cA{background:var(--A)}.cB{background:var(--B)}.cC{background:var(--C)}.cD{background:var(--D)}\n.matgrid input{width:130px}\n.matgrid .unit{font-size:.72rem;color:var(--ink-soft);width:34px;display:inline-block;text-align:left}\n\n.btn{\n  display:inline-flex;align-items:center;gap:8px;justify-content:center;\n  padding:11px 20px;font-size:.86rem;font-weight:600;cursor:pointer;\n  border:none;font-family:inherit;transition:.15s;letter-spacing:.3px;\n}\n.btn-primary{background:var(--clay);color:#fff}\n.btn-primary:hover{background:#9d5228}\n.btn-ghost{background:transparent;color:var(--steel);border:1px solid var(--steel)}\n.btn-ghost:hover{background:rgba(45,95,124,.08)}\n.btn-block{width:100%}\n.btnrow{display:flex;gap:10px;margin-top:6px;flex-wrap:wrap}\n\n/* ---------- Results ---------- */\n.headline{\n  background:var(--steel-dark);color:#fff;padding:22px 24px;margin-bottom:0;\n  border:1px solid var(--steel-dark);\n}\n.headline .k{font-size:.72rem;letter-spacing:2px;text-transform:uppercase;color:#a9bcc7}\n.headline .v{font-size:2.5rem;font-weight:700;line-height:1;margin-top:6px;font-family:\"SF Mono\",ui-monospace,monospace}\n.headline .v small{font-size:1rem;font-weight:500;color:#b9c7d1}\n.headline .row{display:flex;gap:36px;flex-wrap:wrap}\n.headline .row>div{flex:1;min-width:120px}\n\n.classbars{display:flex;flex-direction:column;gap:0;border:1px solid var(--line);border-top:none}\n.cbar{display:grid;grid-template-columns:44px 1fr auto;align-items:center;gap:0;border-bottom:1px solid var(--line);background:#fff}\n.cbar:last-child{border-bottom:none}\n.cbar .badge{align-self:stretch;display:grid;place-items:center;color:#fff;font-weight:800;font-size:1.1rem;font-family:\"SF Mono\",monospace}\n.cbar .info{padding:11px 14px}\n.cbar .info .t{font-size:.82rem;font-weight:600}\n.cbar .info .d{font-size:.68rem;color:var(--ink-soft);margin-top:2px}\n.cbar .info .track{height:5px;background:var(--paper-2);margin-top:7px;overflow:hidden}\n.cbar .info .track i{display:block;height:100%}\n.cbar .nums{padding:11px 16px;text-align:right;white-space:nowrap}\n.cbar .nums .m{font-size:1.05rem;font-weight:700;font-family:\"SF Mono\",monospace}\n.cbar .nums .s{font-size:.68rem;color:var(--ink-soft);font-family:\"SF Mono\",monospace}\n\n.panel{border:1px solid var(--line);background:#fff;margin-top:18px}\n.panel-h{padding:11px 16px;background:var(--paper-2);border-bottom:1px solid var(--line);font-size:.82rem;font-weight:700;letter-spacing:.3px;display:flex;align-items:center;gap:8px}\n.panel-b{padding:16px}\n\n.trow{display:flex;justify-content:space-between;align-items:baseline;padding:7px 0;border-bottom:1px dotted var(--line);font-size:.84rem}\n.trow:last-child{border-bottom:none}\n.trow .lbl{color:var(--ink-soft)}\n.trow .val{font-weight:700;font-family:\"SF Mono\",monospace}\n\n.cacamba{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:4px}\n.cacamba .cc{border:1px solid var(--line);padding:12px;text-align:center;background:#fdfcf8}\n.cacamba .cc .cap{font-size:.68rem;color:var(--ink-soft);letter-spacing:.3px}\n.cacamba .cc .qt{font-size:1.7rem;font-weight:700;font-family:\"SF Mono\",monospace;line-height:1;margin:5px 0}\n.cacamba .cc .un{font-size:.66rem;color:var(--ink-soft)}\n.cacamba .cc.pick{border-color:var(--clay);border-width:2px;background:#faf1e9}\n\n.flag{display:flex;gap:11px;padding:12px 14px;border-left:4px solid;margin-top:10px;font-size:.8rem;line-height:1.45;align-items:flex-start}\n.flag.ok{background:#eaf3ee;border-color:var(--ok);color:#1f4a35}\n.flag.warn{background:#f6e9e8;border-color:var(--warn);color:#7a2621}\n.flag.info{background:#e9eff3;border-color:var(--steel);color:#1e4457}\n.flag svg{width:17px;height:17px;flex-shrink:0;margin-top:1px}\n.flag b{font-weight:700}\n\n.gauge{margin-top:6px}\n.gauge .scale{position:relative;height:34px;margin:22px 8px 8px}\n.gauge .band{position:absolute;top:12px;height:9px;left:0;right:0;background:linear-gradient(90deg,#c9d6b8 0%,#8fb27a 22%,#8fb27a 78%,#e0b06a 100%);border-radius:5px}\n.gauge .lim{position:absolute;top:4px;width:2px;height:25px;background:var(--ink)}\n.gauge .lim span{position:absolute;top:-17px;left:50%;transform:translateX(-50%);font-size:.62rem;font-weight:700;white-space:nowrap;font-family:\"SF Mono\",monospace}\n.gauge .marker{position:absolute;top:-3px;width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;border-top:11px solid var(--clay);transform:translateX(-50%);transition:left .4s}\n.gauge .marker span{position:absolute;top:-22px;left:50%;transform:translateX(-50%);font-size:.66rem;font-weight:800;color:var(--clay);white-space:nowrap;font-family:\"SF Mono\",monospace}\n.gauge .ends{display:flex;justify-content:space-between;font-size:.64rem;color:var(--ink-soft);font-family:\"SF Mono\",monospace}\n\n.empty{text-align:center;padding:50px 20px;color:var(--ink-soft)}\n.empty svg{width:44px;height:44px;opacity:.4;margin-bottom:12px}\n.empty p{font-size:.86rem}\n\n.divider{height:1px;background:var(--line);margin:18px 0}\n.section-lbl{font-size:.72rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--steel);margin:2px 0 12px;padding-bottom:6px;border-bottom:2px solid var(--paper-2)}\n\n/* PGRCC doc output */\n.docprev{font-size:.8rem;line-height:1.55}\n.docprev h4{font-size:.82rem;font-weight:700;color:var(--steel-dark);margin:14px 0 5px;text-transform:uppercase;letter-spacing:.5px}\n.docprev h4:first-child{margin-top:0}\n.docprev .dl{display:grid;grid-template-columns:auto 1fr;gap:2px 14px}\n.docprev .dl dt{color:var(--ink-soft)}\n.docprev .dl dd{font-weight:600;text-align:right;font-family:\"SF Mono\",monospace}\n.docprev table{width:100%;border-collapse:collapse;margin-top:6px}\n.docprev th,.docprev td{padding:5px 8px;border:1px solid var(--line);font-size:.74rem;text-align:left}\n.docprev th{background:var(--paper-2);font-weight:700}\n.docprev td.num{text-align:right;font-family:\"SF Mono\",monospace}\n\nfooter{max-width:1180px;margin:0 auto;padding:0 28px 40px;color:var(--ink-soft);font-size:.72rem;line-height:1.6}\nfooter .refbox{border:1px solid var(--line);padding:14px 18px;background:#fbf9f3}\nfooter strong{color:var(--ink)}\n\n.savebar{position:sticky;bottom:0;background:var(--paper-2);border:1px solid var(--line);border-bottom:none;padding:10px 16px;display:flex;gap:10px;align-items:center;justify-content:space-between;font-size:.74rem;color:var(--ink-soft);margin-top:26px;flex-wrap:wrap}\n.savebar .actions{display:flex;gap:8px;flex-wrap:wrap}\n.mini{padding:7px 13px;font-size:.76rem}\n\n@media print{\n  header,.tabs,.savebar,.btnrow,footer .noprint{display:none}\n  body{background:#fff}\n  .card{box-shadow:none;break-inside:avoid}\n  #splash{display:none!important}\n}\n\n/* ---------- Tela de abertura / aviso legal ---------- */\n#splash{\n  position:fixed;inset:0;z-index:1000;\n  background:var(--steel-dark);\n  display:grid;place-items:center;\n  padding:28px;overflow:auto;\n}\n#splash.hide{display:none}\n.splash-card{\n  width:100%;max-width:720px;\n  background:#fbf9f3;\n  border:1px solid var(--line);\n  border-top:4px solid var(--clay);\n  box-shadow:0 20px 60px rgba(0,0,0,.35);\n}\n.splash-top{\n  padding:34px 40px 26px;\n  border-bottom:1px solid var(--line);\n  display:flex;align-items:center;gap:20px;\n}\n.splash-top .logo{\n  width:66px;height:66px;flex-shrink:0;\n  border:2px solid var(--clay);\n  display:grid;place-items:center;\n  background:rgba(181,98,47,.1);\n}\n.splash-top .logo svg{width:38px;height:38px}\n.splash-top .sub{font-size:.7rem;letter-spacing:2.5px;text-transform:uppercase;color:var(--clay);font-weight:700}\n.splash-top h1{font-size:1.55rem;font-weight:700;line-height:1.18;margin-top:5px;letter-spacing:.2px}\n.splash-body{padding:26px 40px 6px}\n.splash-body .lead{font-size:.9rem;color:var(--ink-soft);line-height:1.55;margin-bottom:20px}\n.legal-h{font-size:.72rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--steel);margin-bottom:10px;display:flex;align-items:center;gap:8px}\n.legal-h svg{width:16px;height:16px}\n.legal{\n  border:1px solid var(--line);background:#fff;\n  padding:16px 18px;max-height:230px;overflow:auto;\n  font-size:.79rem;line-height:1.55;color:var(--ink);\n}\n.legal p{margin-bottom:10px}\n.legal p:last-child{margin-bottom:0}\n.legal b{font-weight:700}\n.legal .art{font-size:.68rem;color:var(--ink-soft);border-top:1px dotted var(--line);padding-top:10px;margin-top:12px}\n.splash-foot{\n  padding:18px 40px 34px;\n  display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;\n}\n.agree{display:flex;align-items:flex-start;gap:10px;font-size:.82rem;color:var(--ink-soft);cursor:pointer;max-width:400px;line-height:1.4}\n.agree input{width:18px;height:18px;flex-shrink:0;margin-top:1px;accent-color:var(--clay);cursor:pointer}\n#btnEnter{white-space:nowrap}\n#btnEnter:disabled{background:var(--paper-2);color:#9a9484;cursor:not-allowed}\n@media(max-width:560px){\n  .splash-top{padding:26px 24px 20px;gap:14px}\n  .splash-body,.splash-foot{padding-left:24px;padding-right:24px}\n  .splash-top h1{font-size:1.25rem}\n}\n<\u002Fstyle>\n<\u002Fhead>\n<body>\n\n<!-- ============ TELA DE ABERTURA / AVISO LEGAL ============ -->\n<div id=\"splash\">\n  <div class=\"splash-card\">\n    <div class=\"splash-top\">\n      <div class=\"logo\" aria-hidden=\"true\">\n        <svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#b5622f\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\">\n          <path d=\"M3 21h18\"><\u002Fpath><path d=\"M5 21V8l7-5 7 5v13\"><\u002Fpath><path d=\"M9 21v-6h6v6\"><\u002Fpath><path d=\"M9 11h.01M15 11h.01\"><\u002Fpath>\n        <\u002Fsvg>\n      <\u002Fdiv>\n      <div>\n        <div class=\"sub\">Ferramenta técnica de apoio<\u002Fdiv>\n        <h1>Calculadora de Resíduos de Construção Civil<br>e Gerador de PGRCC<\u002Fh1>\n      <\u002Fdiv>\n    <\u002Fdiv>\n    <div class=\"splash-body\">\n      <p class=\"lead\">Estime a geração de resíduos por classe (A, B, C e D), planeje transporte e caçambas e gere a minuta do <b>Plano de Gerenciamento de Resíduos da Construção Civil<\u002Fb> a partir da área construída ou dos quantitativos de material.<\u002Fp>\n      <div class=\"legal-h\">\n        <svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z\"><\u002Fpath><path d=\"M9 12l2 2 4-4\"><\u002Fpath><\u002Fsvg>\n        Aviso legal\n      <\u002Fdiv>\n      <div class=\"legal\">\n        <p><b>Natureza estimativa.<\u002Fb> Esta ferramenta produz <b>estimativas para fins de planejamento<\u002Fb>. Os quantitativos são calculados a partir de taxas médias de referência e de percentuais médios de composição e não substituem a medição direta em campo.<\u002Fp>\n        <p><b>Responsabilidade técnica.<\u002Fb> O PGRCC definitivo deve ser elaborado, quantificado e assinado por <b>profissional legalmente habilitado<\u002Fb>, com a devida Anotação de Responsabilidade Técnica (ART/RRT). Os resultados aqui apresentados não constituem projeto, laudo ou documento oficial.<\u002Fp>\n        <p><b>Conformidade local.<\u002Fb> É de responsabilidade do usuário verificar e atender às exigências específicas do órgão ambiental competente e da legislação municipal aplicável ao empreendimento.<\u002Fp>\n        <p><b>Isenção de responsabilidade.<\u002Fb> Os desenvolvedores desta ferramenta não se responsabilizam por decisões, custos, sanções ou danos decorrentes do uso das estimativas geradas.<\u002Fp>\n        <p><b>Privacidade.<\u002Fb> Os dados informados são gravados <b>apenas localmente neste navegador<\u002Fb> e não são enviados a servidores externos.<\u002Fp>\n        <p class=\"art\">Classificação conforme Resolução CONAMA nº 307/2002 (e alterações 348/2004 e 431/2011) e NBR 10004/2004. Gestão conforme a Lei nº 12.305/2010 (PNRS).<\u002Fp>\n      <\u002Fdiv>\n    <\u002Fdiv>\n    <div class=\"splash-foot\">\n      <label class=\"agree\">\n        <input type=\"checkbox\" id=\"agreeChk\">\n        <span>Li e concordo com o aviso legal e compreendo o caráter estimativo desta ferramenta.<\u002Fspan>\n      <\u002Flabel>\n      <button class=\"btn btn-primary\" id=\"btnEnter\" disabled=\"\">\n        Acessar a calculadora\n        <svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 12h14M13 6l6 6-6 6\"><\u002Fpath><\u002Fsvg>\n      <\u002Fbutton>\n    <\u002Fdiv>\n  <\u002Fdiv>\n<\u002Fdiv>\n\n<header>\n  <div class=\"hwrap\">\n    <div class=\"brand\">\n      <div class=\"logo\" aria-hidden=\"true\">\n        <svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#b5622f\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\">\n          <path d=\"M3 21h18\"><\u002Fpath><path d=\"M5 21V8l7-5 7 5v13\"><\u002Fpath><path d=\"M9 21v-6h6v6\"><\u002Fpath><path d=\"M9 11h.01M15 11h.01\"><\u002Fpath>\n        <\u002Fsvg>\n      <\u002Fdiv>\n      <div>\n        <h1>Calculadora PGRCC<\u002Fh1>\n        <div class=\"sub\">Gerenciamento de Resíduos da Construção Civil<\u002Fdiv>\n      <\u002Fdiv>\n    <\u002Fdiv>\n    <div class=\"hmeta\">\n      <div>CONAMA <strong>307/2002<\u002Fstrong> · <strong>431/2011<\u002Fstrong><\u002Fdiv>\n      <div>Lei <strong>12.305/2010<\u002Fstrong> — PNRS<\u002Fdiv>\n      <div>NBR <strong>10004/2004<\u002Fstrong><\u002Fdiv>\n    <\u002Fdiv>\n  <\u002Fdiv>\n<\u002Fheader>\n\n<main>\n  <div class=\"grid\">\n    <!-- ============ COLUNA ESQUERDA: ENTRADA ============ -->\n    <div>\n      <div class=\"card\">\n        <div class=\"card-h\"><span class=\"n\">1<\u002Fspan><h2>Dados da obra<\u002Fh2><\u002Fdiv>\n        <div class=\"card-b\">\n          <div class=\"field\">\n            <label>Identificação / nome da obra<\u002Flabel>\n            <input type=\"text\" id=\"obraNome\" placeholder=\"Ex.: Edifício Residencial Aurora\">\n          <\u002Fdiv>\n          <div class=\"row2\">\n            <div class=\"field\">\n              <label>Responsável técnico<\u002Flabel>\n              <input type=\"text\" id=\"obraResp\" placeholder=\"Eng. / ART\">\n            <\u002Fdiv>\n            <div class=\"field\">\n              <label>Localização<\u002Flabel>\n              <input type=\"text\" id=\"obraLocal\" placeholder=\"Município / UF\">\n            <\u002Fdiv>\n          <\u002Fdiv>\n          <div class=\"row2\">\n            <div class=\"field\">\n              <label>Tipo de obra<\u002Flabel>\n              <select id=\"obraTipo\">\n                <option value=\"residencial\">Residencial<\u002Foption>\n                <option value=\"comercial\">Comercial<\u002Foption>\n                <option value=\"institucional\">Institucional<\u002Foption>\n                <option value=\"servicos\">Serviços de saúde<\u002Foption>\n              <\u002Fselect>\n            <\u002Fdiv>\n            <div class=\"field\">\n              <label>Fase / natureza<\u002Flabel>\n              <select id=\"obraFase\">\n                <option value=\"construcao\">Construção nova<\u002Foption>\n                <option value=\"reforma\">Reforma<\u002Foption>\n                <option value=\"demolicao\">Demolição<\u002Foption>\n              <\u002Fselect>\n            <\u002Fdiv>\n          <\u002Fdiv>\n        <\u002Fdiv>\n      <\u002Fdiv>\n\n      <div class=\"card\" style=\"margin-top:24px\">\n        <div class=\"card-h\"><span class=\"n\">2<\u002Fspan><h2>Quantificação<\u002Fh2>\n          <span class=\"hint\">escolha o método<\u002Fspan><\u002Fdiv>\n        <div class=\"card-b\">\n          <div class=\"tabs\">\n            <div class=\"tab on\" data-tab=\"area\">Por área construída<\u002Fdiv>\n            <div class=\"tab\" data-tab=\"material\">Por materiais<\u002Fdiv>\n          <\u002Fdiv>\n\n          <!-- MÉTODO 1: ÁREA -->\n          <div id=\"pane-area\">\n            <div class=\"field\">\n              <label>Área a construir / reformar <span class=\"u\">m²<\u002Fspan><\u002Flabel>\n              <input type=\"number\" class=\"mono\" id=\"areaM2\" placeholder=\"0,00\" step=\"0.01\" min=\"0\">\n              <div class=\"hlp\">Estimativa baseada em taxa de referência de geração por metro quadrado de área construída (medição direta em edificações — ver rodapé).<\u002Fdiv>\n            <\u002Fdiv>\n            <div class=\"field\">\n              <label>Taxa de geração adotada <span class=\"u\">kg/m²<\u002Fspan><\u002Flabel>\n              <select id=\"taxaSel\">\n                <option value=\"86.27\">86,27 — média ponderada RCC Classe A (referência)<\u002Foption>\n                <option value=\"93.89\">93,89 — média ponderada RCC total (bruto)<\u002Foption>\n                <option value=\"99.17\">99,17 — média aritmética RCC Classe A<\u002Foption>\n                <option value=\"62.31\">62,31 — limite inferior 90% (conservador)<\u002Foption>\n                <option value=\"136.02\">136,02 — limite superior 90% (crítico)<\u002Foption>\n                <option value=\"custom\">Personalizada…<\u002Foption>\n              <\u002Fselect>\n              <input type=\"number\" class=\"mono\" id=\"taxaCustom\" placeholder=\"Digite a taxa em kg/m²\" step=\"0.01\" min=\"0\" style=\"display:none;margin-top:8px\">\n              <div class=\"hlp\">A composição por classe é distribuída segundo percentuais médios de estudos de caracterização (Classe A predominante, ~93%).<\u002Fdiv>\n            <\u002Fdiv>\n          <\u002Fdiv>\n\n          <!-- MÉTODO 2: MATERIAIS -->\n          <div id=\"pane-material\" style=\"display:none\">\n            <div class=\"section-lbl\">Classe A · agregados recicláveis<\u002Fdiv>\n            <div class=\"matgrid\" id=\"matA\"><\u002Fdiv>\n            <div class=\"divider\"><\u002Fdiv>\n            <div class=\"section-lbl\">Classe B · recicláveis p/ outras destinações<\u002Fdiv>\n            <div class=\"matgrid\" id=\"matB\"><\u002Fdiv>\n            <div class=\"divider\"><\u002Fdiv>\n            <div class=\"section-lbl\">Classe C · sem tecnologia viável<\u002Fdiv>\n            <div class=\"matgrid\" id=\"matC\"><\u002Fdiv>\n            <div class=\"divider\"><\u002Fdiv>\n            <div class=\"section-lbl\">Classe D · perigosos<\u002Fdiv>\n            <div class=\"matgrid\" id=\"matD\"><\u002Fdiv>\n            <div class=\"hlp\" style=\"margin-top:12px\">Massa unitária média adotada para conversão volume→massa: <b>1.025 kg/m³<\u002Fb> (RCC bruto). Metais, vidros e plásticos são informados diretamente em kg.<\u002Fdiv>\n          <\u002Fdiv>\n\n          <div class=\"btnrow\" style=\"margin-top:18px\">\n            <button class=\"btn btn-primary btn-block\" id=\"btnCalc\">\n              <svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><path d=\"M9 7h6M9 11h6M9 15h4\"><\u002Fpath><rect x=\"5\" y=\"3\" width=\"14\" height=\"18\" rx=\"1\"><\u002Frect><\u002Fsvg>\n              Calcular geração de resíduos\n            <\u002Fbutton>\n          <\u002Fdiv>\n        <\u002Fdiv>\n      <\u002Fdiv>\n    <\u002Fdiv>\n\n    <!-- ============ COLUNA DIREITA: RESULTADOS ============ -->\n    <div>\n      <div class=\"card\">\n        <div class=\"card-h\"><span class=\"n\">3<\u002Fspan><h2>Resultado<\u002Fh2>\n          <span class=\"hint\" id=\"metodoTag\">—<\u002Fspan><\u002Fdiv>\n        <div id=\"resultArea\">\n          <div class=\"empty\">\n            <svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\"><path d=\"M3 3v18h18\"><\u002Fpath><path d=\"M7 14l4-4 3 3 5-6\"><\u002Fpath><\u002Fsvg>\n            <p>Preencha os dados e calcule para ver<br>a estimativa de geração por classe.<\u002Fp>\n          <\u002Fdiv>\n        <\u002Fdiv>\n      <\u002Fdiv>\n\n      <div class=\"card\" id=\"docCard\" style=\"margin-top:24px;display:none\">\n        <div class=\"card-h\"><span class=\"n\">4<\u002Fspan><h2>Minuta do PGRCC<\u002Fh2>\n          <span class=\"hint\">pré-visualização<\u002Fspan><\u002Fdiv>\n        <div class=\"card-b\">\n          <div class=\"docprev\" id=\"docPrev\"><\u002Fdiv>\n          <div class=\"btnrow\" style=\"margin-top:16px\">\n            <button class=\"btn btn-ghost\" id=\"btnPrint\">\n              <svg width=\"15\" height=\"15\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2\"><\u002Fpath><rect x=\"6\" y=\"14\" width=\"12\" height=\"8\"><\u002Frect><\u002Fsvg>\n              Imprimir / PDF\n            <\u002Fbutton>\n            <button class=\"btn btn-ghost\" id=\"btnCSV\">\n              <svg width=\"15\" height=\"15\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z\"><\u002Fpath><path d=\"M14 2v6h6M8 13h8M8 17h5\"><\u002Fpath><\u002Fsvg>\n              Planilha (CSV)\n            <\u002Fbutton>\n          <\u002Fdiv>\n        <\u002Fdiv>\n      <\u002Fdiv>\n    <\u002Fdiv>\n  <\u002Fdiv>\n\n  <div class=\"savebar\">\n    <span id=\"saveStatus\">Dados salvos localmente neste navegador.<\u002Fspan>\n    <div class=\"actions\">\n      <button class=\"btn btn-ghost mini\" id=\"btnSave\">Salvar<\u002Fbutton>\n      <button class=\"btn btn-ghost mini\" id=\"btnClear\">Limpar tudo<\u002Fbutton>\n    <\u002Fdiv>\n  <\u002Fdiv>\n<\u002Fmain>\n\n<footer>\n  <div class=\"refbox noprint\">\n    <strong>Referências normativas e técnicas.<\u002Fstrong>\n    Classificação conforme <strong>Resolução CONAMA nº 307/2002<\u002Fstrong> (com as alterações das Resoluções nº 348/2004 e nº 431/2011) e <strong>NBR 10004/2004<\u002Fstrong>.\n    Diretrizes gerais de gestão conforme a <strong>Lei nº 12.305, de 2 de agosto de 2010<\u002Fstrong>, que institui a Política Nacional de Resíduos Sólidos.\n    Os parâmetros de estimativa por área (taxa média de <strong>86,27 kg/m²<\u002Fstrong> para RCC Classe A; intervalo de confiança 90% de <strong>62,31 a 136,02 kg/m²<\u002Fstrong>; massa unitária de <strong>1.025 kg/m³<\u002Fstrong>) derivam de estudo de medição direta de geração de RCC em edificações (dissertação de mestrado, PPGEUA/UFPB, João Pessoa, 2012).\n    Esta ferramenta produz estimativas para planejamento; a quantificação real deve ser aferida em campo e o PGRCC final elaborado por profissional habilitado.\n  <\u002Fdiv>\n<\u002Ffooter>\n\n<script>\n\"use strict\";\n\n// ---------- Parâmetros técnicos ----------\nconst MASSA_UNIT = 1025;              // kg/m³ RCC bruto\nconst IC = {inf:62.31, sup:136.02};   // limites 90% classe A\n\n// Composição percentual por classe na estimativa por ÁREA\n// Classe A predominante (~93% conforme caracterização), demais rateadas.\nconst COMP = {A:0.93, B:0.05, C:0.01, D:0.01};\n\n// Densidades aparentes p/ conversão volume→massa (kg/m³) no método por material\nconst DENS = {\n  concreto:1025, argamassa:1025, ceramica:1025, rochas:1025, solo:1025,\n  madeira:1025, gesso:1025\n};\n\n// Definição dos materiais por classe (método 2)\nconst MATERIAIS = {\n  A:[\n    {id:\"concreto\", nome:\"Concreto\", un:\"m³\", dens:1025},\n    {id:\"argamassa\", nome:\"Argamassa\", un:\"m³\", dens:1025},\n    {id:\"ceramica\", nome:\"Cerâmica / alvenaria (tijolos, blocos, telhas)\", un:\"m³\", dens:1025},\n    {id:\"rochas\", nome:\"Rochas naturais\", un:\"m³\", dens:1025},\n    {id:\"solo\", nome:\"Solo de terraplanagem\", un:\"m³\", dens:1025},\n  ],\n  B:[\n    {id:\"madeira\", nome:\"Madeira\", un:\"m³\", dens:1025},\n    {id:\"gesso\", nome:\"Gesso\", un:\"m³\", dens:1025},\n    {id:\"metais\", nome:\"Metais (ferrosos / não ferrosos)\", un:\"kg\", dens:null},\n    {id:\"vidro\", nome:\"Vidros\", un:\"kg\", dens:null},\n    {id:\"plastico\", nome:\"Plásticos\", un:\"kg\", dens:null},\n    {id:\"papel\", nome:\"Papel / papelão\", un:\"kg\", dens:null},\n  ],\n  C:[\n    {id:\"classeC\", nome:\"Resíduos sem reciclagem viável\", un:\"kg\", dens:null},\n  ],\n  D:[\n    {id:\"tintas\", nome:\"Tintas, solventes e óleos\", un:\"kg\", dens:null},\n    {id:\"amianto\", nome:\"Amianto / contaminados\", un:\"kg\", dens:null},\n    {id:\"perigosoOut\", nome:\"Outros perigosos\", un:\"kg\", dens:null},\n  ]\n};\n\nconst CLASSE_INFO = {\n  A:{nome:\"Classe A\", desc:\"Recicláveis como agregados — reutilização em obras, sub-base de vias e pré-moldados\", color:\"var(--A)\", bg:\"var(--A-bg)\", dest:\"Usina de triagem/reciclagem de RCC ou aterro de inertes licenciado\"},\n  B:{nome:\"Classe B\", desc:\"Recicláveis para outras destinações — madeira, gesso, metais, vidros, plásticos, papel\", color:\"var(--B)\", bg:\"var(--B-bg)\", dest:\"Cooperativas de reciclagem ou empresas especializadas por tipo de material\"},\n  C:{nome:\"Classe C\", desc:\"Sem tecnologia de reciclagem economicamente viável\", color:\"var(--C)\", bg:\"var(--C-bg)\", dest:\"Aterro licenciado, conforme normas técnicas específicas\"},\n  D:{nome:\"Classe D\", desc:\"Perigosos — tintas, solventes, óleos, amianto, contaminados\", color:\"var(--D)\", bg:\"var(--D-bg)\", dest:\"Empresa licenciada para resíduos perigosos — CTR obrigatório\"}\n};\n\nconst CAP = [4.5, 7.6, 12]; // capacidades de caçamba/transporte em m³\n\n// ---------- Utilidades ----------\nconst $ = s=>document.querySelector(s);\nconst $$ = s=>document.querySelectorAll(s);\nconst num = v => { const n=parseFloat(String(v).replace(\",\",\".\")); return isFinite(n)&&n>0?n:0; };\nconst fmt = (n,d=2)=> n.toLocaleString(\"pt-BR\",{minimumFractionDigits:d,maximumFractionDigits:d});\nconst fmt0 = n => n.toLocaleString(\"pt-BR\",{maximumFractionDigits:0});\n\nlet metodo = \"area\";\nlet ultimo = null; // guarda último cálculo p/ export\n\n// ---------- Montar campos de material ----------\nfunction buildMateriais(){\n  for(const cls of [\"A\",\"B\",\"C\",\"D\"]){\n    const box = $(\"#mat\"+cls);\n    box.innerHTML = \"\";\n    MATERIAIS[cls].forEach(m=>{\n      const lbl = document.createElement(\"div\");\n      lbl.className = \"ml\";\n      lbl.innerHTML = `${m.nome}`;\n      const wrap = document.createElement(\"div\");\n      wrap.style.display=\"flex\"; wrap.style.alignItems=\"center\"; wrap.style.gap=\"8px\";\n      const inp = document.createElement(\"input\");\n      inp.type=\"number\"; inp.className=\"mono\"; inp.step=\"0.01\"; inp.min=\"0\";\n      inp.placeholder=\"0\"; inp.id=\"mat_\"+m.id; inp.dataset.cls=cls; inp.dataset.un=m.un;\n      inp.dataset.dens = m.dens||\"\";\n      const un = document.createElement(\"span\");\n      un.className=\"unit\"; un.textContent=m.un;\n      wrap.appendChild(inp); wrap.appendChild(un);\n      box.appendChild(lbl); box.appendChild(wrap);\n    });\n  }\n}\n\n// ---------- Tabs ----------\n$$(\".tab\").forEach(t=>t.addEventListener(\"click\",()=>{\n  $$(\".tab\").forEach(x=>x.classList.remove(\"on\"));\n  t.classList.add(\"on\");\n  metodo = t.dataset.tab;\n  $(\"#pane-area\").style.display   = metodo===\"area\"?\"block\":\"none\";\n  $(\"#pane-material\").style.display = metodo===\"material\"?\"block\":\"none\";\n}));\n\n// taxa personalizada\n$(\"#taxaSel\").addEventListener(\"change\",e=>{\n  $(\"#taxaCustom\").style.display = e.target.value===\"custom\"?\"block\":\"none\";\n});\n\n// ---------- Cálculo ----------\nfunction calcularPorArea(){\n  const area = num($(\"#areaM2\").value);\n  if(area<=0){ alert(\"Informe uma área construída maior que zero.\"); return null; }\n  let taxa;\n  if($(\"#taxaSel\").value===\"custom\"){\n    taxa = num($(\"#taxaCustom\").value);\n    if(taxa<=0){ alert(\"Informe uma taxa personalizada válida.\"); return null; }\n  } else {\n    taxa = parseFloat($(\"#taxaSel\").value);\n  }\n  // A taxa selecionada refere-se à base; expandimos p/ total quando a taxa é de Classe A\n  // Estratégia: a taxa informada é tratada como massa TOTAL de RCC por m².\n  const massaTotal = area * taxa;\n  const classes = {};\n  for(const c of [\"A\",\"B\",\"C\",\"D\"]){\n    const massa = massaTotal * COMP[c];\n    classes[c] = { massa, volume: massa/MASSA_UNIT };\n  }\n  const volumeTotal = massaTotal/MASSA_UNIT;\n  return {\n    metodo:\"área\", base:{area, taxa},\n    massaTotal, volumeTotal, classes,\n    taxaEfetiva: taxa\n  };\n}\n\nfunction calcularPorMaterial(){\n  const classes = {A:{massa:0,volume:0},B:{massa:0,volume:0},C:{massa:0,volume:0},D:{massa:0,volume:0}};\n  let any=false;\n  $$('#pane-material input[type=number]').forEach(inp=>{\n    const v = num(inp.value);\n    if(v<=0) return;\n    any=true;\n    const cls = inp.dataset.cls;\n    const un = inp.dataset.un;\n    let massa, volume;\n    if(un===\"m³\"){\n      const dens = parseFloat(inp.dataset.dens)||MASSA_UNIT;\n      volume = v; massa = v*dens;\n    } else { // kg\n      massa = v; volume = v/MASSA_UNIT;\n    }\n    classes[cls].massa += massa;\n    classes[cls].volume += volume;\n  });\n  if(!any){ alert(\"Informe ao menos um quantitativo de material.\"); return null; }\n  let massaTotal=0, volumeTotal=0;\n  for(const c of [\"A\",\"B\",\"C\",\"D\"]){ massaTotal+=classes[c].massa; volumeTotal+=classes[c].volume; }\n  const area = num($(\"#areaM2\").value);\n  return {\n    metodo:\"materiais\", base:{area},\n    massaTotal, volumeTotal, classes,\n    taxaEfetiva: area>0 ? massaTotal/area : null\n  };\n}\n\n// ---------- Render ----------\nfunction render(r){\n  ultimo = r;\n  $(\"#metodoTag\").textContent = \"método: \"+r.metodo;\n\n  const cacambas = escolherCacamba(r.volumeTotal);\n  const dentroIC = r.taxaEfetiva!=null ? (r.taxaEfetiva>=IC.inf && r.taxaEfetiva<=IC.sup) : null;\n\n  let html = `\n  <div class=\"headline\">\n    <div class=\"row\">\n      <div>\n        <div class=\"k\">Massa total de RCC<\u002Fdiv>\n        <div class=\"v\">${fmt0(r.massaTotal)} <small>kg<\u002Fsmall><\u002Fdiv>\n      <\u002Fdiv>\n      <div>\n        <div class=\"k\">Volume total<\u002Fdiv>\n        <div class=\"v\">${fmt(r.volumeTotal)} <small>m³<\u002Fsmall><\u002Fdiv>\n      <\u002Fdiv>\n    <\u002Fdiv>\n  <\u002Fdiv>\n  <div class=\"classbars\">`;\n\n  for(const c of [\"A\",\"B\",\"C\",\"D\"]){\n    const cl = r.classes[c], info = CLASSE_INFO[c];\n    const pct = r.massaTotal>0 ? (cl.massa/r.massaTotal*100) : 0;\n    html += `\n    <div class=\"cbar\">\n      <div class=\"badge\" style=\"background:${info.color}\">${c}<\u002Fdiv>\n      <div class=\"info\">\n        <div class=\"t\">${info.nome}<\u002Fdiv>\n        <div class=\"d\">${info.desc}<\u002Fdiv>\n        <div class=\"track\"><i style=\"width:${pct.toFixed(1)}%;background:${info.color}\"><\u002Fi><\u002Fdiv>\n      <\u002Fdiv>\n      <div class=\"nums\">\n        <div class=\"m\">${fmt0(cl.massa)} <span style=\"font-size:.7rem;color:var(--ink-soft)\">kg<\u002Fspan><\u002Fdiv>\n        <div class=\"s\">${fmt(cl.volume)} m³ · ${pct.toFixed(1)}%<\u002Fdiv>\n      <\u002Fdiv>\n    <\u002Fdiv>`;\n  }\n  html += `<\u002Fdiv>`;\n\n  // Gauge de conformidade (só faz sentido com taxa por m²)\n  if(r.taxaEfetiva!=null){\n    const min=40, max=160; // faixa visual do medidor\n    const clamp = x => Math.max(min,Math.min(max,x));\n    const pos = x => ((clamp(x)-min)/(max-min))*100;\n    html += `\n    <div class=\"panel\">\n      <div class=\"panel-h\">\n        <svg width=\"15\" height=\"15\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M12 2v4M12 18v4M2 12h4M18 12h4\"/><circle cx=\"12\" cy=\"12\" r=\"6\"/><\u002Fsvg>\n        Conformidade da taxa de geração\n      <\u002Fdiv>\n      <div class=\"panel-b\">\n        <div class=\"gauge\">\n          <div class=\"scale\">\n            <div class=\"band\"><\u002Fdiv>\n            <div class=\"lim\" style=\"left:${pos(IC.inf)}%\"><span>${fmt(IC.inf)}<\u002Fspan><\u002Fdiv>\n            <div class=\"lim\" style=\"left:${pos(IC.sup)}%\"><span>${fmt(IC.sup)}<\u002Fspan><\u002Fdiv>\n            <div class=\"marker\" style=\"left:${pos(r.taxaEfetiva)}%\"><span>${fmt(r.taxaEfetiva)}<\u002Fspan><\u002Fdiv>\n          <\u002Fdiv>\n          <div class=\"ends\"><span>${min} kg/m²<\u002Fspan><span>${max} kg/m²<\u002Fspan><\u002Fdiv>\n        <\u002Fdiv>`;\n\n    if(dentroIC){\n      html += `<div class=\"flag ok\">\n        <svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M20 6L9 17l-5-5\"/><\u002Fsvg>\n        <span><b>Dentro do intervalo esperado.<\u002Fb> A taxa de ${fmt(r.taxaEfetiva)} kg/m² situa-se entre os limites de aceitação de 90% de confiança (${fmt(IC.inf)}–${fmt(IC.sup)} kg/m²), sugerindo geração compatível com padrões de referência.<\u002Fspan><\u002Fdiv>`;\n    } else if(r.taxaEfetiva<IC.inf){\n      html += `<div class=\"flag warn\">\n        <svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M12 9v4M12 17h.01\"/><path d=\"M10.3 3.9L1.8 18a2 2 0 001.7 3h17a2 2 0 001.7-3L14.7 3.9a2 2 0 00-3.4 0z\"/><\u002Fsvg>\n        <span><b>Abaixo do limite inferior.<\u002Fb> A taxa de ${fmt(r.taxaEfetiva)} kg/m² está abaixo de ${fmt(IC.inf)} kg/m². Verifique se parte dos resíduos deixou de ser contabilizada ou foi remanejada — recomenda-se justificar a destinação.<\u002Fspan><\u002Fdiv>`;\n    } else {\n      html += `<div class=\"flag warn\">\n        <svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M12 9v4M12 17h.01\"/><path d=\"M10.3 3.9L1.8 18a2 2 0 001.7 3h17a2 2 0 001.7-3L14.7 3.9a2 2 0 00-3.4 0z\"/><\u002Fsvg>\n        <span><b>Acima do limite superior.<\u002Fb> A taxa de ${fmt(r.taxaEfetiva)} kg/m² excede ${fmt(IC.sup)} kg/m². Geração elevada — recomenda-se revisar perdas no canteiro e reforçar a segregação para reduzir o volume descartado.<\u002Fspan><\u002Fdiv>`;\n    }\n    html += `<\u002Fdiv><\u002Fdiv>`;\n  }\n\n  // Caçambas / transporte\n  html += `\n  <div class=\"panel\">\n    <div class=\"panel-h\">\n      <svg width=\"15\" height=\"15\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M1 3h15v13H1zM16 8h4l3 3v5h-7\"/><circle cx=\"5.5\" cy=\"18.5\" r=\"2.5\"/><circle cx=\"18.5\" cy=\"18.5\" r=\"2.5\"/><\u002Fsvg>\n      Planejamento de caçambas e transporte\n    <\u002Fdiv>\n    <div class=\"panel-b\">\n      <div class=\"cacamba\">`;\n  CAP.forEach(cap=>{\n    const n = Math.ceil(r.volumeTotal/cap);\n    const pick = cap===cacambas.cap;\n    html += `<div class=\"cc ${pick?'pick':''}\">\n      <div class=\"cap\">Caçamba ${fmt(cap).replace(\",00\",\"\")} m³<\u002Fdiv>\n      <div class=\"qt\">${fmt0(n)}<\u002Fdiv>\n      <div class=\"un\">viagens${pick?' · sugerida':''}<\u002Fdiv>\n    <\u002Fdiv>`;\n  });\n  html += `<\u002Fdiv>\n      <div class=\"flag info\" style=\"margin-top:14px\">\n        <svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M12 16v-4M12 8h.01\"/><\u002Fsvg>\n        <span>Estimativa de <b>${fmt0(cacambas.n)} viagens<\u002Fb> com caçamba de ${fmt(cacambas.cap).replace(\",00\",\"\")} m³ para o volume total. Classe D deve ser transportada separadamente, com <b>Controle de Transporte de Resíduo (CTR)<\u002Fb>.<\u002Fspan>\n      <\u002Fdiv>\n    <\u002Fdiv>\n  <\u002Fdiv>`;\n\n  // Destinação por classe\n  html += `\n  <div class=\"panel\">\n    <div class=\"panel-h\">\n      <svg width=\"15\" height=\"15\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M3 12l2-2 4 4 8-8 4 4\"/><path d=\"M3 20h18\"/><\u002Fsvg>\n      Destinação recomendada\n    <\u002Fdiv>\n    <div class=\"panel-b\" style=\"padding-top:8px\">`;\n  for(const c of [\"A\",\"B\",\"C\",\"D\"]){\n    if(r.classes[c].massa<=0) continue;\n    const info=CLASSE_INFO[c];\n    html += `<div class=\"trow\">\n      <span class=\"lbl\"><span class=\"mono\" style=\"font-weight:700;color:${info.color}\">[${c}]<\u002Fspan> ${info.dest}<\u002Fspan>\n      <span class=\"val\">${fmt0(r.classes[c].massa)} kg<\u002Fspan>\n    <\u002Fdiv>`;\n  }\n  html += `<\u002Fdiv><\u002Fdiv>`;\n\n  $(\"#resultArea\").innerHTML = html;\n\n  // Documento PGRCC\n  renderDoc(r, cacambas);\n  $(\"#docCard\").style.display=\"block\";\n  save(true);\n}\n\nfunction escolherCacamba(vol){\n  // escolhe a maior capacidade que resulte em nº \"razoável\" de viagens; default 12 p/ grandes volumes\n  let cap = 4.5;\n  if(vol>30) cap=12; else if(vol>12) cap=7.6; else cap=4.5;\n  return {cap, n:Math.ceil(vol/cap)};\n}\n\nfunction renderDoc(r, cac){\n  const nome = $(\"#obraNome\").value||\"—\";\n  const resp = $(\"#obraResp\").value||\"—\";\n  const local = $(\"#obraLocal\").value||\"—\";\n  const tipo = $(\"#obraTipo\").selectedOptions[0].text;\n  const fase = $(\"#obraFase\").selectedOptions[0].text;\n  const hoje = new Date().toLocaleDateString(\"pt-BR\");\n\n  let rows=\"\";\n  for(const c of [\"A\",\"B\",\"C\",\"D\"]){\n    const cl=r.classes[c];\n    rows += `<tr>\n      <td><b style=\"color:${CLASSE_INFO[c].color}\">${c}<\u002Fb><\u002Ftd>\n      <td>${CLASSE_INFO[c].nome}<\u002Ftd>\n      <td class=\"num\">${fmt(cl.volume)}<\u002Ftd>\n      <td class=\"num\">${fmt0(cl.massa)}<\u002Ftd>\n      <td style=\"font-size:.68rem\">${CLASSE_INFO[c].dest}<\u002Ftd>\n    <\u002Ftr>`;\n  }\n\n  $(\"#docPrev\").innerHTML = `\n    <h4>1. Identificação do empreendimento<\u002Fh4>\n    <dl class=\"dl\">\n      <dt>Obra<\u002Fdt><dd>${nome}<\u002Fdd>\n      <dt>Responsável técnico<\u002Fdt><dd>${resp}<\u002Fdd>\n      <dt>Localização<\u002Fdt><dd>${local}<\u002Fdd>\n      <dt>Tipo / fase<\u002Fdt><dd>${tipo} · ${fase}<\u002Fdd>\n      ${r.base.area?`<dt>Área (m²)<\u002Fdt><dd>${fmt(r.base.area)}<\u002Fdd>`:\"\"}\n      <dt>Data da estimativa<\u002Fdt><dd>${hoje}<\u002Fdd>\n    <\u002Fdl>\n\n    <h4>2. Quantificação estimada por classe<\u002Fh4>\n    <table>\n      <thead><tr><th>Cl.<\u002Fth><th>Classificação<\u002Fth><th>Vol. (m³)<\u002Fth><th>Massa (kg)<\u002Fth><th>Destinação<\u002Fth><\u002Ftr><\u002Fthead>\n      <tbody>${rows}\n      <tr style=\"background:var(--paper-2)\"><td colspan=\"2\"><b>Total<\u002Fb><\u002Ftd><td class=\"num\"><b>${fmt(r.volumeTotal)}<\u002Fb><\u002Ftd><td class=\"num\"><b>${fmt0(r.massaTotal)}<\u002Fb><\u002Ftd><td><\u002Ftd><\u002Ftr>\n      <\u002Ftbody>\n    <\u002Ftable>\n\n    <h4>3. Transporte<\u002Fh4>\n    <dl class=\"dl\">\n      <dt>Capacidade sugerida<\u002Fdt><dd>${fmt(cac.cap).replace(\",00\",\"\")} m³<\u002Fdd>\n      <dt>Viagens estimadas<\u002Fdt><dd>${fmt0(cac.n)}<\u002Fdd>\n      <dt>Massa unitária adotada<\u002Fdt><dd>1.025 kg/m³<\u002Fdd>\n      ${r.taxaEfetiva!=null?`<dt>Taxa efetiva<\u002Fdt><dd>${fmt(r.taxaEfetiva)} kg/m²<\u002Fdd>`:\"\"}\n    <\u002Fdl>\n\n    <h4>4. Diretrizes de gestão<\u002Fh4>\n    <p style=\"font-size:.75rem;color:var(--ink-soft);line-height:1.5\">\n    Segregação na origem por classe; acondicionamento em dispositivos identificados; priorização da não geração, redução, reutilização e reciclagem, nesta ordem, conforme a Política Nacional de Resíduos Sólidos (Lei nº 12.305/2010).\n    Resíduos Classe D exigem manejo diferenciado e Controle de Transporte de Resíduo (CTR).\n    Classificação conforme Resolução CONAMA nº 307/2002 e alterações.\n    <\u002Fp>\n  `;\n}\n\n// ---------- Export CSV ----------\nfunction exportCSV(){\n  if(!ultimo){ return; }\n  const r=ultimo;\n  let csv=\"Classe;Classificacao;Volume_m3;Massa_kg;Percentual;Destinacao\\n\";\n  for(const c of [\"A\",\"B\",\"C\",\"D\"]){\n    const cl=r.classes[c];\n    const pct = r.massaTotal>0?(cl.massa/r.massaTotal*100):0;\n    csv += `${c};${CLASSE_INFO[c].nome};${cl.volume.toFixed(2).replace(\".\",\",\")};${cl.massa.toFixed(0)};${pct.toFixed(1).replace(\".\",\",\")}%;\"${CLASSE_INFO[c].dest}\"\\n`;\n  }\n  csv += `TOTAL;;${r.volumeTotal.toFixed(2).replace(\".\",\",\")};${r.massaTotal.toFixed(0)};100%;\\n`;\n  const blob = new Blob([\"\\ufeff\"+csv],{type:\"text/csv;charset=utf-8\"});\n  const a=document.createElement(\"a\");\n  a.href=URL.createObjectURL(blob);\n  a.download=\"PGRCC_quantificacao.csv\";\n  a.click();\n}\n\n// ---------- Persistência (localStorage) ----------\nconst KEY=\"pgrcc_v1\";\nfunction collect(){\n  const mats={};\n  $$('#pane-material input[type=number]').forEach(i=>{ if(i.value) mats[i.id]=i.value; });\n  return {\n    obraNome:$(\"#obraNome\").value, obraResp:$(\"#obraResp\").value, obraLocal:$(\"#obraLocal\").value,\n    obraTipo:$(\"#obraTipo\").value, obraFase:$(\"#obraFase\").value,\n    areaM2:$(\"#areaM2\").value, taxaSel:$(\"#taxaSel\").value, taxaCustom:$(\"#taxaCustom\").value,\n    metodo, mats\n  };\n}\nfunction save(silent){\n  try{\n    localStorage.setItem(KEY, JSON.stringify(collect()));\n    if(!silent){ $(\"#saveStatus\").textContent=\"Salvo em \"+new Date().toLocaleTimeString(\"pt-BR\")+\".\"; }\n  }catch(e){ $(\"#saveStatus\").textContent=\"Não foi possível salvar neste navegador.\"; }\n}\nfunction load(){\n  let d; try{ d=JSON.parse(localStorage.getItem(KEY)); }catch(e){ return; }\n  if(!d) return;\n  const set=(id,v)=>{ if(v!=null&&$(\"#\"+id)) $(\"#\"+id).value=v; };\n  set(\"obraNome\",d.obraNome); set(\"obraResp\",d.obraResp); set(\"obraLocal\",d.obraLocal);\n  set(\"obraTipo\",d.obraTipo); set(\"obraFase\",d.obraFase);\n  set(\"areaM2\",d.areaM2); set(\"taxaSel\",d.taxaSel); set(\"taxaCustom\",d.taxaCustom);\n  if(d.taxaSel===\"custom\") $(\"#taxaCustom\").style.display=\"block\";\n  if(d.mats){ for(const k in d.mats){ if($(\"#\"+k)) $(\"#\"+k).value=d.mats[k]; } }\n  if(d.metodo){\n    $$(\".tab\").forEach(t=>t.classList.toggle(\"on\",t.dataset.tab===d.metodo));\n    metodo=d.metodo;\n    $(\"#pane-area\").style.display=metodo===\"area\"?\"block\":\"none\";\n    $(\"#pane-material\").style.display=metodo===\"material\"?\"block\":\"none\";\n  }\n}\nfunction clearAll(){\n  if(!confirm(\"Limpar todos os dados e resultados?\")) return;\n  localStorage.removeItem(KEY);\n  $$(\"input\").forEach(i=>i.value=\"\");\n  $(\"#obraTipo\").selectedIndex=0; $(\"#obraFase\").selectedIndex=0; $(\"#taxaSel\").selectedIndex=0;\n  $(\"#taxaCustom\").style.display=\"none\";\n  $(\"#resultArea\").innerHTML=`<div class=\"empty\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\"><path d=\"M3 3v18h18\"/><path d=\"M7 14l4-4 3 3 5-6\"/><\u002Fsvg><p>Preencha os dados e calcule para ver<br>a estimativa de geração por classe.<\u002Fp><\u002Fdiv>`;\n  $(\"#docCard\").style.display=\"none\";\n  $(\"#metodoTag\").textContent=\"—\";\n  ultimo=null;\n  $(\"#saveStatus\").textContent=\"Dados limpos.\";\n}\n\n// ---------- Eventos ----------\n$(\"#btnCalc\").addEventListener(\"click\",()=>{\n  const r = metodo===\"area\" ? calcularPorArea() : calcularPorMaterial();\n  if(r) render(r);\n});\n$(\"#btnSave\").addEventListener(\"click\",()=>save(false));\n$(\"#btnClear\").addEventListener(\"click\",clearAll);\n$(\"#btnPrint\").addEventListener(\"click\",()=>window.print());\n$(\"#btnCSV\").addEventListener(\"click\",exportCSV);\n\n// autosave leve\ndocument.addEventListener(\"input\",()=>save(true));\n\n// ---------- Tela de abertura / aviso legal ----------\n(function(){\n  const splash=$(\"#splash\"), chk=$(\"#agreeChk\"), enter=$(\"#btnEnter\");\n  if(!splash) return;\n  chk.addEventListener(\"change\",()=>{ enter.disabled=!chk.checked; });\n  enter.addEventListener(\"click\",()=>{ splash.classList.add(\"hide\"); });\n})();\n\n// init\nbuildMateriais();\nload();\n<\u002Fscript>\n\n\n<\u002Fbody><\u002Fhtml>"
+  </script>
+</body>
+</html>

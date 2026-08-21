@@ -122,7 +122,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/riscos/` | 963063 bytes | 940336 caracteres |
 | `/administracao-canteiro/` | 480651 bytes | 480651 caracteres |
 | `/memorial-descritivo/` | 6349 bytes | 6349 caracteres |
-| `/sispav-reabilitacao/` | 147360 bytes | 147360 caracteres |
+| `/sispav-reabilitacao/` | 205135 bytes | 198981 caracteres |
 | `/muros-arrimo/` | 527416 bytes | 527416 caracteres |
 | `/casa-parametrica/` | 38883 bytes | 38883 caracteres |
 | `/termopro/` | 550398 bytes | 550398 caracteres |
@@ -135,8 +135,8 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/drenapro/` | 185925 bytes | 185925 caracteres |
 | `/taludepro/` | 97674 bytes | 97674 caracteres |
 | `/solarpro/` | 557283 bytes | 551659 caracteres |
-| `/pgrcc/` | 67446 bytes | 67446 caracteres |
-| `/ventopro/` | 275065 bytes | 275065 caracteres |
+| `/pgrcc/` | 95310 bytes | 94583 caracteres |
+| `/ventopro/` | 283733 bytes | 283626 caracteres |
 | `/concretopro/` | 621889 bytes | 621889 caracteres |
 | `/aterramentopro/` | 324591 bytes | 324591 caracteres |
 | `/parafusopro/` | 292299 bytes | 288543 caracteres |
@@ -315,6 +315,8 @@ Arquivo: `sispav-reabilitacao/index.html`
 
 Ultima atualizacao relevante:
 
+- Em 21/08/2026, substituido por `SisPav_com_manual_interativo.html`, com manual interativo incorporado.
+- Backup anterior: `C:\Obras Inteligentes\backups\sispav-reabilitacao-index-before-manual-interativo-20260821-1935.html`.
 - Substituido por `SisPav_Reabilitacao_de_Pavimentos_v2026-07.html`.
 - Commit historico: `9b71144` - `Atualiza modulo SisPav`.
 
@@ -588,6 +590,8 @@ Arquivo: `pgrcc/index.html`
 
 Ultima inclusao:
 
+- Em 21/08/2026, atualizado com `index (34).html`, identificado como nova versao da Calculadora de Residuos de Construcao Civil e Gerador de PGRCC.
+- Backup anterior: `C:\Obras Inteligentes\backups\pgrcc-index-before-update-20260821-1935.html`.
 - Fonte: `C:\Users\ACER\Documents\Downloads\Calculadora de Resíduos e PGRCC.html`
 - Data: 21/07/2026
 - Alteracao: inclusao de novo card na home e publicacao do aplicativo como HTML standalone.
@@ -605,6 +609,8 @@ Arquivo: `ventopro/index.html`
 
 Ultima inclusao:
 
+- Em 21/08/2026, atualizado com `index (35).html`, identificado como nova versao do VentoPro.
+- Backup anterior: `C:\Obras Inteligentes\backups\ventopro-index-before-update-20260821-1935.html`.
 - Fonte: `C:\Users\ACER\Documents\Downloads\VentoPro Abertura.html`
 - Data: 21/07/2026
 - Alteracao: inclusao de novo card na home e publicacao do aplicativo como HTML standalone.

@@ -36,12 +36,11 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:14
 .topbar-warn{margin-left:auto;font-size:11px;color:#fde68a;background:rgba(255,255,255,.08);border:1px solid rgba(253,230,138,.35);border-radius:4px;padding:3px 10px;}
 
 /* ── MÓDULOS (abas principais) ── */
-.mod-bar{background:var(--panel);border-bottom:2px solid var(--border);padding:0 12px 0 20px;display:flex;overflow:hidden;align-items:center;}
-.mod-tabs-scroll{display:flex;align-items:center;min-width:0;flex:1;overflow-x:auto;scroll-behavior:smooth;}
+.mod-bar{background:var(--panel);border-bottom:2px solid var(--border);padding:0 20px;display:flex;overflow-x:auto;align-items:center;}
 .mod-tab{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--muted);padding:11px 13px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap;transition:color .15s,border-color .15s;letter-spacing:.04em;}
 .mod-tab:hover{color:var(--accent);}
 .mod-tab.active{color:var(--accent);border-bottom-color:var(--terra);}
-.mod-actions{margin-left:8px;display:flex;gap:6px;padding:6px 0 6px 10px;flex:0 0 auto;background:var(--panel);border-left:1px solid var(--border);box-shadow:-8px 0 12px rgba(255,255,255,.92);z-index:3;}
+.mod-actions{margin-left:auto;display:flex;gap:6px;padding-left:12px;}
 .btn-mini{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--muted);background:var(--panel2);border:1px solid var(--border);border-radius:4px;padding:4px 9px;cursor:pointer;white-space:nowrap;transition:color .15s,border-color .15s;}
 .btn-mini:hover{color:var(--accent);border-color:var(--accent2);}
 
@@ -262,123 +261,6 @@ canvas{display:block;width:100%;background:var(--panel2);border:1px solid var(--
 .disc-btn{background:var(--accent);color:#fff;border:none;border-radius:var(--r);padding:11px 22px;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.05em;cursor:pointer;transition:background .15s,opacity .2s;box-shadow:var(--shadow);}
 .disc-btn:hover{background:var(--accent2);}
 .disc-btn:disabled{opacity:.4;cursor:not-allowed;}
-
-
-/* ══ MANUAL INTERATIVO ═══════════════════════════════════════════════════════ */
-.manual-side-intro{font-size:11.5px;color:var(--muted);line-height:1.65;margin-bottom:10px;}
-.manual-nav-list{display:flex;flex-direction:column;gap:5px;}
-.manual-nav-btn{width:100%;display:flex;align-items:center;gap:8px;text-align:left;background:var(--panel2);border:1px solid var(--border);border-radius:var(--r);padding:8px 9px;font-family:var(--sans);font-size:11.5px;color:var(--text);cursor:pointer;transition:background .15s,border-color .15s,color .15s;}
-.manual-nav-btn:hover{background:var(--accent-dim);border-color:var(--accent2);color:var(--accent);}
-.manual-nav-btn.active{background:var(--accent-dim);border-color:var(--accent);color:var(--accent);font-weight:700;}
-.manual-nav-btn .manual-nav-ico{width:18px;text-align:center;font-family:var(--mono);font-size:11px;}
-.manual-progress-card{background:var(--panel2);border:1px solid var(--border);border-radius:var(--r);padding:10px 11px;}
-.manual-progress-head{display:flex;justify-content:space-between;gap:8px;font-family:var(--mono);font-size:10px;color:var(--muted);margin-bottom:7px;}
-.manual-progress-track{height:8px;background:var(--border);border-radius:99px;overflow:hidden;}
-.manual-progress-fill{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--ok));border-radius:99px;transition:width .3s ease;}
-.manual-hero{position:relative;overflow:hidden;background:linear-gradient(135deg,#173e63 0%,#1d4e7c 58%,#2a6496 100%);color:#fff;border-radius:8px;padding:24px 26px;margin-bottom:13px;box-shadow:var(--shadow);}
-.manual-hero::after{content:'?';position:absolute;right:22px;top:-24px;font-family:var(--mono);font-size:150px;font-weight:700;color:rgba(255,255,255,.06);line-height:1;pointer-events:none;}
-.manual-hero-kicker{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.65);margin-bottom:7px;}
-.manual-hero h1{font-size:26px;line-height:1.18;margin-bottom:8px;max-width:700px;}
-.manual-hero p{font-size:13px;line-height:1.65;color:rgba(255,255,255,.82);max-width:800px;}
-.manual-hero-meta{display:flex;gap:7px;flex-wrap:wrap;margin-top:14px;}
-.manual-pill{font-family:var(--mono);font-size:9.5px;letter-spacing:.03em;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.10);color:#fff;border-radius:99px;padding:4px 9px;}
-.manual-toolbar{display:flex;align-items:center;gap:7px;flex-wrap:wrap;background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:9px 11px;margin-bottom:13px;box-shadow:var(--shadow);}
-.manual-toolbar .manual-current{margin-left:auto;font-family:var(--mono);font-size:10px;color:var(--muted);}
-.manual-section-title{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.11em;color:var(--accent);text-transform:uppercase;margin:19px 0 10px;display:flex;align-items:center;gap:9px;}
-.manual-section-title::after{content:'';height:1px;background:var(--border);flex:1;}
-.manual-grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;}
-.manual-grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px;}
-.manual-card{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:15px 16px;box-shadow:var(--shadow);}
-.manual-card-icon{width:34px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:7px;background:var(--accent-dim);color:var(--accent);font-family:var(--mono);font-size:16px;margin-bottom:10px;}
-.manual-card h3{font-size:13px;margin-bottom:5px;color:var(--text);}
-.manual-card p{font-size:11.5px;color:var(--muted);line-height:1.6;}
-.manual-card ul,.manual-card ol{margin:8px 0 0 18px;font-size:11.5px;color:var(--muted);line-height:1.55;}
-.manual-card li{margin-bottom:4px;}
-.manual-card .btn-row{margin-top:10px;}
-.manual-flow{display:flex;flex-direction:column;gap:9px;}
-.manual-flow-step{display:grid;grid-template-columns:38px 1fr auto;gap:12px;align-items:start;background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:13px 14px;box-shadow:var(--shadow);transition:border-color .15s,background .15s;}
-.manual-flow-step.done{border-color:rgba(26,102,64,.45);background:linear-gradient(90deg,var(--ok-dim),var(--panel) 28%);}
-.manual-flow-num{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--accent);color:#fff;font-family:var(--mono);font-size:11px;font-weight:700;}
-.manual-flow-title{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13px;font-weight:700;margin-bottom:3px;}
-.manual-flow-desc{font-size:11.5px;color:var(--muted);line-height:1.55;}
-.manual-step-check{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:9px;font-weight:600;color:var(--ok);background:var(--ok-dim);border:1px solid rgba(26,102,64,.22);border-radius:99px;padding:3px 7px;cursor:pointer;user-select:none;}
-.manual-step-check input{accent-color:var(--ok);width:13px;height:13px;}
-.manual-auto-badge{display:inline-flex;align-items:center;gap:4px;font-family:var(--mono);font-size:8.5px;color:var(--accent);background:var(--accent-dim);border:1px solid rgba(29,78,124,.18);border-radius:99px;padding:2px 6px;}
-.manual-module-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;}
-.manual-module-card{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden;scroll-margin-top:100px;}
-.manual-module-card[open]{border-color:var(--accent2);}
-.manual-module-card summary{list-style:none;display:flex;align-items:center;gap:11px;padding:13px 14px;cursor:pointer;user-select:none;}
-.manual-module-card summary::-webkit-details-marker{display:none;}
-.manual-module-card summary::after{content:'＋';margin-left:auto;font-family:var(--mono);font-size:13px;color:var(--muted);}
-.manual-module-card[open] summary::after{content:'−';color:var(--accent);}
-.manual-module-number{width:34px;height:34px;flex:0 0 34px;border-radius:7px;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;font-weight:700;}
-.manual-module-title{font-size:13px;font-weight:700;line-height:1.25;}
-.manual-module-sub{font-size:10.5px;color:var(--muted);margin-top:2px;}
-.manual-module-body{border-top:1px solid var(--border);padding:13px 14px 14px;}
-.manual-io-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
-.manual-io-box{background:var(--panel2);border:1px solid var(--border);border-radius:4px;padding:9px 10px;}
-.manual-io-box h4{font-family:var(--mono);font-size:9px;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);margin-bottom:5px;}
-.manual-io-box ul{margin-left:16px;font-size:10.8px;color:var(--muted);line-height:1.5;}
-.manual-io-box li{margin-bottom:3px;}
-.manual-callout{display:flex;gap:9px;align-items:flex-start;border-radius:var(--r);padding:10px 11px;font-size:11.5px;line-height:1.55;margin:9px 0;}
-.manual-callout.info{background:var(--accent-dim);border:1px solid rgba(29,78,124,.2);color:var(--accent);}
-.manual-callout.warn{background:var(--warn-dim);border:1px solid rgba(139,94,26,.25);color:#6b4710;}
-.manual-callout.ok{background:var(--ok-dim);border:1px solid rgba(26,102,64,.25);color:#145230;}
-.manual-status-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;}
-.manual-status-card{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:11px 12px;box-shadow:var(--shadow);}
-.manual-status-head{display:flex;align-items:center;gap:7px;font-size:11px;font-weight:700;margin-bottom:4px;}
-.manual-status-dot{width:9px;height:9px;border-radius:50%;background:var(--border2);box-shadow:0 0 0 3px rgba(184,176,164,.16);}
-.manual-status-card.ok .manual-status-dot{background:var(--ok);box-shadow:0 0 0 3px var(--ok-dim);}
-.manual-status-card.warn .manual-status-dot{background:var(--warn);box-shadow:0 0 0 3px var(--warn-dim);}
-.manual-status-text{font-family:var(--mono);font-size:9.5px;color:var(--muted);line-height:1.45;}
-.manual-table{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--border);font-size:11.5px;box-shadow:var(--shadow);}
-.manual-table th{background:var(--accent);color:#fff;font-family:var(--mono);font-size:9px;letter-spacing:.07em;text-transform:uppercase;text-align:left;padding:7px 9px;}
-.manual-table td{padding:8px 9px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.5;}
-.manual-table td:first-child{font-family:var(--mono);font-weight:600;color:var(--accent);white-space:nowrap;}
-.manual-faq{display:flex;flex-direction:column;gap:7px;}
-.manual-faq details{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);}
-.manual-faq summary{cursor:pointer;padding:11px 13px;font-size:12px;font-weight:700;list-style:none;display:flex;align-items:center;gap:9px;}
-.manual-faq summary::before{content:'?';width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--accent-dim);color:var(--accent);font-family:var(--mono);font-size:10px;}
-.manual-faq summary::after{content:'＋';margin-left:auto;color:var(--muted);font-family:var(--mono);}
-.manual-faq details[open] summary::after{content:'−';color:var(--accent);}
-.manual-faq-answer{border-top:1px solid var(--border);padding:11px 13px;font-size:11.5px;color:var(--muted);line-height:1.65;}
-.manual-check-group{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);padding:13px 14px;}
-.manual-check-group h3{font-family:var(--mono);font-size:10px;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;}
-.manual-check-item{display:flex;align-items:flex-start;gap:8px;padding:7px 0;border-bottom:1px solid var(--border);font-size:11.5px;line-height:1.5;cursor:pointer;}
-.manual-check-item:last-child{border-bottom:none;}
-.manual-check-item input{margin-top:2px;width:15px;height:15px;accent-color:var(--ok);}
-.manual-check-item.done span{text-decoration:line-through;color:var(--muted);}
-.manual-quiz{display:flex;flex-direction:column;gap:10px;}
-.manual-quiz-q{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:13px 14px;box-shadow:var(--shadow);}
-.manual-quiz-q.correct{border-color:rgba(26,102,64,.55);background:linear-gradient(90deg,var(--ok-dim),var(--panel) 30%);}
-.manual-quiz-q.incorrect{border-color:rgba(139,32,32,.45);background:linear-gradient(90deg,var(--danger-dim),var(--panel) 30%);}
-.manual-quiz-q h3{font-size:12px;margin-bottom:9px;line-height:1.45;}
-.manual-quiz-options{display:grid;gap:6px;}
-.manual-quiz-option{display:flex;align-items:flex-start;gap:8px;border:1px solid var(--border);border-radius:4px;padding:7px 9px;font-size:11.5px;cursor:pointer;background:var(--panel2);}
-.manual-quiz-option:hover{border-color:var(--accent2);}
-.manual-quiz-option input{margin-top:2px;accent-color:var(--accent);}
-.manual-quiz-feedback{font-size:10.5px;line-height:1.5;margin-top:8px;font-weight:600;}
-.manual-result{background:var(--accent-dim);border:1px solid rgba(29,78,124,.22);border-radius:var(--r);padding:12px 14px;font-family:var(--mono);font-size:11px;color:var(--accent);margin-top:10px;}
-.manual-search-results{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;}
-.manual-search-result{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:12px 13px;box-shadow:var(--shadow);cursor:pointer;transition:border-color .15s,transform .15s;}
-.manual-search-result:hover{border-color:var(--accent2);transform:translateY(-1px);}
-.manual-search-result h3{font-size:12px;color:var(--accent);margin-bottom:4px;}
-.manual-search-result p{font-size:11px;color:var(--muted);line-height:1.5;}
-.manual-search-result .manual-result-tag{display:inline-block;margin-top:7px;font-family:var(--mono);font-size:8.5px;color:var(--terra);background:var(--terra-dim);border-radius:99px;padding:2px 7px;}
-.manual-tour-overlay{position:fixed;right:20px;top:102px;z-index:9600;width:min(390px,calc(100vw - 40px));pointer-events:none;}
-.manual-tour-card{pointer-events:auto;background:var(--panel);border:2px solid var(--accent);border-radius:8px;box-shadow:0 18px 50px rgba(0,0,0,.32);overflow:hidden;}
-.manual-tour-head{background:var(--accent);color:#fff;padding:10px 13px;display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10px;letter-spacing:.06em;}
-.manual-tour-head button{margin-left:auto;background:none;border:none;color:#fff;font-size:16px;cursor:pointer;}
-.manual-tour-body{padding:14px 15px;}
-.manual-tour-body h3{font-size:14px;margin-bottom:6px;}
-.manual-tour-body p{font-size:11.5px;color:var(--muted);line-height:1.6;}
-.manual-tour-foot{display:flex;align-items:center;gap:7px;padding:10px 13px;border-top:1px solid var(--border);background:var(--panel2);}
-.manual-tour-count{font-family:var(--mono);font-size:9px;color:var(--muted);margin-right:auto;}
-.manual-tour-focus{outline:3px solid #fde68a!important;outline-offset:-3px;box-shadow:0 0 0 4px rgba(253,230,138,.35)!important;background:rgba(255,255,255,.14)!important;color:#fff!important;}
-@media(max-width:1100px){.manual-status-grid{grid-template-columns:repeat(2,1fr)}.manual-grid-3{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:720px){.manual-grid-2,.manual-grid-3,.manual-module-grid,.manual-search-results,.manual-io-grid{grid-template-columns:1fr}.manual-status-grid{grid-template-columns:1fr}.manual-flow-step{grid-template-columns:34px 1fr}.manual-flow-step>.btn-mini{grid-column:2}.manual-toolbar .manual-current{width:100%;margin-left:0}.manual-hero{padding:20px}.manual-hero h1{font-size:22px}}
-@media print{.manual-toolbar,.manual-tour-overlay{display:none!important}.manual-hero{box-shadow:none}.manual-card,.manual-module-card,.manual-check-group{break-inside:avoid}}
-
 </style>
 </head>
 <body>
@@ -469,7 +351,6 @@ function aceitarAviso(){
 
 <!-- MÓDULOS -->
 <div class="mod-bar">
-  <div class="mod-tabs-scroll">
   <div class="mod-tab active" data-mod="cadastro" onclick="switchMod('cadastro')">01 · CADASTRO</div>
   <div class="mod-tab" data-mod="deflecto" onclick="switchMod('deflecto')">02 · DEFLECTOMETRIA</div>
   <div class="mod-tab" data-mod="retroanalise" onclick="switchMod('retroanalise')">03 · RETROANÁLISE</div>
@@ -480,10 +361,7 @@ function aceitarAviso(){
   <div class="mod-tab" data-mod="memorial" onclick="switchMod('memorial')">08 · MEMORIAL</div>
   <div class="mod-tab" data-mod="ia" onclick="switchMod('ia')">09 · IA · PARECER</div>
   <div class="mod-tab" data-mod="rede" onclick="switchMod('rede')">10 · REDE · DASHBOARD</div>
-  <div class="mod-tab" data-mod="manual" onclick="switchMod('manual')">11 · MANUAL</div>
-  </div>
   <div class="mod-actions">
-    <button class="btn-mini" onclick="switchMod('manual')" title="Abrir o manual interativo">❔ Manual</button>
     <button class="btn-mini" onclick="salvarProjeto(true)" title="Salvar projeto no navegador">💾 Salvar</button>
     <button class="btn-mini" onclick="exportarProjeto()" title="Exportar projeto em JSON">⬇ Exportar</button>
     <button class="btn-mini" onclick="document.getElementById('importFile').click()" title="Importar projeto JSON">⬆ Importar</button>
@@ -793,47 +671,6 @@ function aceitarAviso(){
       <button class="btn-secondary" onclick="restaurarRedeExemplo()">↺ Rede exemplo</button>
     </div>
   </div>
-
-  <!-- ── 11 MANUAL ── -->
-  <div id="sb-manual" class="sb-content" style="display:none">
-    <div class="section">
-      <div class="sec-title">Manual interativo</div>
-      <p class="manual-side-intro">Consulte o fluxo recomendado, entenda cada módulo e acompanhe o seu progresso. Os botões do manual levam diretamente às telas do sistema.</p>
-      <div class="field">
-        <label>Buscar assunto, campo ou sigla</label>
-        <input id="manualBusca" type="search" placeholder="Ex.: CSV, Dadm, BDI, salvar..." oninput="manualBuscar(this.value)">
-        <div class="hint">Digite ao menos 2 caracteres.</div>
-      </div>
-    </div>
-    <div class="section">
-      <div class="sec-title">Conteúdo</div>
-      <div class="manual-nav-list">
-        <button class="manual-nav-btn" data-manual-nav="inicio" onclick="manualAbrirSecao('inicio')"><span class="manual-nav-ico">⌂</span>Visão geral</button>
-        <button class="manual-nav-btn" data-manual-nav="fluxo" onclick="manualAbrirSecao('fluxo')"><span class="manual-nav-ico">→</span>Fluxo recomendado</button>
-        <button class="manual-nav-btn" data-manual-nav="modulos" onclick="manualAbrirSecao('modulos')"><span class="manual-nav-ico">▦</span>Módulos 01 a 10</button>
-        <button class="manual-nav-btn" data-manual-nav="dados" onclick="manualAbrirSecao('dados')"><span class="manual-nav-ico">⇄</span>Dados e arquivos</button>
-        <button class="manual-nav-btn" data-manual-nav="glossario" onclick="manualAbrirSecao('glossario')"><span class="manual-nav-ico">Aa</span>Glossário técnico</button>
-        <button class="manual-nav-btn" data-manual-nav="faq" onclick="manualAbrirSecao('faq')"><span class="manual-nav-ico">?</span>Perguntas frequentes</button>
-        <button class="manual-nav-btn" data-manual-nav="checklist" onclick="manualAbrirSecao('checklist')"><span class="manual-nav-ico">✓</span>Checklist final</button>
-        <button class="manual-nav-btn" data-manual-nav="quiz" onclick="manualAbrirSecao('quiz')"><span class="manual-nav-ico">★</span>Teste rápido</button>
-      </div>
-    </div>
-    <div class="section">
-      <div class="sec-title">Seu progresso</div>
-      <div class="manual-progress-card">
-        <div class="manual-progress-head"><span>Etapas marcadas</span><strong id="manualProgressText">0/15</strong></div>
-        <div class="manual-progress-track"><div class="manual-progress-fill" id="manualProgressFill"></div></div>
-      </div>
-    </div>
-    <div class="btn-row">
-      <button class="btn-primary" onclick="iniciarTourManual()">▶ TOUR GUIADO</button>
-      <button class="btn-secondary" onclick="window.print()">⎙ Imprimir</button>
-    </div>
-    <div class="btn-row">
-      <button class="btn-secondary" onclick="manualResetarProgresso()">↺ Reiniciar marcações</button>
-    </div>
-  </div>
-
 </div>
 
 <!-- ═══════════════════════════ CONTENT ════════════════════════════════════ -->
@@ -880,7 +717,6 @@ const RENDERERS={
   memorial:()=>gerarMemorial(),
   ia:()=>hintEmpty('Informe a API key, escolha o modelo e clique em CONSULTAR IA.'),
   rede:()=>gerarDashboard(),
-  manual:()=>renderManual(window.__manualSec||'inicio'),
 };
 function hintEmpty(msg){
   $('mainContent').innerHTML=`<div class="empty"><div class="empty-icon">⬡</div><div class="empty-txt">${msg}</div></div>`;
@@ -889,8 +725,7 @@ function switchMod(name){
   document.querySelectorAll('.sb-content').forEach(e=>e.style.display='none');
   document.querySelectorAll('.mod-tab').forEach(e=>e.classList.remove('active'));
   const sb=$('sb-'+name); if(sb) sb.style.display='block';
-  const tab=document.querySelector(`.mod-tab[data-mod="${name}"]`);
-  if(tab){tab.classList.add('active');setTimeout(()=>tab.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'}),0);}
+  const tab=document.querySelector(`[data-mod="${name}"]`); if(tab) tab.classList.add('active');
   if(RENDERERS[name]) RENDERERS[name]();
 }
 
@@ -2424,404 +2259,6 @@ function gerarDashboard(){
     drawBar2('cvDashExt',classes,classes.map(cl=>sel.filter(g=>g.classe===cl).reduce((s,g)=>s+g.ext,0)/1000),cols,'Extensão por classe (km)');
   });
 }
-
-
-
-// ─── 11 MANUAL INTERATIVO ────────────────────────────────────────────────────
-const MANUAL_MODULOS=[
-  {id:'cadastro',n:'01',titulo:'Cadastro',sub:'Segmento, tráfego, condição funcional e estrutura existente',
-   entradas:['Rodovia, estacas, extensão, largura, faixa e segmento homogêneo','N histórico, N futuro, crescimento e vidas úteis','IGG e IRI, quando disponíveis','Camadas, espessuras, módulos resilientes, Poisson e condição'],
-   procedimento:['Revise a identificação do trecho','Cadastre as camadas da superfície ao subleito','Clique em PROCESSAR'],
-   saidas:['Espessura total, área e N histórico','SN atual estimado','Classificação de IGG/IRI','Quadro e gráfico dos módulos das camadas'],
-   atencao:'O SN é estimado com coeficientes AASHTO e fatores de condição. Confirme as propriedades em projeto e ensaios.'},
-  {id:'deflecto',n:'02',titulo:'Deflectometria',sub:'Entrada, controle estatístico e leitura da bacia deflectométrica',
-   entradas:['Equipamento, carga aplicada e temperatura do revestimento','Linhas no formato: estaca, D0, D20, D30, D45, D60, D90, D120','Arquivo CSV ou TXT, ou colagem manual'],
-   procedimento:['Use vírgula, ponto e vírgula ou tabulação como separador','Confira a unidade de deflexão: 0,01 mm','Clique em PROCESSAR'],
-   saidas:['Média, desvio, CV, percentil 85% e D0 característica','Outliers acima de média + 3S','Perfil longitudinal, histograma e bacia média','Raio de curvatura por ponto'],
-   atencao:'Trechos com CV elevado podem exigir nova segmentação homogênea. Investigue outliers antes de descartá-los.'},
-  {id:'retroanalise',n:'03',titulo:'Retroanálise',sub:'Estimativa dos módulos a partir da bacia medida',
-   entradas:['Método de cálculo','Raio da placa, pressão de contato e Poisson do subleito','Fator de ajuste campo–projeto'],
-   procedimento:['Processe cadastro e deflectometria','Revise os parâmetros do FWD','Clique em EXECUTAR'],
-   saidas:['MR retroanalisado do subleito','Módulo E0 do conjunto e Ep efetivo','Comparação entre MR de projeto e retroanalisado','Ajuste da bacia e módulos de superfície'],
-   atencao:'A distribuição de Ep entre camadas é uma estimativa proporcional. Para projeto, utilize retroanálise iterativa multicamadas validada.'},
-  {id:'avaliacao',n:'04',titulo:'Avaliação',sub:'Capacidade estrutural, dano e vida residual',
-   entradas:['Dadm automática pela DNER-PRO 011/79 ou valor informado','Critério para a deflexão característica','Coeficiente k e fator de temperatura Ft'],
-   procedimento:['Processe a deflectometria','Revise N futuro e a correção de temperatura','Clique em AVALIAR'],
-   saidas:['Dc, Dc corrigida e Dadm','ICE e classificação estrutural','Fator de dano e N suportável','Estimativa da vida residual'],
-   atencao:'O ICE é uma escala própria do SisPav. Não o confunda com índices oficiais sem declarar a metodologia usada.'},
-  {id:'reforco',n:'05',titulo:'Reforço',sub:'Pré-dimensionamento e comparação de alternativas técnicas',
-   entradas:['Critério deflectométrico, AASHTO 93 ou envoltória','K, confiabilidade e desvio global','Seleção entre dez soluções estruturais e funcionais'],
-   procedimento:['Conclua a avaliação estrutural','Selecione as soluções que deseja estudar','Clique em DIMENSIONAR'],
-   saidas:['Espessura proposta por solução','Vida útil estimada e SN final','Verificação de atendimento ao SN alvo','Seções esquemáticas das alternativas'],
-   atencao:'Microrrevestimento e tratamento superficial são funcionais; não recuperam capacidade estrutural quando o dano é crítico.'},
-  {id:'custos',n:'06',titulo:'Custos',sub:'Orçamento expedito das soluções dimensionadas',
-   entradas:['Preços unitários editáveis','DMT da usina e densidade do CBUQ','Percentuais de canteiro/mobilização e BDI'],
-   procedimento:['Dimensione as soluções no módulo 05','Substitua os preços referenciais pela base vigente','Clique em ORÇAR SOLUÇÕES'],
-   saidas:['Composição resumida por alternativa','Custo direto, canteiro, BDI e preço total','R$/m², R$/km e CO2e estimado','Gráfico de preços'],
-   atencao:'Os preços pré-carregados são apenas ilustrativos. Orçamentos oficiais exigem SICRO/SINAPI vigente, encargos e composições completas.'},
-  {id:'comparacao',n:'07',titulo:'Comparação',sub:'Análise econômica e ranking multicritério',
-   entradas:['Taxa de desconto e custo anual de conservação','Pesos de custo inicial, vida útil, CAUE e emissões'],
-   procedimento:['Dimensione as soluções; preferencialmente, também as orce','Ajuste os pesos para o objetivo da análise','Clique em COMPARAR'],
-   saidas:['Preço, vida, CAUE, valor presente e CO2e','Score normalizado e ranking','Gráficos de preço × vida e CAUE'],
-   atencao:'Quando o dano é crítico, soluções funcionais são excluídas do ranking técnico, embora permaneçam visíveis para referência.'},
-  {id:'memorial',n:'08',titulo:'Memorial',sub:'Consolidação da memória de cálculo',
-   entradas:['Resultados produzidos nos módulos anteriores'],
-   procedimento:['Execute os módulos aplicáveis','Clique em GERAR MEMORIAL','Use Copiar ou PDF/impressão'],
-   saidas:['Identificação, tráfego e estrutura','Deflectometria, retroanálise e avaliação','Dimensionamento, orçamento e recomendações'],
-   atencao:'O memorial é preliminar e deve ser revisado, complementado e assinado pelo profissional responsável.'},
-  {id:'ia',n:'09',titulo:'IA · Parecer',sub:'Parecer técnico assistido por modelo externo',
-   entradas:['Chave de API da Anthropic','Modelo disponível na conta','Enfoque e contexto adicional'],
-   procedimento:['Preencha e processe os dados técnicos antes da consulta','Informe a chave e selecione o enfoque','Clique em CONSULTAR IA e revise a resposta'],
-   saidas:['Diagnóstico textual','Comparação de alternativas','Recomendação, riscos e condicionantes'],
-   atencao:'Requer internet, créditos e modelo válido. O parecer gerado por IA não dispensa revisão de profissional habilitado.'},
-  {id:'rede',n:'10',titulo:'Rede · Dashboard',sub:'Gestão da malha e plano plurianual de intervenções',
-   entradas:['Segmentos salvos na rede','Filtro por rodovia','Orçamento anual e horizonte do plano'],
-   procedimento:['Avalie o segmento atual antes de adicioná-lo','Use Segmento atual para incluir ou atualizar','Clique em ATUALIZAR e exporte o CSV quando necessário'],
-   saidas:['ICE médio, extensão e investimento necessário','Semáforo e ranking de intervenção','Plano plurianual por criticidade','CSV consolidado da rede'],
-   atencao:'A alocação anual usa heurística gulosa. Para otimização formal de carteira, utilize modelo específico e restrições institucionais.'}
-];
-
-const MANUAL_PASSOS=[
-  {id:'cadastro',n:'01',mod:'cadastro',titulo:'Defina o segmento e a estrutura',desc:'Identifique o trecho, informe o tráfego, registre IGG/IRI e descreva todas as camadas.'},
-  {id:'deflecto',n:'02',mod:'deflecto',titulo:'Carregue a deflectometria',desc:'Cole os dados ou importe CSV/TXT, confira unidades e processe o controle estatístico.'},
-  {id:'retro',n:'03',mod:'retroanalise',titulo:'Execute a retroanálise',desc:'Estime MR do subleito e Ep efetivo, verificando a coerência entre bacia medida e modelo.'},
-  {id:'avaliacao',n:'04',mod:'avaliacao',titulo:'Avalie a capacidade estrutural',desc:'Compare Dc e Dadm, interprete ICE, dano acumulado e vida residual.'},
-  {id:'reforco',n:'05',mod:'reforco',titulo:'Dimensione alternativas',desc:'Escolha o método e selecione as soluções técnicas que devem ser pré-dimensionadas.'},
-  {id:'custos',n:'06',mod:'custos',titulo:'Atualize preços e orce',desc:'Substitua valores ilustrativos pela referência vigente e calcule os preços das soluções.'},
-  {id:'comparacao',n:'07',mod:'comparacao',titulo:'Compare técnica e economia',desc:'Defina pesos, taxa de desconto e conservação para obter o ranking multicritério.'},
-  {id:'memorial',n:'08',mod:'memorial',titulo:'Gere a memória de cálculo',desc:'Consolide os dados, fórmulas, resultados, alertas e recomendações em documento único.'},
-  {id:'ia',n:'09',mod:'ia',titulo:'Use o parecer de IA, se aplicável',desc:'Envie os resultados processados ao modelo externo e revise criticamente o texto gerado.'},
-  {id:'rede',n:'10',mod:'rede',titulo:'Inclua o segmento na rede',desc:'Atualize o dashboard, priorize a malha e monte o plano plurianual conforme o orçamento.'}
-];
-
-const MANUAL_CHECK_IDS=['cadastro','deflecto','retro','avaliacao','reforco','custos','comparacao','memorial','ia','rede','validar_dados','validar_normas','validar_precos','validar_projeto','arquivar'];
-
-const MANUAL_TOUR=[
-  {mod:'cadastro',titulo:'01 · Cadastro',texto:'O fluxo começa pela identificação do segmento, tráfego, condição funcional e camadas existentes.'},
-  {mod:'deflecto',titulo:'02 · Deflectometria',texto:'Aqui são importadas as bacias deflectométricas e calculados média, dispersão, outliers e raio de curvatura.'},
-  {mod:'retroanalise',titulo:'03 · Retroanálise',texto:'O sistema estima MR do subleito e o módulo efetivo do pavimento a partir da bacia medida.'},
-  {mod:'avaliacao',titulo:'04 · Avaliação',texto:'A capacidade é interpretada pela relação entre deflexão característica e admissível, ICE, dano e vida residual.'},
-  {mod:'reforco',titulo:'05 · Reforço',texto:'Selecione alternativas estruturais ou funcionais e obtenha um pré-dimensionamento comparativo.'},
-  {mod:'custos',titulo:'06 · Custos',texto:'Atualize os preços, DMT, canteiro e BDI antes de gerar o orçamento expedito.'},
-  {mod:'comparacao',titulo:'07 · Comparação',texto:'Defina os pesos do ranking e compare custo, vida útil, CAUE e emissões.'},
-  {mod:'memorial',titulo:'08 · Memorial',texto:'Gere a memória de cálculo consolidada e use a impressão do navegador para salvar em PDF.'},
-  {mod:'ia',titulo:'09 · IA · Parecer',texto:'Opcionalmente, consulte um modelo externo com os resultados do projeto e revise o parecer.'},
-  {mod:'rede',titulo:'10 · Rede · Dashboard',texto:'Adicione o segmento avaliado à malha e organize o plano plurianual de investimentos.'},
-  {mod:'manual',titulo:'11 · Manual',texto:'Retorne a esta aba para pesquisar conceitos, revisar o fluxo, marcar o checklist e realizar o teste rápido.'}
-];
-
-function manualChecks(){
-  try{return JSON.parse(localStorage.getItem('sispav_manual_checks')||'{}')||{};}catch(e){return {};}
-}
-function manualSalvarChecks(o){try{localStorage.setItem('sispav_manual_checks',JSON.stringify(o));}catch(e){}}
-function manualCheckDone(id){return !!manualChecks()[id];}
-function manualAutoStatus(id){
-  const map={
-    cadastro:STATE.camadas.length>0,
-    deflecto:STATE.deflecoes.length>0,
-    retro:!!STATE.retroResumo,
-    avaliacao:!!STATE.avalResult,
-    reforco:STATE.reforcoResults.length>0,
-    custos:STATE.custosResults.length>0,
-    comparacao:Array.isArray(window.__compResult)&&window.__compResult.length>0,
-    memorial:!!$('memorialBox'),
-    ia:!!window.__iaParecer,
-    rede:false
-  };
-  return !!map[id];
-}
-function manualToggleCheck(id,checked){
-  const o=manualChecks();o[id]=!!checked;manualSalvarChecks(o);manualAtualizarProgresso();
-  document.querySelectorAll(`[data-manual-check="${id}"]`).forEach(el=>{
-    if(el.type==='checkbox')el.checked=!!checked;
-    const p=el.closest('.manual-flow-step,.manual-check-item');if(p)p.classList.toggle('done',!!checked);
-  });
-}
-function manualAtualizarProgresso(){
-  const o=manualChecks();
-  const feitos=MANUAL_CHECK_IDS.filter(id=>o[id]).length;
-  const total=MANUAL_CHECK_IDS.length;
-  const t=$('manualProgressText'),f=$('manualProgressFill');
-  if(t)t.textContent=`${feitos}/${total}`;
-  if(f)f.style.width=`${Math.round(feitos/total*100)}%`;
-  document.querySelectorAll('input[data-manual-check]').forEach(el=>{
-    el.checked=!!o[el.dataset.manualCheck];
-    const p=el.closest('.manual-flow-step,.manual-check-item');if(p)p.classList.toggle('done',el.checked);
-  });
-}
-function manualResetarProgresso(){
-  if(!confirm('Apagar todas as marcações do manual? Os dados técnicos do projeto não serão alterados.'))return;
-  try{localStorage.removeItem('sispav_manual_checks');}catch(e){}
-  manualAtualizarProgresso();renderManual(window.__manualSec||'inicio');toast('Marcações do manual reiniciadas.');
-}
-function manualAtivarNav(sec){
-  document.querySelectorAll('[data-manual-nav]').forEach(b=>b.classList.toggle('active',b.dataset.manualNav===sec));
-}
-function manualAbrirSecao(sec){
-  const b=$('manualBusca');if(b)b.value='';
-  renderManual(sec);
-}
-function manualIrModulo(mod){
-  switchMod(mod);
-  const nome=MANUAL_MODULOS.find(m=>m.id===mod)?.titulo||mod;
-  toast(`Módulo ${nome} aberto. Consulte o manual novamente pela aba 11.`);
-}
-function manualDiagnostico(){
-  return [
-    {nome:'Camadas cadastradas',ok:STATE.camadas.length>0,txt:STATE.camadas.length?`${STATE.camadas.length} camada(s) na estrutura`:'Nenhuma camada cadastrada'},
-    {nome:'Deflectometria',ok:STATE.deflecoes.length>0,txt:STATE.deflecoes.length?`${STATE.deflecoes.length} ponto(s) processado(s)`:'Ainda não processada'},
-    {nome:'Retroanálise',ok:!!STATE.retroResumo,txt:STATE.retroResumo?`MR subleito ${fmtInt(STATE.retroResumo.mrSubRetro)} MPa`:'Ainda não executada'},
-    {nome:'Avaliação',ok:!!STATE.avalResult,txt:STATE.avalResult?`ICE ${fmt(STATE.avalResult.ice,0)} · ${STATE.avalResult.classific}`:'Ainda não realizada'},
-    {nome:'Reforços',ok:STATE.reforcoResults.length>0,txt:STATE.reforcoResults.length?`${STATE.reforcoResults.length} solução(ões)`:'Ainda não dimensionados'},
-    {nome:'Orçamento',ok:STATE.custosResults.length>0,txt:STATE.custosResults.length?`${STATE.custosResults.length} solução(ões) orçada(s)`:'Ainda não calculado'},
-    {nome:'Comparação',ok:Array.isArray(window.__compResult)&&window.__compResult.length>0,txt:Array.isArray(window.__compResult)?'Ranking disponível':'Ainda não realizada'},
-    {nome:'Parecer de IA',ok:!!window.__iaParecer,txt:window.__iaParecer?'Parecer disponível':'Opcional · ainda não gerado'}
-  ];
-}
-function manualStatusHtml(){
-  return `<div class="manual-status-grid">${manualDiagnostico().map(s=>`<div class="manual-status-card ${s.ok?'ok':'warn'}"><div class="manual-status-head"><span class="manual-status-dot"></span>${s.nome}</div><div class="manual-status-text">${s.txt}</div></div>`).join('')}</div>`;
-}
-function manualShell(sec,titulo,subtitulo,body){
-  window.__manualSec=sec;
-  manualAtivarNav(sec);
-  $('mainContent').innerHTML=`
-    <div class="manual-hero">
-      <div class="manual-hero-kicker">SisPav · Central de aprendizagem</div>
-      <h1>${titulo}</h1>
-      <p>${subtitulo}</p>
-      <div class="manual-hero-meta"><span class="manual-pill">HTML único</span><span class="manual-pill">10 módulos técnicos</span><span class="manual-pill">Busca e checklists</span><span class="manual-pill">Dados locais + API opcional</span></div>
-    </div>
-    <div class="manual-toolbar">
-      <button class="btn-primary" onclick="manualAbrirSecao('fluxo')">▶ COMEÇAR PELO ROTEIRO</button>
-      <button class="btn-secondary" onclick="iniciarTourManual()">◎ Tour da barra</button>
-      <button class="btn-secondary" onclick="manualAbrirSecao('faq')">? Dúvidas comuns</button>
-      <span class="manual-current">Seção: ${titulo}</span>
-    </div>
-    ${body}`;
-  manualAtualizarProgresso();
-  $('mainContent').scrollTop=0;
-}
-function manualInicioHtml(){
-  return `
-    <div class="manual-grid-3">
-      <div class="manual-card"><div class="manual-card-icon">①</div><h3>Trabalhe na ordem lógica</h3><p>O encadeamento recomendado vai do cadastro e dos ensaios até o diagnóstico, reforço, orçamento, comparação e gestão da rede.</p></div>
-      <div class="manual-card"><div class="manual-card-icon">✓</div><h3>Valide antes de decidir</h3><p>Os cálculos são preliminares. Confira unidades, coerência dos ensaios, normas aplicáveis e dados de projeto antes de usar os resultados.</p></div>
-      <div class="manual-card"><div class="manual-card-icon">⇄</div><h3>Salve e compartilhe</h3><p>O projeto pode ser salvo no navegador e exportado em JSON. A rede pode ser exportada em CSV e o memorial impresso em PDF.</p></div>
-    </div>
-    <div class="manual-section-title">O fluxo em uma linha</div>
-    <div class="manual-card">
-      <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">${MANUAL_MODULOS.map((m,i)=>`<button class="btn-mini" onclick="manualIrModulo('${m.id}')">${m.n} ${m.titulo}</button>${i<MANUAL_MODULOS.length-1?'<span style="color:var(--border2)">→</span>':''}`).join('')}</div>
-      <div class="manual-callout info" style="margin-bottom:0"><span>ℹ</span><span>Nem todo estudo exige todos os módulos. A retroanálise e o parecer de IA, por exemplo, podem ser tratados como etapas complementares, desde que a limitação seja registrada.</span></div>
-    </div>
-    <div class="manual-section-title">Diagnóstico do projeto aberto</div>
-    ${manualStatusHtml()}
-    <div class="manual-section-title">Primeiros passos</div>
-    <div class="manual-grid-2">
-      <div class="manual-card"><h3>Usar o exemplo já carregado</h3><ol><li>Abra 01 · Cadastro.</li><li>Revise as camadas de exemplo.</li><li>Clique em PROCESSAR.</li><li>Siga para 02 · Deflectometria e processe os dados existentes.</li></ol><div class="btn-row"><button class="btn-primary" onclick="manualIrModulo('cadastro')">Abrir Cadastro</button></div></div>
-      <div class="manual-card"><h3>Iniciar um projeto próprio</h3><ol><li>Substitua todos os dados de identificação e tráfego.</li><li>Apague ou edite as camadas do exemplo.</li><li>Importe a deflectometria real.</li><li>Atualize preços e parâmetros econômicos.</li></ol><div class="btn-row"><button class="btn-secondary" onclick="manualAbrirSecao('dados')">Ver dados e arquivos</button></div></div>
-    </div>
-    <div class="manual-callout warn"><span>⚠</span><span><strong>Limite de uso:</strong> o SisPav apoia análises preliminares. Não substitui investigação de campo, projeto executivo, orçamento oficial nem responsabilidade técnica com ART/RRT.</span></div>`;
-}
-function manualFluxoHtml(){
-  return `
-    <div class="manual-callout info"><span>◎</span><span>Marque cada etapa quando concluí-la. As marcações ficam neste navegador e não alteram os cálculos do projeto.</span></div>
-    <div class="manual-flow">${MANUAL_PASSOS.map(p=>{
-      const done=manualCheckDone(p.id),auto=manualAutoStatus(p.id);
-      return `<div class="manual-flow-step ${done?'done':''}">
-        <div class="manual-flow-num">${p.n}</div>
-        <div><div class="manual-flow-title">${p.titulo}${auto?'<span class="manual-auto-badge">● dado detectado</span>':''}<label class="manual-step-check"><input type="checkbox" data-manual-check="${p.id}" ${done?'checked':''} onchange="manualToggleCheck('${p.id}',this.checked)"> concluído</label></div><div class="manual-flow-desc">${p.desc}</div></div>
-        <button class="btn-mini" onclick="manualIrModulo('${p.mod}')">Abrir módulo →</button>
-      </div>`;}).join('')}</div>
-    <div class="manual-callout ok"><span>✓</span><span>Ao concluir a comparação, gere o memorial antes de alterar premissas. Isso preserva um registro legível da rodada analisada.</span></div>`;
-}
-function manualModuleCard(m){
-  return `<details class="manual-module-card" id="manual-mod-${m.id}">
-    <summary><div class="manual-module-number">${m.n}</div><div><div class="manual-module-title">${m.titulo}</div><div class="manual-module-sub">${m.sub}</div></div></summary>
-    <div class="manual-module-body">
-      <div class="manual-io-grid">
-        <div class="manual-io-box"><h4>Entradas principais</h4><ul>${m.entradas.map(x=>`<li>${x}</li>`).join('')}</ul></div>
-        <div class="manual-io-box"><h4>Como operar</h4><ol style="margin-left:16px;font-size:10.8px;color:var(--muted);line-height:1.5">${m.procedimento.map(x=>`<li style="margin-bottom:3px">${x}</li>`).join('')}</ol></div>
-        <div class="manual-io-box"><h4>Saídas</h4><ul>${m.saidas.map(x=>`<li>${x}</li>`).join('')}</ul></div>
-        <div class="manual-io-box"><h4>Pré-requisito</h4><p style="font-size:10.8px;color:var(--muted);line-height:1.5">${m.n==='01'?'Nenhum. É a porta de entrada do projeto.':m.n==='02'?'Cadastro recomendado para contextualizar o trecho.':m.n==='03'?'Cadastro e deflectometria processados.':m.n==='04'?'Deflectometria processada.':m.n==='05'?'Avaliação estrutural concluída.':m.n==='06'?'Soluções dimensionadas.':m.n==='07'?'Soluções dimensionadas; orçamento recomendado.':m.n==='08'?'Resultados dos módulos aplicáveis.':m.n==='09'?'Dados processados, internet e chave de API.':'Avaliação do segmento para adicioná-lo à rede.'}</p></div>
-      </div>
-      <div class="manual-callout warn"><span>⚠</span><span>${m.atencao}</span></div>
-      <div class="btn-row"><button class="btn-primary" onclick="manualIrModulo('${m.id}')">Abrir ${m.n} · ${m.titulo}</button></div>
-    </div>
-  </details>`;
-}
-function manualModulosHtml(){
-  return `<div class="manual-callout info"><span>▦</span><span>Clique no título de cada módulo para abrir suas entradas, procedimento, saídas e cuidados de interpretação.</span></div><div class="manual-module-grid">${MANUAL_MODULOS.map(manualModuleCard).join('')}</div>`;
-}
-function manualDadosHtml(){
-  return `
-    <div class="manual-grid-2">
-      <div class="manual-card"><div class="manual-card-icon">💾</div><h3>Salvar no navegador</h3><p>O botão <strong>Salvar</strong> grava o projeto no armazenamento local do navegador. Ao reabrir o mesmo arquivo e navegador, o sistema tenta restaurar os dados.</p><ul><li>Não cria um arquivo visível no computador.</li><li>Pode ser apagado ao limpar os dados do navegador.</li><li>Use também a exportação JSON como cópia de segurança.</li></ul></div>
-      <div class="manual-card"><div class="manual-card-icon">JSON</div><h3>Exportar e importar projeto</h3><p><strong>Exportar</strong> gera um arquivo JSON com entradas, camadas, deflexões e soluções selecionadas. <strong>Importar</strong> restaura esses dados e solicita novo processamento dos módulos.</p><ul><li>A chave de API da IA não é incluída no JSON.</li><li>Resultados calculados devem ser regenerados após a importação.</li></ul></div>
-      <div class="manual-card"><div class="manual-card-icon">CSV</div><h3>Deflectometria</h3><p>O módulo 02 aceita CSV ou TXT. Cada linha deve conter estaca e sete deflexões: D0, D20, D30, D45, D60, D90 e D120.</p><div class="memorial" style="max-height:none;margin-top:9px">0+000,95,72,61,48,38,27,19</div><ul><li>Unidade: 0,01 mm.</li><li>Separadores aceitos: vírgula, ponto e vírgula ou tabulação.</li><li>Use ponto como separador decimal nos arquivos.</li></ul></div>
-      <div class="manual-card"><div class="manual-card-icon">⇩</div><h3>Rede e relatórios</h3><p>O dashboard exporta a rede em CSV. O memorial e o manual podem ser impressos pelo navegador e salvos em PDF.</p><ul><li>Na impressão, menus e barra lateral são ocultados.</li><li>Confira a orientação, margens e escala antes de salvar.</li></ul></div>
-    </div>
-    <div class="manual-section-title">O que fica armazenado</div>
-    <table class="manual-table"><thead><tr><th>Item</th><th>Local</th><th>Observação</th></tr></thead><tbody>
-      <tr><td>Projeto salvo</td><td>localStorage do navegador</td><td>Entradas principais, camadas, deflexões e soluções selecionadas.</td></tr>
-      <tr><td>Rede</td><td>localStorage do navegador</td><td>Segmentos, ICE, vida, investimento e solução.</td></tr>
-      <tr><td>Progresso do manual</td><td>localStorage do navegador</td><td>Somente as marcações dos checklists.</td></tr>
-      <tr><td>Chave de API</td><td>Somente se “Lembrar” estiver marcado</td><td>Fica no navegador; nunca é exportada com o projeto.</td></tr>
-      <tr><td>JSON/CSV/PDF</td><td>Arquivo escolhido pelo usuário</td><td>Única forma de criar uma cópia externa e portável.</td></tr>
-    </tbody></table>
-    <div class="manual-callout warn"><span>⚠</span><span>Antes de trocar de computador, navegador ou limpar dados locais, exporte o projeto em JSON e a rede em CSV.</span></div>`;
-}
-const MANUAL_GLOSSARIO=[
-  ['N','Número acumulado de repetições equivalentes do eixo padrão usado no dimensionamento.'],
-  ['SN','Structural Number ou número estrutural; representa a capacidade estrutural equivalente das camadas.'],
-  ['MR','Módulo resiliente, em MPa, usado para caracterizar a resposta elástica dos materiais.'],
-  ['FWD','Falling Weight Deflectometer; equipamento que aplica carga de impacto e mede a bacia deflectométrica.'],
-  ['D0','Deflexão medida no centro da carga, expressa no sistema em centésimos de milímetro.'],
-  ['Dc','Deflexão característica escolhida: média, percentil 85% ou média acrescida de k desvios.'],
-  ['Dadm','Deflexão admissível para o tráfego de projeto. Pode ser calculada automaticamente pela equação adotada.'],
-  ['RC','Raio de curvatura obtido a partir das deflexões próximas ao ponto de carga.'],
-  ['Ep','Módulo efetivo do conjunto do pavimento estimado na retroanálise.'],
-  ['ICE','Índice estrutural do SisPav, de 0 a 100, construído a partir da razão Dc/Dadm.'],
-  ['Fator de dano','Relação entre o tráfego histórico acumulado e o tráfego estruturalmente suportável estimado.'],
-  ['CBUQ','Concreto betuminoso usinado a quente.'],
-  ['DMT','Distância média de transporte usada na composição do custo logístico.'],
-  ['BDI','Benefícios e Despesas Indiretas aplicados sobre a base definida no orçamento.'],
-  ['CAUE','Custo anual uniforme equivalente, usado para comparar alternativas com vidas úteis distintas.'],
-  ['CO2e','Estimativa de emissões equivalentes de dióxido de carbono associadas à solução.'],
-  ['IGG','Índice de Gravidade Global da condição superficial do pavimento.'],
-  ['IRI','International Roughness Index, indicador de irregularidade longitudinal em m/km.']
-];
-function manualGlossarioHtml(){
-  return `<div class="manual-callout info"><span>Aa</span><span>As definições abaixo descrevem o uso dos termos dentro deste aplicativo. Em documentos oficiais, cite também a norma e o procedimento de obtenção.</span></div><table class="manual-table"><thead><tr><th>Termo</th><th>Significado no SisPav</th></tr></thead><tbody>${MANUAL_GLOSSARIO.map(([t,d])=>`<tr><td>${t}</td><td>${d}</td></tr>`).join('')}</tbody></table>`;
-}
-function manualFaqHtml(){
-  const faq=[
-    ['Qual é a ordem recomendada de uso?','Cadastro → Deflectometria → Retroanálise → Avaliação → Reforço → Custos → Comparação → Memorial. O parecer de IA é opcional; a Rede recebe os segmentos avaliados.'],
-    ['Por que um módulo exibe apenas uma orientação em vez dos resultados?','O pré-requisito ainda não foi processado. Volte ao módulo anterior, preencha os dados e use o botão principal de processamento.'],
-    ['Como deve ser o CSV de deflectometria?','Uma linha por estaca, com oito colunas: estaca, D0, D20, D30, D45, D60, D90 e D120. As deflexões devem estar em 0,01 mm.'],
-    ['O que fazer com um outlier?','Investigue primeiro a estaca, o registro do equipamento, a condição local e a homogeneidade do trecho. Não elimine o ponto apenas porque o sistema o marcou.'],
-    ['Posso usar os preços carregados no orçamento oficial?','Não. Eles são ilustrativos. Substitua-os por SICRO/SINAPI vigente para a UF e data-base, com composições, encargos, transportes e BDI devidamente justificados.'],
-    ['Microrrevestimento ou TSD resolvem deficiência estrutural?','Não. No sistema são alternativas funcionais. Quando o dano é crítico, elas são excluídas do ranking técnico.'],
-    ['Onde os dados ficam salvos?','O botão Salvar usa o armazenamento local do navegador. Para uma cópia portátil, exporte o JSON. A rede deve ser exportada separadamente em CSV.'],
-    ['A chave de API vai para o arquivo do projeto?','Não. O código exclui a chave do snapshot do projeto. Ela só fica no navegador quando a opção de lembrá-la está marcada.'],
-    ['Por que a consulta de IA pode falhar?','As causas mais comuns são chave inválida, falta de créditos, model string indisponível, internet ausente ou bloqueio do navegador à chamada direta.'],
-    ['Como gerar PDF?','Abra o Memorial ou o Manual, use o botão de impressão e selecione “Salvar como PDF” no diálogo do navegador.'],
-    ['Como recuperar os dados de exemplo da rede?','No módulo 10, use “Rede exemplo”. A operação substitui a rede atual após confirmação.'],
-    ['O arquivo continua sendo único?','Sim. Interface, estilos, cálculos e manual permanecem dentro deste único arquivo HTML; apenas dados salvos e exportações ficam fora dele.']
-  ];
-  return `<div class="manual-faq">${faq.map(([q,a])=>`<details><summary>${q}</summary><div class="manual-faq-answer">${a}</div></details>`).join('')}</div>`;
-}
-function manualChecklistHtml(){
-  const grupos=[
-    {titulo:'Consistência dos dados',itens:[
-      ['validar_dados','Unidades, separadores decimais e extensão do segmento foram conferidos.'],
-      ['cadastro','Estrutura existente e parâmetros de tráfego representam o trecho analisado.'],
-      ['deflecto','A deflectometria foi revisada, incluindo outliers e possível necessidade de segmentação.']
-    ]},
-    {titulo:'Métodos e normas',itens:[
-      ['retro','A retroanálise foi validada ou sua ausência foi justificada.'],
-      ['avaliacao','Os critérios de Dadm, k e correção de temperatura foram documentados.'],
-      ['validar_normas','Normas, procedimentos e versões aplicáveis foram conferidos para o caso concreto.'],
-      ['reforco','Alternativas funcionais e estruturais foram corretamente diferenciadas.']
-    ]},
-    {titulo:'Orçamento e decisão',itens:[
-      ['validar_precos','Preços, DMT, canteiro, BDI e data-base foram atualizados e justificados.'],
-      ['custos','As composições resumidas foram confrontadas com o orçamento detalhado.'],
-      ['comparacao','Pesos do ranking e taxa de desconto foram aprovados para o objetivo da análise.'],
-      ['rede','A prioridade do segmento foi comparada com os demais trechos da rede.']
-    ]},
-    {titulo:'Documentação e responsabilidade',itens:[
-      ['memorial','O memorial da rodada foi gerado e revisado.'],
-      ['ia','O parecer de IA foi revisado ou marcado como não aplicável.'],
-      ['validar_projeto','Resultados foram validados por profissional habilitado e não tratados como projeto executivo automático.'],
-      ['arquivar','Projeto JSON, rede CSV, memorial e documentos de apoio foram arquivados.']
-    ]}
-  ];
-  return `<div class="manual-grid-2">${grupos.map(g=>`<div class="manual-check-group"><h3>${g.titulo}</h3>${g.itens.map(([id,t])=>`<label class="manual-check-item ${manualCheckDone(id)?'done':''}"><input type="checkbox" data-manual-check="${id}" ${manualCheckDone(id)?'checked':''} onchange="manualToggleCheck('${id}',this.checked)"><span>${t}</span></label>`).join('')}</div>`).join('')}</div><div class="manual-callout warn"><span>⚠</span><span>Marcar o checklist registra apenas uma conferência do usuário. O aplicativo não verifica automaticamente conformidade normativa, responsabilidade técnica ou aderência do orçamento.</span></div>`;
-}
-function manualQuizHtml(){
-  const qs=[
-    {q:'1. Após processar a deflectometria, qual sequência é a mais completa?',exp:'A sequência recomendada é retroanálise, avaliação, reforço, custos e comparação.',opts:[['Ir diretamente ao dashboard',false],['Retroanálise → Avaliação → Reforço → Custos → Comparação',true],['Gerar o memorial antes de avaliar',false]]},
-    {q:'2. Os preços unitários pré-carregados podem ser usados diretamente em orçamento oficial?',exp:'Eles são meramente referenciais e devem ser substituídos pela base vigente e pela região/data-base corretas.',opts:[['Sim, porque já incluem todas as particularidades locais',false],['Somente se o BDI for zero',false],['Não; devem ser atualizados e validados',true]]},
-    {q:'3. Microrrevestimento e TSD restauram a capacidade estrutural?',exp:'No SisPav, essas alternativas são funcionais e não corrigem deficiência estrutural.',opts:[['Não',true],['Sim, sempre',false],['Apenas quando o ICE é zero',false]]},
-    {q:'4. A chave da API de IA é incluída no JSON exportado?',exp:'A chave é expressamente excluída do snapshot do projeto.',opts:[['Sim',false],['Não',true],['Somente na rede CSV',false]]},
-    {q:'5. O ICE apresentado pelo aplicativo deve ser interpretado como:',exp:'O próprio sistema informa que o ICE é uma escala interna, construída a partir da relação Dc/Dadm.',opts:[['Um índice oficial universal do DNIT',false],['Uma escala própria do SisPav',true],['O mesmo que o IRI',false]]}
-  ];
-  return `<div class="manual-quiz">${qs.map((x,i)=>`<div class="manual-quiz-q" data-explain="${x.exp}"><h3>${x.q}</h3><div class="manual-quiz-options">${x.opts.map(([t,c])=>`<label class="manual-quiz-option"><input type="radio" name="manual_q${i}" data-correct="${c}"><span>${t}</span></label>`).join('')}</div><div class="manual-quiz-feedback"></div></div>`).join('')}</div><div class="btn-row"><button class="btn-primary" onclick="avaliarQuizManual()">✓ CORRIGIR TESTE</button><button class="btn-secondary" onclick="manualAbrirSecao('quiz')">↺ Refazer</button></div><div id="manualQuizResultado"></div>`;
-}
-function avaliarQuizManual(){
-  const qs=[...document.querySelectorAll('.manual-quiz-q')];let acertos=0,respondidas=0;
-  qs.forEach(q=>{
-    q.classList.remove('correct','incorrect');
-    const s=q.querySelector('input:checked'),f=q.querySelector('.manual-quiz-feedback');
-    if(!s){f.textContent='Selecione uma resposta.';f.style.color='var(--warn)';return;}
-    respondidas++;
-    const ok=s.dataset.correct==='true';if(ok)acertos++;
-    q.classList.add(ok?'correct':'incorrect');
-    f.textContent=(ok?'Correto. ':'Revise. ')+q.dataset.explain;
-    f.style.color=ok?'var(--ok)':'var(--danger)';
-  });
-  const box=$('manualQuizResultado');if(!box)return;
-  const pct=Math.round(acertos/qs.length*100);
-  box.innerHTML=`<div class="manual-result"><strong>Resultado: ${acertos}/${qs.length} (${pct}%)</strong> · ${respondidas<qs.length?'Ainda há questão sem resposta.':pct===100?'Excelente: você dominou o fluxo essencial.':pct>=60?'Bom resultado; revise as explicações destacadas.':'Retorne ao fluxo e às perguntas frequentes antes de continuar.'}</div>`;
-}
-function manualBuscaIndex(){
-  const extras=[
-    {titulo:'Salvar, exportar e importar',secao:'dados',texto:'localStorage JSON cópia de segurança projeto'},
-    {titulo:'Formato do CSV de deflectometria',secao:'dados',texto:'estaca D0 D20 D30 D45 D60 D90 D120 0,01 mm'},
-    {titulo:'Glossário de siglas',secao:'glossario',texto:MANUAL_GLOSSARIO.map(x=>x.join(' ')).join(' ')},
-    {titulo:'Checklist de validação',secao:'checklist',texto:'dados normas preços projeto responsabilidade arquivo'},
-    {titulo:'Perguntas frequentes',secao:'faq',texto:'erros API PDF outlier ordem dados exemplo'},
-    {titulo:'Teste rápido',secao:'quiz',texto:'questionário aprendizado avaliação'}
-  ];
-  return MANUAL_MODULOS.map(m=>({titulo:`${m.n} · ${m.titulo}`,secao:'modulos',modulo:m.id,texto:[m.sub,...m.entradas,...m.procedimento,...m.saidas,m.atencao].join(' ')})).concat(extras);
-}
-function manualNormalizar(s){return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();}
-function manualBuscar(q){
-  const nq=manualNormalizar(q).trim();
-  if(nq.length<2){renderManual(window.__manualSec==='busca'?'inicio':(window.__manualSec||'inicio'));return;}
-  const termos=nq.split(/\s+/).filter(Boolean);
-  const res=manualBuscaIndex().filter(r=>{const hay=manualNormalizar(r.titulo+' '+r.texto);return termos.every(t=>hay.includes(t));});
-  const body=res.length?`<div class="manual-search-results">${res.map(r=>`<div class="manual-search-result" onclick="manualAbrirResultado('${r.secao}','${r.modulo||''}')"><h3>${r.titulo}</h3><p>${r.texto.slice(0,170)}${r.texto.length>170?'…':''}</p><span class="manual-result-tag">Abrir ${r.secao}</span></div>`).join('')}</div>`:`<div class="manual-card"><h3>Nenhum resultado</h3><p>Tente outra palavra, uma sigla ou um termo mais amplo, como “deflexão”, “preço”, “JSON” ou “vida”.</p></div>`;
-  manualShell('busca',`Resultados para “${esc(q)}”`,`${res.length} tópico(s) encontrado(s) no manual integrado.`,body);
-}
-function manualAbrirResultado(sec,mod){
-  const b=$('manualBusca');if(b)b.value='';
-  renderManual(sec);
-  if(mod)setTimeout(()=>{const el=$('manual-mod-'+mod);if(el){el.open=true;el.scrollIntoView({behavior:'smooth',block:'start'});}},80);
-}
-function renderManual(sec='inicio'){
-  const map={
-    inicio:['Manual interativo do SisPav','Aprenda o fluxo de avaliação e reabilitação de pavimentos, acompanhe o estado do projeto e acesse diretamente cada módulo.',manualInicioHtml],
-    fluxo:['Fluxo recomendado de trabalho','Uma sequência didática para transformar dados de campo em diagnóstico, alternativas, custos, comparação e planejamento de rede.',manualFluxoHtml],
-    modulos:['Guia dos módulos 01 a 10','Entradas, modo de operação, saídas e cuidados de interpretação de cada etapa técnica.',manualModulosHtml],
-    dados:['Dados, arquivos e persistência','Entenda o que é salvo no navegador, o que deve ser exportado e como preparar os arquivos de entrada.',manualDadosHtml],
-    glossario:['Glossário técnico','Conceitos e siglas usados nas telas, fórmulas, gráficos e relatórios do aplicativo.',manualGlossarioHtml],
-    faq:['Perguntas frequentes','Respostas objetivas para os problemas mais comuns de operação, interpretação, arquivos e API.',manualFaqHtml],
-    checklist:['Checklist final de validação','Uma verificação antes de usar, compartilhar ou arquivar os resultados da análise.',manualChecklistHtml],
-    quiz:['Teste rápido de aprendizagem','Cinco questões para confirmar o entendimento do fluxo, das limitações e da gestão de dados.',manualQuizHtml]
-  };
-  const x=map[sec]||map.inicio;manualShell(sec,x[0],x[1],x[2]());
-}
-let __manualTourIdx=0;
-function iniciarTourManual(){
-  fecharTourManual();__manualTourIdx=0;
-  const o=document.createElement('div');o.id='manualTourOverlay';o.className='manual-tour-overlay';document.body.appendChild(o);
-  manualTourMostrar();
-}
-function manualTourMostrar(){
-  document.querySelectorAll('.manual-tour-focus').forEach(e=>e.classList.remove('manual-tour-focus'));
-  const s=MANUAL_TOUR[__manualTourIdx],tab=document.querySelector(`[data-mod="${s.mod}"]`),o=$('manualTourOverlay');if(!o)return;
-  if(tab){tab.classList.add('manual-tour-focus');tab.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});}
-  o.innerHTML=`<div class="manual-tour-card"><div class="manual-tour-head">TOUR DA NAVEGAÇÃO<button onclick="fecharTourManual()" title="Fechar">×</button></div><div class="manual-tour-body"><h3>${s.titulo}</h3><p>${s.texto}</p></div><div class="manual-tour-foot"><span class="manual-tour-count">${__manualTourIdx+1}/${MANUAL_TOUR.length}</span><button class="btn-mini" onclick="manualTourAnterior()" ${__manualTourIdx===0?'disabled':''}>← Anterior</button><button class="btn-primary" onclick="manualTourProximo()">${__manualTourIdx===MANUAL_TOUR.length-1?'Concluir':'Próximo →'}</button></div></div>`;
-}
-function manualTourAnterior(){if(__manualTourIdx>0){__manualTourIdx--;manualTourMostrar();}}
-function manualTourProximo(){if(__manualTourIdx>=MANUAL_TOUR.length-1){fecharTourManual();toast('Tour concluído.');return;}__manualTourIdx++;manualTourMostrar();}
-function fecharTourManual(){
-  document.querySelectorAll('.manual-tour-focus').forEach(e=>e.classList.remove('manual-tour-focus'));
-  const o=$('manualTourOverlay');if(o)o.remove();
-}
-document.addEventListener('keydown',e=>{if(e.key==='Escape')fecharTourManual();});
-
 
 // ─── INIT ────────────────────────────────────────────────────────────────────
 (function init(){
