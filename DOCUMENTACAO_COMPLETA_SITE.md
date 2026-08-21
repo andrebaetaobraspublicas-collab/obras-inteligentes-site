@@ -119,7 +119,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/fiscalizacao/` | 354221 bytes | 354221 caracteres |
 | `/estrutural/` | 989496 bytes | 989496 caracteres |
 | `/pavimentos/` | 271969 bytes | 271969 caracteres |
-| `/riscos/` | 582771 bytes | 582771 caracteres |
+| `/riscos/` | 418044 bytes | 412789 caracteres |
 | `/administracao-canteiro/` | 480651 bytes | 480651 caracteres |
 | `/memorial-descritivo/` | 6349 bytes | 6349 caracteres |
 | `/sispav-reabilitacao/` | 147360 bytes | 147360 caracteres |
@@ -175,7 +175,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/criticaopex/` | 631053 bytes | 631053 caracteres |
 | `/pmoc-manager/` | 604647 bytes | 604647 caracteres |
 | `/mobilizasicro/` | 1337033 bytes | 1337033 caracteres |
-| `/acesscheck/` | 174234 bytes | 171622 caracteres |
+| `/acesscheck/` | 200004 bytes | 197102 caracteres |
 
 ## Estrutura local principal
 
@@ -285,6 +285,8 @@ mapa_matriz_riscos_pro_v4.html
 Observacoes:
 
 - Em 21/07/2026, recebeu tela inicial com aviso de uso demonstrativo, isencao de responsabilidade e botao de concordancia antes de iniciar a abertura do sistema.
+- Em 21/08/2026, foi atualizado com a nova versao `Mapa_Matriz_Riscos_Pro_v4_5_Unificado.html`, identificada como v4.5, com quantificacao profissional em arquivo unificado.
+- Backup da versao anterior: `C:\Obras Inteligentes\backups\riscos-index-before-v4-5-unificado-20260821-0747.html`
 
 ### Administracao Local e Canteiro de Obra
 
@@ -1302,12 +1304,12 @@ Observacoes:
 Rota: `/acesscheck/`  
 Arquivo: `acesscheck/index.html`
 
-Ultima inclusao:
+Ultima atualizacao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\Animação splash screen acessibilidade.zip`
-- Arquivo publicado: `AcessCheck.html`
-- Data: 20/08/2026
-- Alteracao: inclusao de novo card na home, no filtro `Manutencao Predial`, e publicacao do aplicativo AcessCheck como HTML standalone.
+- Fonte: `C:\Users\ACER\Documents\Downloads\AcessCheck (2).html`
+- Data: 21/08/2026
+- Alteracao: substituicao integral de `acesscheck/index.html` pela nova versao do aplicativo.
+- Backup da versao anterior: `C:\Obras Inteligentes\backups\acesscheck-index-before-v2-20260821-0747.html`
 
 Observacoes:
 
