@@ -132,7 +132,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/paraboltpro/` | 1203461 bytes | 1183789 caracteres |
 | `/steelpro/` | 278012 bytes | 275650 caracteres |
 | `/cronogramapro/` | 402158 bytes | 402158 caracteres |
-| `/drenapro/` | 185925 bytes | 185925 caracteres |
+| `/drenapro/` | 249087 bytes | 249037 caracteres |
 | `/taludepro/` | 182065 bytes | 179465 caracteres |
 | `/solarpro/` | 557283 bytes | 551659 caracteres |
 | `/pgrcc/` | 95310 bytes | 94583 caracteres |
@@ -536,6 +536,8 @@ Arquivo: `drenapro/index.html`
 
 Ultima inclusao:
 
+- Em 22/08/2026, atualizado com `DrenaPro_com_manual_interativo (1).html`, identificado como versao com manual interativo.
+- Backup anterior: `C:\Obras Inteligentes\backups\drenapro-index-before-manual-interativo-20260822-1111.html`.
 - Fonte: `C:\Users\ACER\Documents\Downloads\DrenaPro (standalone).html`
 - Data: 21/07/2026
 - Alteracao: inclusao de novo card na home e publicacao do aplicativo como HTML standalone.
