@@ -133,11 +133,11 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/steelpro/` | 278012 bytes | 275650 caracteres |
 | `/cronogramapro/` | 402158 bytes | 402158 caracteres |
 | `/drenapro/` | 185925 bytes | 185925 caracteres |
-| `/taludepro/` | 97674 bytes | 97674 caracteres |
+| `/taludepro/` | 182065 bytes | 179465 caracteres |
 | `/solarpro/` | 557283 bytes | 551659 caracteres |
 | `/pgrcc/` | 95310 bytes | 94583 caracteres |
 | `/ventopro/` | 283733 bytes | 283626 caracteres |
-| `/concretopro/` | 621889 bytes | 621889 caracteres |
+| `/concretopro/` | 646687 bytes | 646598 caracteres |
 | `/aterramentopro/` | 324591 bytes | 324591 caracteres |
 | `/parafusopro/` | 292299 bytes | 288543 caracteres |
 | `/risco-cambial/` | 68775 bytes | 68775 caracteres |
@@ -554,6 +554,8 @@ Arquivo: `taludepro/index.html`
 
 Ultima inclusao:
 
+- Em 22/08/2026, atualizado com `index (36).html`, identificado como nova versao do TaludePro com manual interativo.
+- Backup anterior: `C:\Obras Inteligentes\backups\taludepro-index-before-update-20260822-1022.html`.
 - Fonte: `C:\Users\ACER\Documents\Downloads\TaludePro Standalone.html`
 - Data: 21/07/2026
 - Alteracao: inclusao de novo card na home e publicacao do aplicativo como HTML standalone.
@@ -628,6 +630,9 @@ Arquivo: `concretopro/index.html`
 
 Ultima inclusao:
 
+- Em 22/08/2026, atualizado com `ConcretoPro_com_Manual_Interativo.html`, identificado como versao com manual interativo.
+- Ajuste tecnico local: o placeholder interno `sistemaUrl` foi apontado para o HTML embutido do proprio pacote, permitindo abrir o sistema apos o aceite legal.
+- Backup anterior: `C:\Obras Inteligentes\backups\concretopro-index-before-manual-interativo-20260822-1022.html`.
 - Fonte: `C:\Users\ACER\Documents\Downloads\ConcretoPro - Abertura e Sistema.html`
 - Data: 22/07/2026
 - Alteracao: inclusao de novo card na home e publicacao do aplicativo como HTML standalone.
