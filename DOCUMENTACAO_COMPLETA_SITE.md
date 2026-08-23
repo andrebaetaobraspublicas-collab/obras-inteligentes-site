@@ -138,9 +138,9 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/pgrcc/` | 95310 bytes | 94583 caracteres |
 | `/ventopro/` | 283733 bytes | 283626 caracteres |
 | `/concretopro/` | 646687 bytes | 646598 caracteres |
-| `/aterramentopro/` | 324591 bytes | 324591 caracteres |
+| `/aterramentopro/` | 350011 bytes | 349919 caracteres |
 | `/parafusopro/` | 292299 bytes | 288543 caracteres |
-| `/risco-cambial/` | 68775 bytes | 68775 caracteres |
+| `/risco-cambial/` | 154065 bytes | 152257 caracteres |
 | `/protendpro/` | 915441 bytes | 915441 caracteres |
 | `/eventogramapro/` | 728843 bytes | 728843 caracteres |
 | `/termo-massa/` | 145812 bytes | 145812 caracteres |
@@ -170,7 +170,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/terceirizapro/` | 723110 bytes | 723110 caracteres |
 | `/cimbrepro/` | 188067 bytes | 188067 caracteres |
 | `/alvenariapro/` | 474835 bytes | 474835 caracteres |
-| `/andaimefach-pro/` | 160989 bytes | 160989 caracteres |
+| `/andaimefach-pro/` | 227525 bytes | 224792 caracteres |
 | `/recebeobra-pro/` | 617407 bytes | 617407 caracteres |
 | `/criticaopex/` | 631053 bytes | 631053 caracteres |
 | `/pmoc-manager/` | 604647 bytes | 604647 caracteres |
@@ -652,6 +652,8 @@ Arquivo: `aterramentopro/index.html`
 
 Ultima inclusao:
 
+- Em 23/08/2026, atualizado com `AterramentoPro_v1.6_Manual_Interativo.html`, identificado como versao com manual interativo.
+- Backup anterior: `C:\Obras Inteligentes\backups\aterramentopro-index-before-manual-interativo-20260823-1122.html`.
 - Fonte: `C:\Users\ACER\Documents\Downloads\AterramentoPro_v1.6.html`
 - Data: 26/07/2026
 - Alteracao: atualizacao do aplicativo AterramentoPro para nova versao standalone v1.6.
@@ -687,6 +689,8 @@ Arquivo: `risco-cambial/index.html`
 
 Ultima inclusao:
 
+- Em 23/08/2026, atualizado com `index (37).html`, identificado como nova versao do Simulador de Risco Cambial com manual interativo.
+- Backup anterior: `C:\Obras Inteligentes\backups\risco-cambial-index-before-update-20260823-1122.html`.
 - Fonte: `C:\Users\ACER\Documents\Downloads\Simulador_de_Risco_Cambial_v2026.09.html`
 - Data: 24/07/2026
 - Alteracao: atualizacao do aplicativo Simulador de Risco Cambial para nova versao standalone v2026.09.
@@ -1226,6 +1230,8 @@ Arquivo: `andaimefach-pro/index.html`
 
 Ultima inclusao:
 
+- Em 23/08/2026, atualizado com `index (38).html`, identificado como nova versao do AndaimeFach Pro com manual.
+- Backup anterior: `C:\Obras Inteligentes\backups\andaimefach-pro-index-before-update-20260823-1122.html`.
 - Fonte: `C:\Users\ACER\Documents\Downloads\AndaimeFach Pro - abertura.html`
 - Data: 13/08/2026
 - Alteracao: inclusao de novo card na home e publicacao do aplicativo AndaimeFach Pro como HTML standalone.

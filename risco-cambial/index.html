@@ -66,10 +66,149 @@
     @media(max-width:700px){.fields,.online-grid{grid-template-columns:1fr}.summary{grid-template-columns:1fr}}
   </style>
 
+<!-- ===== Barra superior e Manual interativo — estilos ===== -->
+<style>
+  /* Barra superior */
+  .topbar{position:sticky;top:0;z-index:800;background:linear-gradient(180deg,#fff 0%,#f6f9fd 100%);border-bottom:1px solid var(--line);box-shadow:0 2px 14px rgba(21,34,50,.07)}
+  .topbar-inner{max-width:1500px;margin:0 auto;padding:10px 24px;display:flex;align-items:center;gap:14px;justify-content:space-between;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:12px;min-width:0}
+  .brand-mark{width:42px;height:42px;border-radius:13px;background:linear-gradient(135deg,var(--accent) 0%,var(--accent2) 100%);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;flex:none;box-shadow:0 6px 16px rgba(31,90,166,.28)}
+  .brand-title{font-size:17px;font-weight:800;margin:0;line-height:1.2}
+  .brand-sub{font-size:12px;color:var(--muted);margin:2px 0 0;letter-spacing:.02em}
+  .topbar-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .btn-manual{display:inline-flex;align-items:center;gap:9px;background:var(--accent);color:#fff;padding:10px 16px;border-radius:12px;font-weight:800;font-size:14px;box-shadow:0 6px 18px rgba(31,90,166,.25)}
+  .btn-manual:hover{box-shadow:0 10px 24px rgba(31,90,166,.32)}
+  .btn-manual .kbd{background:rgba(255,255,255,.22);border:1px solid rgba(255,255,255,.35);border-radius:6px;padding:1px 6px;font-size:11px;font-weight:700;letter-spacing:.04em}
+  @media(max-width:700px){.topbar-inner{padding:10px 14px}.brand-sub{display:none}.brand-title{font-size:15px}.btn-manual .kbd{display:none}}
+
+  /* Sobreposição do manual */
+  .mnl-hide{display:none!important}
+  #manualOverlay{position:fixed;inset:0;z-index:9000;background:rgba(10,19,34,.55);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:22px}
+  #manualModal{background:var(--card);width:100%;max-width:1180px;height:min(90vh,900px);border-radius:20px;box-shadow:0 30px 80px rgba(0,0,0,.42);display:flex;flex-direction:column;overflow:hidden;font-family:Arial,Helvetica,sans-serif}
+  .mnl-head{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:16px 20px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#fff,#f7fafd);flex-wrap:wrap}
+  .mnl-head h2{margin:0;font-size:19px;color:var(--accent)}
+  .mnl-head .mnl-sub{margin:3px 0 0;font-size:12.5px;color:var(--muted)}
+  .mnl-head-actions{display:flex;gap:8px;flex-wrap:wrap}
+  .mnl-body{display:grid;grid-template-columns:274px minmax(0,1fr);flex:1;min-height:0}
+  .mnl-nav{border-right:1px solid var(--line);background:#f8fafc;display:flex;flex-direction:column;min-height:0}
+  .mnl-nav-top{padding:12px 12px 8px;border-bottom:1px solid var(--line)}
+  .mnl-nav-top input{font-size:13px;padding:9px 11px}
+  .mnl-progress{margin-top:9px;font-size:11.5px;color:var(--muted);font-weight:700}
+  .mnl-bar{height:6px;border-radius:99px;background:#e4ebf3;margin-top:5px;overflow:hidden}
+  .mnl-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0;transition:width .3s ease}
+  .mnl-nav-list{list-style:none;margin:0;padding:8px;overflow:auto;flex:1;min-height:0}
+  .mnl-nav-list li{margin-bottom:3px}
+  .mnl-navitem{width:100%;text-align:left;background:transparent;color:var(--text);font-size:13px;font-weight:600;padding:9px 10px;border-radius:10px;display:flex;gap:9px;align-items:flex-start;line-height:1.3}
+  .mnl-navitem:hover{background:#eef3f9;transform:none}
+  .mnl-navitem.active{background:var(--accent);color:#fff}
+  .mnl-navitem .n{font-size:11px;font-weight:800;opacity:.65;flex:none;min-width:17px}
+  .mnl-navitem .done{margin-left:auto;color:var(--ok);font-weight:800;font-size:12px}
+  .mnl-navitem.active .done{color:#cdf0d9}
+  .mnl-content{overflow:auto;padding:24px 30px 40px;min-height:0}
+  .mnl-section{display:none;animation:mnlIn .25s ease}
+  .mnl-section.active{display:block}
+  @keyframes mnlIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .mnl-section h3{font-size:22px;color:var(--accent);margin:0 0 4px}
+  .mnl-section h4{font-size:16px;margin:22px 0 8px;color:var(--text);border-left:4px solid var(--accent2);padding-left:10px}
+  .mnl-section h5{font-size:14px;margin:16px 0 6px;color:var(--accent2)}
+  .mnl-section p{font-size:14.2px;line-height:1.62;color:#334250;margin:0 0 11px}
+  .mnl-section ul,.mnl-section ol{font-size:14.2px;line-height:1.62;color:#334250;padding-left:20px;margin:0 0 11px}
+  .mnl-section li{margin-bottom:6px}
+  .mnl-lead{font-size:14.5px;color:var(--muted);margin-bottom:16px;line-height:1.55}
+  .mnl-tag{display:inline-block;background:#eaf0f8;color:var(--accent);border-radius:99px;padding:3px 10px;font-size:11.5px;font-weight:800;letter-spacing:.03em;margin-bottom:10px}
+  .mnl-fx{background:#0f1c2e;color:#e8f0fb;border-radius:12px;padding:13px 16px;font-family:Consolas,monospace;font-size:13.5px;line-height:1.7;overflow-x:auto;margin:10px 0 12px;white-space:pre-wrap}
+  .mnl-fx .c{color:#8fb3dd}
+  .mnl-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:12px;margin:12px 0 14px}
+  .mnl-box{border:1px solid var(--line);border-radius:14px;padding:13px 15px;background:#fbfcfe}
+  .mnl-box b{display:block;font-size:13.5px;margin-bottom:5px;color:var(--accent)}
+  .mnl-box span{font-size:13px;color:#455565;line-height:1.5;display:block}
+  .mnl-step{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:#fff;margin-bottom:9px}
+  .mnl-step .num{width:28px;height:28px;border-radius:9px;background:var(--accent);color:#fff;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;flex:none}
+  .mnl-step b{display:block;font-size:14px;margin-bottom:3px}
+  .mnl-step span{font-size:13.2px;color:#455565;line-height:1.5}
+  .mnl-table{width:100%;border-collapse:collapse;font-size:13.2px;margin:10px 0 14px}
+  .mnl-table th,.mnl-table td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top;white-space:normal}
+  .mnl-table th{background:#f2f6fb;color:var(--muted);font-size:12.5px;text-transform:uppercase;letter-spacing:.03em}
+  .mnl-table code{background:#eef3f9;border-radius:5px;padding:1px 5px;font-size:12.3px}
+  .mnl-note{border-left:4px solid var(--accent);background:#f5f9fd;border-radius:10px;padding:11px 14px;font-size:13.4px;line-height:1.55;color:#334250;margin:12px 0}
+  .mnl-note.warn{border-left-color:var(--warn);background:#fffaf0}
+  .mnl-note.ok{border-left-color:var(--ok);background:#f4fbf6}
+  .mnl-note.bad{border-left-color:var(--danger);background:#fdf5f5}
+  .mnl-note b{color:inherit}
+  /* Laboratórios interativos */
+  .mnl-lab{border:1px solid #cfdcec;border-radius:16px;background:linear-gradient(180deg,#f7fbff,#fff);padding:15px 17px;margin:14px 0 16px}
+  .mnl-lab h5{margin-top:0;display:flex;align-items:center;gap:8px}
+  .mnl-lab-fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+  .mnl-lab-fields label{display:block;font-size:11.5px;font-weight:700;color:var(--muted);margin-bottom:4px}
+  .mnl-lab-fields input{font-size:13px;padding:8px 10px}
+  .mnl-out{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:12px}
+  .mnl-out div{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+  .mnl-out .k{font-size:11px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.04em}
+  .mnl-out .v{font-size:18px;font-weight:800;margin-top:3px}
+  .mnl-actions{display:flex;gap:9px;flex-wrap:wrap;margin:12px 0 4px}
+  /* Quiz */
+  .mnl-quiz{border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:12px;background:#fff}
+  .mnl-quiz .q{font-size:14px;font-weight:700;margin-bottom:9px;line-height:1.45}
+  .mnl-opt{display:block;width:100%;text-align:left;background:#f6f8fb;color:var(--text);font-size:13.2px;font-weight:600;padding:9px 12px;border-radius:10px;margin-bottom:6px;line-height:1.4;border:1px solid transparent}
+  .mnl-opt:hover{background:#eaf0f8;transform:none}
+  .mnl-opt.right{background:#eaf7ee;border-color:#b7ddc4;color:#1e5c35}
+  .mnl-opt.wrong{background:#fdeeee;border-color:#eec9c9;color:#8d3134}
+  .mnl-fb{font-size:13px;line-height:1.5;margin-top:8px;padding:9px 12px;border-radius:10px;background:#f5f9fd;border-left:4px solid var(--accent);color:#334250}
+  .mnl-score{font-size:13.5px;font-weight:800;color:var(--accent)}
+  .mnl-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 20px;border-top:1px solid var(--line);background:#f8fafc}
+  .mnl-pos{font-size:12.5px;color:var(--muted);font-weight:700}
+  .mnl-empty{font-size:13px;color:var(--muted);padding:10px}
+  mark{background:#ffe9a8;border-radius:3px;padding:0 2px}
+  @media(max-width:900px){
+    #manualOverlay{padding:0}
+    #manualModal{height:100vh;max-width:none;border-radius:0}
+    .mnl-body{grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr)}
+    .mnl-nav{border-right:none;border-bottom:1px solid var(--line);max-height:38vh}
+    .mnl-content{padding:18px 16px 34px}
+    .mnl-section h3{font-size:19px}
+  }
+  /* Tour guiado */
+  #tourLayer{position:fixed;inset:0;z-index:9500;pointer-events:none}
+  #tourRing{position:absolute;border-radius:14px;border:2px solid var(--accent2);box-shadow:0 0 0 9999px rgba(10,19,34,.62);transition:all .28s cubic-bezier(.2,.8,.25,1)}
+  #tourTip{position:absolute;max-width:340px;background:#fff;border-radius:14px;box-shadow:0 20px 50px rgba(0,0,0,.35);padding:14px 16px;pointer-events:auto;font-family:Arial,Helvetica,sans-serif;transition:all .28s cubic-bezier(.2,.8,.25,1)}
+  #tourTip b{display:block;font-size:14.5px;color:var(--accent);margin-bottom:5px}
+  #tourTip p{font-size:13.2px;line-height:1.5;color:#334250;margin:0 0 11px}
+  #tourTip .row{display:flex;gap:8px;align-items:center;justify-content:space-between}
+  #tourTip .step{font-size:11.5px;color:var(--muted);font-weight:800}
+  /* Impressão */
+  @media print{
+    .topbar{display:none!important}
+    #manualOverlay{display:none!important}
+    body.mnl-print #manualOverlay{display:block!important;position:static;background:#fff;backdrop-filter:none;padding:0}
+    body.mnl-print .wrap{display:none!important}
+    body.mnl-print #manualModal{box-shadow:none;height:auto;max-width:none;border-radius:0}
+    body.mnl-print .mnl-nav,body.mnl-print .mnl-head-actions,body.mnl-print .mnl-foot,body.mnl-print .mnl-actions,body.mnl-print #tourLayer{display:none!important}
+    body.mnl-print .mnl-body{display:block}
+    body.mnl-print .mnl-section{display:block!important;page-break-after:always}
+    body.mnl-print .mnl-content{overflow:visible;height:auto}
+  }
+</style>
+
 </head>
 <body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <div class="brand-mark">FX</div>
+      <div>
+        <h1 class="brand-title">Simulador de Risco Cambial e Contingência</h1>
+        <p class="brand-sub">Monte Carlo &middot; VaR &middot; CVaR &middot; contingência cambial em contratos</p>
+      </div>
+      <span class="pill">v2026.09</span>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn-manual" id="openManual" type="button" title="Abrir o manual interativo (F1)" aria-label="Abrir o manual interativo do sistema">
+        <span aria-hidden="true">&#128216;</span> Manual interativo <span class="kbd">F1</span>
+      </button>
+    </div>
+  </div>
+</header>
 <div class="wrap">
-  <h1>Simulador de Risco Cambial e Contingência</h1>
   <p class="subtitle">Simulação de Monte Carlo com modelos triangular, lognormal, cenários discretos e bootstrap histórico, cronograma de exposição, hedge parcial, VaR, CVaR e distribuição econômica separada da reserva não negativa. <strong>v2026.09</strong> — histograma com recorte de cauda, busca online restabelecida e cronograma acoplado ao horizonte.</p>
 
   <div class="grid">
@@ -1039,5 +1178,1017 @@
 </script>
 
 
+
+<!-- ===== Manual interativo — conteúdo ===== -->
+<div id="manualOverlay" class="mnl-hide" role="dialog" aria-modal="true" aria-labelledby="manualTitle">
+  <div id="manualModal">
+    <div class="mnl-head">
+      <div>
+        <h2 id="manualTitle">Manual interativo do Simulador de Risco Cambial</h2>
+        <p class="mnl-sub">Guia didático em 13 capítulos, com laboratórios, exemplos aplicáveis, tour guiado e autoavaliação.</p>
+      </div>
+      <div class="mnl-head-actions">
+        <button class="secondary small-btn" id="manualTour" type="button">Tour guiado</button>
+        <button class="ghost small-btn" id="manualPrint" type="button">Imprimir manual</button>
+        <button class="danger small-btn" id="manualClose" type="button">Fechar ✕</button>
+      </div>
+    </div>
+
+    <div class="mnl-body">
+      <nav class="mnl-nav">
+        <div class="mnl-nav-top">
+          <input id="manualSearch" type="search" placeholder="Buscar no manual (ex.: hedge, CVaR, bootstrap)" aria-label="Buscar no manual">
+          <div class="mnl-progress" id="manualProgressText">Progresso de leitura: 0 de 13 capítulos</div>
+          <div class="mnl-bar"><i id="manualProgressBar"></i></div>
+        </div>
+        <ul class="mnl-nav-list" id="manualNavList"></ul>
+      </nav>
+
+      <div class="mnl-content" id="manualContent">
+
+        <!-- 01 -->
+        <section class="mnl-section active" id="mnl-01" data-title="Visão geral do sistema">
+          <span class="mnl-tag">Capítulo 01</span>
+          <h3>Visão geral do sistema</h3>
+          <p class="mnl-lead">O simulador estima, em bases probabilísticas, quanto a variação do câmbio pode custar a um contrato com insumos, equipamentos ou serviços atrelados a moeda estrangeira — e converte essa incerteza em um valor de contingência defensável.</p>
+
+          <h4>O problema que o sistema resolve</h4>
+          <p>Em contratos com parcela indexada a moeda estrangeira, o custo futuro depende de uma variável que ninguém controla. A prática usual — adotar um único câmbio "provável" — produz um número isolado, sem informar a probabilidade de ele ser insuficiente. O simulador substitui esse número único por uma <strong>distribuição de resultados</strong>: milhares de trajetórias de câmbio são geradas, cada uma aplicada ao cronograma de desembolso, gerando milhares de impactos financeiros possíveis.</p>
+          <p>Dessa distribuição extraem-se as respostas úteis: qual a chance de haver perda, qual reserva cobre 80% ou 95% dos cenários, e qual a perda média nos casos em que a reserva é estourada.</p>
+
+          <h4>Fluxo de trabalho em cinco passos</h4>
+          <div class="mnl-step"><div class="num">1</div><div><b>Dados do contrato</b><span>Valor total, parcela exposta ao câmbio, moeda, horizonte, câmbio-base e fator de repasse.</span></div></div>
+          <div class="mnl-step"><div class="num">2</div><div><b>Cronograma de exposição</b><span>Distribuição da exposição ao longo dos meses, com o percentual de hedge de cada parcela.</span></div></div>
+          <div class="mnl-step"><div class="num">3</div><div><b>Modelo estatístico</b><span>Escolha entre lognormal, triangular, cenários discretos ou bootstrap histórico.</span></div></div>
+          <div class="mnl-step"><div class="num">4</div><div><b>Simulação</b><span>Número de iterações, percentil alvo, semente aleatória e configuração do histograma.</span></div></div>
+          <div class="mnl-step"><div class="num">5</div><div><b>Leitura e registro</b><span>Interpretação dos indicadores, exportação em CSV e impressão do relatório em PDF.</span></div></div>
+
+          <h4>O que o sistema não faz</h4>
+          <ul>
+            <li>Não prevê o câmbio futuro. Ele organiza a incerteza a partir das premissas que você informa.</li>
+            <li>Não substitui política de hedge, parecer econômico-financeiro nem análise jurídica do contrato.</li>
+            <li>Não modela correlação com outros riscos (inflação de insumos, atraso de cronograma, risco de crédito).</li>
+            <li>Não considera tributos, custos financeiros da operação de hedge nem efeitos de repactuação contratual.</li>
+          </ul>
+
+          <div class="mnl-note ok"><b>Sugestão de primeiro uso:</b> feche este manual, clique em <em>Carregar exemplo</em> e depois em <em>Calcular</em>. Volte aqui e percorra os capítulos 2 a 7 comparando cada explicação com a tela.</div>
+
+          <div class="mnl-actions">
+            <button class="primary small-btn" data-mnl-tour="1" type="button">Iniciar tour guiado pela tela</button>
+            <button class="secondary small-btn" data-mnl-goto="mnl-02" type="button">Ir ao capítulo 2 →</button>
+          </div>
+        </section>
+
+        <!-- 02 -->
+        <section class="mnl-section" id="mnl-02" data-title="Conceitos essenciais">
+          <span class="mnl-tag">Capítulo 02</span>
+          <h3>Conceitos essenciais</h3>
+          <p class="mnl-lead">Sete conceitos sustentam todas as telas do sistema. Compreendidos estes, o restante do manual é apenas detalhamento operacional.</p>
+
+          <div class="mnl-grid">
+            <div class="mnl-box"><b>Exposição cambial</b><span>Parcela do contrato, em reais, cujo custo varia com a moeda estrangeira. Não é o valor total do contrato: é apenas a fração efetivamente indexada.</span></div>
+            <div class="mnl-box"><b>Repasse (pass-through)</b><span>Proporção da variação cambial que efetivamente chega ao custo. Fornecedores com estoque nacional, componentes locais ou preços travados repassam menos de 100%.</span></div>
+            <div class="mnl-box"><b>Hedge</b><span>Fração de uma parcela protegida por instrumento financeiro ou cláusula contratual. No modelo, a parcela protegida é liquidada ao câmbio-base, com impacto zero.</span></div>
+            <div class="mnl-box"><b>Contingência</b><span>Reserva financeira dimensionada para absorver o risco. Aqui é sempre não negativa: ganhos cambiais não reduzem a reserva necessária.</span></div>
+            <div class="mnl-box"><b>Percentil (VaR)</b><span>P80 é o valor que não é superado em 80% dos cenários simulados. É o "valor em risco" no nível de confiança escolhido.</span></div>
+            <div class="mnl-box"><b>CVaR</b><span>Média das perdas <em>além</em> do percentil. Responde: quando a reserva estourar, quanto tende a faltar em média.</span></div>
+            <div class="mnl-box"><b>Monte Carlo</b><span>Método que substitui o cálculo analítico por repetição massiva de sorteios. Cada iteração é um futuro possível; o conjunto forma a distribuição.</span></div>
+          </div>
+
+          <h4>Por que separar impacto líquido e perda</h4>
+          <p>O sistema mantém duas séries distintas. O <strong>impacto econômico líquido</strong> admite valores negativos, representando ganho quando o câmbio cai — é a visão econômica correta do resultado do contrato. A série de <strong>perdas</strong> converte todo resultado favorável em zero, porque uma reserva de contingência não pode ser dimensionada assumindo que o câmbio vai ajudar. Todas as reservas (P50 a P99 e CVaR) derivam da segunda série; os indicadores econômicos (média, desvio, assimetria) derivam da primeira.</p>
+
+          <div class="mnl-lab">
+            <h5>🧪 Laboratório 1 — o impacto de uma parcela</h5>
+            <p style="margin-bottom:10px">Altere os campos e observe a fórmula operando em tempo real. Este é exatamente o cálculo que o motor repete para cada parcela, em cada uma das milhares de iterações.</p>
+            <div class="mnl-lab-fields">
+              <div><label for="lab-exp">Exposição da parcela (R$)</label><input id="lab-exp" type="number" step="1000" value="1000000"></div>
+              <div><label for="lab-fx0">Câmbio-base</label><input id="lab-fx0" type="number" step="0.01" value="5.20"></div>
+              <div><label for="lab-fx1">Câmbio na data da parcela</label><input id="lab-fx1" type="number" step="0.01" value="5.85"></div>
+              <div><label for="lab-rep">Repasse (%)</label><input id="lab-rep" type="number" step="1" value="100"></div>
+              <div><label for="lab-hedge">Hedge (%)</label><input id="lab-hedge" type="number" step="1" value="0"></div>
+            </div>
+            <div class="mnl-out">
+              <div><div class="k">Variação cambial</div><div class="v" id="lab-var">+12,50%</div></div>
+              <div><div class="k">Impacto financeiro</div><div class="v" id="lab-out">R$ 125.000,00</div></div>
+              <div><div class="k">Sobre a parcela</div><div class="v" id="lab-pct">12,50%</div></div>
+            </div>
+            <div class="mnl-fb" id="lab-note" style="margin-top:10px"></div>
+          </div>
+
+          <div class="mnl-note"><b>Leia assim:</b> com hedge de 40%, apenas 60% da parcela permanece exposta; com repasse de 70%, apenas 70% da variação chega ao custo. Os dois fatores são multiplicativos e reduzem o impacto de forma independente.</div>
+        </section>
+
+        <!-- 03 -->
+        <section class="mnl-section" id="mnl-03" data-title="Passo 1 — Dados do contrato">
+          <span class="mnl-tag">Capítulo 03</span>
+          <h3>Passo 1 — Dados do contrato</h3>
+          <p class="mnl-lead">O primeiro cartão define a escala do problema. Erros aqui deslocam todos os resultados proporcionalmente, sem que o sistema tenha como detectá-los.</p>
+
+          <table class="mnl-table">
+            <thead><tr><th>Campo</th><th>Significado</th><th>Como preencher</th></tr></thead>
+            <tbody>
+              <tr><td><b>Projeto / contrato</b></td><td>Identificação livre.</td><td>Use um rótulo que apareça no CSV e no PDF, incluindo número do processo quando houver.</td></tr>
+              <tr><td><b>Valor total (R$)</b></td><td>Base de referência para os percentuais dos resultados.</td><td>Valor global contratado. Serve de denominador em todos os indicadores "% do contrato".</td></tr>
+              <tr><td><b>Parcela exposta (R$)</b></td><td>Fração indexada à moeda estrangeira.</td><td>Levante item a item na planilha orçamentária. Deve ficar entre zero e o valor total.</td></tr>
+              <tr><td><b>Moeda</b></td><td>USD, EUR ou CNY.</td><td>Define a moeda consultada na busca online de séries históricas.</td></tr>
+              <tr><td><b>Horizonte (meses)</b></td><td>Prazo máximo de exposição, entre 1 e 120.</td><td>Normalmente o prazo até o último desembolso indexado, não o prazo total da obra.</td></tr>
+              <tr><td><b>Câmbio-base</b></td><td>Cotação de referência do orçamento.</td><td>Use a cotação da data-base do orçamento. É o ponto de partida de todas as trajetórias.</td></tr>
+              <tr><td><b>Câmbio determinístico</b></td><td>Cenário único de comparação.</td><td>A cotação que seria adotada em uma análise tradicional. Aparece como linha vermelha no histograma.</td></tr>
+              <tr><td><b>Fator global de repasse (%)</b></td><td>Quanto da variação chega ao custo.</td><td>100% para importação direta; menos quando há nacionalização parcial ou preço travado.</td></tr>
+            </tbody>
+          </table>
+
+          <h4>Regras de validação aplicadas</h4>
+          <ul>
+            <li>Valor total maior que zero.</li>
+            <li>Parcela exposta entre zero e o valor total.</li>
+            <li>Horizonte entre 1 e 120 meses.</li>
+            <li>Câmbio-base e câmbio determinístico positivos.</li>
+            <li>Repasse entre 0% e 100%.</li>
+          </ul>
+          <p>Mensagens em vermelho no campo <em>Revise</em> bloqueiam o cálculo; mensagens em âmbar são avisos e não impedem a simulação.</p>
+
+          <div class="mnl-note warn"><b>Erro frequente:</b> lançar o valor total do contrato como parcela exposta. Isso multiplica a contingência pela razão entre os dois valores. Se apenas 25% do orçamento é importado, a parcela exposta é 25% — e não o valor global.</div>
+          <div class="mnl-note"><b>Relação entre câmbio-base e data-base:</b> se o orçamento foi elaborado meses antes e o câmbio já se moveu, atualizar apenas o câmbio-base sem reduzir o horizonte superestima o risco remanescente, porque parte da variação já se materializou.</div>
+        </section>
+
+        <!-- 04 -->
+        <section class="mnl-section" id="mnl-04" data-title="Passo 2 — Cronograma de exposição">
+          <span class="mnl-tag">Capítulo 04</span>
+          <h3>Passo 2 — Cronograma de exposição</h3>
+          <p class="mnl-lead">O cronograma é o coração do modelo. O risco cambial não depende do prazo do contrato, mas do <strong>momento</strong> em que cada desembolso indexado ocorre.</p>
+
+          <h4>Por que o mês importa mais do que o horizonte</h4>
+          <p>Em processos de difusão, a dispersão do câmbio cresce com a raiz quadrada do tempo. Um desembolso no mês 4 carrega desvio-padrão proporcional a √4; no mês 36, proporcional a √36 — três vezes maior. Ampliar o horizonte de 12 para 60 meses <em>sem</em> mover as parcelas não altera o risco simulado: as parcelas continuam ocorrendo cedo, e o intervalo adicional simplesmente não é usado por nenhuma exposição.</p>
+          <p>Por isso o sistema emite aviso quando a última parcela ocorre antes de 60% do horizonte, e oferece o botão <em>Estender ao horizonte</em>, que redistribui as parcelas uniformemente até o último mês.</p>
+
+          <div class="mnl-lab">
+            <h5>🧪 Laboratório 2 — o efeito do prazo sobre a dispersão</h5>
+            <p style="margin-bottom:10px">Com o modelo lognormal, informe tendência e volatilidade anuais e observe como o intervalo provável do câmbio se abre à medida que a parcela se afasta no tempo.</p>
+            <div class="mnl-lab-fields">
+              <div><label for="tl-fx0">Câmbio-base</label><input id="tl-fx0" type="number" step="0.01" value="5.20"></div>
+              <div><label for="tl-drift">Tendência anual (%)</label><input id="tl-drift" type="number" step="0.5" value="8"></div>
+              <div><label for="tl-vol">Volatilidade anual (%)</label><input id="tl-vol" type="number" step="0.5" value="18"></div>
+            </div>
+            <table class="mnl-table" style="margin-top:12px">
+              <thead><tr><th>Mês da parcela</th><th>Desvio acumulado</th><th>Câmbio mediano</th><th>Câmbio P80</th><th>Câmbio P95</th></tr></thead>
+              <tbody id="tl-body"></tbody>
+            </table>
+            <div class="mnl-fb" id="tl-note"></div>
+          </div>
+
+          <h4>Colunas da tabela</h4>
+          <table class="mnl-table">
+            <thead><tr><th>Coluna</th><th>Função</th></tr></thead>
+            <tbody>
+              <tr><td><b>Mês</b></td><td>Momento em que a exposição se materializa. Limitado automaticamente ao horizonte informado; ao reduzir o horizonte, meses excedentes são ajustados e destacados temporariamente.</td></tr>
+              <tr><td><b>Participação (%)</b></td><td>Fração da exposição total alocada naquele mês. A soma de todas as linhas deve ser exatamente 100%.</td></tr>
+              <tr><td><b>Hedge (%)</b></td><td>Percentual daquela parcela protegido. A fração protegida é liquidada ao câmbio-base e não gera impacto.</td></tr>
+            </tbody>
+          </table>
+
+          <h4>Os três botões auxiliares</h4>
+          <ul>
+            <li><b>Adicionar parcela</b> — insere uma linha nova no último mês do horizonte, com participação zero.</li>
+            <li><b>Distribuir igualmente</b> — divide 100% entre as linhas existentes, sem alterar os meses.</li>
+            <li><b>Estender ao horizonte</b> — reposiciona os meses uniformemente até o horizonte e recalcula.</li>
+          </ul>
+
+          <div class="mnl-note ok"><b>Boa prática:</b> derive o cronograma do cronograma físico-financeiro real, não de uma divisão uniforme por conveniência. Equipamentos importados costumam ter desembolso concentrado em poucos marcos (pedido, embarque, entrega), o que muda materialmente a contingência.</div>
+          <div class="mnl-note warn"><b>Atenção ao hedge:</b> o hedge é aplicado por parcela, não globalmente. Proteger 100% da primeira parcela e nada das demais é muito diferente de proteger 33% de cada uma — mesmo que a fração total protegida coincida, porque as parcelas ocorrem em momentos de risco diferentes.</div>
+        </section>
+
+        <!-- 05 -->
+        <section class="mnl-section" id="mnl-05" data-title="Passo 3 — Os quatro modelos">
+          <span class="mnl-tag">Capítulo 05</span>
+          <h3>Passo 3 — Os quatro modelos estatísticos</h3>
+          <p class="mnl-lead">A escolha do modelo define como as trajetórias de câmbio são geradas. Não existe modelo universalmente melhor: existe o modelo compatível com a informação disponível.</p>
+
+          <h4>1. Lognormal por volatilidade</h4>
+          <p>Simula trajetórias mensais completas por movimento browniano geométrico, o padrão de mercado para preços de ativos. A cada mês:</p>
+          <div class="mnl-fx">S<sub>m</sub> = S<sub>m−1</sub> · exp[ (μ − σ²/2)·Δt + σ·√Δt·Z ] <span class="c">com Δt = 1/12 e Z ~ N(0,1)</span></div>
+          <p>Parâmetros: <b>tendência anual (μ)</b>, a deriva esperada da moeda, e <b>volatilidade anual (σ)</b>, o desvio-padrão dos retornos logarítmicos. O termo −σ²/2 é a correção de Itô, que garante que a tendência informada corresponda ao crescimento esperado do logaritmo do câmbio.</p>
+          <p><b>Quando usar:</b> situação padrão, quando há estimativa razoável de volatilidade (implícita em opções, histórica, ou referência de mercado). É o único modelo em que a trajetória mensal é genuinamente estocástica, e portanto o único que reage corretamente ao reposicionamento das parcelas no tempo.</p>
+
+          <h4>2. Triangular por cenários</h4>
+          <p>Sorteia o câmbio <em>terminal</em> de uma distribuição triangular definida por mínimo, mais provável e máximo, e interpola a trajetória de forma log-linear entre o câmbio-base e o valor sorteado.</p>
+          <div class="mnl-fx">S<sub>m</sub> = S<sub>0</sub> · exp[ ln(S<sub>T</sub>/S<sub>0</sub>) · m/H ]  <span class="c">S<sub>T</sub> sorteado da triangular</span></div>
+          <p><b>Quando usar:</b> quando não há série histórica nem estimativa de volatilidade, mas há julgamento técnico sobre limites plausíveis — por exemplo, a partir de projeções de instituições financeiras.</p>
+          <div class="mnl-note warn"><b>Limitação:</b> o histograma tende a reproduzir a forma triangular, porque o impacto é uma transformação praticamente linear do câmbio sorteado. A distribuição resultante reflete o julgamento inserido, não uma propriedade estatística do mercado.</div>
+
+          <h4>3. Cenários discretos ponderados</h4>
+          <p>Um conjunto finito de cotações terminais, cada uma com probabilidade atribuída. O sorteio escolhe um cenário conforme os pesos e a trajetória é interpolada como na triangular. As probabilidades devem somar 100%.</p>
+          <p><b>Quando usar:</b> quando a análise já está estruturada em cenários nomeados (otimista, base, adverso, extremo), o que facilita a comunicação com instâncias decisórias e a documentação da premissa adotada.</p>
+          <div class="mnl-note"><b>Consequência técnica:</b> como só existem poucos valores terminais possíveis, o histograma exibe agrupamentos discretos, e percentis intermediários podem coincidir. Com quatro cenários, todo P entre 75% e 95% pode retornar o mesmo valor.</div>
+
+          <h4>4. Bootstrap histórico</h4>
+          <p>Calcula os retornos logarítmicos mensais da série informada e sorteia esses retornos <em>com reposição</em> para montar trajetórias:</p>
+          <div class="mnl-fx">r<sub>i</sub> = ln( S<sub>i</sub> / S<sub>i−1</sub> )   →   S<sub>m</sub> = S<sub>m−1</sub> · exp( r<sub>sorteado</sub> )</div>
+          <p>A vantagem é dispensar hipótese de normalidade: caudas pesadas, assimetria e saltos observados historicamente são reproduzidos na simulação. A limitação é o pressuposto de que o passado representa o futuro e de que os retornos são independentes entre si.</p>
+
+          <h5>Origem dos dados</h5>
+          <ul>
+            <li><b>Banco Central — PTAX:</b> cotação de venda do boletim de fechamento; o sistema retém a última observação de cada mês.</li>
+            <li><b>Frankfurter:</b> série agregada de bancos centrais, usada também como alternativa automática caso a consulta PTAX falhe.</li>
+            <li><b>Importação manual:</b> colagem ou arquivo CSV/TXT, aceitando um valor por linha ou o formato <code>data;valor</code>. Linhas iniciadas por <code>#</code> são ignoradas e a vírgula é tratada como separador decimal.</li>
+          </ul>
+          <p>São exigidas no mínimo 12 observações mensais. Entre 12 e 24 observações, e entre 24 e 60, o sistema emite avisos de incerteza crescente. Retornos extremos isolados também geram alerta, porque podem inflar artificialmente a cauda da distribuição.</p>
+
+          <table class="mnl-table">
+            <thead><tr><th>Situação</th><th>Modelo recomendado</th></tr></thead>
+            <tbody>
+              <tr><td>Há série histórica longa e representativa</td><td>Bootstrap histórico</td></tr>
+              <tr><td>Há estimativa confiável de volatilidade</td><td>Lognormal</td></tr>
+              <tr><td>Há apenas limites plausíveis de julgamento</td><td>Triangular</td></tr>
+              <tr><td>A decisão será comunicada em cenários nomeados</td><td>Cenários discretos</td></tr>
+              <tr><td>Deseja-se testar a robustez da reserva</td><td>Rodar dois modelos e comparar o P80</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <!-- 06 -->
+        <section class="mnl-section" id="mnl-06" data-title="Passo 4 — Simulação e gráficos">
+          <span class="mnl-tag">Capítulo 06</span>
+          <h3>Passo 4 — Simulação e visualização</h3>
+          <p class="mnl-lead">Este cartão controla a precisão numérica, o nível de confiança da reserva e a legibilidade dos gráficos.</p>
+
+          <h4>Iterações</h4>
+          <p>Cada iteração é uma trajetória completa de câmbio. O erro de Monte Carlo cai com 1/√N: quadruplicar as iterações reduz o erro pela metade. Percentis centrais (P50) estabilizam rapidamente; percentis de cauda (P95, P99) e o CVaR exigem muito mais amostras, porque dependem de poucos cenários extremos.</p>
+          <table class="mnl-table">
+            <thead><tr><th>Iterações</th><th>Uso adequado</th></tr></thead>
+            <tbody>
+              <tr><td>1.000 a 5.000</td><td>Exploração rápida de premissas, ajuste de cronograma.</td></tr>
+              <tr><td>20.000 a 50.000</td><td>Análise de trabalho, valor padrão do sistema (30.000).</td></tr>
+              <tr><td>100.000 a 500.000</td><td>Resultado final documentado, especialmente com P95/P99 ou bootstrap.</td></tr>
+            </tbody>
+          </table>
+
+          <h4>Percentil alvo</h4>
+          <p>Define o nível de confiança da contingência e alimenta simultaneamente o cartão <em>Contingência alvo</em>, o CVaR, o marcador do histograma e as linhas tracejadas da curva acumulada. P80 significa: em 80% dos cenários simulados, a reserva é suficiente.</p>
+          <div class="mnl-note"><b>Como escolher:</b> P50 é a mediana e cobre metade dos cenários — em geral insuficiente para reserva. P80 é o uso corrente em análise de risco de projetos. P90 e P95 aplicam-se quando a consequência da insuficiência é grave (paralisação, aditivo inviável, risco reputacional).</div>
+
+          <h4>Configuração do histograma</h4>
+          <ul>
+            <li><b>Histograma de</b> — alterna entre o impacto econômico líquido (com ganhos e perdas) e a série de perdas não negativas, usada para contingência.</li>
+            <li><b>Escala</b> — frequência relativa (proporção por classe), absoluta (contagem) ou densidade (proporção dividida pela largura da classe, comparável entre configurações diferentes).</li>
+            <li><b>Classes</b> — automático pela regra de Freedman–Diaconis, que define a largura como 2·IQR/∛n, ou manual entre 10 e 100 classes.</li>
+          </ul>
+
+          <h5>Recorte da cauda</h5>
+          <p>Um único cenário extremo esticaria o eixo horizontal e comprimiria 99% dos dados em uma barra única. O sistema recorta a janela visível no percentil 99,5%; os valores acima são agrupados na última classe, destacada em tom avermelhado, com nota indicando o valor de corte e o percentual agrupado. O recorte é <strong>apenas visual</strong>: todos os indicadores, percentis e o CVaR continuam calculados sobre a amostra completa.</p>
+
+          <h4>Semente aleatória</h4>
+          <p>O gerador é um PRNG determinístico (mulberry32) inicializado por um <em>hash</em> do texto informado. A mesma semente, com as mesmas premissas, reproduz exatamente os mesmos resultados — condição essencial para auditabilidade e para comparação entre alternativas.</p>
+          <div class="mnl-note ok"><b>Teste de estabilidade:</b> rode a mesma configuração com três sementes diferentes. Se o P80 variar pouco, a amostra é suficiente. Se variar de forma relevante, aumente as iterações antes de documentar o resultado.</div>
+        </section>
+
+        <!-- 07 -->
+        <section class="mnl-section" id="mnl-07" data-title="Leitura dos resultados">
+          <span class="mnl-tag">Capítulo 07</span>
+          <h3>Leitura dos resultados</h3>
+          <p class="mnl-lead">O painel direito apresenta quatro indicadores de topo, dois gráficos, três tabelas e um resumo interpretativo. Cada um responde a uma pergunta distinta.</p>
+
+          <h4>Os quatro cartões</h4>
+          <table class="mnl-table">
+            <thead><tr><th>Cartão</th><th>Pergunta que responde</th><th>Observação</th></tr></thead>
+            <tbody>
+              <tr><td><b>Impacto determinístico</b></td><td>Quanto custaria no cenário único tradicional?</td><td>Calculado com a trajetória interpolada até o câmbio determinístico. Serve de referência comparativa.</td></tr>
+              <tr><td><b>Impacto líquido esperado</b></td><td>Qual o resultado médio considerando ganhos e perdas?</td><td>Média da distribuição econômica. Pode ser negativo, indicando ganho esperado.</td></tr>
+              <tr><td><b>Contingência alvo</b></td><td>Que reserva cobre o percentil escolhido?</td><td>Percentil da série de perdas. É o número que normalmente vai ao orçamento.</td></tr>
+              <tr><td><b>CVaR no percentil alvo</b></td><td>Se a reserva estourar, quanto falta em média?</td><td>Sempre maior ou igual à contingência. A diferença mede a severidade da cauda.</td></tr>
+            </tbody>
+          </table>
+
+          <h4>Indicadores estatísticos</h4>
+          <ul>
+            <li><b>Probabilidade de perda e de ganho</b> — proporção de cenários com impacto positivo e negativo.</li>
+            <li><b>Perda média condicionada à perda</b> — média apenas dos cenários desfavoráveis; sempre maior que a perda esperada global.</li>
+            <li><b>Desvio-padrão</b> — dispersão do impacto líquido, em reais.</li>
+            <li><b>Assimetria</b> — valores positivos indicam cauda direita alongada, típico de distribuições cambiais: perdas grandes são mais prováveis do que ganhos de mesma magnitude.</li>
+            <li><b>Curtose excedente</b> — acima de zero indica caudas mais pesadas que a normal. Comum no bootstrap, quando a série contém crises.</li>
+            <li><b>FX terminal médio e mediano</b> — a diferença entre eles é outra leitura da assimetria da distribuição do câmbio.</li>
+          </ul>
+
+          <h4>Os dois gráficos</h4>
+          <p>O <b>histograma</b> mostra a forma da distribuição, com três marcadores verticais: média (azul), percentil alvo (verde) e cenário determinístico (vermelho). A posição relativa do marcador vermelho é reveladora — se ele cai bem à esquerda do verde, o cenário determinístico adotado na análise tradicional cobre uma fração pequena dos futuros possíveis.</p>
+          <p>A <b>curva acumulada</b> mostra, para cada valor de perda, a probabilidade de não ser ultrapassado. As linhas tracejadas identificam o percentil alvo. Ela responde diretamente à pergunta inversa: dada uma reserva já fixada, qual o nível de cobertura correspondente?</p>
+
+          <h4>Registro do resultado</h4>
+          <ul>
+            <li><b>Exportar resumo CSV</b> — premissas, indicadores, percentis e cronograma, em arquivo com BOM e separador ponto-e-vírgula, compatível com Excel em pt-BR.</li>
+            <li><b>Imprimir / PDF</b> — imprime apenas o painel de resultados, sem os campos de entrada.</li>
+            <li><b>Premissas registradas</b> — tabela que consolida tudo o que foi usado no cálculo, incluindo a semente. É a peça que garante a reprodutibilidade da análise.</li>
+          </ul>
+
+          <div class="mnl-note warn"><b>Cuidado interpretativo:</b> a contingência alvo não é "o que vai acontecer". É o valor que, sob as premissas adotadas, seria suficiente na proporção de cenários escolhida. Alterada a premissa, altera-se o número — por isso a tabela de premissas acompanha obrigatoriamente o resultado.</div>
+        </section>
+
+        <!-- 08 -->
+        <section class="mnl-section" id="mnl-08" data-title="Matemática do motor">
+          <span class="mnl-tag">Capítulo 08</span>
+          <h3>Matemática do motor de cálculo</h3>
+          <p class="mnl-lead">Descrição completa do que ocorre entre o clique em <em>Calcular</em> e a exibição dos resultados.</p>
+
+          <h4>Impacto de uma trajetória</h4>
+          <p>Para uma trajetória de câmbio S = (S₀, S₁, …, S<sub>H</sub>) e um cronograma de parcelas i, com participação w<sub>i</sub>, hedge h<sub>i</sub> e mês m<sub>i</sub>:</p>
+          <div class="mnl-fx">I(S) = Σ<sub>i</sub>  [ E · w<sub>i</sub> / S<sub>0</sub> ] · (1 − h<sub>i</sub>) · ( S<sub>m<sub>i</sub></sub> − S<sub>0</sub> ) · ρ
+
+<span class="c">E   = parcela exposta em reais
+w<sub>i</sub>  = participação da parcela (Σ w<sub>i</sub> = 1)
+h<sub>i</sub>  = hedge da parcela
+ρ   = fator global de repasse
+S<sub>0</sub>  = câmbio-base</span></div>
+          <p>O termo E·w<sub>i</sub>/S₀ converte a parcela em moeda estrangeira ao câmbio-base — é a quantidade de moeda efetivamente necessária. A diferença (S<sub>m</sub> − S₀) é o custo adicional por unidade de moeda. O resultado é positivo quando o câmbio sobe (perda) e negativo quando cai (ganho).</p>
+
+          <h4>Sequência de execução</h4>
+          <ol>
+            <li>Leitura e validação das entradas; erros bloqueiam, avisos apenas alertam.</li>
+            <li>Inicialização do PRNG com o hash FNV-1a da semente.</li>
+            <li>Para cada uma das N iterações: geração da trajetória conforme o modelo e cálculo de I(S).</li>
+            <li>Armazenamento paralelo de três séries — impacto líquido, perda (máx{0, I}) e câmbio terminal.</li>
+            <li>Ordenação das três séries e extração de percentis por interpolação linear entre observações adjacentes.</li>
+            <li>Cálculo do CVaR como média das observações iguais ou superiores ao percentil alvo.</li>
+            <li>Cálculo do impacto determinístico com a trajetória log-interpolada até o câmbio do cenário único.</li>
+            <li>Renderização de cartões, tabelas, gráficos e resumo interpretativo.</li>
+          </ol>
+
+          <h4>Trajetória determinística</h4>
+          <div class="mnl-fx">S<sub>m</sub> = S<sub>0</sub> · exp[ ln(S<sub>det</sub>/S<sub>0</sub>) · m/H ]</div>
+          <p>A interpolação é logarítmica, e não linear, para manter taxa de variação percentual constante ao longo do horizonte — coerente com a forma como o câmbio se comporta.</p>
+
+          <h4>Percentis e CVaR</h4>
+          <div class="mnl-fx">P<sub>q</sub> = x<sub>(k)</sub> + r · ( x<sub>(k+1)</sub> − x<sub>(k)</sub> )   <span class="c">com p = (n−1)·q, k = ⌊p⌋, r = p − k</span>
+CVaR<sub>q</sub> = média { x : x ≥ P<sub>q</sub> }</div>
+
+          <div class="mnl-note"><b>Nota sobre independência:</b> os retornos mensais são sorteados de forma independente em todos os modelos. Não há reversão à média nem correlação serial, o que é conservador para horizontes longos: modelos com reversão produziriam dispersão terminal menor.</div>
+        </section>
+
+        <!-- 09 -->
+        <section class="mnl-section" id="mnl-09" data-title="Exemplos aplicados">
+          <span class="mnl-tag">Capítulo 09</span>
+          <h3>Exemplos aplicados</h3>
+          <p class="mnl-lead">Três casos completos. Cada botão preenche o sistema, executa a simulação e fecha o manual para que você veja o resultado imediatamente.</p>
+
+          <h4>Caso 1 — Equipamentos importados, sem hedge</h4>
+          <p>Contrato de R$ 12 milhões, com R$ 3 milhões em elevadores e equipamentos importados dos Estados Unidos. Desembolsos nos meses 3 (20%), 6 (35%) e 10 (45%), sem proteção cambial. Câmbio-base de 5,20 e volatilidade anual de 18%.</p>
+          <p><b>O que observar:</b> a probabilidade de perda fica próxima de 60% — reflexo da tendência positiva informada — e a contingência P80 costuma superar o impacto do cenário determinístico, evidenciando a subestimação típica da análise de cenário único.</p>
+          <div class="mnl-actions"><button class="primary small-btn" data-mnl-example="1" type="button">Aplicar o caso 1 no sistema</button></div>
+
+          <h4>Caso 2 — Contrato longo com hedge parcial</h4>
+          <p>Contrato de R$ 48 milhões, com R$ 15 milhões em equipamentos europeus, horizonte de 30 meses e repasse de 85%, porque parte do fornecimento é nacionalizada. Parcelas nos meses 6, 14, 22 e 30, com hedge de 50% e 40% nas duas primeiras. Percentil alvo P90.</p>
+          <p><b>O que observar:</b> compare o efeito do hedge zerando as duas primeiras proteções. A redução da contingência é menor do que a intuição sugere, porque as parcelas protegidas são justamente as de menor risco temporal — as mais próximas.</p>
+          <div class="mnl-actions"><button class="primary small-btn" data-mnl-example="2" type="button">Aplicar o caso 2 no sistema</button></div>
+
+          <h4>Caso 3 — Triangular por julgamento técnico, moeda chinesa</h4>
+          <p>Contrato de R$ 8 milhões com R$ 4,4 milhões em equipamentos chineses e horizonte de 14 meses, sem série histórica disponível. Adotam-se limites de julgamento: mínimo 0,65, mais provável 0,78 e máximo 0,95. Percentil alvo P95.</p>
+          <p><b>O que observar:</b> o histograma reproduz a forma triangular, e a assimetria positiva decorre do intervalo superior mais largo que o inferior. É o comportamento esperado quando a premissa é julgamento, e não dado.</p>
+          <div class="mnl-actions"><button class="primary small-btn" data-mnl-example="3" type="button">Aplicar o caso 3 no sistema</button></div>
+
+          <div class="mnl-note ok"><b>Exercício sugerido:</b> aplique o caso 1, anote o P80, retorne e aplique o caso 1 novamente alterando apenas a volatilidade de 18% para 26%. A variação do P80 mostra a sensibilidade da reserva ao único parâmetro que costuma ser estimado com maior margem de erro.</div>
+        </section>
+
+        <!-- 10 -->
+        <section class="mnl-section" id="mnl-10" data-title="Uso em contratos e alocação de risco">
+          <span class="mnl-tag">Capítulo 10</span>
+          <h3>Uso em contratos e alocação de risco</h3>
+          <p class="mnl-lead">A saída do simulador só se torna útil quando conectada à estrutura contratual que trata do risco cambial.</p>
+
+          <h4>Da distribuição à matriz de riscos</h4>
+          <p>A matriz de alocação de riscos, prevista no art. 22 da Lei 14.133/2021, exige definir a quem cabe cada risco e, quando cabe à Administração, dimensioná-lo. O simulador fornece exatamente os dois elementos que essa definição costuma carecer: a <strong>probabilidade</strong> de materialização e a <strong>magnitude</strong> em faixas de confiança. Uma linha de matriz passa a poder registrar, por exemplo, que o risco cambial da parcela importada tem 58% de probabilidade de gerar custo adicional, com impacto de R$ 214 mil no P80 e R$ 351 mil no P95.</p>
+
+          <h4>Três usos distintos do mesmo resultado</h4>
+          <div class="mnl-grid">
+            <div class="mnl-box"><b>Reserva de contingência</b><span>O percentil alvo dimensiona a reserva orçamentária destinada a absorver a álea assumida pela Administração.</span></div>
+            <div class="mnl-box"><b>Decisão sobre hedge</b><span>Comparar a contingência com e sem hedge indica quanto de reserva o instrumento de proteção efetivamente dispensa, contrapondo-se ao seu custo.</span></div>
+            <div class="mnl-box"><b>Análise de reequilíbrio</b><span>Distinguir a álea ordinária, precificada na proposta, da variação extraordinária que fundamenta pedido de restabelecimento do equilíbrio econômico-financeiro.</span></div>
+          </div>
+
+          <h4>Álea ordinária e extraordinária</h4>
+          <p>A distribuição simulada oferece um critério objetivo para uma discussão frequentemente conduzida por impressão. Variações contidas no intervalo central — digamos, entre P10 e P80 — configuram oscilação previsível, própria do risco do negócio. Movimentos além da cauda superior aproximam-se do fato imprevisível ou previsível de consequências incalculáveis, hipótese do art. 124, II, "d", da Lei 14.133/2021. O simulador não decide a questão jurídica: fornece a base quantitativa sobre a qual ela é discutida, com a premissa registrada e a semente que permite reproduzir o cálculo.</p>
+
+          <div class="mnl-note"><b>Documentação mínima recomendada:</b> anexe ao processo (i) a tabela de premissas registradas, (ii) a origem do câmbio-base e da série histórica, (iii) a justificativa do percentil adotado e (iv) o CSV exportado. Sem esses quatro elementos, o número perde rastreabilidade.</div>
+          <div class="mnl-note warn"><b>Limite de uso:</b> a existência de reserva de contingência não autoriza, por si só, o pagamento de valores ao contratado. A reserva é instrumento de planejamento orçamentário; a alteração contratual segue o regime jurídico próprio e depende da demonstração concreta do desequilíbrio.</div>
+        </section>
+
+        <!-- 11 -->
+        <section class="mnl-section" id="mnl-11" data-title="Solução de problemas">
+          <span class="mnl-tag">Capítulo 11</span>
+          <h3>Solução de problemas</h3>
+          <p class="mnl-lead">Situações mais comuns e o que fazer em cada uma.</p>
+
+          <table class="mnl-table">
+            <thead><tr><th>Sintoma</th><th>Causa</th><th>Solução</th></tr></thead>
+            <tbody>
+              <tr><td>Mensagem "as participações devem totalizar 100%"</td><td>Soma das participações diferente de 100%, com tolerância de 0,05%.</td><td>Use <em>Distribuir igualmente</em> ou ajuste manualmente. A etiqueta ao lado dos botões mostra o total corrente.</td></tr>
+              <tr><td>Aumentar o horizonte não muda os resultados</td><td>As parcelas continuam alocadas nos meses originais.</td><td>Clique em <em>Estender ao horizonte</em>. O risco depende de quando a exposição ocorre, não do prazo declarado.</td></tr>
+              <tr><td>Falha na busca online da série</td><td>Indisponibilidade da fonte, ausência de conexão ou restrição do navegador ao abrir o arquivo por <code>file://</code>.</td><td>Tente a outra fonte, sirva a página por HTTP local ou use a importação CSV/TXT. O sistema tenta a Frankfurter automaticamente quando a PTAX falha.</td></tr>
+              <tr><td>"O bootstrap requer no mínimo 12 observações"</td><td>Série colada com menos de 12 valores válidos ou em formato não reconhecido.</td><td>Verifique o separador: aceita-se <code>data;valor</code> ou um valor por linha, com vírgula decimal. Valores fora da faixa 0,01 a 1.000 são descartados.</td></tr>
+              <tr><td>Histograma com uma barra dominante</td><td>Concentração de massa em zero na série de perdas, comum quando a probabilidade de perda é baixa.</td><td>Alterne para o impacto líquido, que exibe também os cenários favoráveis, ou aumente o número de classes.</td></tr>
+              <tr><td>Nota vermelha de cauda agrupada</td><td>Valores acima do percentil 99,5% foram reunidos na última classe para preservar a escala.</td><td>Comportamento esperado. Nenhum indicador é afetado: o recorte é apenas visual.</td></tr>
+              <tr><td>Percentis repetidos entre P80 e P95</td><td>Modelo de cenários discretos com poucos valores terminais.</td><td>Acrescente cenários intermediários ou adote o modelo lognormal.</td></tr>
+              <tr><td>Os dados voltaram diferentes ao reabrir</td><td>O sistema restaura automaticamente o último estado salvo no navegador.</td><td>Use <em>Limpar dados salvos</em>, no rodapé do painel de resultados, para retornar ao exemplo padrão.</td></tr>
+              <tr><td>Resultados mudam a cada execução</td><td>Semente alterada entre execuções.</td><td>Fixe a semente. Com semente e premissas idênticas, o resultado é exatamente reproduzível.</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <!-- 12 -->
+        <section class="mnl-section" id="mnl-12" data-title="Autoavaliação">
+          <span class="mnl-tag">Capítulo 12</span>
+          <h3>Autoavaliação</h3>
+          <p class="mnl-lead">Seis questões sobre os pontos que mais geram erro de uso. Clique na alternativa que considera correta para receber a explicação.</p>
+          <div id="mnl-quiz">
+            <div class="mnl-quiz" data-q="1">
+              <div class="q">1. Um contrato de R$ 20 milhões tem R$ 5 milhões em equipamentos importados. Qual valor deve ser lançado em "Parcela exposta ao câmbio"?</div>
+              <button class="mnl-opt" type="button">R$ 20 milhões, o valor global do contrato</button>
+              <button class="mnl-opt" data-ok="1" type="button">R$ 5 milhões, apenas a fração indexada</button>
+              <button class="mnl-opt" type="button">R$ 15 milhões, o valor não importado</button>
+              <div class="mnl-fb mnl-hide">A parcela exposta é somente a fração cujo custo varia com a moeda estrangeira. O valor total serve apenas como denominador dos indicadores percentuais.</div>
+            </div>
+            <div class="mnl-quiz" data-q="2">
+              <div class="q">2. O horizonte foi ampliado de 12 para 48 meses, mas a contingência praticamente não mudou. Qual a explicação mais provável?</div>
+              <button class="mnl-opt" type="button">O número de iterações é insuficiente</button>
+              <button class="mnl-opt" data-ok="1" type="button">As parcelas continuam alocadas nos meses iniciais</button>
+              <button class="mnl-opt" type="button">O modelo lognormal ignora o horizonte</button>
+              <div class="mnl-fb mnl-hide">A dispersão cresce com o tempo até cada parcela. Se nenhuma exposição ocorre no intervalo acrescido, ele não é utilizado. O botão "Estender ao horizonte" reposiciona as parcelas.</div>
+            </div>
+            <div class="mnl-quiz" data-q="3">
+              <div class="q">3. A contingência P80 é R$ 400 mil e o CVaR P80 é R$ 620 mil. O que isso significa?</div>
+              <button class="mnl-opt" type="button">Há erro de cálculo, pois o CVaR deveria ser menor</button>
+              <button class="mnl-opt" data-ok="1" type="button">Nos 20% de cenários piores, a perda média é R$ 620 mil</button>
+              <button class="mnl-opt" type="button">A reserva deve ser a soma dos dois valores</button>
+              <div class="mnl-fb mnl-hide">O CVaR é a média da cauda além do percentil, portanto sempre maior ou igual à contingência. A diferença mede a severidade dos cenários que a reserva não cobre.</div>
+            </div>
+            <div class="mnl-quiz" data-q="4">
+              <div class="q">4. Uma parcela tem hedge de 60% e o repasse global é de 50%. Qual fração da variação cambial chega ao custo dessa parcela?</div>
+              <button class="mnl-opt" type="button">10%, a diferença entre os dois percentuais</button>
+              <button class="mnl-opt" data-ok="1" type="button">20%, o produto de 40% por 50%</button>
+              <button class="mnl-opt" type="button">50%, apenas o repasse importa</button>
+              <div class="mnl-fb mnl-hide">Os fatores são multiplicativos: (1 − 0,60) × 0,50 = 0,20. Hedge e repasse atuam de forma independente sobre a mesma parcela.</div>
+            </div>
+            <div class="mnl-quiz" data-q="5">
+              <div class="q">5. Não há série histórica nem estimativa de volatilidade, mas a equipe técnica tem convicção sobre limites plausíveis do câmbio. Qual modelo é o mais adequado?</div>
+              <button class="mnl-opt" type="button">Bootstrap histórico, com série improvisada</button>
+              <button class="mnl-opt" data-ok="1" type="button">Triangular, com mínimo, mais provável e máximo</button>
+              <button class="mnl-opt" type="button">Lognormal, com volatilidade arbitrada em 50%</button>
+              <div class="mnl-fb mnl-hide">A triangular foi concebida para julgamento estruturado. Registre a origem dos três limites nas premissas, já que o resultado reflete o julgamento adotado.</div>
+            </div>
+            <div class="mnl-quiz" data-q="6">
+              <div class="q">6. O histograma exibe nota vermelha informando que a cauda acima de determinado valor foi agrupada à direita. O que fazer?</div>
+              <button class="mnl-opt" type="button">Reduzir as iterações para eliminar os extremos</button>
+              <button class="mnl-opt" type="button">Descartar o resultado, pois há distorção nos percentis</button>
+              <button class="mnl-opt" data-ok="1" type="button">Nada: o recorte é visual e não afeta os indicadores</button>
+              <div class="mnl-fb mnl-hide">O recorte no percentil 99,5% existe para manter a escala legível. Percentis, CVaR e estatísticas continuam calculados sobre a amostra integral.</div>
+            </div>
+          </div>
+          <div class="mnl-actions">
+            <span class="mnl-score" id="mnl-quiz-score">Acertos: 0 de 6</span>
+            <button class="ghost small-btn" id="mnl-quiz-reset" type="button">Refazer a autoavaliação</button>
+          </div>
+        </section>
+
+        <!-- 13 -->
+        <section class="mnl-section" id="mnl-13" data-title="Atalhos, dados e referências">
+          <span class="mnl-tag">Capítulo 13</span>
+          <h3>Atalhos, dados salvos e referências</h3>
+
+          <h4>Atalhos de teclado</h4>
+          <table class="mnl-table">
+            <thead><tr><th>Tecla</th><th>Ação</th></tr></thead>
+            <tbody>
+              <tr><td><code>F1</code></td><td>Abre e fecha este manual</td></tr>
+              <tr><td><code>Esc</code></td><td>Fecha o manual ou encerra o tour guiado</td></tr>
+              <tr><td><code>←</code> / <code>→</code></td><td>Navega entre capítulos com o manual aberto</td></tr>
+              <tr><td><code>Ctrl</code> + <code>P</code></td><td>Imprime o painel de resultados</td></tr>
+            </tbody>
+          </table>
+
+          <h4>Dados salvos no navegador</h4>
+          <p>Todas as entradas — incluindo cronograma, cenários e série histórica — são gravadas automaticamente no armazenamento local do navegador cerca de um segundo após cada alteração, e restauradas na próxima abertura. Nada é enviado a servidores; as únicas conexões externas são as consultas opcionais de cotações. O progresso de leitura deste manual e o resultado da autoavaliação também são guardados localmente.</p>
+          <p>Para retornar ao estado inicial, use <em>Limpar dados salvos</em> no rodapé do painel de resultados.</p>
+
+          <h4>Fontes de dados cambiais</h4>
+          <ul>
+            <li><b>PTAX — Banco Central do Brasil:</b> cotação de venda do boletim de fechamento, referência usual em contratos administrativos.</li>
+            <li><b>Frankfurter:</b> agregador de séries de bancos centrais, utilizado como alternativa automática.</li>
+          </ul>
+
+          <h4>Referências conceituais</h4>
+          <ul>
+            <li>Movimento browniano geométrico e correção de Itô, aplicados à modelagem de preços de ativos.</li>
+            <li>Value at Risk e Conditional Value at Risk como medidas de risco de cauda; o CVaR é medida coerente, o VaR não é.</li>
+            <li>Regra de Freedman–Diaconis para largura de classe em histogramas.</li>
+            <li>Bootstrap de retornos, como método de reamostragem sem hipótese distributiva.</li>
+            <li>Lei 14.133/2021, art. 22 (matriz de alocação de riscos) e art. 124, II, "d" (restabelecimento do equilíbrio econômico-financeiro).</li>
+          </ul>
+
+          <div class="mnl-note bad"><b>Aviso permanente:</b> os resultados são estimativas probabilísticas condicionadas às premissas informadas. Não constituem previsão, garantia, recomendação de investimento nem aconselhamento financeiro, contábil ou jurídico. A decisão e a validação técnica permanecem sob responsabilidade do usuário.</div>
+
+          <div class="mnl-actions">
+            <button class="secondary small-btn" data-mnl-goto="mnl-01" type="button">← Voltar ao capítulo 1</button>
+            <button class="ghost small-btn" id="mnl-reset-progress" type="button">Zerar progresso de leitura</button>
+          </div>
+        </section>
+
+      </div>
+    </div>
+
+    <div class="mnl-foot">
+      <button class="ghost small-btn" id="manualPrev" type="button">← Anterior</button>
+      <span class="mnl-pos" id="manualPos">Capítulo 1 de 13</span>
+      <button class="secondary small-btn" id="manualNext" type="button">Próximo →</button>
+    </div>
+  </div>
+</div>
+
+<div id="tourLayer" class="mnl-hide">
+  <div id="tourRing"></div>
+  <div id="tourTip">
+    <b id="tourTitle">Título</b>
+    <p id="tourText">Texto</p>
+    <div class="row">
+      <span class="step" id="tourStep">1 / 10</span>
+      <span>
+        <button class="ghost small-btn" id="tourPrev" type="button">Anterior</button>
+        <button class="primary small-btn" id="tourNext" type="button">Próximo</button>
+        <button class="danger small-btn" id="tourEnd" type="button">Encerrar</button>
+      </span>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ===== Manual interativo — comportamento ===== */
+(function(){
+  'use strict';
+  var $ = function(id){ return document.getElementById(id); };
+  var STORAGE_MANUAL = 'simulador_risco_cambial_manual_v1';
+
+  var overlay = $('manualOverlay');
+  if(!overlay) return;
+  var content   = $('manualContent');
+  var navList   = $('manualNavList');
+  var sections  = [].slice.call(content.querySelectorAll('.mnl-section'));
+  var current   = 0;
+  var state     = { read: [], quiz: {} };
+
+  /* ---------- persistência ---------- */
+  function loadState(){
+    try{
+      var raw = localStorage.getItem(STORAGE_MANUAL);
+      if(!raw) return;
+      var s = JSON.parse(raw);
+      if(s && Array.isArray(s.read)) state.read = s.read;
+      if(s && s.quiz && typeof s.quiz === 'object') state.quiz = s.quiz;
+    }catch(e){ /* armazenamento indisponível: o manual segue funcionando sem progresso */ }
+  }
+  function saveState(){
+    try{ localStorage.setItem(STORAGE_MANUAL, JSON.stringify(state)); }catch(e){}
+  }
+
+  /* ---------- utilitários ---------- */
+  function money(v){
+    try{ return new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(isFinite(v)?v:0); }
+    catch(e){ return 'R$ ' + (isFinite(v)?v.toFixed(2):'0,00'); }
+  }
+  function num(v,d){
+    d = (d===undefined) ? 2 : d;
+    try{ return new Intl.NumberFormat('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d}).format(isFinite(v)?v:0); }
+    catch(e){ return String(isFinite(v)?v.toFixed(d):0); }
+  }
+  function val(id, fallback){
+    var el = $(id); if(!el) return fallback;
+    var v = Number(String(el.value).replace(',','.'));
+    return isFinite(v) ? v : fallback;
+  }
+  function toast(message){
+    var t = document.createElement('div');
+    t.textContent = message;
+    t.setAttribute('style','position:fixed;right:20px;bottom:20px;z-index:9800;background:#1f5aa6;color:#fff;'+
+      'padding:12px 16px;border-radius:12px;font:700 13px Arial,Helvetica,sans-serif;max-width:340px;line-height:1.4;'+
+      'box-shadow:0 14px 34px rgba(21,34,50,.35);opacity:0;transition:opacity .25s ease');
+    document.body.appendChild(t);
+    setTimeout(function(){ t.style.opacity = '1'; }, 20);
+    setTimeout(function(){ t.style.opacity = '0'; setTimeout(function(){ t.remove(); }, 350); }, 3600);
+  }
+
+  /* ---------- navegação ---------- */
+  function buildNav(){
+    navList.innerHTML = '';
+    sections.forEach(function(sec, i){
+      var li = document.createElement('li');
+      var b  = document.createElement('button');
+      b.type = 'button';
+      b.className = 'mnl-navitem' + (i === 0 ? ' active' : '');
+      b.setAttribute('data-target', sec.id);
+      b.innerHTML = '<span class="n">' + String(i+1).padStart(2,'0') + '</span>' +
+                    '<span class="t">' + sec.getAttribute('data-title') + '</span>' +
+                    '<span class="done"></span>';
+      b.addEventListener('click', function(){ goTo(i); });
+      li.appendChild(b);
+      navList.appendChild(li);
+    });
+    refreshProgress();
+  }
+  function goTo(index){
+    if(index < 0 || index >= sections.length) return;
+    current = index;
+    sections.forEach(function(s,i){ s.classList.toggle('active', i === index); });
+    [].slice.call(navList.querySelectorAll('.mnl-navitem')).forEach(function(b,i){
+      b.classList.toggle('active', i === index);
+    });
+    content.scrollTop = 0;
+    $('manualPos').textContent = 'Capítulo ' + (index+1) + ' de ' + sections.length;
+    $('manualPrev').disabled = (index === 0);
+    $('manualNext').disabled = (index === sections.length - 1);
+    markRead(sections[index].id);
+  }
+  function goToId(id){
+    for(var i=0;i<sections.length;i++){ if(sections[i].id === id){ goTo(i); return; } }
+  }
+  function markRead(id){
+    if(state.read.indexOf(id) === -1){ state.read.push(id); saveState(); }
+    refreshProgress();
+  }
+  function refreshProgress(){
+    var total = sections.length;
+    var done  = sections.filter(function(s){ return state.read.indexOf(s.id) !== -1; }).length;
+    var txt = $('manualProgressText'), bar = $('manualProgressBar');
+    if(txt) txt.textContent = 'Progresso de leitura: ' + done + ' de ' + total + ' capítulos';
+    if(bar) bar.style.width = (total ? Math.round(done/total*100) : 0) + '%';
+    [].slice.call(navList.querySelectorAll('.mnl-navitem')).forEach(function(b,i){
+      var mark = b.querySelector('.done');
+      if(mark) mark.textContent = (state.read.indexOf(sections[i].id) !== -1) ? '✓' : '';
+    });
+  }
+
+  /* ---------- abrir / fechar ---------- */
+  function openManual(){
+    overlay.classList.remove('mnl-hide');
+    document.body.style.overflow = 'hidden';
+    markRead(sections[current].id);
+    var s = $('manualSearch'); if(s && typeof s.focus === 'function') s.focus();
+  }
+  function closeManual(){
+    overlay.classList.add('mnl-hide');
+    if(!document.getElementById('mcSplash')) document.body.style.overflow = '';
+  }
+  function isOpen(){ return !overlay.classList.contains('mnl-hide'); }
+
+  /* ---------- busca ---------- */
+  function runSearch(term){
+    term = String(term || '').trim().toLowerCase();
+    var items = [].slice.call(navList.querySelectorAll('li'));
+    var found = 0, firstIdx = -1;
+    items.forEach(function(li,i){
+      var sec  = sections[i];
+      var text = ((sec.getAttribute('data-title') || '') + ' ' + (sec.textContent || '')).toLowerCase();
+      var hit  = !term || text.indexOf(term) !== -1;
+      li.style.display = hit ? '' : 'none';
+      if(hit){ found++; if(firstIdx === -1) firstIdx = i; }
+    });
+    if(term && found > 0 && firstIdx !== -1) goTo(firstIdx);
+    var txt = $('manualProgressText');
+    if(term && txt) txt.textContent = found + ' capítulo(s) com "' + term + '"';
+    else refreshProgress();
+  }
+
+  /* ---------- laboratório 1: impacto de uma parcela ---------- */
+  function runLab1(){
+    if(!$('lab-out')) return null;
+    var exp   = val('lab-exp', 0);
+    var fx0   = val('lab-fx0', 0);
+    var fx1   = val('lab-fx1', 0);
+    var rep   = val('lab-rep', 0) / 100;
+    var hedge = val('lab-hedge', 0) / 100;
+    var variation = (fx0 > 0) ? (fx1 / fx0 - 1) : 0;
+    var impact = (fx0 > 0) ? (exp / fx0) * (1 - hedge) * (fx1 - fx0) * rep : 0;
+    $('lab-var').textContent = (variation >= 0 ? '+' : '') + num(variation*100, 2) + '%';
+    $('lab-out').textContent = money(impact);
+    $('lab-out').style.color = impact > 0 ? '#a63d40' : (impact < 0 ? '#2f6f44' : '#1d2733');
+    $('lab-pct').textContent = (exp > 0 ? num(impact/exp*100, 2) : '0,00') + '%';
+    var nota;
+    if(fx0 <= 0){
+      nota = 'Informe um câmbio-base maior que zero.';
+    }else if(impact > 0){
+      nota = 'O câmbio subiu ' + num(variation*100,2) + '%. Da parcela, ' + num((1-hedge)*100,0) +
+             '% permanece exposta e ' + num(rep*100,0) + '% da variação chega ao custo: o impacto equivale a ' +
+             num(impact/exp*100,2) + '% da parcela.';
+    }else if(impact < 0){
+      nota = 'O câmbio caiu ' + num(Math.abs(variation)*100,2) + '%, gerando ganho econômico. Na série de perdas usada para contingência, este cenário é convertido em zero.';
+    }else{
+      nota = 'Sem impacto: ou o câmbio não variou, ou a parcela está integralmente protegida, ou o repasse é nulo.';
+    }
+    $('lab-note').textContent = nota;
+    return { variation: variation, impact: impact };
+  }
+
+  /* ---------- laboratório 2: efeito do prazo ---------- */
+  function runLab2(){
+    var body = $('tl-body'); if(!body) return null;
+    var fx0   = val('tl-fx0', 5.2);
+    var drift = val('tl-drift', 8) / 100;
+    var vol   = val('tl-vol', 18) / 100;
+    var months = [3, 6, 12, 24, 36];
+    var z = { p80: 0.8416, p95: 1.6449 };
+    var rows = [];
+    body.innerHTML = '';
+    months.forEach(function(m){
+      var t  = m / 12;
+      var sd = vol * Math.sqrt(t);
+      var mu = (drift - 0.5*vol*vol) * t;
+      var median = fx0 * Math.exp(mu);
+      var p80 = fx0 * Math.exp(mu + z.p80*sd);
+      var p95 = fx0 * Math.exp(mu + z.p95*sd);
+      rows.push({ month: m, sd: sd, median: median, p80: p80, p95: p95 });
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td>Mês ' + m + '</td><td>' + num(sd*100,2) + '%</td><td>' + num(median,4) +
+                     '</td><td>' + num(p80,4) + '</td><td>' + num(p95,4) + '</td>';
+      body.appendChild(tr);
+    });
+    var a = rows[0], b = rows[rows.length-1];
+    var nota = 'Do mês ' + a.month + ' ao mês ' + b.month + ', o desvio acumulado passa de ' + num(a.sd*100,2) +
+               '% para ' + num(b.sd*100,2) + '% — crescimento proporcional à raiz do tempo, não ao tempo. ' +
+               'O câmbio P95 sobe de ' + num(a.p95,4) + ' para ' + num(b.p95,4) +
+               ': é por isso que reposicionar uma parcela no cronograma altera a contingência.';
+    $('tl-note').textContent = nota;
+    return rows;
+  }
+
+  /* ---------- exemplos aplicáveis ---------- */
+  var EXAMPLES = {
+    '1': {
+      titulo: 'Caso 1 — equipamentos importados, sem hedge',
+      campos: { nomeProjeto:'Caso 1 — elevadores e equipamentos importados', valorTotal:12000000, valorExposto:3000000,
+                moedaBase:'USD', horizonteMeses:10, fxBase:5.20, fxCenario:5.85, repasse:100,
+                modelType:'lognormal', driftAnnual:8, volAnnual:18, iterations:30000, targetPercentile:'0.80',
+                histMetric:'loss', histMode:'relative', binsMode:'auto', seed:'caso-1-sem-hedge' },
+      cronograma: [ {month:3,share:20,hedge:0}, {month:6,share:35,hedge:0}, {month:10,share:45,hedge:0} ]
+    },
+    '2': {
+      titulo: 'Caso 2 — contrato longo com hedge parcial',
+      campos: { nomeProjeto:'Caso 2 — equipamentos europeus com hedge parcial', valorTotal:48000000, valorExposto:15000000,
+                moedaBase:'EUR', horizonteMeses:30, fxBase:6.10, fxCenario:6.80, repasse:85,
+                modelType:'lognormal', driftAnnual:6, volAnnual:14, iterations:50000, targetPercentile:'0.90',
+                histMetric:'loss', histMode:'relative', binsMode:'auto', seed:'caso-2-hedge-parcial' },
+      cronograma: [ {month:6,share:25,hedge:50}, {month:14,share:35,hedge:40}, {month:22,share:25,hedge:0}, {month:30,share:15,hedge:0} ]
+    },
+    '3': {
+      titulo: 'Caso 3 — triangular por julgamento técnico',
+      campos: { nomeProjeto:'Caso 3 — equipamentos chineses, julgamento técnico', valorTotal:8000000, valorExposto:4400000,
+                moedaBase:'CNY', horizonteMeses:14, fxBase:0.72, fxCenario:0.80, repasse:100,
+                modelType:'triangular', fxMin:0.65, fxMode:0.78, fxMax:0.95, iterations:40000, targetPercentile:'0.95',
+                histMetric:'loss', histMode:'relative', binsMode:'auto', seed:'caso-3-triangular' },
+      cronograma: [ {month:7,share:50,hedge:0}, {month:14,share:50,hedge:0} ]
+    }
+  };
+
+  function setField(id, value){
+    var el = $(id); if(!el) return false;
+    el.value = String(value);
+    el.dispatchEvent(new Event('input',  { bubbles:true }));
+    el.dispatchEvent(new Event('change', { bubbles:true }));
+    return true;
+  }
+  function setSchedule(list){
+    var tbody = document.querySelector('#scheduleTable tbody');
+    var addBtn = $('addSchedule');
+    if(!tbody || !addBtn) return false;
+    var rows = function(){ return [].slice.call(tbody.querySelectorAll('tr')); };
+    var guard = 0;
+    while(rows().length > list.length && guard++ < 60){
+      var last = rows()[rows().length - 1];
+      var rm = last.querySelector('.remove-row');
+      if(!rm) break;
+      rm.click();
+    }
+    guard = 0;
+    while(rows().length < list.length && guard++ < 60){ addBtn.click(); }
+    rows().forEach(function(tr, i){
+      var p = list[i]; if(!p) return;
+      var m = tr.querySelector('.s-month'), s = tr.querySelector('.s-share'), h = tr.querySelector('.s-hedge');
+      if(m){ m.value = String(p.month); }
+      if(s){ s.value = String(p.share); }
+      if(h){ h.value = String(p.hedge); }
+      [m,s,h].forEach(function(el){ if(el) el.dispatchEvent(new Event('input', { bubbles:true })); });
+    });
+    return true;
+  }
+  function applyExample(key){
+    var ex = EXAMPLES[String(key)];
+    if(!ex) return false;
+    // o horizonte precisa vir antes do cronograma: ele limita o mês máximo das parcelas
+    setField('horizonteMeses', ex.campos.horizonteMeses);
+    Object.keys(ex.campos).forEach(function(id){
+      if(id === 'horizonteMeses') return;
+      setField(id, ex.campos[id]);
+    });
+    setSchedule(ex.cronograma);
+    var calc = $('calculate');
+    if(calc) calc.click();
+    closeManual();
+    var painel = document.querySelector('.summary');
+    if(painel && typeof painel.scrollIntoView === 'function') painel.scrollIntoView({ behavior:'smooth', block:'center' });
+    toast(ex.titulo + ' aplicado e simulado.');
+    return true;
+  }
+
+  /* ---------- autoavaliação ---------- */
+  function setupQuiz(){
+    var blocks = [].slice.call(document.querySelectorAll('#mnl-quiz .mnl-quiz'));
+    blocks.forEach(function(block){
+      var key = block.getAttribute('data-q');
+      var opts = [].slice.call(block.querySelectorAll('.mnl-opt'));
+      var fb = block.querySelector('.mnl-fb');
+      opts.forEach(function(opt){
+        opt.addEventListener('click', function(){
+          if(block.getAttribute('data-answered') === '1') return;
+          block.setAttribute('data-answered','1');
+          var ok = opt.getAttribute('data-ok') === '1';
+          opts.forEach(function(o){
+            if(o.getAttribute('data-ok') === '1') o.classList.add('right');
+          });
+          if(!ok) opt.classList.add('wrong');
+          if(fb) fb.classList.remove('mnl-hide');
+          state.quiz[key] = ok ? 1 : 0;
+          saveState();
+          updateScore();
+        });
+      });
+      if(state.quiz[key] !== undefined){
+        block.setAttribute('data-answered','1');
+        opts.forEach(function(o){ if(o.getAttribute('data-ok') === '1') o.classList.add('right'); });
+        if(fb) fb.classList.remove('mnl-hide');
+      }
+    });
+    updateScore();
+  }
+  function updateScore(){
+    var el = $('mnl-quiz-score'); if(!el) return;
+    var total = document.querySelectorAll('#mnl-quiz .mnl-quiz').length;
+    var hits = 0;
+    Object.keys(state.quiz).forEach(function(k){ if(state.quiz[k] === 1) hits++; });
+    el.textContent = 'Acertos: ' + hits + ' de ' + total;
+  }
+  function resetQuiz(){
+    state.quiz = {}; saveState();
+    [].slice.call(document.querySelectorAll('#mnl-quiz .mnl-quiz')).forEach(function(block){
+      block.removeAttribute('data-answered');
+      [].slice.call(block.querySelectorAll('.mnl-opt')).forEach(function(o){ o.classList.remove('right','wrong'); });
+      var fb = block.querySelector('.mnl-fb'); if(fb) fb.classList.add('mnl-hide');
+    });
+    updateScore();
+  }
+
+  /* ---------- tour guiado ---------- */
+  var TOUR = [
+    { sel:'#openManual',     t:'Manual sempre acessível', x:'Este botão reabre o manual a qualquer momento. O atalho F1 tem o mesmo efeito, e Esc fecha.' },
+    { sel:'#valorExposto',   t:'Parcela exposta ao câmbio', x:'Informe apenas a fração do contrato indexada à moeda estrangeira — não o valor global. É a base de todo o cálculo.' },
+    { sel:'#horizonteMeses', t:'Horizonte de exposição', x:'Prazo até o último desembolso indexado. Ao reduzi-lo, os meses das parcelas são ajustados automaticamente.' },
+    { sel:'#scheduleTable',  t:'Cronograma de exposição', x:'Distribua a exposição pelos meses e informe o hedge de cada parcela. O risco cresce com o tempo até cada desembolso; a soma das participações deve ser 100%.' },
+    { sel:'#modelType',      t:'Modelo estatístico', x:'Lognormal para volatilidade conhecida, triangular e cenários discretos para julgamento técnico, bootstrap para série histórica real.' },
+    { sel:'#iterations',     t:'Iterações e percentil', x:'Mais iterações reduzem o erro numérico, sobretudo nas caudas. O percentil alvo define o nível de confiança da reserva.' },
+    { sel:'#calculate',      t:'Executar a simulação', x:'Roda todas as trajetórias e atualiza o painel. Com a mesma semente e as mesmas premissas, o resultado é sempre idêntico.' },
+    { sel:'.summary',        t:'Indicadores de topo', x:'Impacto determinístico, impacto líquido esperado, contingência no percentil alvo e CVaR — a perda média nos cenários que estouram a reserva.' },
+    { sel:'#histCanvas',     t:'Histograma', x:'A forma da distribuição, com marcadores de média, percentil alvo e cenário determinístico. A cauda acima do percentil 99,5% é agrupada apenas para efeito de escala.' },
+    { sel:'#cdfCanvas',      t:'Curva acumulada', x:'Para cada valor de perda, a probabilidade de não ser ultrapassado. Útil para descobrir a cobertura de uma reserva já fixada.' },
+    { sel:'#interpretation', t:'Resumo interpretativo', x:'Texto pronto para transcrição no relatório, com os números da simulação corrente.' },
+    { sel:'#exportCsv',      t:'Registro da análise', x:'Exporte o CSV com premissas e indicadores, ou imprima o painel em PDF. A tabela de premissas garante a reprodutibilidade.' }
+  ];
+  var tourIdx = 0;
+  var layer = $('tourLayer'), ring = $('tourRing'), tip = $('tourTip');
+
+  function tourVisible(){ return layer && !layer.classList.contains('mnl-hide'); }
+  function startTour(){
+    closeManual();
+    tourIdx = 0;
+    layer.classList.remove('mnl-hide');
+    showTourStep(0);
+    window.addEventListener('resize', repositionTour);
+    window.addEventListener('scroll', repositionTour, true);
+  }
+  function endTour(){
+    layer.classList.add('mnl-hide');
+    window.removeEventListener('resize', repositionTour);
+    window.removeEventListener('scroll', repositionTour, true);
+  }
+  function showTourStep(i){
+    if(i < 0 || i >= TOUR.length) return;
+    tourIdx = i;
+    var step = TOUR[i];
+    var el = document.querySelector(step.sel);
+    $('tourTitle').textContent = step.t;
+    $('tourText').textContent  = step.x;
+    $('tourStep').textContent  = (i+1) + ' / ' + TOUR.length;
+    $('tourPrev').disabled = (i === 0);
+    $('tourNext').disabled = (i === TOUR.length - 1);
+    if(el && typeof el.scrollIntoView === 'function'){
+      el.scrollIntoView({ behavior:'smooth', block:'center' });
+    }
+    setTimeout(repositionTour, 260);
+    repositionTour();
+  }
+  function repositionTour(){
+    if(!tourVisible()) return;
+    var step = TOUR[tourIdx];
+    var el = document.querySelector(step.sel);
+    if(!el || typeof el.getBoundingClientRect !== 'function') return;
+    var r = el.getBoundingClientRect();
+    var pad = 8;
+    ring.style.top    = Math.max(0, r.top - pad) + 'px';
+    ring.style.left   = Math.max(0, r.left - pad) + 'px';
+    ring.style.width  = (r.width  + pad*2) + 'px';
+    ring.style.height = (r.height + pad*2) + 'px';
+    var vh = window.innerHeight || 800, vw = window.innerWidth || 1200;
+    var tipH = tip.offsetHeight || 150, tipW = tip.offsetWidth || 320;
+    var below = (r.bottom + tipH + 20 < vh);
+    tip.style.top  = (below ? r.bottom + 14 : Math.max(12, r.top - tipH - 14)) + 'px';
+    tip.style.left = Math.max(12, Math.min(vw - tipW - 12, r.left)) + 'px';
+  }
+
+  /* ---------- impressão ---------- */
+  function printManual(){
+    var wasOpen = isOpen();
+    if(!wasOpen) openManual();
+    document.body.classList.add('mnl-print');
+    window.print();
+    setTimeout(function(){
+      document.body.classList.remove('mnl-print');
+      if(!wasOpen) closeManual();
+    }, 800);
+  }
+
+  /* ---------- ligações ---------- */
+  loadState();
+  buildNav();
+  goTo(0);
+  state.read = state.read.filter(function(id){ return sections.some(function(s){ return s.id === id; }); });
+  refreshProgress();
+  setupQuiz();
+  runLab1();
+  runLab2();
+
+  var openBtn = $('openManual');
+  if(openBtn) openBtn.addEventListener('click', openManual);
+  $('manualClose').addEventListener('click', closeManual);
+  $('manualPrev').addEventListener('click', function(){ goTo(current - 1); });
+  $('manualNext').addEventListener('click', function(){ goTo(current + 1); });
+  $('manualTour').addEventListener('click', startTour);
+  $('manualPrint').addEventListener('click', printManual);
+  $('manualSearch').addEventListener('input', function(e){ runSearch(e.target.value); });
+
+  overlay.addEventListener('click', function(e){ if(e.target === overlay) closeManual(); });
+
+  ['lab-exp','lab-fx0','lab-fx1','lab-rep','lab-hedge'].forEach(function(id){
+    var el = $(id); if(el) el.addEventListener('input', runLab1);
+  });
+  ['tl-fx0','tl-drift','tl-vol'].forEach(function(id){
+    var el = $(id); if(el) el.addEventListener('input', runLab2);
+  });
+
+  content.addEventListener('click', function(e){
+    var t = e.target.closest ? e.target.closest('[data-mnl-example],[data-mnl-goto],[data-mnl-tour]') : null;
+    if(!t) return;
+    if(t.hasAttribute('data-mnl-example')) applyExample(t.getAttribute('data-mnl-example'));
+    else if(t.hasAttribute('data-mnl-goto')) goToId(t.getAttribute('data-mnl-goto'));
+    else if(t.hasAttribute('data-mnl-tour')) startTour();
+  });
+
+  var resetQuizBtn = $('mnl-quiz-reset');
+  if(resetQuizBtn) resetQuizBtn.addEventListener('click', resetQuiz);
+  var resetProgBtn = $('mnl-reset-progress');
+  if(resetProgBtn) resetProgBtn.addEventListener('click', function(){
+    state.read = []; saveState(); markRead(sections[current].id); toast('Progresso de leitura zerado.');
+  });
+
+  $('tourPrev').addEventListener('click', function(){ showTourStep(tourIdx - 1); });
+  $('tourNext').addEventListener('click', function(){ showTourStep(tourIdx + 1); });
+  $('tourEnd').addEventListener('click', endTour);
+
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'F1'){ e.preventDefault(); isOpen() ? closeManual() : openManual(); return; }
+    if(e.key === 'Escape'){
+      if(tourVisible()){ endTour(); return; }
+      if(isOpen()) closeManual();
+      return;
+    }
+    if(!isOpen()) return;
+    var tag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : '';
+    if(tag === 'input' || tag === 'textarea' || tag === 'select') return;
+    if(e.key === 'ArrowRight') goTo(current + 1);
+    if(e.key === 'ArrowLeft')  goTo(current - 1);
+  });
+
+  /* pontos de acesso para a suíte de testes automatizados */
+  window.__manual = {
+    open: openManual, close: closeManual, isOpen: isOpen, goTo: goTo, goToId: goToId,
+    current: function(){ return current; }, sections: function(){ return sections.map(function(s){ return s.id; }); },
+    search: runSearch, lab1: runLab1, lab2: runLab2, applyExample: applyExample,
+    examples: EXAMPLES, tour: TOUR, startTour: startTour, endTour: endTour, tourVisible: tourVisible,
+    resetQuiz: resetQuiz, state: function(){ return state; }
+  };
+})();
+</script>
 
 </body></html>
