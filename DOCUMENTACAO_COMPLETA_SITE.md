@@ -157,7 +157,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/compressorselect-pro/` | 791039 bytes | 791039 caracteres |
 | `/ventiladorpro/` | 669301 bytes | 669301 caracteres |
 | `/hidrocalc/` | 567089 bytes | 565179 caracteres |
-| `/elevadorcalc/` | 259316 bytes | 259316 caracteres |
+| `/elevadorcalc/` | 386384 bytes | 382143 caracteres |
 | `/thermox-pro/` | 428015 bytes | 428015 caracteres |
 | `/comparador-honorarios-projetos/` | 525309 bytes | 525309 caracteres |
 | `/consultoriapro-rodoviario/` | 284681 bytes | 284681 caracteres |
@@ -994,6 +994,8 @@ Arquivo: `elevadorcalc/index.html`
 
 Ultima inclusao:
 
+- Em 23/08/2026, atualizado com `index (39).html`, identificado como nova versao do ElevadorCalc Pro v2.0 com manual.
+- Backup anterior: `C:\Obras Inteligentes\backups\elevadorcalc-index-before-update-20260823-1652.html`.
 - Fonte: `C:\Users\ACER\Documents\Downloads\ElevadorCalc_Pro_v2.0.html`
 - Data: 05/08/2026
 - Alteracao: inclusao de novo card na home e publicacao do aplicativo como HTML standalone.
