@@ -146,7 +146,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/termo-massa/` | 145812 bytes | 145812 caracteres |
 | `/cabocalc/` | 129693 bytes | 129693 caracteres |
 | `/subestacaopro/` | 730239 bytes | 730239 caracteres |
-| `/brucknercalc/` | 1399176 bytes | 1399176 caracteres |
+| `/brucknercalc/` | 1479721 bytes | 1475264 caracteres |
 | `/molapro/` | 304857 bytes | 304857 caracteres |
 | `/calculadora-eixos/` | 173241 bytes | 173241 caracteres |
 | `/mancalpro/` | 1138677 bytes | 1138677 caracteres |
@@ -793,6 +793,8 @@ Arquivo: `brucknercalc/index.html`
 
 Ultima inclusao:
 
+- Em 23/08/2026, atualizado com `BruecknerCalc_Pro_v2.3_com_manual_interativo.html`, identificado como v2.3 com manual interativo.
+- Backup anterior: `C:\Obras Inteligentes\backups\brucknercalc-index-before-manual-interativo-20260823-1221.html`.
 - Fonte: `C:\Users\ACER\Documents\Downloads\BrucknerCalc_Pro_v2.3_SICRO_DF_04-2026.html`
 - Data: 26/07/2026
 - Alteracao: atualizacao do aplicativo BrucknerCalc para nova versao standalone v2.3 com SICRO DF 04/2026.
