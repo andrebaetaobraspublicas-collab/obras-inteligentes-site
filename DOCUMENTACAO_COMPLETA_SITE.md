@@ -177,7 +177,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/pmoc-manager/` | 604647 bytes | 604647 caracteres |
 | `/mobilizasicro/` | 1337033 bytes | 1337033 caracteres |
 | `/acesscheck/` | 200004 bytes | 197102 caracteres |
-| `/canteiro-sicro/` | 207919 bytes | 205793 caracteres |
+| `/canteiro-sicro/` | 246827 bytes | 244312 caracteres |
 
 ## Estrutura local principal
 
@@ -1331,11 +1331,12 @@ Observacoes:
 Rota: `/canteiro-sicro/`  
 Arquivo: `canteiro-sicro/index.html`
 
-Ultima inclusao:
+Ultima atualizacao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\CanteiroSICRO_v3.0_Etapas1a7.html`
+- Fonte: `C:\Users\ACER\Documents\Downloads\CanteiroSICRO_v4.0_Etapas1a10 (5).html`
 - Data: 23/08/2026
-- Alteracao: inclusao de novo card independente da home, no filtro `Orcamento`, e publicacao do aplicativo CanteiroSICRO v3.0, etapas 1 a 7, como HTML standalone.
+- Alteracao: substituicao do aplicativo pelo CanteiroSICRO v4.0.0, etapas 1 a 10, mantendo a rota `/canteiro-sicro/` e o card independente no filtro `Orcamento`.
+- Backup da versao anterior do aplicativo salvo em `C:\Obras Inteligentes\backups\canteiro-sicro-index-before-v4-20260823-185959.html`.
 
 Observacoes:
 
