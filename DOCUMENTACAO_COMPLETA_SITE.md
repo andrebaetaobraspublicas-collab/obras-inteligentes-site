@@ -108,6 +108,7 @@ Inventario originalmente verificado em 21/07/2026 e atualizado em 18/08/2026 par
 | 59 / PMOC | PMOC Manager | `/pmoc-manager/` | `C:\Obras Inteligentes\pmoc-manager\index.html` | existe | 200 |
 | 60 / MOBILIZACAO | MobilizaSICRO | `/mobilizasicro/` | `C:\Obras Inteligentes\mobilizasicro\index.html` | existe | 200 |
 | 61 / ACESSIBILIDADE | AcessCheck | `/acesscheck/` | `C:\Obras Inteligentes\acesscheck\index.html` | existe | 200 |
+| 62 / CANTEIRO SICRO | Canteiro de Obras - Sicro | `/canteiro-sicro/` | `C:\Obras Inteligentes\canteiro-sicro\index.html` | existe | 200 |
 
 ## Tamanhos verificados
 
@@ -176,6 +177,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/pmoc-manager/` | 604647 bytes | 604647 caracteres |
 | `/mobilizasicro/` | 1337033 bytes | 1337033 caracteres |
 | `/acesscheck/` | 200004 bytes | 197102 caracteres |
+| `/canteiro-sicro/` | 207919 bytes | 205793 caracteres |
 
 ## Estrutura local principal
 
@@ -1324,6 +1326,25 @@ Observacoes:
 - Backup da home anterior salvo em `C:\Obras Inteligentes\backups\index-before-mobilizasicro-20260818-0725.html`.
 - Validar apos futuras alteracoes se abertura, banco SICRO, servicos, planejamento, rotas, composicoes, cronograma, custos e relatorios continuam carregando corretamente.
 
+### Canteiro de Obras - Sicro
+
+Rota: `/canteiro-sicro/`  
+Arquivo: `canteiro-sicro/index.html`
+
+Ultima inclusao:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\CanteiroSICRO_v3.0_Etapas1a7.html`
+- Data: 23/08/2026
+- Alteracao: inclusao de novo card independente da home, no filtro `Orcamento`, e publicacao do aplicativo CanteiroSICRO v3.0, etapas 1 a 7, como HTML standalone.
+
+Observacoes:
+
+- Este modulo e independente do card `Administracao Local e Canteiro de Obra`, cuja rota continua em `/administracao-canteiro/` e nao foi substituida.
+- Aplicativo standalone em HTML unico, com calculadora offline de canteiro de obras baseada no SICRO.
+- Tela inicial do site aponta para `/canteiro-sicro/`.
+- Backup da home anterior salvo em `C:\Obras Inteligentes\backups\index-before-canteiro-sicro-20260823-1705.html`.
+- Validar apos futuras alteracoes se projetos, canteiros moveis, fatores SICRO, autotestes, custos e memoria de calculo continuam carregando corretamente.
+
 ### AcessCheck
 
 Rota: `/acesscheck/`  
@@ -1551,6 +1572,7 @@ $headers=@{ 'User-Agent'='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
   '/criticaopex/',
   '/pmoc-manager/',
   '/mobilizasicro/',
+  '/canteiro-sicro/',
   '/acesscheck/'
 ) | ForEach-Object {
   $url = "https://www.obrasinteligentes.ia.br$_?v=check"
