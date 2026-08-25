@@ -165,7 +165,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/geradorpro/` | 265143 bytes | 265143 caracteres |
 | `/spdapro/` | 709941 bytes | 709941 caracteres |
 | `/lumipro/` | 756040 bytes | 756040 caracteres |
-| `/esgotocalcpro/` | 587293 bytes | 587293 caracteres |
+| `/esgotocalcpro/` | 1037879 bytes | 1032140 caracteres |
 | `/equivaleclt/` | 107244 bytes | 106067 caracteres |
 | `/hidrosan-pro/` | 290818 bytes | 290818 caracteres |
 | `/terceirizapro/` | 723110 bytes | 723110 caracteres |
@@ -1125,9 +1125,10 @@ Arquivo: `esgotocalcpro/index.html`
 
 Ultima atualizacao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\EsgotoCalc_Pro_v1.2.html`
-- Data: 09/08/2026
-- Alteracao: substituicao integral de `esgotocalcpro/index.html` pela versao EsgotoCalc Pro v1.2 enviada.
+- Fonte: `C:\Users\ACER\Documents\Downloads\index (41).html`
+- Data: 25/08/2026
+- Alteracao: substituicao integral de `esgotocalcpro/index.html` pela nova versao enviada, identificada como `EsgotoCalc Pro — Dimensionamento de Redes Coletoras de Esgoto Sanitário`, com manual interativo.
+- Backup da versao anterior salvo em `C:\Obras Inteligentes\backups\esgotocalcpro-index-before-index41-20260825-060826.html`.
 
 Observacoes:
 
