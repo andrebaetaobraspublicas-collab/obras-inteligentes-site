@@ -166,7 +166,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/spdapro/` | 709941 bytes | 709941 caracteres |
 | `/lumipro/` | 756040 bytes | 756040 caracteres |
 | `/esgotocalcpro/` | 587293 bytes | 587293 caracteres |
-| `/equivaleclt/` | 58612 bytes | 58612 caracteres |
+| `/equivaleclt/` | 107244 bytes | 106067 caracteres |
 | `/hidrosan-pro/` | 290818 bytes | 290818 caracteres |
 | `/terceirizapro/` | 723110 bytes | 723110 caracteres |
 | `/cimbrepro/` | 188067 bytes | 188067 caracteres |
@@ -1144,16 +1144,17 @@ Arquivo: `equivaleclt/index.html`
 
 Ultima atualizacao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\EquivaleCLT_v1.1.html`
-- Data: 09/08/2026
-- Alteracao: substituicao integral de `equivaleclt/index.html` pela nova versao enviada, preservando o card existente.
+- Fonte: `C:\Users\ACER\Documents\Downloads\EquivaleCLT_v1.2_manual_interativo.html`
+- Data: 25/08/2026
+- Alteracao: substituicao integral de `equivaleclt/index.html` pela versao EquivaleCLT v1.2 com manual interativo, preservando o card existente.
+- Backup da versao anterior salvo em `C:\Obras Inteligentes\backups\equivaleclt-index-before-v12-20260825-030207.html`.
 
 Observacoes:
 
 - Aplicativo standalone empacotado em HTML unico.
 - Tela inicial do site aponta para `/equivaleclt/`.
 - O card foi classificado no filtro `Orcamento`.
-- O link interno de download do HTML foi ajustado para `index.html`, preservando o nome de arquivo baixado `EquivaleCLT_v1.1.html`.
+- Verificar em futuras versoes se o link interno de download do HTML continua apontando para o arquivo standalone correto.
 - Validar apos futuras alteracoes se a simulacao CLT/PJ, encargos SINAPI, beneficios, tributos, reservas, cenarios comparativos e relatorio continuam carregando corretamente.
 
 ### HidroSan Pro

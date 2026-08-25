@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>EquivaleCLT v1.2</title>
+  <title>EquivaleCLT v1.1</title>
   <meta name="description" content="Comparador técnico-financeiro de remuneração CLT e contratação por pessoa jurídica">
   <style>
     :root{--ink:#14211d;--muted:#617069;--paper:#f3f6f5;--card:#fff;--line:#d9e2de;--green:#145c46;--green2:#1f7a5b;--lime:#cbe85b;--amber:#ad6a00;--amberbg:#fff7df;--red:#a33a32;--redbg:#fff0ed;--blue:#315f78;--shadow:0 18px 45px rgba(23,57,46,.09);--radius:20px}
@@ -15,50 +15,6 @@
   <style>
     body.splashing{overflow:hidden}.splash{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;background:radial-gradient(circle at 70% 22%,#267c5d 0,#124a39 38%,#092c23 100%);color:#fff;transition:opacity .45s ease,visibility .45s ease}.splash.done{opacity:0;visibility:hidden;pointer-events:none}.splash-skip{position:absolute;right:24px;top:22px;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.08);color:#fff;border-radius:999px;padding:8px 13px;font-size:11px}.splash-content{width:min(920px,92vw);text-align:center}.splash-brand{display:inline-flex;align-items:center;gap:10px;font-weight:850;letter-spacing:-.03em;font-size:18px}.splash-brand span{width:34px;height:34px;border-radius:10px;background:var(--lime);color:#154f3b;display:grid;place-items:center}.splash h2{font-size:clamp(29px,5vw,52px);line-height:1.04;margin:24px auto 8px;letter-spacing:-.055em}.splash-sub{color:#d4e8e0;margin:0 auto 28px;max-width:620px}.pj-stage{height:220px;position:relative;margin:auto;max-width:760px}.contract-card{position:absolute;top:32px;width:190px;height:125px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.11);backdrop-filter:blur(10px);border-radius:22px;padding:21px;text-align:left}.contract-card.clt{left:5%;animation:cltDim 4s ease forwards}.contract-card.pj{right:5%;opacity:.35;transform:scale(.92);animation:pjRise 4s ease forwards}.contract-card small{display:block;color:#c6ddd4;text-transform:uppercase;letter-spacing:.12em;font-size:9px}.contract-card b{font-size:31px;display:block;margin:7px 0}.contract-card em{font-style:normal;color:#d6e6e0;font-size:11px}.transition-line{position:absolute;left:29%;right:29%;top:93px;height:2px;background:rgba(255,255,255,.22)}.transition-line:before{content:"";position:absolute;inset:-1px auto -1px 0;width:0;background:var(--lime);animation:lineGrow 2.4s .55s ease forwards}.worker-token{position:absolute;left:27%;top:66px;width:56px;height:56px;border-radius:18px;background:#fff;color:var(--green);display:grid;place-items:center;font-size:25px;box-shadow:0 14px 30px rgba(0,0,0,.2);animation:workerMove 2.5s .55s cubic-bezier(.65,0,.2,1) forwards}.flying-note{position:absolute;left:47%;top:23px;border-radius:10px;background:var(--lime);color:#174c3a;font-weight:850;padding:8px 12px;font-size:11px;opacity:0;animation:noteFly 1.5s 1.65s ease forwards}.splash-status{font-size:11px;color:#bdd4cb;letter-spacing:.08em;text-transform:uppercase}.splash-progress{height:4px;background:rgba(255,255,255,.15);border-radius:99px;max-width:420px;margin:11px auto 0;overflow:hidden}.splash-progress i{display:block;height:100%;width:0;background:var(--lime);animation:splashProgress 4s linear forwards}@keyframes workerMove{0%{left:27%;transform:rotate(0)}65%{transform:rotate(4deg)}100%{left:66%;transform:rotate(0)}}@keyframes lineGrow{to{width:100%}}@keyframes cltDim{0%,35%{opacity:1;transform:scale(1)}100%{opacity:.38;transform:scale(.94)}}@keyframes pjRise{0%,35%{opacity:.35;transform:scale(.92)}100%{opacity:1;transform:scale(1)}}@keyframes noteFly{0%{opacity:0;transform:translateY(16px) rotate(-7deg)}55%,100%{opacity:1;transform:translateY(0) rotate(2deg)}}@keyframes splashProgress{to{width:100%}}@media(max-width:640px){.pj-stage{height:250px}.contract-card{width:145px;height:122px;padding:17px}.contract-card.clt{left:0}.contract-card.pj{right:0}.contract-card b{font-size:25px}.transition-line{left:23%;right:23%}.worker-token{left:19%}@keyframes workerMove{0%{left:19%}100%{left:68%}}}.splash h2{margin-top:18px}}@media(prefers-reduced-motion:reduce){.contract-card,.transition-line:before,.worker-token,.flying-note{animation:none}.contract-card.pj{opacity:1;transform:none}.flying-note{opacity:1}.splash-progress i{animation:splashProgress 4s linear forwards}}
   </style>
-
-  <style>
-    /* Manual interativo */
-    .manual-hero{display:grid;grid-template-columns:1.2fr .8fr;gap:18px;margin-bottom:18px}
-    .manual-intro{position:relative;overflow:hidden;border-radius:26px;padding:30px;background:linear-gradient(135deg,#123f32,#1f7255);color:white;min-height:230px}
-    .manual-intro:after{content:"?";position:absolute;right:24px;bottom:-42px;font-size:210px;line-height:1;font-weight:900;color:rgba(203,232,91,.10);pointer-events:none}
-    .manual-intro h2{font-size:32px;line-height:1.08;letter-spacing:-.04em;margin:12px 0 10px;max-width:740px}
-    .manual-intro p{max-width:720px;color:#dcebe6;margin:0;font-size:14px}
-    .manual-intro-actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:22px;position:relative;z-index:1}
-    .manual-overview{background:white;border:1px solid var(--line);border-radius:26px;padding:25px;display:flex;flex-direction:column;justify-content:space-between}
-    .manual-overview h3{margin:0 0 8px;font-size:17px}.manual-overview p{margin:0;color:var(--muted);font-size:12px}
-    .manual-completion{margin-top:18px}.manual-progress-label{display:flex;justify-content:space-between;gap:12px;font-size:11px;font-weight:750;color:#425149;margin-bottom:7px}
-    .manual-progress-track{height:9px;border-radius:999px;background:#e8efec;overflow:hidden}.manual-progress-fill{height:100%;width:0;background:linear-gradient(90deg,var(--green),var(--lime));border-radius:inherit;transition:width .25s ease}
-    .manual-toolbar{display:flex;gap:10px;align-items:center;background:white;border:1px solid var(--line);border-radius:16px;padding:10px;margin-bottom:17px;position:sticky;top:52px;z-index:18;box-shadow:0 8px 22px rgba(23,57,46,.06)}
-    .manual-search{display:flex;align-items:center;gap:8px;flex:1;min-width:0;background:#f7faf8;border:1px solid var(--line);border-radius:11px;padding:0 11px}.manual-search span{font-size:17px;color:var(--muted)}
-    .manual-search input{width:100%;border:0;background:transparent;outline:0;padding:10px 0;color:var(--ink)}
-    .manual-search-result{font-size:11px;color:var(--muted);white-space:nowrap;padding:0 5px}
-    .manual-layout{display:grid;grid-template-columns:250px minmax(0,1fr);gap:17px;align-items:start}
-    .manual-side{position:sticky;top:116px;background:white;border:1px solid var(--line);border-radius:18px;padding:10px;box-shadow:0 3px 15px rgba(23,57,46,.035)}
-    .manual-side-title{padding:9px 10px 7px;color:var(--muted);font-size:10px;font-weight:850;letter-spacing:.09em;text-transform:uppercase}
-    .manual-topic-btn{width:100%;border:0;background:transparent;text-align:left;border-radius:10px;padding:10px 11px;color:#4f625a;font-weight:750;font-size:12px;display:flex;align-items:center;gap:9px;margin:2px 0}
-    .manual-topic-btn:hover{background:#f1f6f4;color:var(--green)}.manual-topic-btn.active{background:#e6f1ed;color:var(--green)}.manual-topic-btn span{width:21px;text-align:center;font-size:14px}
-    .manual-side-note{margin:11px 5px 4px;padding:12px;border-radius:11px;background:var(--amberbg);color:#6b572b;font-size:10px;border:1px solid #f2d48c}
-    .manual-content{min-width:0}.manual-topic{animation:manualFade .18s ease}@keyframes manualFade{from{opacity:.45;transform:translateY(3px)}to{opacity:1;transform:none}}
-    .manual-topic-head{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin:3px 0 15px}.manual-topic-head h2{font-size:24px;letter-spacing:-.03em;margin:0}.manual-topic-head p{color:var(--muted);margin:5px 0 0;max-width:760px}
-    .manual-card-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.manual-card-grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}
-    .manual-card{background:white;border:1px solid var(--line);border-radius:17px;padding:19px;box-shadow:0 3px 15px rgba(23,57,46,.025)}.manual-card h3{font-size:15px;margin:0 0 8px}.manual-card p{color:var(--muted);font-size:12px;margin:0}.manual-card ul,.manual-card ol{padding-left:19px;margin:11px 0 0;color:#425149;font-size:12px}.manual-card li+li{margin-top:6px}.manual-card .btn{margin-top:14px}
-    .manual-number{width:34px;height:34px;border-radius:11px;background:#e6f1ed;color:var(--green);display:grid;place-items:center;font-weight:900;margin-bottom:13px}.manual-number.amber{background:#fff1cf;color:#8b5b00}
-    .manual-route{display:grid;grid-template-columns:repeat(7,minmax(105px,1fr));gap:8px;overflow:auto;padding:2px 0 9px}.manual-route-step{min-width:105px;border:1px solid var(--line);background:white;border-radius:14px;padding:13px}.manual-route-step b{display:block;color:var(--green);font-size:11px;margin-bottom:5px}.manual-route-step span{font-size:10px;color:var(--muted)}
-    .manual-guide{background:white;border:1px solid var(--line);border-radius:20px;padding:22px;margin-top:15px}.manual-guide-top{display:flex;justify-content:space-between;gap:16px;align-items:center}.manual-guide-top small{font-weight:800;color:var(--green);text-transform:uppercase;letter-spacing:.08em}.manual-guide h3{font-size:20px;margin:12px 0 7px}.manual-guide p{color:var(--muted);margin:0;max-width:800px}.manual-guide-list{margin:14px 0 0;padding-left:20px;color:#425149;font-size:12px}.manual-guide-list li+li{margin-top:6px}.manual-guide-controls{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-top:19px;padding-top:17px;border-top:1px solid var(--line)}.manual-guide-nav{display:flex;gap:8px;flex-wrap:wrap}.manual-guide-controls button:disabled{opacity:.45;cursor:not-allowed}
-    .manual-checklist{display:grid;gap:8px;margin-top:13px}.manual-check{display:flex;align-items:flex-start;gap:10px;border:1px solid var(--line);background:#fbfcfc;border-radius:12px;padding:11px 12px}.manual-check input{width:17px;height:17px;margin-top:1px;accent-color:var(--green2)}.manual-check b{display:block;font-size:12px}.manual-check small{display:block;color:var(--muted);margin-top:2px}
-    .manual-key{display:inline-flex;border:1px solid #cfdad5;border-bottom-width:2px;background:#fff;border-radius:6px;padding:1px 6px;font:10px ui-monospace,SFMono-Regular,Consolas,monospace;color:#425149}
-    .manual-formula{background:#132f27;color:#e5f3ee;border-radius:14px;padding:15px 17px;font:11px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:normal;margin-top:12px;overflow:auto}
-    .manual-table{width:100%;min-width:640px}.manual-table td,.manual-table th{text-align:left;vertical-align:top}.manual-table td:first-child{font-weight:800;color:var(--green);width:160px}
-    .manual-faq{display:grid;gap:9px}.manual-faq details{background:white;border:1px solid var(--line);border-radius:14px;padding:0 16px}.manual-faq summary{cursor:pointer;font-weight:800;padding:15px 26px 15px 0;position:relative;list-style:none}.manual-faq summary::-webkit-details-marker{display:none}.manual-faq summary:after{content:"+";position:absolute;right:0;top:13px;font-size:20px;color:var(--green)}.manual-faq details[open] summary:after{content:"−"}.manual-faq details p{color:var(--muted);font-size:12px;margin:0;padding:0 0 15px}
-    .manual-glossary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.manual-term{background:white;border:1px solid var(--line);border-radius:13px;padding:14px}.manual-term b{display:block;color:var(--green);font-size:12px}.manual-term span{display:block;color:var(--muted);font-size:11px;margin-top:4px}
-    .manual-empty{display:none;background:white;border:1px dashed #aabbb4;border-radius:16px;padding:28px;text-align:center;color:var(--muted)}.manual-empty.show{display:block}
-    .manual-callout-title{display:flex;gap:11px;align-items:flex-start}.manual-callout-icon{width:34px;height:34px;border-radius:11px;background:#e6f1ed;color:var(--green);display:grid;place-items:center;flex:0 0 auto;font-size:17px}.manual-callout-title h3{margin:0 0 4px}
-    [data-manual-search-item][hidden]{display:none!important}
-    body.manual-open .mobile-calc{display:none!important}
-    @media(max-width:1050px){.manual-hero{grid-template-columns:1fr}.manual-layout{grid-template-columns:210px minmax(0,1fr)}.manual-card-grid.three{grid-template-columns:repeat(2,minmax(0,1fr))}}
-    @media(max-width:760px){.manual-toolbar{top:50px;align-items:stretch;flex-wrap:wrap}.manual-search-result{width:100%;padding:0 3px}.manual-layout{grid-template-columns:1fr}.manual-side{position:static;display:flex;gap:4px;overflow:auto;padding:7px}.manual-side-title,.manual-side-note{display:none}.manual-topic-btn{width:auto;min-width:max-content;margin:0}.manual-card-grid,.manual-card-grid.three,.manual-glossary{grid-template-columns:1fr}.manual-topic-head{flex-direction:column}.manual-guide-controls{align-items:flex-start;flex-direction:column}.manual-guide-nav{width:100%}.manual-guide-nav .btn{flex:1}.manual-intro{padding:24px}.manual-intro h2{font-size:27px}}
-  </style>
-
 </head>
 <body class="splashing">
   <div class="splash no-print" id="splash" role="dialog" aria-label="Abertura do EquivaleCLT">
@@ -81,14 +37,14 @@
       <div class="brand"><div class="mark">E≡</div><div><h1>EquivaleCLT</h1><p>Remuneração, encargos e equivalência PJ em uma única análise</p></div></div>
       <div class="header-actions no-print">
         <button class="btn" id="saveBtn">↧ Salvar cenário</button>
-        <a class="btn" href="index.html" download="EquivaleCLT_v1.2.html">↓ Baixar HTML</a>
+        <a class="btn" href="index.html" download="EquivaleCLT_v1.1.html">↓ Baixar HTML</a>
         <label class="btn" for="loadFile">↥ Carregar JSON</label><input id="loadFile" type="file" accept="application/json" hidden>
         <button class="btn primary" data-go="comparativo">Calcular equivalência</button>
       </div>
     </header>
 
     <nav class="tabs no-print" aria-label="Módulos">
-      <button class="tab active" data-tab="inicio">Visão geral</button><button class="tab" data-tab="dados">Dados CLT</button><button class="tab" data-tab="encargos">Encargos SINAPI</button><button class="tab" data-tab="regimes">Regimes PJ</button><button class="tab" data-tab="comparativo">Comparativo</button><button class="tab" data-tab="cenarios">Cenários</button><button class="tab" data-tab="relatorio">Relatório</button><button class="tab" data-tab="manual">❔ Manual interativo</button>
+      <button class="tab active" data-tab="inicio">Visão geral</button><button class="tab" data-tab="dados">Dados CLT</button><button class="tab" data-tab="encargos">Encargos SINAPI</button><button class="tab" data-tab="regimes">Regimes PJ</button><button class="tab" data-tab="comparativo">Comparativo</button><button class="tab" data-tab="cenarios">Cenários</button><button class="tab" data-tab="relatorio">Relatório</button>
     </nav>
 
     <main>
@@ -181,226 +137,8 @@
         <div class="section-head no-print"><div><h2>Relatório profissional</h2><p>Premissas, resultados, alertas e memória de cálculo.</p></div><button class="btn primary" id="printBtn">Imprimir / Salvar PDF</button></div>
         <article class="report" id="reportBody"></article>
       </section>
-
-
-      <section class="page" id="manual">
-        <div class="manual-hero">
-          <div class="manual-intro">
-            <div class="eyebrow">Central de aprendizagem</div>
-            <h2>Aprenda a usar o EquivaleCLT do primeiro dado ao relatório final</h2>
-            <p>Consulte instruções por módulo, siga um roteiro guiado, pesquise conceitos e acompanhe uma lista de verificação para montar simulações consistentes.</p>
-            <div class="manual-intro-actions">
-              <button class="btn light" id="manualStartGuide">▶ Iniciar roteiro guiado</button>
-              <button class="btn ghost" data-go="dados">Abrir Dados CLT</button>
-              <button class="btn ghost" data-go="comparativo">Ver resultados atuais</button>
-            </div>
-          </div>
-          <aside class="manual-overview">
-            <div>
-              <span class="tag">Manual integrado</span>
-              <h3 style="margin-top:14px">Seu progresso de preparação</h3>
-              <p>Marque os itens concluídos. O progresso fica salvo apenas neste navegador.</p>
-              <div class="manual-completion">
-                <div class="manual-progress-label"><span id="manualCompletionText">0 de 6 itens concluídos</span><span id="manualCompletionPct">0%</span></div>
-                <div class="manual-progress-track"><div class="manual-progress-fill" id="manualCompletionFill"></div></div>
-              </div>
-            </div>
-            <button class="btn soft" id="manualResetProgress" style="margin-top:18px">↺ Limpar progresso</button>
-          </aside>
-        </div>
-
-        <div class="manual-toolbar no-print">
-          <label class="manual-search" for="manualSearch"><span>⌕</span><input id="manualSearch" data-manual-control type="search" autocomplete="off" placeholder="Pesquisar no manual: Fator R, FGTS, JSON, relatório..."></label>
-          <button class="btn" id="manualSearchClear" type="button">Limpar</button>
-          <span class="manual-search-result" id="manualSearchResult" aria-live="polite">Navegue pelos assuntos ao lado</span>
-        </div>
-
-        <div class="manual-layout">
-          <aside class="manual-side no-print" aria-label="Sumário do manual">
-            <div class="manual-side-title">Assuntos</div>
-            <button class="manual-topic-btn active" data-manual-topic="comecar"><span>🚀</span>Comece aqui</button>
-            <button class="manual-topic-btn" data-manual-topic="dados-clt"><span>👤</span>Dados CLT</button>
-            <button class="manual-topic-btn" data-manual-topic="encargos-sinapi"><span>🧱</span>Encargos SINAPI</button>
-            <button class="manual-topic-btn" data-manual-topic="regimes-pj"><span>🏢</span>Regimes PJ</button>
-            <button class="manual-topic-btn" data-manual-topic="resultados"><span>📊</span>Resultados e relatório</button>
-            <button class="manual-topic-btn" data-manual-topic="arquivos"><span>💾</span>Cenários e arquivos</button>
-            <button class="manual-topic-btn" data-manual-topic="duvidas"><span>💡</span>Dúvidas e glossário</button>
-            <div class="manual-side-note"><b>Atenção:</b> o sistema oferece uma simulação econômico-financeira e não substitui análise jurídica, tributária, previdenciária ou contábil.</div>
-          </aside>
-
-          <div class="manual-content" id="manualContent">
-            <section class="manual-topic" data-manual-panel="comecar">
-              <div class="manual-topic-head" data-manual-search-item>
-                <div><h2>Comece aqui</h2><p>Entenda o objetivo da ferramenta e percorra, na ordem correta, os módulos que formam uma simulação.</p></div>
-                <button class="btn primary" data-go="dados">Começar a preencher →</button>
-              </div>
-
-              <div class="manual-card" data-manual-search-item>
-                <div class="manual-callout-title"><div class="manual-callout-icon">◎</div><div><h3>O que o EquivaleCLT calcula?</h3><p>O sistema estima o faturamento mensal necessário, nos meses efetivamente faturáveis, para que a contratação por pessoa jurídica alcance um valor econômico anual equivalente ao conjunto de renda, benefícios e proteção considerados na relação CLT.</p></div></div>
-                <div class="manual-formula">Valor econômico CLT = 11 × líquido regular + férias líquidas com 1/3 + 13º líquido + 12 × benefícios + FGTS anual estimado</div>
-              </div>
-
-              <div class="manual-route" aria-label="Fluxo resumido" style="margin-top:15px" data-manual-search-item>
-                <div class="manual-route-step"><b>1. Dados CLT</b><span>Salário, jornada, categoria e benefícios.</span></div>
-                <div class="manual-route-step"><b>2. Encargos</b><span>Grupos SINAPI, complementares e CPRB.</span></div>
-                <div class="manual-route-step"><b>3. Regimes PJ</b><span>Alternativas tributárias a comparar.</span></div>
-                <div class="manual-route-step"><b>4. Premissas PJ</b><span>RBT12, Fator R, pró-labore e custos.</span></div>
-                <div class="manual-route-step"><b>5. Comparativo</b><span>Faturamento, tributos, reservas e alertas.</span></div>
-                <div class="manual-route-step"><b>6. Cenários</b><span>Exemplos prontos para estudo e teste.</span></div>
-                <div class="manual-route-step"><b>7. Relatório</b><span>Premissas, memória de cálculo e impressão.</span></div>
-              </div>
-
-              <div class="manual-guide" id="manualGuide" data-manual-search-item>
-                <div class="manual-guide-top"><small id="manualGuideCounter">Etapa 1 de 7</small><span class="tag" id="manualGuideTarget">Dados CLT</span></div>
-                <div class="manual-progress-track" style="margin-top:10px"><div class="manual-progress-fill" id="manualGuideFill"></div></div>
-                <h3 id="manualGuideTitle">Cadastre a remuneração CLT</h3>
-                <p id="manualGuideText"></p>
-                <ul class="manual-guide-list" id="manualGuideList"></ul>
-                <div class="manual-guide-controls">
-                  <button class="btn primary" id="manualGuideOpen">Abrir módulo indicado</button>
-                  <div class="manual-guide-nav"><button class="btn" id="manualGuidePrev">← Anterior</button><button class="btn" id="manualGuideNext">Próxima →</button></div>
-                </div>
-              </div>
-
-              <div class="grid-2" style="margin-top:15px">
-                <div class="manual-card" data-manual-search-item>
-                  <h3>Lista de verificação</h3><p>Use esta sequência antes de confiar na comparação.</p>
-                  <div class="manual-checklist">
-                    <label class="manual-check"><input data-manual-control data-manual-check="clt" type="checkbox"><span><b>Dados CLT conferidos</b><small>Salário, jornada, benefícios, descontos e data-base.</small></span></label>
-                    <label class="manual-check"><input data-manual-control data-manual-check="encargos" type="checkbox"><span><b>Encargos ajustados</b><small>Perfil SINAPI, percentuais e complementares aplicáveis.</small></span></label>
-                    <label class="manual-check"><input data-manual-control data-manual-check="regimes" type="checkbox"><span><b>Regimes PJ selecionados</b><small>CNAE e alternativas tributárias plausíveis.</small></span></label>
-                    <label class="manual-check"><input data-manual-control data-manual-check="premissas" type="checkbox"><span><b>Premissas PJ revisadas</b><small>RBT12, Fator R, pró-labore, custos e risco.</small></span></label>
-                    <label class="manual-check"><input data-manual-control data-manual-check="resultado" type="checkbox"><span><b>Alertas interpretados</b><small>Validade, tributação, reservas e diferenças de ótica.</small></span></label>
-                    <label class="manual-check"><input data-manual-control data-manual-check="relatorio" type="checkbox"><span><b>Relatório salvo</b><small>Premissas documentadas em PDF ou cenário JSON.</small></span></label>
-                  </div>
-                </div>
-                <div class="manual-card" data-manual-search-item>
-                  <div class="manual-number amber">!</div><h3>Três cuidados essenciais</h3>
-                  <ol>
-                    <li><b>Equivalência econômica não afasta vínculo empregatício.</b> A realidade da prestação prevalece sobre o nome do contrato.</li>
-                    <li><b>Parâmetros demonstrativos precisam ser atualizados.</b> Confira tabelas previdenciárias, IRRF, SINAPI, legislação tributária e convenção coletiva na data-base.</li>
-                    <li><b>Custo do contratante não é o alvo automático do PJ.</b> O sistema separa o custo empresarial da renda econômica recebida pelo trabalhador.</li>
-                  </ol>
-                </div>
-              </div>
-            </section>
-
-            <section class="manual-topic" data-manual-panel="dados-clt" hidden>
-              <div class="manual-topic-head" data-manual-search-item><div><h2>Dados da contratação CLT</h2><p>Os dados desta etapa formam a referência econômica que será igualada pelas alternativas PJ.</p></div><button class="btn primary" data-go="dados">Abrir Dados CLT →</button></div>
-              <div class="manual-card-grid">
-                <article class="manual-card" data-manual-search-item><div class="manual-number">1</div><h3>Remuneração e jornada</h3><p>Informe o salário bruto mensal e a jornada mensal. O sistema exibe o salário-hora bruto apenas como indicador auxiliar.</p><ul><li><b>Mensalista:</b> utiliza o perfil demonstrativo mensalista dos encargos.</li><li><b>Horista:</b> altera automaticamente os grupos B e D e o total direto demonstrativo.</li></ul></article>
-                <article class="manual-card" data-manual-search-item><div class="manual-number">2</div><h3>Categoria, UF e referência</h3><p>A categoria profissional, a unidade da Federação e o mês/ano identificam o contexto da simulação e aparecem no relatório.</p><ul><li>Esses campos não atualizam automaticamente tabelas externas.</li><li>Substitua os percentuais demonstrativos pelos valores vigentes do caso concreto.</li></ul></article>
-                <article class="manual-card" data-manual-search-item><div class="manual-number">3</div><h3>INSS e IRRF</h3><p>O cálculo utiliza faixas progressivas internas e considera o número de dependentes informado.</p><ul><li><b>Automático:</b> escolhe a maior dedução entre a simplificada e as legais.</li><li><b>Simplificada:</b> força a dedução simplificada.</li><li><b>Legais:</b> utiliza INSS e dependentes.</li></ul></article>
-                <article class="manual-card" data-manual-search-item><div class="manual-number">4</div><h3>Benefícios e descontos</h3><p>Vale-alimentação, vale-transporte, plano de saúde, seguro de vida e outros benefícios integram o valor econômico anual.</p><ul><li>Outros descontos reduzem o líquido regular e o líquido de férias.</li><li>Confirme se o valor lançado representa custo ou vantagem efetivamente percebida.</li></ul></article>
-              </div>
-              <div class="manual-card" style="margin-top:14px" data-manual-search-item><h3>Como o ano CLT é montado</h3><p>Para não contar o mês de férias duas vezes, o sistema considera 11 meses líquidos regulares, as férias líquidas acrescidas de um terço e o 13º líquido. Os benefícios são anualizados em 12 meses e o FGTS é incorporado como proteção econômica acumulada.</p><div class="manual-formula">Renda anual em caixa = 11 × salário líquido regular + férias líquidas com 1/3 + 13º líquido + 12 × benefícios<br>Valor econômico anual = renda anual em caixa + FGTS anual estimado</div></div>
-              <div class="callout warning" style="margin-top:14px" data-manual-search-item><b>Conferência recomendada:</b> compare o salário, os benefícios e os descontos com contracheques, proposta de emprego, convenção coletiva ou documento equivalente. Uma premissa incorreta nesta etapa contamina todos os regimes PJ.</div>
-            </section>
-
-            <section class="manual-topic" data-manual-panel="encargos-sinapi" hidden>
-              <div class="manual-topic-head" data-manual-search-item><div><h2>Encargos SINAPI e custo do contratante</h2><p>Parametrize os encargos sociais e mantenha separadas as óticas do trabalhador e do empregador.</p></div><button class="btn primary" data-go="encargos">Abrir Encargos SINAPI →</button></div>
-              <div class="manual-card-grid">
-                <article class="manual-card" data-manual-search-item><div class="manual-number">A</div><h3>Grupo A — encargos básicos</h3><p>Reúne os encargos básicos incidentes sobre a folha conforme a composição utilizada. O valor do sistema é apenas demonstrativo e editável.</p></article>
-                <article class="manual-card" data-manual-search-item><div class="manual-number">B</div><h3>Grupo B — repousos e provisões</h3><p>Representa parcelas remuneradas sem prestação direta de serviço e provisões. O perfil horista possui percentual demonstrativo distinto do mensalista.</p></article>
-                <article class="manual-card" data-manual-search-item><div class="manual-number">C</div><h3>Grupo C — rescisões</h3><p>Contempla provisões relacionadas a rescisões e indenizações, conforme a metodologia da composição adotada.</p></article>
-                <article class="manual-card" data-manual-search-item><div class="manual-number">D</div><h3>Grupo D — reincidências</h3><p>Registra incidências de encargos de um grupo sobre parcelas de outro grupo. Não deve ser estimado sem observar a metodologia aplicável.</p></article>
-              </div>
-              <div class="grid-2" style="margin-top:14px">
-                <article class="manual-card" data-manual-search-item><h3>Duas formas de informar encargos</h3><ul><li><b>Somar os grupos A + B + C + D:</b> o sistema calcula o total a partir dos quatro campos.</li><li><b>Percentual total direto:</b> o sistema ignora a soma e aplica o total informado.</li><li>O ajuste adicional permite representar CCT, risco ou particularidade específica.</li></ul></article>
-                <article class="manual-card" data-manual-search-item><h3>Complementares e benefícios</h3><p>Encargos complementares mensais são somados ao salário, aos encargos sociais e aos benefícios para formar o custo mensal do contratante.</p><div class="manual-formula">Custo mensal = salário + encargos sociais + CPRB, quando aplicável + benefícios + complementares</div></article>
-                <article class="manual-card" data-manual-search-item><h3>Desoneração e CPRB</h3><p>Ao ativar a opção, o sistema retira da taxa social os pontos percentuais de CPP informados e acrescenta a CPRB sobre a base mensal indicada.</p><ul><li>Se a base ficar em zero, o salário é usado apenas como aproximação.</li><li>A CPRB incide sobre receita bruta, não sobre a folha.</li></ul></article>
-                <article class="manual-card" data-manual-search-item><h3>Não confunda as referências</h3><p><b>Valor econômico CLT</b> mede o que se pretende preservar para o trabalhador. <b>Custo do contratante</b> mede o dispêndio empresarial estimado. A diferença entre eles não é automaticamente renda disponível ao PJ.</p></article>
-              </div>
-              <div class="callout warning" style="margin-top:14px" data-manual-search-item><b>Uso em orçamento oficial:</b> selecione a composição SINAPI vigente para UF, período, tipo de trabalhador e condição de desoneração do empreendimento. O perfil interno é demonstrativo.</div>
-            </section>
-
-            <section class="manual-topic" data-manual-panel="regimes-pj" hidden>
-              <div class="manual-topic-head" data-manual-search-item><div><h2>Regimes da pessoa jurídica</h2><p>Selecione apenas alternativas plausíveis e ajuste os parâmetros empresariais que reduzem o faturamento disponível.</p></div><button class="btn primary" data-go="regimes">Abrir Regimes PJ →</button></div>
-              <div class="manual-card-grid three">
-                <article class="manual-card" data-manual-search-item><h3>MEI</h3><p>Usa DAS fixo e verifica o limite anual informado. A atividade precisa ser permitida e a autonomia deve existir na prática.</p></article>
-                <article class="manual-card" data-manual-search-item><h3>Simples — Anexos I e II</h3><p>Correspondem, respectivamente, a comércio e indústria. Permanecem no sistema para comparação didática e recebem alerta quando o texto do CNAE indica serviço.</p></article>
-                <article class="manual-card" data-manual-search-item><h3>Simples — Anexo III</h3><p>Pode abranger serviços admitidos e atividades direcionadas pelo Fator R quando a relação folha/RBT12 alcança o limite informado no sistema.</p></article>
-                <article class="manual-card" data-manual-search-item><h3>Simples — Anexo IV</h3><p>Usado na simulação de obras e outras atividades previstas em lei. A CPP patronal é calculada fora do DAS sobre o pró-labore.</p></article>
-                <article class="manual-card" data-manual-search-item><h3>Simples — Anexo V</h3><p>Representa serviços sujeitos ao Fator R quando a relação folha/RBT12 fica abaixo de 28%, conforme a premissa interna.</p></article>
-                <article class="manual-card" data-manual-search-item><h3>Lucro Presumido</h3><p>Estima PIS, Cofins, ISS, IRPJ e CSLL separadamente, além da CPP, INSS e IRRF associados ao pró-labore.</p></article>
-              </div>
-              <div class="grid-2" style="margin-top:14px">
-                <article class="manual-card" data-manual-search-item><h3>CNAE e atividade</h3><p>Descreva a atividade efetivamente prestada. O campo orienta alertas básicos, mas o sistema não valida a classificação fiscal completa.</p><ul><li>Confirme CNAE, permissões e anexo com profissional habilitado.</li><li>O nome dado ao serviço não altera a realidade trabalhista da prestação.</li></ul></article>
-                <article class="manual-card" data-manual-search-item><h3>RBT12 e alíquota efetiva</h3><p>RBT12 é a receita bruta acumulada nos 12 meses anteriores. No Simples, ela define a faixa e participa da fórmula da alíquota efetiva.</p><div class="manual-formula">Alíquota efetiva = [(RBT12 × alíquota nominal) − parcela a deduzir] ÷ RBT12</div></article>
-                <article class="manual-card" data-manual-search-item><h3>Fator R</h3><p>A relação entre folha e receita pode direcionar determinadas atividades entre os Anexos III e V.</p><ul><li><b>Automático:</b> usa o limite interno de 28%.</li><li><b>Forçar III ou V:</b> aplica o anexo escolhido para estudo de sensibilidade.</li></ul></article>
-                <article class="manual-card" data-manual-search-item><h3>Meses faturáveis</h3><p>O padrão é 11 meses para representar um mês sem emissão de nota durante as férias. Quanto menos meses faturáveis, maior tende a ser a nota mensal necessária.</p></article>
-                <article class="manual-card" data-manual-search-item><h3>Pró-labore e encargos do sócio</h3><p>O percentual de pró-labore sobre o faturamento influencia INSS, IRRF e, em alguns regimes, CPP patronal fora do DAS.</p></article>
-                <article class="manual-card" data-manual-search-item><h3>Custos e reserva de risco</h3><p>Contabilidade, administração, despesas operacionais e reserva de risco reduzem o valor econômico líquido da PJ e elevam o faturamento de equivalência.</p></article>
-              </div>
-              <div class="callout warning" style="margin-top:14px" data-manual-search-item><b>Alertas automáticos são filtros iniciais.</b> Eles não confirmam o enquadramento, a possibilidade de distribuição de lucros, o tratamento do ISS ou a regularidade trabalhista da contratação.</div>
-            </section>
-
-            <section class="manual-topic" data-manual-panel="resultados" hidden>
-              <div class="manual-topic-head" data-manual-search-item><div><h2>Comparativo e relatório</h2><p>Leia os resultados em conjunto: valor mensal, faturamento anual, tributos, custos, reservas e alertas.</p></div><button class="btn primary" data-go="comparativo">Abrir Comparativo →</button></div>
-              <div class="manual-card-grid">
-                <article class="manual-card" data-manual-search-item><div class="manual-number">1</div><h3>Referência econômica CLT</h3><p>É o valor anual que a solução iterativa procura reproduzir em cada regime PJ após deduzir tributos, custos e reservas considerados.</p></article>
-                <article class="manual-card" data-manual-search-item><div class="manual-number">2</div><h3>Faturamento mensal de equivalência</h3><p>É a nota necessária em cada mês faturável. O menor valor destacado considera apenas regimes que passaram pelas validações automáticas básicas.</p></article>
-                <article class="manual-card" data-manual-search-item><div class="manual-number">3</div><h3>Reserva mensal recomendada</h3><p>Distribui férias, 13º e FGTS equivalente pelos meses faturáveis. Essas parcelas já integram o alvo anual e não devem ser somadas novamente.</p></article>
-                <article class="manual-card" data-manual-search-item><div class="manual-number">4</div><h3>Status e incompatibilidades</h3><p>Leia a mensagem abaixo de cada cartão. Um regime pode aparecer como incompatível por limite anual, RBT12 ou atividade indicativa de outro anexo.</p></article>
-              </div>
-              <div class="grid-2" style="margin-top:14px">
-                <article class="manual-card" data-manual-search-item><h3>Como interpretar os gráficos</h3><ul><li><b>Faturamento mensal:</b> compara a nota necessária entre os regimes.</li><li><b>Proteções:</b> mostra a participação de férias, 13º e FGTS na reserva total.</li><li><b>Custo do contratante:</b> decompõe salário, encargos, benefícios e complementares.</li></ul></article>
-                <article class="manual-card" data-manual-search-item><h3>Memória comparativa</h3><p>A tabela detalha faturamento, tributos, CPP, INSS e IRRF do sócio, custos administrativos, reserva de risco, valor econômico líquido e diferença frente ao custo anual CLT.</p></article>
-                <article class="manual-card" data-manual-search-item><h3>Relatório profissional</h3><p>A aba Relatório reúne identificação, premissas, resultados CLT, custo do contratante, alternativas PJ, alertas, fórmulas e referências metodológicas.</p><button class="btn soft" data-go="relatorio">Abrir relatório</button></article>
-                <article class="manual-card" data-manual-search-item><h3>Imprimir ou salvar em PDF</h3><p>Na aba Relatório, pressione <span class="manual-key">Imprimir / Salvar PDF</span>. Na janela do navegador, escolha a impressora PDF ou a opção equivalente.</p></article>
-              </div>
-              <div class="manual-card" style="margin-top:14px" data-manual-search-item><h3>Equação resolvida para cada regime</h3><div class="manual-formula">Faturamento PJ − tributos da PJ − custos anuais − CPP − INSS/IRRF do pró-labore − reserva de risco = valor econômico anual CLT</div><p style="margin-top:10px">O sistema encontra numericamente o faturamento que aproxima os dois lados da igualdade. Por isso, a alteração de qualquer premissa atualiza todo o comparativo.</p></div>
-            </section>
-
-            <section class="manual-topic" data-manual-panel="arquivos" hidden>
-              <div class="manual-topic-head" data-manual-search-item><div><h2>Cenários, salvamento e uso offline</h2><p>Use exemplos para aprender, preserve premissas em JSON e mantenha o arquivo HTML como aplicação local.</p></div><button class="btn primary" data-go="cenarios">Abrir Cenários →</button></div>
-              <div class="manual-card-grid">
-                <article class="manual-card" data-manual-search-item><div class="manual-number">1</div><h3>Cenários demonstrativos</h3><p>A aba Cenários oferece exemplos de profissões e salários. Ao pressionar <span class="manual-key">Usar</span>, o sistema preenche salário, categoria, atividade e seleciona um anexo sugerido junto do Lucro Presumido.</p></article>
-                <article class="manual-card" data-manual-search-item><div class="manual-number">2</div><h3>Salvar cenário em JSON</h3><p>O botão <span class="manual-key">Salvar cenário</span> gera um arquivo com os campos editáveis, os regimes selecionados e o estado da desoneração/CPRB.</p></article>
-                <article class="manual-card" data-manual-search-item><div class="manual-number">3</div><h3>Carregar JSON</h3><p>Use <span class="manual-key">Carregar JSON</span> para restaurar um cenário salvo. Arquivos inválidos são rejeitados com uma mensagem no canto inferior da tela.</p></article>
-                <article class="manual-card" data-manual-search-item><div class="manual-number">4</div><h3>Restaurar padrão</h3><p>Na aba Cenários, <span class="manual-key">Restaurar padrão</span> repõe os dados demonstrativos, os regimes inicialmente selecionados e desativa a CPRB.</p></article>
-                <article class="manual-card" data-manual-search-item><div class="manual-number">5</div><h3>Aplicação em arquivo único</h3><p>O EquivaleCLT reúne interface, estilos e cálculos no próprio HTML. Ele pode ser aberto localmente em navegador moderno, sem servidor para a operação básica.</p></article>
-                <article class="manual-card" data-manual-search-item><div class="manual-number">6</div><h3>O que não é salvo automaticamente</h3><p>As premissas da simulação não ficam persistidas por padrão ao fechar o navegador. Para preservá-las, salve o JSON e mantenha-o junto do arquivo HTML.</p></article>
-              </div>
-              <div class="callout" style="margin-top:14px" data-manual-search-item><b>Boa prática de rastreabilidade:</b> nomeie o JSON e o PDF com profissional, data-base e versão, por exemplo: <span class="manual-key">engenheiro_SC_2026-08_v1.json</span>.</div>
-            </section>
-
-            <section class="manual-topic" data-manual-panel="duvidas" hidden>
-              <div class="manual-topic-head" data-manual-search-item><div><h2>Dúvidas frequentes e glossário</h2><p>Respostas rápidas para os pontos que mais afetam a interpretação da equivalência.</p></div></div>
-              <div class="manual-faq">
-                <details data-manual-search-item><summary>Por que o padrão considera 11 meses faturáveis?</summary><p>Para representar um profissional PJ que permanece um mês de férias sem emitir nota. A renda anual, as férias, o 13º equivalente, o FGTS equivalente e os custos precisam ser financiados pelos meses em que há faturamento.</p></details>
-                <details data-manual-search-item><summary>O custo anual do contratante é o valor que o PJ deve cobrar?</summary><p>Não automaticamente. O custo do contratante inclui encargos e parcelas que não correspondem integralmente à renda econômica do trabalhador. O alvo principal do sistema é o valor econômico anual CLT; o custo patronal aparece como referência distinta.</p></details>
-                <details data-manual-search-item><summary>O resultado confirma que a contratação PJ é legal?</summary><p>Não. A ferramenta calcula equivalência financeira. Pessoalidade, habitualidade, onerosidade e subordinação podem caracterizar relação de emprego independentemente do contrato ou da emissão de nota fiscal.</p></details>
-                <details data-manual-search-item><summary>Posso usar os encargos SINAPI exibidos em um orçamento oficial?</summary><p>Somente após substituir os percentuais demonstrativos pela composição vigente e aplicável à UF, ao período, ao tipo de trabalhador e à condição de desoneração, além de considerar convenção coletiva e particularidades do orçamento.</p></details>
-                <details data-manual-search-item><summary>Por que um regime aparece como incompatível?</summary><p>As validações básicas podem identificar limite anual do MEI excedido, RBT12 superior ao teto interno do Simples ou atividade textual incompatível com os Anexos I ou II. Outros impedimentos podem existir e não são verificados automaticamente.</p></details>
-                <details data-manual-search-item><summary>O que significa RBT12?</summary><p>É a receita bruta acumulada nos 12 meses anteriores. No Simples Nacional, ela é utilizada para identificar a faixa e calcular a alíquota efetiva.</p></details>
-                <details data-manual-search-item><summary>Alterei um campo e todos os números mudaram. Isso é esperado?</summary><p>Sim. O sistema recalcula automaticamente a referência CLT, o custo do contratante e a solução de equivalência de cada regime sempre que um campo da simulação é alterado.</p></details>
-                <details data-manual-search-item><summary>Como guardar a simulação para continuar depois?</summary><p>Salve um arquivo JSON pelo botão superior. Depois, use Carregar JSON para restaurar os campos, os regimes selecionados e o estado da desoneração.</p></details>
-              </div>
-
-              <div class="section-head" style="margin-top:24px" data-manual-search-item><div><h2 style="font-size:19px">Glossário essencial</h2><p>Conceitos utilizados nas telas e no relatório.</p></div></div>
-              <div class="manual-glossary">
-                <div class="manual-term" data-manual-search-item><b>Valor econômico CLT</b><span>Renda líquida anual, benefícios e FGTS estimado considerados como referência de equivalência.</span></div>
-                <div class="manual-term" data-manual-search-item><b>Custo do contratante</b><span>Salário, encargos sociais, CPRB quando aplicável, benefícios e complementares.</span></div>
-                <div class="manual-term" data-manual-search-item><b>RBT12</b><span>Receita bruta total acumulada nos 12 meses anteriores.</span></div>
-                <div class="manual-term" data-manual-search-item><b>Fator R</b><span>Relação entre folha de salários e receita, usada em determinadas atividades do Simples.</span></div>
-                <div class="manual-term" data-manual-search-item><b>Pró-labore</b><span>Remuneração do sócio pelo trabalho prestado à própria empresa.</span></div>
-                <div class="manual-term" data-manual-search-item><b>DAS</b><span>Documento de arrecadação que reúne tributos do Simples Nacional.</span></div>
-                <div class="manual-term" data-manual-search-item><b>CPP</b><span>Contribuição previdenciária patronal, calculada fora do DAS em situações indicadas no sistema.</span></div>
-                <div class="manual-term" data-manual-search-item><b>CPRB</b><span>Contribuição previdenciária sobre a receita bruta, quando aplicável à simulação.</span></div>
-                <div class="manual-term" data-manual-search-item><b>FGTS equivalente</b><span>Proteção econômica anual estimada que integra a referência CLT.</span></div>
-                <div class="manual-term" data-manual-search-item><b>Reserva de risco</b><span>Percentual do faturamento destinado a inadimplência, incertezas e contingências empresariais.</span></div>
-              </div>
-              <div class="callout warning" style="margin-top:14px" data-manual-search-item><b>Limite do manual:</b> as explicações descrevem o funcionamento desta versão do sistema. Elas não substituem a conferência das normas, tabelas e condições efetivamente aplicáveis ao usuário.</div>
-            </section>
-
-            <div class="manual-empty" id="manualEmpty"><b>Nenhum conteúdo encontrado.</b><br><span>Tente outro termo ou limpe a pesquisa para voltar ao sumário.</span></div>
-          </div>
-        </div>
-      </section>
-
     </main>
-    <footer class="footer"><span>EquivaleCLT v1.2 • Simulação econômico-financeira</span><span>Parâmetros tributários editáveis • referência inicial: 2026</span></footer>
+    <footer class="footer"><span>EquivaleCLT v1.1 • Simulação econômico-financeira</span><span>Parâmetros tributários editáveis • referência inicial: 2026</span></footer>
   </div>
   <button class="btn primary mobile-calc no-print" data-go="comparativo">Calcular equivalência</button><div class="toast" id="toast"></div>
 
@@ -430,18 +168,6 @@
     const scenarios=[
       ['Servente de obras',2200,'Apoio operacional em obra','IV'],['Pedreiro',3200,'Execução de alvenaria e revestimentos','IV'],['Carpinteiro',3400,'Formas, escoramentos e montagem','IV'],['Eletricista',4200,'Instalações elétricas prediais','III'],['Encanador',3900,'Instalações hidráulicas e sanitárias','III'],['Mestre de obras',6500,'Coordenação de equipes e frentes','IV'],['Técnico em edificações',5200,'Acompanhamento técnico de campo','III'],['Engenheiro civil',12000,'Serviços técnicos especializados','V'],['Profissional de tecnologia',10000,'Desenvolvimento e suporte técnico','V'],['Consultor autônomo',15000,'Consultoria especializada','V']
     ];
-
-    const manualGuideSteps=[
-      {target:'dados',label:'Dados CLT',title:'Cadastre a remuneração CLT',text:'Comece pela referência que será preservada na equivalência econômica.',points:['Informe salário bruto, jornada, perfil mensalista ou horista, categoria, UF e mês/ano.','Revise dependentes e a modalidade de dedução do IRRF.','Use documentos reais da contratação sempre que possível.']},
-      {target:'dados',label:'Benefícios',title:'Complete benefícios e descontos',text:'Benefícios aumentam o valor econômico anual; descontos reduzem o líquido recebido.',points:['Preencha alimentação, transporte, saúde, seguro de vida e outros benefícios.','Registre outros descontos do empregado somente quando efetivamente suportados.','Confira o total mensal mostrado ao fim do painel.']},
-      {target:'encargos',label:'Encargos SINAPI',title:'Ajuste o custo social do empregador',text:'Escolha a forma de composição e substitua os valores demonstrativos pelos percentuais aplicáveis.',points:['Use a soma dos grupos A, B, C e D ou informe o percentual total diretamente.','Acrescente encargos complementares e ajustes de convenção coletiva.','Ative a CPRB apenas quando pertinente e informe uma base coerente com a receita bruta.']},
-      {target:'regimes',label:'Regimes PJ',title:'Selecione as alternativas tributárias',text:'Compare apenas regimes compatíveis com a atividade e com o faturamento projetado.',points:['Revise CNAE, RBT12, ISS, regra do Fator R e meses faturáveis.','Marque os anexos do Simples, MEI ou Lucro Presumido que deseja testar.','Trate os alertas automáticos como triagem, não como parecer tributário.']},
-      {target:'regimes',label:'Custos e proteção',title:'Modele a operação da pessoa jurídica',text:'Custos empresariais e reservas reduzem o valor disponível ao profissional.',points:['Informe contabilidade, administração e despesas operacionais.','Defina reserva de risco, pró-labore, CPP e presunção tributária.','Confira o limite anual do MEI usado na validação.']},
-      {target:'comparativo',label:'Comparativo',title:'Interprete a equivalência',text:'Observe os valores mensais e anuais junto dos tributos, custos e mensagens de validade.',points:['Compare o faturamento mensal necessário entre os regimes.','Não some novamente as reservas já incluídas no valor econômico anual.','Leia a memória comparativa e investigue qualquer incompatibilidade.']},
-      {target:'relatorio',label:'Relatório',title:'Documente e preserve a análise',text:'Finalize registrando premissas, resultados e limitações.',points:['Abra o relatório e revise identificação, premissas, alertas e memória de cálculo.','Use a impressão do navegador para gerar PDF.','Salve também o cenário em JSON quando precisar editar a simulação futuramente.']}
-    ];
-    let manualTopic='comecar',manualStep=0;
-
     const defaults={salary:5000,hours:220,workerType:'monthly',category:'Profissional da construção civil',uf:'DF',period:'2026-08',dependents:0,irMode:'auto',food:650,transport:280,health:450,life:35,otherBenefits:0,employeeDiscounts:0,groupA:36.8,groupB:17.88,groupC:14.85,groupD:6.58,socialMode:'groups',socialTotalDirect:76.11,complementary:230,additionalRate:0,cppReduction:20,cprbRate:2.7,cprbBase:0,cnae:'Serviços de engenharia e construção',rbt12:120000,issRate:5,factorRMode:'auto',factorR:28,billableMonths:11,prolaboreRate:28,adminCost:450,operatingCost:250,riskRate:5,cppRate:20,presumption:32,meiLimit:81000};
     let selected=new Set(['MEI','III','IV','V','LP']), last=null, deson=false;
 
@@ -453,91 +179,14 @@
       $('#scenarioGrid').innerHTML=scenarios.map((s,i)=>`<article class="scenario"><span class="tag">Exemplo ${i+1}</span><h3>${s[0]}</h3><p>${s[2]}</p><div class="scenario-foot"><b>${money(s[1])}/mês</b><button class="btn soft" data-scenario="${i}">Usar</button></div></article>`).join('');
       $$('.tab').forEach(b=>b.addEventListener('click',()=>go(b.dataset.tab)));
       $$('[data-go]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.go)));
-      $$('input:not([data-manual-control]),select:not([data-manual-control])').forEach(el=>el.addEventListener('input',()=>{if(el.id==='workerType') setWorkerProfile(); calculate()}));
+      $$('input,select').forEach(el=>el.addEventListener('input',()=>{if(el.id==='workerType') setWorkerProfile(); calculate()}));
       $$('[data-regime]').forEach(cb=>cb.addEventListener('change',e=>{e.target.checked?selected.add(e.target.dataset.regime):selected.delete(e.target.dataset.regime); e.target.closest('.regime-card').classList.toggle('selected',e.target.checked); calculate()}));
       $$('[data-scenario]').forEach(b=>b.addEventListener('click',()=>applyScenario(+b.dataset.scenario)));
       $('#desonToggle').addEventListener('click',e=>{deson=!deson;e.currentTarget.classList.toggle('on',deson);e.currentTarget.setAttribute('aria-pressed',String(deson));$('#cprbFields').hidden=!deson;calculate()});
       $('#saveBtn').addEventListener('click',saveJSON); $('#loadFile').addEventListener('change',loadJSON); $('#resetBtn').addEventListener('click',reset); $('#printBtn').addEventListener('click',()=>window.print());
-      setupManual();
       calculate();
     }
-
-    function setupManual(){
-      const search=$('#manualSearch');
-      if(!search)return;
-      $$('[data-manual-topic]').forEach(btn=>btn.addEventListener('click',()=>{
-        search.value='';
-        filterManual('');
-        showManualTopic(btn.dataset.manualTopic);
-      }));
-      search.addEventListener('input',()=>filterManual(search.value));
-      $('#manualSearchClear').addEventListener('click',()=>{search.value='';filterManual('');search.focus()});
-      $('#manualStartGuide').addEventListener('click',()=>{manualStep=0;showManualTopic('comecar');renderManualGuide();$('#manualGuide').scrollIntoView({behavior:'smooth',block:'center'})});
-      $('#manualGuidePrev').addEventListener('click',()=>{manualStep=Math.max(0,manualStep-1);renderManualGuide()});
-      $('#manualGuideNext').addEventListener('click',()=>{manualStep=manualStep===manualGuideSteps.length-1?0:manualStep+1;renderManualGuide()});
-      $('#manualGuideOpen').addEventListener('click',()=>go(manualGuideSteps[manualStep].target));
-      $$('[data-manual-check]').forEach(cb=>cb.addEventListener('change',saveManualProgress));
-      $('#manualResetProgress').addEventListener('click',()=>{ $$('[data-manual-check]').forEach(cb=>cb.checked=false); saveManualProgress(); toast('Progresso do manual reiniciado') });
-      restoreManualProgress();
-      showManualTopic(manualTopic);
-      renderManualGuide();
-    }
-    function normalizeManualText(text){return String(text||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim()}
-    function showManualTopic(topic){
-      manualTopic=topic;
-      $$('[data-manual-topic]').forEach(btn=>btn.classList.toggle('active',btn.dataset.manualTopic===topic));
-      $$('[data-manual-panel]').forEach(panel=>{panel.hidden=panel.dataset.manualPanel!==topic;panel.querySelectorAll('[data-manual-search-item]').forEach(item=>item.hidden=false)});
-      $('#manualEmpty').classList.remove('show');
-      $('#manualSearchResult').textContent='Navegue pelos assuntos ao lado';
-    }
-    function filterManual(raw){
-      const query=normalizeManualText(raw),panels=$$('[data-manual-panel]'),items=$$('[data-manual-search-item]');
-      if(!query){showManualTopic(manualTopic);return}
-      $$('[data-manual-topic]').forEach(btn=>btn.classList.remove('active'));
-      let matches=0;
-      panels.forEach(panel=>{
-        let panelMatches=0;
-        panel.querySelectorAll('[data-manual-search-item]').forEach(item=>{
-          const match=normalizeManualText(item.textContent).includes(query);
-          item.hidden=!match;
-          if(match){matches++;panelMatches++}
-        });
-        panel.hidden=panelMatches===0;
-      });
-      $('#manualEmpty').classList.toggle('show',matches===0);
-      $('#manualSearchResult').textContent=matches===0?'Nenhum resultado':matches+(matches===1?' resultado':' resultados');
-    }
-    function renderManualGuide(){
-      const step=manualGuideSteps[manualStep],pct=(manualStep+1)/manualGuideSteps.length*100;
-      $('#manualGuideCounter').textContent=`Etapa ${manualStep+1} de ${manualGuideSteps.length}`;
-      $('#manualGuideTarget').textContent=step.label;
-      $('#manualGuideTitle').textContent=step.title;
-      $('#manualGuideText').textContent=step.text;
-      $('#manualGuideList').innerHTML=step.points.map(point=>`<li>${point}</li>`).join('');
-      $('#manualGuideFill').style.width=pct+'%';
-      $('#manualGuidePrev').disabled=manualStep===0;
-      $('#manualGuideNext').textContent=manualStep===manualGuideSteps.length-1?'↺ Reiniciar roteiro':'Próxima →';
-      $('#manualGuideOpen').textContent='Abrir '+step.label;
-    }
-    function restoreManualProgress(){
-      let saved=[];
-      try{saved=JSON.parse(localStorage.getItem('equivaleclt_manual_progress_v12')||'[]')}catch{}
-      $$('[data-manual-check]').forEach(cb=>cb.checked=saved.includes(cb.dataset.manualCheck));
-      updateManualProgress();
-    }
-    function saveManualProgress(){
-      const saved=$$('[data-manual-check]:checked').map(cb=>cb.dataset.manualCheck);
-      try{localStorage.setItem('equivaleclt_manual_progress_v12',JSON.stringify(saved))}catch{}
-      updateManualProgress();
-    }
-    function updateManualProgress(){
-      const all=$$('[data-manual-check]'),done=all.filter(cb=>cb.checked).length,pct=all.length?Math.round(done/all.length*100):0;
-      $('#manualCompletionText').textContent=`${done} de ${all.length} itens concluídos`;
-      $('#manualCompletionPct').textContent=pct+'%';
-      $('#manualCompletionFill').style.width=pct+'%';
-    }
-
-    function go(id){$$('.tab').forEach(x=>x.classList.toggle('active',x.dataset.tab===id));$$('.page').forEach(x=>x.classList.toggle('active',x.id===id));document.body.classList.toggle('manual-open',id==='manual');if(id==='relatorio') renderReport();window.scrollTo({top:0,behavior:'smooth'})}
+    function go(id){$$('.tab').forEach(x=>x.classList.toggle('active',x.dataset.tab===id));$$('.page').forEach(x=>x.classList.toggle('active',x.id===id));if(id==='relatorio') renderReport();window.scrollTo({top:0,behavior:'smooth'})}
     function setWorkerProfile(){const hourly=$('#workerType').value==='hourly';if(hourly){$('#groupA').value=36.8;$('#groupB').value=46.37;$('#groupC').value=14.85;$('#groupD').value=17.07;$('#socialTotalDirect').value=115.09}else{$('#groupA').value=36.8;$('#groupB').value=17.88;$('#groupC').value=14.85;$('#groupD').value=6.58;$('#socialTotalDirect').value=76.11}$('#profileTag').textContent=(hourly?'Horista':'Mensalista')+' · demonstrativo'}
     function inss(gross){const caps=[[1621,.075],[2902.84,.09],[4354.27,.12],[8475.55,.14]];let tax=0,prev=0;for(const [cap,rate] of caps){const base=Math.max(0,Math.min(gross,cap)-prev);tax+=base*rate;prev=cap;if(gross<=cap)break}return tax}
     function irrf(gross,inssValue){const legal=inssValue+val('dependents')*189.59;const simple=607.20;const mode=$('#irMode').value;const deduction=mode==='legal'?legal:mode==='simple'?simple:Math.max(legal,simple);const base=Math.max(0,gross-deduction);let tax=base<=2428.8?0:base<=2826.65?base*.075-182.16:base<=3751.05?base*.15-394.16:base<=4664.68?base*.225-675.49:base*.275-908.73;let reduction=0;if(gross<=5000)reduction=tax;else if(gross<=7350)reduction=Math.max(0,978.62-.133145*gross);return Math.max(0,tax-reduction)}
@@ -592,7 +241,7 @@
       $('#comparisonTable').innerHTML=`<thead><tr><th>Indicador</th>${cols}</tr></thead><tbody>${row('Faturamento mensal',r=>money(r.invoice))}${row('Faturamento anual',r=>money(r.revenue))}${row('Tributos da PJ',r=>money(r.companyTax))}${row('Alíquota tributária estimada',r=>num(r.companyTax/Math.max(1,r.revenue)*100)+'%')}${row('CPP fora do DAS',r=>money(r.cpp))}${row('INSS do sócio',r=>money(r.partnerInss))}${row('IRRF do pró-labore',r=>money(r.partnerIrrf))}${row('Custos administrativos/operacionais',r=>money(r.admin))}${row('Reserva de risco',r=>money(r.risk))}${row('Valor econômico líquido',r=>money(r.netEconomic))}${row('Diferença para custo anual CLT',r=>money(r.revenue-c.annualCost))}</tbody>`;
     }
     function renderReport(){if(!last)return;const {c,results,date}=last;const alerts=results.filter(r=>!r.valid).map(r=>`<li><b>${regimes[r.kind].short}:</b> ${r.status}</li>`).join('')||'<li>Nenhuma incompatibilidade automática identificada. O CNAE ainda deve ser confirmado.</li>';
-      $('#reportBody').innerHTML=`<div class="report-header"><div><div class="eyebrow" style="color:var(--green)">Relatório técnico-financeiro</div><h1>Equivalência de remuneração CLT × PJ</h1><p>${escapeHTML($('#category').value)} · ${$('#uf').value} · referência ${$('#period').value}</p></div><div style="text-align:right"><b>EquivaleCLT v1.2</b><br><small>Gerado em ${date.toLocaleString('pt-BR')}</small></div></div>
+      $('#reportBody').innerHTML=`<div class="report-header"><div><div class="eyebrow" style="color:var(--green)">Relatório técnico-financeiro</div><h1>Equivalência de remuneração CLT × PJ</h1><p>${escapeHTML($('#category').value)} · ${$('#uf').value} · referência ${$('#period').value}</p></div><div style="text-align:right"><b>EquivaleCLT v1.1</b><br><small>Gerado em ${date.toLocaleString('pt-BR')}</small></div></div>
       <div class="report-summary"><div class="report-box"><small>Salário bruto CLT</small><b>${money(c.salary)}</b></div><div class="report-box"><small>Valor econômico anual</small><b>${money(c.economic)}</b></div><div class="report-box"><small>Custo anual do contratante</small><b>${money(c.annualCost)}</b></div></div>
       <h2>1. Premissas principais</h2><div class="table-wrap"><table><tbody><tr><td>Jornada mensal</td><td>${num(val('hours'))} h</td><td>Meses faturáveis do PJ</td><td>${num(val('billableMonths'))}</td></tr><tr><td>Benefícios mensais</td><td>${money(c.benefits)}</td><td>Custos PJ mensais</td><td>${money(val('adminCost')+val('operatingCost'))}</td></tr><tr><td>Encargos sociais</td><td>${num(c.socialRate)}%</td><td>Reserva de risco</td><td>${num(val('riskRate'))}%</td></tr><tr><td>RBT12 informada</td><td>${money(val('rbt12'))}</td><td>Pró-labore</td><td>${num(val('prolaboreRate'))}%</td></tr></tbody></table></div>
       <h2>2. Trabalhador CLT</h2><div class="table-wrap"><table><thead><tr><th>Parcela</th><th>Valor</th></tr></thead><tbody><tr><td>Salário líquido regular</td><td>${money(c.net)}</td></tr><tr><td>INSS mensal</td><td>${money(c.regularInss)}</td></tr><tr><td>IRRF mensal</td><td>${money(c.regularIrrf)}</td></tr><tr><td>Férias líquidas com 1/3</td><td>${money(c.vacationNet)}</td></tr><tr><td>13º líquido</td><td>${money(c.thirteenthNet)}</td></tr><tr><td>FGTS anual estimado</td><td>${money(c.fgts)}</td></tr><tr><td>Valor econômico anual</td><td><b>${money(c.economic)}</b></td></tr></tbody></table></div>
@@ -607,7 +256,7 @@ Equivalência PJ: faturamento resolvido iterativamente até que receita − trib
       <h2>7. Referências metodológicas</h2><p style="font-size:11px">SINAPI — Metodologias, cálculos e parâmetros; tabelas previdenciárias do INSS; tabelas mensais do IRPF da Receita Federal; Lei Complementar nº 123/2006 e anexos; regras do FGTS. Todos os parâmetros devem ser conferidos na data-base efetiva.</p><p style="font-size:10px;color:var(--muted);margin-top:16px">* “Simulação admissível” significa apenas que as validações automáticas básicas não encontraram impedimento. Não constitui confirmação de enquadramento tributário ou trabalhista.</p>`;
     }
     function escapeHTML(s){return String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
-    function collect(){const data={};inputIds.forEach(id=>data[id]=$('#'+id).value);return {app:'EquivaleCLT',version:'1.2',data,selected:[...selected],deson}}
+    function collect(){const data={};inputIds.forEach(id=>data[id]=$('#'+id).value);return {app:'EquivaleCLT',version:'1.1',data,selected:[...selected],deson}}
     function saveJSON(){const blob=new Blob([JSON.stringify(collect(),null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='cenario_equivaleclt.json';a.click();URL.revokeObjectURL(a.href);toast('Cenário salvo em JSON')}
     function loadJSON(e){const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{try{const o=JSON.parse(rd.result);Object.entries(o.data||{}).forEach(([k,v])=>{if($('#'+k))$('#'+k).value=v});selected=new Set(o.selected||[...selected]);deson=!!o.deson;$$('[data-regime]').forEach(x=>{x.checked=selected.has(x.dataset.regime);x.closest('.regime-card').classList.toggle('selected',x.checked)});$('#desonToggle').classList.toggle('on',deson);$('#desonToggle').setAttribute('aria-pressed',String(deson));$('#cprbFields').hidden=!deson;calculate();toast('Cenário carregado')}catch{toast('Arquivo JSON inválido')}};rd.readAsText(f);e.target.value=''}
     function applyScenario(i){const s=scenarios[i];$('#salary').value=s[1];$('#category').value=s[0];$('#cnae').value=s[2];selected=new Set([s[3],'LP']);$$('[data-regime]').forEach(x=>{x.checked=selected.has(x.dataset.regime);x.closest('.regime-card').classList.toggle('selected',x.checked)});calculate();go('dados');toast('Cenário “'+s[0]+'” carregado')}
