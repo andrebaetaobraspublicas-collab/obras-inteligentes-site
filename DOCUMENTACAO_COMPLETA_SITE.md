@@ -295,7 +295,15 @@ Observacoes:
 ### Administracao Local e Canteiro de Obra
 
 Rota: `/administracao-canteiro/`  
-Arquivo: `administracao-canteiro/index.html`
+Arquivo de abertura: `administracao-canteiro/index.html`  
+Arquivo do sistema: `administracao-canteiro/calculadora.html`
+
+Ultima atualizacao:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\ALC_Sistema_com_Manual.zip`
+- Data: 25/08/2026
+- Alteracao: substituicao de `administracao-canteiro/calculadora.html` pela versao com manual interativo. O `index.html` do pacote era identico ao arquivo ja publicado e foi preservado.
+- Backup da calculadora anterior salvo em `C:\Obras Inteligentes\backups\administracao-canteiro-calculadora-before-alc-manual-20260825-061436.html`.
 
 Observacao:
 
