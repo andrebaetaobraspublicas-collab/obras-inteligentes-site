@@ -145,7 +145,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/risco-cambial/` | 154065 bytes | 152257 caracteres |
 | `/protendpro/` | 915441 bytes | 915441 caracteres |
 | `/eventogramapro/` | 728843 bytes | 728843 caracteres |
-| `/termo-massa/` | 145812 bytes | 145812 caracteres |
+| `/termo-massa/` | 199232 bytes | 196348 caracteres |
 | `/cabocalc/` | 129693 bytes | 129693 caracteres |
 | `/subestacaopro/` | 730239 bytes | 730239 caracteres |
 | `/brucknercalc/` | 1479721 bytes | 1475264 caracteres |
@@ -752,11 +752,12 @@ Observacoes:
 Rota: `/termo-massa/`  
 Arquivo: `termo-massa/index.html`
 
-Ultima inclusao:
+Ultima atualizacao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\Termo Massa - Analisador de Temperatura de Concretagem.html`
-- Data: 25/07/2026
-- Alteracao: inclusao de novo card na home e publicacao do aplicativo como HTML standalone.
+- Fonte: `C:\Users\ACER\Documents\Downloads\index (42).html`
+- Data: 26/08/2026
+- Alteracao: substituicao integral de `termo-massa/index.html` pela nova versao enviada, identificada como `TermoMassa — Controle térmico de concreto massa`, com manual interativo.
+- Backup da versao anterior salvo em `C:\Obras Inteligentes\backups\termo-massa-index-before-index42-20260826-172542.html`.
 
 Observacoes:
 
