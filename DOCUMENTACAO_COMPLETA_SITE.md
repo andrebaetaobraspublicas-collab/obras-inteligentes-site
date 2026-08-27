@@ -150,7 +150,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/subestacaopro/` | 730239 bytes | 730239 caracteres |
 | `/brucknercalc/` | 1479721 bytes | 1475264 caracteres |
 | `/molapro/` | 304857 bytes | 304857 caracteres |
-| `/calculadora-eixos/` | 173241 bytes | 173241 caracteres |
+| `/calculadora-eixos/` | 231280 bytes | 228654 caracteres |
 | `/mancalpro/` | 1138677 bytes | 1138677 caracteres |
 | `/engrenagecalc/` | 582008 bytes | 578817 caracteres |
 | `/volantepro/` | 104335 bytes | 104335 caracteres |
@@ -842,11 +842,12 @@ Observacoes:
 Rota: `/calculadora-eixos/`  
 Arquivo: `calculadora-eixos/index.html`
 
-Ultima inclusao:
+Ultima atualizacao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\Calculadora de Eixos v3.0 (offline).html`
-- Data: 30/07/2026
-- Alteracao: atualizacao do aplicativo Calculadora de Eixos para a versao standalone v3.0.
+- Fonte: `C:\Users\ACER\Documents\Downloads\index (43).html`
+- Data: 27/08/2026
+- Alteracao: substituicao integral de `calculadora-eixos/index.html` pela nova versao enviada, identificada como `Calculadora de Eixos v3.0 — Dimensionamento, Verificação e Eixo Escalonado`, com manual interativo.
+- Backup da versao anterior salvo em `C:\Obras Inteligentes\backups\calculadora-eixos-index-before-index43-20260827-003823.html`.
 
 Observacoes:
 
