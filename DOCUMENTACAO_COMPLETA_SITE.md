@@ -111,6 +111,7 @@ Inventario originalmente verificado em 21/07/2026 e atualizado em 27/08/2026 par
 | 62 / CANTEIRO SICRO | Canteiro de Obras - Sicro | `/canteiro-sicro/` | `C:\Obras Inteligentes\canteiro-sicro\index.html` | existe | 200 |
 | 63 / GRUAS | GruaPro | `/gruapro/` | `C:\Obras Inteligentes\gruapro\index.html` | existe | 200 |
 | 64 / ICAMENTO | IcamentoPro | `/icamento-pro/` | `C:\Obras Inteligentes\icamento-pro\index.html` | existe | 200 |
+| 65 / LOCAR OU COMPRAR | Locar ou Comprar Pro | `/locar-ou-comprar-pro/` | `C:\Obras Inteligentes\locar-ou-comprar-pro\index.html` | existe | 200 |
 
 ## Tamanhos verificados
 
@@ -182,6 +183,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/canteiro-sicro/` | 246827 bytes | 244312 caracteres |
 | `/gruapro/` | 607247 bytes | 602186 caracteres |
 | `/icamento-pro/` | 1073180 bytes | 1062059 caracteres |
+| `/locar-ou-comprar-pro/` | 372920 bytes | 370117 caracteres |
 
 ## Estrutura local principal
 
@@ -1402,6 +1404,25 @@ Observacoes:
 - Tela inicial do site aponta para `/canteiro-sicro/`.
 - Backup da home anterior salvo em `C:\Obras Inteligentes\backups\index-before-canteiro-sicro-20260823-1705.html`.
 - Validar apos futuras alteracoes se projetos, canteiros moveis, fatores SICRO, autotestes, custos e memoria de calculo continuam carregando corretamente.
+
+### Locar ou Comprar Pro
+
+Rota: `/locar-ou-comprar-pro/`  
+Arquivo: `locar-ou-comprar-pro/index.html`
+
+Ultima inclusao:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\LocarOuComprarPro_v1.4.html`
+- Data: 27/08/2026
+- Alteracao: inclusao de novo card na home, no filtro `Orcamento`, e publicacao do aplicativo Locar ou Comprar Pro v1.4 como HTML standalone.
+
+Observacoes:
+
+- Aplicativo standalone empacotado em HTML unico.
+- Tela inicial do site aponta para `/locar-ou-comprar-pro/`.
+- O card foi classificado no filtro `Orcamento`.
+- Backup da home anterior salvo em `C:\Obras Inteligentes\backups\index-before-locar-ou-comprar-pro-20260827-202628.html`.
+- Validar apos futuras alteracoes se a comparacao economica entre locacao e compra, custos, produtividade, prazos, valor residual, cenarios e relatorios continuam carregando corretamente.
 
 ### AcessCheck
 
