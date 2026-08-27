@@ -181,7 +181,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/acesscheck/` | 200004 bytes | 197102 caracteres |
 | `/canteiro-sicro/` | 246827 bytes | 244312 caracteres |
 | `/gruapro/` | 607247 bytes | 602186 caracteres |
-| `/icamento-pro/` | 807771 bytes | 799121 caracteres |
+| `/icamento-pro/` | 983428 bytes | 972886 caracteres |
 
 ## Estrutura local principal
 
@@ -1293,10 +1293,10 @@ Arquivo: `icamento-pro/index.html`
 
 Ultima atualizacao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\IcamentoPro_v1.4.html`
+- Fonte: `C:\Users\ACER\Documents\Downloads\IcamentoPro_v1.9.html`
 - Data: 27/08/2026
-- Alteracao: substituicao integral de `icamento-pro/index.html` pela versao IcamentoPro v1.4 enviada, preservando o card existente no filtro `Estruturas`.
-- Backup da versao anterior salvo em `C:\Obras Inteligentes\backups\icamento-pro-index-before-v14-20260827-081521.html`.
+- Alteracao: substituicao integral de `icamento-pro/index.html` pela versao IcamentoPro v1.9 enviada, preservando o card existente no filtro `Estruturas`.
+- Backup da versao anterior salvo em `C:\Obras Inteligentes\backups\icamento-pro-index-before-v19-20260827-103251.html`.
 - Backup da home anterior a inclusao original salvo em `C:\Obras Inteligentes\backups\index-before-icamento-pro-20260827-004151.html`.
 
 Observacoes:
