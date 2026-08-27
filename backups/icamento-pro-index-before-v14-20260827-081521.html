@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="IçamentoPro — planejamento, verificação e documentação de operações de içamento." />
-  <title>IçamentoPro v1.4</title>
+  <title>IçamentoPro v1.3</title>
   <style>
     :root{
       --bg:#eef3f8;
@@ -248,53 +248,6 @@
     @media print{
       body{background:white}.sidebar,.topbar,.page-head,.report-toolbar,.toast,.modal-backdrop{display:none!important}.app-shell{display:block}.main{padding:0}.page-section{display:none!important}.page-section#report{display:block!important;max-width:none}.report-paper{box-shadow:none;border:0;max-width:none;padding:0}.report-cover{min-height:94vh;page-break-after:always}.report-paper h2{page-break-after:avoid}table,tr,.panel{page-break-inside:avoid}@page{size:A4;margin:16mm}
     }
-  
-
-    /* Recursos v1.4 — estabilidade, patolas, sensibilidade e assistente */
-    .v14-hero{background:linear-gradient(135deg,#071a2c,#0e456f 58%,#17608f);color:#fff;border:0;position:relative;overflow:hidden}
-    .v14-hero:after{content:"";position:absolute;width:280px;height:280px;border-radius:50%;right:-110px;top:-130px;background:rgba(255,255,255,.08)}
-    .v14-hero p{color:#dbe9f5;max-width:820px}.v14-hero .badge{position:relative;z-index:2}
-    .assistant-flow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
-    .assistant-step{border:1px solid var(--line);border-radius:13px;background:#fff;padding:14px;min-height:145px;position:relative;overflow:hidden}
-    .assistant-step:before{content:attr(data-step);position:absolute;right:9px;top:3px;font-size:46px;font-weight:950;color:#edf2f7;line-height:1}
-    .assistant-step strong{display:block;color:var(--primary);margin-bottom:6px;position:relative}.assistant-step p{font-size:12px;color:var(--muted);margin:0;position:relative}
-    .assistant-summary{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
-    .assistant-candidates{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-    .assistant-candidate{border:1px solid var(--line);border-radius:13px;background:#fff;padding:15px;display:flex;flex-direction:column;gap:9px;min-width:0}
-    .assistant-candidate h3{margin:0;font-size:15px}.assistant-candidate .candidate-source{font-size:10px;color:var(--muted);overflow-wrap:anywhere;min-height:28px}
-    .assistant-candidate .candidate-specs{display:grid;grid-template-columns:1fr 1fr;gap:7px}.assistant-candidate .candidate-spec{padding:8px;border-radius:8px;background:var(--surface-2)}
-    .assistant-candidate .candidate-spec span{display:block;font-size:9px;text-transform:uppercase;color:var(--muted);font-weight:800}.assistant-candidate .candidate-spec strong{font-size:12px}
-    .assistant-candidate .candidate-actions{margin-top:auto;display:flex;gap:7px;flex-wrap:wrap}
-    .assistant-checks{display:grid;gap:8px}.assistant-check{display:flex;align-items:flex-start;gap:9px;padding:10px;border:1px solid var(--line);border-radius:10px;background:#fff}
-    .assistant-check i{display:grid;place-items:center;width:22px;height:22px;border-radius:50%;font-style:normal;font-size:11px;font-weight:900;flex:0 0 auto}
-    .assistant-check.ok i{background:var(--success-bg);color:var(--success)}.assistant-check.pending i{background:var(--warning-bg);color:var(--warning)}.assistant-check.block i{background:var(--danger-bg);color:var(--danger)}
-    .support-layout{display:grid;grid-template-columns:minmax(0,1.18fr) minmax(320px,.82fr);gap:16px}
-    .support-stage{min-height:440px;border:1px solid var(--line);border-radius:13px;background:linear-gradient(180deg,#fbfdff,#edf4f8);overflow:hidden}.support-stage svg{width:100%;height:440px;display:block}
-    .support-table input,.support-table select{min-width:82px;padding:7px 8px;font-size:11px}.support-table input[type="checkbox"]{min-width:auto;width:auto}
-    .support-table .support-label{min-width:135px}.support-table td{padding:7px}.support-table th{padding:8px 7px}
-    .reaction-cell strong{display:block;font-size:12px}.reaction-cell span{font-size:10px;color:var(--muted)}
-    .reaction-meter{height:7px;background:#e8edf2;border-radius:999px;overflow:hidden;margin-top:5px;min-width:70px}.reaction-meter i{display:block;height:100%;border-radius:inherit;background:var(--primary)}
-    .support-legend{display:flex;gap:10px;flex-wrap:wrap;font-size:10px;color:var(--muted)}.support-legend span{display:flex;align-items:center;gap:5px}.support-legend i{width:10px;height:10px;border-radius:50%;background:var(--primary)}
-    .support-legend .resultant i{background:var(--danger)}.support-legend .load i{background:var(--accent)}.support-legend .polygon i{background:#8b5cf6}
-    .ground-kpis{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
-    .ground-kpi{border:1px solid var(--line);border-radius:11px;padding:11px;background:#fff;min-width:0}.ground-kpi span{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:800}.ground-kpi strong{display:block;font-size:18px;margin-top:4px;overflow:hidden;text-overflow:ellipsis}.ground-kpi small{display:block;color:var(--muted);font-size:10px;margin-top:2px}
-    .slew-canvas{width:100%;height:300px;display:block}
-    .sensitivity-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.sensitivity-canvas{width:100%;height:330px;display:block}
-    .robustness-card{border:1px solid var(--line);border-radius:14px;background:#fff;padding:17px;display:grid;grid-template-columns:120px 1fr;gap:16px;align-items:center}
-    .robustness-ring{--robust:0;--robust-color:var(--warning);width:112px;height:112px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--robust-color) calc(var(--robust)*1%),#e8edf3 0);position:relative}
-    .robustness-ring:before{content:"";position:absolute;inset:11px;background:#fff;border-radius:50%}.robustness-ring strong{position:relative;font-size:28px}.robustness-ring small{position:relative;color:var(--muted);font-size:10px}
-    .sensitivity-summary{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}.sensitivity-summary .calc-box{min-height:88px}
-    .threshold-list{display:grid;gap:8px}.threshold-item{display:grid;grid-template-columns:minmax(130px,.7fr) minmax(140px,.6fr) 1.4fr;gap:10px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:10px;background:#fff;font-size:12px}
-    .threshold-item strong{color:var(--primary)}.threshold-item span{color:var(--muted)}
-    .model-chip{display:inline-flex;align-items:center;gap:6px;border:1px solid #c7d7fe;background:#f3f7ff;color:#175cd3;padding:5px 8px;border-radius:999px;font-size:10px;font-weight:800}
-    .method-note{font-size:11px;color:var(--muted);border-top:1px dashed var(--line);padding-top:10px;margin-top:10px}
-    .support-status{display:inline-flex;align-items:center;gap:5px;font-weight:800;font-size:10px}.support-status:before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor}
-    .support-status.aprovado{color:var(--success)}.support-status.alerta{color:var(--warning)}.support-status.reprovado{color:var(--danger)}.support-status.nao_verificado{color:var(--muted)}
-    .compact-tabs{display:flex;gap:7px;flex-wrap:wrap}.compact-tabs button.active{background:var(--primary);color:#fff;border-color:var(--primary)}
-    @media(max-width:1200px){.assistant-flow{grid-template-columns:repeat(2,1fr)}.assistant-candidates{grid-template-columns:repeat(2,1fr)}.ground-kpis{grid-template-columns:repeat(3,1fr)}.assistant-summary,.sensitivity-summary{grid-template-columns:repeat(3,1fr)}}
-    @media(max-width:900px){.support-layout,.sensitivity-grid{grid-template-columns:1fr}.assistant-candidates{grid-template-columns:1fr}.ground-kpis,.assistant-summary,.sensitivity-summary{grid-template-columns:repeat(2,1fr)}}
-    @media(max-width:620px){.assistant-flow{grid-template-columns:1fr}.ground-kpis,.assistant-summary,.sensitivity-summary{grid-template-columns:1fr}.robustness-card{grid-template-columns:1fr;text-align:center}.robustness-ring{margin:auto}.threshold-item{grid-template-columns:1fr}.support-stage,.support-stage svg{height:360px;min-height:360px}}
-
   </style>
 </head>
 <body>
@@ -312,7 +265,7 @@
     </div>
     <div class="access-panel">
       <div class="access-card">
-        <span class="tag">IçamentoPro v1.4</span>
+        <span class="tag">IçamentoPro v1.3</span>
         <h2>Acesso ao sistema</h2>
         <p>Leia o aviso técnico antes de iniciar uma análise.</p>
         <div class="legal-box">
@@ -363,15 +316,13 @@
       <nav class="side-nav">
         <div class="nav-group-label">Operação</div>
         <button class="nav-btn active" data-section="dashboard"><span class="nav-icon">◫</span>Painel</button>
-        <button class="nav-btn" data-section="engineeringAssistant"><span class="nav-icon">A1</span>Assistente de Engenharia</button>
         <button class="nav-btn" data-section="operation"><span class="nav-icon">01</span>Nova operação</button>
         <button class="nav-btn" data-section="load"><span class="nav-icon">02</span>Carga e centro de gravidade</button>
         <button class="nav-btn" data-section="equipment"><span class="nav-icon">03</span>Equipamento</button>
         <button class="nav-btn" data-section="loadchart"><span class="nav-icon">04</span>Tabela de carga</button>
         <button class="nav-btn" data-section="geometry"><span class="nav-icon">05</span>Geometria e croquis</button>
         <button class="nav-btn" data-section="accessories"><span class="nav-icon">06</span>Acessórios e ramais</button>
-        <button class="nav-btn" data-section="ground"><span class="nav-icon">07</span>Patolas, estabilidade e solo</button>
-        <button class="nav-btn" data-section="sensitivity"><span class="nav-icon">07A</span>Sensibilidade e robustez</button>
+        <button class="nav-btn" data-section="ground"><span class="nav-icon">07</span>Estabilizadores e solo</button>
         <button class="nav-btn" data-section="environment"><span class="nav-icon">08</span>Ambiente e interferências</button>
         <div class="nav-group-label">Controle</div>
         <button class="nav-btn" data-section="risks"><span class="nav-icon">09</span>Análise de riscos</button>
@@ -387,7 +338,7 @@
         <button class="nav-btn" data-section="projects"><span class="nav-icon">18</span>Projetos salvos</button>
         <button class="nav-btn" data-section="manual"><span class="nav-icon">19</span>Manual do sistema</button>
       </nav>
-      <div class="side-footer">v1.4.0 · Estabilidade, apoio e robustez<br>Dados armazenados localmente</div>
+      <div class="side-footer">v1.3.0 · Catálogos oficiais rastreáveis<br>Dados armazenados localmente</div>
     </aside>
 
     <main class="main">
@@ -396,7 +347,7 @@
           <div><h1>Painel da operação</h1><p>Visão consolidada da capacidade, rigging, apoio, ambiente, riscos e pendências.</p></div>
           <div class="page-actions"><button class="btn btn-primary" data-go="operation">Editar operação</button><button class="btn" id="btnRecalculate">⟳ Recalcular</button></div>
         </div>
-        <div class="release-note"><span class="badge badge-info">NOVO NA V1.4</span><div><strong>Estabilidade durante o giro, patolas individualizadas, análise de sensibilidade e Assistente de Engenharia</strong><span>O novo motor calcula um envelope preliminar de reações, pressões e posição da resultante em cada azimute. Dados oficiais do fabricante continuam prevalecendo, e cálculos internos são explicitamente classificados como estimativas de planejamento.</span></div></div>
+        <div class="release-note"><span class="badge badge-info">NOVO NA V1.3</span><div><strong>Catálogos oficiais rastreáveis de equipamentos e acessórios</strong><span>Pesquise modelos reais, compare envelopes gerais e consulte as fontes. Curvas de carga ausentes não são presumidas, e acessórios dependentes de vão, comprimento ou montagem permanecem sem WLL operacional até a configuração completa.</span></div></div>
         <div class="dashboard-hero">
           <div class="panel hero-panel">
             <span class="badge badge-info" id="dashClassification">OPERAÇÃO ESPECIAL</span>
@@ -418,8 +369,6 @@
           <div class="metric-card"><div class="label">Vento / limite</div><div class="value" id="mWind">—</div><div class="sub">Rajada adotada</div></div>
           <div class="metric-card"><div class="label">Raio governante</div><div class="value" id="mGoverningRadius">—</div><div class="sub">Maior solicitação da trajetória</div></div>
           <div class="metric-card"><div class="label">Menor margem vertical</div><div class="value" id="mGeometryMargin">—</div><div class="sub">Entre as posições avaliadas</div></div>
-          <div class="metric-card"><div class="label">Reserva de estabilidade</div><div class="value" id="mStabilityReserve">—</div><div class="sub">Pior posição do giro</div></div>
-          <div class="metric-card"><div class="label">Robustez da solução</div><div class="value" id="mRobustness">—</div><div class="sub">Análise de sensibilidade</div></div>
         </div>
         <div class="grid grid-2 mt-16">
           <div class="panel">
@@ -443,58 +392,6 @@
             <article class="analytics-card"><h3>Distribuição dos riscos</h3><p>Quantidade por faixa de severidade bruta.</p><canvas id="dashRiskDistribution" class="mini-canvas"></canvas></article>
             <article class="analytics-card"><h3>Resultados das verificações</h3><p>Aprovadas, alertas, reprovadas e não verificadas.</p><canvas id="dashVerificationDistribution" class="mini-canvas"></canvas></article>
           </div>
-        </div>
-      </section>
-
-
-
-      <section id="engineeringAssistant" class="page-section">
-        <div class="page-head"><div><h1>A1 · Assistente de Engenharia</h1><p>Conduz a pré-concepção da solução sem ocultar hipóteses, fontes ou pendências técnicas.</p></div><div class="page-actions"><button class="btn" id="btnAssistantSync">↻ Sincronizar com o projeto</button><button class="btn btn-accent" id="btnAssistantApply">Aplicar parâmetros</button><button class="btn btn-primary" id="btnAssistantAnalyze">Analisar alternativas</button></div></div>
-        <div class="panel v14-hero">
-          <span class="badge badge-info">ASSISTENTE EXPLICÁVEL</span>
-          <h2>Da necessidade de içamento à solução tecnicamente verificável</h2>
-          <p>O assistente organiza carga, geometria, equipamentos candidatos, rigging, apoio e condições ambientais. Um modelo somente é apresentado como <strong>verificado</strong> quando existe curva de carga vinculada à configuração; especificações gerais servem exclusivamente à pré-seleção.</p>
-        </div>
-        <div class="assistant-flow mt-16">
-          <article class="assistant-step" data-step="1"><strong>Caracterizar</strong><p>Consolidar peso, acessórios, dimensões, centro de gravidade, raio e altura requerida.</p></article>
-          <article class="assistant-step" data-step="2"><strong>Pré-selecionar</strong><p>Pesquisar no catálogo equipamentos compatíveis com capacidade nominal, lança e envelope geral.</p></article>
-          <article class="assistant-step" data-step="3"><strong>Verificar</strong><p>Exigir tabela de carga, configuração efetiva, acessórios, patolas, solo, vento e interferências.</p></article>
-          <article class="assistant-step" data-step="4"><strong>Documentar</strong><p>Registrar hipóteses, fontes, pendências, memória de cálculo e plano de rigging.</p></article>
-        </div>
-        <div class="grid grid-2 mt-16">
-          <div class="panel">
-            <div class="panel-header"><div><h2>Parâmetros de pré-concepção</h2><p>Os campos podem ser sincronizados com a operação ou aplicados ao projeto atual.</p></div><span class="model-chip">Sem fatores ocultos</span></div>
-            <div class="grid grid-3">
-              <div class="field"><label>Peso líquido estimado</label><div class="input-unit"><input type="number" min="0" step="10" data-type="number" data-bind="engineeringAssistant.loadWeightKg" /><span>kg</span></div></div>
-              <div class="field"><label>Reserva para acessórios</label><div class="input-unit"><input type="number" min="0" max="100" step="1" data-type="number" data-bind="engineeringAssistant.accessoryAllowancePct" /><span>%</span></div></div>
-              <div class="field"><label>Fator global preliminar</label><input type="number" min="1" step="0.01" data-type="number" data-bind="engineeringAssistant.preliminaryFactor" /></div>
-              <div class="field"><label>Raio aproximado</label><div class="input-unit"><input type="number" min="0" step="0.1" data-type="number" data-bind="engineeringAssistant.radiusM" /><span>m</span></div></div>
-              <div class="field"><label>Altura requerida do gancho</label><div class="input-unit"><input type="number" min="0" step="0.1" data-type="number" data-bind="engineeringAssistant.hookHeightM" /><span>m</span></div></div>
-              <div class="field"><label>Margem vertical desejada</label><div class="input-unit"><input type="number" min="0" step="0.1" data-type="number" data-bind="engineeringAssistant.verticalMarginM" /><span>m</span></div></div>
-              <div class="field"><label>Capacidade admissível do apoio</label><div class="input-unit"><input type="number" min="0" step="1" data-type="number" data-bind="engineeringAssistant.groundAllowableKpa" /><span>kPa</span></div></div>
-              <div class="field"><label>Limite de vento</label><div class="input-unit"><input type="number" min="0" step="0.1" data-type="number" data-bind="engineeringAssistant.windLimitMs" /><span>m/s</span></div></div>
-              <div class="field"><label>Utilização máxima desejada</label><div class="input-unit"><input type="number" min="1" max="100" step="1" data-type="number" data-bind="engineeringAssistant.maxUtilPct" /><span>%</span></div></div>
-              <label class="checkbox-field"><input type="checkbox" data-type="boolean" data-bind="engineeringAssistant.requireValidatedChart" /><span>Priorizar somente curvas de carga validadas</span></label>
-              <label class="checkbox-field"><input type="checkbox" data-type="boolean" data-bind="engineeringAssistant.includePreselection" /><span>Mostrar pré-seleções sem curva</span></label>
-              <label class="checkbox-field"><input type="checkbox" data-type="boolean" data-bind="engineeringAssistant.applyGroundAndWind" /><span>Aplicar solo e vento ao projeto</span></label>
-              <div class="field span-3"><label>Restrições e observações</label><textarea data-bind="engineeringAssistant.constraints" placeholder="Acesso, largura disponível, restrição de contrapeso, altura, interferências, tipo de equipamento..."></textarea></div>
-            </div>
-          </div>
-          <div class="panel">
-            <div class="panel-header"><div><h2>Diagnóstico inicial</h2><p>Resumo atualizado com os parâmetros do assistente.</p></div><span id="assistantQualityBadge" class="badge badge-neutral">AGUARDANDO ANÁLISE</span></div>
-            <div class="assistant-summary">
-              <div class="calc-box"><span>Carga preliminar</span><strong id="assistantDesignLoad">—</strong></div>
-              <div class="calc-box"><span>Lança mínima geométrica</span><strong id="assistantRequiredBoom">—</strong></div>
-              <div class="calc-box"><span>Candidatos verificados</span><strong id="assistantVerifiedCount">—</strong></div>
-              <div class="calc-box"><span>Pré-seleções</span><strong id="assistantPreselectionCount">—</strong></div>
-              <div class="calc-box"><span>Placa preliminar</span><strong id="assistantPadEstimate">—</strong></div>
-            </div>
-            <div id="assistantChecks" class="assistant-checks mt-16"></div>
-          </div>
-        </div>
-        <div class="panel mt-16">
-          <div class="panel-header"><div><h2>Equipamentos candidatos</h2><p>Resultados ordenados por qualidade da informação, compatibilidade geométrica, utilização e margem.</p></div><span id="assistantCandidateBadge" class="badge badge-neutral">NÃO EXECUTADO</span></div>
-          <div id="assistantCandidates" class="assistant-candidates"><div class="empty-state">Pressione <strong>Analisar alternativas</strong> para pesquisar o catálogo do projeto.</div></div>
         </div>
       </section>
 
@@ -781,146 +678,41 @@
         </div>
       </section>
 
-
       <section id="ground" class="page-section">
-        <div class="page-head"><div><h1>07 · Patolas, estabilidade e solo</h1><p>Calcule um envelope preliminar de reações durante o giro, verifique cada apoio e documente as condições do terreno.</p></div><div class="page-actions"><button class="btn" id="btnGenerateSupports">▦ Gerar arranjo retangular</button><button class="btn" id="btnCopyCommonPad">Copiar placa comum</button><button class="btn btn-accent" id="btnRunGroundEnvelope">⟳ Recalcular envelope</button><button class="btn btn-primary" data-go="sensitivity">Analisar robustez →</button></div></div>
-        <div class="callout warning mb-16"><strong>Hierarquia de dados:</strong> reações e pressões específicas fornecidas pelo fabricante ou por seu sistema oficial prevalecem. O modo de equilíbrio interno é uma estimativa estática auditável para planejamento preliminar e não reproduz flexibilidade do chassi, rigidez diferencial, lógica do limitador de momento ou particularidades construtivas da máquina.</div>
-        <div class="panel">
-          <div class="panel-header"><div><h2>Modelo de análise</h2><p>Defina como as reações serão obtidas e quais posições do giro formarão o envelope.</p></div><span id="groundModelBadge" class="badge badge-neutral">—</span></div>
-          <div class="grid grid-5">
-            <div class="field"><label>Modo das reações</label><select data-bind="ground.analysisMode"><option value="equilibrium">Equilíbrio estático preliminar</option><option value="manufacturer">Reações informadas pelo fabricante</option><option value="conservative">Envelope conservador: maior valor</option></select></div>
-            <div class="field"><label>Varredura do giro</label><select data-bind="ground.slewMode"><option value="path">Azimutes da trajetória</option><option value="full360">Giro completo 360°</option><option value="manual">Azimute único</option></select></div>
-            <div class="field"><label>Passo do giro</label><div class="input-unit"><input type="number" min="1" max="45" step="1" data-type="number" data-bind="ground.slewStepDeg" /><span>°</span></div></div>
-            <div class="field"><label>Azimute manual</label><div class="input-unit"><input type="number" min="0" max="359.9" step="1" data-type="number" data-bind="ground.manualAzimuthDeg" /><span>°</span></div></div>
-            <div class="field"><label>Raio manual de apoio</label><div class="input-unit"><input type="number" min="0" step="0.1" data-type="number" data-bind="ground.analysisRadiusM" /><span>m</span></div><span class="hint">0 = raio governante</span></div>
-            <div class="field"><label>Peso operacional adotado</label><div class="input-unit"><input type="number" min="0" step="100" data-type="number" data-bind="ground.craneWeightKg" /><span>kg</span></div><span class="hint">0 = cadastro do equipamento</span></div>
-            <div class="field"><label>CG da máquina — X</label><div class="input-unit"><input type="number" step="0.01" data-type="number" data-bind="ground.craneCgXM" /><span>m</span></div></div>
-            <div class="field"><label>CG da máquina — Y</label><div class="input-unit"><input type="number" step="0.01" data-type="number" data-bind="ground.craneCgYM" /><span>m</span></div></div>
-            <div class="field"><label>Fator adicional de momento</label><input type="number" min="1" step="0.01" data-type="number" data-bind="ground.loadMomentFactor" /></div>
-            <div class="field"><label>Fator das reações de projeto</label><input type="number" min="1" step="0.01" data-type="number" data-bind="ground.reactionDesignFactor" /></div>
-            <div class="field"><label>Direção do vento</label><div class="input-unit"><input type="number" min="0" max="359.9" step="1" data-type="number" data-bind="ground.windDirectionDeg" /><span>°</span></div></div>
-            <div class="field"><label>Altura de aplicação do vento</label><div class="input-unit"><input type="number" min="0" step="0.1" data-type="number" data-bind="ground.windApplicationHeightM" /><span>m</span></div></div>
-            <div class="field"><label>Reserva mínima de estabilidade</label><div class="input-unit"><input type="number" min="0" max="50" step="1" data-type="number" data-bind="ground.minStabilityReservePct" /><span>%</span></div></div>
-            <div class="field span-2"><label>Fonte do peso e CG da máquina</label><input data-bind="ground.craneCgSource" /></div>
-            <div class="field span-3"><label>Fonte / documento das reações</label><input data-bind="ground.reactionSource" /></div>
-            <div class="field span-2"><label>Critério do modelo</label><input data-bind="ground.stabilitySource" /></div>
-          </div>
-        </div>
-
-        <div class="ground-kpis mt-16">
-          <div class="ground-kpi"><span>Patola crítica</span><strong id="groundCriticalSupport">—</strong><small id="groundCriticalSupportSub">—</small></div>
-          <div class="ground-kpi"><span>Reação máxima</span><strong id="groundMaxReaction">—</strong><small>Envelope analisado</small></div>
-          <div class="ground-kpi"><span>Pressão máxima</span><strong id="groundPressure">—</strong><small id="groundPressureSub">—</small></div>
-          <div class="ground-kpi"><span>Utilização do solo</span><strong id="groundSoilUtil">—</strong><small>Pressão / admissível</small></div>
-          <div class="ground-kpi"><span>Estabilidade</span><strong id="groundStabilityUtil">—</strong><small id="groundStabilitySub">—</small></div>
-          <div class="ground-kpi"><span>Azimute crítico</span><strong id="groundCriticalAzimuth">—</strong><small id="groundCriticalRadius">—</small></div>
-        </div>
-
-        <div class="support-layout mt-16">
+        <div class="page-head"><div><h1>07 · Estabilizadores e solo</h1><p>Estime a pressão de contato, a área mínima e registre as condições de apoio.</p></div><div class="page-actions"><button class="btn btn-primary" data-go="environment">Avançar para ambiente →</button></div></div>
+        <div class="grid grid-2">
           <div class="panel">
-            <div class="panel-header"><div><h2>Mapa de reações e resultante</h2><p>Vista em planta da posição governante do envelope.</p></div><div class="support-legend"><span><i></i>patola</span><span class="resultant"><i></i>resultante</span><span class="load"><i></i>direção da carga</span><span class="polygon"><i></i>polígono de apoio</span></div></div>
-            <div id="supportPlanSvg" class="support-stage"></div>
-          </div>
-          <div class="panel">
-            <div class="panel-header"><div><h2>Variação durante o giro</h2><p>Maior reação e utilização da estabilidade em cada posição.</p></div></div>
-            <canvas id="groundSlewCanvas" class="slew-canvas"></canvas>
-            <div id="groundSlewSummary" class="method-note"></div>
-          </div>
-        </div>
-
-        <div class="panel mt-16">
-          <div class="panel-header"><div><h2>Patolas e placas individualizadas</h2><p>Coordenadas no plano: +X para a frente da máquina e +Y para o lado esquerdo.</p></div><span id="supportCountBadge" class="badge badge-neutral">4 APOIOS</span></div>
-          <div class="table-wrap"><table class="support-table"><thead><tr><th>Ativa</th><th>Patola</th><th>X (m)</th><th>Y (m)</th><th>Reação oficial (kN)</th><th>Placa L (m)</th><th>Placa C (m)</th><th>Esp. (m)</th><th>Fator área</th><th>q adm. (kPa)</th><th>Reação envelope</th><th>Pressão / utilização</th><th>Flexão preliminar</th><th>Resultado</th></tr></thead><tbody id="supportRowsBody"></tbody></table></div>
-          <div class="grid grid-5 mt-16">
-            <div class="field"><label>Largura comum da placa</label><div class="input-unit"><input type="number" min="0" step="0.01" data-type="number" data-bind="ground.padWidthM" /><span>m</span></div></div>
-            <div class="field"><label>Comprimento comum</label><div class="input-unit"><input type="number" min="0" step="0.01" data-type="number" data-bind="ground.padLengthM" /><span>m</span></div></div>
-            <div class="field"><label>Espessura comum</label><div class="input-unit"><input type="number" min="0" step="0.001" data-type="number" data-bind="ground.padThicknessM" /><span>m</span></div></div>
-            <div class="field"><label>Fator comum de área</label><input type="number" min="0.1" max="1" step="0.01" data-type="number" data-bind="ground.distributionFactor" /></div>
-            <div class="field"><label>Capacidade comum</label><div class="input-unit"><input type="number" min="0" step="1" data-type="number" data-bind="ground.allowableKpa" /><span>kPa</span></div></div>
-          </div>
-          <div class="calc-strip">
-            <div class="calc-box"><span>Área efetiva crítica</span><strong id="groundArea">—</strong></div>
-            <div class="calc-box"><span>Área mínima crítica</span><strong id="groundMinArea">—</strong></div>
-            <div class="calc-box"><span>Dimensão quadrada</span><strong id="groundSuggestedPad">—</strong></div>
-            <div class="calc-box"><span>Maior tensão de flexão</span><strong id="groundPadStress">—</strong></div>
-          </div>
-          <div id="groundNotice" class="callout mt-16"></div>
-        </div>
-
-        <div class="grid grid-2 mt-16">
-          <div class="panel">
-            <div class="panel-header"><div><h2>Verificação preliminar da placa</h2><p>Modelo simplificado de faixa em balanço, destinado apenas à triagem dimensional.</p></div></div>
+            <div class="panel-header"><div><h2>Reação e placa de apoio</h2><p>A reação deve ser obtida de fonte tecnicamente adequada para a configuração analisada.</p></div></div>
             <div class="grid grid-3">
-              <div class="field"><label>Material</label><select data-bind="ground.padMaterial"><option>Aço</option><option>Madeira engenheirada</option><option>Compósito</option><option>Outro</option></select></div>
-              <div class="field"><label>Tensão admissível adotada</label><div class="input-unit"><input type="number" min="0" step="1" data-type="number" data-bind="ground.padAllowableStressMpa" /><span>MPa</span></div></div>
-              <div class="field"><label>Fator da placa</label><input type="number" min="1" step="0.01" data-type="number" data-bind="ground.padDesignFactor" /></div>
-              <div class="field"><label>Largura da sapata da patola</label><div class="input-unit"><input type="number" min="0" step="0.01" data-type="number" data-bind="ground.floatWidthM" /><span>m</span></div></div>
-              <div class="field"><label>Comprimento da sapata</label><div class="input-unit"><input type="number" min="0" step="0.01" data-type="number" data-bind="ground.floatLengthM" /><span>m</span></div></div>
-              <div class="field"><label>Fonte do material / placa</label><input data-bind="ground.padSource" /></div>
+              <div class="field"><label>Reação máxima adotada</label><div class="input-unit"><input type="number" min="0" step="1" data-type="number" data-bind="ground.maxReactionKn" /><span>kN</span></div></div>
+              <div class="field"><label>Largura da placa</label><div class="input-unit"><input type="number" min="0" step="0.01" data-type="number" data-bind="ground.padWidthM" /><span>m</span></div></div>
+              <div class="field"><label>Comprimento da placa</label><div class="input-unit"><input type="number" min="0" step="0.01" data-type="number" data-bind="ground.padLengthM" /><span>m</span></div></div>
+              <div class="field"><label>Espessura da placa</label><div class="input-unit"><input type="number" min="0" step="0.001" data-type="number" data-bind="ground.padThicknessM" /><span>m</span></div></div>
+              <div class="field"><label>Capacidade admissível</label><div class="input-unit"><input type="number" min="0" step="1" data-type="number" data-bind="ground.allowableKpa" /><span>kPa</span></div></div>
+              <div class="field"><label>Fator de distribuição</label><input type="number" min="0.1" max="1" step="0.01" data-type="number" data-bind="ground.distributionFactor" /></div>
+              <div class="field span-3"><label>Fonte da reação</label><input data-bind="ground.reactionSource" /></div>
+              <div class="field span-3"><label>Fonte da capacidade do terreno</label><input data-bind="ground.soilSource" /></div>
             </div>
-            <p class="method-note">A verificação não representa punção, esmagamento local, anisotropia, laminação, ligações entre peças, deformação excessiva, perda de contato ou distribuição tridimensional. O dimensionamento final deve seguir o projeto e os dados do fabricante da placa.</p>
+            <div class="calc-strip">
+              <div class="calc-box"><span>Área efetiva</span><strong id="groundArea">—</strong></div>
+              <div class="calc-box"><span>Pressão calculada</span><strong id="groundPressure">—</strong></div>
+              <div class="calc-box"><span>Área mínima</span><strong id="groundMinArea">—</strong></div>
+              <div class="calc-box"><span>Dimensão quadrada</span><strong id="groundSuggestedPad">—</strong></div>
+            </div>
+            <div id="groundNotice" class="callout mt-16"></div>
           </div>
           <div class="panel">
-            <div class="panel-header"><div><h2>Condição do local</h2><p>Fatores de campo que podem invalidar a hipótese de apoio firme e uniforme.</p></div></div>
-            <div class="grid grid-3">
+            <div class="panel-header"><div><h2>Condição do local</h2><p>Registre fatores que podem invalidar a hipótese de apoio uniforme.</p></div></div>
+            <div class="grid grid-2">
               <div class="field"><label>Superfície</label><select data-bind="ground.surface"><option>Concreto</option><option>Asfalto</option><option>Solo compactado</option><option>Brita</option><option>Solo natural</option><option>Aterro</option><option>Terreno saturado</option><option>Laje estrutural</option><option>Situação especial</option></select></div>
-              <div class="field"><label>Inclinação medida</label><div class="input-unit"><input type="number" min="0" step="0.1" data-type="number" data-bind="ground.measuredSlopePct" /><span>%</span></div></div>
-              <div class="field"><label>Limite de inclinação</label><div class="input-unit"><input type="number" min="0" step="0.1" data-type="number" data-bind="ground.maxSlopePct" /><span>%</span></div></div>
-              <div class="field"><label>Distância da escavação</label><div class="input-unit"><input type="number" min="0" step="0.1" data-type="number" data-bind="ground.excavationDistanceM" /><span>m</span></div></div>
-              <div class="field"><label>Profundidade da escavação</label><div class="input-unit"><input type="number" min="0" step="0.1" data-type="number" data-bind="ground.excavationDepthM" /><span>m</span></div></div>
-              <div class="field"><label>Fator de afastamento</label><input type="number" min="0" step="0.1" data-type="number" data-bind="ground.excavationInfluenceFactor" /></div>
-              <div class="field span-3"><label>Fonte da capacidade do terreno / estrutura</label><input data-bind="ground.soilSource" /></div>
-              <div class="field span-3"><label>Nível, compactação e drenagem</label><input data-bind="ground.levelCondition" /></div>
+              <div class="field"><label>Nível / inclinação</label><input data-bind="ground.levelCondition" /></div>
               <label class="checkbox-field"><input type="checkbox" data-type="boolean" data-bind="ground.nearExcavation" /><span>Próximo a escavação, vala ou talude</span></label>
-              <label class="checkbox-field"><input type="checkbox" data-type="boolean" data-bind="ground.nearUnderground" /><span>Redes ou vazios enterrados</span></label>
-              <label class="checkbox-field"><input type="checkbox" data-type="boolean" data-bind="ground.onStructure" /><span>Apoio sobre estrutura existente</span></label>
-              <label class="checkbox-field"><input type="checkbox" data-type="boolean" data-bind="ground.inspected" /><span>Local inspecionado e liberado</span></label>
+              <label class="checkbox-field"><input type="checkbox" data-type="boolean" data-bind="ground.nearUnderground" /><span>Existem redes ou vazios enterrados</span></label>
+              <label class="checkbox-field"><input type="checkbox" data-type="boolean" data-bind="ground.onStructure" /><span>Equipamento apoiado sobre estrutura existente</span></label>
+              <label class="checkbox-field"><input type="checkbox" data-type="boolean" data-bind="ground.inspected" /><span>Local de apoio inspecionado e liberado</span></label>
               <div class="field span-2"><label>Observações do apoio</label><textarea data-bind="ground.notes"></textarea></div>
             </div>
           </div>
-        </div>
-      </section>
-
-
-      <section id="sensitivity" class="page-section">
-        <div class="page-head"><div><h1>07A · Sensibilidade e robustez</h1><p>Mostra como pequenas variações de campo afetam capacidade, rigging, estabilidade, vento e apoio.</p></div><div class="page-actions"><button class="btn" id="btnSensitivityDefaults">↺ Parâmetros padrão</button><button class="btn btn-accent" id="btnRunSensitivity">⟳ Recalcular cenários</button><button class="btn btn-primary" data-go="environment">Avançar para ambiente →</button></div></div>
-        <div class="grid grid-2">
-          <div class="panel">
-            <div class="panel-header"><div><h2>Faixas de variação</h2><p>Defina a amplitude da análise sem alterar os valores-base do projeto.</p></div><span class="model-chip">Cenários determinísticos</span></div>
-            <div class="grid grid-4">
-              <div class="field"><label>Passo do raio</label><div class="input-unit"><input type="number" min="0.1" step="0.1" data-type="number" data-bind="sensitivity.radiusStepM" /><span>m</span></div></div>
-              <div class="field"><label>Passos abaixo / acima</label><input type="number" min="1" max="12" step="1" data-type="number" data-bind="sensitivity.radiusStepsEachSide" /></div>
-              <div class="field"><label>Aumento máximo de carga</label><div class="input-unit"><input type="number" min="0" max="100" step="5" data-type="number" data-bind="sensitivity.loadIncreasePct" /><span>%</span></div></div>
-              <div class="field"><label>Redução de carga</label><div class="input-unit"><input type="number" min="0" max="100" step="5" data-type="number" data-bind="sensitivity.loadReductionPct" /><span>%</span></div></div>
-              <div class="field"><label>Passo da carga</label><div class="input-unit"><input type="number" min="1" max="50" step="1" data-type="number" data-bind="sensitivity.loadStepPct" /><span>%</span></div></div>
-              <div class="field"><label>Vento máximo analisado</label><div class="input-unit"><input type="number" min="0" step="0.5" data-type="number" data-bind="sensitivity.windMaxMs" /><span>m/s</span></div><span class="hint">0 = 120% do limite</span></div>
-              <div class="field"><label>Deslocamento do CG</label><div class="input-unit"><input type="number" min="0" step="0.05" data-type="number" data-bind="sensitivity.cgShiftM" /><span>m</span></div></div>
-              <div class="field"><label>Redução da capacidade do solo</label><div class="input-unit"><input type="number" min="0" max="90" step="5" data-type="number" data-bind="sensitivity.soilReductionPct" /><span>%</span></div></div>
-              <div class="field"><label>Ângulo mínimo dos ramais</label><div class="input-unit"><input type="number" min="5" max="89" step="1" data-type="number" data-bind="sensitivity.minSlingAngleDeg" /><span>° horiz.</span></div></div>
-              <div class="field"><label>Meta de margem do solo</label><div class="input-unit"><input type="number" min="0" max="50" step="1" data-type="number" data-bind="sensitivity.targetSoilReservePct" /><span>%</span></div></div>
-              <div class="field"><label>Meta de estabilidade</label><div class="input-unit"><input type="number" min="0" max="50" step="1" data-type="number" data-bind="sensitivity.targetStabilityReservePct" /><span>%</span></div></div>
-              <div class="field"><label>Utilização máxima</label><div class="input-unit"><input type="number" min="1" max="100" step="1" data-type="number" data-bind="sensitivity.maxUtilPct" /><span>%</span></div></div>
-            </div>
-          </div>
-          <div class="robustness-card">
-            <div id="robustnessRing" class="robustness-ring"><div><strong id="robustnessValue">—</strong><small>/100</small></div></div>
-            <div><span id="robustnessBadge" class="badge badge-neutral">—</span><h2 id="robustnessTitle" style="margin:8px 0 4px">Análise não calculada</h2><p id="robustnessDetail" class="muted small">O índice combina margens de capacidade, vento, apoio, estabilidade e geometria. Verifique também cada cenário individual.</p><div id="robustnessCritical" class="callout mt-12"></div></div>
-          </div>
-        </div>
-        <div class="sensitivity-summary mt-16">
-          <div class="calc-box"><span>Raio no limite</span><strong id="sensitivityRadiusLimit">—</strong></div>
-          <div class="calc-box"><span>Acréscimo de carga no limite</span><strong id="sensitivityLoadLimit">—</strong></div>
-          <div class="calc-box"><span>Vento governante</span><strong id="sensitivityWindLimit">—</strong></div>
-          <div class="calc-box"><span>Capacidade mínima do solo</span><strong id="sensitivitySoilRequired">—</strong></div>
-          <div class="calc-box"><span>Deslocamento crítico do CG</span><strong id="sensitivityCgLimit">—</strong></div>
-        </div>
-        <div class="sensitivity-grid mt-16">
-          <div class="panel"><div class="panel-header"><div><h2>Capacidade × raio</h2><p>Utilização da carga de projeto ao longo da faixa analisada.</p></div></div><canvas id="sensitivityRadiusCanvas" class="sensitivity-canvas"></canvas></div>
-          <div class="panel"><div class="panel-header"><div><h2>Mapa de margens</h2><p>Menor barra significa maior vulnerabilidade à variação.</p></div></div><canvas id="sensitivityTornadoCanvas" class="sensitivity-canvas"></canvas></div>
-        </div>
-        <div class="panel mt-16">
-          <div class="panel-header"><div><h2>Limiares e diagnóstico</h2><p>Valores aproximados em que o critério selecionado deixa de ser atendido.</p></div></div>
-          <div id="sensitivityThresholds" class="threshold-list"></div>
         </div>
       </section>
 
@@ -1104,7 +896,7 @@
           <div class="panel"><h3>Ângulo dos ramais</h3><p class="small muted">Quanto mais próximo da horizontal, maior a tração em cada ramal. O sistema informa a referência angular para evitar confusão entre ângulo em relação à vertical e à horizontal.</p></div>
           <div class="panel"><h3>Centro de gravidade</h3><p class="small muted">A linha vertical do gancho deve ser compatível com o centro de gravidade. Deslocamentos ou incertezas podem produzir distribuição assimétrica de esforços e rotação inesperada.</p></div>
           <div class="panel"><h3>Reeving</h3><p class="small muted">O número de linhas e a tração admissível do cabo limitam o sistema de elevação. A eficiência cadastrada deve ser justificada pelo fabricante ou procedimento aplicável.</p></div>
-          <div class="panel"><h3>Reações, estabilidade e patolas</h3><p class="small muted">A reação varia com posição da carga, geometria do apoio, peso e centro de gravidade da máquina. Dados oficiais do fabricante prevalecem. O equilíbrio interno da v1.4 é uma estimativa estática, e a pressão deve ser verificada individualmente em cada placa.</p></div>
+          <div class="panel"><h3>Pressão nas patolas</h3><p class="small muted">A pressão média é a reação dividida pela área efetiva. A placa também deve possuir resistência e rigidez suficientes, e o terreno deve ser avaliado quanto a vazios, escavações, saturação e estratificação.</p></div>
           <div class="panel"><h3>Vento</h3><p class="small muted">O limite operacional depende do equipamento, da configuração e da carga. A força do vento cresce aproximadamente com o quadrado da velocidade e pode controlar cargas de grande área exposta.</p></div>
           <div class="panel"><h3>Tandem lift</h3><p class="small muted">Içamentos com dois equipamentos são sensíveis à posição do centro de gravidade, à sincronização e à redistribuição dinâmica. Exigem estudo específico e classificação de maior criticidade.</p></div>
           <div class="panel"><h3>Rastreabilidade</h3><p class="small muted">Todo parâmetro crítico deve indicar origem, unidade e critério. Quando a fonte não é informada, o sistema pode manter a verificação como não concluída.</p></div>
@@ -1130,10 +922,9 @@
           <div class="manual-step" data-step="3"><h2><span class="step-number">4</span>Importe ou transcreva a tabela de carga</h2><p>Importe um CSV ou insira os pontos da curva oficial da configuração exata. Depois, informe o documento, a revisão e a configuração e confirme expressamente a vinculação. Até essa confirmação, a capacidade no raio permanece como não verificada. O sistema não extrapola a curva; a interpolação permanece desativável e somente deve ser utilizada quando admitida pela fonte aplicável.</p><button class="btn btn-primary" data-go="loadchart">Abrir tabela de carga</button></div>
           <div class="manual-step" data-step="4"><h2><span class="step-number">5</span>Modele a trajetória e confira o rigging</h2><p>Cadastre as posições da carga em planta e elevação. O sistema calcula o raio, a altura e a capacidade em cada fase, identifica o ponto governante e verifica a aproximação aos obstáculos. Depois, confira ângulos, WLL, certificados e fatores do rigging.</p><div class="page-actions"><button class="btn btn-primary" data-go="geometry">Abrir geometria</button><button class="btn" data-go="accessories">Abrir acessórios</button></div></div>
           <div class="manual-step" data-step="5"><h2><span class="step-number">6</span>Use catálogos e compare alternativas</h2><p>Pesquise modelos reais por fabricante e categoria. Especificações gerais oficiais servem à pré-seleção; somente curvas de carga transcritas da configuração efetiva permitem calcular capacidade no raio. Na biblioteca de acessórios, diferencie WLL exata, peso dependente do comprimento e itens que exigem configuração completa.</p><button class="btn btn-primary" data-go="catalog">Abrir comparação</button></div>
-          <div class="manual-step" data-step="6"><h2><span class="step-number">7</span>Modele as patolas e o apoio</h2><p>Cadastre as coordenadas e placas de cada patola. Utilize reações oficiais sempre que disponíveis; no modo preliminar, confira o envelope durante o giro, a posição da resultante, as pressões, a flexão simplificada das placas e as condições de escavação, inclinação e vazios.</p><button class="btn btn-primary" data-go="ground">Abrir patolas e estabilidade</button></div>
-          <div class="manual-step" data-step="7"><h2><span class="step-number">8</span>Teste a robustez</h2><p>Varie raio, peso, vento, centro de gravidade, capacidade do solo e ângulo dos ramais. A operação deve ser revisada quando pequenas mudanças de campo eliminarem as margens técnicas.</p><button class="btn btn-primary" data-go="sensitivity">Abrir análise de sensibilidade</button></div>
-          <div class="manual-step" data-step="8"><h2><span class="step-number">9</span>Trate riscos e execute o checklist</h2><p>A matriz ajuda a priorizar controles. O checklist deve ser confirmado em campo antes da liberação, e sua conclusão no software não substitui assinatura ou autorização formal.</p><button class="btn btn-primary" data-go="risks">Abrir análise de riscos</button></div>
-          <div class="manual-step" data-step="9"><h2><span class="step-number">10</span>Revise a memória e o relatório</h2><p>Filtre os registros de cálculo, confira fontes pendentes e exporte a memória em CSV. Corrija itens reprovados ou não verificados antes de emitir o relatório.</p><button class="btn btn-primary" data-go="memory">Abrir memória de cálculo</button></div>
+          <div class="manual-step" data-step="6"><h2><span class="step-number">7</span>Avalie apoio, vento e interferências</h2><p>Informe a reação máxima, placa de apoio e capacidade admissível do local. Registre vento, rede elétrica, obstáculos, circulação e demais interferências.</p><button class="btn btn-primary" data-go="ground">Abrir estabilizadores e solo</button></div>
+          <div class="manual-step" data-step="7"><h2><span class="step-number">8</span>Trate riscos e execute o checklist</h2><p>A matriz ajuda a priorizar controles. O checklist deve ser confirmado em campo antes da liberação, e sua conclusão no software não substitui assinatura ou autorização formal.</p><button class="btn btn-primary" data-go="risks">Abrir análise de riscos</button></div>
+          <div class="manual-step" data-step="8"><h2><span class="step-number">9</span>Revise a memória e o relatório</h2><p>Filtre os registros de cálculo, confira fontes pendentes e exporte a memória em CSV. Corrija itens reprovados ou não verificados antes de emitir o relatório.</p><button class="btn btn-primary" data-go="memory">Abrir memória de cálculo</button></div>
         </div>
       </section>
     </main>
@@ -1184,7 +975,7 @@
   <script>
   'use strict';
 
-  const APP_VERSION = '1.4.0';
+  const APP_VERSION = '1.3.0';
   const DB_NAME = 'IcamentoProDB';
   const STORE_NAME = 'projects';
   const FALLBACK_KEY = 'icamentoPro.projects.v1';
@@ -9989,7 +9780,7 @@
       if(!$('#legalAccept').checked) return;
       $('#appShell').classList.remove('hidden'); $('#splash').classList.add('is-hidden');
       setTimeout(()=>{$('#splash').classList.add('hidden');drawLoadChart();drawDashboardCharts();drawCatalogComparisonChart();},380);
-      showToast('IçamentoPro aberto','Projeto demonstrativo v1.4 carregado com estabilidade durante o giro, patolas individualizadas, sensibilidade e Assistente de Engenharia.');
+      showToast('IçamentoPro aberto','Projeto demonstrativo v1.3 carregado com catálogos oficiais, trajetória e croquis automáticos.');
     });
     $('#mobileMenu').addEventListener('click',()=>$('#sidebar').classList.toggle('open'));
     document.addEventListener('input',event=>{handleBoundInput(event);handleTableInput(event);});
@@ -10082,579 +9873,8 @@
     window.addEventListener('keydown',event=>{if(event.key==='Escape'){$$('.modal-backdrop:not(.hidden)').forEach(modal=>modal.classList.add('hidden'));$('#sidebar').classList.remove('open');}});
   }
 
-  /* ===== IçamentoPro v1.4 — estabilidade, patolas, sensibilidade e assistente ===== */
-  const normalizeProjectV13 = normalizeProject;
-  const computeAllV13 = computeAll;
-  const renderComputedViewsV13 = renderComputedViews;
-  const renderAllV13 = renderAll;
-  const renderReportV13 = renderReport;
-  const buildMemoryRecordsV13 = buildMemoryRecords;
-  const automaticConclusionV13 = automaticConclusion;
-  const showSectionV13 = showSection;
-
-  let assistantAnalysisV14 = null;
-
-  function v14AssistantDefaults(project){
-    return {
-      loadWeightKg:num(project?.load?.weightKg),accessoryAllowancePct:15,preliminaryFactor:1.05,
-      radiusM:num(project?.equipment?.radiusM)||10,hookHeightM:num(project?.geometry?.requiredHookHeightM)||15,verticalMarginM:1,
-      groundAllowableKpa:num(project?.ground?.allowableKpa)||0,windLimitMs:num(project?.environment?.windLimitMs)||0,
-      maxUtilPct:num(project?.criteria?.criticalUtilPct)||85,requireValidatedChart:true,includePreselection:true,applyGroundAndWind:true,constraints:''
-    };
-  }
-
-  function v14SensitivityDefaults(project){
-    return {
-      radiusStepM:1,radiusStepsEachSide:4,loadIncreasePct:30,loadReductionPct:10,loadStepPct:5,
-      windMaxMs:0,cgShiftM:Math.max(.25,num(project?.load?.cgUncertaintyM)||.25),soilReductionPct:35,
-      minSlingAngleDeg:30,targetSoilReservePct:20,targetStabilityReservePct:10,maxUtilPct:num(project?.criteria?.maxUtilPct)||90
-    };
-  }
-
-  function v14SupportTemplate(project){
-    const g=project.ground||{},geom=project.geometry||{};
-    const length=Math.max(.1,num(geom.outriggerLengthM)||6),width=Math.max(.1,num(geom.outriggerWidthM)||6);
-    const common={padWidthM:num(g.padWidthM)||1.2,padLengthM:num(g.padLengthM)||1.2,padThicknessM:num(g.padThicknessM)||.08,distributionFactor:num(g.distributionFactor)||1,allowableKpa:num(g.allowableKpa)||0,manualReactionKn:0,notes:''};
-    return [
-      {id:'support-fl',code:'FL',label:'Dianteira esquerda',enabled:true,xM:length/2,yM:width/2,...common},
-      {id:'support-fr',code:'FR',label:'Dianteira direita',enabled:true,xM:length/2,yM:-width/2,...common},
-      {id:'support-rr',code:'RR',label:'Traseira direita',enabled:true,xM:-length/2,yM:-width/2,...common},
-      {id:'support-rl',code:'RL',label:'Traseira esquerda',enabled:true,xM:-length/2,yM:width/2,...common}
-    ];
-  }
-
-  function normalizeV14Support(raw,index,project){
-    const fallback=v14SupportTemplate(project)[index%4];
-    const item={...fallback,...(raw||{})};
-    return {
-      id:item.id||uid('support'),code:String(item.code||fallback.code||`P${index+1}`),label:String(item.label||fallback.label||`Patola ${index+1}`),enabled:item.enabled!==false,
-      xM:num(item.xM),yM:num(item.yM),manualReactionKn:Math.max(0,num(item.manualReactionKn)),
-      padWidthM:Math.max(0,num(item.padWidthM)),padLengthM:Math.max(0,num(item.padLengthM)),padThicknessM:Math.max(0,num(item.padThicknessM)),
-      distributionFactor:clamp(num(item.distributionFactor)||1,.1,1),allowableKpa:Math.max(0,num(item.allowableKpa)),notes:String(item.notes||'')
-    };
-  }
-
-  function ensureV14Project(project){
-    project.engineeringAssistant=mergeDeep(v14AssistantDefaults(project),project.engineeringAssistant||{});
-    project.sensitivity=mergeDeep(v14SensitivityDefaults(project),project.sensitivity||{});
-    const g=project.ground||{};
-    const defaults={
-      analysisMode:'equilibrium',slewMode:'path',slewStepDeg:10,manualAzimuthDeg:0,analysisRadiusM:0,
-      craneWeightKg:0,craneCgXM:0,craneCgYM:0,craneCgSource:'',loadMomentFactor:1,reactionDesignFactor:1,
-      windDirectionDeg:0,windApplicationHeightM:Math.max(1,num(project.geometry?.requiredHookHeightM)||10),minStabilityReservePct:10,
-      stabilitySource:'Equilíbrio estático preliminar de corpo rígido com apoios pontuais de rigidez equivalente',
-      padMaterial:'Aço',padAllowableStressMpa:160,padDesignFactor:1,floatWidthM:.45,floatLengthM:.45,padSource:'',
-      excavationDistanceM:0,excavationDepthM:0,excavationInfluenceFactor:1.5,measuredSlopePct:0,maxSlopePct:1
-    };
-    Object.keys(defaults).forEach(key=>{if(g[key]===undefined||g[key]===null)g[key]=defaults[key];});
-    if(!Array.isArray(g.supports)||g.supports.length<3)g.supports=v14SupportTemplate(project);
-    g.supports=g.supports.map((item,index)=>normalizeV14Support(item,index,project));
-    project.ground=g;
-    return project;
-  }
-
-  normalizeProject = function(project){
-    const normalized=normalizeProjectV13(project);
-    ensureV14Project(normalized);
-    normalized.appVersion=APP_VERSION;
-    return normalized;
-  };
-
-  function v14Det3(m){
-    return m[0][0]*(m[1][1]*m[2][2]-m[1][2]*m[2][1])-m[0][1]*(m[1][0]*m[2][2]-m[1][2]*m[2][0])+m[0][2]*(m[1][0]*m[2][1]-m[1][1]*m[2][0]);
-  }
-
-  function v14Invert3(m){
-    const d=v14Det3(m);if(Math.abs(d)<1e-10)return null;
-    return [
-      [(m[1][1]*m[2][2]-m[1][2]*m[2][1])/d,(m[0][2]*m[2][1]-m[0][1]*m[2][2])/d,(m[0][1]*m[1][2]-m[0][2]*m[1][1])/d],
-      [(m[1][2]*m[2][0]-m[1][0]*m[2][2])/d,(m[0][0]*m[2][2]-m[0][2]*m[2][0])/d,(m[0][2]*m[1][0]-m[0][0]*m[1][2])/d],
-      [(m[1][0]*m[2][1]-m[1][1]*m[2][0])/d,(m[0][1]*m[2][0]-m[0][0]*m[2][1])/d,(m[0][0]*m[1][1]-m[0][1]*m[1][0])/d]
-    ];
-  }
-
-  function v14MatVec(m,v){return m.map(row=>row.reduce((sum,value,index)=>sum+value*v[index],0));}
-
-  function v14Combinations(array,size){
-    const out=[];const walk=(start,current)=>{if(current.length===size){out.push(current.slice());return;}for(let i=start;i<array.length;i++){current.push(array[i]);walk(i+1,current);current.pop();}};walk(0,[]);return out;
-  }
-
-  function v14SolveSupportReactions(supports,totalKn,xResultantM,yResultantM){
-    const n=supports.length;
-    if(n<3||totalKn<=0)return {reactions:Array(n).fill(0),feasible:false,detail:'São necessários ao menos três apoios ativos e carga vertical positiva.',residual:null};
-    const A=[Array(n).fill(1),supports.map(s=>num(s.xM)),supports.map(s=>num(s.yM))];
-    const b=[totalKn,totalKn*xResultantM,totalKn*yResultantM];
-    const G=Array.from({length:3},(_,i)=>Array.from({length:3},(_,j)=>A[i].reduce((sum,value,k)=>sum+value*A[j][k],0)));
-    const inv=v14Invert3(G);let reactions=null;
-    if(inv){const y=v14MatVec(inv,b);reactions=Array.from({length:n},(_,k)=>A[0][k]*y[0]+A[1][k]*y[1]+A[2][k]*y[2]);}
-    const tol=Math.max(.01,totalKn*1e-7);
-    if(reactions&&reactions.every(value=>value>=-tol)){
-      reactions=reactions.map(value=>Math.max(0,value));
-      const residual=v14ReactionResidual(supports,reactions,b);
-      return {reactions,feasible:true,detail:'Solução de mínima energia para apoios de rigidez vertical equivalente.',residual};
-    }
-    const indices=supports.map((_,i)=>i);let best=null;
-    for(const subset of v14Combinations(indices,3)){
-      const m=[[1,1,1],subset.map(i=>supports[i].xM),subset.map(i=>supports[i].yM)];const im=v14Invert3(m);if(!im)continue;
-      const r=v14MatVec(im,b);if(r.some(value=>value<-tol))continue;
-      const full=Array(n).fill(0);subset.forEach((index,j)=>full[index]=Math.max(0,r[j]));
-      const score=Math.max(...full)+full.reduce((sum,value)=>sum+value*value,0)/Math.max(1,totalKn);
-      if(!best||score<best.score)best={reactions:full,score};
-    }
-    if(!best){
-      for(const [i,j] of v14Combinations(indices,2)){
-        const a=supports[i],c=supports[j],dx=c.xM-a.xM,dy=c.yM-a.yM,len2=dx*dx+dy*dy;if(len2<1e-12)continue;
-        const t=((xResultantM-a.xM)*dx+(yResultantM-a.yM)*dy)/len2;
-        const px=a.xM+t*dx,py=a.yM+t*dy;
-        if(t>=-1e-7&&t<=1+1e-7&&Math.hypot(px-xResultantM,py-yResultantM)<1e-6){const full=Array(n).fill(0);full[i]=totalKn*(1-t);full[j]=totalKn*t;best={reactions:full,score:Math.max(...full)};break;}
-      }
-    }
-    if(best){const residual=v14ReactionResidual(supports,best.reactions,b);return {reactions:best.reactions,feasible:true,detail:'Resultante próxima à borda: solução com perda de contato em um ou mais apoios.',residual,uplift:true};}
-    const fallback=(reactions||Array(n).fill(totalKn/n)).map(value=>Math.max(0,value));const sum=fallback.reduce((a,b)=>a+b,0)||1;const scaled=fallback.map(value=>value*totalKn/sum);
-    return {reactions:scaled,feasible:false,detail:'A resultante está fora do polígono de apoio; as reações exibidas são apenas uma normalização gráfica.',residual:v14ReactionResidual(supports,scaled,b)};
-  }
-
-  function v14ReactionResidual(supports,reactions,b){
-    const calc=[reactions.reduce((a,v)=>a+v,0),reactions.reduce((a,v,i)=>a+v*supports[i].xM,0),reactions.reduce((a,v,i)=>a+v*supports[i].yM,0)];
-    return {forceKn:calc[0]-b[0],momentYKnM:calc[1]-b[1],momentXKnM:calc[2]-b[2]};
-  }
-
-  function v14PointEdgeDistance(point,polygon){
-    if(!polygon||polygon.length<2)return null;
-    return Math.min(...polygon.map((p,index)=>pointSegmentProjection(point,p,polygon[(index+1)%polygon.length]).distanceM));
-  }
-
-  function v14RayUtilization(point,polygon){
-    if(!polygon||polygon.length<3)return {utilizationPct:null,boundaryDistanceM:null,centroid:null};
-    const centroid={xM:polygon.reduce((s,p)=>s+p.xM,0)/polygon.length,yM:polygon.reduce((s,p)=>s+p.yM,0)/polygon.length};
-    const dx=point.xM-centroid.xM,dy=point.yM-centroid.yM,dr=Math.hypot(dx,dy);
-    if(dr<1e-10)return {utilizationPct:0,boundaryDistanceM:v14PointEdgeDistance(centroid,polygon),centroid};
-    let tBoundary=Infinity;
-    for(let i=0;i<polygon.length;i++){
-      const a=polygon[i],b=polygon[(i+1)%polygon.length],ex=b.xM-a.xM,ey=b.yM-a.yM;
-      const den=dx*ey-dy*ex;if(Math.abs(den)<1e-12)continue;
-      const ax=a.xM-centroid.xM,ay=a.yM-centroid.yM;
-      const t=(ax*ey-ay*ex)/den;const u=(ax*dy-ay*dx)/den;
-      if(t>=0&&u>=-1e-9&&u<=1+1e-9)tBoundary=Math.min(tBoundary,t);
-    }
-    if(!Number.isFinite(tBoundary)||tBoundary<=0)return {utilizationPct:null,boundaryDistanceM:null,centroid};
-    return {utilizationPct:100/tBoundary,boundaryDistanceM:tBoundary*dr,centroid};
-  }
-
-  function v14PadCheck(support,reactionKn){
-    const g=state.ground,areaGeom=num(support.padWidthM)*num(support.padLengthM),areaEff=areaGeom*num(support.distributionFactor);
-    const designReactionKn=Math.max(0,reactionKn)*Math.max(1,num(g.reactionDesignFactor)||1);
-    const pressureKpa=areaEff>0?designReactionKn/areaEff:null;
-    const allowableKpa=num(support.allowableKpa);
-    const soilUtilPct=pressureKpa!=null&&allowableKpa>0?pressureKpa/allowableKpa*100:null;
-    const requiredEffectiveAreaM2=allowableKpa>0?designReactionKn/allowableKpa:null;
-    const requiredGeometricAreaM2=requiredEffectiveAreaM2!=null&&num(support.distributionFactor)>0?requiredEffectiveAreaM2/num(support.distributionFactor):null;
-    const suggestedSquareM=requiredGeometricAreaM2!=null?Math.sqrt(requiredGeometricAreaM2):null;
-    const thicknessMm=num(support.padThicknessM)*1000;
-    const exMm=Math.max(0,(num(support.padLengthM)-num(g.floatLengthM))/2)*1000;
-    const eyMm=Math.max(0,(num(support.padWidthM)-num(g.floatWidthM))/2)*1000;
-    const qNmm2=pressureKpa==null?null:pressureKpa/1000;
-    const stressX=qNmm2!=null&&thicknessMm>0?3*qNmm2*exMm*exMm/(thicknessMm*thicknessMm)*Math.max(1,num(g.padDesignFactor)||1):null;
-    const stressY=qNmm2!=null&&thicknessMm>0?3*qNmm2*eyMm*eyMm/(thicknessMm*thicknessMm)*Math.max(1,num(g.padDesignFactor)||1):null;
-    const padStressMpa=stressX==null||stressY==null?null:Math.max(stressX,stressY);
-    const padAllowable=num(g.padAllowableStressMpa);const padUtilPct=padStressMpa!=null&&padAllowable>0?padStressMpa/padAllowable*100:null;
-    let status='aprovado';
-    if(reactionKn==null||pressureKpa==null||allowableKpa<=0)status='nao_verificado';
-    else if(soilUtilPct>100||(padUtilPct!=null&&padUtilPct>100))status='reprovado';
-    else if(soilUtilPct>80||padUtilPct==null||padUtilPct>80)status='alerta';
-    return {areaGeom,areaEff,designReactionKn,pressureKpa,allowableKpa,soilUtilPct,requiredEffectiveAreaM2,requiredGeometricAreaM2,suggestedSquareM,padStressMpa,padUtilPct,status};
-  }
-
-  function computeV14SupportScenario(base,azimuthDeg,radiusM,options={}){
-    const g=state.ground;const supports=(g.supports||[]).map((item,index)=>normalizeV14Support(item,index,state)).filter(item=>item.enabled);
-    const gravity=9.80665;
-    const craneMassKg=options.craneWeightKg!==undefined?num(options.craneWeightKg):(num(g.craneWeightKg)>0?num(g.craneWeightKg):num(state.equipment.operatingWeightKg));
-    const designWeightKg=options.designWeightKg!==undefined?num(options.designWeightKg):num(base.designWeightKg);
-    const craneKn=craneMassKg*gravity/1000,loadKn=designWeightKg*gravity/1000,totalKn=craneKn+loadKn;
-    const az=num(azimuthDeg)*Math.PI/180,windAz=num(g.windDirectionDeg)*Math.PI/180;
-    const momentFactor=Math.max(1,num(g.loadMomentFactor)||1),radius=Math.max(0,num(radiusM));
-    const windForceKn=options.windForceKn!==undefined?Math.max(0,num(options.windForceKn)):Math.max(0,num(base.windForceKn));
-    const windHeight=Math.max(0,num(g.windApplicationHeightM));
-    const momentXNumerator=craneKn*num(g.craneCgXM)+loadKn*radius*Math.cos(az)*momentFactor+windForceKn*windHeight*Math.cos(windAz);
-    const momentYNumerator=craneKn*num(g.craneCgYM)+loadKn*radius*Math.sin(az)*momentFactor+windForceKn*windHeight*Math.sin(windAz);
-    const xResultantM=totalKn>0?momentXNumerator/totalKn:0,yResultantM=totalKn>0?momentYNumerator/totalKn:0;
-    const hull=convexHull(supports);const point={xM:xResultantM,yM:yResultantM};const edgeDistance=v14PointEdgeDistance(point,hull);
-    const inside=Boolean(hull.length>=3&&(pointInPolygon(point,hull)||(edgeDistance!=null&&edgeDistance<1e-7)));
-    const ray=v14RayUtilization(point,hull);const signedReserveM=edgeDistance==null?null:(inside?edgeDistance:-edgeDistance);
-    const equilibrium=v14SolveSupportReactions(supports,totalKn,xResultantM,yResultantM);
-    const manual=supports.map(s=>Math.max(0,num(s.manualReactionKn)));const manualComplete=manual.length>=3&&manual.every(v=>v>0);
-    let rawReactions=equilibrium.reactions.slice(),reactionMethod='equilibrium';let feasible=equilibrium.feasible;let detail=equilibrium.detail;
-    if(g.analysisMode==='manufacturer'){
-      rawReactions=manualComplete?manual:Array(supports.length).fill(0);reactionMethod='manufacturer';feasible=manualComplete;detail=manualComplete?'Reações individualizadas informadas pelo usuário a partir da fonte declarada.':'Preencha uma reação oficial positiva para cada apoio ativo.';
-    }else if(g.analysisMode==='conservative'){
-      rawReactions=equilibrium.reactions.map((value,index)=>Math.max(value,manual[index]||0));reactionMethod='conservative';feasible=equilibrium.feasible;detail='Envelope conservador formado pelo maior valor entre equilíbrio preliminar e reação oficial informada em cada apoio.';
-    }
-    const supportResults=supports.map((support,index)=>({support,reactionKn:rawReactions[index]||0,...v14PadCheck(support,rawReactions[index]||0)}));
-    const maxReactionKn=supportResults.length?Math.max(...supportResults.map(r=>r.designReactionKn)):null;
-    const validPressure=supportResults.filter(r=>r.pressureKpa!=null),validSoil=supportResults.filter(r=>r.soilUtilPct!=null),validPad=supportResults.filter(r=>r.padUtilPct!=null);
-    const maxPressureKpa=validPressure.length?Math.max(...validPressure.map(r=>r.pressureKpa)):null;
-    const maxSoilUtilPct=validSoil.length?Math.max(...validSoil.map(r=>r.soilUtilPct)):null;
-    const maxPadStressMpa=validPad.length?Math.max(...validPad.map(r=>r.padStressMpa)):null;
-    const maxPadUtilPct=validPad.length?Math.max(...validPad.map(r=>r.padUtilPct)):null;
-    const stabilityUtilPct=ray.utilizationPct;const stabilityReservePct=stabilityUtilPct==null?null:100-stabilityUtilPct;
-    const criticalSupport=supportResults.slice().sort((a,b)=>(b.soilUtilPct??-1)-(a.soilUtilPct??-1)||b.designReactionKn-a.designReactionKn)[0]||null;
-    return {azimuthDeg:((num(azimuthDeg)%360)+360)%360,radiusM:radius,craneMassKg,craneKn,loadKn,totalKn,xResultantM,yResultantM,hull,inside,signedReserveM,stabilityUtilPct,stabilityReservePct,equilibrium,manualComplete,reactionMethod,feasible,detail,supportResults,maxReactionKn,maxPressureKpa,maxSoilUtilPct,maxPadStressMpa,maxPadUtilPct,criticalSupport,windForceKn};
-  }
-
-  function computeV14AdvancedGround(base){
-    const g=state.ground,steps=[];
-    if(g.slewMode==='path'&&base.pathEvaluations?.length){base.pathEvaluations.forEach(item=>steps.push({azimuthDeg:item.azimuthDeg,radiusM:item.radiusM,label:item.phase}));}
-    else if(g.slewMode==='full360'){
-      const step=clamp(Math.round(num(g.slewStepDeg)||10),1,45),radius=num(g.analysisRadiusM)>0?num(g.analysisRadiusM):num(base.analysisRadiusM);
-      for(let angle=0;angle<360;angle+=step)steps.push({azimuthDeg:angle,radiusM:radius,label:`${angle}°`});
-    }else steps.push({azimuthDeg:num(g.manualAzimuthDeg),radiusM:num(g.analysisRadiusM)>0?num(g.analysisRadiusM):num(base.analysisRadiusM),label:'Azimute manual'});
-    if(!steps.length)steps.push({azimuthDeg:num(g.manualAzimuthDeg),radiusM:num(base.analysisRadiusM),label:'Posição única'});
-    const scenarios=steps.map(step=>({...computeV14SupportScenario(base,step.azimuthDeg,step.radiusM),label:step.label}));
-    const severity=item=>Math.max((item.maxSoilUtilPct??0)/100,(item.maxPadUtilPct??0)/100,(item.stabilityUtilPct??0)/100,item.feasible?0:2);
-    const criticalScenario=scenarios.slice().sort((a,b)=>severity(b)-severity(a)||((b.maxReactionKn??0)-(a.maxReactionKn??0)))[0]||null;
-    const worstStabilityScenario=scenarios.filter(x=>x.stabilityUtilPct!=null).sort((a,b)=>b.stabilityUtilPct-a.stabilityUtilPct)[0]||null;
-    const supports=(g.supports||[]).map((item,index)=>normalizeV14Support(item,index,state)).filter(item=>item.enabled);
-    const supportEnvelope=supports.map(support=>{
-      const values=scenarios.map(s=>s.supportResults.find(r=>r.support.id===support.id)).filter(Boolean);
-      const critical=values.slice().sort((a,b)=>(b.soilUtilPct??-1)-(a.soilUtilPct??-1)||b.designReactionKn-a.designReactionKn)[0]||null;
-      const scenario=critical?scenarios.find(s=>s.supportResults.some(r=>r===critical)):null;
-      return {support,critical,criticalAzimuthDeg:scenario?.azimuthDeg??null,criticalRadiusM:scenario?.radiusM??null,maxReactionKn:values.length?Math.max(...values.map(v=>v.designReactionKn)):null,maxPressureKpa:values.filter(v=>v.pressureKpa!=null).length?Math.max(...values.filter(v=>v.pressureKpa!=null).map(v=>v.pressureKpa)):null,maxSoilUtilPct:values.filter(v=>v.soilUtilPct!=null).length?Math.max(...values.filter(v=>v.soilUtilPct!=null).map(v=>v.soilUtilPct)):null,maxPadStressMpa:values.filter(v=>v.padStressMpa!=null).length?Math.max(...values.filter(v=>v.padStressMpa!=null).map(v=>v.padStressMpa)):null,maxPadUtilPct:values.filter(v=>v.padUtilPct!=null).length?Math.max(...values.filter(v=>v.padUtilPct!=null).map(v=>v.padUtilPct)):null,status:critical?.status||'nao_verificado'};
-    });
-    const criticalSupportEnvelope=supportEnvelope.slice().sort((a,b)=>(b.maxSoilUtilPct??-1)-(a.maxSoilUtilPct??-1)||(b.maxReactionKn??0)-(a.maxReactionKn??0))[0]||null;
-    const maxReactionKn=supportEnvelope.filter(x=>x.maxReactionKn!=null).length?Math.max(...supportEnvelope.filter(x=>x.maxReactionKn!=null).map(x=>x.maxReactionKn)):null;
-    const worstPressureKpa=supportEnvelope.filter(x=>x.maxPressureKpa!=null).length?Math.max(...supportEnvelope.filter(x=>x.maxPressureKpa!=null).map(x=>x.maxPressureKpa)):null;
-    const maxSoilUtilPct=supportEnvelope.filter(x=>x.maxSoilUtilPct!=null).length?Math.max(...supportEnvelope.filter(x=>x.maxSoilUtilPct!=null).map(x=>x.maxSoilUtilPct)):null;
-    const maxPadStressMpa=supportEnvelope.filter(x=>x.maxPadStressMpa!=null).length?Math.max(...supportEnvelope.filter(x=>x.maxPadStressMpa!=null).map(x=>x.maxPadStressMpa)):null;
-    const maxPadUtilPct=supportEnvelope.filter(x=>x.maxPadUtilPct!=null).length?Math.max(...supportEnvelope.filter(x=>x.maxPadUtilPct!=null).map(x=>x.maxPadUtilPct)):null;
-    const maxStabilityUtilPct=worstStabilityScenario?.stabilityUtilPct??null,minStabilityReservePct=maxStabilityUtilPct==null?null:100-maxStabilityUtilPct;
-    const requiredSetbackM=num(g.excavationDepthM)*num(g.excavationInfluenceFactor),setbackMarginM=num(g.excavationDistanceM)-requiredSetbackM;
-    const craneWeightKnown=(num(g.craneWeightKg)>0||num(state.equipment.operatingWeightKg)>0)&&Boolean(g.craneCgSource||state.equipment.dataSource);
-    const sourcesComplete=Boolean(g.reactionSource&&g.soilSource);
-    const criticalPad=criticalSupportEnvelope?.critical||null;
-    return {scenarios,criticalScenario,worstStabilityScenario,supportEnvelope,criticalSupportEnvelope,maxReactionKn,worstPressureKpa,maxSoilUtilPct,maxPadStressMpa,maxPadUtilPct,maxStabilityUtilPct,minStabilityReservePct,requiredSetbackM,setbackMarginM,craneWeightKnown,sourcesComplete,criticalPad,supportCount:supports.length,analysisCount:scenarios.length};
-  }
-
-  function computeV14Sensitivity(base,advanced){
-    const s=state.sensitivity||v14SensitivityDefaults(state),maxUtil=num(s.maxUtilPct)||num(state.criteria.maxUtilPct)||90,currentRadius=num(base.analysisRadiusM),radiusStep=Math.max(.1,num(s.radiusStepM)||1),steps=clamp(Math.round(num(s.radiusStepsEachSide)||4),1,12);
-    const radiusRows=[];for(let i=-steps;i<=steps;i++){
-      const radius=Math.max(.1,currentRadius+i*radiusStep),cap=computeCapacity(state.loadChart.points,radius,Boolean(state.loadChart.allowInterpolation));const util=cap.capacityT?base.designWeightT/cap.capacityT*100:null;
-      radiusRows.push({radiusM:radius,capacityT:cap.capacityT,utilizationPct:util,status:util==null?'nao_verificado':util>maxUtil?'reprovado':util>=num(state.criteria.warningUtilPct)?'alerta':'aprovado'});
-    }
-    const loadRows=[];const loadStep=Math.max(1,num(s.loadStepPct)||5);for(let pct=-Math.abs(num(s.loadReductionPct));pct<=Math.abs(num(s.loadIncreasePct))+1e-8;pct+=loadStep){const designT=base.designWeightT*(1+pct/100),util=base.capacityT?designT/base.capacityT*100:null;loadRows.push({pct,designT,utilizationPct:util,status:util==null?'nao_verificado':util>maxUtil?'reprovado':'aprovado'});}
-    const windMax=num(s.windMaxMs)>0?num(s.windMaxMs):Math.max(num(state.environment.windLimitMs)*1.2,base.adoptedWindMs+3,3),windStep=Math.max(.5,windMax/12),criticalAz=advanced.criticalScenario?.azimuthDeg??num(state.ground.manualAzimuthDeg),criticalRadius=advanced.criticalScenario?.radiusM??currentRadius;
-    const windRows=[];for(let speed=0;speed<=windMax+.001;speed+=windStep){const windForce=.5*num(state.environment.airDensity)*num(state.environment.dragCoefficient)*num(state.environment.projectedAreaM2)*speed*speed/1000;const scenario=computeV14SupportScenario(base,criticalAz,criticalRadius,{windForceKn:windForce});const fail=speed>num(state.environment.windLimitMs)||(scenario.stabilityUtilPct!=null&&scenario.stabilityUtilPct>100)||(scenario.maxSoilUtilPct!=null&&scenario.maxSoilUtilPct>100);windRows.push({speedMs:speed,windForceKn:windForce,stabilityUtilPct:scenario.stabilityUtilPct,soilUtilPct:scenario.maxSoilUtilPct,status:fail?'reprovado':'aprovado'});}
-    const cgMax=Math.max(0,num(s.cgShiftM)),cgRows=[];[-1,-.5,0,.5,1].forEach(factor=>{const shift=cgMax*factor,scenario=computeV14SupportScenario(base,criticalAz,Math.max(.1,criticalRadius+shift));const fail=(scenario.stabilityUtilPct??0)>100||(scenario.maxSoilUtilPct??0)>100;cgRows.push({shiftM:shift,stabilityUtilPct:scenario.stabilityUtilPct,soilUtilPct:scenario.maxSoilUtilPct,status:fail?'reprovado':'aprovado'});});
-    const soilRows=[];const minFactor=Math.max(.1,1-num(s.soilReductionPct)/100);for(let factor=minFactor;factor<=1.401;factor+=.1){const util=advanced.worstPressureKpa!=null&&num(state.ground.allowableKpa)>0?advanced.worstPressureKpa/(num(state.ground.allowableKpa)*factor)*100:null;soilRows.push({factor,allowableKpa:num(state.ground.allowableKpa)*factor,utilizationPct:util,status:util==null?'nao_verificado':util>100?'reprovado':'aprovado'});}
-    const angleRows=[];const minAngle=clamp(num(s.minSlingAngleDeg)||30,5,89);for(let angle=minAngle;angle<=90;angle+=5){const trig=Math.sin(angle*Math.PI/180),tension=trig>0&&base.effectiveLegs>0?base.factoredSupportedWeightKg/(base.effectiveLegs*trig)/1000:null;angleRows.push({angleDeg:angle,tensionT:tension});}
-    const capMargin=base.utilizationDesignPct==null?0:clamp((maxUtil-base.utilizationDesignPct)/maxUtil*100,0,100);
-    const windMargin=num(state.environment.windLimitMs)>0?clamp((num(state.environment.windLimitMs)-base.adoptedWindMs)/num(state.environment.windLimitMs)*100,0,100):0;
-    const soilMargin=advanced.maxSoilUtilPct==null?0:clamp(100-advanced.maxSoilUtilPct,0,100);
-    const stabilityMargin=advanced.maxStabilityUtilPct==null?0:clamp(100-advanced.maxStabilityUtilPct,0,100);
-    const geometryMargin=base.minBoomMarginM==null||base.maxRequiredBoomM<=0?0:clamp(base.minBoomMarginM/(Math.max(1,base.maxRequiredBoomM)*.1)*100,0,100);
-    const angleHorizontal=state.rigging.angleReference==='horizontal'?num(state.rigging.angleDeg):90-num(state.rigging.angleDeg);const riggingMargin=clamp((angleHorizontal-30)/30*100,0,100);
-    const margins=[{key:'capacity',label:'Capacidade / raio',value:capMargin},{key:'wind',label:'Vento',value:windMargin},{key:'soil',label:'Solo e placas',value:soilMargin},{key:'stability',label:'Estabilidade',value:stabilityMargin},{key:'geometry',label:'Envelope geométrico',value:geometryMargin},{key:'rigging',label:'Ângulo dos ramais',value:riggingMargin}];
-    const minMargin=Math.min(...margins.map(m=>m.value)),avgMargin=margins.reduce((sum,m)=>sum+m.value,0)/margins.length,robustnessIndex=Math.round(.6*minMargin+.4*avgMargin);const criticalMargin=margins.slice().sort((a,b)=>a.value-b.value)[0];
-    const radiusLimit=radiusRows.find(row=>row.radiusM>=currentRadius&&row.status==='reprovado');const loadLimit=loadRows.find(row=>row.pct>=0&&row.status==='reprovado');const windLimit=windRows.find(row=>row.status==='reprovado');const cgLimit=cgRows.filter(row=>row.shiftM>=0).find(row=>row.status==='reprovado');
-    const targetSoilReserve=clamp(num(s.targetSoilReservePct),0,90),soilRequiredKpa=advanced.worstPressureKpa!=null?advanced.worstPressureKpa/(1-targetSoilReserve/100):null;
-    const thresholds=[
-      {parameter:'Raio operacional',limit:radiusLimit?`${fmt(radiusLimit.radiusM,2)} m`:'Não atingido na faixa',diagnosis:radiusLimit?'A utilização supera o limite ou a curva deixa de cobrir o cenário.':'A faixa analisada permaneceu dentro do critério de capacidade.'},
-      {parameter:'Peso suspenso',limit:loadLimit?`+${fmt(loadLimit.pct,0)}%`:'Não atingido na faixa',diagnosis:loadLimit?'O acréscimo indicado ultrapassa a utilização máxima definida.':'A variação de carga analisada permaneceu dentro do critério.'},
-      {parameter:'Vento',limit:windLimit?`${fmt(windLimit.speedMs,1)} m/s`:'Não atingido na faixa',diagnosis:windLimit?'O limite operacional, o apoio ou a estabilidade passa a controlar.':'Nenhum limiar foi atingido na faixa de vento analisada.'},
-      {parameter:'Capacidade do solo',limit:soilRequiredKpa==null?'Não verificada':`${fmt(soilRequiredKpa,1)} kPa`,diagnosis:`Valor mínimo aproximado para manter ${fmt(targetSoilReserve,0)}% de reserva sobre a pressão máxima calculada.`},
-      {parameter:'Deslocamento radial do CG',limit:cgLimit?`${fmt(cgLimit.shiftM,2)} m`:'Não atingido na faixa',diagnosis:cgLimit?'A combinação de estabilidade e pressão deixa de atender.':'A incerteza analisada não eliminou as margens atuais.'},
-      {parameter:'Ângulo dos ramais',limit:`${fmt(minAngle,0)}° a 90°`,diagnosis:`A tração varia de ${fmt(angleRows[0]?.tensionT,2)} t a ${fmt(angleRows.at(-1)?.tensionT,2)} t por ramal na faixa.`}
-    ];
-    return {radiusRows,loadRows,windRows,cgRows,soilRows,angleRows,margins,robustnessIndex,criticalMargin,radiusLimit,loadLimit,windLimit,cgLimit,soilRequiredKpa,thresholds,maxUtil};
-  }
-
-  function buildV14Verifications(base,advanced,sensitivity){
-    const checks=[],add=(code,name,status,detail)=>checks.push({code,name,status,detail});const g=state.ground;
-    const manualRequired=g.analysisMode==='manufacturer';
-    if(advanced.supportCount<3)add('SO-10','Arranjo de estabilizadores','reprovado','Menos de três apoios ativos foram cadastrados.');
-    else if(!advanced.craneWeightKnown)add('SO-10','Modelo de reações','nao_verificado','Peso operacional e fonte do peso/CG da máquina não estão completos.');
-    else if(manualRequired&&!advanced.scenarios.every(s=>s.manualComplete))add('SO-10','Modelo de reações','nao_verificado','O modo fabricante exige reação positiva individual para cada apoio ativo.');
-    else if(g.analysisMode==='equilibrium')add('SO-10','Modelo de reações','alerta',`Envelope preliminar calculado em ${advanced.analysisCount} posição(ões). Substituir por reações oficiais sempre que disponíveis.`);
-    else if(g.analysisMode==='conservative')add('SO-10','Modelo de reações','alerta','Foi adotado o maior valor entre o equilíbrio preliminar e as reações informadas; conferir coerência com o documento do fabricante.');
-    else if(!g.reactionSource)add('SO-10','Modelo de reações','nao_verificado','Fonte das reações oficiais não informada.');
-    else add('SO-10','Modelo de reações','aprovado','Reações individualizadas informadas e fonte cadastrada.');
-
-    if(advanced.worstPressureKpa==null||advanced.maxSoilUtilPct==null)add('SO-11','Pressões individualizadas','nao_verificado','Placa ou capacidade admissível ausente em um ou mais apoios.');
-    else if(advanced.maxSoilUtilPct>100)add('SO-11','Pressões individualizadas','reprovado',`Maior utilização do apoio ${fmt(advanced.maxSoilUtilPct,1)}% e pressão ${fmt(advanced.worstPressureKpa,1)} kPa.`);
-    else if(!g.soilSource)add('SO-11','Pressões individualizadas','nao_verificado','A capacidade admissível não possui fonte geotécnica ou estrutural identificada.');
-    else if(advanced.maxSoilUtilPct>80)add('SO-11','Pressões individualizadas','alerta',`Maior utilização do apoio ${fmt(advanced.maxSoilUtilPct,1)}%; margem reduzida.`);
-    else add('SO-11','Pressões individualizadas','aprovado',`Todos os apoios cadastrados permanecem até ${fmt(advanced.maxSoilUtilPct,1)}% da capacidade informada.`);
-
-    if(advanced.maxStabilityUtilPct==null)add('SO-12','Estabilidade durante o giro','nao_verificado','Não foi possível construir o polígono de apoio ou localizar a resultante.');
-    else if(advanced.maxStabilityUtilPct>100)add('SO-12','Estabilidade durante o giro','reprovado',`A resultante ultrapassa o polígono de apoio: utilização ${fmt(advanced.maxStabilityUtilPct,1)}%.`);
-    else if(advanced.minStabilityReservePct<num(g.minStabilityReservePct))add('SO-12','Estabilidade durante o giro','alerta',`Reserva mínima ${fmt(advanced.minStabilityReservePct,1)}% abaixo da meta de ${fmt(g.minStabilityReservePct,1)}%.`);
-    else add('SO-12','Estabilidade durante o giro',g.analysisMode==='manufacturer'?'aprovado':'alerta',`Resultante dentro do polígono; reserva mínima ${fmt(advanced.minStabilityReservePct,1)}%. ${g.analysisMode==='manufacturer'?'':'Resultado baseado em modelo preliminar.'}`);
-
-    if(advanced.maxPadUtilPct==null)add('SO-13','Flexão preliminar das placas','nao_verificado','Espessura, sapata, tensão admissível ou geometria da placa não informada.');
-    else if(advanced.maxPadUtilPct>100)add('SO-13','Flexão preliminar das placas','reprovado',`Utilização simplificada de flexão ${fmt(advanced.maxPadUtilPct,1)}%.`);
-    else if(!g.padSource)add('SO-13','Flexão preliminar das placas','alerta',`Cálculo simplificado atende (${fmt(advanced.maxPadUtilPct,1)}%), mas a placa não possui fonte/projeto identificado.`);
-    else add('SO-13','Flexão preliminar das placas','alerta',`Triagem simplificada em ${fmt(advanced.maxPadUtilPct,1)}%; verificar dimensionamento completo da placa.`);
-
-    if(num(g.measuredSlopePct)>num(g.maxSlopePct)&&num(g.maxSlopePct)>0)add('SO-14','Inclinação e condição do local','reprovado',`Inclinação ${fmt(g.measuredSlopePct,1)}% acima do limite informado de ${fmt(g.maxSlopePct,1)}%.`);
-    else if(g.nearExcavation&&num(g.excavationDepthM)>0&&advanced.setbackMarginM<0)add('SO-14','Inclinação e condição do local','reprovado',`Afastamento de ${fmt(g.excavationDistanceM,2)} m inferior ao critério informado de ${fmt(advanced.requiredSetbackM,2)} m.`);
-    else if(g.nearUnderground||g.onStructure||g.nearExcavation)add('SO-14','Inclinação e condição do local','alerta','Há escavação, vazio enterrado ou estrutura existente que exige verificação específica.');
-    else if(!g.inspected)add('SO-14','Inclinação e condição do local','alerta','O local ainda não foi marcado como inspecionado e liberado.');
-    else add('SO-14','Inclinação e condição do local','aprovado','Condições especiais não declaradas e inspeção registrada; manter monitoramento durante a operação.');
-
-    if(!sensitivity||base.capacityT==null||advanced.maxSoilUtilPct==null)add('RB-01','Robustez da solução','nao_verificado','Faltam capacidade governante ou dados de apoio para consolidar a sensibilidade.');
-    else if(sensitivity.robustnessIndex<35)add('RB-01','Robustez da solução','alerta',`Índice ${sensitivity.robustnessIndex}/100: solução frágil, controlada por ${sensitivity.criticalMargin.label.toLowerCase()}.`);
-    else if(sensitivity.robustnessIndex<60)add('RB-01','Robustez da solução','alerta',`Índice ${sensitivity.robustnessIndex}/100: robustez moderada; parâmetro governante ${sensitivity.criticalMargin.label.toLowerCase()}.`);
-    else add('RB-01','Robustez da solução','aprovado',`Índice ${sensitivity.robustnessIndex}/100; menor margem relativa em ${sensitivity.criticalMargin.label.toLowerCase()}.`);
-    return checks;
-  }
-
-  function v14RecomputeOutcome(base,checks,advanced,sensitivity){
-    const failCount=checks.filter(v=>v.status==='reprovado').length,unverifiedCount=checks.filter(v=>v.status==='nao_verificado').length,alertCount=checks.filter(v=>v.status==='alerta').length;
-    let overallStatus='APROVADA',overallKey='aprovado',overallReason='Todas as verificações cadastradas foram atendidas.';
-    if(failCount){overallStatus='NÃO APROVADA';overallKey='reprovado';overallReason=`${failCount} verificação(ões) reprovada(s) exigem correção.`;}
-    else if(unverifiedCount){overallStatus='REVISÃO NECESSÁRIA';overallKey='nao_verificado';overallReason=`${unverifiedCount} verificação(ões) ainda não possuem dados suficientes.`;}
-    else if(alertCount){overallStatus='APROVADA COM RESSALVAS';overallKey='alerta';overallReason=`${alertCount} alerta(s) exigem confirmação e tratamento.`;}
-    const score=clamp(Math.round(100-failCount*16-unverifiedCount*6-alertCount*2.5),0,100);
-    let recommendedClassification=base.recommendedClassification;
-    if((advanced.maxStabilityUtilPct??0)>100||(advanced.maxSoilUtilPct??0)>100||advanced.setbackMarginM<0)recommendedClassification='Crítica';
-    else if((advanced.minStabilityReservePct??100)<num(state.ground.minStabilityReservePct)||(sensitivity?.robustnessIndex??100)<40)recommendedClassification=recommendedClassification==='Crítica'?'Crítica':'Especial';
-    return {failCount,unverifiedCount,alertCount,overallStatus,overallKey,overallReason,score,recommendedClassification};
-  }
-
-  computeAll = function(){
-    const base=computeAllV13();const advancedGround=computeV14AdvancedGround(base);const sensitivity=computeV14Sensitivity(base,advancedGround);
-    const checks=base.verifications.filter(item=>item.code!=='SO-01').concat(buildV14Verifications(base,advancedGround,sensitivity));
-    const outcome=v14RecomputeOutcome(base,checks,advancedGround,sensitivity);const criticalPad=advancedGround.criticalPad;
-    return {...base,...outcome,verifications:checks,advancedGround,sensitivity,
-      groundPressureKpa:advancedGround.worstPressureKpa,groundAreaM2:criticalPad?.areaEff??null,
-      groundRequiredAreaM2:criticalPad?.requiredEffectiveAreaM2??null,groundRequiredGeometricAreaM2:criticalPad?.requiredGeometricAreaM2??null,
-      suggestedPadM:criticalPad?.suggestedSquareM??null,maxGroundReactionKn:advancedGround.maxReactionKn,
-      stabilityUtilizationPct:advancedGround.maxStabilityUtilPct,stabilityReservePct:advancedGround.minStabilityReservePct,robustnessIndex:sensitivity.robustnessIndex};
-  };
-
-  function v14StatusFromUtil(value,warning=80){return value==null?'nao_verificado':value>100?'reprovado':value>warning?'alerta':'aprovado';}
-
-  function renderV14SupportTable(){
-    const body=$('#supportRowsBody');if(!body)return;const supports=state.ground.supports||[];
-    body.innerHTML=supports.map((support,index)=>`<tr data-support-row="${index}">
-      <td><input type="checkbox" data-v14-support-index="${index}" data-v14-support-field="enabled" ${support.enabled?'checked':''}></td>
-      <td><input class="support-label" data-v14-support-index="${index}" data-v14-support-field="label" value="${escapeHTML(support.label)}"></td>
-      <td><input type="number" step="0.01" data-v14-support-index="${index}" data-v14-support-field="xM" value="${support.xM}"></td>
-      <td><input type="number" step="0.01" data-v14-support-index="${index}" data-v14-support-field="yM" value="${support.yM}"></td>
-      <td><input type="number" min="0" step="1" data-v14-support-index="${index}" data-v14-support-field="manualReactionKn" value="${support.manualReactionKn}"></td>
-      <td><input type="number" min="0" step="0.01" data-v14-support-index="${index}" data-v14-support-field="padWidthM" value="${support.padWidthM}"></td>
-      <td><input type="number" min="0" step="0.01" data-v14-support-index="${index}" data-v14-support-field="padLengthM" value="${support.padLengthM}"></td>
-      <td><input type="number" min="0" step="0.001" data-v14-support-index="${index}" data-v14-support-field="padThicknessM" value="${support.padThicknessM}"></td>
-      <td><input type="number" min="0.1" max="1" step="0.01" data-v14-support-index="${index}" data-v14-support-field="distributionFactor" value="${support.distributionFactor}"></td>
-      <td><input type="number" min="0" step="1" data-v14-support-index="${index}" data-v14-support-field="allowableKpa" value="${support.allowableKpa}"></td>
-      <td id="supportReaction-${escapeHTML(support.id)}" class="reaction-cell">—</td>
-      <td id="supportPressure-${escapeHTML(support.id)}" class="reaction-cell">—</td>
-      <td id="supportBending-${escapeHTML(support.id)}" class="reaction-cell">—</td>
-      <td id="supportStatus-${escapeHTML(support.id)}">—</td>
-    </tr>`).join('');
-    setText('#supportCountBadge',`${supports.filter(s=>s.enabled).length} APOIOS ATIVOS`);
-  }
-
-  function updateV14SupportResults(){
-    const env=computed.advancedGround?.supportEnvelope||[];const maxReaction=Math.max(1,...env.map(item=>item.maxReactionKn||0));
-    env.forEach(item=>{
-      const reaction=$(`#supportReaction-${CSS.escape(item.support.id)}`),pressure=$(`#supportPressure-${CSS.escape(item.support.id)}`),bending=$(`#supportBending-${CSS.escape(item.support.id)}`),status=$(`#supportStatus-${CSS.escape(item.support.id)}`);
-      if(reaction)reaction.innerHTML=`<strong>${item.maxReactionKn==null?'—':`${fmt(item.maxReactionKn,1)} kN`}</strong><span>${item.criticalAzimuthDeg==null?'—':`a ${fmt(item.criticalAzimuthDeg,0)}°`}</span><div class="reaction-meter"><i style="width:${clamp((item.maxReactionKn||0)/maxReaction*100,0,100)}%"></i></div>`;
-      if(pressure)pressure.innerHTML=`<strong>${item.maxPressureKpa==null?'—':`${fmt(item.maxPressureKpa,1)} kPa`}</strong><span>${item.maxSoilUtilPct==null?'não verificada':`${fmt(item.maxSoilUtilPct,1)}% do admissível`}</span>`;
-      if(bending)bending.innerHTML=`<strong>${item.maxPadStressMpa==null?'—':`${fmt(item.maxPadStressMpa,2)} MPa`}</strong><span>${item.maxPadUtilPct==null?'triagem pendente':`${fmt(item.maxPadUtilPct,1)}%`}</span>`;
-      if(status)status.innerHTML=`<span class="support-status ${item.status}">${statusLabel(item.status)}</span>`;
-    });
-  }
-
-  function buildV14SupportSvg(){
-    const adv=computed.advancedGround,scenario=adv?.criticalScenario;if(!scenario||!scenario.hull?.length)return '<div class="empty-state" style="margin:18px">Arranjo de apoio insuficiente para gerar o croqui.</div>';
-    const supports=scenario.supportResults.map(r=>r.support),points=[...supports,{xM:scenario.xResultantM,yM:scenario.yResultantM},{xM:scenario.radiusM*Math.cos(scenario.azimuthDeg*Math.PI/180),yM:scenario.radiusM*Math.sin(scenario.azimuthDeg*Math.PI/180)}];
-    const maxAbs=Math.max(4,...points.flatMap(p=>[Math.abs(p.xM),Math.abs(p.yM)]))*1.22,view=520,scale=view/(2*maxAbs),cx=view/2,cy=view/2;
-    const sx=x=>cx+x*scale,sy=y=>cy-y*scale;const hullPath=scenario.hull.map((p,i)=>`${i?'L':'M'} ${sx(p.xM)} ${sy(p.yM)}`).join(' ')+' Z';
-    const maxReaction=Math.max(1,...scenario.supportResults.map(r=>r.designReactionKn));
-    const grid=[];for(let v=-Math.floor(maxAbs);v<=Math.floor(maxAbs);v++){grid.push(`<line x1="${sx(v)}" y1="0" x2="${sx(v)}" y2="${view}" stroke="#dfe7ef" stroke-width=".7"/><line x1="0" y1="${sy(v)}" x2="${view}" y2="${sy(v)}" stroke="#dfe7ef" stroke-width=".7"/>`);}
-    const supportNodes=scenario.supportResults.map(r=>{const radius=13+23*Math.sqrt(Math.max(0,r.designReactionKn)/maxReaction);const status=v14StatusFromUtil(Math.max(r.soilUtilPct??0,r.padUtilPct??0));const color=status==='reprovado'?'#b42318':status==='alerta'?'#9a6700':'#174f7a';return `<g><circle cx="${sx(r.support.xM)}" cy="${sy(r.support.yM)}" r="${radius}" fill="${color}" fill-opacity=".17" stroke="${color}" stroke-width="2"/><circle cx="${sx(r.support.xM)}" cy="${sy(r.support.yM)}" r="5" fill="${color}"/><text x="${sx(r.support.xM)}" y="${sy(r.support.yM)-radius-6}" text-anchor="middle" font-size="11" font-weight="800" fill="#172033">${escapeHTML(r.support.code)}</text><text x="${sx(r.support.xM)}" y="${sy(r.support.yM)+4}" text-anchor="middle" font-size="9" font-weight="800" fill="#172033">${fmt(r.designReactionKn,0)}</text></g>`;}).join('');
-    const loadX=scenario.radiusM*Math.cos(scenario.azimuthDeg*Math.PI/180),loadY=scenario.radiusM*Math.sin(scenario.azimuthDeg*Math.PI/180);
-    return `<svg viewBox="0 0 ${view} ${view}" role="img" aria-label="Mapa de reações nas patolas"><defs><marker id="arrow-v14" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#e8952f"/></marker></defs>${grid.join('')}<path d="${hullPath}" fill="#8b5cf6" fill-opacity=".08" stroke="#8b5cf6" stroke-width="2" stroke-dasharray="7 5"/><line x1="${cx}" y1="${cy}" x2="${sx(loadX)}" y2="${sy(loadY)}" stroke="#e8952f" stroke-width="4" marker-end="url(#arrow-v14)"/><circle cx="${cx}" cy="${cy}" r="16" fill="#0b2b4c"/><rect x="${cx-34}" y="${cy-11}" width="68" height="22" rx="5" fill="#174f7a"/><circle cx="${sx(scenario.xResultantM)}" cy="${sy(scenario.yResultantM)}" r="8" fill="#b42318" stroke="#fff" stroke-width="3"/><line x1="${sx(scenario.xResultantM)-13}" y1="${sy(scenario.yResultantM)}" x2="${sx(scenario.xResultantM)+13}" y2="${sy(scenario.yResultantM)}" stroke="#b42318"/><line x1="${sx(scenario.xResultantM)}" y1="${sy(scenario.yResultantM)-13}" x2="${sx(scenario.xResultantM)}" y2="${sy(scenario.yResultantM)+13}" stroke="#b42318"/>${supportNodes}<text x="18" y="24" font-size="12" font-weight="800" fill="#172033">Azimute ${fmt(scenario.azimuthDeg,0)}° · raio ${fmt(scenario.radiusM,2)} m</text><text x="18" y="43" font-size="10" fill="#667085">Resultante X ${fmt(scenario.xResultantM,2)} m · Y ${fmt(scenario.yResultantM,2)} m · reserva ${scenario.stabilityReservePct==null?'—':fmt(scenario.stabilityReservePct,1)+'%'}</text><text x="${view-14}" y="${view-15}" text-anchor="end" font-size="9" fill="#667085">Croqui esquemático — eixo +X à frente; +Y à esquerda</text></svg>`;
-  }
-
-  function drawV14SlewChart(){
-    const canvas=$('#groundSlewCanvas'),prepared=prepareCanvas(canvas);if(!prepared)return;const {ctx,w,h}=prepared,rows=computed.advancedGround?.scenarios||[];
-    if(!rows.length){drawCanvasMessage(canvas,'Sem posições para o envelope.');return;}
-    const left=45,right=18,top=22,bottom=38,pw=w-left-right,ph=h-top-bottom,maxReaction=Math.max(1,...rows.map(r=>r.maxReactionKn||0)),maxStab=Math.max(110,...rows.map(r=>r.stabilityUtilPct||0));
-    ctx.strokeStyle='#dce3ec';ctx.lineWidth=1;for(let i=0;i<=4;i++){const y=top+ph*i/4;ctx.beginPath();ctx.moveTo(left,y);ctx.lineTo(w-right,y);ctx.stroke();}
-    const x=i=>left+(rows.length===1?pw/2:i*pw/(rows.length-1)),yR=v=>top+ph-(v/maxReaction)*ph,yS=v=>top+ph-(v/maxStab)*ph;
-    ctx.strokeStyle='#174f7a';ctx.lineWidth=2.5;ctx.beginPath();rows.forEach((r,i)=>{const xx=x(i),yy=yR(r.maxReactionKn||0);i?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy);});ctx.stroke();
-    ctx.strokeStyle='#b42318';ctx.setLineDash([6,4]);ctx.beginPath();rows.forEach((r,i)=>{const xx=x(i),yy=yS(r.stabilityUtilPct||0);i?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy);});ctx.stroke();ctx.setLineDash([]);
-    ctx.font='10px system-ui';ctx.fillStyle='#667085';ctx.textAlign='center';const tickEvery=Math.max(1,Math.ceil(rows.length/7));rows.forEach((r,i)=>{if(i%tickEvery===0||i===rows.length-1)ctx.fillText(`${fmt(r.azimuthDeg,0)}°`,x(i),h-16);});
-    ctx.textAlign='left';ctx.fillStyle='#174f7a';ctx.fillText(`Reação máx. (escala ${fmt(maxReaction,0)} kN)`,left,12);ctx.fillStyle='#b42318';ctx.fillText(`Estabilidade (escala ${fmt(maxStab,0)}%)`,Math.max(left,w-210),12);
-  }
-
-  function renderV14Ground(){
-    const adv=computed.advancedGround,crit=adv?.criticalSupportEnvelope,scenario=adv?.criticalScenario,pad=adv?.criticalPad;
-    const modeLabel={equilibrium:'EQUILÍBRIO PRELIMINAR',manufacturer:'REAÇÕES DO FABRICANTE',conservative:'ENVELOPE CONSERVADOR'}[state.ground.analysisMode]||'—';setText('#groundModelBadge',modeLabel);
-    setText('#groundCriticalSupport',crit?.support?.code||'—');setText('#groundCriticalSupportSub',crit?.support?.label||'Sem apoio crítico');
-    setText('#groundMaxReaction',adv?.maxReactionKn==null?'—':`${fmt(adv.maxReactionKn,1)} kN`);setText('#groundPressure',adv?.worstPressureKpa==null?'—':`${fmt(adv.worstPressureKpa,1)} kPa`);
-    setText('#groundPressureSub',crit?.maxSoilUtilPct==null?'Não verificada':`${fmt(crit.maxSoilUtilPct,1)}% do admissível`);setText('#groundSoilUtil',adv?.maxSoilUtilPct==null?'—':`${fmt(adv.maxSoilUtilPct,1)}%`);
-    setText('#groundStabilityUtil',adv?.maxStabilityUtilPct==null?'—':`${fmt(adv.maxStabilityUtilPct,1)}%`);setText('#groundStabilitySub',adv?.minStabilityReservePct==null?'Reserva não verificada':`reserva ${fmt(adv.minStabilityReservePct,1)}%`);
-    setText('#groundCriticalAzimuth',scenario?`${fmt(scenario.azimuthDeg,0)}°`:'—');setText('#groundCriticalRadius',scenario?`raio ${fmt(scenario.radiusM,2)} m`:'—');
-    setText('#groundArea',pad?.areaEff?`${fmt(pad.areaEff,3)} m²`:'—');setText('#groundMinArea',pad?.requiredGeometricAreaM2==null?'—':`${fmt(pad.requiredGeometricAreaM2,3)} m²`);setText('#groundSuggestedPad',pad?.suggestedSquareM==null?'—':`${fmt(pad.suggestedSquareM,2)} × ${fmt(pad.suggestedSquareM,2)} m`);setText('#groundPadStress',adv?.maxPadStressMpa==null?'—':`${fmt(adv.maxPadStressMpa,2)} MPa`);
-    setText('#mStabilityReserve',adv?.minStabilityReservePct==null?'—':`${fmt(adv.minStabilityReservePct,1)}%`);setText('#mRobustness',computed.robustnessIndex==null?'—':`${computed.robustnessIndex}/100`);
-    const notice=$('#groundNotice');if(notice){
-      if((adv?.maxSoilUtilPct??0)>100||(adv?.maxStabilityUtilPct??0)>100){notice.className='callout danger mt-16';notice.innerHTML='<strong>Condição não atendida:</strong> a pressão, a placa ou a posição da resultante ultrapassa o critério informado.';}
-      else if(state.ground.analysisMode!=='manufacturer'){notice.className='callout warning mt-16';notice.innerHTML=`<strong>Estimativa preliminar:</strong> o envelope possui ${adv?.analysisCount||0} posição(ões). Confirme reações oficiais, rigidez das placas, capacidade do apoio e condições reais de campo.`;}
-      else if(!state.ground.soilSource||!state.ground.reactionSource){notice.className='callout danger mt-16';notice.innerHTML='<strong>Rastreabilidade incompleta:</strong> informe a fonte das reações e da capacidade admissível.';}
-      else{notice.className='callout success mt-16';notice.innerHTML='<strong>Parâmetros cadastrados atendidos:</strong> manter inspeção, nivelamento e monitoramento dos apoios durante a operação.';}
-    }
-    const stage=$('#supportPlanSvg');if(stage)stage.innerHTML=buildV14SupportSvg();drawV14SlewChart();
-    setHTML('#groundSlewSummary',scenario?`Posição crítica: <strong>${escapeHTML(scenario.label||'—')}</strong>, azimute ${fmt(scenario.azimuthDeg,1)}°, raio ${fmt(scenario.radiusM,2)} m. Modelo: ${escapeHTML(scenario.detail)} Total vertical considerado: ${fmt(scenario.totalKn,1)} kN.`:'Envelope indisponível.');
-    updateV14SupportResults();
-  }
-
-  function v14AssistantFingerprint(){const a=state.engineeringAssistant;return JSON.stringify([a.loadWeightKg,a.accessoryAllowancePct,a.preliminaryFactor,a.radiusM,a.hookHeightM,a.verticalMarginM,a.groundAllowableKpa,a.windLimitMs,a.maxUtilPct,a.requireValidatedChart,a.includePreselection]);}
-
-  function computeV14AssistantAnalysis(){
-    const a=state.engineeringAssistant,loadKg=Math.max(0,num(a.loadWeightKg)),designKg=loadKg*(1+Math.max(0,num(a.accessoryAllowancePct))/100)*Math.max(1,num(a.preliminaryFactor)||1),designT=designKg/1000,radius=Math.max(0,num(a.radiusM)),pivot=Math.max(0,num(state.equipment.pivotHeightM)||2.5),hook=Math.max(0,num(a.hookHeightM)+num(a.verticalMarginM)),requiredBoom=Math.hypot(radius,Math.max(0,hook-pivot)),requiredMomentTm=designT*radius;
-    const candidates=[];(state.catalog||[]).map(normalizeCatalogItem).forEach(item=>{
-      const chart=item.chart||[],validated=chart.length>=2&&['user-validated','official-transcribed','manufacturer-validated'].includes(item.loadChartStatus);const cap=validated?computeCapacity(chart,radius,true):{capacityT:null};const geometryOk=!num(item.maxBoomM)||num(item.maxBoomM)>=requiredBoom;let status='insufficient',kind='preselection',utilizationPct=null,capacityT=cap.capacityT,reason='';
-      if(validated&&capacityT!=null){utilizationPct=designT/capacityT*100;if(geometryOk&&designT<=capacityT&&utilizationPct<=num(a.maxUtilPct)){status='compatible';kind='verified';reason='Curva cadastrada cobre o raio e atende à meta de utilização.';}else{status='insufficient';kind='verified';reason=!geometryOk?'Lança máxima inferior à geometria preliminar.':`Utilização ${fmt(utilizationPct,1)}% acima do critério ou capacidade insuficiente.`;}}
-      else{
-        const momentOk=num(item.liftingMomentTm)>0?num(item.liftingMomentTm)>=requiredMomentTm*1.1:num(item.nominalCapacityT)>=designT*1.5;
-        if(geometryOk&&momentOk&&num(item.nominalCapacityT)>=designT){status='warning';kind='preselection';reason='Envelope geral compatível, mas a tabela de carga da configuração é obrigatória.';}else{reason=!geometryOk?'Lança máxima insuficiente para a geometria preliminar.':'Capacidade nominal ou momento geral insuficiente para a triagem conservadora.';}
-      }
-      if(kind==='verified'||(a.includePreselection&&status==='warning')){
-        const quality=kind==='verified'?1000:400,marginScore=capacityT?Math.max(0,capacityT-designT)*10:Math.max(0,num(item.nominalCapacityT)-designT),boomScore=Math.max(0,num(item.maxBoomM)-requiredBoom);candidates.push({item,status,kind,capacityT,utilizationPct,geometryOk,reason,score:quality+marginScore+boomScore});
-      }
-    });
-    candidates.sort((x,y)=>y.score-x.score||num(x.item.nominalCapacityT)-num(y.item.nominalCapacityT));
-    const verifiedCount=candidates.filter(c=>c.kind==='verified'&&c.status==='compatible').length,preselectionCount=candidates.filter(c=>c.kind==='preselection').length;
-    const tempBase={...computed,designWeightKg:designKg,designWeightT:designT,analysisRadiusM:radius,windForceKn:computed.windForceKn};const padScenario=computeV14SupportScenario(tempBase,num(state.ground.manualAzimuthDeg),radius,{designWeightKg:designKg});const padRequired=padScenario.criticalSupport?.suggestedSquareM??null;
-    const checks=[
-      {ok:loadKg>0,label:'Peso da carga informado',detail:loadKg>0?fmtMass(loadKg):'Informe o peso líquido estimado.'},
-      {ok:radius>0,label:'Raio operacional informado',detail:radius>0?`${fmt(radius,2)} m`:'Informe o raio aproximado.'},
-      {ok:hook>0,label:'Altura requerida informada',detail:hook>0?`${fmt(hook,2)} m com margem`:'Informe a altura do gancho.'},
-      {ok:num(a.groundAllowableKpa)>0,label:'Capacidade do apoio informada',detail:num(a.groundAllowableKpa)>0?`${fmt(a.groundAllowableKpa,1)} kPa`:'A pré-concepção da placa permanece pendente.'},
-      {ok:verifiedCount>0,label:'Existe candidato com curva cadastrada',detail:verifiedCount?`${verifiedCount} alternativa(s) verificada(s) na base atual.`:'Somente pré-seleções ou nenhum candidato; transcreva curvas oficiais.'}
-    ];
-    const quality=checks.every(c=>c.ok)&&verifiedCount?'complete':checks.slice(0,3).every(c=>c.ok)?'partial':'insufficient';
-    return {fingerprint:v14AssistantFingerprint(),designKg,designT,radius,hookHeightM:hook,requiredBoom,requiredMomentTm,candidates:candidates.slice(0,18),verifiedCount,preselectionCount,padRequired,checks,quality};
-  }
-
-  function syncV14Assistant(){state.engineeringAssistant={...state.engineeringAssistant,...v14AssistantDefaults(state),constraints:state.engineeringAssistant.constraints||''};populateBindings();assistantAnalysisV14=null;renderV14Assistant();showToast('Assistente sincronizado','Peso, raio, altura, solo, vento e critério foram copiados do projeto.');}
-
-  function applyV14Assistant(){
-    const a=state.engineeringAssistant;state.load.weightKg=Math.max(0,num(a.loadWeightKg));state.equipment.radiusM=Math.max(0,num(a.radiusM));state.geometry.requiredHookHeightM=Math.max(0,num(a.hookHeightM));state.criteria.maxUtilPct=clamp(num(a.maxUtilPct)||90,1,100);
-    if(a.applyGroundAndWind){state.ground.allowableKpa=Math.max(0,num(a.groundAllowableKpa));state.ground.supports.forEach(s=>s.allowableKpa=Math.max(0,num(a.groundAllowableKpa)));state.environment.windLimitMs=Math.max(0,num(a.windLimitMs));}
-    state.updatedAt=new Date().toISOString();renderAll();showToast('Parâmetros aplicados','A solução ainda depende das fontes e verificações específicas de cada módulo.');
-  }
-
-  function analyzeV14Assistant(){assistantAnalysisV14=computeV14AssistantAnalysis();renderV14Assistant();showToast('Pré-concepção analisada',`${assistantAnalysisV14.verifiedCount} candidato(s) verificado(s) e ${assistantAnalysisV14.preselectionCount} pré-seleção(ões).`);}
-
-  function renderV14Assistant(){
-    const preview=assistantAnalysisV14||computeV14AssistantAnalysis(),stale=assistantAnalysisV14&&assistantAnalysisV14.fingerprint!==v14AssistantFingerprint();
-    setText('#assistantDesignLoad',fmtMass(preview.designKg));setText('#assistantRequiredBoom',`${fmt(preview.requiredBoom,2)} m`);setText('#assistantVerifiedCount',String(preview.verifiedCount));setText('#assistantPreselectionCount',String(preview.preselectionCount));setText('#assistantPadEstimate',preview.padRequired==null?'—':`${fmt(preview.padRequired,2)} × ${fmt(preview.padRequired,2)} m`);
-    const badge=$('#assistantQualityBadge');if(badge){const map={complete:['badge-success','DADOS BÁSICOS COMPLETOS'],partial:['badge-warning','PRÉ-CONCEPÇÃO PARCIAL'],insufficient:['badge-danger','DADOS INSUFICIENTES']};const [cls,label]=map[preview.quality]||map.insufficient;badge.className=`badge ${cls}`;badge.textContent=stale?'RESULTADO DESATUALIZADO':label;}
-    const checks=$('#assistantChecks');if(checks)checks.innerHTML=preview.checks.map(item=>`<div class="assistant-check ${item.ok?'ok':'pending'}"><i>${item.ok?'✓':'!'}</i><div><strong>${escapeHTML(item.label)}</strong><div class="small muted">${escapeHTML(item.detail)}</div></div></div>`).join('');
-    const container=$('#assistantCandidates'),candidateBadge=$('#assistantCandidateBadge');if(!container)return;
-    if(!assistantAnalysisV14){container.innerHTML='<div class="empty-state">Pressione <strong>Analisar alternativas</strong> para pesquisar o catálogo do projeto.</div>';if(candidateBadge){candidateBadge.className='badge badge-neutral';candidateBadge.textContent='NÃO EXECUTADO';}return;}
-    if(stale){if(candidateBadge){candidateBadge.className='badge badge-warning';candidateBadge.textContent='RESULTADO DESATUALIZADO';}}
-    else if(candidateBadge){candidateBadge.className='badge badge-info';candidateBadge.textContent=`${assistantAnalysisV14.candidates.length} EXIBIDOS`;}
-    if(!assistantAnalysisV14.candidates.length){container.innerHTML='<div class="empty-state">Nenhum equipamento atendeu à triagem. Revise peso, raio, altura ou amplie o catálogo com a configuração necessária.</div>';return;}
-    container.innerHTML=assistantAnalysisV14.candidates.map(candidate=>{const item=candidate.item;return `<article class="assistant-candidate"><div class="page-actions" style="justify-content:space-between"><span class="badge ${candidate.kind==='verified'?'badge-success':'badge-warning'}">${candidate.kind==='verified'?'CURVA CADASTRADA':'PRÉ-SELEÇÃO'}</span><span class="tiny muted">${escapeHTML(item.type)}</span></div><h3>${escapeHTML(item.manufacturer)} ${escapeHTML(item.model)}</h3><div class="candidate-specs"><div class="candidate-spec"><span>Capacidade no raio</span><strong>${candidate.capacityT==null?'Tabela requerida':`${fmt(candidate.capacityT,2)} t`}</strong></div><div class="candidate-spec"><span>Utilização</span><strong>${candidate.utilizationPct==null?'—':`${fmt(candidate.utilizationPct,1)}%`}</strong></div><div class="candidate-spec"><span>Lança máxima</span><strong>${item.maxBoomM?`${fmt(item.maxBoomM,1)} m`:'—'}</strong></div><div class="candidate-spec"><span>Nominal</span><strong>${fmt(item.nominalCapacityT,1)} t</strong></div></div><p class="small muted">${escapeHTML(candidate.reason)}</p><div class="candidate-source">${escapeHTML([item.source,item.sourceRevision].filter(Boolean).join(' · ')||'Fonte não informada')}</div><div class="candidate-actions"><button class="btn btn-primary btn-sm" data-v14-action="adopt-assistant" data-id="${escapeHTML(item.id)}">Adotar no projeto</button>${item.sourceUrl?`<a class="btn btn-sm" target="_blank" rel="noopener" href="${escapeHTML(item.sourceUrl)}">Fonte oficial</a>`:''}</div></article>`;}).join('');
-  }
-
-  function renderV14Sensitivity(){
-    const sens=computed.sensitivity;if(!sens)return;const score=sens.robustnessIndex,ring=$('#robustnessRing');if(ring){ring.style.setProperty('--robust',score);ring.style.setProperty('--robust-color',score>=60?'var(--success)':score>=35?'var(--warning)':'var(--danger)');}setText('#robustnessValue',String(score));
-    const level=score>=70?['badge-success','ROBUSTEZ BOA','Solução com margens relativamente estáveis']:score>=50?['badge-info','ROBUSTEZ MODERADA','Há margens, mas algumas variações exigem controle']:score>=30?['badge-warning','SOLUÇÃO FRÁGIL','Pequenas variações podem controlar a operação']:['badge-danger','ROBUSTEZ MUITO BAIXA','A solução deve ser revista antes da liberação'];
-    const badge=$('#robustnessBadge');if(badge){badge.className=`badge ${level[0]}`;badge.textContent=level[1];}setText('#robustnessTitle',level[2]);setText('#robustnessDetail',`Índice composto a partir de seis margens normalizadas. Parâmetro governante: ${sens.criticalMargin.label.toLowerCase()} (${fmt(sens.criticalMargin.value,0)} pontos de margem).`);
-    const critical=$('#robustnessCritical');if(critical){critical.className=`callout ${score<30?'danger':score<60?'warning':'success'} mt-12`;critical.innerHTML=`<strong>Parâmetro crítico:</strong> ${escapeHTML(sens.criticalMargin.label)}. A análise de robustez não substitui os limites absolutos de cada verificação.`;}
-    setText('#sensitivityRadiusLimit',sens.radiusLimit?`${fmt(sens.radiusLimit.radiusM,2)} m`:'Não atingido');setText('#sensitivityLoadLimit',sens.loadLimit?`+${fmt(sens.loadLimit.pct,0)}%`:'Não atingido');setText('#sensitivityWindLimit',sens.windLimit?`${fmt(sens.windLimit.speedMs,1)} m/s`:'Não atingido');setText('#sensitivitySoilRequired',sens.soilRequiredKpa==null?'—':`${fmt(sens.soilRequiredKpa,1)} kPa`);setText('#sensitivityCgLimit',sens.cgLimit?`${fmt(sens.cgLimit.shiftM,2)} m`:'Não atingido');
-    const thresholds=$('#sensitivityThresholds');if(thresholds)thresholds.innerHTML=sens.thresholds.map(item=>`<div class="threshold-item"><strong>${escapeHTML(item.parameter)}</strong><span>${escapeHTML(item.limit)}</span><div>${escapeHTML(item.diagnosis)}</div></div>`).join('');
-    drawV14RadiusSensitivity();drawV14Tornado();
-  }
-
-  function drawV14RadiusSensitivity(){
-    const canvas=$('#sensitivityRadiusCanvas'),prepared=prepareCanvas(canvas);if(!prepared)return;const {ctx,w,h}=prepared,rows=computed.sensitivity?.radiusRows||[];if(!rows.length){drawCanvasMessage(canvas,'Sem dados de raio.');return;}
-    const left=48,right=20,top=25,bottom=40,pw=w-left-right,ph=h-top-bottom,valid=rows.filter(r=>r.utilizationPct!=null),maxY=Math.max(110,...valid.map(r=>r.utilizationPct));
-    ctx.strokeStyle='#dce3ec';ctx.lineWidth=1;for(let i=0;i<=5;i++){const y=top+ph*i/5;ctx.beginPath();ctx.moveTo(left,y);ctx.lineTo(w-right,y);ctx.stroke();ctx.fillStyle='#667085';ctx.font='10px system-ui';ctx.textAlign='right';ctx.fillText(`${fmt(maxY*(1-i/5),0)}%`,left-7,y+3);}
-    const minX=rows[0].radiusM,maxX=rows.at(-1).radiusM,x=v=>left+(v-minX)/(maxX-minX||1)*pw,y=v=>top+ph-v/maxY*ph;
-    ctx.strokeStyle='#174f7a';ctx.lineWidth=3;ctx.beginPath();valid.forEach((r,i)=>{i?ctx.lineTo(x(r.radiusM),y(r.utilizationPct)):ctx.moveTo(x(r.radiusM),y(r.utilizationPct));});ctx.stroke();
-    ctx.strokeStyle='#b42318';ctx.setLineDash([6,4]);ctx.beginPath();ctx.moveTo(left,y(computed.sensitivity.maxUtil));ctx.lineTo(w-right,y(computed.sensitivity.maxUtil));ctx.stroke();ctx.setLineDash([]);ctx.fillStyle='#b42318';ctx.textAlign='left';ctx.fillText(`Limite ${fmt(computed.sensitivity.maxUtil,0)}%`,left+5,y(computed.sensitivity.maxUtil)-6);
-    rows.forEach(r=>{if(r.utilizationPct==null)return;ctx.fillStyle=r.status==='reprovado'?'#b42318':r.status==='alerta'?'#9a6700':'#174f7a';ctx.beginPath();ctx.arc(x(r.radiusM),y(r.utilizationPct),4,0,Math.PI*2);ctx.fill();});ctx.fillStyle='#667085';ctx.textAlign='center';rows.forEach((r,i)=>{if(i%Math.max(1,Math.ceil(rows.length/7))===0||i===rows.length-1)ctx.fillText(fmt(r.radiusM,1),x(r.radiusM),h-16);});ctx.fillText('Raio (m)',left+pw/2,h-3);
-  }
-
-  function drawV14Tornado(){
-    const canvas=$('#sensitivityTornadoCanvas'),prepared=prepareCanvas(canvas);if(!prepared)return;const {ctx,w,h}=prepared,rows=(computed.sensitivity?.margins||[]).slice().sort((a,b)=>a.value-b.value);if(!rows.length){drawCanvasMessage(canvas,'Sem margens calculadas.');return;}
-    const left=Math.min(170,w*.42),right=28,top=22,bottom=24,rowH=(h-top-bottom)/rows.length,maxW=w-left-right;ctx.font='11px system-ui';
-    rows.forEach((row,index)=>{const y=top+index*rowH+rowH*.18,barH=rowH*.58;ctx.fillStyle='#edf1f5';ctx.fillRect(left,y,maxW,barH);ctx.fillStyle=row.value<30?'#b42318':row.value<60?'#9a6700':'#174f7a';ctx.fillRect(left,y,maxW*row.value/100,barH);ctx.fillStyle='#344054';ctx.textAlign='right';ctx.fillText(row.label,left-9,y+barH*.72);ctx.textAlign='left';ctx.fillText(`${fmt(row.value,0)}`,Math.min(w-25,left+maxW*row.value/100+6),y+barH*.72);});ctx.fillStyle='#667085';ctx.textAlign='center';ctx.fillText('Margem relativa normalizada (0–100)',left+maxW/2,h-5);
-  }
-
-  function renderV14Computed(){renderV14Ground();renderV14Sensitivity();renderV14Assistant();}
-
-  renderComputedViews = function(){renderComputedViewsV13();renderV14Computed();};
-  renderAll = function(){renderAllV13();renderV14SupportTable();renderV14Computed();};
-
-  function generateV14Supports(){
-    const template=v14SupportTemplate(state);state.ground.supports=template.map((item,index)=>({...item,manualReactionKn:state.ground.supports?.[index]?.manualReactionKn||0}));state.updatedAt=new Date().toISOString();renderAll();showToast('Arranjo gerado','As coordenadas foram obtidas das dimensões esquemáticas informadas no módulo de geometria.');
-  }
-
-  function copyV14CommonPad(){state.ground.supports.forEach(s=>{s.padWidthM=num(state.ground.padWidthM);s.padLengthM=num(state.ground.padLengthM);s.padThicknessM=num(state.ground.padThicknessM);s.distributionFactor=clamp(num(state.ground.distributionFactor)||1,.1,1);s.allowableKpa=num(state.ground.allowableKpa);});state.updatedAt=new Date().toISOString();renderAll();showToast('Placa comum aplicada','Dimensões, fator de área e capacidade foram copiados para todos os apoios.');}
-
-  function handleV14SupportInput(event){
-    const input=event.target.closest('[data-v14-support-index][data-v14-support-field]');if(!input)return;const index=num(input.dataset.v14SupportIndex),field=input.dataset.v14SupportField,support=state.ground.supports[index];if(!support)return;
-    support[field]=input.type==='checkbox'?input.checked:(input.type==='number'?num(input.value):input.value);state.updatedAt=new Date().toISOString();scheduleUpdate();
-  }
-
-  function v14SensitivityReset(){state.sensitivity=v14SensitivityDefaults(state);populateBindings();computed=computeAll();renderComputedViews();showToast('Faixas restauradas','Parâmetros padrão de sensibilidade aplicados.');}
-
-  function buildV14GroundReportHtml(){
-    const adv=computed.advancedGround,sens=computed.sensitivity,rows=(adv.supportEnvelope||[]).map(item=>`<tr><td>${escapeHTML(item.support.code)} · ${escapeHTML(item.support.label)}</td><td>${fmt(item.support.xM,2)} / ${fmt(item.support.yM,2)}</td><td>${item.maxReactionKn==null?'—':fmt(item.maxReactionKn,1)}</td><td>${item.maxPressureKpa==null?'—':fmt(item.maxPressureKpa,1)}</td><td>${item.maxSoilUtilPct==null?'—':`${fmt(item.maxSoilUtilPct,1)}%`}</td><td>${item.maxPadStressMpa==null?'—':fmt(item.maxPadStressMpa,2)}</td><td>${item.criticalAzimuthDeg==null?'—':`${fmt(item.criticalAzimuthDeg,0)}°`}</td><td>${escapeHTML(statusLabel(item.status))}</td></tr>`).join('');
-    const scenarios=(adv.scenarios||[]).map(item=>`<tr><td>${escapeHTML(item.label||'—')}</td><td>${fmt(item.azimuthDeg,1)}°</td><td>${fmt(item.radiusM,2)} m</td><td>${item.maxReactionKn==null?'—':`${fmt(item.maxReactionKn,1)} kN`}</td><td>${item.maxSoilUtilPct==null?'—':`${fmt(item.maxSoilUtilPct,1)}%`}</td><td>${item.stabilityUtilPct==null?'—':`${fmt(item.stabilityUtilPct,1)}%`}</td><td>${item.feasible?'Resultante compatível':'Resultante fora / solução inviável'}</td></tr>`).join('');
-    return `${reportRows([
-      ['Modo das reações',({equilibrium:'Equilíbrio estático preliminar',manufacturer:'Reações individualizadas do fabricante',conservative:'Envelope conservador'}[state.ground.analysisMode]||state.ground.analysisMode)],['Posições do giro avaliadas',String(adv.analysisCount)],['Peso operacional adotado',`${fmt(adv.criticalScenario?.craneMassKg,0)} kg`],['Fonte peso/CG',state.ground.craneCgSource||state.equipment.dataSource],['Patola crítica',adv.criticalSupportEnvelope?`${adv.criticalSupportEnvelope.support.code} · ${adv.criticalSupportEnvelope.support.label}`:'—'],['Reação máxima de projeto',adv.maxReactionKn==null?'—':`${fmt(adv.maxReactionKn,1)} kN`],['Pressão máxima',adv.worstPressureKpa==null?'—':`${fmt(adv.worstPressureKpa,1)} kPa`],['Maior utilização do solo',adv.maxSoilUtilPct==null?'—':`${fmt(adv.maxSoilUtilPct,1)}%`],['Utilização máxima da estabilidade',adv.maxStabilityUtilPct==null?'—':`${fmt(adv.maxStabilityUtilPct,1)}%`],['Reserva mínima de estabilidade',adv.minStabilityReservePct==null?'—':`${fmt(adv.minStabilityReservePct,1)}%`],['Fonte das reações',state.ground.reactionSource],['Fonte do apoio',state.ground.soilSource],['Inclinação medida / limite',`${fmt(state.ground.measuredSlopePct,1)}% / ${fmt(state.ground.maxSlopePct,1)}%`],['Afastamento de escavação',state.ground.nearExcavation?`${fmt(state.ground.excavationDistanceM,2)} m; critério ${fmt(adv.requiredSetbackM,2)} m`:'Não declarado']
-    ])}<h3>Envelope por patola</h3><div class="table-wrap"><table><thead><tr><th>Patola</th><th>X / Y (m)</th><th>Reação kN</th><th>Pressão kPa</th><th>Solo</th><th>Tensão placa MPa</th><th>Azimute</th><th>Resultado</th></tr></thead><tbody>${rows}</tbody></table></div><h3>Posições do giro</h3><div class="table-wrap"><table><thead><tr><th>Fase</th><th>Azimute</th><th>Raio</th><th>Reação máx.</th><th>Solo</th><th>Estabilidade</th><th>Diagnóstico</th></tr></thead><tbody>${scenarios}</tbody></table></div><div class="report-drawing">${buildV14SupportSvg()}</div><h3>Análise de sensibilidade</h3>${reportRows([['Índice de robustez',`${sens.robustnessIndex}/100`],['Parâmetro governante',`${sens.criticalMargin.label} (${fmt(sens.criticalMargin.value,0)} pontos)`],['Raio aproximado no limite',sens.radiusLimit?`${fmt(sens.radiusLimit.radiusM,2)} m`:'Não atingido'],['Acréscimo de carga no limite',sens.loadLimit?`+${fmt(sens.loadLimit.pct,0)}%`:'Não atingido'],['Vento governante',sens.windLimit?`${fmt(sens.windLimit.speedMs,1)} m/s`:'Não atingido'],['Capacidade mínima do apoio',sens.soilRequiredKpa==null?'—':`${fmt(sens.soilRequiredKpa,1)} kPa`]])}`;
-  }
-
-  renderReport = function(){
-    renderReportV13();const paper=$('#reportPaper');if(!paper)return;const headings=Array.from(paper.querySelectorAll('h2')),groundHeading=headings.find(h=>h.textContent.trim().startsWith('6. Estabilizadores')),environmentHeading=headings.find(h=>h.textContent.trim().startsWith('7. Ambiente'));
-    if(groundHeading&&environmentHeading){let node=groundHeading.nextSibling;while(node&&node!==environmentHeading){const next=node.nextSibling;node.remove();node=next;}const holder=document.createElement('div');holder.innerHTML=buildV14GroundReportHtml();while(holder.firstChild)environmentHeading.parentNode.insertBefore(holder.firstChild,environmentHeading);}
-  };
-
-  buildMemoryRecords = function(){
-    const records=buildMemoryRecordsV13(),adv=computed.advancedGround,sens=computed.sensitivity,crit=adv.criticalScenario,pad=adv.criticalPad;
-    records.push(
-      {code:'MC-SO-10',category:'Apoio',title:'Peso vertical total considerado',formula:'W = Wmáquina + Wcarga,projeto',values:`W = ${fmt(crit?.craneKn,2)} + ${fmt(crit?.loadKn,2)} kN`,result:crit?`${fmt(crit.totalKn,2)} kN`:'Não verificado',source:state.ground.craneCgSource||state.equipment.dataSource||'Fonte não informada',status:verificationStatus('SO-10')},
-      {code:'MC-SO-11',category:'Apoio',title:'Posição da resultante vertical',formula:'xR = Σ(Wi·xi + Mvento,x) / ΣWi; yR = Σ(Wi·yi + Mvento,y) / ΣWi',values:crit?`xR = ${fmt(crit.xResultantM,3)} m; yR = ${fmt(crit.yResultantM,3)} m; azimute ${fmt(crit.azimuthDeg,1)}°`:'—',result:crit?`(${fmt(crit.xResultantM,3)}; ${fmt(crit.yResultantM,3)}) m`:'Não verificado',source:state.ground.stabilitySource||'Critério não informado',status:verificationStatus('SO-12')},
-      {code:'MC-SO-12',category:'Apoio',title:'Reação máxima no envelope',formula:'Rmáx = máx(Ri,θ) × fator de projeto',values:`${adv.analysisCount} posição(ões); fator ${fmt(state.ground.reactionDesignFactor,3)}`,result:adv.maxReactionKn==null?'Não verificada':`${fmt(adv.maxReactionKn,2)} kN`,source:state.ground.reactionSource||'Modelo preliminar sem fonte oficial',status:verificationStatus('SO-10')},
-      {code:'MC-SO-13',category:'Apoio',title:'Pressão máxima individual',formula:'qi = Ri,projeto / (Li × Ci × fator de área)',values:pad?`q = ${fmt(pad.designReactionKn,2)} / ${fmt(pad.areaEff,4)}`:'—',result:adv.worstPressureKpa==null?'Não verificada':`${fmt(adv.worstPressureKpa,2)} kPa`,source:state.ground.soilSource||'Fonte não informada',status:verificationStatus('SO-11')},
-      {code:'MC-SO-14',category:'Apoio',title:'Reserva de estabilidade',formula:'Reserva = 100% − distância radial relativa da resultante à borda do polígono',values:`Utilização máxima = ${fmt(adv.maxStabilityUtilPct,2)}%`,result:adv.minStabilityReservePct==null?'Não verificada':`${fmt(adv.minStabilityReservePct,2)}%`,source:state.ground.stabilitySource||'Critério não informado',status:verificationStatus('SO-12')},
-      {code:'MC-SO-15',category:'Apoio',title:'Flexão preliminar da placa',formula:'σ ≈ 3·q·e²/t² (faixa em balanço simplificada)',values:`q = ${fmt(adv.worstPressureKpa,2)} kPa; σadm = ${fmt(state.ground.padAllowableStressMpa,2)} MPa`,result:adv.maxPadStressMpa==null?'Não verificada':`${fmt(adv.maxPadStressMpa,3)} MPa`,source:state.ground.padSource||'Fonte/projeto da placa não informado',status:verificationStatus('SO-13')},
-      {code:'MC-RB-01',category:'Sensibilidade',title:'Índice de robustez',formula:'IR = 0,60 × menor margem + 0,40 × média das margens normalizadas',values:sens.margins.map(m=>`${m.label}: ${fmt(m.value,0)}`).join('; '),result:`${sens.robustnessIndex}/100`,source:'Cenários determinísticos configurados no módulo Sensibilidade',status:verificationStatus('RB-01')}
-    );return records;
-  };
-
-  automaticConclusion = function(){
-    const text=automaticConclusionV13(),adv=computed.advancedGround,sens=computed.sensitivity;const supportText=adv.maxReactionKn==null?'As reações nas patolas permanecem não verificadas.':`O envelope de apoio indicou reação máxima de ${fmt(adv.maxReactionKn,1)} kN, pressão máxima de ${fmt(adv.worstPressureKpa,1)} kPa e reserva mínima de estabilidade de ${fmt(adv.minStabilityReservePct,1)}%.`;
-    return `${text} ${supportText} A robustez global foi estimada em ${sens.robustnessIndex}/100, com maior sensibilidade a ${sens.criticalMargin.label.toLowerCase()}. Reações oficiais do fabricante, avaliação do terreno e dimensionamento completo das placas prevalecem sobre o modelo preliminar.`;
-  };
-
-  analysisFingerprint = function(){const critical={appVersion:APP_VERSION,revision:state.revision,load:state.load,loadComponents:state.loadComponents,liftingPoints:state.liftingPoints,equipment:state.equipment,loadChart:state.loadChart,criteria:state.criteria,geometry:state.geometry,operationPath:state.operationPath,geometryObstacles:state.geometryObstacles,rigging:state.rigging,accessories:state.accessories,ground:state.ground,sensitivity:state.sensitivity,environment:state.environment,interferences:state.interferences,risks:state.risks,checklist:state.checklist};const text=JSON.stringify(critical);let hash=2166136261;for(let i=0;i<text.length;i++){hash^=text.charCodeAt(i);hash=Math.imul(hash,16777619);}return `IP14-${(hash>>>0).toString(16).toUpperCase().padStart(8,'0')}`;};
-
-  renderManualNav = function(){const labels=['Operação','Carga e CG','Equipamento','Tabela','Trajetória','Catálogos','Patolas e solo','Sensibilidade','Riscos','Memória'];$('#manualNav').innerHTML=labels.map((label,index)=>`<button class="btn btn-sm ${index===0?'btn-primary':''}" data-manual-step="${index}">${index+1}. ${label}</button>`).join('');};
-
-  showSection = function(id){showSectionV13(id);if(id==='ground')setTimeout(()=>{renderV14Ground();drawV14SlewChart();},70);if(id==='sensitivity')setTimeout(renderV14Sensitivity,70);if(id==='engineeringAssistant')setTimeout(renderV14Assistant,40);};
-
-  function initializeV14Events(){
-    $('#btnGenerateSupports')?.addEventListener('click',generateV14Supports);$('#btnCopyCommonPad')?.addEventListener('click',copyV14CommonPad);$('#btnRunGroundEnvelope')?.addEventListener('click',()=>{computed=computeAll();renderComputedViews();showToast('Envelope recalculado',`${computed.advancedGround.analysisCount} posição(ões) analisada(s).`);});
-    $('#btnRunSensitivity')?.addEventListener('click',()=>{computed=computeAll();renderComputedViews();showToast('Sensibilidade recalculada',`Índice de robustez ${computed.robustnessIndex}/100.`);});$('#btnSensitivityDefaults')?.addEventListener('click',v14SensitivityReset);
-    $('#btnAssistantSync')?.addEventListener('click',syncV14Assistant);$('#btnAssistantApply')?.addEventListener('click',applyV14Assistant);$('#btnAssistantAnalyze')?.addEventListener('click',analyzeV14Assistant);
-    document.addEventListener('input',handleV14SupportInput);document.addEventListener('change',handleV14SupportInput);
-    document.addEventListener('click',event=>{const action=event.target.closest('[data-v14-action]');if(!action)return;if(action.dataset.v14Action==='adopt-assistant'){applyV14Assistant();selectCatalogItem(action.dataset.id);}});
-    window.addEventListener('resize',()=>{clearTimeout(window.__v14Resize);window.__v14Resize=setTimeout(()=>{drawV14SlewChart();drawV14RadiusSensitivity();drawV14Tornado();},130);});
-  }
-
-
   function init(){
-    computed=computeAll(); renderAll(); initializeEvents(); initializeV12Events(); initializeV14Events();
+    computed=computeAll(); renderAll(); initializeEvents(); initializeV12Events();
   }
 
   document.addEventListener('DOMContentLoaded',init);

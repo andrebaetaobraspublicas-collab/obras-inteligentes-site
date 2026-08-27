@@ -153,7 +153,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/molapro/` | 304857 bytes | 304857 caracteres |
 | `/calculadora-eixos/` | 231280 bytes | 228654 caracteres |
 | `/mancalpro/` | 1138677 bytes | 1138677 caracteres |
-| `/engrenagecalc/` | 582008 bytes | 578817 caracteres |
+| `/engrenagecalc/` | 683617 bytes | 678412 caracteres |
 | `/volantepro/` | 104335 bytes | 104335 caracteres |
 | `/transmissaopro/` | 317190 bytes | 317190 caracteres |
 | `/tubocalc/` | 256920 bytes | 256920 caracteres |
@@ -181,7 +181,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/acesscheck/` | 200004 bytes | 197102 caracteres |
 | `/canteiro-sicro/` | 246827 bytes | 244312 caracteres |
 | `/gruapro/` | 607247 bytes | 602186 caracteres |
-| `/icamento-pro/` | 700335 bytes | 692570 caracteres |
+| `/icamento-pro/` | 807771 bytes | 799121 caracteres |
 
 ## Estrutura local principal
 
@@ -883,9 +883,10 @@ Arquivo: `engrenagecalc/index.html`
 
 Ultima inclusao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\EngrenageCalc Pro v2.0 (offline).html`
-- Data: 31/07/2026
-- Alteracao: atualizacao do aplicativo EngrenageCalc Pro para a versao standalone v2.0.
+- Fonte: `C:\Users\ACER\Documents\Downloads\index (45).html`
+- Data: 27/08/2026
+- Alteracao: substituicao integral de `engrenagecalc/index.html` pela nova versao EngrenageCalc Pro v2.0 enviada, com manual interativo.
+- Backup da versao anterior salvo em `C:\Obras Inteligentes\backups\engrenagecalc-index-before-v20-20260827-081521.html`.
 
 Observacoes:
 
@@ -1292,10 +1293,10 @@ Arquivo: `icamento-pro/index.html`
 
 Ultima atualizacao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\IcamentoPro_v1.3.html`
+- Fonte: `C:\Users\ACER\Documents\Downloads\IcamentoPro_v1.4.html`
 - Data: 27/08/2026
-- Alteracao: substituicao integral de `icamento-pro/index.html` pela versao IcamentoPro v1.3 enviada, preservando o card existente no filtro `Estruturas`.
-- Backup da versao anterior salvo em `C:\Obras Inteligentes\backups\icamento-pro-index-before-v13-20260827-063425.html`.
+- Alteracao: substituicao integral de `icamento-pro/index.html` pela versao IcamentoPro v1.4 enviada, preservando o card existente no filtro `Estruturas`.
+- Backup da versao anterior salvo em `C:\Obras Inteligentes\backups\icamento-pro-index-before-v14-20260827-081521.html`.
 - Backup da home anterior a inclusao original salvo em `C:\Obras Inteligentes\backups\index-before-icamento-pro-20260827-004151.html`.
 
 Observacoes:
