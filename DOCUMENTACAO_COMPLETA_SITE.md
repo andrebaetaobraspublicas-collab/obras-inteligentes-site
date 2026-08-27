@@ -157,7 +157,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/volantepro/` | 104335 bytes | 104335 caracteres |
 | `/transmissaopro/` | 317190 bytes | 317190 caracteres |
 | `/tubocalc/` | 256920 bytes | 256920 caracteres |
-| `/compressorselect-pro/` | 791039 bytes | 791039 caracteres |
+| `/compressorselect-pro/` | 1267287 bytes | 1260281 caracteres |
 | `/ventiladorpro/` | 669301 bytes | 669301 caracteres |
 | `/hidrocalc/` | 567089 bytes | 565179 caracteres |
 | `/elevadorcalc/` | 386384 bytes | 382143 caracteres |
@@ -181,7 +181,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/acesscheck/` | 200004 bytes | 197102 caracteres |
 | `/canteiro-sicro/` | 246827 bytes | 244312 caracteres |
 | `/gruapro/` | 607247 bytes | 602186 caracteres |
-| `/icamento-pro/` | 267544 bytes | 264831 caracteres |
+| `/icamento-pro/` | 700335 bytes | 692570 caracteres |
 
 ## Estrutura local principal
 
@@ -955,9 +955,10 @@ Arquivo: `compressorselect-pro/index.html`
 
 Ultima atualizacao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\CompressorSelect Pro v2.3 (offline).html`
-- Data: 02/08/2026
-- Alteracao: substituicao integral de `compressorselect-pro/index.html` pela versao 2.3 do aplicativo.
+- Fonte: `C:\Users\ACER\Documents\Downloads\CompressorSelect_Pro_v2.4.html`
+- Data: 27/08/2026
+- Alteracao: substituicao integral de `compressorselect-pro/index.html` pela versao CompressorSelect Pro v2.4 enviada.
+- Backup da versao anterior salvo em `C:\Obras Inteligentes\backups\compressorselect-pro-index-before-v24-20260827-063425.html`.
 
 Observacoes:
 
@@ -1289,12 +1290,13 @@ Observacoes:
 Rota: `/icamento-pro/`  
 Arquivo: `icamento-pro/index.html`
 
-Ultima inclusao:
+Ultima atualizacao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\IcamentoPro_v1.1.html`
+- Fonte: `C:\Users\ACER\Documents\Downloads\IcamentoPro_v1.3.html`
 - Data: 27/08/2026
-- Alteracao: inclusao de novo card na home, no filtro `Estruturas`, e publicacao do aplicativo IcamentoPro v1.1 como HTML standalone.
-- Backup da home anterior salvo em `C:\Obras Inteligentes\backups\index-before-icamento-pro-20260827-004151.html`.
+- Alteracao: substituicao integral de `icamento-pro/index.html` pela versao IcamentoPro v1.3 enviada, preservando o card existente no filtro `Estruturas`.
+- Backup da versao anterior salvo em `C:\Obras Inteligentes\backups\icamento-pro-index-before-v13-20260827-063425.html`.
+- Backup da home anterior a inclusao original salvo em `C:\Obras Inteligentes\backups\index-before-icamento-pro-20260827-004151.html`.
 
 Observacoes:
 
