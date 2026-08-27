@@ -43,7 +43,7 @@ Excecoes/observacoes:
 
 ## Inventario verificado dos aplicativos
 
-Inventario originalmente verificado em 21/07/2026 e atualizado em 26/08/2026 para inclusao do GruaPro no filtro Estruturas. Todos os cards listados possuem arquivo local correspondente.
+Inventario originalmente verificado em 21/07/2026 e atualizado em 27/08/2026 para inclusao do IcamentoPro no filtro Estruturas. Todos os cards listados possuem arquivo local correspondente.
 
 | Card | Aplicativo | Rota publicada | Arquivo local principal | Status local | Status site |
 |---|---|---|---|---|---|
@@ -110,6 +110,7 @@ Inventario originalmente verificado em 21/07/2026 e atualizado em 26/08/2026 par
 | 61 / ACESSIBILIDADE | AcessCheck | `/acesscheck/` | `C:\Obras Inteligentes\acesscheck\index.html` | existe | 200 |
 | 62 / CANTEIRO SICRO | Canteiro de Obras - Sicro | `/canteiro-sicro/` | `C:\Obras Inteligentes\canteiro-sicro\index.html` | existe | 200 |
 | 63 / GRUAS | GruaPro | `/gruapro/` | `C:\Obras Inteligentes\gruapro\index.html` | existe | 200 |
+| 64 / ICAMENTO | IcamentoPro | `/icamento-pro/` | `C:\Obras Inteligentes\icamento-pro\index.html` | existe | 200 |
 
 ## Tamanhos verificados
 
@@ -180,6 +181,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/acesscheck/` | 200004 bytes | 197102 caracteres |
 | `/canteiro-sicro/` | 246827 bytes | 244312 caracteres |
 | `/gruapro/` | 607247 bytes | 602186 caracteres |
+| `/icamento-pro/` | 267544 bytes | 264831 caracteres |
 
 ## Estrutura local principal
 
@@ -1282,6 +1284,25 @@ Observacoes:
 - O card foi classificado no filtro `Estruturas`.
 - Validar apos futuras alteracoes se os modulos de IFC/BIM, planejamento de gruas, documentacao, raio de operacao, interferencias, produtividade, seguranca e relatorios continuam carregando corretamente.
 
+### IcamentoPro
+
+Rota: `/icamento-pro/`  
+Arquivo: `icamento-pro/index.html`
+
+Ultima inclusao:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\IcamentoPro_v1.1.html`
+- Data: 27/08/2026
+- Alteracao: inclusao de novo card na home, no filtro `Estruturas`, e publicacao do aplicativo IcamentoPro v1.1 como HTML standalone.
+- Backup da home anterior salvo em `C:\Obras Inteligentes\backups\index-before-icamento-pro-20260827-004151.html`.
+
+Observacoes:
+
+- Aplicativo standalone empacotado em HTML unico, com tela de abertura e manual.
+- Tela inicial do site aponta para `/icamento-pro/`.
+- O card foi classificado no filtro `Estruturas`.
+- Validar apos futuras alteracoes se os modulos de cargas, raio de operacao, acessorios, estabilidade, interferencias, seguranca, planejamento e relatorios continuam carregando corretamente.
+
 ### RecebeObra Pro
 
 Rota: `/recebeobra-pro/`  
@@ -1603,6 +1624,7 @@ $headers=@{ 'User-Agent'='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
   '/alvenariapro/',
   '/andaimefach-pro/',
   '/gruapro/',
+  '/icamento-pro/',
   '/recebeobra-pro/',
   '/criticaopex/',
   '/pmoc-manager/',
