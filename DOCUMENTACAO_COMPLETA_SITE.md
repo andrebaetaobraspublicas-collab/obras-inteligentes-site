@@ -1051,7 +1051,7 @@ Observacoes:
 
 - Aplicativo standalone empacotado em HTML unico, com tela de abertura 3D.
 - Tela inicial do site aponta para `/thermox-pro/`.
-- O card foi classificado no filtro `Engenharia Mecanica`.
+- O card foi remanejado do filtro `Engenharia Mecanica` para `Ar condicionado e ventilacao` em 27/08/2026.
 - Validar apos futuras alteracoes se dimensionamento e verificacao de trocadores de calor, balanco termico, LMTD, epsilon-NTU, perdas hidraulicas, custos, catalogo comercial, RFQ, mudanca de fase, otimizacao e abertura 3D continuam carregando corretamente.
 
 ### Comparador de Honorarios de Projetos
