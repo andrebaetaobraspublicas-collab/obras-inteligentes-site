@@ -43,7 +43,7 @@ Excecoes/observacoes:
 
 ## Inventario verificado dos aplicativos
 
-Inventario originalmente verificado em 21/07/2026 e atualizado em 27/08/2026 para inclusao do IcamentoPro no filtro Estruturas. Todos os cards listados possuem arquivo local correspondente.
+Inventario originalmente verificado em 21/07/2026 e atualizado em 27/08/2026 para reorganizacao dos filtros `Equipamentos, Apoios e Montagens`, `Instalacoes Eletricas` e `Instalacoes Hidrosanitarias`. Todos os cards listados possuem arquivo local correspondente.
 
 | Card | Aplicativo | Rota publicada | Arquivo local principal | Status local | Status site |
 |---|---|---|---|---|---|
@@ -427,6 +427,7 @@ Ultima versao publicada:
 Observacoes:
 
 - Aplicativo standalone com tela de abertura e aviso legal.
+- O card foi remanejado do filtro `Instalacoes` para `Instalacoes Eletricas` em 27/08/2026.
 - Validar apos futuras alteracoes se abertura, aceite, calculo de carga termica, psicrometria, catalogo, documentacao, rede ramificada, balanceamento de dutos e exportacoes continuam carregando corretamente.
 
 ### CircuitoPro
@@ -445,6 +446,7 @@ Ultima atualizacao:
 Observacoes:
 
 - Aplicativo standalone.
+- O card foi remanejado do filtro `Instalacoes` para `Instalacoes Eletricas` em 27/08/2026.
 - Validado com carregamento da tela legal e presenca da interface principal.
 
 ### ReservatorioPro
@@ -463,6 +465,7 @@ Observacoes:
 
 - Aplicativo standalone.
 - Tela inicial do site aponta para `/reservatoriopro/`.
+- O card foi remanejado do filtro `Instalacoes` para `Instalacoes Hidrosanitarias` em 27/08/2026.
 - Validar apos futuras alteracoes se a tela de abertura, calculos, exportacoes e relatorios continuam carregando sem dependencias externas.
 
 ### BombaPro
@@ -481,6 +484,7 @@ Observacoes:
 
 - Aplicativo standalone com tela de abertura e aviso legal.
 - Usa bibliotecas via CDN: Chart.js, xlsx e jsPDF.
+- O card foi remanejado do filtro `Instalacoes` para `Instalacoes Hidrosanitarias` em 27/08/2026.
 - Tela inicial do site aponta para `/bombapro/`.
 - Validar apos futuras alteracoes se graficos, catalogo de bombas, selecao inteligente, otimizacao tecnico-economica, memoria de calculo, especificacao profissional, exportacao Excel e relatorios PDF continuam carregando corretamente.
 
@@ -601,6 +605,7 @@ Observacoes:
 
 - Aplicativo standalone empacotado em HTML unico.
 - Tela inicial do site aponta para `/solarpro/`.
+- O card foi remanejado do filtro `Instalacoes` para `Instalacoes Eletricas` em 27/08/2026.
 - Validar apos futuras alteracoes se a abertura, os calculos de geracao fotovoltaica, economia, payback, exportacoes e relatorios continuam carregando corretamente.
 
 ### Calculadora de Residuos e PGRCC
@@ -678,6 +683,7 @@ Observacoes:
 
 - Aplicativo standalone empacotado em HTML unico.
 - Tela inicial do site aponta para `/aterramentopro/`.
+- O card foi remanejado do filtro `Instalacoes` para `Instalacoes Eletricas` em 27/08/2026.
 - Validar apos futuras alteracoes se a abertura, os calculos de aterramento, resistividade do solo, hastes, malhas, resistencia equivalente e relatorios continuam carregando corretamente.
 
 ### ParafusoPro
@@ -801,6 +807,7 @@ Observacoes:
 
 - Aplicativo standalone empacotado em HTML unico.
 - Tela inicial do site aponta para `/subestacaopro/`.
+- O card foi remanejado do filtro `Instalacoes` para `Instalacoes Eletricas` em 27/08/2026.
 - Validar apos futuras alteracoes se a abertura, dimensionamento de subestacoes prediais, demandas, transformadores, protecoes e relatorios continuam carregando corretamente.
 
 ### BrucknerCalc
@@ -1098,7 +1105,7 @@ Observacoes:
 
 - Aplicativo standalone empacotado em HTML unico, com tela de abertura 3D.
 - Tela inicial do site aponta para `/geradorpro/`.
-- O card foi classificado no filtro `Instalacoes`.
+- O card foi classificado no filtro `Instalacoes Eletricas`.
 - Validar apos futuras alteracoes se selecao, dimensionamento, autonomia de grupos geradores, cargas prioritarias, partida de motores, curto-circuito, catalogo e relatorios continuam carregando corretamente.
 
 ### SPDAPro
@@ -1116,7 +1123,7 @@ Observacoes:
 
 - Aplicativo standalone empacotado em HTML unico, extraido do ZIP enviado.
 - Tela inicial do site aponta para `/spdapro/`.
-- O card foi classificado no filtro `Instalacoes`.
+- O card foi classificado no filtro `Instalacoes Eletricas`.
 - Validar apos futuras alteracoes se analise de risco, SPDA externo, aterramento, equipotencializacao, potenciais preliminares, otimizacao tecnico-economica, abertura 3D e relatorios continuam carregando corretamente.
 
 ### LumiPro
@@ -1134,7 +1141,7 @@ Observacoes:
 
 - Aplicativo standalone empacotado em HTML unico.
 - Tela inicial do site aponta para `/lumipro/`.
-- O card foi classificado no filtro `Instalacoes`.
+- O card foi classificado no filtro `Instalacoes Eletricas`.
 - Validar apos futuras alteracoes se dimensionamento luminotecnico, ambientes, luminarias, iluminancia, catalogo e relatorios continuam carregando corretamente.
 
 ### EsgotoCalc Pro
@@ -1192,7 +1199,7 @@ Observacoes:
 
 - Aplicativo standalone empacotado em HTML unico, com tela de abertura e aviso de responsabilidade.
 - Tela inicial do site aponta para `/hidrosan-pro/`.
-- O card foi classificado no filtro `Instalacoes`.
+- O card foi classificado no filtro `Instalacoes Hidrosanitarias`.
 - Validar apos futuras alteracoes se os modulos de agua fria, esgoto sanitario, ventilacao sanitaria, reservatorios, criterios normativos, exemplos, relatorios e memorias de calculo continuam carregando corretamente.
 
 ### TerceirizaPro
@@ -1229,7 +1236,7 @@ Observacoes:
 
 - Aplicativo standalone empacotado em HTML unico.
 - Tela inicial do site aponta para `/cimbrepro/`.
-- O card foi classificado nos filtros `Estruturas` e `Equipamentos, Apoios e Montagens`.
+- O card foi remanejado do filtro `Estruturas` para `Equipamentos, Apoios e Montagens` em 27/08/2026.
 - Validar apos futuras alteracoes se os modulos de cargas, malha de torres, longarinas, prazos de desforma, verificacoes tecnicas, relatorio e exportacao IFC continuam carregando corretamente.
 
 ### AlvenariaPro
@@ -1267,7 +1274,7 @@ Observacoes:
 
 - Aplicativo standalone empacotado em HTML unico, com tela de abertura e aviso legal.
 - Tela inicial do site aponta para `/andaimefach-pro/`.
-- O card foi classificado nos filtros `Estruturas` e `Equipamentos, Apoios e Montagens`.
+- O card foi remanejado do filtro `Estruturas` para `Equipamentos, Apoios e Montagens` em 27/08/2026.
 - Validar apos futuras alteracoes se os modulos de geometria da fachada, cargas, vento, ancoragens, verificacao estrutural, otimizacao, cronograma, orcamento, memorial e exportacoes continuam carregando corretamente.
 
 ### GruaPro
@@ -1286,7 +1293,7 @@ Observacoes:
 
 - Aplicativo standalone empacotado em HTML unico, com tela de abertura e manual.
 - Tela inicial do site aponta para `/gruapro/`.
-- O card foi classificado nos filtros `Estruturas` e `Equipamentos, Apoios e Montagens`.
+- O card foi remanejado do filtro `Estruturas` para `Equipamentos, Apoios e Montagens` em 27/08/2026.
 - Validar apos futuras alteracoes se os modulos de IFC/BIM, planejamento de gruas, documentacao, raio de operacao, interferencias, produtividade, seguranca e relatorios continuam carregando corretamente.
 
 ### IcamentoPro
@@ -1306,7 +1313,7 @@ Observacoes:
 
 - Aplicativo standalone empacotado em HTML unico, com tela de abertura e manual.
 - Tela inicial do site aponta para `/icamento-pro/`.
-- O card foi classificado nos filtros `Estruturas` e `Equipamentos, Apoios e Montagens`.
+- O card foi remanejado do filtro `Estruturas` para `Equipamentos, Apoios e Montagens` em 27/08/2026.
 - Validar apos futuras alteracoes se os modulos de cargas, raio de operacao, acessorios, estabilidade, interferencias, seguranca, planejamento e relatorios continuam carregando corretamente.
 
 ### RecebeObra Pro
