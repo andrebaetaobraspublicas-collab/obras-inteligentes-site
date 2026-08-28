@@ -114,6 +114,7 @@ Inventario originalmente verificado em 21/07/2026 e atualizado em 27/08/2026 par
 | 65 / LOCAR OU COMPRAR | Locar ou Comprar Pro | `/locar-ou-comprar-pro/` | `C:\Obras Inteligentes\locar-ou-comprar-pro\index.html` | existe | 200 |
 | 66 / FREIOS | FricCalc | `/friccalc/` | `C:\Obras Inteligentes\friccalc\index.html` | existe | 200 |
 | 67 / PSICROMETRIA | PsicroPro | `/psicropro/` | `C:\Obras Inteligentes\psicropro\index.html` | existe | 200 |
+| 68 / GARAGENS | GaragemPro | `/garagempro/` | `C:\Obras Inteligentes\garagempro\index.html` | existe | 200 |
 
 ## Tamanhos verificados
 
@@ -188,6 +189,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/locar-ou-comprar-pro/` | 488993 bytes | 485317 caracteres |
 | `/friccalc/` | 537204 bytes | 536242 caracteres |
 | `/psicropro/` | 360038 bytes | 357014 caracteres |
+| `/garagempro/` | 200812 bytes | 199073 caracteres |
 
 ## Estrutura local principal
 
@@ -1098,6 +1100,25 @@ Observacoes:
 - Backup da home anterior salvo em `C:\Obras Inteligentes\backups\index-before-psicropro-20260828-074210.html`.
 - Validar apos futuras alteracoes se os calculos psicrometricos, propriedades do ar umido, conforto, climatizacao, processos termicos e relatorios continuam carregando corretamente.
 
+### GaragemPro
+
+Rota: `/garagempro/`  
+Arquivo: `garagempro/index.html`
+
+Ultima inclusao:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\GaragemPro_v1.0.html`
+- Data: 28/08/2026
+- Alteracao: inclusao de novo card na home, no filtro `Ar condicionado e ventilacao`, e publicacao do aplicativo GaragemPro v1.0 - Ventilacao e Exaustao de Garagens como HTML standalone.
+
+Observacoes:
+
+- Aplicativo standalone empacotado em HTML unico.
+- Tela inicial do site aponta para `/garagempro/`.
+- O card foi classificado no filtro `Ar condicionado e ventilacao`.
+- Backup da home anterior salvo em `C:\Obras Inteligentes\backups\index-before-garagempro-20260828-195803.html`.
+- Validar apos futuras alteracoes se ventilacao e exaustao de garagens, vazoes, renovacao de ar, controle de poluentes, exaustores, memoria e relatorios continuam carregando corretamente.
+
 ### Comparador de Honorarios de Projetos
 
 Rota: `/comparador-honorarios-projetos/`  
@@ -1692,6 +1713,7 @@ $headers=@{ 'User-Agent'='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
   '/elevadorcalc/',
   '/thermox-pro/',
   '/psicropro/',
+  '/garagempro/',
   '/comparador-honorarios-projetos/',
   '/consultoriapro-rodoviario/',
   '/geradorpro/',
