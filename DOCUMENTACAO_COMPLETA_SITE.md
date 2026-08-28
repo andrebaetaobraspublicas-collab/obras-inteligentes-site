@@ -976,7 +976,7 @@ Observacoes:
 
 - Aplicativo standalone empacotado em HTML unico.
 - Tela inicial do site aponta para `/compressorselect-pro/`.
-- O card foi classificado no filtro `Engenharia Mecanica`.
+- O card foi remanejado do filtro `Engenharia Mecanica` para `Equipamentos, Apoios e Montagens` em 27/08/2026.
 - Validar apos futuras alteracoes se selecao e dimensionamento de compressores de ar, catalogo de modelos, demanda pneumatica, reservatorio, rede de ar comprimido, qualidade do ar, analise energetica e relatorios continuam carregando corretamente.
 
 ### VentiladorPro
@@ -1033,7 +1033,7 @@ Observacoes:
 
 - Aplicativo standalone empacotado em HTML unico.
 - Tela inicial do site aponta para `/elevadorcalc/`.
-- O card foi classificado no filtro `Engenharia Mecanica`.
+- O card foi remanejado do filtro `Engenharia Mecanica` para `Equipamentos, Apoios e Montagens` em 27/08/2026.
 - Validar apos futuras alteracoes se especificacao, dimensionamento, trafego vertical, ciclo de vida, otimizacao e estimativa de custos de elevadores continuam carregando corretamente.
 
 ### ThermoX Pro
