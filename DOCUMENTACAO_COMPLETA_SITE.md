@@ -112,6 +112,7 @@ Inventario originalmente verificado em 21/07/2026 e atualizado em 27/08/2026 par
 | 63 / GRUAS | GruaPro | `/gruapro/` | `C:\Obras Inteligentes\gruapro\index.html` | existe | 200 |
 | 64 / ICAMENTO | IcamentoPro | `/icamento-pro/` | `C:\Obras Inteligentes\icamento-pro\index.html` | existe | 200 |
 | 65 / LOCAR OU COMPRAR | Locar ou Comprar Pro | `/locar-ou-comprar-pro/` | `C:\Obras Inteligentes\locar-ou-comprar-pro\index.html` | existe | 200 |
+| 66 / FREIOS | FricCalc | `/friccalc/` | `C:\Obras Inteligentes\friccalc\index.html` | existe | 200 |
 
 ## Tamanhos verificados
 
@@ -184,6 +185,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/gruapro/` | 607247 bytes | 602186 caracteres |
 | `/icamento-pro/` | 1073180 bytes | 1062059 caracteres |
 | `/locar-ou-comprar-pro/` | 488993 bytes | 485317 caracteres |
+| `/friccalc/` | 537204 bytes | 536242 caracteres |
 
 ## Estrutura local principal
 
@@ -960,6 +962,25 @@ Observacoes:
 - O card foi classificado no filtro `Engenharia Mecanica`.
 - Validar apos futuras alteracoes se dimensionamento de tubulacoes industriais, perdas de carga, espessuras, materiais, suportes, expansao termica, novos modulos da versao 2.0 e relatorios continuam carregando corretamente.
 
+### FricCalc
+
+Rota: `/friccalc/`  
+Arquivo: `friccalc/index.html`
+
+Ultima inclusao:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\FricCalc - Freios e Embreagens (offline) (3).html`
+- Data: 28/08/2026
+- Alteracao: inclusao de novo card na home, no filtro `Engenharia Mecanica`, e publicacao do aplicativo FricCalc - Embreagens e Freios como HTML standalone.
+
+Observacoes:
+
+- Aplicativo standalone empacotado em HTML unico.
+- Tela inicial do site aponta para `/friccalc/`.
+- O card foi classificado no filtro `Engenharia Mecanica`.
+- Backup da home anterior salvo em `C:\Obras Inteligentes\backups\index-before-friccalc-20260828-072344.html`.
+- Validar apos futuras alteracoes se os calculos de freios, embreagens, atrito, torque, energia dissipada, pressao, aquecimento e relatorios continuam carregando corretamente.
+
 ### CompressorSelect Pro
 
 Rota: `/compressorselect-pro/`  
@@ -1641,6 +1662,7 @@ $headers=@{ 'User-Agent'='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
   '/volantepro/',
   '/transmissaopro/',
   '/tubocalc/',
+  '/friccalc/',
   '/compressorselect-pro/',
   '/ventiladorpro/',
   '/hidrocalc/',
