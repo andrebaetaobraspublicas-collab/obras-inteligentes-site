@@ -43,7 +43,7 @@ Excecoes/observacoes:
 
 ## Inventario verificado dos aplicativos
 
-Inventario originalmente verificado em 21/07/2026 e atualizado em 27/08/2026 para reorganizacao dos filtros `Equipamentos, Apoios e Montagens`, `Instalacoes Eletricas` e `Instalacoes Hidrosanitarias`. Todos os cards listados possuem arquivo local correspondente.
+Inventario originalmente verificado em 21/07/2026 e atualizado em 27/08/2026 para reorganizacao dos filtros `Equipamentos, Apoios e Montagens`, `Instalacoes Eletricas`, `Instalacoes Hidrosanitarias` e `Ar condicionado e ventilacao`. Todos os cards listados possuem arquivo local correspondente.
 
 | Card | Aplicativo | Rota publicada | Arquivo local principal | Status local | Status site |
 |---|---|---|---|---|---|
@@ -428,6 +428,7 @@ Observacoes:
 
 - Aplicativo standalone com tela de abertura e aviso legal.
 - O card foi remanejado do filtro `Instalacoes` para `Instalacoes Eletricas` em 27/08/2026.
+- O card foi remanejado para o filtro `Ar condicionado e ventilacao` em 27/08/2026.
 - Validar apos futuras alteracoes se abertura, aceite, calculo de carga termica, psicrometria, catalogo, documentacao, rede ramificada, balanceamento de dutos e exportacoes continuam carregando corretamente.
 
 ### CircuitoPro
@@ -993,7 +994,7 @@ Observacoes:
 
 - Aplicativo standalone empacotado em HTML unico, com tela de abertura e aviso legal.
 - Tela inicial do site aponta para `/ventiladorpro/`.
-- O card foi classificado no filtro `Engenharia Mecanica`.
+- O card foi remanejado do filtro `Engenharia Mecanica` para `Ar condicionado e ventilacao` em 27/08/2026.
 - Validar apos futuras alteracoes se dimensionamento, selecao e otimizacao tecnico-economica de ventiladores, cenarios, sensibilidade, energia, acustica, vibracao e memoria tecnica continuam carregando corretamente.
 
 ### HidroCalc
@@ -1372,6 +1373,7 @@ Observacoes:
 
 - Aplicativo standalone empacotado em HTML unico, com tela de abertura 3D, aviso legal e manual visual offline.
 - Tela inicial do site aponta para `/pmoc-manager/`.
+- O card foi remanejado do filtro `Manutencao Predial` para `Ar condicionado e ventilacao` em 27/08/2026.
 - Backup da home anterior salvo em `C:\Obras Inteligentes\backups\index-before-pmoc-manager-20260817-20260817-073334.html`.
 - Validar apos futuras alteracoes se os modulos de edificacao, equipamentos, plano PMOC, ordens de servico, QAI, ensaios, energia, pecas, indicadores, relatorios, anexos e armazenamento local continuam carregando corretamente.
 
