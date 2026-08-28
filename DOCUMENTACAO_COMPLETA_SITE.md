@@ -150,7 +150,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/protendpro/` | 915441 bytes | 915441 caracteres |
 | `/eventogramapro/` | 728843 bytes | 728843 caracteres |
 | `/termo-massa/` | 199232 bytes | 196348 caracteres |
-| `/cabocalc/` | 129693 bytes | 129693 caracteres |
+| `/cabocalc/` | 206539 bytes | 202935 caracteres |
 | `/subestacaopro/` | 730239 bytes | 730239 caracteres |
 | `/brucknercalc/` | 1479721 bytes | 1475264 caracteres |
 | `/molapro/` | 304857 bytes | 304857 caracteres |
@@ -785,11 +785,12 @@ Observacoes:
 Rota: `/cabocalc/`  
 Arquivo: `cabocalc/index.html`
 
-Ultima inclusao:
+Ultima atualizacao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\CaboCalc - Standalone.html`
-- Data: 25/07/2026
-- Alteracao: inclusao de novo card na home e publicacao do aplicativo como HTML standalone.
+- Fonte: `C:\Users\ACER\Documents\Downloads\index (48).html`
+- Data: 28/08/2026
+- Alteracao: substituicao integral de `cabocalc/index.html` pela nova versao CaboCalc - Cabos estruturais estacionarios enviada.
+- Backup da versao anterior salvo em `C:\Obras Inteligentes\backups\cabocalc-index-before-update-20260828-193907.html`.
 
 Observacoes:
 
