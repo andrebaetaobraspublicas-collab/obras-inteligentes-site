@@ -1229,7 +1229,7 @@ Observacoes:
 
 - Aplicativo standalone empacotado em HTML unico.
 - Tela inicial do site aponta para `/cimbrepro/`.
-- O card foi classificado no filtro `Estruturas`.
+- O card foi classificado nos filtros `Estruturas` e `Equipamentos, Apoios e Montagens`.
 - Validar apos futuras alteracoes se os modulos de cargas, malha de torres, longarinas, prazos de desforma, verificacoes tecnicas, relatorio e exportacao IFC continuam carregando corretamente.
 
 ### AlvenariaPro
@@ -1267,7 +1267,7 @@ Observacoes:
 
 - Aplicativo standalone empacotado em HTML unico, com tela de abertura e aviso legal.
 - Tela inicial do site aponta para `/andaimefach-pro/`.
-- O card foi classificado no filtro `Estruturas`.
+- O card foi classificado nos filtros `Estruturas` e `Equipamentos, Apoios e Montagens`.
 - Validar apos futuras alteracoes se os modulos de geometria da fachada, cargas, vento, ancoragens, verificacao estrutural, otimizacao, cronograma, orcamento, memorial e exportacoes continuam carregando corretamente.
 
 ### GruaPro
@@ -1286,7 +1286,7 @@ Observacoes:
 
 - Aplicativo standalone empacotado em HTML unico, com tela de abertura e manual.
 - Tela inicial do site aponta para `/gruapro/`.
-- O card foi classificado no filtro `Estruturas`.
+- O card foi classificado nos filtros `Estruturas` e `Equipamentos, Apoios e Montagens`.
 - Validar apos futuras alteracoes se os modulos de IFC/BIM, planejamento de gruas, documentacao, raio de operacao, interferencias, produtividade, seguranca e relatorios continuam carregando corretamente.
 
 ### IcamentoPro
@@ -1306,7 +1306,7 @@ Observacoes:
 
 - Aplicativo standalone empacotado em HTML unico, com tela de abertura e manual.
 - Tela inicial do site aponta para `/icamento-pro/`.
-- O card foi classificado no filtro `Estruturas`.
+- O card foi classificado nos filtros `Estruturas` e `Equipamentos, Apoios e Montagens`.
 - Validar apos futuras alteracoes se os modulos de cargas, raio de operacao, acessorios, estabilidade, interferencias, seguranca, planejamento e relatorios continuam carregando corretamente.
 
 ### RecebeObra Pro

@@ -520,14 +520,13 @@ body.modal-open{overflow:hidden}
       <button class="filter-btn" type="button" data-filter="Instalacoes">Instala&ccedil;&otilde;es</button>
       <button class="filter-btn" type="button" data-filter="Pavimentacao, Saneamento e Infraestrutura">Pavimenta&ccedil;&atilde;o, Saneamento e Infraestrutura</button>
       <button class="filter-btn" type="button" data-filter="Engenharia Mecanica">Engenharia Mec&acirc;nica</button>
-      <button class="filter-btn" type="button" data-filter="Equipamentos, Apoios e Montagens">Equipamentos, Apoios e Montagens</button>
       <button class="filter-btn" type="button" data-filter="Gestao de Obras e de Contratos">Gest&atilde;o de Obras e de Contratos</button>
       <button class="filter-btn" type="button" data-filter="Manutencao Predial">Manuten&ccedil;&atilde;o Predial</button>
       <button class="filter-btn" type="button" data-filter="Riscos">Riscos</button>
       <button class="filter-btn" type="button" data-filter="Orcamento">Or&ccedil;amento</button>
       <button class="filter-btn" type="button" data-filter="Artigos">Artigos</button>
     </div>
-    <div class="app-filter-status" id="appFilterStatus">65 aplicativos encontrados</div>
+    <div class="app-filter-status" id="appFilterStatus">64 aplicativos encontrados</div>
   </div>
 
   <div class="apps">
@@ -1503,11 +1502,11 @@ body.modal-open{overflow:hidden}
     ["/equivaleclt/", ["Orcamento", "equivaleclt clt pj pessoa juridica remuneracao encargos sinapi beneficios tributos fgts ferias decimo terceiro equivalencia orcamento"]],
     ["/hidrosan-pro/", ["Instalacoes", "hidrosan pro hidrossanitario hidrossanitaria instalacoes prediais agua fria esgoto sanitario ventilacao sanitaria reservatorios nbr 5626 nbr 8160 memoria calculo"]],
     ["/terceirizapro/", ["Gestao de Obras e de Contratos", "terceirizapro terceirizacao terceirizacao conta vinculada conta deposito vinculada contratos gestao fiscalizacao medicao glosa provisoes trabalhistas encargos fato gerador lei 14133"]],
-    ["/cimbrepro/", [["Estruturas", "Equipamentos, Apoios e Montagens"], "cimbrepro cimbres escoramentos metalicos lajes formas longarinas torres escoras desforma reescoramento cargas ifc estruturas equipamentos apoios montagens"]],
+    ["/cimbrepro/", ["Estruturas", "cimbrepro cimbres escoramentos metalicos lajes formas longarinas torres escoras desforma reescoramento cargas ifc estruturas"]],
     ["/alvenariapro/", ["Estruturas", "alvenariapro alvenaria estrutural blocos graute armaduras cintas paredes cargas verticais flexo compressao cisalhamento nbr 16868 estruturas"]],
-    ["/andaimefach-pro/", [["Estruturas", "Equipamentos, Apoios e Montagens"], "andaimefach pro andaimes fachadeiros montagem carga fachadas vento ancoragens contraventamento verificacao estrutural nr18 nr35 nbr 16492 nbr 6123 estruturas equipamentos apoios montagens"]],
-    ["/gruapro/", [["Estruturas", "Equipamentos, Apoios e Montagens"], "gruapro grua gruas planejamento documentacao ifc bim equipamentos obra raio operacao interferencias produtividade seguranca estruturas apoios montagens"]],
-    ["/icamento-pro/", [["Estruturas", "Equipamentos, Apoios e Montagens"], "icamento pro icamentopro icamento içamento cargas guindaste grua raio operacao acessorios estabilidade interferencias seguranca planejamento rigging estruturas equipamentos apoios montagens"]],
+    ["/andaimefach-pro/", ["Estruturas", "andaimefach pro andaimes fachadeiros montagem carga fachadas vento ancoragens contraventamento verificacao estrutural nr18 nr35 nbr 16492 nbr 6123 estruturas"]],
+    ["/gruapro/", ["Estruturas", "gruapro grua gruas planejamento documentacao ifc bim equipamentos obra raio operacao interferencias produtividade seguranca estruturas"]],
+    ["/icamento-pro/", ["Estruturas", "icamento pro icamentopro icamento içamento cargas guindaste grua raio operacao acessorios estabilidade interferencias seguranca planejamento rigging estruturas"]],
     ["/recebeobra-pro/", ["Gestao de Obras e de Contratos", "recebeobra pro recebimento obras publicas comissionamento ensaios vistoria punch list prontuario entrega contrato fiscalizacao recebimento provisorio definitivo garantia relatorios"]],
     ["/criticaopex/", ["Manutencao Predial", "criticaopex critica opex manutencao predial vistoria anomalias matriz gos criticidade patologias servicos teto orcamentario otimizacao relatorios"]],
     ["/pmoc-manager/", ["Manutencao Predial", "pmoc manager plano manutencao operacao controle climatizacao ar condicionado avac hvac equipamentos rotinas ordens servico qualidade ar indicadores relatorios"]],
@@ -1539,9 +1538,8 @@ body.modal-open{overflow:hidden}
 
   appCards.forEach(function(card){
     const entry = entries.get(cardPath(card)) || ["Gestao de Obras e de Contratos", ""];
-    const categories = Array.isArray(entry[0]) ? entry[0] : [entry[0]];
-    card.dataset.category = categories.join("|");
-    card.dataset.search = normalize(card.textContent + " " + categories.join(" ") + " " + entry[1]);
+    card.dataset.category = entry[0];
+    card.dataset.search = normalize(card.textContent + " " + entry[0] + " " + entry[1]);
   });
 
   postCards.forEach(function(card){
@@ -1566,8 +1564,7 @@ body.modal-open{overflow:hidden}
     let visiblePosts = 0;
 
     appCards.forEach(function(card){
-      const categories = (card.dataset.category || "").split("|");
-      const matchesCategory = activeFilter === "todos" || categories.includes(activeFilter);
+      const matchesCategory = activeFilter === "todos" || card.dataset.category === activeFilter;
       const matchesSearch = !query || card.dataset.search.includes(query);
       const shouldShow = activeFilter !== "Artigos" && matchesCategory && matchesSearch;
       card.classList.toggle("is-hidden", !shouldShow);
