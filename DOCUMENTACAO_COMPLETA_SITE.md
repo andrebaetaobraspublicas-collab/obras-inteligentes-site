@@ -187,7 +187,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/icamento-pro/` | 1073180 bytes | 1062059 caracteres |
 | `/locar-ou-comprar-pro/` | 488993 bytes | 485317 caracteres |
 | `/friccalc/` | 537204 bytes | 536242 caracteres |
-| `/psicropro/` | 242098 bytes | 240405 caracteres |
+| `/psicropro/` | 360038 bytes | 357014 caracteres |
 
 ## Estrutura local principal
 
@@ -1082,11 +1082,12 @@ Observacoes:
 Rota: `/psicropro/`  
 Arquivo: `psicropro/index.html`
 
-Ultima inclusao:
+Ultima atualizacao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\PsicroPro_v1.6.html`
+- Fonte: `C:\Users\ACER\Documents\Downloads\PsicroPro_v2.0.html`
 - Data: 28/08/2026
-- Alteracao: inclusao de novo card na home, no filtro `Ar condicionado e ventilacao`, e publicacao do aplicativo PsicroPro v1.6 - Psicrometria Aplicada como HTML standalone.
+- Alteracao: substituicao integral de `psicropro/index.html` pela versao PsicroPro v2.0 - Psicrometria, Balanco de Ar e Assistente HVAC enviada, preservando o card existente no filtro `Ar condicionado e ventilacao`.
+- Backup da versao anterior salvo em `C:\Obras Inteligentes\backups\psicropro-index-before-v20-20260828-103612.html`.
 
 Observacoes:
 
