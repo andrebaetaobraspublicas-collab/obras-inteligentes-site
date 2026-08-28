@@ -183,7 +183,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/canteiro-sicro/` | 246827 bytes | 244312 caracteres |
 | `/gruapro/` | 607247 bytes | 602186 caracteres |
 | `/icamento-pro/` | 1073180 bytes | 1062059 caracteres |
-| `/locar-ou-comprar-pro/` | 372920 bytes | 370117 caracteres |
+| `/locar-ou-comprar-pro/` | 488993 bytes | 485317 caracteres |
 
 ## Estrutura local principal
 
@@ -1420,11 +1420,12 @@ Observacoes:
 Rota: `/locar-ou-comprar-pro/`  
 Arquivo: `locar-ou-comprar-pro/index.html`
 
-Ultima inclusao:
+Ultima atualizacao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\LocarOuComprarPro_v1.4.html`
+- Fonte: `C:\Users\ACER\Documents\Downloads\LocarOuComprarPro_v1.7.html`
 - Data: 27/08/2026
-- Alteracao: inclusao de novo card na home, no filtro `Orcamento`, e publicacao do aplicativo Locar ou Comprar Pro v1.4 como HTML standalone.
+- Alteracao: substituicao integral de `locar-ou-comprar-pro/index.html` pela versao Locar ou Comprar Pro v1.7 enviada, preservando o card existente no filtro `Orcamento`.
+- Backup da versao anterior salvo em `C:\Obras Inteligentes\backups\locar-ou-comprar-pro-index-before-v17-20260827-213251.html`.
 
 Observacoes:
 
