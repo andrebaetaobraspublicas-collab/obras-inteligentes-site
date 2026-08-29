@@ -160,7 +160,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/mancalpro/` | 1138677 bytes | 1138677 caracteres |
 | `/engrenagecalc/` | 683617 bytes | 678412 caracteres |
 | `/volantepro/` | 104335 bytes | 104335 caracteres |
-| `/transmissaopro/` | 317190 bytes | 317190 caracteres |
+| `/transmissaopro/` | 424776 bytes | 420488 caracteres |
 | `/tubocalc/` | 388607 bytes | 383056 caracteres |
 | `/compressorselect-pro/` | 1267287 bytes | 1260281 caracteres |
 | `/ventiladorpro/` | 669301 bytes | 669301 caracteres |
@@ -940,9 +940,10 @@ Arquivo: `transmissaopro/index.html`
 
 Ultima atualizacao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\TransmissaoPro_v6.0_vida_dinamica_alinhamento_desenho.html`
-- Data: 03/08/2026
-- Alteracao: substituicao integral de `transmissaopro/index.html` pela versao 6.0, com vida dinamica, alinhamento e desenho de conjunto.
+- Fonte: `C:\Users\ACER\Documents\Downloads\index (53).html`
+- Data: 29/08/2026
+- Alteracao: substituicao integral de `transmissaopro/index.html` pela nova versao TransmissaoPro v6.0 enviada, preservando o card existente e o filtro `Engenharia Mecanica`.
+- Backup da versao anterior salvo em `C:\Obras Inteligentes\backups\transmissaopro-index-before-index53-20260829-034504.html`.
 
 Observacoes:
 
