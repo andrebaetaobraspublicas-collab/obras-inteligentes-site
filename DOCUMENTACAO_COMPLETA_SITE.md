@@ -191,7 +191,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/friccalc/` | 537204 bytes | 536242 caracteres |
 | `/psicropro/` | 360038 bytes | 357014 caracteres |
 | `/garagempro/` | 200812 bytes | 199073 caracteres |
-| `/orcamento-forense/` | 1181903 bytes | 1169821 caracteres |
+| `/orcamento-forense/` | 1261281 bytes | 1248445 caracteres |
 
 ## Estrutura local principal
 
@@ -1528,11 +1528,12 @@ Observacoes:
 Rota: `/orcamento-forense/`  
 Arquivo: `orcamento-forense/index.html`
 
-Ultima inclusao:
+Ultima atualizacao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\OrcamentoForense_v2.1 (1).html`
+- Fonte: `C:\Users\ACER\Documents\Downloads\OrcamentoForense_v2.5.html`
 - Data: 29/08/2026
-- Alteracao: inclusao de novo card na home, no filtro `Orcamento`, e publicacao do aplicativo OrcamentoForense v2.1 - Auditoria Estatistica de Orcamentos como HTML standalone.
+- Alteracao: substituicao integral de `orcamento-forense/index.html` pela versao OrcamentoForense v2.5 - Auditoria Estatistica e Contratual enviada, preservando o card existente e o filtro `Orcamento`.
+- Backup da versao anterior salvo em `C:\Obras Inteligentes\backups\orcamento-forense-index-before-v25-20260829-040757.html`.
 
 Observacoes:
 
@@ -1540,7 +1541,7 @@ Observacoes:
 - Tela inicial do site aponta para `/orcamento-forense/`.
 - O card foi classificado no filtro `Orcamento`.
 - Backup da home anterior salvo em `C:\Obras Inteligentes\backups\index-before-orcamento-forense-20260829-032656.html`.
-- Validar apos futuras alteracoes se importacao de planilhas, testes estatisticos, Benford, anomalias, materialidade, priorizacao e nota tecnica automatica continuam carregando corretamente.
+- Validar apos futuras alteracoes se importacao de planilhas, testes estatisticos, Benford, convergencia de evidencias, mapa forense, comparacao contratual, jogo de planilha, materialidade, priorizacao e nota tecnica automatica continuam carregando corretamente.
 
 ## Artigos publicados na home
 
