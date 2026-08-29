@@ -190,7 +190,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/locar-ou-comprar-pro/` | 488993 bytes | 485317 caracteres |
 | `/friccalc/` | 537204 bytes | 536242 caracteres |
 | `/psicropro/` | 360038 bytes | 357014 caracteres |
-| `/garagempro/` | 200812 bytes | 199073 caracteres |
+| `/garagempro/` | 482965 bytes | 479079 caracteres |
 | `/orcamento-forense/` | 1261281 bytes | 1248445 caracteres |
 
 ## Estrutura local principal
@@ -1109,11 +1109,12 @@ Observacoes:
 Rota: `/garagempro/`  
 Arquivo: `garagempro/index.html`
 
-Ultima inclusao:
+Ultima atualizacao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\GaragemPro_v1.0.html`
-- Data: 28/08/2026
-- Alteracao: inclusao de novo card na home, no filtro `Ar condicionado e ventilacao`, e publicacao do aplicativo GaragemPro v1.0 - Ventilacao e Exaustao de Garagens como HTML standalone.
+- Fonte: `C:\Users\ACER\Documents\Downloads\GaragemPro_v1.5.html`
+- Data: 29/08/2026
+- Alteracao: substituicao integral de `garagempro/index.html` pela versao GaragemPro v1.5 - Catalogo Tecnico e Simulacao Dinamica Multizona enviada, preservando o card existente e o filtro `Ar condicionado e ventilacao`.
+- Backup da versao anterior salvo em `C:\Obras Inteligentes\backups\garagempro-index-before-v15-20260829-153822.html`.
 
 Observacoes:
 
@@ -1121,7 +1122,7 @@ Observacoes:
 - Tela inicial do site aponta para `/garagempro/`.
 - O card foi classificado no filtro `Ar condicionado e ventilacao`.
 - Backup da home anterior salvo em `C:\Obras Inteligentes\backups\index-before-garagempro-20260828-195803.html`.
-- Validar apos futuras alteracoes se ventilacao e exaustao de garagens, vazoes, renovacao de ar, controle de poluentes, exaustores, memoria e relatorios continuam carregando corretamente.
+- Validar apos futuras alteracoes se ventilacao e exaustao de garagens, vazoes, renovacao de ar, controle de poluentes, editor 2D, rede de dutos, catalogo tecnico, ventiladores, jet fans, simulacao dinamica multizona, memoria e relatorios continuam carregando corretamente.
 
 ### Comparador de Honorarios de Projetos
 
