@@ -115,6 +115,7 @@ Inventario originalmente verificado em 21/07/2026 e atualizado em 27/08/2026 par
 | 66 / FREIOS | FricCalc | `/friccalc/` | `C:\Obras Inteligentes\friccalc\index.html` | existe | 200 |
 | 67 / PSICROMETRIA | PsicroPro | `/psicropro/` | `C:\Obras Inteligentes\psicropro\index.html` | existe | 200 |
 | 68 / GARAGENS | GaragemPro | `/garagempro/` | `C:\Obras Inteligentes\garagempro\index.html` | existe | 200 |
+| 69 / ORCAMENTO FORENSE | OrcamentoForense | `/orcamento-forense/` | `C:\Obras Inteligentes\orcamento-forense\index.html` | existe | 200 |
 
 ## Tamanhos verificados
 
@@ -190,6 +191,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/friccalc/` | 537204 bytes | 536242 caracteres |
 | `/psicropro/` | 360038 bytes | 357014 caracteres |
 | `/garagempro/` | 200812 bytes | 199073 caracteres |
+| `/orcamento-forense/` | 1181903 bytes | 1169821 caracteres |
 
 ## Estrutura local principal
 
@@ -1520,6 +1522,25 @@ Observacoes:
 - Backup da home anterior salvo em `C:\Obras Inteligentes\backups\index-before-acesscheck-20260820-2034.html`.
 - Validar apos futuras alteracoes se a tela de abertura, aviso legal, checklist de acessibilidade, registro fotografico, armazenamento local e laudos continuam carregando corretamente.
 
+### OrcamentoForense
+
+Rota: `/orcamento-forense/`  
+Arquivo: `orcamento-forense/index.html`
+
+Ultima inclusao:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\OrcamentoForense_v2.1 (1).html`
+- Data: 29/08/2026
+- Alteracao: inclusao de novo card na home, no filtro `Orcamento`, e publicacao do aplicativo OrcamentoForense v2.1 - Auditoria Estatistica de Orcamentos como HTML standalone.
+
+Observacoes:
+
+- Aplicativo standalone empacotado em HTML unico.
+- Tela inicial do site aponta para `/orcamento-forense/`.
+- O card foi classificado no filtro `Orcamento`.
+- Backup da home anterior salvo em `C:\Obras Inteligentes\backups\index-before-orcamento-forense-20260829-032656.html`.
+- Validar apos futuras alteracoes se importacao de planilhas, testes estatisticos, Benford, anomalias, materialidade, priorizacao e nota tecnica automatica continuam carregando corretamente.
+
 ## Artigos publicados na home
 
 Em 20/07/2026, os tres cards iniciais do bloco `Conteudo` da home foram substituidos por artigos reais enviados em PDF. Em 21/07/2026, foi incluido um quarto artigo. A estrategia adotada foi renderizar cada pagina do PDF como PNG dentro de uma pagina HTML propria, preservando a diagramacao original, tabelas, figuras e paginacao. Cada pagina tambem oferece link para abrir/baixar o PDF original.
@@ -1734,7 +1755,8 @@ $headers=@{ 'User-Agent'='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
   '/pmoc-manager/',
   '/mobilizasicro/',
   '/canteiro-sicro/',
-  '/acesscheck/'
+  '/acesscheck/',
+  '/orcamento-forense/'
 ) | ForEach-Object {
   $url = "https://www.obrasinteligentes.ia.br$_?v=check"
   $r = Invoke-WebRequest -UseBasicParsing -Headers $headers -Uri $url -TimeoutSec 30
