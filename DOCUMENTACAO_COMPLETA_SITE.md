@@ -116,6 +116,7 @@ Inventario originalmente verificado em 21/07/2026 e atualizado em 27/08/2026 par
 | 67 / PSICROMETRIA | PsicroPro | `/psicropro/` | `C:\Obras Inteligentes\psicropro\index.html` | existe | 200 |
 | 68 / GARAGENS | GaragemPro | `/garagempro/` | `C:\Obras Inteligentes\garagempro\index.html` | existe | 200 |
 | 69 / ORCAMENTO FORENSE | OrcamentoForense | `/orcamento-forense/` | `C:\Obras Inteligentes\orcamento-forense\index.html` | existe | 200 |
+| 70 / ABC FISCAL | ABC Fiscal | `/abc-fiscal/` | `C:\Obras Inteligentes\abc-fiscal\index.html` | existe | 200 |
 
 ## Tamanhos verificados
 
@@ -192,6 +193,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/psicropro/` | 360038 bytes | 357014 caracteres |
 | `/garagempro/` | 482965 bytes | 479079 caracteres |
 | `/orcamento-forense/` | 1261281 bytes | 1248445 caracteres |
+| `/abc-fiscal/` | 335185 bytes | 333158 caracteres |
 
 ## Estrutura local principal
 
@@ -1544,6 +1546,25 @@ Observacoes:
 - Backup da home anterior salvo em `C:\Obras Inteligentes\backups\index-before-orcamento-forense-20260829-032656.html`.
 - Validar apos futuras alteracoes se importacao de planilhas, testes estatisticos, Benford, convergencia de evidencias, mapa forense, comparacao contratual, jogo de planilha, materialidade, priorizacao e nota tecnica automatica continuam carregando corretamente.
 
+### ABC Fiscal
+
+Rota: `/abc-fiscal/`  
+Arquivo: `abc-fiscal/index.html`
+
+Ultima inclusao:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\abc-fiscal-v2.1 (1).html`
+- Data: 29/08/2026
+- Alteracao: inclusao de novo card na home, no filtro `Orcamento`, e publicacao do aplicativo ABC Fiscal v2.1 - Custo bruto dos insumos, carga tributaria e creditos IBS/CBS como HTML standalone.
+
+Observacoes:
+
+- Aplicativo standalone empacotado em HTML unico.
+- Tela inicial do site aponta para `/abc-fiscal/`.
+- O card foi classificado no filtro `Orcamento`.
+- Backup da home anterior salvo em `C:\Obras Inteligentes\backups\index-before-abc-fiscal-20260829-194135.html`.
+- Validar apos futuras alteracoes se simulacao tributaria de curvas ABC, custo bruto de aquisicao, carga tributaria, creditos IBS/CBS, transicao 2026-2033, auditoria fiscal e biblioteca persistente continuam carregando corretamente.
+
 ## Artigos publicados na home
 
 Em 20/07/2026, os tres cards iniciais do bloco `Conteudo` da home foram substituidos por artigos reais enviados em PDF. Em 21/07/2026, foi incluido um quarto artigo. A estrategia adotada foi renderizar cada pagina do PDF como PNG dentro de uma pagina HTML propria, preservando a diagramacao original, tabelas, figuras e paginacao. Cada pagina tambem oferece link para abrir/baixar o PDF original.
@@ -1759,7 +1780,8 @@ $headers=@{ 'User-Agent'='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
   '/mobilizasicro/',
   '/canteiro-sicro/',
   '/acesscheck/',
-  '/orcamento-forense/'
+  '/orcamento-forense/',
+  '/abc-fiscal/'
 ) | ForEach-Object {
   $url = "https://www.obrasinteligentes.ia.br$_?v=check"
   $r = Invoke-WebRequest -UseBasicParsing -Headers $headers -Uri $url -TimeoutSec 30
