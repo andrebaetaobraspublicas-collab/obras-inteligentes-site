@@ -193,7 +193,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/psicropro/` | 360038 bytes | 357014 caracteres |
 | `/garagempro/` | 482965 bytes | 479079 caracteres |
 | `/orcamento-forense/` | 1261281 bytes | 1248445 caracteres |
-| `/abc-fiscal/` | 335185 bytes | 333158 caracteres |
+| `/abc-fiscal/` | 351255 bytes | 349022 caracteres |
 
 ## Estrutura local principal
 
@@ -1551,11 +1551,12 @@ Observacoes:
 Rota: `/abc-fiscal/`  
 Arquivo: `abc-fiscal/index.html`
 
-Ultima inclusao:
+Ultima atualizacao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\abc-fiscal-v2.1 (1).html`
+- Fonte: `C:\Users\ACER\Documents\Downloads\abc-fiscal-v2.2.html`
 - Data: 29/08/2026
-- Alteracao: inclusao de novo card na home, no filtro `Orcamento`, e publicacao do aplicativo ABC Fiscal v2.1 - Custo bruto dos insumos, carga tributaria e creditos IBS/CBS como HTML standalone.
+- Alteracao: substituicao integral de `abc-fiscal/index.html` pela versao ABC Fiscal v2.2 - Custo bruto dos insumos, carga tributaria e creditos IBS/CBS enviada, preservando o card existente e o filtro `Orcamento`.
+- Backup da versao anterior salvo em `C:\Obras Inteligentes\backups\abc-fiscal-index-before-v22-20260829-205232.html`.
 
 Observacoes:
 
@@ -1563,7 +1564,7 @@ Observacoes:
 - Tela inicial do site aponta para `/abc-fiscal/`.
 - O card foi classificado no filtro `Orcamento`.
 - Backup da home anterior salvo em `C:\Obras Inteligentes\backups\index-before-abc-fiscal-20260829-194135.html`.
-- Validar apos futuras alteracoes se simulacao tributaria de curvas ABC, custo bruto de aquisicao, carga tributaria, creditos IBS/CBS, transicao 2026-2033, auditoria fiscal e biblioteca persistente continuam carregando corretamente.
+- Validar apos futuras alteracoes se simulacao tributaria de curvas ABC, custo bruto de aquisicao, carga tributaria, creditos IBS/CBS, Imposto Seletivo, pre-validacao, transicao 2026-2033, auditoria fiscal e biblioteca persistente continuam carregando corretamente.
 
 ## Artigos publicados na home
 
