@@ -154,7 +154,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/cabocalc/` | 206539 bytes | 202935 caracteres |
 | `/subestacaopro/` | 730239 bytes | 730239 caracteres |
 | `/brucknercalc/` | 1479721 bytes | 1475264 caracteres |
-| `/molapro/` | 304857 bytes | 304857 caracteres |
+| `/molapro/` | 426577 bytes | 421455 caracteres |
 | `/calculadora-eixos/` | 231280 bytes | 228654 caracteres |
 | `/mancalpro/` | 1138677 bytes | 1138677 caracteres |
 | `/engrenagecalc/` | 683617 bytes | 678412 caracteres |
@@ -843,11 +843,12 @@ Observacoes:
 Rota: `/molapro/`  
 Arquivo: `molapro/index.html`
 
-Ultima inclusao:
+Ultima atualizacao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\MolaPro_v1.5.html`
-- Data: 31/07/2026
-- Alteracao: atualizacao do aplicativo MolaPro para a versao standalone v1.5, com tela de abertura e aceite legal.
+- Fonte: `C:\Users\ACER\Documents\Downloads\index (52).html`
+- Data: 29/08/2026
+- Alteracao: substituicao integral de `molapro/index.html` pela nova versao MolaPro v1.5 enviada, mantendo o card existente e o filtro `Engenharia Mecanica`.
+- Backup da versao anterior salvo em `C:\Obras Inteligentes\backups\molapro-index-before-index52-20260829-032127.html`.
 
 Observacoes:
 
