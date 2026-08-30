@@ -160,7 +160,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/brucknercalc/` | 1479721 bytes | 1475264 caracteres |
 | `/molapro/` | 426577 bytes | 421455 caracteres |
 | `/calculadora-eixos/` | 231280 bytes | 228654 caracteres |
-| `/mancalpro/` | 1138677 bytes | 1138677 caracteres |
+| `/mancalpro/` | 1227253 bytes | 1219722 caracteres |
 | `/engrenagecalc/` | 683617 bytes | 678412 caracteres |
 | `/volantepro/` | 201528 bytes | 198246 caracteres |
 | `/transmissaopro/` | 424776 bytes | 420488 caracteres |
@@ -887,11 +887,12 @@ Observacoes:
 Rota: `/mancalpro/`  
 Arquivo: `mancalpro/index.html`
 
-Ultima inclusao:
+Ultima atualizacao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\MancalPro v0.6 - abertura (offline) (1).html`
-- Data: 30/07/2026
-- Alteracao: atualizacao do aplicativo MancalPro para a versao standalone v0.6, com tela de abertura.
+- Fonte: `C:\Users\ACER\Documents\Downloads\MancalPro_v0.6_com_manual_interativo_corrigido.html`
+- Data: 30/08/2026
+- Alteracao: substituicao integral de `mancalpro/index.html` pela versao MancalPro v0.6 corrigida, com manual interativo incorporado.
+- Backup da versao anterior salvo em `C:\Obras Inteligentes\backups\mancalpro-index-before-manual-corrigido-20260830-1645.html`.
 
 Observacoes:
 
