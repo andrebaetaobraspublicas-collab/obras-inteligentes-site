@@ -160,7 +160,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/calculadora-eixos/` | 231280 bytes | 228654 caracteres |
 | `/mancalpro/` | 1138677 bytes | 1138677 caracteres |
 | `/engrenagecalc/` | 683617 bytes | 678412 caracteres |
-| `/volantepro/` | 104335 bytes | 104335 caracteres |
+| `/volantepro/` | 201528 bytes | 198246 caracteres |
 | `/transmissaopro/` | 424776 bytes | 420488 caracteres |
 | `/tubocalc/` | 388607 bytes | 383056 caracteres |
 | `/compressorselect-pro/` | 1267287 bytes | 1260281 caracteres |
@@ -922,11 +922,12 @@ Observacoes:
 Rota: `/volantepro/`  
 Arquivo: `volantepro/index.html`
 
-Ultima inclusao:
+Ultima atualizacao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\VolantePro_v4.3_com_abertura.html`
-- Data: 31/07/2026
-- Alteracao: inclusao de novo card na home e publicacao do aplicativo como HTML standalone.
+- Fonte: `C:\Users\ACER\Documents\Downloads\index (54).html`
+- Data: 30/08/2026
+- Alteracao: substituicao integral de `volantepro/index.html` pela nova versao VolantePro v4.3 enviada, preservando o card existente e o filtro `Engenharia Mecanica`.
+- Backup da versao anterior salvo em `C:\Obras Inteligentes\backups\volantepro-index-before-index54-20260830-160245.html`.
 
 Observacoes:
 
