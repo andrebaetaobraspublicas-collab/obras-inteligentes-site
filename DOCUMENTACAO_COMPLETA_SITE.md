@@ -19,7 +19,7 @@ O site `www.obrasinteligentes.ia.br` e uma pagina estatica hospedada na Hostinge
 C:\Obras Inteligentes\index.html
 ```
 
-A tela inicial possui atualmente 70 cards de aplicativos. Cada card aponta para uma rota estatica dentro do dominio. A regra geral e:
+A tela inicial possui atualmente 69 cards de aplicativos. Cada card aponta para uma rota estatica dentro do dominio. A regra geral e:
 
 ```text
 https://www.obrasinteligentes.ia.br/nome-da-rota/
@@ -33,6 +33,8 @@ C:\Obras Inteligentes\assets\hero-obras-ai-3d.png
 ```
 
 Em 30/08/2026, a grade de aplicativos foi ajustada para melhor aproveitamento de telas largas: 5 cards por linha a partir de 1500px, 4 cards em desktops menores, 2 cards em tablets e 1 card em celulares. A home anterior foi salva em `C:\Obras Inteligentes\backups\index-before-5cards-20260830-163133.html`.
+
+Em 30/08/2026, o card `ABC Fiscal` foi removido da home, do rodape e dos filtros de busca. O arquivo do aplicativo foi preservado em `C:\Obras Inteligentes\abc-fiscal\index.html`. A home anterior foi salva em `C:\Obras Inteligentes\backups\index-before-remove-abc-fiscal-20260830-1730.html`.
 
 Em 05/08/2026, o link `Contato` no rodape passou a apontar para `https://www.instagram.com/andrebeta.obraspublicas/`.
 
@@ -118,7 +120,6 @@ Inventario originalmente verificado em 21/07/2026 e atualizado em 27/08/2026 par
 | 67 / PSICROMETRIA | PsicroPro | `/psicropro/` | `C:\Obras Inteligentes\psicropro\index.html` | existe | 200 |
 | 68 / GARAGENS | GaragemPro | `/garagempro/` | `C:\Obras Inteligentes\garagempro\index.html` | existe | 200 |
 | 69 / ORCAMENTO FORENSE | OrcamentoForense | `/orcamento-forense/` | `C:\Obras Inteligentes\orcamento-forense\index.html` | existe | 200 |
-| 70 / ABC FISCAL | ABC Fiscal | `/abc-fiscal/` | `C:\Obras Inteligentes\abc-fiscal\index.html` | existe | 200 |
 
 ## Tamanhos verificados
 
@@ -1562,12 +1563,14 @@ Ultima atualizacao:
 - Data: 29/08/2026
 - Alteracao: substituicao integral de `abc-fiscal/index.html` pela versao ABC Fiscal v2.2 - Custo bruto dos insumos, carga tributaria e creditos IBS/CBS enviada, preservando o card existente e o filtro `Orcamento`.
 - Backup da versao anterior salvo em `C:\Obras Inteligentes\backups\abc-fiscal-index-before-v22-20260829-205232.html`.
+- Em 30/08/2026, o card `ABC Fiscal` foi removido da home, do rodape e dos filtros de busca a pedido do usuario. O arquivo `abc-fiscal/index.html` permanece preservado no diretorio existente.
+- Backup da home anterior a remocao salvo em `C:\Obras Inteligentes\backups\index-before-remove-abc-fiscal-20260830-1730.html`.
 
 Observacoes:
 
 - Aplicativo standalone empacotado em HTML unico.
-- Tela inicial do site aponta para `/abc-fiscal/`.
-- O card foi classificado no filtro `Orcamento`.
+- A tela inicial do site nao lista mais este aplicativo; a rota estatica e o arquivo local foram mantidos para preservacao.
+- O card foi removido do filtro `Orcamento`.
 - Backup da home anterior salvo em `C:\Obras Inteligentes\backups\index-before-abc-fiscal-20260829-194135.html`.
 - Validar apos futuras alteracoes se simulacao tributaria de curvas ABC, custo bruto de aquisicao, carga tributaria, creditos IBS/CBS, Imposto Seletivo, pre-validacao, transicao 2026-2033, auditoria fiscal e biblioteca persistente continuam carregando corretamente.
 
@@ -1786,8 +1789,7 @@ $headers=@{ 'User-Agent'='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
   '/mobilizasicro/',
   '/canteiro-sicro/',
   '/acesscheck/',
-  '/orcamento-forense/',
-  '/abc-fiscal/'
+  '/orcamento-forense/'
 ) | ForEach-Object {
   $url = "https://www.obrasinteligentes.ia.br$_?v=check"
   $r = Invoke-WebRequest -UseBasicParsing -Headers $headers -Uri $url -TimeoutSec 30
