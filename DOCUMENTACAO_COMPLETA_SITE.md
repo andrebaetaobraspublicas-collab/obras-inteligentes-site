@@ -184,7 +184,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/andaimefach-pro/` | 227525 bytes | 224792 caracteres |
 | `/recebeobra-pro/` | 617407 bytes | 617407 caracteres |
 | `/criticaopex/` | 631053 bytes | 631053 caracteres |
-| `/pmoc-manager/` | 604647 bytes | 604647 caracteres |
+| `/pmoc-manager/` | 656063 bytes | 652005 caracteres |
 | `/mobilizasicro/` | 1337033 bytes | 1337033 caracteres |
 | `/acesscheck/` | 200004 bytes | 197102 caracteres |
 | `/canteiro-sicro/` | 246827 bytes | 244312 caracteres |
@@ -1439,11 +1439,12 @@ Observacoes:
 Rota: `/pmoc-manager/`  
 Arquivo: `pmoc-manager/index.html`
 
-Ultima inclusao:
+Ultima atualizacao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\PMOC_Manager_v2.2_Visual_Manual_offline.html`
-- Data: 17/08/2026
-- Alteracao: inclusao de novo card na home, no filtro `Manutencao Predial`, e publicacao do aplicativo PMOC Manager v2.2 como HTML standalone.
+- Fonte: `C:\Users\ACER\Documents\Downloads\PMOC_Manager_v2.2_manual_interativo_ampliado.html`
+- Data: 30/08/2026
+- Alteracao: substituicao integral de `pmoc-manager/index.html` pela versao PMOC Manager v2.2 com manual interativo ampliado.
+- Backup da versao anterior salvo em `C:\Obras Inteligentes\backups\pmoc-manager-index-before-manual-ampliado-20260830-1718.html`.
 
 Observacoes:
 
