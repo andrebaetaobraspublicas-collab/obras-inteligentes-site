@@ -19,7 +19,7 @@ O site `www.obrasinteligentes.ia.br` e uma pagina estatica hospedada na Hostinge
 C:\Obras Inteligentes\index.html
 ```
 
-A tela inicial possui atualmente 60 cards de aplicativos. Cada card aponta para uma rota estatica dentro do dominio. A regra geral e:
+A tela inicial possui atualmente 70 cards de aplicativos. Cada card aponta para uma rota estatica dentro do dominio. A regra geral e:
 
 ```text
 https://www.obrasinteligentes.ia.br/nome-da-rota/
@@ -31,6 +31,8 @@ Em 05/08/2026, a tela inicial recebeu novo hero visual com imagem 3D de obra em 
 ```text
 C:\Obras Inteligentes\assets\hero-obras-ai-3d.png
 ```
+
+Em 30/08/2026, a grade de aplicativos foi ajustada para melhor aproveitamento de telas largas: 5 cards por linha a partir de 1500px, 4 cards em desktops menores, 2 cards em tablets e 1 card em celulares. A home anterior foi salva em `C:\Obras Inteligentes\backups\index-before-5cards-20260830-163133.html`.
 
 Em 05/08/2026, o link `Contato` no rodape passou a apontar para `https://www.instagram.com/andrebeta.obraspublicas/`.
 
