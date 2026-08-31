@@ -172,7 +172,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/elevadorcalc/` | 386384 bytes | 382143 caracteres |
 | `/thermox-pro/` | 428015 bytes | 428015 caracteres |
 | `/comparador-honorarios-projetos/` | 525309 bytes | 525309 caracteres |
-| `/consultoriapro-rodoviario/` | 284681 bytes | 284681 caracteres |
+| `/consultoriapro-rodoviario/` | 389055 bytes | 384378 caracteres |
 | `/geradorpro/` | 354392 bytes | 351100 caracteres |
 | `/spdapro/` | 709941 bytes | 709941 caracteres |
 | `/lumipro/` | 756040 bytes | 756040 caracteres |
@@ -1163,9 +1163,10 @@ Arquivo: `consultoriapro-rodoviario/index.html`
 
 Ultima atualizacao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\consultoria_pro_engenharia_consultiva_rodoviaria_v5_1_2_relatorio_corrigido.html`
-- Data: 05/08/2026
-- Alteracao: substituicao integral de `consultoriapro-rodoviario/index.html` pela versao 5.1.2, com relatorio profissional corrigido.
+- Fonte: `C:\Users\ACER\Documents\Downloads\ConsultoriaPro_v5.1.3_manual_interativo.html`
+- Data: 30/08/2026
+- Alteracao: substituicao integral de `consultoriapro-rodoviario/index.html` pela versao 5.1.3, com manual interativo incorporado.
+- Backup da versao anterior salvo em `C:\Obras Inteligentes\backups\consultoriapro-rodoviario-index-before-v5-1-3-manual-20260830-2146.html`.
 
 Observacoes:
 
