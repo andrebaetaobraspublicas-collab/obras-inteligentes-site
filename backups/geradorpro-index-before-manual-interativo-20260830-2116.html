@@ -150,44 +150,6 @@ td input,td select{min-width:78px;padding:7px 7px;font-size:12px}td .wide{min-wi
 .callout{padding:11px;border-radius:11px;border:1px solid var(--line);background:#fbfdfd;font-size:12px}.callout b{display:block;font-size:16px;margin-top:4px}
 @media(max-width:900px){.callout-row{grid-template-columns:1fr}.diagram-detail .detail-grid{grid-template-columns:1fr}}
 
-
-/* Manual interativo — GeradorPro */
-body.im-lock{overflow:hidden}
-.im-backdrop{position:fixed;inset:0;z-index:2600;display:none;align-items:center;justify-content:center;padding:14px;background:rgba(3,18,22,.82);backdrop-filter:blur(8px)}
-.im-backdrop.show{display:flex}
-.im-dialog{width:min(1480px,calc(100vw - 28px));height:min(94vh,980px);display:grid;grid-template-rows:auto auto minmax(0,1fr) auto;overflow:hidden;background:#f6f9fa;border:1px solid rgba(255,255,255,.2);border-radius:22px;box-shadow:0 30px 100px rgba(0,0,0,.45)}
-.im-header{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:18px 20px;color:white;background:linear-gradient(120deg,#0b565d 0%,#10777b 56%,#243f52 100%)}
-.im-brand{display:flex;align-items:center;gap:13px;min-width:0}.im-brand-mark{width:46px;height:46px;flex:0 0 auto;border-radius:14px;display:grid;place-items:center;background:linear-gradient(145deg,#2ba0a3,#e3a043);box-shadow:0 9px 26px rgba(0,0,0,.22)}
-.im-brand h2{margin:0;font-size:21px}.im-brand p{margin:3px 0 0;color:#cce5e6;font-size:12px;line-height:1.35}.im-header-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
-.im-icon-btn{width:40px;height:40px;border-radius:11px;border:1px solid rgba(255,255,255,.26);background:rgba(255,255,255,.1);color:white;font-size:22px;display:grid;place-items:center}.im-icon-btn:hover,.im-icon-btn:focus-visible{background:rgba(255,255,255,.2);outline:2px solid rgba(255,255,255,.5);outline-offset:2px}
-.im-toolbar{display:grid;grid-template-columns:minmax(260px,1fr) auto;align-items:center;gap:12px;padding:11px 15px;border-bottom:1px solid var(--line);background:white}.im-search-wrap{position:relative}.im-search-wrap span{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#6b7f85}.im-search{padding-left:36px;padding-right:38px}.im-clear-search{position:absolute;right:7px;top:50%;transform:translateY(-50%);width:28px;height:28px;border:0;border-radius:8px;background:transparent;color:#64777e;font-size:18px;display:none}.im-clear-search.show{display:grid;place-items:center}.im-toolbar-note{font-size:12px;color:var(--muted);white-space:nowrap}
-.im-layout{display:grid;grid-template-columns:292px minmax(0,1fr);min-height:0}.im-sidebar{min-height:0;overflow:auto;padding:14px;background:#ecf3f4;border-right:1px solid var(--line)}
-.im-progress-card{padding:12px;border-radius:13px;background:white;border:1px solid var(--line);box-shadow:0 5px 18px rgba(23,48,56,.05);margin-bottom:12px}.im-progress-head{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12px}.im-progress-head strong{font-size:13px}.im-progress-track{height:7px;margin-top:9px;border-radius:999px;background:#e3ecee;overflow:hidden}.im-progress-bar{height:100%;width:0;border-radius:inherit;background:linear-gradient(90deg,#0c6e72,#38a6a7,#e29a2f);transition:width .25s ease}.im-progress-sub{font-size:10px;color:var(--muted);margin-top:7px;line-height:1.35}
-.im-nav-title{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:#71888e;margin:13px 8px 6px}.im-nav-list{display:grid;gap:4px}.im-nav-btn{width:100%;border:1px solid transparent;border-radius:10px;padding:9px 10px;background:transparent;color:#3b555c;text-align:left;display:grid;grid-template-columns:26px minmax(0,1fr) 18px;align-items:center;gap:7px;font-size:12px;font-weight:700;line-height:1.25}.im-nav-btn:hover{background:white;border-color:#dbe5e7}.im-nav-btn.active{background:#0c6e72;color:white;border-color:#0c6e72;box-shadow:0 5px 14px rgba(12,110,114,.18)}.im-nav-btn[hidden]{display:none}.im-nav-num{width:24px;height:24px;border-radius:8px;display:grid;place-items:center;background:rgba(12,110,114,.09);font-size:10px}.im-nav-btn.active .im-nav-num{background:rgba(255,255,255,.17)}.im-nav-done{font-size:12px;opacity:0}.im-nav-btn.done .im-nav-done{opacity:1;color:var(--good)}.im-nav-btn.active.done .im-nav-done{color:#bff4d8}
-.im-content{min-width:0;min-height:0;overflow:auto;padding:22px 24px 38px;scroll-behavior:smooth}.im-topic{display:none;max-width:1120px;margin:0 auto;animation:im-fade .18s ease}.im-topic.active{display:block}.im-content.search-mode .im-topic{display:none}.im-content.search-mode .im-topic.search-match{display:block;margin-bottom:28px;padding-bottom:28px;border-bottom:2px solid #dce6e8}.im-content.search-mode .im-topic.search-match:last-of-type{border-bottom:0}.im-search-empty{display:none;max-width:760px;margin:70px auto;text-align:center;color:var(--muted)}.im-search-empty.show{display:block}
-@keyframes im-fade{from{opacity:.25;transform:translateY(5px)}to{opacity:1;transform:none}}
-.im-topic-head{display:flex;justify-content:space-between;align-items:flex-start;gap:15px;margin-bottom:17px}.im-eyebrow{font-size:10px;text-transform:uppercase;letter-spacing:.14em;color:var(--primary);font-weight:800}.im-topic-head h2{font-size:28px;margin:4px 0 7px;letter-spacing:-.025em}.im-topic-head p{margin:0;color:var(--muted);line-height:1.55;max-width:850px}.im-topic-index{flex:0 0 auto;width:54px;height:54px;border-radius:16px;display:grid;place-items:center;font-size:19px;font-weight:850;color:#0c6e72;background:linear-gradient(145deg,#e3f3f3,#fff2db);border:1px solid #d5e5e6}
-.im-hero{position:relative;overflow:hidden;border-radius:18px;padding:22px;color:white;background:linear-gradient(125deg,#0b5d63,#17878a 58%,#2e4d5d);box-shadow:0 13px 34px rgba(23,48,56,.14);margin-bottom:16px}.im-hero:after{content:"";position:absolute;width:260px;height:260px;border-radius:50%;right:-70px;top:-130px;background:rgba(255,255,255,.08)}.im-hero h3{position:relative;z-index:1;font-size:22px;margin:0 0 8px}.im-hero p{position:relative;z-index:1;color:#dcf0f0;margin:0;line-height:1.6;max-width:880px}.im-hero-actions{position:relative;z-index:1;display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
-.im-grid{display:grid;gap:13px}.im-grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}.im-grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}.im-grid-4{grid-template-columns:repeat(4,minmax(0,1fr))}
-.im-card{background:white;border:1px solid var(--line);border-radius:15px;padding:16px;box-shadow:0 7px 22px rgba(23,48,56,.055);min-width:0}.im-card h3{margin:0 0 10px;font-size:17px}.im-card h4{margin:14px 0 7px}.im-card p,.im-card li{font-size:13px;line-height:1.62;color:#41575e}.im-card p:last-child{margin-bottom:0}.im-card ul,.im-card ol{padding-left:20px}.im-card code,.im-code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#eaf2f3;border:1px solid #d7e2e4;border-radius:6px;padding:2px 5px;color:#24464e}
-.im-kpi-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin-top:14px}.im-kpi{padding:12px;border:1px solid rgba(255,255,255,.18);border-radius:12px;background:rgba(255,255,255,.1);backdrop-filter:blur(5px)}.im-kpi span{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:#cfe4e6}.im-kpi b{display:block;margin-top:5px;font-size:18px}.im-kpi small{display:block;margin-top:3px;color:#cfe4e6;font-size:10px}
-.im-callout{border:1px solid;border-radius:12px;padding:12px 14px;font-size:13px;line-height:1.55;margin:12px 0}.im-callout.info{background:#eef7fc;border-color:#c8e1f0;color:#2b5e79}.im-callout.warn{background:#fff7e8;border-color:#ecd4a8;color:#7a511e}.im-callout.good{background:#ecf8f2;border-color:#bee2ce;color:#286344}.im-callout.bad{background:#fff0f0;border-color:#efc5c5;color:#893737}
-.im-formula-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.im-formula-card{border:1px solid #d3e0e2;border-radius:12px;background:linear-gradient(180deg,#fbfdfd,#edf4f5);padding:13px}.im-formula-card b{display:block;font-size:12px;color:#536970;margin-bottom:7px}.im-formula-card .eq{font-family:Georgia,"Times New Roman",serif;font-size:19px;color:#173b43;overflow:auto}.im-formula-card p{font-size:11px;color:var(--muted);line-height:1.45;margin:7px 0 0}
-.im-table-wrap{overflow:auto;border:1px solid var(--line);border-radius:12px;background:white}.im-table{width:100%;border-collapse:collapse;white-space:normal;font-size:12px}.im-table th{position:static;background:#eaf2f3}.im-table td,.im-table th{padding:9px;border-bottom:1px solid #e1e9eb;vertical-align:top;line-height:1.45}.im-table tr:last-child td{border-bottom:0}
-.im-step-list{display:grid;gap:9px}.im-step{display:grid;grid-template-columns:36px minmax(0,1fr) auto;gap:11px;align-items:start;padding:12px;border:1px solid var(--line);border-radius:12px;background:white}.im-step-num{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:#e9f4f4;color:#0c6e72;font-weight:850}.im-step h4{margin:1px 0 4px;font-size:14px}.im-step p{margin:0;color:var(--muted);font-size:12px;line-height:1.45}.im-step label{display:flex;align-items:center;gap:6px;font-size:11px;color:#536970;white-space:nowrap;padding-top:7px}.im-step input{width:17px;height:17px}
-.im-module-card{display:flex;flex-direction:column;min-height:200px}.im-module-card .im-module-icon{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:#e8f4f4;color:#0c6e72;font-size:19px;margin-bottom:10px}.im-module-card h3{font-size:15px}.im-module-card p{font-size:12px;flex:1}.im-module-card .btn{align-self:flex-start;margin-top:8px}
-.im-energy-chain{display:flex;align-items:stretch;gap:6px;overflow:auto;padding:5px 2px 9px}.im-energy-stage{min-width:128px;flex:1;border:1px solid #cbdadd;border-radius:12px;background:white;padding:11px 9px;color:#315159;font-weight:750;font-size:11px;text-align:center;transition:.16s}.im-energy-stage:hover,.im-energy-stage.active{transform:translateY(-2px);border-color:#0c6e72;background:#eaf7f7;box-shadow:0 7px 18px rgba(12,110,114,.11)}.im-energy-arrow{align-self:center;color:#8aa0a5;font-weight:800}.im-energy-detail{min-height:116px;margin-top:9px;padding:14px;border-radius:12px;border:1px solid var(--line);background:#fbfdfd}.im-energy-detail h4{margin:0 0 6px}.im-energy-detail p{margin:0;font-size:12px;line-height:1.55;color:#4b6269}
-.im-calc{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.im-calc .field label{font-size:11px}.im-calc-result{grid-column:1/-1;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:2px}.im-calc-kpi{padding:10px;border:1px solid var(--line);border-radius:10px;background:#f6fafb}.im-calc-kpi span{font-size:10px;color:var(--muted)}.im-calc-kpi b{display:block;margin-top:4px;font-size:17px}
-.im-quiz{display:grid;gap:12px}.im-question{padding:14px;border:1px solid var(--line);border-radius:13px;background:white}.im-question h4{margin:0 0 9px;font-size:14px;line-height:1.45}.im-options{display:grid;gap:6px}.im-option{display:flex;align-items:flex-start;gap:8px;padding:8px 9px;border:1px solid #e0e8ea;border-radius:9px;font-size:12px;line-height:1.35}.im-option:hover{background:#f5fafa}.im-option input{width:16px;height:16px;flex:0 0 auto;margin-top:1px}.im-question-feedback{display:none;margin-top:9px;padding:8px 10px;border-radius:9px;font-size:11px;line-height:1.45}.im-question.correct .im-question-feedback{display:block;background:#eaf8f1;color:#246142}.im-question.incorrect .im-question-feedback{display:block;background:#fff3e7;color:#80501a}.im-quiz-score{display:none;padding:14px;border-radius:12px;background:#eaf7f7;border:1px solid #bfe0e1;font-weight:750}.im-quiz-score.show{display:block}
-.im-glossary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.im-term{padding:11px;border:1px solid var(--line);border-radius:11px;background:white}.im-term b{display:block;color:#234a53;font-size:12px}.im-term span{display:block;margin-top:4px;color:#5a7076;font-size:11px;line-height:1.45}
-.im-details{border:1px solid var(--line);border-radius:12px;background:white;margin:8px 0;overflow:hidden}.im-details summary{cursor:pointer;padding:12px 14px;font-weight:750;font-size:13px;background:#f7fafb}.im-details[open] summary{border-bottom:1px solid var(--line);background:#edf6f6}.im-details-body{padding:2px 14px 13px}.im-details-body p,.im-details-body li{font-size:12px;line-height:1.55;color:#465d64}
-.im-footer{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px;padding:10px 15px;border-top:1px solid var(--line);background:white}.im-footer-status{font-size:11px;color:var(--muted)}.im-footer-nav{display:flex;align-items:center;gap:8px}.im-footer-close{justify-self:end}.im-search-summary{font-size:11px;color:var(--muted);text-align:center}
-.im-highlight{background:#fff2c8;border-radius:3px;padding:0 2px}
-@media(max-width:1050px){.im-grid-4{grid-template-columns:repeat(2,minmax(0,1fr))}.im-grid-3{grid-template-columns:repeat(2,minmax(0,1fr))}.im-kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:860px){.im-backdrop{padding:0}.im-dialog{width:100vw;height:100vh;border-radius:0;border:0}.im-layout{grid-template-columns:1fr}.im-sidebar{border-right:0;border-bottom:1px solid var(--line);max-height:220px}.im-nav-list{grid-template-columns:repeat(2,minmax(0,1fr))}.im-content{padding:18px 15px 30px}.im-topic-head h2{font-size:24px}.im-toolbar{grid-template-columns:1fr}.im-toolbar-note{display:none}.im-footer{grid-template-columns:1fr auto}.im-footer-status{display:none}.im-footer-close{display:none}}
-@media(max-width:560px){.im-header{padding:12px}.im-brand-mark{width:40px;height:40px}.im-brand h2{font-size:17px}.im-brand p{display:none}.im-header-actions .btn{display:none}.im-sidebar{max-height:190px;padding:9px}.im-nav-list{grid-template-columns:1fr 1fr}.im-nav-btn{padding:7px;font-size:11px;grid-template-columns:22px minmax(0,1fr) 14px}.im-nav-num{width:21px;height:21px}.im-grid-2,.im-grid-3,.im-grid-4,.im-formula-grid,.im-glossary{grid-template-columns:1fr}.im-kpi-grid,.im-calc-result{grid-template-columns:1fr 1fr}.im-calc{grid-template-columns:1fr 1fr}.im-topic-index{display:none}.im-step{grid-template-columns:32px minmax(0,1fr)}.im-step label{grid-column:2}.im-footer{padding:8px}.im-footer-nav .btn{padding:7px 9px;font-size:11px}}
-@media print{#manual-modal{display:none!important}}
-
 #print-area{display:none}
 @media(max-width:1200px){.grid-4{grid-template-columns:repeat(2,minmax(0,1fr))}.field-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.hero-grid{grid-template-columns:1fr}.hero-actions{justify-content:flex-start}}
 @media(max-width:900px){
@@ -367,6 +329,7 @@ body.intro-lock{overflow:hidden}
       <button class="nav-btn" data-tab="catalog"><span class="nav-ico">▤</span>Seleção real</button>
       <button class="nav-btn" data-tab="scenarios"><span class="nav-ico">◫</span>Cenários</button>
       <button class="nav-btn" data-tab="report"><span class="nav-ico">▧</span>Memorial e relatório</button>
+      <button class="nav-btn" data-tab="manual"><span class="nav-ico">?</span>Manual incorporado</button>
     </div>
     <div class="sidebar-foot">Versão 1.2 • arquivo único<br>Dados salvos localmente no navegador.</div>
   </aside>
@@ -378,7 +341,6 @@ body.intro-lock{overflow:hidden}
         <div class="topbar-title"><h2 id="page-title">Dashboard</h2><p id="save-status">Pronto para calcular</p></div>
       </div>
       <div class="top-actions">
-        <button class="btn btn-accent" id="open-manual" title="Abrir manual didático e interativo"><span aria-hidden="true">◉</span> Manual interativo</button>
         <button class="btn btn-secondary hide-mobile" id="load-example">Carregar exemplo</button>
         <button class="btn btn-secondary" id="export-json">Exportar projeto</button>
         <label class="btn btn-secondary" for="import-json" style="cursor:pointer">Importar</label>
@@ -759,398 +721,41 @@ body.intro-lock{overflow:hidden}
         <div class="section-head"><div><h2>Memória de cálculo e relatório</h2><p>O conteúdo é gerado diretamente no DOM antes da impressão, evitando relatórios em branco.</p></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-secondary" id="refresh-report">Atualizar prévia</button><button class="btn btn-secondary" id="download-report-html">Baixar HTML do relatório</button><button class="btn btn-primary" id="print-report">Imprimir / salvar em PDF</button></div></div>
         <div class="report-preview"><div id="report-preview-content"></div></div>
       </section>
+
+      <section class="tab-panel manual" id="tab-manual">
+        <div class="section-head"><div><h2>Manual incorporado</h2><p>Orientações de uso, fórmulas, limites e fluxo recomendado de trabalho.</p></div></div>
+        <div class="card">
+          <h3>1. Fluxo recomendado</h3>
+          <ol><li>Preencha projeto, tensão, regime, operação, ambiente e referências.</li><li>Cadastre cargas e motores sem duplicidade; distribua cargas monofásicas entre A, B e C.</li><li>Informe demanda, simultaneidade, prioridades, THDi e parcela de harmônicos triplens quando conhecida.</li><li>Cadastre separadamente os fatores de derating do motor primário e do alternador.</li><li>Analise a potência em regime e aplique a potência recomendada.</li><li>Abra “Seleção real”, filtre os modelos e examine as pendências documentais antes de aplicar um conjunto.</li><li>Preencha X″d, X′d, Xd, X/R, constantes de tempo, AVR e governador.</li><li>Revise partidas, quedas de tensão e frequência, curto-circuito e I²t.</li><li>Informe a curva oficial de consumo, tanque e perfil de carga.</li><li>Execute o simulador de falta e revise o load shedding.</li><li>Confira QTA, cabos, neutro, aterramento, unifilar e gere o memorial.</li></ol>
+          <h3>2. Potências e derating</h3>
+          <p>Para cada carga, o sistema calcula <code>S = P / FP</code> e <code>Q = √(S² − P²)</code>. A soma é vetorial: <code>S_total = √[(ΣP)² + (ΣQ)²]</code>.</p>
+          <p>O alternador é verificado em kVA com seu próprio fator ambiental. O motor primário é verificado em kW com derating independente e reserva ativa transitória. A função de estimativa ambiental é genérica e não substitui curvas de fabricante.</p>
+          <h3>3. Partida e resposta transitória</h3>
+          <p>A sequência considera o início e o término de cada partida. O modelo preliminar de tensão utiliza as componentes ativa e reativa do degrau, X″d, X/R e um fator de suporte do AVR. A frequência usa o degrau ativo, droop e multiplicador dinâmico do governador.</p>
+          <p>Essas estimativas servem para triagem e comparação. Para seleção final, use curvas de aceitação de carga, mergulho de tensão/frequência e tempos de recuperação do conjunto comercial.</p>
+          <h3>4. Curto-circuito</h3>
+          <p>O sistema estima <code>I″k ≈ c × In / X″d</code>, <code>I′k ≈ c × In / X′d</code> e <code>Ik ≈ c × In / Xd</code>. O pico assimétrico depende do X/R. O I²t é integrado durante o tempo de eliminação informado, incluindo uma componente contínua aproximada.</p>
+          <p>O fator térmico <code>k</code> deve ser escolhido conforme material, isolação e temperaturas admissíveis. A seção térmica indicada não substitui coordenação, seletividade nem verificação eletrodinâmica.</p>
+          <h3>5. Fases, neutro e harmônicos</h3>
+          <p>Cargas trifásicas são distribuídas igualmente. Cargas monofásicas são alocadas na fase selecionada. O neutro fundamental decorre da soma vetorial das correntes; os harmônicos triplens são somados de forma conservadora e combinados por RMS.</p>
+          <p>O campo “H3/triplens” representa a parcela da corrente fundamental que retorna pelo neutro como harmônicos de sequência zero. Utilize dados de medição ou fabricante sempre que disponíveis.</p>
+          <h3>6. Combustível, autonomia e falta</h3>
+          <p>Com curva oficial, o consumo é interpolado entre 0%, 25%, 50%, 75% e 100%. No modo estimativo: <code>C = C_vazio + P_ativa × consumo_específico</code>. O simulador desconta o consumo trecho a trecho e identifica a entrada em reserva e o volume não utilizável.</p>
+          <p>O load shedding respeita o limite de prioridade e retira primeiro as cargas menos prioritárias. Cargas P1 não são descartadas automaticamente; se apenas P1 exceder a capacidade, o cenário é classificado como falha.</p>
+          <h3>7. Unifilar interativo</h3>
+          <p>Clique na rede, gerador, QTA, QGBT ou grupos de prioridade. O painel apresenta resultados associados e oferece acesso direto ao módulo correspondente. O desenho é conceitual e não substitui o diagrama executivo.</p>
+          <h3>8. Seleção real de equipamentos</h3><p>O motor compara separadamente kVA e kW no regime escolhido, frequência, tensão documentada, combustível, configuração física, ruído, autonomia e sobredimensionamento. A classificação “compatível” não equivale à aprovação final do fabricante.</p><p>🟢 indica ficha oficial completa para os campos incorporados; 🟡 indica ficha oficial parcial; 🟠 identifica kVA calculado a FP 0,8 a partir de kW oficiais; 🔵 corresponde a dado cadastrado pelo usuário. Toda ficha possui fonte e data de consulta.</p><h3>9. Limitações essenciais</h3>
+          <ul><li>Reatâncias, constantes de tempo e curvas de consumo devem corresponder ao modelo selecionado.</li><li>A resposta eletromecânica real depende do motor, alternador, AVR, governador, inércia e controles.</li><li>A corrente de curto-circuito varia no tempo e pode depender do sistema de excitação.</li><li>Cargas não lineares exigem análise do espectro harmônico, neutro e compatibilidade do alternador.</li><li>Paralelismo com rede exige estudo de interface e aprovação da distribuidora.</li><li>Tanques, ventilação, exaustão, acústica e incêndio devem atender às exigências locais.</li></ul>
+          <h3>10. Salvamento e relatório</h3>
+          <p>O projeto é salvo automaticamente. Projetos JSON das versões v1.0 e v1.1 são migrados para a v1.2. O relatório é montado diretamente no documento antes da impressão, pode ser salvo em PDF pelo navegador ou baixado como HTML independente.</p>
+        </div>
+      </section>
     </div>
   </main>
 </div>
 
 <div id="print-area"></div>
 <div id="toast"></div>
-
-<div class="im-backdrop" id="manual-modal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="manual-title">
-  <div class="im-dialog">
-    <header class="im-header">
-      <div class="im-brand">
-        <div class="im-brand-mark" aria-hidden="true"><svg width="29" height="29" viewBox="0 0 64 64" fill="none"><path d="M9 38h13l6-20 8 32 7-23 5 11h7" stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="38" r="3.5" fill="white"/><circle cx="55" cy="38" r="3.5" fill="white"/></svg></div>
-        <div><h2 id="manual-title">Manual interativo do GeradorPro</h2><p>Uso do sistema, fundamentos físicos, memória de cálculo e boas práticas de engenharia.</p></div>
-      </div>
-      <div class="im-header-actions">
-        <button class="btn btn-ghost btn-sm" type="button" id="manual-reset-progress">Reiniciar progresso</button>
-        <button class="im-icon-btn" type="button" id="manual-close" aria-label="Fechar manual" title="Fechar (Esc)">×</button>
-      </div>
-    </header>
-
-    <div class="im-toolbar">
-      <div class="im-search-wrap"><span aria-hidden="true">⌕</span><input class="im-search" id="manual-search" type="search" autocomplete="off" placeholder="Pesquisar: fator de potência, partida, curto-circuito, tanque, QTA..."><button class="im-clear-search" id="manual-clear-search" type="button" aria-label="Limpar pesquisa">×</button></div>
-      <div class="im-toolbar-note">Navegue pelos capítulos ou pesquise em todo o manual.</div>
-    </div>
-
-    <div class="im-layout">
-      <aside class="im-sidebar" aria-label="Capítulos do manual">
-        <div class="im-progress-card">
-          <div class="im-progress-head"><strong>Progresso de leitura</strong><span id="manual-progress-text">0%</span></div>
-          <div class="im-progress-track"><div class="im-progress-bar" id="manual-progress-bar"></div></div>
-          <div class="im-progress-sub" id="manual-progress-sub">Abra os capítulos e marque as etapas concluídas.</div>
-        </div>
-        <div class="im-nav-title">Aprender e operar</div>
-        <nav class="im-nav-list" id="manual-nav">
-          <button class="im-nav-btn active" type="button" data-manual-topic="start"><span class="im-nav-num">01</span><span>Comece aqui</span><span class="im-nav-done">✓</span></button>
-          <button class="im-nav-btn" type="button" data-manual-topic="physics"><span class="im-nav-num">02</span><span>Como o gerador funciona</span><span class="im-nav-done">✓</span></button>
-          <button class="im-nav-btn" type="button" data-manual-topic="power"><span class="im-nav-num">03</span><span>Potências, FP e trifásico</span><span class="im-nav-done">✓</span></button>
-          <button class="im-nav-btn" type="button" data-manual-topic="sizing"><span class="im-nav-num">04</span><span>Dimensionamento e derating</span><span class="im-nav-done">✓</span></button>
-          <button class="im-nav-btn" type="button" data-manual-topic="motors"><span class="im-nav-num">05</span><span>Motores e transitórios</span><span class="im-nav-done">✓</span></button>
-          <button class="im-nav-btn" type="button" data-manual-topic="faults"><span class="im-nav-num">06</span><span>Curto, harmônicos e neutro</span><span class="im-nav-done">✓</span></button>
-          <button class="im-nav-btn" type="button" data-manual-topic="fuel"><span class="im-nav-num">07</span><span>Combustível e falta de energia</span><span class="im-nav-done">✓</span></button>
-          <button class="im-nav-btn" type="button" data-manual-topic="electrical"><span class="im-nav-num">08</span><span>Integração elétrica</span><span class="im-nav-done">✓</span></button>
-          <button class="im-nav-btn" type="button" data-manual-topic="modules"><span class="im-nav-num">09</span><span>Todas as funcionalidades</span><span class="im-nav-done">✓</span></button>
-          <button class="im-nav-btn" type="button" data-manual-topic="workflow"><span class="im-nav-num">10</span><span>Roteiro de projeto</span><span class="im-nav-done">✓</span></button>
-          <button class="im-nav-btn" type="button" data-manual-topic="limits"><span class="im-nav-num">11</span><span>Limites e validações</span><span class="im-nav-done">✓</span></button>
-          <button class="im-nav-btn" type="button" data-manual-topic="glossary"><span class="im-nav-num">12</span><span>Glossário técnico</span><span class="im-nav-done">✓</span></button>
-          <button class="im-nav-btn" type="button" data-manual-topic="quiz"><span class="im-nav-num">13</span><span>Teste seus conhecimentos</span><span class="im-nav-done">✓</span></button>
-        </nav>
-      </aside>
-
-      <main class="im-content" id="manual-content" tabindex="0">
-        <div class="im-search-empty" id="manual-search-empty"><h3>Nenhum resultado encontrado</h3><p>Tente uma palavra mais geral, como “potência”, “motor”, “autonomia” ou “proteção”.</p></div>
-
-        <section class="im-topic active" id="manual-topic-start" data-title="Comece aqui introdução fluxo rápido projeto exemplo dashboard">
-          <div class="im-topic-head"><div><div class="im-eyebrow">Capítulo 1</div><h2>Comece aqui</h2><p>Entenda o propósito do GeradorPro, veja os resultados atuais do projeto e percorra um fluxo seguro de utilização.</p></div><div class="im-topic-index">01</div></div>
-          <div class="im-hero">
-            <h3>O GeradorPro é um ambiente de pré-dimensionamento e verificação</h3>
-            <p>Ele organiza cargas, motores, potência ativa e aparente, partidas, resposta transitória preliminar, curto-circuito, autonomia, load shedding, alimentadores, seleção comercial e memorial. O resultado é uma base rastreável para o projeto — não uma dispensa da análise do fabricante nem da responsabilidade técnica.</p>
-            <div class="im-kpi-grid">
-              <div class="im-kpi"><span>Projeto atual</span><b id="manual-live-project">—</b><small>Identificação cadastrada</small></div>
-              <div class="im-kpi"><span>Demanda ativa</span><b id="manual-live-p">—</b><small>ΣP das cargas ativas</small></div>
-              <div class="im-kpi"><span>Demanda aparente</span><b id="manual-live-s">—</b><small>Composição vetorial P–Q</small></div>
-              <div class="im-kpi"><span>Seleção atual</span><b id="manual-live-gen">—</b><small id="manual-live-governing">Critério governante</small></div>
-            </div>
-            <div class="im-hero-actions"><button class="btn btn-ghost" type="button" data-manual-go="project">Abrir dados do projeto</button><button class="btn btn-ghost" type="button" data-manual-go="loads">Cadastrar cargas</button><button class="btn btn-accent" type="button" data-manual-go="sizing">Ver dimensionamento</button></div>
-          </div>
-          <div class="im-grid im-grid-3">
-            <div class="im-card"><h3>O que entra</h3><p>Características do projeto, cargas, motores, fatores de demanda e simultaneidade, ambiente, parâmetros do alternador, curva de combustível, tanque, cabos e critérios de aceitação.</p></div>
-            <div class="im-card"><h3>O que o motor calcula</h3><p>Potências P, Q e S; correntes; sequência de partidas; requisitos independentes do motor e do alternador; correntes de falta; autonomia; balanço de fases; queda de tensão e cenários.</p></div>
-            <div class="im-card"><h3>O que ainda deve ser confirmado</h3><p>Curvas oficiais, ratings no regime correto, derating específico, aceitação de degraus, harmônicos, ventilação, exaustão, acústica, incêndio, coordenação e requisitos locais.</p></div>
-          </div>
-          <div class="im-card" style="margin-top:13px">
-            <h3>Fluxo rápido em sete decisões</h3>
-            <div class="im-step-list">
-              <div class="im-step"><div class="im-step-num">1</div><div><h4>Defina o serviço</h4><p>Tensão, frequência, regime, ambiente, operação isolada ou em paralelo e finalidade do grupo gerador.</p></div><label><input class="im-check" type="checkbox" data-check="quick-1"> Concluído</label></div>
-              <div class="im-step"><div class="im-step-num">2</div><div><h4>Modele a demanda real</h4><p>Cadastre cargas e motores sem duplicidade; aplique demanda, simultaneidade, rendimento, fator de potência e prioridade.</p></div><label><input class="im-check" type="checkbox" data-check="quick-2"> Concluído</label></div>
-              <div class="im-step"><div class="im-step-num">3</div><div><h4>Separe kW de kVA</h4><p>O motor primário precisa fornecer potência mecânica/ativa; o alternador precisa suportar potência aparente e corrente.</p></div><label><input class="im-check" type="checkbox" data-check="quick-3"> Concluído</label></div>
-              <div class="im-step"><div class="im-step-num">4</div><div><h4>Verifique partidas e transitórios</h4><p>Avalie degraus, queda de tensão, queda de frequência e a sequência temporal de entrada dos motores.</p></div><label><input class="im-check" type="checkbox" data-check="quick-4"> Concluído</label></div>
-              <div class="im-step"><div class="im-step-num">5</div><div><h4>Confirme proteção e integração</h4><p>Curto-circuito, QTA, disjuntor, cabos, neutro, aterramento, desequilíbrio e chaveamento.</p></div><label><input class="im-check" type="checkbox" data-check="quick-5"> Concluído</label></div>
-              <div class="im-step"><div class="im-step-num">6</div><div><h4>Simule combustível e contingência</h4><p>Use curva documentada, tanque real, reserva, perfil de carga e política de load shedding.</p></div><label><input class="im-check" type="checkbox" data-check="quick-6"> Concluído</label></div>
-              <div class="im-step"><div class="im-step-num">7</div><div><h4>Selecione, compare e documente</h4><p>Escolha um equipamento comercial, registre pendências e gere o memorial para revisão técnica.</p></div><label><input class="im-check" type="checkbox" data-check="quick-7"> Concluído</label></div>
-            </div>
-          </div>
-        </section>
-
-        <section class="im-topic" id="manual-topic-physics" data-title="física energia diesel combustão motor eixo alternador indução eletromagnética AVR governador frequência tensão QTA">
-          <div class="im-topic-head"><div><div class="im-eyebrow">Capítulo 2</div><h2>Como um grupo gerador funciona</h2><p>Da energia química do combustível à energia elétrica entregue às cargas, cada subsistema cumpre uma função física distinta.</p></div><div class="im-topic-index">02</div></div>
-          <div class="im-card">
-            <h3>Cadeia de conversão de energia — clique em cada etapa</h3>
-            <div class="im-energy-chain" id="manual-energy-chain">
-              <button class="im-energy-stage active" type="button" data-energy-stage="fuel">1. Combustível</button><span class="im-energy-arrow">→</span>
-              <button class="im-energy-stage" type="button" data-energy-stage="engine">2. Motor primário</button><span class="im-energy-arrow">→</span>
-              <button class="im-energy-stage" type="button" data-energy-stage="shaft">3. Eixo e inércia</button><span class="im-energy-arrow">→</span>
-              <button class="im-energy-stage" type="button" data-energy-stage="alternator">4. Alternador</button><span class="im-energy-arrow">→</span>
-              <button class="im-energy-stage" type="button" data-energy-stage="controls">5. AVR e governador</button><span class="im-energy-arrow">→</span>
-              <button class="im-energy-stage" type="button" data-energy-stage="loads">6. QTA e cargas</button>
-            </div>
-            <div class="im-energy-detail" id="manual-energy-detail"><h4>Combustível e energia química</h4><p>O diesel armazena energia química. A combustão libera calor; parte dele é convertida em trabalho mecânico e outra parte é dissipada no escape, no sistema de arrefecimento, no atrito e em perdas auxiliares. Por isso, litros por hora não dependem apenas dos kVA nominais: dependem principalmente da potência ativa produzida e da eficiência do conjunto no ponto de carga.</p></div>
-          </div>
-          <div class="im-grid im-grid-2" style="margin-top:13px">
-            <div class="im-card"><h3>Motor primário: torque e rotação</h3><p>O motor de combustão fornece torque ao eixo. A potência mecânica é o produto do torque pela velocidade angular: <code>P = T × ω</code>. Quando uma carga ativa entra, o torque eletromagnético resistente aumenta. A rotação tende a cair até o governador elevar o combustível e restabelecer o equilíbrio.</p><div class="im-callout info"><strong>Consequência:</strong> o motor primário é verificado em <strong>kW</strong>, porque precisa suprir potência ativa e perdas.</div></div>
-            <div class="im-card"><h3>Alternador síncrono: campo e tensão</h3><p>O rotor excitado cria um campo magnético girante. Ao cruzar os enrolamentos do estator, o fluxo variável induz tensão elétrica. Em uma máquina síncrona, a frequência se relaciona com a rotação e o número de polos: <code>n = 120 f / p</code>.</p><div class="im-callout info"><strong>Consequência:</strong> o alternador é verificado em <strong>kVA</strong> e corrente, pois conduz componentes ativa e reativa.</div></div>
-            <div class="im-card"><h3>AVR: controle da tensão</h3><p>O regulador automático de tensão mede a tensão terminal e ajusta a excitação do rotor. Uma entrada abrupta de corrente, sobretudo reativa, causa mergulho de tensão; o AVR reage elevando a excitação, dentro dos limites do sistema e da máquina.</p></div>
-            <div class="im-card"><h3>Governador: controle da frequência</h3><p>O governador mede a velocidade e comanda o combustível. Um degrau de potência ativa desacelera o conjunto antes da correção. A inércia rotacional reduz a rapidez da queda; o ajuste de droop define a relação estática entre carga e frequência.</p></div>
-          </div>
-          <details class="im-details"><summary>Por que tensão e frequência respondem a fenômenos diferentes?</summary><div class="im-details-body"><p>Em primeira aproximação, a tensão é mais sensível à corrente reativa, à reatância do alternador e à excitação; a frequência é mais sensível ao desequilíbrio entre potência mecânica e potência ativa elétrica. Na prática há acoplamentos, saturação e dinâmica de controles. O GeradorPro separa essas duas triagens para tornar o diagnóstico compreensível.</p></div></details>
-          <details class="im-details"><summary>O que significa inércia do conjunto?</summary><div class="im-details-body"><p>Rotor do motor, volante e rotor do alternador armazenam energia cinética. Durante os primeiros instantes de um degrau, essa energia sustenta temporariamente a carga. Conjuntos com maior inércia tendem a apresentar menor taxa inicial de queda de frequência, embora a resposta final também dependa do governador e da reserva de torque.</p></div></details>
-        </section>
-
-        <section class="im-topic" id="manual-topic-power" data-title="potência ativa reativa aparente fator de potência triângulo P Q S corrente trifásica monofásica demanda simultaneidade rendimento">
-          <div class="im-topic-head"><div><div class="im-eyebrow">Capítulo 3</div><h2>Potências, fator de potência e sistema trifásico</h2><p>As três grandezas P, Q e S descrevem aspectos diferentes do mesmo fluxo elétrico e não devem ser somadas de forma aritmética.</p></div><div class="im-topic-index">03</div></div>
-          <div class="im-formula-grid">
-            <div class="im-formula-card"><b>Potência aparente de uma carga</b><div class="eq">S = P ÷ FP</div><p>P em kW, S em kVA e FP entre 0 e 1.</p></div>
-            <div class="im-formula-card"><b>Potência reativa</b><div class="eq">Q = √(S² − P²)</div><p>Q em kvar; representa troca oscilante de energia com campos magnéticos e elétricos.</p></div>
-            <div class="im-formula-card"><b>Soma vetorial do conjunto</b><div class="eq">S<sub>T</sub> = √[(ΣP)² + (ΣQ)²]</div><p>O programa soma P e Q e somente depois recompõe S.</p></div>
-            <div class="im-formula-card"><b>Corrente trifásica equilibrada</b><div class="eq">I = S·1000 ÷ (√3·V)</div><p>V é a tensão entre fases. Em monofásico: I = S·1000 ÷ V.</p></div>
-          </div>
-          <div class="im-grid im-grid-3" style="margin-top:13px">
-            <div class="im-card"><h3>P — potência ativa</h3><p>É a parcela convertida em trabalho, calor, movimento, luz e processamento. Ela determina o esforço energético do motor primário e o consumo de combustível.</p></div>
-            <div class="im-card"><h3>Q — potência reativa</h3><p>É necessária para estabelecer campos em motores, transformadores e outros equipamentos. Não representa energia líquida consumida por ciclo, mas aumenta corrente, perdas e ocupação do alternador.</p></div>
-            <div class="im-card"><h3>S — potência aparente</h3><p>É a combinação vetorial de P e Q. Dimensiona corrente, enrolamentos do alternador, cabos e dispositivos. Dois projetos com os mesmos kW podem exigir kVA diferentes.</p></div>
-          </div>
-          <div class="im-card" style="margin-top:13px">
-            <h3>Calculadora didática P–Q–S</h3>
-            <p class="subtle">Este exercício não altera o projeto. Ele demonstra como fator de potência e tensão mudam a corrente exigida.</p>
-            <div class="im-calc">
-              <div class="field"><label>Potência ativa P</label><div class="input-group"><input id="manual-calc-p" type="number" min="0" step="1" value="100"><span>kW</span></div></div>
-              <div class="field"><label>Fator de potência</label><input id="manual-calc-pf" type="number" min="0.1" max="1" step="0.01" value="0.80"></div>
-              <div class="field"><label>Tensão</label><div class="input-group"><input id="manual-calc-v" type="number" min="1" step="1" value="380"><span>V</span></div></div>
-              <div class="field"><label>Sistema</label><select id="manual-calc-phases"><option value="3">Trifásico</option><option value="1">Monofásico</option></select></div>
-              <div class="im-calc-result">
-                <div class="im-calc-kpi"><span>Potência aparente</span><b id="manual-calc-s">125,00 kVA</b></div>
-                <div class="im-calc-kpi"><span>Potência reativa</span><b id="manual-calc-q">75,00 kvar</b></div>
-                <div class="im-calc-kpi"><span>Corrente</span><b id="manual-calc-i">189,93 A</b></div>
-                <div class="im-calc-kpi"><span>Ângulo φ</span><b id="manual-calc-phi">36,87°</b></div>
-              </div>
-            </div>
-          </div>
-          <div class="im-grid im-grid-2" style="margin-top:13px">
-            <div class="im-card"><h3>Demanda e simultaneidade</h3><p>O sistema aplica os dois fatores multiplicativamente. Uma carga de 100 kW, demanda de 80% e simultaneidade de 75% contribui com <code>100 × 0,80 × 0,75 = 60 kW</code>. Use critérios documentados; fatores arbitrários podem ocultar sobrecarga.</p></div>
-            <div class="im-card"><h3>Rendimento</h3><p>Para motores cadastrados em kW, cv ou hp mecânicos, o programa converte a potência de eixo e divide pelo rendimento para obter a potência elétrica absorvida. Um motor de 75 kW com η = 90% absorve aproximadamente 83,3 kW em plena condição informada.</p></div>
-          </div>
-          <div class="im-callout warn"><strong>Erro comum:</strong> somar diretamente os kVA individuais. Como os fatores de potência podem diferir, o correto é somar P e Q e então calcular o S total — exatamente o procedimento utilizado pelo GeradorPro.</div>
-        </section>
-
-        <section class="im-topic" id="manual-topic-sizing" data-title="dimensionamento kW kVA motor alternador margem derating altitude temperatura instalação ESP LTP PRP COP reserva carregamento">
-          <div class="im-topic-head"><div><div class="im-eyebrow">Capítulo 4</div><h2>Dimensionamento, margens e derating</h2><p>O GeradorPro verifica separadamente a capacidade eletromagnética do alternador e a capacidade mecânica do motor primário.</p></div><div class="im-topic-index">04</div></div>
-          <div class="im-formula-grid">
-            <div class="im-formula-card"><b>Requisito do alternador</b><div class="eq">S<sub>regime</sub> = S<sub>total</sub>·(1+m) ÷ K<sub>alt</sub></div><p>Corrige a potência aparente por margem e fatores ambientais do alternador.</p></div>
-            <div class="im-formula-card"><b>Requisito do motor primário</b><div class="eq">P<sub>motor</sub> = P<sub>total</sub>·(1+m+r) ÷ K<sub>mot</sub></div><p>m é a margem geral; r é a reserva ativa transitória.</p></div>
-            <div class="im-formula-card"><b>Equivalente em kVA pelo motor</b><div class="eq">S<sub>eq,mot</sub> = P<sub>motor</sub> ÷ FP<sub>nom</sub></div><p>Permite comparar o limite ativo do motor com faixas nominais de kVA.</p></div>
-            <div class="im-formula-card"><b>Fator combinado</b><div class="eq">K = K<sub>altitude</sub>·K<sub>temperatura</sub>·K<sub>instalação</sub></div><p>Motor e alternador possuem fatores independentes.</p></div>
-          </div>
-          <div class="im-grid im-grid-2" style="margin-top:13px">
-            <div class="im-card"><h3>Por que dois deratings?</h3><p>O motor perde capacidade de admissão, combustão e rejeição térmica conforme altitude, temperatura e ventilação. O alternador sofre efeitos térmicos e dielétricos próprios. As curvas e limites não são necessariamente iguais. O programa, portanto, mantém <code>Kmotor</code> e <code>Kalternador</code> separados.</p></div>
-            <div class="im-card"><h3>Margem não é substituto de informação</h3><p>A margem cobre incertezas razoáveis, crescimento e tolerâncias. Ela não deve compensar cadastro incompleto, curva de partida desconhecida, fator de potência omitido ou derating ignorado. Margens excessivas também podem causar baixa carga prolongada.</p></div>
-          </div>
-          <div class="im-card" style="margin-top:13px">
-            <h3>Regimes de potência</h3>
-            <div class="im-table-wrap"><table class="im-table"><thead><tr><th>Regime</th><th>Uso conceitual</th><th>Cuidado de projeto</th></tr></thead><tbody>
-              <tr><td><strong>ESP</strong></td><td>Emergência durante falha da fonte normal, com limites de horas e perfil definidos pelo fabricante.</td><td>Não presumir que admite sobrecarga nem operação ilimitada.</td></tr>
-              <tr><td><strong>LTP</strong></td><td>Potência limitada por determinado número de horas anuais.</td><td>Confirmar duração e condições de carga na ficha específica.</td></tr>
-              <tr><td><strong>PRP</strong></td><td>Operação principal com carga variável e condições de média admissível.</td><td>Verificar regras de média, sobrecarga e manutenção.</td></tr>
-              <tr><td><strong>COP</strong></td><td>Potência contínua para carga essencialmente constante e operação prolongada.</td><td>É um rating específico; não deve ser inferido de ESP ou PRP.</td></tr>
-            </tbody></table></div>
-          </div>
-          <div class="im-grid im-grid-3" style="margin-top:13px">
-            <div class="im-card"><h3>Carregamento mínimo</h3><p>Baixa carga pode reduzir eficiência e, em motores diesel, favorecer operação térmica inadequada. O limite desejável é critério do projeto, não uma regra universal.</p></div>
-            <div class="im-card"><h3>Carregamento máximo</h3><p>Reserva operacional protege contra variações e transitórios. O GeradorPro alerta quando a potência ativa ou aparente se aproxima do limite cadastrado.</p></div>
-            <div class="im-card"><h3>Critério governante</h3><p>O maior entre requisito aparente, equivalente ativo e — se escolhido — critério conservador de partida define a recomendação automática.</p></div>
-          </div>
-          <div class="im-callout info"><strong>Uso recomendado:</strong> aplique a potência automática para iniciar a análise; depois abra “Seleção real” e escolha um rating comercial compatível em kVA e kW no regime correto.</div>
-          <button class="btn btn-primary" type="button" data-manual-go="sizing">Abrir o módulo Dimensionamento</button>
-        </section>
-
-        <section class="im-topic" id="manual-topic-motors" data-title="motor indução partida corrente rotor bloqueado direta estrela triângulo soft starter inversor tensão frequência AVR governador degrau transitório">
-          <div class="im-topic-head"><div><div class="im-eyebrow">Capítulo 5</div><h2>Motores, partidas e resposta transitória</h2><p>A partida de motores pode impor ao grupo gerador uma solicitação muito superior à potência de regime durante alguns segundos.</p></div><div class="im-topic-index">05</div></div>
-          <div class="im-grid im-grid-2">
-            <div class="im-card"><h3>O que acontece na partida</h3><p>Com o rotor parado, a frequência relativa do campo no rotor é máxima e a impedância efetiva pode resultar em corrente elevada. A corrente de partida cria um grande kVA, frequentemente com baixo fator de potência. Conforme o motor acelera, a corrente cai até o regime.</p><div class="im-callout warn">O sistema usa o multiplicador <code>Ipart/In</code> e o FP de partida informados. Dados de placa, curva ou fabricante são preferíveis a valores genéricos.</div></div>
-            <div class="im-card"><h3>Sequência temporal</h3><p>Cada motor recebe instante de início e duração de partida. O motor constrói eventos nos inícios e términos, soma cargas já em regime e motores ainda partindo e identifica o pior ponto da sequência.</p><div class="im-callout info">Partidas escalonadas podem reduzir o pico simultâneo; mas a lógica de comando e as condições reais de processo precisam permitir esse escalonamento.</div></div>
-          </div>
-          <div class="im-card" style="margin-top:13px">
-            <h3>Métodos de partida e efeito esperado</h3>
-            <div class="im-table-wrap"><table class="im-table"><thead><tr><th>Método</th><th>Comportamento simplificado</th><th>Observação</th></tr></thead><tbody>
-              <tr><td>Direta</td><td>Maior corrente e maior torque de partida.</td><td>O valor padrão do sistema é apenas inicial; substitua pelo dado real.</td></tr>
-              <tr><td>Estrela-triângulo</td><td>Reduz tensão por fase na etapa estrela, reduzindo corrente e torque.</td><td>A transição pode gerar novo transitório.</td></tr>
-              <tr><td>Autotransformador</td><td>Aplica tensão reduzida durante a partida.</td><td>Depende do tap e do arranjo adotado.</td></tr>
-              <tr><td>Soft starter</td><td>Controla a tensão e limita corrente, com torque dependente do ajuste.</td><td>Confirmar perfil de corrente e duração para a carga mecânica.</td></tr>
-              <tr><td>Inversor de frequência</td><td>Controla frequência e tensão, podendo limitar fortemente a corrente.</td><td>Introduz eletrônica de potência e harmônicos; confirmar bypass e modo de emergência.</td></tr>
-            </tbody></table></div>
-          </div>
-          <div class="im-formula-grid" style="margin-top:13px">
-            <div class="im-formula-card"><b>Triagem da queda de tensão usada no app</b><div class="eq">ΔV ≈ 100·K<sub>AVR</sub>·(R<sub>pu</sub>·ΔP/S<sub>b</sub> + X″<sub>d</sub>·ΔQ/S<sub>b</sub>)</div><p>É uma aproximação P–Q/impedância; não substitui curva de aceitação de carga.</p></div>
-            <div class="im-formula-card"><b>Triagem da queda de frequência</b><div class="eq">Δf% ≈ droop·K<sub>din</sub>·ΔP/P<sub>b</sub></div><p>Representa a sensibilidade preliminar ao degrau ativo; não é modelo completo de inércia e governador.</p></div>
-          </div>
-          <div class="im-grid im-grid-3" style="margin-top:13px">
-            <div class="im-card"><h3>Degrau ativo</h3><p>Compara a potência ativa de partida com a potência ativa disponível. Um degrau grande pode produzir forte desaceleração.</p></div>
-            <div class="im-card"><h3>Mergulho de tensão</h3><p>É influenciado por reatância, corrente reativa de partida, excitação, saturação, cabos e tensão prévia.</p></div>
-            <div class="im-card"><h3>Recuperação</h3><p>As constantes de recuperação desenham uma curva exponencial didática após o pior evento. Use tempos do fabricante para decisão final.</p></div>
-          </div>
-          <div class="im-callout bad"><strong>Não use o kVA de rotor bloqueado como potência nominal de forma automática.</strong> No modo “verificação separada”, ele serve para estudar a resposta transitória. O modo conservador pode superdimensionar o conjunto e deve ser conscientemente escolhido.</div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-primary" type="button" data-manual-go="motors">Abrir Motores e partidas</button><button class="btn btn-secondary" type="button" data-manual-go="transients">Abrir Transitórios</button></div>
-        </section>
-
-        <section class="im-topic" id="manual-topic-faults" data-title="curto-circuito subtransitória transitória síncrona Xd X/R pico assimétrico I2t proteção térmica harmônico THDi triplen neutro desequilíbrio fases">
-          <div class="im-topic-head"><div><div class="im-eyebrow">Capítulo 6</div><h2>Curto-circuito, harmônicos e neutro</h2><p>Grupos geradores apresentam corrente de falta limitada e variável no tempo, ao mesmo tempo em que cargas não lineares podem elevar a solicitação do neutro.</p></div><div class="im-topic-index">06</div></div>
-          <div class="im-grid im-grid-3">
-            <div class="im-card"><h3>Período subtransitório</h3><p>Logo após a falta, a corrente é limitada principalmente por <code>X″d</code>. É o maior valor simétrico estimado pelo sistema e influencia capacidade de interrupção e esforços iniciais.</p></div>
-            <div class="im-card"><h3>Período transitório</h3><p>Com o decaimento dos fluxos amortecedores, a reatância efetiva se aproxima de <code>X′d</code> e a corrente diminui segundo a constante de tempo informada.</p></div>
-            <div class="im-card"><h3>Regime permanente</h3><p>O valor associado a <code>Xd</code> tende a ser menor. Sistemas de excitação e controles podem modificar a contribuição sustentada; confirme a ficha do alternador.</p></div>
-          </div>
-          <div class="im-formula-grid" style="margin-top:13px">
-            <div class="im-formula-card"><b>Corrente subtransitória</b><div class="eq">I″<sub>k</sub> ≈ c·I<sub>n</sub> ÷ X″<sub>d,pu</sub></div><p>c é o fator de tensão pré-falta.</p></div>
-            <div class="im-formula-card"><b>Pico assimétrico</b><div class="eq">i<sub>p</sub> ≈ √2·κ·I″<sub>k</sub></div><p>κ depende da relação X/R; quanto maior X/R, mais lenta a componente contínua.</p></div>
-            <div class="im-formula-card"><b>Solicitação térmica</b><div class="eq">I²t = ∫ i²(t) dt</div><p>O programa integra componentes alternada e contínua até o tempo de eliminação.</p></div>
-            <div class="im-formula-card"><b>Seção adiabática indicativa</b><div class="eq">S ≥ √(I²t) ÷ k</div><p>k depende de condutor, isolação e temperaturas inicial/final admissíveis.</p></div>
-          </div>
-          <div class="im-callout warn"><strong>Proteção em geradores:</strong> uma corrente de falta relativamente baixa pode não acionar instantaneamente dispositivos dimensionados para redes mais “fortes”. Coordenação, curvas tempo-corrente, proteção do alternador e requisitos de seletividade devem ser estudados.</div>
-          <div class="im-grid im-grid-2">
-            <div class="im-card"><h3>Harmônicos e THDi</h3><p>UPS, inversores, fontes chaveadas e retificadores absorvem correntes não senoidais. A THDi informa a distorção total de corrente, mas a seleção do alternador depende também do espectro, da impedância subtransitória, do tipo de carga e dos limites do fabricante.</p></div>
-            <div class="im-card"><h3>Harmônicos triplens no neutro</h3><p>Componentes de ordem 3, 9, 15... são de sequência zero e chegam em fase ao neutro, somando-se em vez de se cancelarem. O GeradorPro soma a parcela informada de forma conservadora e combina-a por RMS com o neutro fundamental devido ao desequilíbrio.</p></div>
-          </div>
-          <details class="im-details"><summary>Como o programa calcula o desequilíbrio?</summary><div class="im-details-body"><p>Cargas trifásicas são divididas igualmente. Cargas monofásicas são atribuídas à fase A, B ou C. O programa converte P e Q em fasores de corrente, soma as três fases e obtém corrente de neutro fundamental, corrente média, desvio máximo e faixa entre maior e menor corrente.</p></div></details>
-          <details class="im-details"><summary>O que o campo “H3/triplens” significa?</summary><div class="im-details-body"><p>É a parcela percentual da corrente fundamental que se considera retornar no neutro como harmônicos de sequência zero. Use medição, especificação do equipamento ou estudo harmônico; não confunda esse campo com a THDi total.</p></div></details>
-          <button class="btn btn-primary" type="button" data-manual-go="transients">Abrir Transitórios e curto</button>
-        </section>
-
-        <section class="im-topic" id="manual-topic-fuel" data-title="combustível diesel consumo específico curva interpolação tanque autonomia reserva volume morto perfil carga falta energia load shedding prioridade P1 P2 P3 P4 P5">
-          <div class="im-topic-head"><div><div class="im-eyebrow">Capítulo 7</div><h2>Combustível, autonomia e falta de energia</h2><p>Autonomia é um balanço temporal entre volume realmente utilizável e consumo dependente da potência ativa.</p></div><div class="im-topic-index">07</div></div>
-          <div class="im-grid im-grid-2">
-            <div class="im-card"><h3>Curva de fabricante</h3><p>Quando há pontos documentados em 25%, 50%, 75% e 100%, o sistema interpola linearmente entre os pontos válidos. Ele não extrapola automaticamente fora da faixa coberta, evitando inventar consumo abaixo ou acima dos dados disponíveis.</p></div>
-            <div class="im-card"><h3>Consumo específico preliminar</h3><p>No modo estimativo, usa-se <code>C = C₀ + Pativa × ce</code>, em L/h. É uma aproximação; a eficiência varia com carregamento, rotação, temperatura, combustível e configuração do equipamento.</p></div>
-          </div>
-          <div class="im-formula-grid" style="margin-top:13px">
-            <div class="im-formula-card"><b>Volume útil</b><div class="eq">V<sub>útil</sub> = V<sub>tanque</sub>·[1 − (reserva + não utilizável)]</div><p>Os percentuais são aplicados ao volume nominal.</p></div>
-            <div class="im-formula-card"><b>Autonomia simples</b><div class="eq">t = V<sub>útil</sub> ÷ C</div><p>Válida para uma condição constante de consumo.</p></div>
-            <div class="im-formula-card"><b>Volume por trecho</b><div class="eq">V<sub>i</sub> = C(carga<sub>i</sub>)·Δt<sub>i</sub></div><p>O perfil variável soma volumes trecho a trecho.</p></div>
-            <div class="im-formula-card"><b>Tanque requerido</b><div class="eq">V<sub>nom</sub> = C·t<sub>desejado</sub> ÷ fração útil</div><p>Resultado preliminar sujeito a critérios de armazenamento e abastecimento.</p></div>
-          </div>
-          <div class="im-card" style="margin-top:13px"><h3>Sequência simulada da falta</h3><div class="im-step-list">
-            <div class="im-step"><div class="im-step-num">1</div><div><h4>Falha da rede e atraso</h4><p>O sistema registra a perda da fonte normal e espera o atraso configurado para comando de partida.</p></div></div>
-            <div class="im-step"><div class="im-step-num">2</div><div><h4>Partida e estabilização</h4><p>São somados atraso, aquecimento/estabilização e tempo mecânico-elétrico de transferência do QTA.</p></div></div>
-            <div class="im-step"><div class="im-step-num">3</div><div><h4>Aplicação da política de prioridades</h4><p>Somente cargas até a prioridade autorizada entram inicialmente; em sobrecarga, o shedding retira as menos prioritárias.</p></div></div>
-            <div class="im-step"><div class="im-step-num">4</div><div><h4>Consumo por perfil</h4><p>O nível de tanque é atualizado em cada trecho até retorno da rede, reserva ou volume não utilizável.</p></div></div>
-            <div class="im-step"><div class="im-step-num">5</div><div><h4>Retorno, retransferência e resfriamento</h4><p>Após confirmação da rede, ocorre retransferência e funcionamento em vazio pelo tempo de cooldown.</p></div></div>
-          </div></div>
-          <div class="im-grid im-grid-2" style="margin-top:13px">
-            <div class="im-card"><h3>Política de load shedding</h3><p>P5 é menos prioritária que P4, e assim sucessivamente até P1. O algoritmo retira primeiro cargas de maior número de prioridade e, em empate, a de maior potência aparente. Cargas P1 não são descartadas automaticamente.</p></div>
-            <div class="im-card"><h3>Classificação do cenário</h3><p><strong>ADEQUADO</strong>: atende sem entrar em reserva. <strong>ALERTA</strong>: conclui, mas alcança reserva. <strong>FALHA</strong>: capacidade, perfil ou combustível insuficiente. <strong>INDEFINIDO</strong>: faltam dados válidos de consumo.</p></div>
-          </div>
-          <div class="im-callout warn"><strong>Tanque não é apenas volume.</strong> O projeto deve considerar contenção, respiro, retorno, alimentação, expansão, qualidade do combustível, acesso para abastecimento, autonomia normativa/operacional e proteção contra incêndio.</div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-primary" type="button" data-manual-go="fuel">Abrir Combustível</button><button class="btn btn-secondary" type="button" data-manual-go="outage">Abrir Simulador de falta</button></div>
-        </section>
-
-        <section class="im-topic" id="manual-topic-electrical" data-title="integração elétrica QTA ATS disjuntor proteção alimentador cabo ampacidade queda tensão aterramento TN-S TT IT neutro paralelismo rede sincronismo">
-          <div class="im-topic-head"><div><div class="im-eyebrow">Capítulo 8</div><h2>Integração elétrica, QTA, cabos e aterramento</h2><p>O grupo gerador só é funcional quando sua fonte, transferência, proteção, condutores e esquema de aterramento são coerentes entre si.</p></div><div class="im-topic-index">08</div></div>
-          <div class="im-grid im-grid-2">
-            <div class="im-card"><h3>QTA / ATS</h3><p>O quadro de transferência comuta entre fonte normal e gerador, com intertravamento adequado. Deve ser verificado quanto a corrente, número de polos, categoria de utilização, capacidade de curto, sequência de transferência, neutro e lógica de comando.</p></div>
-            <div class="im-card"><h3>Disjuntor e proteção</h3><p>O sistema sugere uma faixa padronizada a partir da corrente nominal e do fator informado. Isso não define ajustes, seletividade, proteção do alternador, função de terra ou curvas de atuação.</p></div>
-            <div class="im-card"><h3>Alimentador</h3><p>A ampacidade informada deve já refletir método de instalação, temperatura, agrupamento e demais correções. O programa calcula utilização, resistência aproximada e queda de tensão P–Q.</p></div>
-            <div class="im-card"><h3>Neutro e harmônicos</h3><p>O neutro é verificado separadamente, considerando desequilíbrio fundamental e triplens. Redução automática de seção não é presumida.</p></div>
-          </div>
-          <div class="im-formula-grid" style="margin-top:13px">
-            <div class="im-formula-card"><b>Corrente nominal trifásica</b><div class="eq">I<sub>n</sub> = S<sub>n</sub>·1000 ÷ (√3·V)</div><p>Base para QTA, disjuntor e alimentador.</p></div>
-            <div class="im-formula-card"><b>Queda trifásica simplificada</b><div class="eq">ΔV = √3·I·(R·cosφ + X·senφ)·L</div><p>R e X em Ω/km; L em km.</p></div>
-          </div>
-          <div class="im-card" style="margin-top:13px">
-            <h3>Esquema de aterramento e chaveamento do neutro</h3>
-            <p>A decisão depende da relação entre neutro do gerador, neutro da rede, condutor de proteção, eletrodos, QTA e dispositivos diferenciais. O gerador pode tornar-se fonte separadamente derivada conforme o arranjo. O campo “avaliar” existe porque a resposta não pode ser universal.</p>
-            <div class="im-table-wrap"><table class="im-table"><thead><tr><th>Pergunta</th><th>Por que importa</th></tr></thead><tbody>
-              <tr><td>O neutro é comutado?</td><td>Define continuidade entre neutros, caminhos de corrente de falta e referência do sistema.</td></tr>
-              <tr><td>Onde existe ligação neutro–terra?</td><td>Múltiplos vínculos indevidos podem criar correntes circulantes; ausência do vínculo necessário pode prejudicar proteção.</td></tr>
-              <tr><td>Qual o esquema TN, TT ou IT?</td><td>Altera a estratégia de seccionamento automático, supervisão de isolamento e proteção contra choque.</td></tr>
-              <tr><td>Há paralelismo?</td><td>Exige sincronismo de tensão, frequência, fase, sequência, compartilhamento de carga e proteções específicas.</td></tr>
-            </tbody></table></div>
-          </div>
-          <div class="im-callout bad"><strong>Paralelismo com a rede:</strong> requer estudo de interface, anti-ilhamento, sincronismo, potência reversa, sobre/subtensão, sobre/subfrequência, requisitos da distribuidora e responsabilidade técnica específica.</div>
-          <button class="btn btn-primary" type="button" data-manual-go="electrical">Abrir Integração elétrica</button>
-        </section>
-
-        <section class="im-topic" id="manual-topic-modules" data-title="funcionalidades dashboard projeto cargas motores dimensionamento transitórios combustível autonomia falta elétrica seleção real catálogo cenários relatório exportar importar salvar">
-          <div class="im-topic-head"><div><div class="im-eyebrow">Capítulo 9</div><h2>Todas as funcionalidades do sistema</h2><p>Use os atalhos abaixo para abrir diretamente o módulo correspondente. O manual será fechado e a tela escolhida será exibida.</p></div><div class="im-topic-index">09</div></div>
-          <div class="im-grid im-grid-3">
-            <div class="im-card im-module-card"><div class="im-module-icon">▦</div><h3>Dashboard</h3><p>Resume P, S, potência recomendada, autonomia, alertas e sequência de partida. É a visão executiva para identificar pendências.</p><button class="btn btn-secondary btn-sm" type="button" data-manual-go="dashboard">Abrir</button></div>
-            <div class="im-card im-module-card"><div class="im-module-icon">⌂</div><h3>Projeto e critérios</h3><p>Identificação, tensão, fases, frequência, FP nominal, regime, combustível, operação, instalação, ambiente, derating, referências e premissas.</p><button class="btn btn-secondary btn-sm" type="button" data-manual-go="project">Abrir</button></div>
-            <div class="im-card im-module-card"><div class="im-module-icon">↯</div><h3>Cargas</h3><p>Cadastro editável de quantidade, potência, unidade, rendimento, FP, demanda, simultaneidade, fase, prioridade, não linearidade, THDi e triplens. Exporta CSV.</p><button class="btn btn-secondary btn-sm" type="button" data-manual-go="loads">Abrir</button></div>
-            <div class="im-card im-module-card"><div class="im-module-icon">⚙</div><h3>Motores e partidas</h3><p>Converte potência mecânica, calcula corrente nominal e de partida, método, FP de partida, instante, duração e curva temporal.</p><button class="btn btn-secondary btn-sm" type="button" data-manual-go="motors">Abrir</button></div>
-            <div class="im-card im-module-card"><div class="im-module-icon">▣</div><h3>Dimensionamento</h3><p>Compara requisito em regime, limite do motor, partida conservadora, margens, derating, carregamento e potência padronizada sugerida.</p><button class="btn btn-secondary btn-sm" type="button" data-manual-go="sizing">Abrir</button></div>
-            <div class="im-card im-module-card"><div class="im-module-icon">∿</div><h3>Transitórios e curto</h3><p>Recebe X″d, X′d, Xd, X/R, constantes, AVR e governador; calcula falta, pico, I²t, seção térmica e triagem de ΔV/Δf.</p><button class="btn btn-secondary btn-sm" type="button" data-manual-go="transients">Abrir</button></div>
-            <div class="im-card im-module-card"><div class="im-module-icon">◒</div><h3>Combustível e autonomia</h3><p>Curva oficial ou consumo específico, tanque, reserva, volume não utilizável, custo, perfil variável, autonomia e tanque requerido.</p><button class="btn btn-secondary btn-sm" type="button" data-manual-go="fuel">Abrir</button></div>
-            <div class="im-card im-module-card"><div class="im-module-icon">◷</div><h3>Simulador de falta</h3><p>Modela partida, estabilização, transferência, prioridades, shedding, perfil, consumo, retorno, cooldown, linha do tempo e resultado.</p><button class="btn btn-secondary btn-sm" type="button" data-manual-go="outage">Abrir</button></div>
-            <div class="im-card im-module-card"><div class="im-module-icon">⌁</div><h3>Integração elétrica</h3><p>Pré-dimensiona QTA, disjuntor, cabo, queda de tensão, neutro, desequilíbrio, aterramento e exibe unifilar clicável.</p><button class="btn btn-secondary btn-sm" type="button" data-manual-go="electrical">Abrir</button></div>
-            <div class="im-card im-module-card"><div class="im-module-icon">▤</div><h3>Seleção real</h3><p>Filtra catálogo oficial e itens do usuário por rating, tensão, frequência, combustível, configuração, ruído, autonomia e completude.</p><button class="btn btn-secondary btn-sm" type="button" data-manual-go="catalog">Abrir</button></div>
-            <div class="im-card im-module-card"><div class="im-module-icon">◫</div><h3>Cenários</h3><p>Compara alternativa mínima, reserva adicional e alta confiabilidade N+1/2×100%, com potência, carregamento, corrente e redundância.</p><button class="btn btn-secondary btn-sm" type="button" data-manual-go="scenarios">Abrir</button></div>
-            <div class="im-card im-module-card"><div class="im-module-icon">▧</div><h3>Memorial e relatório</h3><p>Gera prévia completa no DOM, relatório HTML independente e impressão/salvamento em PDF, com memória e pendências.</p><button class="btn btn-secondary btn-sm" type="button" data-manual-go="report">Abrir</button></div>
-          </div>
-          <div class="im-card" style="margin-top:13px"><h3>Comandos da barra superior</h3><div class="im-table-wrap"><table class="im-table"><thead><tr><th>Comando</th><th>Função</th><th>Atenção</th></tr></thead><tbody>
-            <tr><td>Manual interativo</td><td>Abre este ambiente de aprendizagem sem alterar o projeto.</td><td>O progresso de leitura fica salvo localmente.</td></tr>
-            <tr><td>Carregar exemplo</td><td>Substitui o estado atual por um caso demonstrativo completo.</td><td>Exige confirmação; exporte o projeto antes, se necessário.</td></tr>
-            <tr><td>Exportar projeto</td><td>Baixa um JSON com os dados do projeto.</td><td>Use para backup, transferência e versionamento.</td></tr>
-            <tr><td>Importar</td><td>Carrega JSON e migra versões anteriores compatíveis.</td><td>Revise fontes e parâmetros após a migração.</td></tr>
-            <tr><td>Gerar relatório</td><td>Atualiza o memorial e abre impressão/PDF.</td><td>O navegador controla margens e destino de impressão.</td></tr>
-          </tbody></table></div></div>
-        </section>
-
-        <section class="im-topic" id="manual-topic-workflow" data-title="roteiro checklist projeto levantamento cargas motores validação seleção memorial comissionamento documentação erros comuns">
-          <div class="im-topic-head"><div><div class="im-eyebrow">Capítulo 10</div><h2>Roteiro completo de projeto</h2><p>Uma sequência recomendada para transformar dados brutos em uma especificação preliminar verificável.</p></div><div class="im-topic-index">10</div></div>
-          <div class="im-step-list">
-            <div class="im-step"><div class="im-step-num">1</div><div><h4>Caracterize a aplicação</h4><p>Defina emergência ou operação principal, horas esperadas, criticidade, ambiente, combustível, tensão, frequência e forma de operação.</p></div><label><input class="im-check" type="checkbox" data-check="flow-1"> Concluído</label></div>
-            <div class="im-step"><div class="im-step-num">2</div><div><h4>Levante cargas por circuito e prioridade</h4><p>Registre unidade, quantidade, tensão, fases, FP, rendimento, demanda, simultaneidade, caráter não linear e prioridade P1–P5.</p></div><label><input class="im-check" type="checkbox" data-check="flow-2"> Concluído</label></div>
-            <div class="im-step"><div class="im-step-num">3</div><div><h4>Separe motores</h4><p>Não duplique no cadastro geral. Informe potência de eixo, eficiência, método de partida, múltiplo, FP de partida e sequência.</p></div><label><input class="im-check" type="checkbox" data-check="flow-3"> Concluído</label></div>
-            <div class="im-step"><div class="im-step-num">4</div><div><h4>Revise balanço de fases e harmônicos</h4><p>Distribua monofásicas, avalie THDi, triplens e corrente de neutro. Corrija cadastros incoerentes antes de dimensionar.</p></div><label><input class="im-check" type="checkbox" data-check="flow-4"> Concluído</label></div>
-            <div class="im-step"><div class="im-step-num">5</div><div><h4>Defina margem e derating</h4><p>Use fatores oficiais para motor e alternador; registre a origem. A estimativa automática é apenas preliminar.</p></div><label><input class="im-check" type="checkbox" data-check="flow-5"> Concluído</label></div>
-            <div class="im-step"><div class="im-step-num">6</div><div><h4>Escolha potência preliminar</h4><p>Compare os critérios, aplique a faixa sugerida e verifique carregamento mínimo/máximo.</p></div><label><input class="im-check" type="checkbox" data-check="flow-6"> Concluído</label></div>
-            <div class="im-step"><div class="im-step-num">7</div><div><h4>Insira dados transitórios reais</h4><p>X″d, X′d, Xd, X/R, constantes, suporte e recuperação do AVR, droop e dados do governador devem corresponder ao conjunto.</p></div><label><input class="im-check" type="checkbox" data-check="flow-7"> Concluído</label></div>
-            <div class="im-step"><div class="im-step-num">8</div><div><h4>Verifique falta e proteção</h4><p>Compare I″k, pico, I²t, capacidade de interrupção, seção térmica e curvas tempo-corrente fora do sistema.</p></div><label><input class="im-check" type="checkbox" data-check="flow-8"> Concluído</label></div>
-            <div class="im-step"><div class="im-step-num">9</div><div><h4>Dimensione combustível e contingência</h4><p>Aplique curva oficial, tanque/configuração real, reserva, perfil de carga, duração de falta e prioridades.</p></div><label><input class="im-check" type="checkbox" data-check="flow-9"> Concluído</label></div>
-            <div class="im-step"><div class="im-step-num">10</div><div><h4>Feche a integração elétrica e mecânica</h4><p>QTA, cabos, neutro, aterramento, ventilação, exaustão, acústica, fundação, acessos, tanque, drenagem e incêndio.</p></div><label><input class="im-check" type="checkbox" data-check="flow-10"> Concluído</label></div>
-            <div class="im-step"><div class="im-step-num">11</div><div><h4>Compare equipamentos</h4><p>Use o catálogo como pré-seleção. Leia justificativas de rejeição, fontes, qualidade e dados ausentes; solicite confirmação comercial.</p></div><label><input class="im-check" type="checkbox" data-check="flow-11"> Concluído</label></div>
-            <div class="im-step"><div class="im-step-num">12</div><div><h4>Emita e revise o memorial</h4><p>Registre premissas, alertas e pendências; faça revisão por profissional habilitado e incorpore documentos do fabricante.</p></div><label><input class="im-check" type="checkbox" data-check="flow-12"> Concluído</label></div>
-          </div>
-          <div class="im-card" style="margin-top:13px"><h3>Erros que mais comprometem o resultado</h3><div class="im-grid im-grid-2"><ul><li>Duplicar motores em “Cargas” e “Motores”.</li><li>Usar potência mecânica como se fosse potência elétrica.</li><li>Confundir demanda com simultaneidade.</li><li>Aplicar o mesmo derating a motor e alternador sem fonte.</li><li>Usar rating ESP para uma aplicação PRP.</li></ul><ul><li>Extrapolar curva de combustível.</li><li>Ignorar cargas não lineares e neutro.</li><li>Escolher disjuntor apenas pela corrente nominal.</li><li>Tratar a triagem de ΔV/Δf como curva oficial.</li><li>Gerar relatório sem revisar alertas.</li></ul></div></div>
-        </section>
-
-        <section class="im-topic" id="manual-topic-limits" data-title="limitações normas validação fabricante responsabilidade técnica segurança ventilação exaustão acústica incêndio emissões paralelismo manutenção documentação">
-          <div class="im-topic-head"><div><div class="im-eyebrow">Capítulo 11</div><h2>Limites do modelo e validações obrigatórias</h2><p>O software explicita aproximações para que elas sejam usadas como triagem, e não confundidas com ensaios ou simulações completas.</p></div><div class="im-topic-index">11</div></div>
-          <div class="im-callout bad"><strong>Regra central:</strong> reatâncias, constantes, curvas de consumo, ratings, fatores ambientais e limites de degrau precisam corresponder ao modelo e à configuração efetivamente ofertados.</div>
-          <div class="im-grid im-grid-2">
-            <div class="im-card"><h3>O que é calculado de forma simplificada</h3><ul><li>Queda de tensão por modelo P–Q/impedância.</li><li>Queda de frequência por droop e multiplicador dinâmico.</li><li>Recuperações exponenciais de tensão e frequência.</li><li>Corrente de falta por reatâncias de eixo direto.</li><li>Queda de tensão de cabo com parâmetros agregados.</li><li>Consumo específico linear quando não há curva.</li></ul></div>
-            <div class="im-card"><h3>O que requer estudo externo ou documento oficial</h3><ul><li>Simulação eletromecânica detalhada e aceitação de carga.</li><li>Coordenação e seletividade completas.</li><li>Estudo harmônico e compatibilidade com UPS/VFD.</li><li>Paralelismo, sincronismo e proteção de interface.</li><li>Ventilação, exaustão, contrapressão e dissipação térmica.</li><li>Acústica, emissões, incêndio, tanque e licenciamento.</li></ul></div>
-          </div>
-          <div class="im-card" style="margin-top:13px"><h3>Referências técnicas a conferir no projeto</h3><p>O sistema permite registrar as referências efetivamente adotadas. Conforme escopo e jurisdição, o projetista deve conferir as edições vigentes das normas de instalações de baixa e média tensão, segurança em eletricidade, grupos geradores, máquinas elétricas, proteção contra incêndio, combustíveis, acústica, emissões e requisitos da distribuidora e do Corpo de Bombeiros.</p><div class="im-callout warn">O manual não fixa uma edição normativa universal. A aplicabilidade depende de tensão, potência, instalação, ocupação, combustível, operação e exigências locais.</div></div>
-          <details class="im-details"><summary>Validação mínima junto ao fabricante</summary><div class="im-details-body"><ul><li>Rating kVA/kW no regime, frequência, tensão e condição ambiental.</li><li>Derating por altitude, temperatura e instalação.</li><li>Curvas de aceitação de degrau e recuperação de tensão/frequência.</li><li>X″d, X′d, Xd, X/R, constantes e contribuição de curto.</li><li>Capacidade para cargas não lineares, sequência negativa e desequilíbrio.</li><li>Consumo, tanque, autonomia, ruído, dimensões, massa e contrapressão.</li><li>Escopo de QTA, carregador, baterias, aquecimento, comunicação e proteções.</li></ul></div></details>
-          <details class="im-details"><summary>Validação de instalação e comissionamento</summary><div class="im-details-body"><ul><li>Inspeção mecânica, elétrica, aterramento e torque.</li><li>Testes de partida, transferência, retorno e falhas de comando.</li><li>Teste com banco de carga ou carga real nos degraus críticos.</li><li>Medição de tensão, frequência, corrente, desequilíbrio, temperatura e ruído.</li><li>Verificação de vazamentos, ventilação, escape, combustível e contenção.</li><li>Registro de parâmetros, alarmes, tempos e resultados no relatório de comissionamento.</li></ul></div></details>
-        </section>
-
-        <section class="im-topic" id="manual-topic-glossary" data-title="glossário siglas termos kW kVA kvar FP AVR droop ESP PRP COP LTP QTA THDi triplen Xd I2t load shedding derating">
-          <div class="im-topic-head"><div><div class="im-eyebrow">Capítulo 12</div><h2>Glossário técnico</h2><p>Definições rápidas dos termos usados nas telas e relatórios.</p></div><div class="im-topic-index">12</div></div>
-          <div class="im-glossary">
-            <div class="im-term"><b>kW</b><span>Potência ativa. Relaciona-se ao trabalho útil e ao esforço do motor primário.</span></div>
-            <div class="im-term"><b>kvar</b><span>Potência reativa. Sustenta campos elétricos e magnéticos e aumenta corrente.</span></div>
-            <div class="im-term"><b>kVA</b><span>Potência aparente. Combinação vetorial de kW e kvar; referência do alternador.</span></div>
-            <div class="im-term"><b>FP</b><span>Fator de potência: P/S. Quanto menor, maior o kVA para os mesmos kW.</span></div>
-            <div class="im-term"><b>Derating</b><span>Redução da capacidade nominal por ambiente, instalação ou outras condições.</span></div>
-            <div class="im-term"><b>ESP</b><span>Emergency Standby Power; rating de emergência conforme condições do fabricante.</span></div>
-            <div class="im-term"><b>PRP</b><span>Prime Power; rating para operação principal com carga variável e limites próprios.</span></div>
-            <div class="im-term"><b>LTP</b><span>Limited-Time Running Power; potência para período anual limitado.</span></div>
-            <div class="im-term"><b>COP</b><span>Continuous Operating Power; potência contínua para carga essencialmente constante.</span></div>
-            <div class="im-term"><b>AVR</b><span>Automatic Voltage Regulator; controla excitação e tensão terminal.</span></div>
-            <div class="im-term"><b>Governador</b><span>Controla combustível/torque para regular rotação e frequência.</span></div>
-            <div class="im-term"><b>Droop</b><span>Inclinação estática entre carga e frequência usada no controle e compartilhamento.</span></div>
-            <div class="im-term"><b>X″d</b><span>Reatância subtransitória de eixo direto, associada aos primeiros ciclos da falta.</span></div>
-            <div class="im-term"><b>X′d</b><span>Reatância transitória, associada ao período seguinte ao subtransitório.</span></div>
-            <div class="im-term"><b>Xd</b><span>Reatância síncrona, usada como aproximação do regime de falta sustentado.</span></div>
-            <div class="im-term"><b>X/R</b><span>Relação reatância/resistência; influencia assimetria e decaimento da componente contínua.</span></div>
-            <div class="im-term"><b>I²t</b><span>Integral térmica da corrente de falta ao quadrado durante o tempo de eliminação.</span></div>
-            <div class="im-term"><b>THDi</b><span>Distorção harmônica total da corrente em relação à componente fundamental.</span></div>
-            <div class="im-term"><b>Triplens</b><span>Harmônicos múltiplos ímpares de 3 que se somam no neutro em sistemas trifásicos.</span></div>
-            <div class="im-term"><b>QTA / ATS</b><span>Quadro/chave de transferência automática entre fonte normal e gerador.</span></div>
-            <div class="im-term"><b>Load shedding</b><span>Retirada seletiva de cargas para manter o atendimento das prioridades superiores.</span></div>
-            <div class="im-term"><b>N+1</b><span>Redundância em que há uma unidade adicional além das necessárias à demanda.</span></div>
-            <div class="im-term"><b>Volume não utilizável</b><span>Parcela do tanque que não deve ser considerada disponível para operação.</span></div>
-            <div class="im-term"><b>Tempo de clearing</b><span>Tempo entre início da falta e sua eliminação pela proteção.</span></div>
-          </div>
-        </section>
-
-        <section class="im-topic" id="manual-topic-quiz" data-title="quiz teste conhecimentos perguntas fator potência alternador motor AVR governador curto circuito triplen autonomia load shedding">
-          <div class="im-topic-head"><div><div class="im-eyebrow">Capítulo 13</div><h2>Teste seus conhecimentos</h2><p>Responda às questões e receba correção imediata. O teste não altera o projeto.</p></div><div class="im-topic-index">13</div></div>
-          <div class="im-quiz" id="manual-quiz">
-            <div class="im-question" data-correct="b"><h4>1. Para uma demanda de 100 kW com FP 0,80, qual é a potência aparente?</h4><div class="im-options"><label class="im-option"><input type="radio" name="mq1" value="a">80 kVA</label><label class="im-option"><input type="radio" name="mq1" value="b">125 kVA</label><label class="im-option"><input type="radio" name="mq1" value="c">180 kVA</label></div><div class="im-question-feedback">S = P/FP = 100/0,80 = 125 kVA.</div></div>
-            <div class="im-question" data-correct="c"><h4>2. Qual subsistema é verificado principalmente em kW?</h4><div class="im-options"><label class="im-option"><input type="radio" name="mq2" value="a">Alternador</label><label class="im-option"><input type="radio" name="mq2" value="b">QTA</label><label class="im-option"><input type="radio" name="mq2" value="c">Motor primário</label></div><div class="im-question-feedback">O motor primário fornece potência mecânica/ativa e é verificado em kW.</div></div>
-            <div class="im-question" data-correct="a"><h4>3. Um grande degrau de potência reativa tende a afetar diretamente qual grandeza?</h4><div class="im-options"><label class="im-option"><input type="radio" name="mq3" value="a">Tensão</label><label class="im-option"><input type="radio" name="mq3" value="b">Volume do tanque</label><label class="im-option"><input type="radio" name="mq3" value="c">Data-base do projeto</label></div><div class="im-question-feedback">A tensão é fortemente influenciada por corrente reativa, reatância e resposta do AVR.</div></div>
-            <div class="im-question" data-correct="b"><h4>4. O que X″d representa na triagem de curto-circuito?</h4><div class="im-options"><label class="im-option"><input type="radio" name="mq4" value="a">Rendimento do motor</label><label class="im-option"><input type="radio" name="mq4" value="b">Reatância subtransitória do alternador</label><label class="im-option"><input type="radio" name="mq4" value="c">Reserva do tanque</label></div><div class="im-question-feedback">X″d limita a corrente simétrica inicial nos primeiros ciclos após a falta.</div></div>
-            <div class="im-question" data-correct="c"><h4>5. Por que harmônicos triplens podem elevar a corrente de neutro?</h4><div class="im-options"><label class="im-option"><input type="radio" name="mq5" value="a">Porque reduzem a tensão de linha a zero</label><label class="im-option"><input type="radio" name="mq5" value="b">Porque aumentam somente a potência mecânica</label><label class="im-option"><input type="radio" name="mq5" value="c">Porque componentes de sequência zero chegam em fase e se somam</label></div><div class="im-question-feedback">Harmônicos 3, 9, 15... não se cancelam no neutro; suas correntes se somam.</div></div>
-            <div class="im-question" data-correct="a"><h4>6. O sistema deve extrapolar automaticamente uma curva de consumo além dos pontos documentados?</h4><div class="im-options"><label class="im-option"><input type="radio" name="mq6" value="a">Não</label><label class="im-option"><input type="radio" name="mq6" value="b">Sim, sempre</label><label class="im-option"><input type="radio" name="mq6" value="c">Somente acima de 100%</label></div><div class="im-question-feedback">O GeradorPro interpola dentro da faixa válida e evita extrapolação automática.</div></div>
-            <div class="im-question" data-correct="b"><h4>7. No load shedding automático, qual grupo não é descartado pelo algoritmo?</h4><div class="im-options"><label class="im-option"><input type="radio" name="mq7" value="a">P5</label><label class="im-option"><input type="radio" name="mq7" value="b">P1</label><label class="im-option"><input type="radio" name="mq7" value="c">P4</label></div><div class="im-question-feedback">P1 é tratado como crítico. Se apenas P1 exceder a capacidade, o cenário falha.</div></div>
-            <div class="im-question" data-correct="c"><h4>8. A triagem de queda de tensão e frequência substitui as curvas do fabricante?</h4><div class="im-options"><label class="im-option"><input type="radio" name="mq8" value="a">Sim, em qualquer caso</label><label class="im-option"><input type="radio" name="mq8" value="b">Sim, desde que o relatório seja impresso</label><label class="im-option"><input type="radio" name="mq8" value="c">Não; ela serve para comparação e identificação de riscos</label></div><div class="im-question-feedback">A resposta real depende do conjunto motor–alternador, inércia, excitação, governador e controles.</div></div>
-            <div class="im-quiz-score" id="manual-quiz-score"></div>
-            <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-primary" id="manual-quiz-submit" type="button">Corrigir respostas</button><button class="btn btn-secondary" id="manual-quiz-reset" type="button">Limpar teste</button></div>
-          </div>
-        </section>
-      </main>
-    </div>
-
-    <footer class="im-footer">
-      <div class="im-footer-status" id="manual-footer-status">Capítulo 1 de 13 • Comece aqui</div>
-      <div class="im-footer-nav"><button class="btn btn-secondary btn-sm" id="manual-prev" type="button">← Anterior</button><span class="im-search-summary" id="manual-search-summary"></span><button class="btn btn-primary btn-sm" id="manual-next" type="button">Próximo →</button></div>
-      <button class="btn btn-secondary btn-sm im-footer-close" id="manual-close-footer" type="button">Fechar manual</button>
-    </footer>
-  </div>
-</div>
-
 
 <div class="modal-backdrop" id="legal-modal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="legal-title">
   <div class="modal">
@@ -1808,70 +1413,7 @@ function startIntroSequence(){
   setTimeout(()=>{if(!completed)beginFinish(true)},duration+900);
 }
 
-
-/* Manual interativo */
-const MANUAL_PROGRESS_KEY='GeradorPro_v1_2_manual_progress';
-const MANUAL_TOPICS=['start','physics','power','sizing','motors','faults','fuel','electrical','modules','workflow','limits','glossary','quiz'];
-const MANUAL_LABELS={start:'Comece aqui',physics:'Como o gerador funciona',power:'Potências, FP e trifásico',sizing:'Dimensionamento e derating',motors:'Motores e transitórios',faults:'Curto, harmônicos e neutro',fuel:'Combustível e falta de energia',electrical:'Integração elétrica',modules:'Todas as funcionalidades',workflow:'Roteiro de projeto',limits:'Limites e validações',glossary:'Glossário técnico',quiz:'Teste seus conhecimentos'};
-let activeManualTopic='start';
-let manualLastFocus=null;
-let manualProgressMemory={visited:[],checks:{}};
-
-function normalizeManualProgress(p={}){return {visited:Array.isArray(p.visited)?[...new Set(p.visited.filter(x=>MANUAL_TOPICS.includes(x)))]:[],checks:p.checks&&typeof p.checks==='object'?{...p.checks}:{}};}
-function loadManualProgress(){
-  try{const raw=storageGet(MANUAL_PROGRESS_KEY);if(raw){manualProgressMemory=normalizeManualProgress(JSON.parse(raw));}}catch(e){}
-  return normalizeManualProgress(manualProgressMemory);
-}
-function saveManualProgress(progress){manualProgressMemory=normalizeManualProgress(progress);storageSet(MANUAL_PROGRESS_KEY,JSON.stringify(manualProgressMemory));}
-function renderManualProgress(){
-  const p=loadManualProgress(),visited=new Set(p.visited),checks=document.querySelectorAll('.im-check'),checked=[...checks].filter(x=>p.checks[x.dataset.check]).length,totalUnits=MANUAL_TOPICS.length+checks.length,done=Math.min(totalUnits,visited.size+checked),pct=totalUnits?Math.round(done/totalUnits*100):0;
-  const bar=document.getElementById('manual-progress-bar'),txt=document.getElementById('manual-progress-text'),sub=document.getElementById('manual-progress-sub');if(bar)bar.style.width=pct+'%';if(txt)txt.textContent=pct+'%';if(sub)sub.textContent=`${visited.size} de ${MANUAL_TOPICS.length} capítulos visitados • ${checked} de ${checks.length} etapas marcadas.`;
-  document.querySelectorAll('[data-manual-topic]').forEach(b=>b.classList.toggle('done',visited.has(b.dataset.manualTopic)));
-  checks.forEach(x=>x.checked=!!p.checks[x.dataset.check]);
-}
-function markManualVisited(topic){const p=loadManualProgress();if(!p.visited.includes(topic))p.visited.push(topic);saveManualProgress(p);renderManualProgress();}
-function setManualTopic(topic,{focus=false}={}){
-  if(!MANUAL_TOPICS.includes(topic))topic='start';activeManualTopic=topic;
-  const search=document.getElementById('manual-search');if(search&&search.value){search.value='';manualSearch('');}
-  document.querySelectorAll('.im-topic').forEach(s=>s.classList.toggle('active',s.id==='manual-topic-'+topic));
-  document.querySelectorAll('[data-manual-topic]').forEach(b=>b.classList.toggle('active',b.dataset.manualTopic===topic));
-  const content=document.getElementById('manual-content');if(content)content.scrollTop=0;
-  const index=MANUAL_TOPICS.indexOf(topic),prev=document.getElementById('manual-prev'),next=document.getElementById('manual-next'),status=document.getElementById('manual-footer-status');if(prev)prev.disabled=index<=0;if(next)next.disabled=index>=MANUAL_TOPICS.length-1;if(status)status.textContent=`Capítulo ${index+1} de ${MANUAL_TOPICS.length} • ${MANUAL_LABELS[topic]}`;
-  markManualVisited(topic);if(focus)setTimeout(()=>document.getElementById('manual-topic-'+topic)?.querySelector('h2')?.focus?.(),0);
-}
-function manualSearch(value){
-  const q=String(value||'').trim().toLocaleLowerCase('pt-BR'),content=document.getElementById('manual-content'),empty=document.getElementById('manual-search-empty'),summary=document.getElementById('manual-search-summary'),clear=document.getElementById('manual-clear-search');if(clear)clear.classList.toggle('show',!!q);
-  if(!q){content?.classList.remove('search-mode');document.querySelectorAll('.im-topic').forEach(s=>{s.classList.remove('search-match');s.classList.toggle('active',s.id==='manual-topic-'+activeManualTopic);});document.querySelectorAll('[data-manual-topic]').forEach(b=>b.hidden=false);empty?.classList.remove('show');if(summary)summary.textContent='';const i=MANUAL_TOPICS.indexOf(activeManualTopic);if(document.getElementById('manual-prev'))document.getElementById('manual-prev').disabled=i<=0;if(document.getElementById('manual-next'))document.getElementById('manual-next').disabled=i>=MANUAL_TOPICS.length-1;return;}
-  content?.classList.add('search-mode');let matches=0;document.querySelectorAll('.im-topic').forEach(s=>{const hay=(s.dataset.title+' '+s.textContent).toLocaleLowerCase('pt-BR'),ok=hay.includes(q);s.classList.toggle('search-match',ok);if(ok)matches++;});document.querySelectorAll('[data-manual-topic]').forEach(b=>{const section=document.getElementById('manual-topic-'+b.dataset.manualTopic),hay=((section?.dataset.title||'')+' '+(section?.textContent||'')).toLocaleLowerCase('pt-BR');b.hidden=!hay.includes(q);});empty?.classList.toggle('show',matches===0);if(summary)summary.textContent=matches?`${matches} capítulo(s) encontrado(s)`:'Sem resultados';if(document.getElementById('manual-prev'))document.getElementById('manual-prev').disabled=true;if(document.getElementById('manual-next'))document.getElementById('manual-next').disabled=true;content.scrollTop=0;
-}
-function refreshManualProjectSnapshot(){
-  const c=currentCalc||calculate(),model=modelById(state.selection.selectedEquipmentId),set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};set('manual-live-project',state.project.name||'Novo projeto');set('manual-live-p',fmt(c.p,2)+' kW');set('manual-live-s',fmt(c.s,2)+' kVA');set('manual-live-gen',model?`${model.model} • ${fmt(c.selectedKVA,0)} kVA`:fmt(c.recommendedKVA,0)+' kVA');set('manual-live-governing',c.requiredKVA>0?'Governante: '+c.governing.label:'Cadastre cargas para dimensionar');
-}
-function openInteractiveManual(topic='start'){
-  const modal=document.getElementById('manual-modal');if(!modal)return;manualLastFocus=document.activeElement;refreshManualProjectSnapshot();modal.classList.add('show');modal.setAttribute('aria-hidden','false');document.body.classList.add('im-lock');const app=document.getElementById('app');if(app)app.inert=true;setManualTopic(topic);renderManualProgress();setTimeout(()=>document.getElementById('manual-search')?.focus(),80);
-}
-function closeInteractiveManual(){const modal=document.getElementById('manual-modal');if(!modal)return;modal.classList.remove('show');modal.setAttribute('aria-hidden','true');document.body.classList.remove('im-lock');const app=document.getElementById('app');if(app)app.inert=false;setTimeout(()=>manualLastFocus?.focus?.(),0);}
-function manualPowerCalculator(){const p=Math.max(0,n(document.getElementById('manual-calc-p')?.value)),pf=clamp(n(document.getElementById('manual-calc-pf')?.value,.8),.1,1),v=Math.max(1,n(document.getElementById('manual-calc-v')?.value,380)),ph=n(document.getElementById('manual-calc-phases')?.value,3),s=p/pf,q=Math.sqrt(Math.max(0,s*s-p*p)),i=ph===3?s*1000/(Math.sqrt(3)*v):s*1000/v,phi=Math.acos(pf)*180/Math.PI;const set=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val;};set('manual-calc-s',fmt(s,2)+' kVA');set('manual-calc-q',fmt(q,2)+' kvar');set('manual-calc-i',fmt(i,2)+' A');set('manual-calc-phi',fmt(phi,2)+'°');}
-function showManualEnergyStage(stage){
-  const data={fuel:['Combustível e energia química','O combustível armazena energia química. A combustão libera calor; somente parte se converte em trabalho mecânico. Escape, arrefecimento, atrito e auxiliares explicam por que o consumo não é proporcional apenas ao rating nominal.'],engine:['Motor primário: calor em torque','A expansão dos gases produz torque no virabrequim. O governador regula a injeção para equilibrar a potência mecânica com a potência ativa elétrica e as perdas. Altitude, temperatura e ventilação afetam essa capacidade.'],shaft:['Eixo, volante e energia cinética','As massas girantes armazenam energia cinética. Nos primeiros instantes de um degrau, essa energia reduz a taxa de queda de rotação. Acoplamento, alinhamento e inércia influenciam a resposta dinâmica.'],alternator:['Alternador: indução eletromagnética','O rotor excitado cria fluxo magnético girante e induz tensões trifásicas no estator. Enrolamentos e sistema magnético suportam corrente ativa e reativa; por isso o rating é expresso em kVA e FP.'],controls:['AVR e governador','O AVR ajusta excitação para recuperar tensão; o governador ajusta torque/combustível para recuperar rotação e frequência. As duas malhas interagem, mas respondem prioritariamente a solicitações diferentes.'],loads:['QTA, distribuição e cargas','Após estabilização, o QTA transfere a alimentação. Cabos, proteção, aterramento e prioridades determinam se a energia chega com segurança. A natureza das cargas define FP, harmônicos, partidas e perfil de consumo.']};const d=data[stage]||data.fuel;document.querySelectorAll('[data-energy-stage]').forEach(b=>b.classList.toggle('active',b.dataset.energyStage===stage));const box=document.getElementById('manual-energy-detail');if(box)box.innerHTML=`<h4>${esc(d[0])}</h4><p>${esc(d[1])}</p>`;
-}
-function gradeManualQuiz(){let correct=0,answered=0;const questions=document.querySelectorAll('#manual-quiz .im-question');questions.forEach(q=>{const selected=q.querySelector('input[type="radio"]:checked');q.classList.remove('correct','incorrect');if(selected){answered++;const ok=selected.value===q.dataset.correct;if(ok)correct++;q.classList.add(ok?'correct':'incorrect');}});const score=document.getElementById('manual-quiz-score');if(score){score.classList.add('show');score.textContent=answered<questions.length?`Você respondeu ${answered} de ${questions.length} questões e acertou ${correct}. Complete as restantes para obter a pontuação final.`:`Resultado: ${correct} de ${questions.length} acertos (${Math.round(correct/questions.length*100)}%). ${correct===questions.length?'Excelente: os fundamentos principais foram assimilados.':correct>=6?'Bom resultado: revise apenas os itens sinalizados.':'Releia os capítulos indicados nas correções antes de usar o sistema em um caso real.'}`;}markManualVisited('quiz');}
-function resetManualQuiz(){document.querySelectorAll('#manual-quiz input[type="radio"]').forEach(x=>x.checked=false);document.querySelectorAll('#manual-quiz .im-question').forEach(q=>q.classList.remove('correct','incorrect'));const score=document.getElementById('manual-quiz-score');if(score){score.classList.remove('show');score.textContent='';}}
-function resetManualProgress(){if(!confirm('Apagar o progresso de leitura e as etapas marcadas?'))return;saveManualProgress({visited:[],checks:{}});renderManualProgress();showToast('Progresso do manual reiniciado.');}
-function initManualEvents(){
-  const modal=document.getElementById('manual-modal');if(!modal||modal.dataset.ready==='true')return;modal.dataset.ready='true';
-  document.getElementById('open-manual')?.addEventListener('click',()=>openInteractiveManual('start'));document.getElementById('manual-close')?.addEventListener('click',closeInteractiveManual);document.getElementById('manual-close-footer')?.addEventListener('click',closeInteractiveManual);document.getElementById('manual-reset-progress')?.addEventListener('click',resetManualProgress);
-  document.getElementById('manual-nav')?.addEventListener('click',e=>{const b=e.target.closest('[data-manual-topic]');if(b)setManualTopic(b.dataset.manualTopic);});document.getElementById('manual-prev')?.addEventListener('click',()=>{const i=MANUAL_TOPICS.indexOf(activeManualTopic);if(i>0)setManualTopic(MANUAL_TOPICS[i-1]);});document.getElementById('manual-next')?.addEventListener('click',()=>{const i=MANUAL_TOPICS.indexOf(activeManualTopic);if(i<MANUAL_TOPICS.length-1)setManualTopic(MANUAL_TOPICS[i+1]);});
-  const search=document.getElementById('manual-search');search?.addEventListener('input',e=>manualSearch(e.target.value));document.getElementById('manual-clear-search')?.addEventListener('click',()=>{if(search){search.value='';manualSearch('');search.focus();}});
-  modal.addEventListener('click',e=>{if(e.target===modal)closeInteractiveManual();const go=e.target.closest('[data-manual-go]');if(go){const tab=go.dataset.manualGo;closeInteractiveManual();setTimeout(()=>{goTab(tab);showToast('Módulo aberto a partir do manual.');},30);}const stage=e.target.closest('[data-energy-stage]');if(stage)showManualEnergyStage(stage.dataset.energyStage);});
-  document.querySelectorAll('.im-check').forEach(x=>x.addEventListener('change',()=>{const p=loadManualProgress();p.checks[x.dataset.check]=x.checked;saveManualProgress(p);renderManualProgress();}));
-  ['manual-calc-p','manual-calc-pf','manual-calc-v','manual-calc-phases'].forEach(id=>document.getElementById(id)?.addEventListener('input',manualPowerCalculator));document.getElementById('manual-calc-phases')?.addEventListener('change',manualPowerCalculator);
-  document.getElementById('manual-quiz-submit')?.addEventListener('click',gradeManualQuiz);document.getElementById('manual-quiz-reset')?.addEventListener('click',resetManualQuiz);
-  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modal.classList.contains('show'))closeInteractiveManual();});manualPowerCalculator();showManualEnergyStage('fuel');renderManualProgress();
-}
-
 function initEvents(){
-  initManualEvents();
   document.querySelectorAll('.nav-btn[data-tab]').forEach(b=>b.addEventListener('click',()=>goTab(b.dataset.tab)));document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>goTab(b.dataset.go)));document.getElementById('mobile-menu').addEventListener('click',()=>document.getElementById('sidebar').classList.toggle('open'));
   document.getElementById('add-load').addEventListener('click',()=>{state.loads.push(newLoad());renderLoads();scheduleUpdate();});document.getElementById('add-motor').addEventListener('click',()=>{state.motors.push(newMotor());renderMotors();scheduleUpdate();});document.getElementById('add-profile').addEventListener('click',()=>{state.profile.push({id:uid(),description:'Novo trecho',hours:1,loadPct:50});renderProfile();scheduleUpdate();});document.getElementById('add-equipment').addEventListener('click',()=>{state.equipment.push({id:uid(),manufacturer:'',model:'',regime:state.project.regime,frequency:state.project.frequency,voltage:state.project.voltage,kva:0,kw:0,c25:0,c50:0,c75:0,c100:0,tank:0,sourceDate:'',source:'',sourceUrl:''});renderEquipment();scheduleUpdate();});
   document.getElementById('loads-body').addEventListener('input',rowInputHandler('loads',renderLoads));document.getElementById('loads-body').addEventListener('change',rowInputHandler('loads',renderLoads));document.getElementById('loads-body').addEventListener('click',rowClickHandler('loads',renderLoads,'delete-load'));document.getElementById('motors-body').addEventListener('input',rowInputHandler('motors',renderMotors));document.getElementById('motors-body').addEventListener('change',rowInputHandler('motors',renderMotors));document.getElementById('motors-body').addEventListener('click',rowClickHandler('motors',renderMotors,'delete-motor'));document.getElementById('profile-body').addEventListener('input',rowInputHandler('profile',renderProfile));document.getElementById('profile-body').addEventListener('change',rowInputHandler('profile',renderProfile));document.getElementById('profile-body').addEventListener('click',rowClickHandler('profile',renderProfile,'delete-profile'));document.getElementById('equipment-body').addEventListener('input',rowInputHandler('equipment',renderEquipment));document.getElementById('equipment-body').addEventListener('change',rowInputHandler('equipment',renderEquipment));document.getElementById('equipment-body').addEventListener('click',rowClickHandler('equipment',renderEquipment,'delete-equipment',(action,id)=>{if(action==='apply-equipment')applyCatalogEquipment(id);}));

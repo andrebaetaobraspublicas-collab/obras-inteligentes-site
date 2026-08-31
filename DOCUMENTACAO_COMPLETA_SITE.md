@@ -129,7 +129,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 |---|---:|---:|
 | `/manutencao/` | 278361 bytes | 274136 caracteres |
 | `/fiscalizacao/` | 354221 bytes | 354221 caracteres |
-| `/estrutural/` | 989496 bytes | 989496 caracteres |
+| `/estrutural/` | 1075018 bytes | 1069415 caracteres |
 | `/pavimentos/` | 271969 bytes | 271969 caracteres |
 | `/riscos/` | 963063 bytes | 940336 caracteres |
 | `/administracao-canteiro/` | 480651 bytes | 480651 caracteres |
@@ -173,7 +173,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/thermox-pro/` | 428015 bytes | 428015 caracteres |
 | `/comparador-honorarios-projetos/` | 525309 bytes | 525309 caracteres |
 | `/consultoriapro-rodoviario/` | 284681 bytes | 284681 caracteres |
-| `/geradorpro/` | 265143 bytes | 265143 caracteres |
+| `/geradorpro/` | 354392 bytes | 351100 caracteres |
 | `/spdapro/` | 709941 bytes | 709941 caracteres |
 | `/lumipro/` | 756040 bytes | 756040 caracteres |
 | `/esgotocalcpro/` | 1037879 bytes | 1032140 caracteres |
@@ -271,6 +271,13 @@ Observacoes:
 Rota: `/estrutural/`  
 Arquivo: `estrutural/index.html`  
 Copia local historica: `C:\Obras Inteligentes\Calculadora Estrutural.html`
+
+Ultima atualizacao:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\index (55).html`
+- Data: 30/08/2026
+- Alteracao: substituicao integral de `estrutural/index.html` pela nova versao enviada, preservando o aviso legal de responsabilidade tecnica e o fluxo de concordancia antes do uso.
+- Backup da versao anterior salvo em `C:\Obras Inteligentes\backups\estrutural-index-before-index55-20260830-2116.html`.
 
 Observacoes:
 
@@ -1173,11 +1180,12 @@ Observacoes:
 Rota: `/geradorpro/`  
 Arquivo: `geradorpro/index.html`
 
-Ultima inclusao:
+Ultima atualizacao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\GeradorPro_v1.2_Abertura_3D.html`
-- Data: 06/08/2026
-- Alteracao: inclusao de novo card na home e publicacao do aplicativo GeradorPro v1.2 como HTML standalone.
+- Fonte: `C:\Users\ACER\Documents\Downloads\GeradorPro_v1.2_manual_interativo.html`
+- Data: 30/08/2026
+- Alteracao: substituicao integral de `geradorpro/index.html` pela versao GeradorPro v1.2 com manual interativo incorporado.
+- Backup da versao anterior salvo em `C:\Obras Inteligentes\backups\geradorpro-index-before-manual-interativo-20260830-2116.html`.
 
 Observacoes:
 
