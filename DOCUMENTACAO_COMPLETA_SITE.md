@@ -128,7 +128,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | Rota | Tamanho local aproximado | Tamanho publicado verificado |
 |---|---:|---:|
 | `/manutencao/` | 278361 bytes | 274136 caracteres |
-| `/fiscalizacao/` | 354221 bytes | 354221 caracteres |
+| `/fiscalizacao/` | 482395 bytes | 477052 caracteres |
 | `/estrutural/` | 1075018 bytes | 1069415 caracteres |
 | `/pavimentos/` | 271969 bytes | 271969 caracteres |
 | `/riscos/` | 963063 bytes | 940336 caracteres |
@@ -259,6 +259,13 @@ Observacoes:
 
 Rota: `/fiscalizacao/`  
 Arquivo: `fiscalizacao/index.html`
+
+Ultima atualizacao:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\sistema_gestao_fiscalizacao_manual_interativo.html`
+- Data: 30/08/2026
+- Alteracao: substituicao integral de `fiscalizacao/index.html` pela nova versao do Sistema de Gestao e Fiscalizacao de Contratos de Obras Publicas, com manual interativo incorporado.
+- Backup da versao anterior salvo em `C:\Obras Inteligentes\backups\fiscalizacao-index-before-manual-interativo-20260830-2223.html`.
 
 Observacoes:
 
