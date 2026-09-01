@@ -136,7 +136,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/pavimentos/` | 271969 bytes | 271969 caracteres |
 | `/riscos/` | 963063 bytes | 940336 caracteres |
 | `/administracao-canteiro/` | 480651 bytes | 480651 caracteres |
-| `/memorial-descritivo/` | 6349 bytes | 6349 caracteres |
+| `/memorial-descritivo/` | 861574 bytes | 859745 caracteres |
 | `/sispav-reabilitacao/` | 205135 bytes | 198981 caracteres |
 | `/muros-arrimo/` | 527416 bytes | 527416 caracteres |
 | `/casa-parametrica/` | 38883 bytes | 38883 caracteres |
@@ -358,8 +358,18 @@ Observacao:
 Rota: `/memorial-descritivo/`  
 Arquivo: `memorial-descritivo/index.html`
 
-Observacao:
+Ultima atualizacao:
 
+- Fonte: `C:\Users\ACER\Documents\Downloads\Gerador de Memorial Descritivo.html`
+- Data: 31/08/2026
+- Alteracao: substituicao integral de `memorial-descritivo/index.html` pela nova versao standalone do Gerador Automatico de Memorial Descritivo. A rota principal passou a carregar diretamente o sistema completo, sem depender da antiga abertura com redirecionamento.
+- Backup da abertura anterior salvo em `C:\Obras Inteligentes\backups\memorial-descritivo-index-before-update-20260831-2324.html`.
+- Backup do sistema anterior salvo em `C:\Obras Inteligentes\backups\memorial-descritivo-sistema-before-update-20260831-2324.html`.
+
+Observacoes:
+
+- Aplicativo standalone empacotado em HTML unico.
+- A nova versao contem recursos de apoio para leitura de PDF, OCR, IFC e geracao de documentos.
 - Ha arquivo solto nao versionado `GeradorMemorialDescritivo (4).html`. Nao incluir em commits se nao for solicitado.
 
 ### Sispav - Reabilitacao e Gestao de Pavimentos

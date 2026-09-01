@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="true">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+@keyframes draw{to{stroke-dashoffset:0}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulseDot{0%,100%{opacity:.3}50%{opacity:1}}
+body{margin:0;background:#0c1730}
+</style>
+</helmet>
+
+<div style="width:100vw;height:100vh;background:radial-gradient(circle at 20% 15%,#132552,#0a1226 62%);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;font-family:'Manrope',-apple-system,sans-serif;">
+
+  <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(120,160,255,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(120,160,255,.07) 1px,transparent 1px);background-size:38px 38px;opacity:.7;"></div>
+
+  <div style="position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;max-width:640px;padding:32px;text-align:center;">
+
+    <svg width="220" height="220" viewBox="0 0 220 220" style="opacity:0;animation:fadeUp .9s ease-out .1s forwards;">
+      <circle cx="110" cy="110" r="86" fill="none" stroke="#3a5aa8" stroke-width="1" opacity="0.5"></circle>
+      <g style="transform-origin:110px 110px;animation:spin 14s linear infinite;">
+        <line x1="110" y1="30" x2="110" y2="46" stroke="#5b82e0" stroke-width="2"></line>
+        <circle cx="110" cy="30" r="4" fill="#7fa0f0"></circle>
+      </g>
+      <rect x="58" y="64" width="104" height="92" fill="none" stroke="#8fb0f5" stroke-width="2.5"
+        stroke-dasharray="392" stroke-dashoffset="392" style="animation:draw 1.6s ease-out .5s forwards;"></rect>
+      <line x1="58" y1="112" x2="110" y2="112" stroke="#8fb0f5" stroke-width="2"
+        stroke-dasharray="52" stroke-dashoffset="52" style="animation:draw 1s ease-out 1.9s forwards;"></line>
+      <line x1="122" y1="64" x2="122" y2="118" stroke="#8fb0f5" stroke-width="2"
+        stroke-dasharray="54" stroke-dashoffset="54" style="animation:draw 1s ease-out 2.1s forwards;"></line>
+      <path d="M110 156 v14 a14 14 0 0 0 14 -14" fill="none" stroke="#5b82e0" stroke-width="2"
+        stroke-dasharray="40" stroke-dashoffset="40" style="animation:draw .8s ease-out 2.3s forwards;"></path>
+      <circle cx="110" cy="110" r="3" fill="#cfe0ff" style="opacity:0;animation:fadeUp .5s ease-out 2.6s forwards;"></circle>
+    </svg>
+
+    <div style="margin-top:8px;width:52px;height:52px;border-radius:12px;background:linear-gradient(135deg,#3a5aa8,#1a2f66);display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',monospace;font-weight:700;font-size:20px;color:#e7edff;box-shadow:0 8px 20px rgba(58,90,168,.45);opacity:0;animation:fadeUp .7s ease-out 2.7s forwards;">MD</div>
+
+    <h1 style="margin:16px 0 6px;font-family:'Space Grotesk',monospace;font-weight:600;font-size:26px;color:#f2f5ff;letter-spacing:-.3px;opacity:0;animation:fadeUp .7s ease-out 2.85s forwards;">Gerador Automático de Memorial Descritivo</h1>
+    <p style="margin:0 0 22px;font-size:13.5px;color:#a7b6dc;opacity:0;animation:fadeUp .7s ease-out 3s forwards;">Upload de projetos multidisciplinares → extração inteligente → memorial em Word (.docx)</p>
+
+    <div style="opacity:0;animation:fadeUp .7s ease-out 3.15s forwards;width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(140,170,230,.25);border-radius:12px;padding:16px 18px;text-align:left;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+        <span style="width:7px;height:7px;border-radius:50%;background:#f2b84b;animation:pulseDot 1.6s ease-in-out infinite;"></span>
+        <span style="font-size:11.5px;font-weight:700;letter-spacing:.4px;color:#f2c66b;text-transform:uppercase;">Aviso legal</span>
+      </div>
+      <p style="font-size:12px;line-height:1.6;color:#cdd7ef;margin:0;">
+        Este sistema gera uma <b style="color:#eef2ff">minuta técnica automatizada</b>, sujeita à revisão e validação de profissional habilitado (engenheiro/arquiteto, CREA/CAU) antes de qualquer uso oficial. Não substitui a responsabilidade técnica (ART/RRT) sobre o projeto. Arquivos e chave de API são processados apenas no seu navegador — nada é armazenado em servidores próprios.
+      </p>
+    </div>
+
+    <div style="margin-top:22px;width:100%;height:3px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;opacity:0;animation:fadeUp .5s ease-out 3.3s forwards;">
+      <div style="height:100%;background:linear-gradient(90deg,#5b82e0,#8fb0f5);width:{{ barWidth }}%;transition:width .1s linear;"></div>
+    </div>
+    <div style="margin-top:10px;display:flex;align-items:center;gap:12px;opacity:0;animation:fadeUp .5s ease-out 3.4s forwards;">
+      <span style="font-size:11px;color:#7f8fb8;">Abrindo o sistema…</span>
+      <button onclick="{{ enter }}" style="background:none;border:1px solid rgba(140,170,230,.35);color:#c9d5f2;font-size:11px;padding:5px 12px;border-radius:20px;cursor:pointer;font-family:inherit;">Entrar agora →</button>
+    </div>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { pct: 0 };
+
+  componentDidMount() {
+    const DURATION = 4000;
+    const start = Date.now();
+    this._timer = setInterval(() => {
+      const pct = Math.min(100, ((Date.now() - start) / DURATION) * 100);
+      this.setState({ pct });
+      if (pct >= 100) this.goToSystem();
+    }, 40);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this._timer);
+  }
+
+  goToSystem() {
+    if (this._navigated) return;
+    this._navigated = true;
+    clearInterval(this._timer);
+    window.location.href = "sistema/Gerador de Memorial Descritivo.html";
+  }
+
+  renderVals() {
+    return {
+      barWidth: this.state.pct,
+      enter: () => this.goToSystem(),
+    };
+  }
+}
+
+</script>
+</body>
+</html>
