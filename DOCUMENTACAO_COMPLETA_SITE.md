@@ -19,7 +19,7 @@ O site `www.obrasinteligentes.ia.br` e uma pagina estatica hospedada na Hostinge
 C:\Obras Inteligentes\index.html
 ```
 
-A tela inicial possui atualmente 69 cards de aplicativos. Cada card aponta para uma rota estatica dentro do dominio. A regra geral e:
+A tela inicial possui atualmente 70 cards de aplicativos. Cada card aponta para uma rota estatica dentro do dominio. A regra geral e:
 
 ```text
 https://www.obrasinteligentes.ia.br/nome-da-rota/
@@ -35,6 +35,8 @@ C:\Obras Inteligentes\assets\hero-obras-ai-3d.png
 Em 30/08/2026, a grade de aplicativos foi ajustada para melhor aproveitamento de telas largas: 5 cards por linha a partir de 1500px, 4 cards em desktops menores, 2 cards em tablets e 1 card em celulares. A home anterior foi salva em `C:\Obras Inteligentes\backups\index-before-5cards-20260830-163133.html`.
 
 Em 30/08/2026, o card `ABC Fiscal` foi removido da home, do rodape e dos filtros de busca. O arquivo do aplicativo foi preservado em `C:\Obras Inteligentes\abc-fiscal\index.html`. A home anterior foi salva em `C:\Obras Inteligentes\backups\index-before-remove-abc-fiscal-20260830-1730.html`.
+
+Em 31/08/2026, foi incluido o aplicativo `GRO/PGR Pro` no filtro `Riscos`, publicado em `C:\Obras Inteligentes\gro-pgr-pro\index.html`. A home anterior foi salva em `C:\Obras Inteligentes\backups\index-before-gro-pgr-pro-20260831-221841.html`.
 
 Em 05/08/2026, o link `Contato` no rodape passou a apontar para `https://www.instagram.com/andrebeta.obraspublicas/`.
 
@@ -120,6 +122,7 @@ Inventario originalmente verificado em 21/07/2026 e atualizado em 27/08/2026 par
 | 67 / PSICROMETRIA | PsicroPro | `/psicropro/` | `C:\Obras Inteligentes\psicropro\index.html` | existe | 200 |
 | 68 / GARAGENS | GaragemPro | `/garagempro/` | `C:\Obras Inteligentes\garagempro\index.html` | existe | 200 |
 | 69 / ORCAMENTO FORENSE | OrcamentoForense | `/orcamento-forense/` | `C:\Obras Inteligentes\orcamento-forense\index.html` | existe | 200 |
+| 70 / GRO-PGR | GRO/PGR Pro | `/gro-pgr-pro/` | `C:\Obras Inteligentes\gro-pgr-pro\index.html` | existe | 200 |
 
 ## Tamanhos verificados
 
@@ -196,6 +199,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/psicropro/` | 360038 bytes | 357014 caracteres |
 | `/garagempro/` | 482965 bytes | 479079 caracteres |
 | `/orcamento-forense/` | 1261281 bytes | 1248445 caracteres |
+| `/gro-pgr-pro/` | 663600 bytes | 659150 caracteres |
 | `/abc-fiscal/` | 351255 bytes | 349022 caracteres |
 
 ## Estrutura local principal
@@ -1597,6 +1601,25 @@ Observacoes:
 - Backup da home anterior salvo em `C:\Obras Inteligentes\backups\index-before-abc-fiscal-20260829-194135.html`.
 - Validar apos futuras alteracoes se simulacao tributaria de curvas ABC, custo bruto de aquisicao, carga tributaria, creditos IBS/CBS, Imposto Seletivo, pre-validacao, transicao 2026-2033, auditoria fiscal e biblioteca persistente continuam carregando corretamente.
 
+### GRO/PGR Pro
+
+Rota: `/gro-pgr-pro/`  
+Arquivo: `gro-pgr-pro/index.html`
+
+Ultima inclusao:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\GRO-PGR-Pro (offline).html`
+- Data: 31/08/2026
+- Alteracao: inclusao de novo card na home, no filtro `Riscos`, e publicacao do aplicativo GRO/PGR Pro - Gerenciamento de Riscos Ocupacionais (NR-1) como HTML standalone.
+- Backup da home anterior salvo em `C:\Obras Inteligentes\backups\index-before-gro-pgr-pro-20260831-221841.html`.
+
+Observacoes:
+
+- Aplicativo standalone empacotado em HTML unico, com manual interativo.
+- Tela inicial do site aponta para `/gro-pgr-pro/`.
+- O card foi classificado no filtro `Riscos`.
+- Validar apos futuras alteracoes se o gerenciamento de riscos ocupacionais, inventario de perigos, avaliacao de riscos, plano de acao, PGR e relatorios continuam carregando corretamente.
+
 ## Artigos publicados na home
 
 Em 20/07/2026, os tres cards iniciais do bloco `Conteudo` da home foram substituidos por artigos reais enviados em PDF. Em 21/07/2026, foi incluido um quarto artigo. A estrategia adotada foi renderizar cada pagina do PDF como PNG dentro de uma pagina HTML propria, preservando a diagramacao original, tabelas, figuras e paginacao. Cada pagina tambem oferece link para abrir/baixar o PDF original.
@@ -1812,7 +1835,8 @@ $headers=@{ 'User-Agent'='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
   '/mobilizasicro/',
   '/canteiro-sicro/',
   '/acesscheck/',
-  '/orcamento-forense/'
+  '/orcamento-forense/',
+  '/gro-pgr-pro/'
 ) | ForEach-Object {
   $url = "https://www.obrasinteligentes.ia.br$_?v=check"
   $r = Invoke-WebRequest -UseBasicParsing -Headers $headers -Uri $url -TimeoutSec 30
