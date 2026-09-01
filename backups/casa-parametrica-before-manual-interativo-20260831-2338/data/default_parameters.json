@@ -1,8 +1,8 @@
 {
-  "version": "2026.07-demo-4-programa-area-abertura",
+  "version": "2026.08-rev-exposicao-subsistemas",
   "date_base": "2026-07",
   "currency": "BRL",
-  "notice": "Parâmetros e bases municipais exclusivamente demonstrativos. Substitua-os por fontes técnicas, regionais, rastreáveis e calibradas antes de uso comercial.",
+  "notice": "Parâmetros e bases municipais exclusivamente demonstrativos. Substitua-os por fontes técnicas, regionais, rastreáveis e calibradas antes de uso comercial. | Rev 2026.08: fim da cascata multiplicativa global; fatores aplicados por subsistema (subsystem_factor_exposure); leitura integral do JSON; contingencia com teto.",
   "base_cost_m2": 3200.0,
   "region_factors": {
     "AC": 1.09,

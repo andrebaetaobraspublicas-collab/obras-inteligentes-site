@@ -139,7 +139,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/memorial-descritivo/` | 6349 bytes | 6326 caracteres |
 | `/sispav-reabilitacao/` | 205135 bytes | 198981 caracteres |
 | `/muros-arrimo/` | 527416 bytes | 527416 caracteres |
-| `/casa-parametrica/` | 38883 bytes | 38883 caracteres |
+| `/casa-parametrica/` | 39675 bytes | 39345 caracteres |
 | `/termopro/` | 550398 bytes | 550398 caracteres |
 | `/circuitopro/` | 287904 bytes | 287904 caracteres |
 | `/reservatoriopro/` | 209145 bytes | 206623 caracteres |
@@ -234,6 +234,8 @@ C:\Obras Inteligentes
 │  └─ static\
 │     ├─ app.js
 │     ├─ favicon.svg
+│     ├─ manual.css
+│     ├─ manual.js
 │     ├─ static-api.js
 │     └─ styles.css
 ├─ termopro\
@@ -410,6 +412,8 @@ casa-parametrica/index.html
 casa-parametrica/data/default_parameters.json
 casa-parametrica/data/default_price_bases.json
 casa-parametrica/static/app.js
+casa-parametrica/static/manual.js
+casa-parametrica/static/manual.css
 casa-parametrica/static/static-api.js
 casa-parametrica/static/styles.css
 casa-parametrica/static/favicon.svg
@@ -436,7 +440,7 @@ static/static-api.js?v=revisado-20260817-2
 static/app.js?v=revisado-20260817-2
 ```
 
-Sempre que alterar `static-api.js` ou `app.js`, atualize tambem a query string no `casa-parametrica/index.html` para evitar cache do Chrome.
+Sempre que alterar `static-api.js`, `app.js`, `manual.js` ou `manual.css`, atualize tambem a query string no `casa-parametrica/index.html` para evitar cache do Chrome.
 
 Atualizacao de 17/08/2026:
 
@@ -452,6 +456,13 @@ Atualizacao de 17/08/2026 - revisao 2:
 - A nova revisao acrescenta geracao de modelo IFC conceitual no aplicativo; a query string de `index.html` foi atualizada para `revisado-20260817-2`.
 - Backup da versao de producao Git salvo em `C:\Obras Inteligentes\backups\casa-parametrica-production-git-before-20260817-2159.zip`.
 - Backup local dos arquivos substituidos salvo em `C:\Obras Inteligentes\backups\casa-parametrica-local-before-20260817-2159`.
+
+Atualizacao de 31/08/2026:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\casa_parametrica_com_manual_interativo.zip`.
+- Arquivos atualizados a partir do ZIP: `index.html`, `data/default_parameters.json`, `data/default_price_bases.json`, `static/app.js`, `static/static-api.js`, `static/styles.css`, `static/favicon.svg`, `static/manual.js` e `static/manual.css`.
+- A nova revisao incorpora manual interativo no proprio aplicativo e atualiza as query strings de cache para `manual-20260901-1` nos arquivos do manual.
+- Backup local dos arquivos substituidos salvo em `C:\Obras Inteligentes\backups\casa-parametrica-before-manual-interativo-20260831-2338`.
 
 Commits historicos relevantes:
 

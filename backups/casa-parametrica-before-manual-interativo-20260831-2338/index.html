@@ -7,10 +7,8 @@
   <title>Casa Paramétrica v4 | Quanto custa minha casa?</title>
   <link rel="icon" href="static/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="static/styles.css">
-  <link rel="stylesheet" href="static/manual.css?v=manual-20260901-1">
-  <script defer src="static/static-api.js?v=pdf-formatado-20260719-1"></script>
-  <script defer src="static/app.js?v=pdf-formatado-20260719-1"></script>
-  <script defer src="static/manual.js?v=manual-20260901-1"></script>
+  <script defer src="static/static-api.js?v=revisado-20260817-2"></script>
+  <script defer src="static/app.js?v=revisado-20260817-2"></script>
 </head>
 <body class="opening-active">
   <section class="cp-opening" id="openingScreen" aria-labelledby="openingTitle">
@@ -92,10 +90,6 @@
       </div>
     </div>
     <div class="topbar-actions">
-      <button type="button" class="manual-topbar-button" id="openManualButton" aria-haspopup="dialog" aria-controls="interactiveManual">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 4.75A2.75 2.75 0 0 1 7.75 2H20v16H7.75A2.75 2.75 0 0 0 5 20.75v-16Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M5 20.75A2.75 2.75 0 0 1 7.75 18H20v4H7.75A2.75 2.75 0 0 1 5 19.25M9 6h7M9 10h7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <span>Manual <span class="manual-button-long">interativo</span></span>
-      </button>
       <button type="button" class="intro-link" id="openIntroButton" aria-label="Reabrir tela de abertura">Tela inicial</button>
       <div class="health" id="healthBadge"><span></span> verificando motor</div>
     </div>
@@ -389,6 +383,7 @@
           <div class="result-actions">
             <button type="button" class="button secondary" id="saveButton">Salvar cenário</button>
             <button type="button" class="button primary" id="pdfButton">Gerar PDF</button>
+            <button type="button" class="button secondary" id="ifcButton" title="Modelo volumétrico conceitual (LOD 100) em formato IFC4. Não é projeto arquitetônico.">Baixar modelo IFC (conceitual)</button>
           </div>
         </div>
 
