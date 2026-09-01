@@ -157,7 +157,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/parafusopro/` | 292299 bytes | 288543 caracteres |
 | `/risco-cambial/` | 154065 bytes | 152257 caracteres |
 | `/protendpro/` | 915441 bytes | 915441 caracteres |
-| `/eventogramapro/` | 728843 bytes | 728843 caracteres |
+| `/eventogramapro/` | 821282 bytes | 817343 caracteres |
 | `/termo-massa/` | 199232 bytes | 196348 caracteres |
 | `/cabocalc/` | 206539 bytes | 202935 caracteres |
 | `/subestacaopro/` | 730239 bytes | 730239 caracteres |
@@ -812,6 +812,13 @@ Ultima inclusao:
 - Fonte: `C:\Users\ACER\Documents\Downloads\EventogramaPro - sistema completo com nova abertura.html`
 - Data: 25/07/2026
 - Alteracao: inclusao de novo card na home e publicacao do aplicativo como HTML standalone.
+
+Ultima atualizacao:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\EventogramaPro_com_Manual_Interativo.html`
+- Data: 01/09/2026
+- Alteracao: substituicao integral de `eventogramapro/index.html` pela nova versao standalone com manual interativo incorporado.
+- Backup da versao anterior salvo em `C:\Obras Inteligentes\backups\eventogramapro-index-before-manual-interativo-20260901-0012.html`.
 
 Observacoes:
 
