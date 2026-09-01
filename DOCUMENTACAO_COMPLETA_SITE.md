@@ -127,7 +127,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 
 | Rota | Tamanho local aproximado | Tamanho publicado verificado |
 |---|---:|---:|
-| `/manutencao/` | 496488 bytes | 493368 caracteres |
+| `/manutencao/` | 496550 bytes | 493430 caracteres |
 | `/fiscalizacao/` | 482395 bytes | 477052 caracteres |
 | `/estrutural/` | 1075018 bytes | 1069415 caracteres |
 | `/pavimentos/` | 271969 bytes | 271969 caracteres |
