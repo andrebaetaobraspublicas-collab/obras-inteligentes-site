@@ -127,7 +127,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 
 | Rota | Tamanho local aproximado | Tamanho publicado verificado |
 |---|---:|---:|
-| `/manutencao/` | 278361 bytes | 274136 caracteres |
+| `/manutencao/` | 496488 bytes | 493368 caracteres |
 | `/fiscalizacao/` | 482395 bytes | 477052 caracteres |
 | `/estrutural/` | 1075018 bytes | 1069415 caracteres |
 | `/pavimentos/` | 271969 bytes | 271969 caracteres |
@@ -246,6 +246,13 @@ Atualizacao posterior: tambem existem as pastas `C:\Obras Inteligentes\reservato
 
 Rota: `/manutencao/`  
 Arquivos: `manutencao/index.html`, `manutencao/mp_backend.js`
+
+Ultima atualizacao:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\Manutencao_Predial_Orcamentos_Medicoes_Arquivo_Unico.html`
+- Data: 31/08/2026
+- Alteracao: substituicao integral de `manutencao/index.html` pela nova versao em arquivo unico, com modulos de orcamentos e medicoes. O arquivo `manutencao/mp_backend.js` foi preservado no diretorio.
+- Backup da versao anterior salvo em `C:\Obras Inteligentes\backups\manutencao-index-before-orcamentos-medicoes-20260831-2155.html`.
 
 Observacoes:
 
