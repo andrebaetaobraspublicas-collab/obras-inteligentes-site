@@ -170,7 +170,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/transmissaopro/` | 424776 bytes | 420488 caracteres |
 | `/tubocalc/` | 388607 bytes | 383056 caracteres |
 | `/compressorselect-pro/` | 1267287 bytes | 1260281 caracteres |
-| `/ventiladorpro/` | 669301 bytes | 669301 caracteres |
+| `/ventiladorpro/` | 773373 bytes | 764997 caracteres |
 | `/hidrocalc/` | 567089 bytes | 565179 caracteres |
 | `/elevadorcalc/` | 386384 bytes | 382143 caracteres |
 | `/thermox-pro/` | 428015 bytes | 428015 caracteres |
@@ -1088,6 +1088,12 @@ Ultima atualizacao:
 - Fonte: `C:\Users\ACER\Documents\Downloads\VentiladorPro_v4.1_abertura.html`
 - Data: 02/08/2026
 - Alteracao: substituicao integral de `ventiladorpro/index.html` pela nova versao do aplicativo.
+
+Atualizacao de 01/09/2026:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\VentiladorPro_v4.0_manual_interativo.html`
+- Alteracao: substituicao integral de `ventiladorpro/index.html` pela versao VentiladorPro v4.0 com manual interativo incorporado.
+- Backup da versao anterior salvo em `C:\Obras Inteligentes\backups\ventiladorpro-index-before-v4-manual-interativo-20260901-2258.html`.
 
 Observacoes:
 
