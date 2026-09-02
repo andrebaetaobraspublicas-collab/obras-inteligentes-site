@@ -160,7 +160,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/eventogramapro/` | 821282 bytes | 817343 caracteres |
 | `/termo-massa/` | 199232 bytes | 196348 caracteres |
 | `/cabocalc/` | 206539 bytes | 202935 caracteres |
-| `/subestacaopro/` | 730239 bytes | 730239 caracteres |
+| `/subestacaopro/` | 860087 bytes | 851059 caracteres |
 | `/brucknercalc/` | 1479721 bytes | 1475264 caracteres |
 | `/molapro/` | 426577 bytes | 421455 caracteres |
 | `/calculadora-eixos/` | 231280 bytes | 228654 caracteres |
@@ -872,6 +872,13 @@ Ultima inclusao:
 - Fonte: `C:\Users\ACER\Documents\Downloads\SubestacaoPro_v1_2.html`
 - Data: 25/07/2026
 - Alteracao: inclusao de novo card na home e publicacao do aplicativo como HTML standalone.
+
+Ultima atualizacao:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\SubestacaoPro_v2_0_com_manual_interativo.html`
+- Data: 01/09/2026
+- Alteracao: substituicao integral de `subestacaopro/index.html` pela versao SubestacaoPro v2.0 com manual interativo incorporado.
+- Backup da versao anterior salvo em `C:\Obras Inteligentes\backups\subestacaopro-index-before-v2-manual-interativo-20260901-2216.html`.
 
 Observacoes:
 
