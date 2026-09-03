@@ -182,7 +182,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/esgotocalcpro/` | 1037879 bytes | 1032140 caracteres |
 | `/equivaleclt/` | 107244 bytes | 106067 caracteres |
 | `/hidrosan-pro/` | 290818 bytes | 290818 caracteres |
-| `/terceirizapro/` | 723110 bytes | 723110 caracteres |
+| `/terceirizapro/` | 846598 bytes | 838000 caracteres |
 | `/cimbrepro/` | 188067 bytes | 188067 caracteres |
 | `/alvenariapro/` | 474835 bytes | 474835 caracteres |
 | `/andaimefach-pro/` | 227525 bytes | 224792 caracteres |
@@ -1366,6 +1366,13 @@ Ultima inclusao:
 - Fonte: `C:\Users\ACER\Documents\Downloads\TerceirizaPro_v2.0_Conta_Vinculada_Consolidado (1) (1).html`
 - Data: 11/08/2026
 - Alteracao: inclusao de novo card na home e publicacao do aplicativo TerceirizaPro v2.0 como HTML standalone.
+
+Ultima atualizacao:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\TerceirizaPro_v2.0_manual_interativo.html`
+- Data: 03/09/2026
+- Alteracao: substituicao integral de `terceirizapro/index.html` pela versao TerceirizaPro v2.0 com manual interativo incorporado.
+- Backup da versao anterior salvo em `C:\Obras Inteligentes\backups\terceirizapro-index-before-v2-manual-interativo-20260903-1420.html`.
 
 Observacoes:
 
