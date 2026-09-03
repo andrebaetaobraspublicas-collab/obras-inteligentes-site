@@ -173,7 +173,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/ventiladorpro/` | 773373 bytes | 764997 caracteres |
 | `/hidrocalc/` | 567089 bytes | 565179 caracteres |
 | `/elevadorcalc/` | 386384 bytes | 382143 caracteres |
-| `/thermox-pro/` | 428015 bytes | 428015 caracteres |
+| `/thermox-pro/` | 534348 bytes | 529103 caracteres |
 | `/comparador-honorarios-projetos/` | 525309 bytes | 525309 caracteres |
 | `/consultoriapro-rodoviario/` | 389055 bytes | 384378 caracteres |
 | `/geradorpro/` | 354392 bytes | 351100 caracteres |
@@ -1151,6 +1151,12 @@ Ultima atualizacao:
 - Fonte: `C:\Users\ACER\Documents\Downloads\ThermoX_Pro_v5.0_Abertura_3D.html`
 - Data: 04/08/2026
 - Alteracao: substituicao integral de `thermox-pro/index.html` pela versao 5.0, com abertura 3D e recursos ampliados.
+
+Atualizacao de 03/09/2026:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\ThermoX_Pro_v5.0_manual_interativo.html`
+- Alteracao: substituicao integral de `thermox-pro/index.html` pela versao ThermoX Pro v5.0 com manual interativo incorporado.
+- Backup da versao anterior salvo em `C:\Obras Inteligentes\backups\thermox-pro-index-before-v5-manual-interativo-20260903-1132.html`.
 
 Observacoes:
 
