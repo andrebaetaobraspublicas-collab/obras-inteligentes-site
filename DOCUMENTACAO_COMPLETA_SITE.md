@@ -19,7 +19,7 @@ O site `www.obrasinteligentes.ia.br` e uma pagina estatica hospedada na Hostinge
 C:\Obras Inteligentes\index.html
 ```
 
-A tela inicial possui atualmente 70 cards de aplicativos. Cada card aponta para uma rota estatica dentro do dominio. A regra geral e:
+A tela inicial possui atualmente 71 cards de aplicativos. Cada card aponta para uma rota estatica dentro do dominio. A regra geral e:
 
 ```text
 https://www.obrasinteligentes.ia.br/nome-da-rota/
@@ -123,6 +123,7 @@ Inventario originalmente verificado em 21/07/2026 e atualizado em 27/08/2026 par
 | 68 / GARAGENS | GaragemPro | `/garagempro/` | `C:\Obras Inteligentes\garagempro\index.html` | existe | 200 |
 | 69 / ORCAMENTO FORENSE | OrcamentoForense | `/orcamento-forense/` | `C:\Obras Inteligentes\orcamento-forense\index.html` | existe | 200 |
 | 70 / GRO-PGR | GRO/PGR Pro | `/gro-pgr-pro/` | `C:\Obras Inteligentes\gro-pgr-pro\index.html` | existe | 200 |
+| 71 / CURVA S | Cronograma Curva S | `/cronograma-curva-s/` | `C:\Obras Inteligentes\cronograma-curva-s\index.html` | existe | 200 |
 
 ## Tamanhos verificados
 
@@ -200,6 +201,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/garagempro/` | 482965 bytes | 479079 caracteres |
 | `/orcamento-forense/` | 1261281 bytes | 1248445 caracteres |
 | `/gro-pgr-pro/` | 663600 bytes | 659150 caracteres |
+| `/cronograma-curva-s/` | 451356 bytes | 448871 caracteres |
 | `/abc-fiscal/` | 351255 bytes | 349022 caracteres |
 
 ## Estrutura local principal
@@ -1681,6 +1683,24 @@ Observacoes:
 - Tela inicial do site aponta para `/gro-pgr-pro/`.
 - O card foi classificado no filtro `Riscos`.
 - Validar apos futuras alteracoes se o gerenciamento de riscos ocupacionais, inventario de perigos, avaliacao de riscos, plano de acao, PGR e relatorios continuam carregando corretamente.
+
+### Cronograma Curva S
+
+Rota: `/cronograma-curva-s/`  
+Arquivo: `cronograma-curva-s/index.html`
+
+Ultima inclusao:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\Cronograma_Curva_S_v1.2 (1).html`
+- Data: 03/09/2026
+- Alteracao: inclusao de novo card na home, no filtro `Gestao de Obras e de Contratos`, e publicacao do aplicativo Gestao do Cronograma Fisico-Financeiro v1.2 - Linha de Base, Diagnostico e Nota de Acompanhamento como HTML standalone.
+
+Observacoes:
+
+- Aplicativo standalone empacotado em HTML unico, com recursos de manual/apoio incorporados.
+- Tela inicial do site aponta para `/cronograma-curva-s/`.
+- O card foi classificado no filtro `Gestao de Obras e de Contratos`.
+- Validar apos futuras alteracoes se importacao de cronogramas XLSX/CSV, comparacao de linha de base, Curva S, diagnostico gerencial e nota de acompanhamento continuam carregando corretamente.
 
 ## Artigos publicados na home
 
