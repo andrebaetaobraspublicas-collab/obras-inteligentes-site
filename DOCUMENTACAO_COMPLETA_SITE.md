@@ -19,7 +19,7 @@ O site `www.obrasinteligentes.ia.br` e uma pagina estatica hospedada na Hostinge
 C:\Obras Inteligentes\index.html
 ```
 
-A tela inicial possui atualmente 71 cards de aplicativos. Cada card aponta para uma rota estatica dentro do dominio. A regra geral e:
+A tela inicial possui atualmente 72 cards de aplicativos. Cada card aponta para uma rota estatica dentro do dominio. A regra geral e:
 
 ```text
 https://www.obrasinteligentes.ia.br/nome-da-rota/
@@ -124,6 +124,7 @@ Inventario originalmente verificado em 21/07/2026 e atualizado em 27/08/2026 par
 | 69 / ORCAMENTO FORENSE | OrcamentoForense | `/orcamento-forense/` | `C:\Obras Inteligentes\orcamento-forense\index.html` | existe | 200 |
 | 70 / GRO-PGR | GRO/PGR Pro | `/gro-pgr-pro/` | `C:\Obras Inteligentes\gro-pgr-pro\index.html` | existe | 200 |
 | 71 / CURVA S | Cronograma Curva S | `/cronograma-curva-s/` | `C:\Obras Inteligentes\cronograma-curva-s\index.html` | existe | 200 |
+| 72 / MOTORES | MotorCalc | `/motorcalc/` | `C:\Obras Inteligentes\motorcalc\index.html` | existe | 200 |
 
 ## Tamanhos verificados
 
@@ -202,6 +203,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/orcamento-forense/` | 1261281 bytes | 1248445 caracteres |
 | `/gro-pgr-pro/` | 663600 bytes | 659150 caracteres |
 | `/cronograma-curva-s/` | 451356 bytes | 448871 caracteres |
+| `/motorcalc/` | 148249 bytes | 147037 caracteres |
 | `/abc-fiscal/` | 351255 bytes | 349022 caracteres |
 
 ## Estrutura local principal
@@ -1708,6 +1710,25 @@ Observacoes:
 - Tela inicial do site aponta para `/cronograma-curva-s/`.
 - O card foi classificado no filtro `Gestao de Obras e de Contratos`.
 - Validar apos futuras alteracoes se importacao de cronogramas XLSX/CSV, comparacao de linha de base, Curva S, diagnostico gerencial e nota de acompanhamento continuam carregando corretamente.
+
+### MotorCalc
+
+Rota: `/motorcalc/`  
+Arquivo: `motorcalc/index.html`
+
+Ultima inclusao:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\Tela de abertura com animação motor elétrico.zip`
+- Arquivo publicado: `MotorCalc-com-abertura.html`
+- Data: 04/09/2026
+- Alteracao: inclusao de novo card na home, no filtro `Equipamentos, Apoios e Montagens`, e publicacao do aplicativo MotorCalc - selecao de motores eletricos como HTML standalone com tela de abertura.
+
+Observacoes:
+
+- Aplicativo standalone empacotado em HTML unico, com tela de abertura e manual incorporado.
+- Tela inicial do site aponta para `/motorcalc/`.
+- O card foi classificado no filtro `Equipamentos, Apoios e Montagens`.
+- Validar apos futuras alteracoes se selecao de motores eletricos, dados de potencia, rendimento, partida, regime de operacao e relatorios continuam carregando corretamente.
 
 ## Artigos publicados na home
 

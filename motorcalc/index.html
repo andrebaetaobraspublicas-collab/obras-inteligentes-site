@@ -1,0 +1,2681 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-tema="claro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MotorCalc — seleção de motores elétricos</title>
+<meta name="description" content="Seleção e dimensionamento de motores de indução trifásicos com catálogo paramétrico, custo de ciclo de vida e relatório técnico. Funciona offline.">
+<style>/* ===== Tokens ===== */
+:root{
+  --papel:#EDF0F2; --superficie:#FFFFFF; --tinta:#14181C; --tinta2:#55636E;
+  --linha:#D2D9DE; --linha2:#E4E9EC; --aco:#5C6A76; --aluminio:#C9D0D6;
+  --cobre:#A2592A; --cobre-forte:#8A4A21; --cobre-fraco:#F3E5D9;
+  --ie1:#B03A2E; --ie2:#C47B10; --ie3:#3F7F26; --ie4:#126A60;
+  --placa:#22282D; --placa-tinta:#DEE5E9; --placa-linha:#3C464E;
+  --ok:#2C6E3F; --alerta:#9A6410; --erro:#A33227;
+  --r:4px; --sombra:0 1px 2px rgba(20,24,28,.10), 0 6px 18px -12px rgba(20,24,28,.35);
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+[data-tema="escuro"]{
+  --papel:#141719; --superficie:#1C2126; --tinta:#E3E9ED; --tinta2:#9AA7B1;
+  --linha:#2E363D; --linha2:#262D33; --aco:#8B98A3; --aluminio:#3A444C;
+  --cobre:#C87F45; --cobre-forte:#DE9862; --cobre-fraco:#33261C;
+  --ie1:#D4614F; --ie2:#DFA23A; --ie3:#68B04A; --ie4:#2F9C8E;
+  --placa:#0E1114; --placa-tinta:#C6D0D7; --placa-linha:#2A333A;
+  --ok:#5CAE76; --alerta:#D3A248; --erro:#D96A5C;
+  --sombra:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -14px rgba(0,0,0,.8);
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--papel);color:var(--tinta);font:400 15px/1.55 var(--sans);
+  font-variant-numeric:tabular-nums}
+h1,h2,h3{margin:0;font-weight:600;letter-spacing:-.012em;line-height:1.2}
+a{color:var(--cobre);text-decoration-thickness:1px;text-underline-offset:2px}
+:focus-visible{outline:2px solid var(--cobre);outline-offset:2px;border-radius:2px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ===== Cabeçalho ===== */
+.topo{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;
+  padding:14px 22px;background:var(--superficie);border-bottom:1px solid var(--linha)}
+.topo h1{font-size:17px}
+.topo .versao{font:500 11px/1 var(--mono);color:var(--tinta2);
+  border:1px solid var(--linha);border-radius:2px;padding:3px 6px}
+.topo .sub{color:var(--tinta2);font-size:13px;flex:1;min-width:180px}
+.btn-tema{margin-left:auto}
+
+/* ===== Estrutura ===== */
+.corpo{display:grid;grid-template-columns:334px minmax(0,1fr);gap:0;align-items:start}
+.rail{position:sticky;top:0;max-height:100vh;overflow-y:auto;background:var(--superficie);
+  border-right:1px solid var(--linha);padding:18px 18px 60px}
+.principal{padding:18px 22px 80px;min-width:0}
+.so-movel{display:none}
+@media(max-width:900px){
+  .corpo{grid-template-columns:1fr}
+  .so-movel{display:block;width:100%;margin-bottom:14px}
+  .rail{position:static;max-height:none;border-right:0;border-bottom:1px solid var(--linha);padding-bottom:20px}
+  .principal{padding:16px 14px 70px}
+}
+
+/* ===== Formulário ===== */
+.grupo{margin-bottom:18px}
+.grupo>h3{font-size:12px;font-weight:600;color:var(--tinta2);margin-bottom:9px;
+  padding-bottom:5px;border-bottom:1px solid var(--linha2)}
+.campo{margin-bottom:11px}
+.campo label{display:block;font-size:12.5px;color:var(--tinta2);margin-bottom:3px}
+.campo .dica{font-size:11.5px;color:var(--tinta2);margin-top:3px;line-height:1.4}
+input,select,textarea{width:100%;font:400 14px var(--sans);font-variant-numeric:tabular-nums;
+  color:var(--tinta);background:var(--papel);border:1px solid var(--linha);
+  border-radius:var(--r);padding:7px 9px}
+input[type=number]{font-family:var(--mono);font-size:13.5px}
+select{cursor:pointer}
+input:focus,select:focus,textarea:focus{border-color:var(--cobre);background:var(--superficie)}
+.dupla{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.tripla{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+
+button{font:500 14px var(--sans);cursor:pointer;border-radius:var(--r);
+  border:1px solid var(--linha);background:var(--superficie);color:var(--tinta);padding:8px 13px}
+button:hover{border-color:var(--aco)}
+.primario{background:var(--cobre);border-color:var(--cobre);color:#fff;width:100%;padding:11px;font-weight:600}
+.primario:hover{background:var(--cobre-forte);border-color:var(--cobre-forte)}
+.secundario{background:transparent}
+.mini{font-size:12.5px;padding:5px 9px}
+.linha-btn{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+
+/* ===== Abas ===== */
+.abas{display:flex;gap:2px;border-bottom:1px solid var(--linha);margin-bottom:18px;overflow-x:auto}
+.abas button{border:0;background:transparent;border-bottom:2px solid transparent;
+  border-radius:0;padding:9px 13px;color:var(--tinta2);white-space:nowrap}
+.abas button[aria-selected=true]{color:var(--tinta);border-bottom-color:var(--cobre);font-weight:600}
+.abas .contador{font:500 11px var(--mono);background:var(--cobre-fraco);color:var(--cobre-forte);
+  border-radius:8px;padding:1px 6px;margin-left:5px}
+
+/* ===== Placa de identificação ===== */
+.placa{background:var(--placa);color:var(--placa-tinta);border-radius:5px;padding:18px 20px;
+  border:1px solid var(--placa-linha);position:relative;box-shadow:var(--sombra);margin-bottom:16px}
+.placa::before,.placa::after{content:"";position:absolute;width:6px;height:6px;border-radius:50%;
+  background:var(--placa-linha);top:9px}
+.placa::before{left:9px} .placa::after{right:9px}
+.placa .rebite-b{position:absolute;bottom:9px;width:6px;height:6px;border-radius:50%;background:var(--placa-linha)}
+.placa .rebite-b.e{left:9px} .placa .rebite-b.d{right:9px}
+.placa-topo{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;
+  padding-bottom:12px;margin-bottom:12px;border-bottom:1px solid var(--placa-linha)}
+.placa-marca{font:600 19px/1.15 var(--sans);letter-spacing:.06em;text-transform:uppercase}
+.placa-modelo{font:400 12.5px var(--mono);color:#94A3AD;margin-top:3px}
+.placa-selo{font:600 13px var(--mono);letter-spacing:.05em;padding:4px 9px;border-radius:3px;color:#fff;flex-shrink:0}
+.placa-campos{display:grid;grid-template-columns:repeat(auto-fit,minmax(88px,1fr));gap:1px;
+  background:var(--placa-linha);border:1px solid var(--placa-linha);border-radius:3px;overflow:hidden}
+.placa-campo{background:var(--placa);padding:8px 10px}
+.placa-campo .rot{font:500 9.5px var(--sans);letter-spacing:.11em;text-transform:uppercase;color:#8593A0}
+.placa-campo .val{font:600 16px var(--mono);margin-top:2px;letter-spacing:-.01em}
+.placa-campo .un{font-size:11px;font-weight:400;color:#94A3AD;margin-left:2px}
+.placa-rodape{margin-top:12px;padding-top:10px;border-top:1px solid var(--placa-linha);
+  font:400 11.5px var(--mono);color:#8593A0;display:flex;gap:16px;flex-wrap:wrap}
+
+/* ===== Blocos ===== */
+.bloco{background:var(--superficie);border:1px solid var(--linha);border-radius:var(--r);
+  padding:16px 18px;margin-bottom:16px}
+.bloco>h2{font-size:15px;margin-bottom:4px}
+.bloco>.legenda{font-size:12.5px;color:var(--tinta2);margin-bottom:12px}
+.aviso{background:var(--superficie);border:1px solid var(--linha);
+  border-left:3px solid var(--alerta);border-radius:var(--r);padding:11px 14px;margin-bottom:16px;font-size:13px;color:var(--tinta2)}
+.aviso strong{color:var(--tinta)}
+.vazio{border:1px dashed var(--linha);border-radius:var(--r);padding:26px 20px;text-align:center;color:var(--tinta2);font-size:13.5px}
+
+/* ===== Tabelas ===== */
+.rolagem{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--linha2);white-space:nowrap}
+th{font-weight:600;font-size:11.5px;color:var(--tinta2);border-bottom:1px solid var(--linha);
+  position:sticky;top:0;background:var(--superficie);cursor:pointer;user-select:none}
+th.n,td.n{text-align:right;font-family:var(--mono);font-size:13px}
+tbody tr:hover{background:var(--linha2)}
+tr.destaque{background:var(--cobre-fraco)}
+tr.destaque:hover{background:var(--cobre-fraco)}
+td.melhor{color:var(--ok);font-weight:600}
+.pos{font:600 12px var(--mono);color:var(--tinta2)}
+
+.selo{display:inline-block;font:600 11px var(--mono);letter-spacing:.03em;
+  padding:2px 6px;border-radius:2px;color:#fff}
+.ie-IE1{background:var(--ie1)} .ie-IE2{background:var(--ie2)}
+.ie-IE3{background:var(--ie3)} .ie-IE4{background:var(--ie4)}
+
+.barra-nota{display:block;height:4px;background:var(--linha2);border-radius:2px;overflow:hidden;min-width:52px}
+.barra-nota i{display:block;height:100%;background:var(--cobre)}
+
+/* ===== Gráficos ===== */
+.grafico{width:100%;height:auto;display:block}
+.grafico text{font-family:var(--sans);fill:var(--tinta2)}
+.grafico .eixo{stroke:var(--linha);stroke-width:1}
+.grafico .grade{stroke:var(--linha2);stroke-width:1}
+.legenda-graf{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--tinta2);margin-top:8px}
+.legenda-graf span{display:flex;align-items:center;gap:5px}
+.legenda-graf i{width:9px;height:9px;border-radius:2px;display:inline-block}
+
+/* ===== Indicadores ===== */
+.indicadores{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));gap:1px;
+  background:var(--linha);border:1px solid var(--linha);border-radius:var(--r);overflow:hidden;margin-bottom:16px}
+.ind{background:var(--superficie);padding:11px 13px}
+.ind .rot{font-size:11.5px;color:var(--tinta2)}
+.ind .val{font:600 19px var(--mono);margin-top:2px;letter-spacing:-.02em}
+.ind .val small{font-size:12px;font-weight:400;color:var(--tinta2)}
+
+/* ===== Manual ===== */
+.manual{display:grid;grid-template-columns:220px minmax(0,1fr);gap:22px;align-items:start}
+@media(max-width:820px){.manual{grid-template-columns:1fr}}
+.manual-nav{position:sticky;top:12px}
+.manual-nav a{display:block;padding:6px 9px;font-size:13px;color:var(--tinta2);
+  text-decoration:none;border-left:2px solid transparent;border-radius:0 var(--r) var(--r) 0}
+.manual-nav a:hover{background:var(--linha2);color:var(--tinta)}
+.manual-nav a.ativo{border-left-color:var(--cobre);color:var(--tinta);font-weight:600;background:var(--cobre-fraco)}
+.manual-txt h3{font-size:15px;margin:24px 0 7px;scroll-margin-top:14px}
+.manual-txt h3:first-child{margin-top:0}
+.manual-txt p{margin:0 0 10px;max-width:66ch;font-size:14px}
+.manual-txt ul{margin:0 0 10px;padding-left:20px;max-width:66ch;font-size:14px}
+.manual-txt li{margin-bottom:5px}
+.formula{font-family:var(--mono);font-size:13.5px;background:var(--papel);border:1px solid var(--linha);
+  border-left:3px solid var(--cobre);border-radius:var(--r);padding:10px 13px;margin:0 0 12px;overflow-x:auto}
+.manual-txt .oculto{display:none}
+mark{background:var(--cobre-fraco);color:var(--tinta);padding:0 1px}
+
+/* ===== Diversos ===== */
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.chip{font-size:12px;padding:4px 9px;border:1px solid var(--linha);border-radius:12px;
+  background:var(--superficie);color:var(--tinta2);cursor:pointer}
+.chip[aria-pressed=true]{background:var(--cobre-fraco);border-color:var(--cobre);color:var(--cobre-forte);font-weight:600}
+.rodape{padding:18px 22px;border-top:1px solid var(--linha);color:var(--tinta2);font-size:12.5px;background:var(--superficie)}
+.checkbox{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--tinta2);cursor:pointer}
+.checkbox input{width:auto}
+td .preco-edit{width:96px;font-family:var(--mono);font-size:12.5px;padding:3px 6px}
+.status{font-size:12.5px;color:var(--ok);margin-left:10px}
+</style>
+</head>
+<body>
+
+<header class="topo">
+  <h1>MotorCalc</h1>
+  <span class="versao">v1.0</span>
+  <span class="sub">Seleção de motores de indução trifásicos · IEC 60034 · ABNT NBR 17094-1</span>
+  <button class="btn-tema mini secundario" id="btnTema" type="button">Tema escuro</button>
+</header>
+
+<div class="corpo">
+
+<!-- ===================== PAINEL DE PARÂMETROS ===================== -->
+<aside class="rail" aria-label="Parâmetros de seleção">
+  <button class="so-movel secundario" id="btnRecolher" type="button" aria-expanded="true" aria-controls="railCorpo">Ocultar parâmetros</button>
+  <div id="railCorpo">
+  <div class="grupo">
+    <h3>Carga acionada</h3>
+    <div class="campo">
+      <label for="aplicacao">Aplicação</label>
+      <select id="aplicacao"></select>
+    </div>
+    <div class="dupla">
+      <div class="campo">
+        <label for="potencia">Potência no eixo (kW)</label>
+        <input type="number" id="potencia" value="20" min="0" step="0.1">
+      </div>
+      <div class="campo">
+        <label for="polos">Polaridade</label>
+        <select id="polos">
+          <option value="">Livre</option>
+          <option value="2">2 polos · 3600 rpm</option>
+          <option value="4" selected>4 polos · 1800 rpm</option>
+          <option value="6">6 polos · 1200 rpm</option>
+          <option value="8">8 polos · 900 rpm</option>
+        </select>
+      </div>
+    </div>
+    <div class="dupla">
+      <div class="campo">
+        <label for="torque">ou torque (N·m)</label>
+        <input type="number" id="torque" min="0" step="0.1" placeholder="opcional">
+      </div>
+      <div class="campo">
+        <label for="rpmAlvo">na rotação (rpm)</label>
+        <input type="number" id="rpmAlvo" min="0" step="1" placeholder="opcional">
+      </div>
+    </div>
+    <div class="campo">
+      <label for="regime">Regime de serviço</label>
+      <select id="regime"></select>
+      <div class="dica" id="dicaRegime"></div>
+    </div>
+    <div class="campo">
+      <label for="fs">Fator de serviço</label>
+      <input type="number" id="fs" value="1.15" min="1" max="1.5" step="0.05">
+    </div>
+  </div>
+
+  <div class="grupo">
+    <h3>Instalação</h3>
+    <div class="campo">
+      <label for="tensao">Tensão de alimentação</label>
+      <select id="tensao">
+        <option value="">Livre</option>
+        <option value="220">220 V</option>
+        <option value="380" selected>380 V</option>
+        <option value="440">440 V</option>
+        <option value="3300">3,3 kV</option>
+        <option value="6600">6,6 kV</option>
+      </select>
+    </div>
+    <div class="campo">
+      <label for="ambiente">Ambiente</label>
+      <select id="ambiente"></select>
+      <div class="dica" id="dicaAmbiente"></div>
+    </div>
+    <div class="dupla">
+      <div class="campo">
+        <label for="altitude">Altitude (m)</label>
+        <input type="number" id="altitude" value="0" min="0" max="4000" step="50">
+      </div>
+      <div class="campo">
+        <label for="temp">Temp. ambiente (°C)</label>
+        <input type="number" id="temp" value="40" min="10" max="80" step="1">
+      </div>
+    </div>
+  </div>
+
+  <div class="grupo">
+    <h3>Exigências</h3>
+    <div class="dupla">
+      <div class="campo">
+        <label for="ieMin">Rendimento mínimo</label>
+        <select id="ieMin">
+          <option value="">Sem exigência</option>
+          <option value="IE2">IE2</option>
+          <option value="IE3" selected>IE3</option>
+          <option value="IE4">IE4</option>
+        </select>
+      </div>
+      <div class="campo">
+        <label for="isolMin">Isolamento mínimo</label>
+        <select id="isolMin">
+          <option value="">Livre</option>
+          <option value="B">Classe B</option>
+          <option value="F">Classe F</option>
+          <option value="H">Classe H</option>
+        </select>
+      </div>
+    </div>
+    <div class="tripla">
+      <div class="campo">
+        <label for="ruidoMax">Ruído máx.</label>
+        <input type="number" id="ruidoMax" min="40" max="110" step="1" placeholder="dB(A)">
+      </div>
+      <div class="campo">
+        <label for="prazoMax">Prazo máx.</label>
+        <input type="number" id="prazoMax" min="1" step="1" placeholder="dias">
+      </div>
+      <div class="campo">
+        <label for="orcamento">Teto (R$)</label>
+        <input type="number" id="orcamento" min="0" step="100" placeholder="livre">
+      </div>
+    </div>
+    <div class="campo">
+      <label for="limiteSobre">Sobredimensionamento máximo</label>
+      <select id="limiteSobre">
+        <option value="1.25">1,25× — carga mínima de 80%</option>
+        <option value="1.6" selected>1,60× — carga mínima de 62%</option>
+        <option value="2">2,00× — carga mínima de 50%</option>
+        <option value="4">Sem restrição</option>
+      </select>
+    </div>
+    <div class="campo">
+      <label>Fabricantes considerados</label>
+      <div class="chips" id="chipsFab"></div>
+    </div>
+  </div>
+
+  <div class="grupo">
+    <h3>Premissas econômicas</h3>
+    <div class="dupla">
+      <div class="campo">
+        <label for="horas">Operação (h/ano)</label>
+        <input type="number" id="horas" value="6000" min="0" max="8760" step="100">
+      </div>
+      <div class="campo">
+        <label for="tarifa">Tarifa (R$/kWh)</label>
+        <input type="number" id="tarifa" value="0.72" min="0" step="0.01">
+      </div>
+    </div>
+    <div class="tripla">
+      <div class="campo">
+        <label for="anos">Horizonte</label>
+        <input type="number" id="anos" value="10" min="1" max="30" step="1">
+      </div>
+      <div class="campo">
+        <label for="taxa">Desconto %</label>
+        <input type="number" id="taxa" value="8" min="0" max="30" step="0.5">
+      </div>
+      <div class="campo">
+        <label for="manut">Manut. %</label>
+        <input type="number" id="manut" value="2" min="0" max="20" step="0.5">
+      </div>
+    </div>
+  </div>
+
+  <div class="campo">
+    <label for="prioridade">Critério de decisão</label>
+    <select id="prioridade"></select>
+  </div>
+
+  <button class="primario" id="btnCalcular" type="button">Selecionar motores</button>
+  <div class="linha-btn">
+    <button class="mini secundario" id="btnLimpar" type="button">Restaurar padrões</button>
+    <button class="mini secundario" id="btnSalvar" type="button">Salvar cenário</button>
+  </div>
+  <div class="campo" style="margin-top:12px">
+    <label for="cenarios">Cenários salvos</label>
+    <select id="cenarios"><option value="">Nenhum</option></select>
+  </div>
+  </div>
+</aside>
+
+<!-- ===================== ÁREA PRINCIPAL ===================== -->
+<main class="principal">
+  <div class="abas" role="tablist">
+    <button role="tab" id="tab-selecao" aria-selected="true" data-aba="selecao">Seleção</button>
+    <button role="tab" id="tab-comparacao" aria-selected="false" data-aba="comparacao">Comparação<span class="contador" id="cntComp">0</span></button>
+    <button role="tab" id="tab-energia" aria-selected="false" data-aba="energia">Energia e ciclo de vida</button>
+    <button role="tab" id="tab-orcamento" aria-selected="false" data-aba="orcamento">Orçamento<span class="contador" id="cntOrc">0</span></button>
+    <button role="tab" id="tab-catalogo" aria-selected="false" data-aba="catalogo">Catálogo</button>
+    <button role="tab" id="tab-manual" aria-selected="false" data-aba="manual">Manual</button>
+  </div>
+
+  <section id="painel-selecao" role="tabpanel" aria-labelledby="tab-selecao"></section>
+  <section id="painel-comparacao" role="tabpanel" aria-labelledby="tab-comparacao" hidden></section>
+  <section id="painel-energia" role="tabpanel" aria-labelledby="tab-energia" hidden></section>
+  <section id="painel-orcamento" role="tabpanel" aria-labelledby="tab-orcamento" hidden></section>
+  <section id="painel-catalogo" role="tabpanel" aria-labelledby="tab-catalogo" hidden></section>
+  <section id="painel-manual" role="tabpanel" aria-labelledby="tab-manual" hidden></section>
+</main>
+
+</div>
+
+<footer class="rodape">
+  MotorCalc · ferramenta de apoio à decisão técnica. O catálogo embarcado é paramétrico e os preços são
+  valores de referência; confronte sempre com a folha de dados do fabricante e com cotações formais antes
+  de usar em projeto, orçamento ou termo de referência. Funciona integralmente offline.
+</footer>
+
+<script>/* ---------- 01-dados.js ---------- */
+/* =====================================================================
+   MOTORCALC — NÚCLEO DE DADOS
+   Tabelas normativas, modelos paramétricos e gerador de catálogo.
+   Referências: ABNT NBR 17094-1, IEC 60034-1, IEC 60034-30-1.
+   ===================================================================== */
+
+const MC = {};
+
+/* --- Rendimentos mínimos IE3, 60 Hz, 4 polos (IEC 60034-30-1) --------
+   Chave: potência nominal em kW. Valores em %.
+   Demais classes e polaridades são derivadas por correção documentada. */
+MC.RENDIMENTO_IE3_4P = {
+  0.75: 85.5, 1.1: 86.5, 1.5: 86.5, 2.2: 89.5, 3: 89.5, 4: 90.2,
+  5.5: 91.7, 7.5: 91.7, 11: 92.4, 15: 93.0, 18.5: 93.6, 22: 93.6,
+  30: 94.1, 37: 94.5, 45: 95.0, 55: 95.4, 75: 95.4, 90: 95.8,
+  110: 96.2, 132: 96.2, 150: 96.2, 185: 96.2, 200: 96.2, 250: 96.2,
+  300: 96.2, 355: 96.2, 400: 96.2, 450: 96.2, 500: 96.2
+};
+
+/* Deslocamento da classe de rendimento em pontos percentuais.
+   IE2 e IE4 são obtidos a partir do IE3 de mesma potência. */
+MC.DELTA_CLASSE = {
+  IE1: p => -(4.2 - 0.55 * Math.log10(Math.max(p, 0.75)) * 2.2),
+  IE2: p => -(2.4 - 0.30 * Math.log10(Math.max(p, 0.75)) * 2.2),
+  IE3: () => 0,
+  IE4: p => (1.5 - 0.22 * Math.log10(Math.max(p, 0.75)) * 2.2)
+};
+
+/* Correção de rendimento por polaridade, em pontos percentuais. */
+MC.DELTA_POLOS = { 2: -0.4, 4: 0, 6: -0.7, 8: -1.6 };
+
+/* Rotação síncrona a 60 Hz e escorregamento típico. */
+MC.ROTACAO = { 2: 3600, 4: 1800, 6: 1200, 8: 900 };
+
+/* Carcaça IEC por potência (4 polos). Demais polaridades sobem/descem um passo. */
+MC.CARCACA_4P = {
+  0.75: '80', 1.1: '90S', 1.5: '90L', 2.2: '100L', 3: '100L', 4: '112M',
+  5.5: '132S', 7.5: '132M', 11: '160M', 15: '160L', 18.5: '180M', 22: '180L',
+  30: '200L', 37: '225S/M', 45: '225M', 55: '250S/M', 75: '280S/M', 90: '280M',
+  110: '315S/M', 132: '315M', 150: '315L', 185: '355M', 200: '355M',
+  250: '355L', 300: '355L', 355: '355L', 400: '400', 450: '400', 500: '450'
+};
+
+MC.POTENCIAS = Object.keys(MC.RENDIMENTO_IE3_4P).map(Number).sort((a, b) => a - b);
+
+/* --- Regimes de serviço (IEC 60034-1) ------------------------------- */
+MC.REGIMES = {
+  S1: { nome: 'S1 — Contínuo', fs: 1.00, descricao: 'Carga constante por tempo suficiente ao equilíbrio térmico.' },
+  S2: { nome: 'S2 — Curta duração', fs: 1.00, descricao: 'Carga constante por período definido, insuficiente ao equilíbrio térmico, seguido de repouso.' },
+  S3: { nome: 'S3 — Intermitente periódico', fs: 1.10, descricao: 'Ciclos de carga e repouso; a corrente de partida não afeta o aquecimento.' },
+  S4: { nome: 'S4 — Intermitente com partida', fs: 1.15, descricao: 'Ciclos com partida significativa no balanço térmico.' },
+  S5: { nome: 'S5 — Intermitente com frenagem', fs: 1.20, descricao: 'Ciclos com partida e frenagem elétrica.' },
+  S6: { nome: 'S6 — Contínuo com carga intermitente', fs: 1.10, descricao: 'Operação contínua com períodos alternados de carga e vazio.' },
+  S7: { nome: 'S7 — Contínuo com frenagem', fs: 1.20, descricao: 'Operação contínua com partidas e frenagens elétricas.' },
+  S8: { nome: 'S8 — Contínuo com variação de rotação', fs: 1.25, descricao: 'Cargas e rotações alternadas em ciclos definidos.' },
+  S9: { nome: 'S9 — Variações não periódicas', fs: 1.25, descricao: 'Carga e rotação variam de forma não periódica na faixa admissível.' }
+};
+
+/* --- Ambientes e exigência mínima de grau de proteção --------------- */
+MC.AMBIENTES = {
+  interno_seco:   { nome: 'Interno seco',        ipMin: 54, corrosivo: false, descricao: 'Abrigado, sem condensação, sem jato d\'água.' },
+  interno_umido:  { nome: 'Interno úmido',       ipMin: 55, corrosivo: false, descricao: 'Casa de bombas, ETA/ETE coberta, condensação possível.' },
+  externo:        { nome: 'Externo abrigado',    ipMin: 55, corrosivo: false, descricao: 'Exposto a intempéries, com proteção contra jatos.' },
+  lavagem:        { nome: 'Sujeito a lavagem',   ipMin: 56, corrosivo: false, descricao: 'Limpeza com mangueira, jatos potentes dirigidos.' },
+  corrosivo:      { nome: 'Corrosivo (H₂S)',     ipMin: 56, corrosivo: true,  descricao: 'Elevatórias de esgoto, digestores, gases sulfurosos.' },
+  marinho:        { nome: 'Marinho / salino',    ipMin: 65, corrosivo: true,  descricao: 'Orla, emissários, névoa salina permanente.' }
+};
+
+/* --- Aplicações típicas: fator de serviço sugerido e polaridade ------ */
+MC.APLICACOES = {
+  bomba_centrifuga: { nome: 'Bomba centrífuga',      fs: 1.15, polos: 2, torqueTipo: 'quadratico' },
+  bomba_recalque:   { nome: 'Bomba de recalque',     fs: 1.15, polos: 4, torqueTipo: 'quadratico' },
+  ventilador:       { nome: 'Ventilador / exaustor', fs: 1.10, polos: 4, torqueTipo: 'quadratico' },
+  compressor:       { nome: 'Compressor',            fs: 1.25, polos: 4, torqueTipo: 'constante' },
+  elevador:         { nome: 'Elevador',              fs: 1.25, polos: 6, torqueTipo: 'constante' },
+  escada_rolante:   { nome: 'Escada rolante',        fs: 1.25, polos: 6, torqueTipo: 'constante' },
+  ponte_rolante:    { nome: 'Ponte rolante / talha', fs: 1.25, polos: 4, torqueTipo: 'constante' },
+  britador:         { nome: 'Britador / moinho',     fs: 1.25, polos: 6, torqueTipo: 'alto_impacto' },
+  correia:          { nome: 'Correia transportadora',fs: 1.15, polos: 4, torqueTipo: 'constante' },
+  generico:         { nome: 'Uso geral',             fs: 1.15, polos: 4, torqueTipo: 'constante' }
+};
+
+/* --- Fabricantes: linha comercial e posicionamento de preço --------- */
+MC.FABRICANTES = {
+  WEG:     { linha: 'W22',    fatorPreco: 1.00, prazoBase: 15, ipPadrao: 55, semente: 11 },
+  Siemens: { linha: '1LE1',   fatorPreco: 1.12, prazoBase: 21, ipPadrao: 55, semente: 23 },
+  ABB:     { linha: 'M2BAX',  fatorPreco: 1.18, prazoBase: 28, ipPadrao: 55, semente: 37 },
+  Voges:   { linha: 'VMTE',   fatorPreco: 0.84, prazoBase: 10, ipPadrao: 55, semente: 53 }
+};
+
+/* --- Modelos paramétricos ------------------------------------------- */
+
+/** Rendimento nominal (%) a partir de potência, polos e classe IE. */
+MC.rendimento = function (kW, polos, classe) {
+  const base = MC.RENDIMENTO_IE3_4P[kW];
+  if (base === undefined) return null;
+  const r = base + (MC.DELTA_CLASSE[classe] ? MC.DELTA_CLASSE[classe](kW) : 0) + (MC.DELTA_POLOS[polos] || 0);
+  return Math.min(97.6, Math.max(70, Math.round(r * 10) / 10));
+};
+
+/** Fator de potência nominal. */
+MC.fatorPotencia = function (kW, polos) {
+  const b = { 2: 0.885, 4: 0.855, 6: 0.815, 8: 0.775 }[polos] || 0.85;
+  const g = 0.030 * Math.log10(Math.max(kW, 0.75) / 5.5);
+  return Math.min(0.93, Math.max(0.70, Math.round((b + g) * 1000) / 1000));
+};
+
+/** Massa aproximada em kg. */
+MC.massa = function (kW, polos, classe) {
+  const kPolos = { 2: 9.6, 4: 11.8, 6: 14.6, 8: 17.9 }[polos] || 11.8;
+  const kClasse = { IE1: 0.94, IE2: 0.97, IE3: 1.00, IE4: 1.08 }[classe] || 1;
+  return Math.round(kPolos * Math.pow(kW, 0.79) * kClasse);
+};
+
+/** Nível de pressão sonora em dB(A) a 1 m, carga nominal. */
+MC.ruido = function (kW, polos) {
+  const dPolos = { 2: 6, 4: 0, 6: -3, 8: -5 }[polos] || 0;
+  return Math.round(Math.min(96, Math.max(48, 56 + 12 * Math.log10(Math.max(kW, 0.75)) + dPolos)));
+};
+
+/** Preço de referência em BRL. Modelo de escala, não cotação. */
+MC.precoReferencia = function (kW, polos, classe, fabricante) {
+  const kClasse = { IE1: 0.68, IE2: 0.76, IE3: 1.00, IE4: 1.34 }[classe] || 1;
+  const kPolos = { 2: 0.94, 4: 1.00, 6: 1.14, 8: 1.34 }[polos] || 1;
+  const f = MC.FABRICANTES[fabricante] ? MC.FABRICANTES[fabricante].fatorPreco : 1;
+  const bruto = 600 * Math.pow(kW, 0.86) * kClasse * kPolos * f;
+  return Math.round(bruto / 10) * 10;
+};
+
+/** Corrente de partida em múltiplos da nominal. */
+MC.relacaoIpIn = function (kW, classe) {
+  const base = 7.0 + 0.6 * Math.log10(Math.max(kW, 0.75));
+  const dClasse = { IE1: -0.4, IE2: 0, IE3: 0.5, IE4: 0.9 }[classe] || 0;
+  return Math.round((base + dClasse) * 10) / 10;
+};
+
+/** Carcaça IEC estimada. */
+MC.carcaca = function (kW, polos) {
+  const base = MC.CARCACA_4P[kW] || '—';
+  if (polos === 2) return base;
+  if (polos >= 6) {
+    const i = MC.POTENCIAS.indexOf(kW);
+    const acima = MC.POTENCIAS[Math.min(i + (polos === 6 ? 1 : 2), MC.POTENCIAS.length - 1)];
+    return MC.CARCACA_4P[acima] || base;
+  }
+  return base;
+};
+
+/* Gerador pseudoaleatório determinístico — o catálogo é idêntico em toda
+   execução, condição para auditoria e reprodutibilidade dos resultados. */
+MC.hash = function (str) {
+  let h = 2166136261;
+  for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return (h >>> 0) / 4294967295;
+};
+
+/** Tensões disponíveis conforme a potência. */
+MC.tensoes = function (kW) {
+  if (kW >= 315) return [3300, 6600];
+  if (kW >= 200) return [380, 440, 3300, 6600];
+  if (kW >= 110) return [380, 440, 3300];
+  if (kW <= 7.5) return [220, 380, 440];
+  return [380, 440];
+};
+
+/* --- Geração do catálogo -------------------------------------------- */
+MC.gerarCatalogo = function () {
+  const itens = [];
+  const classes = ['IE2', 'IE3', 'IE4'];
+  Object.keys(MC.FABRICANTES).forEach(fab => {
+    const cfg = MC.FABRICANTES[fab];
+    MC.POTENCIAS.forEach(kW => {
+      [2, 4, 6, 8].forEach(polos => {
+        classes.forEach(classe => {
+          const chave = fab + kW + polos + classe;
+          const r = MC.hash(chave + cfg.semente);
+          // Disponibilidade comercial: nem todo fabricante oferece toda combinação.
+          let prob = 0.52;
+          if (classe === 'IE3') prob = 0.86;
+          if (classe === 'IE4') prob = kW >= 5.5 && kW <= 250 ? 0.40 : 0.10;
+          if (classe === 'IE2') prob = fab === 'Voges' ? 0.62 : 0.24;
+          if (polos === 8) prob *= 0.45;
+          if (polos === 6) prob *= 0.72;
+          if (kW > 355) prob *= 0.35;
+          if (r > prob) return;
+
+          const rend = MC.rendimento(kW, polos, classe);
+          if (rend === null) return;
+          const rpmSinc = MC.ROTACAO[polos];
+          const escorreg = 0.055 - 0.010 * Math.log10(Math.max(kW, 0.75));
+          const rpm = Math.round(rpmSinc * (1 - Math.max(0.008, escorreg)));
+          const cosf = MC.fatorPotencia(kW, polos);
+          // Grau de proteção: os grandes fabricantes oferecem variante IP56
+          // com plano de pintura reforçado em boa parte da linha, e IP65 em
+          // uma fração menor. A aptidão para atmosfera agressiva acompanha
+          // essa variante, não é sorteada de forma independente.
+          const r56 = MC.hash(chave + 'ip56');
+          const r65 = MC.hash(chave + 'ip65');
+          const premium = fab !== 'Voges';
+          let ipGrau = cfg.ipPadrao;
+          if (r65 > (premium ? 0.90 : 0.97)) ipGrau = 65;
+          else if (classe === 'IE4' || r56 > (premium ? 0.50 : 0.85)) ipGrau = 56;
+          const corrosivo = ipGrau >= 56;
+
+          itens.push({
+            id: `${fab.substring(0, 3).toUpperCase()}-${String(kW).replace('.', 'v')}kW-${polos}P-${classe}`,
+            fabricante: fab,
+            linha: cfg.linha,
+            modelo: `${cfg.linha} ${kW} kW ${polos}P ${classe}`,
+            potencia_kw: kW,
+            polos: polos,
+            rpm_sincrona: rpmSinc,
+            rpm: rpm,
+            tensoes: MC.tensoes(kW),
+            frequencia_hz: 60,
+            rendimento: rend,
+            classe_ie: classe,
+            fator_potencia: cosf,
+            fator_servico: MC.hash(chave + 'fs') > 0.55 ? 1.15 : 1.00,
+            classe_isolamento: classe === 'IE2' ? 'B' : 'F',
+            grau_protecao: ipGrau,
+            carcaca: MC.carcaca(kW, polos),
+            massa_kg: MC.massa(kW, polos, classe),
+            ruido_db: MC.ruido(kW, polos),
+            ip_in: MC.relacaoIpIn(kW, classe),
+            cp_cn: Math.round((1.9 + MC.hash(chave + 'cp') * 0.7) * 100) / 100,
+            cmax_cn: Math.round((2.4 + MC.hash(chave + 'cm') * 0.8) * 100) / 100,
+            preco: MC.precoReferencia(kW, polos, classe, fab),
+            prazo_dias: cfg.prazoBase + Math.round(MC.hash(chave + 'pz') * 20),
+            corrosivo_apto: corrosivo,
+            altitude_max_m: 1000,
+            temp_ambiente_max_c: 40
+          });
+        });
+      });
+    });
+  });
+  return itens.sort((a, b) => a.potencia_kw - b.potencia_kw || a.polos - b.polos || a.fabricante.localeCompare(b.fabricante));
+};
+
+
+
+/* ---------- 02-motor.js ---------- */
+/* =====================================================================
+   MOTORCALC — MOTOR DE CÁLCULO
+   Dimensionamento, correções ambientais, filtragem e ranqueamento.
+   ===================================================================== */
+
+/** Fator de correção por altitude (IEC 60034-1). Sem redução até 1000 m;
+ *  acima disso, 1% de potência admissível por 100 m adicionais. */
+MC.fatorAltitude = function (altitude_m) {
+  if (altitude_m <= 1000) return 1;
+  const excedente = Math.min(altitude_m, 4000) - 1000;
+  return Math.max(0.60, 1 - 0.01 * (excedente / 100));
+};
+
+/** Fator de correção por temperatura ambiente (IEC 60034-1).
+ *  Referência 40 °C; abaixo há bonificação, acima há redução. */
+MC.fatorTemperatura = function (temp_c) {
+  const tabela = [
+    [30, 1.07], [35, 1.04], [40, 1.00], [45, 0.96],
+    [50, 0.92], [55, 0.87], [60, 0.82], [70, 0.71], [80, 0.60]
+  ];
+  if (temp_c <= tabela[0][0]) return tabela[0][1];
+  for (let i = 0; i < tabela.length - 1; i++) {
+    const [t1, f1] = tabela[i], [t2, f2] = tabela[i + 1];
+    if (temp_c <= t2) return f1 + (f2 - f1) * (temp_c - t1) / (t2 - t1);
+  }
+  return 0.60;
+};
+
+/* Relação máxima admitida entre potência nominal do motor e potência
+   exigida pelo requisito, antes que o motor seja considerado
+   sobredimensionado. */
+MC.LIMITE_SOBREDIMENSIONAMENTO = 1.6;
+
+/** Torque nominal em N·m. T = 9550 · P(kW) / n(rpm) */
+MC.torque = function (kW, rpm) {
+  if (!rpm) return 0;
+  return Math.round((9550 * kW / rpm) * 10) / 10;
+};
+
+/** Corrente nominal em A. Trifásico: I = P·1000 / (√3 · U · η · cosφ) */
+MC.corrente = function (kW, tensao_v, rendimento_pct, cosfi, fases) {
+  const eta = rendimento_pct / 100;
+  if (!tensao_v || !eta || !cosfi) return 0;
+  const raiz = (fases === 1) ? 1 : Math.sqrt(3);
+  return Math.round((kW * 1000 / (raiz * tensao_v * eta * cosfi)) * 10) / 10;
+};
+
+/** Potência absorvida da rede em kW para uma dada carga no eixo. */
+MC.potenciaAbsorvida = function (kW_eixo, rendimento_pct) {
+  return kW_eixo / (rendimento_pct / 100);
+};
+
+/** Rendimento em carga parcial. Aproximação de curva típica de motor de
+ *  indução: o pico ocorre entre 70% e 85% da carga nominal. */
+MC.rendimentoParcial = function (rendNominal_pct, carga) {
+  const c = Math.max(0.1, Math.min(1.2, carga));
+  const queda = 0.9 * Math.pow(c - 0.80, 2) + 0.06 * Math.pow(Math.max(0, 0.35 - c) / 0.35, 2) * 10;
+  return Math.max(35, rendNominal_pct * (1 - queda * 0.055));
+};
+
+/* --- Requisito do projeto ------------------------------------------- */
+
+/**
+ * Converte a entrada do usuário em requisito de potência corrigido.
+ * @returns {{potenciaEixo:number, potenciaExigida:number, fAlt:number, fTemp:number, fServico:number}}
+ */
+MC.requisito = function (e) {
+  const fAlt = MC.fatorAltitude(e.altitude_m || 0);
+  const fTemp = MC.fatorTemperatura(e.temp_ambiente_c != null ? e.temp_ambiente_c : 40);
+  const fServico = e.fator_servico || 1.0;
+  let potenciaEixo = Number(e.potencia_kw) || 0;
+
+  // Entrada alternativa por torque: P = T · n / 9550
+  if (!potenciaEixo && e.torque_nm && e.rpm_alvo) {
+    potenciaEixo = (Number(e.torque_nm) * Number(e.rpm_alvo)) / 9550;
+  }
+  const potenciaExigida = potenciaEixo * fServico / (fAlt * fTemp);
+  return {
+    potenciaEixo: Math.round(potenciaEixo * 1000) / 1000,
+    potenciaExigida: Math.round(potenciaExigida * 1000) / 1000,
+    fAlt: Math.round(fAlt * 1000) / 1000,
+    fTemp: Math.round(fTemp * 1000) / 1000,
+    fServico: fServico
+  };
+};
+
+/* --- Filtragem ------------------------------------------------------- */
+
+/**
+ * Avalia um motor contra o requisito. Retorna a lista de rejeições;
+ * vazia significa motor elegível.
+ */
+MC.motivosRejeicao = function (motor, e, req) {
+  const m = [];
+  if (motor.potencia_kw < req.potenciaExigida - 1e-9) m.push('Potência abaixo da exigida com correções');
+  if (e.tensao && motor.tensoes.indexOf(Number(e.tensao)) === -1) m.push('Tensão indisponível na linha');
+  if (e.polos && motor.polos !== Number(e.polos)) m.push('Polaridade diferente da requerida');
+  if (e.classe_ie_min) {
+    const ordem = { IE1: 1, IE2: 2, IE3: 3, IE4: 4 };
+    if (ordem[motor.classe_ie] < ordem[e.classe_ie_min]) m.push('Classe de rendimento inferior à mínima');
+  }
+  if (e.isolamento_min) {
+    const ordem = { B: 1, F: 2, H: 3 };
+    if ((ordem[motor.classe_isolamento] || 0) < (ordem[e.isolamento_min] || 0)) m.push('Classe de isolamento insuficiente');
+  }
+  const amb = MC.AMBIENTES[e.ambiente];
+  if (amb) {
+    if (motor.grau_protecao < amb.ipMin) m.push(`Grau de proteção abaixo de IP${amb.ipMin}`);
+    if (amb.corrosivo && !motor.corrosivo_apto) m.push('Sem proteção declarada para ambiente agressivo');
+  }
+  if (e.ruido_max_db && motor.ruido_db > Number(e.ruido_max_db)) m.push('Ruído acima do limite');
+  if (e.prazo_max_dias && motor.prazo_dias > Number(e.prazo_max_dias)) m.push('Prazo de entrega acima do limite');
+  if (e.orcamento_max && motor.preco > Number(e.orcamento_max)) m.push('Preço acima do orçamento');
+  if (e.fabricantes && e.fabricantes.length && e.fabricantes.indexOf(motor.fabricante) === -1) m.push('Fabricante não selecionado');
+  // Sobredimensionamento: em carga baixa caem o rendimento e o fator de
+  // potência, e o custo de aquisição sobe sem contrapartida. O limite é
+  // parametrizável; o padrão de 1,6x mantém a carga acima de 62%.
+  const limite = Number(e.limite_sobredim) || MC.LIMITE_SOBREDIMENSIONAMENTO;
+  if (req.potenciaExigida > 0 && motor.potencia_kw > req.potenciaExigida * limite) {
+    const carga = Math.round(100 / limite);
+    m.push(`Sobredimensionado (carga abaixo de ${carga}% da nominal)`);
+  }
+  return m;
+};
+
+/* --- Custo de operação e ciclo de vida ------------------------------ */
+
+/**
+ * Custo total de propriedade.
+ * @param cfg {horas_ano, tarifa, anos, taxa_desconto, manutencao_pct}
+ */
+MC.tco = function (motor, req, cfg) {
+  const horas = cfg.horas_ano || 0;
+  const tarifa = cfg.tarifa || 0;
+  const anos = cfg.anos || 10;
+  const i = (cfg.taxa_desconto != null ? cfg.taxa_desconto : 0) / 100;
+  const manutPct = (cfg.manutencao_pct != null ? cfg.manutencao_pct : 2) / 100;
+
+  const carga = req.potenciaEixo > 0 ? Math.min(1.2, req.potenciaEixo / motor.potencia_kw) : 1;
+  const rendOper = MC.rendimentoParcial(motor.rendimento, carga);
+  const kwEixo = req.potenciaEixo > 0 ? req.potenciaEixo : motor.potencia_kw;
+  const kwRede = MC.potenciaAbsorvida(kwEixo, rendOper);
+  const consumoAno = kwRede * horas;
+  const custoEnergiaAno = consumoAno * tarifa;
+  const custoManutAno = motor.preco * manutPct;
+
+  const fluxo = [];
+  let vpl = motor.preco;
+  for (let a = 1; a <= anos; a++) {
+    const nominal = custoEnergiaAno + custoManutAno;
+    const desc = nominal / Math.pow(1 + i, a);
+    vpl += desc;
+    fluxo.push({ ano: a, energia: custoEnergiaAno, manutencao: custoManutAno, descontado: desc, acumulado: vpl });
+  }
+  return {
+    carga: Math.round(carga * 1000) / 1000,
+    rendimento_operacao: Math.round(rendOper * 10) / 10,
+    kw_rede: Math.round(kwRede * 1000) / 1000,
+    consumo_ano_kwh: Math.round(consumoAno),
+    custo_energia_ano: Math.round(custoEnergiaAno * 100) / 100,
+    custo_manutencao_ano: Math.round(custoManutAno * 100) / 100,
+    vpl: Math.round(vpl * 100) / 100,
+    fluxo: fluxo
+  };
+};
+
+/* --- Ranqueamento ---------------------------------------------------- */
+
+/* Cada perfil declara um critério primário de ordenação e um conjunto de
+   pesos. O critério primário garante que o primeiro colocado seja de fato
+   o melhor naquilo que dá nome ao perfil; os pesos produzem a nota global
+   exibida e resolvem empates. O perfil balanceado ordena pela nota. */
+MC.PERFIS = {
+  custo: {
+    nome: 'Menor investimento inicial',
+    criterio: m => m.preco, direcao: 1, rotulo: 'menor preço de aquisição',
+    pesos: { preco: 0.62, tco: 0.10, rendimento: 0.08, prazo: 0.12, desempenho: 0.08 }
+  },
+  ciclo_vida: {
+    nome: 'Menor custo de ciclo de vida',
+    criterio: m => m.calc.vpl, direcao: 1, rotulo: 'menor valor presente em N anos',
+    pesos: { preco: 0.10, tco: 0.55, rendimento: 0.20, prazo: 0.05, desempenho: 0.10 }
+  },
+  eficiencia: {
+    nome: 'Máxima eficiência energética',
+    criterio: m => m.rendimento, direcao: -1, rotulo: 'maior rendimento nominal',
+    pesos: { preco: 0.08, tco: 0.22, rendimento: 0.55, prazo: 0.03, desempenho: 0.12 }
+  },
+  desempenho: {
+    nome: 'Melhor desempenho mecânico',
+    criterio: m => m.indice_desempenho, direcao: -1, rotulo: 'maior reserva de torque e densidade de potência',
+    pesos: { preco: 0.12, tco: 0.10, rendimento: 0.13, prazo: 0.10, desempenho: 0.55 }
+  },
+  balanceado: {
+    nome: 'Balanceado',
+    criterio: null, direcao: -1, rotulo: 'melhor nota global ponderada',
+    pesos: { preco: 0.28, tco: 0.24, rendimento: 0.24, prazo: 0.10, desempenho: 0.14 }
+  }
+};
+
+/** Normaliza para 0..1, onde 1 é sempre o melhor. */
+MC.normalizar = function (valores, menorMelhor) {
+  const min = Math.min.apply(null, valores);
+  const max = Math.max.apply(null, valores);
+  const amp = max - min;
+  return valores.map(v => {
+    if (amp === 0) return 1;
+    const n = (v - min) / amp;
+    return menorMelhor ? 1 - n : n;
+  });
+};
+
+/**
+ * Seleciona e ranqueia motores do catálogo.
+ * @returns {{req, elegiveis:Array, rejeitados:Array, total:number}}
+ */
+MC.selecionar = function (catalogo, entrada, cfgCusto) {
+  const req = MC.requisito(entrada);
+  const elegiveis = [];
+  const rejeitados = [];
+
+  catalogo.forEach(motor => {
+    const motivos = MC.motivosRejeicao(motor, entrada, req);
+    if (motivos.length === 0) elegiveis.push(Object.assign({}, motor));
+    else rejeitados.push({ motor: motor, motivos: motivos });
+  });
+
+  if (elegiveis.length === 0) return { req, elegiveis: [], rejeitados, total: catalogo.length };
+
+  elegiveis.forEach(m => {
+    m.calc = MC.tco(m, req, cfgCusto);
+    m.torque_nm = MC.torque(m.potencia_kw, m.rpm);
+    const tensao = Number(entrada.tensao) || m.tensoes[Math.min(1, m.tensoes.length - 1)];
+    m.tensao_calculo = tensao;
+    m.corrente_a = MC.corrente(m.potencia_kw, tensao, m.rendimento, m.fator_potencia, 3);
+    m.corrente_partida_a = Math.round(m.corrente_a * m.ip_in * 10) / 10;
+    // Índice de desempenho mecânico: reserva de torque, densidade de
+    // potência e ruído, agregados em escala relativa.
+    m.indice_desempenho = (m.cmax_cn * 1.0) + (m.potencia_kw / m.massa_kg) * 4 - (m.ruido_db / 100);
+  });
+
+  const nPreco = MC.normalizar(elegiveis.map(m => m.preco), true);
+  const nTco = MC.normalizar(elegiveis.map(m => m.calc.vpl), true);
+  const nRend = MC.normalizar(elegiveis.map(m => m.rendimento), false);
+  const nPrazo = MC.normalizar(elegiveis.map(m => m.prazo_dias), true);
+  const nDesemp = MC.normalizar(elegiveis.map(m => m.indice_desempenho), false);
+
+  const perfil = MC.PERFIS[entrada.prioridade] || MC.PERFIS.balanceado;
+  const p = perfil.pesos;
+
+  elegiveis.forEach((m, k) => {
+    m.notas = { preco: nPreco[k], tco: nTco[k], rendimento: nRend[k], prazo: nPrazo[k], desempenho: nDesemp[k] };
+    m.score = p.preco * nPreco[k] + p.tco * nTco[k] + p.rendimento * nRend[k] +
+              p.prazo * nPrazo[k] + p.desempenho * nDesemp[k];
+  });
+
+  elegiveis.sort((a, b) => {
+    if (perfil.criterio) {
+      const d = (perfil.criterio(a) - perfil.criterio(b)) * perfil.direcao;
+      if (Math.abs(d) > 1e-9) return d;
+    }
+    return b.score - a.score || a.preco - b.preco;
+  });
+  elegiveis.forEach((m, k) => { m.posicao = k + 1; });
+
+  return {
+    req, elegiveis, rejeitados, total: catalogo.length,
+    perfil: perfil.nome, criterioPrimario: perfil.rotulo
+  };
+};
+
+/** Economia anual de energia de um motor em relação a outro. */
+MC.comparaEnergia = function (motorA, motorB, req, cfgCusto) {
+  const a = MC.tco(motorA, req, cfgCusto);
+  const b = MC.tco(motorB, req, cfgCusto);
+  const economiaAno = b.custo_energia_ano - a.custo_energia_ano;
+  const sobrepreco = motorA.preco - motorB.preco;
+  const payback = economiaAno > 0 ? sobrepreco / economiaAno : null;
+  return {
+    economia_ano: Math.round(economiaAno * 100) / 100,
+    economia_kwh_ano: b.consumo_ano_kwh - a.consumo_ano_kwh,
+    sobrepreco: Math.round(sobrepreco * 100) / 100,
+    payback_anos: payback != null && payback > 0 ? Math.round(payback * 100) / 100 : (payback != null ? 0 : null)
+  };
+};
+
+
+
+/* ---------- 03-docx.js ---------- */
+/* =====================================================================
+   MOTORCALC — EXPORTAÇÃO .DOCX
+   Escritor ZIP (método store) e montador OOXML. Sem bibliotecas externas.
+   ===================================================================== */
+
+MC.zip = (function () {
+  const tabelaCRC = (function () {
+    const t = new Uint32Array(256);
+    for (let n = 0; n < 256; n++) {
+      let c = n;
+      for (let k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+      t[n] = c >>> 0;
+    }
+    return t;
+  })();
+
+  function crc32(bytes) {
+    let c = 0xFFFFFFFF;
+    for (let i = 0; i < bytes.length; i++) c = tabelaCRC[(c ^ bytes[i]) & 0xFF] ^ (c >>> 8);
+    return (c ^ 0xFFFFFFFF) >>> 0;
+  }
+
+  function utf8(str) {
+    if (typeof TextEncoder !== 'undefined') return new TextEncoder().encode(str);
+    const out = [];
+    for (let i = 0; i < str.length; i++) {
+      let c = str.charCodeAt(i);
+      if (c < 0x80) out.push(c);
+      else if (c < 0x800) out.push(0xC0 | (c >> 6), 0x80 | (c & 63));
+      else out.push(0xE0 | (c >> 12), 0x80 | ((c >> 6) & 63), 0x80 | (c & 63));
+    }
+    return new Uint8Array(out);
+  }
+
+  function u16(v) { return [v & 0xFF, (v >> 8) & 0xFF]; }
+  function u32(v) { return [v & 0xFF, (v >> 8) & 0xFF, (v >> 16) & 0xFF, (v >>> 24) & 0xFF]; }
+
+  /** Monta um arquivo ZIP a partir de {nome: conteudoTexto}. */
+  function criar(arquivos) {
+    const locais = [];
+    const central = [];
+    let deslocamento = 0;
+
+    Object.keys(arquivos).forEach(nome => {
+      const dados = utf8(arquivos[nome]);
+      const nomeBytes = utf8(nome);
+      const crc = crc32(dados);
+      const cabecalho = [].concat(
+        u32(0x04034b50), u16(20), u16(0x0800), u16(0), u16(0), u16(0),
+        u32(crc), u32(dados.length), u32(dados.length),
+        u16(nomeBytes.length), u16(0)
+      );
+      locais.push(new Uint8Array(cabecalho), nomeBytes, dados);
+
+      central.push(new Uint8Array([].concat(
+        u32(0x02014b50), u16(20), u16(20), u16(0x0800), u16(0), u16(0), u16(0),
+        u32(crc), u32(dados.length), u32(dados.length),
+        u16(nomeBytes.length), u16(0), u16(0), u16(0), u16(0), u32(0),
+        u32(deslocamento)
+      )), nomeBytes);
+
+      deslocamento += cabecalho.length + nomeBytes.length + dados.length;
+    });
+
+    const tamCentral = central.reduce((s, a) => s + a.length, 0);
+    const fim = new Uint8Array([].concat(
+      u32(0x06054b50), u16(0), u16(0),
+      u16(Object.keys(arquivos).length), u16(Object.keys(arquivos).length),
+      u32(tamCentral), u32(deslocamento), u16(0)
+    ));
+
+    const partes = locais.concat(central, [fim]);
+    const total = partes.reduce((s, a) => s + a.length, 0);
+    const saida = new Uint8Array(total);
+    let p = 0;
+    partes.forEach(a => { saida.set(a, p); p += a.length; });
+    return saida;
+  }
+
+  return { criar, crc32, utf8 };
+})();
+
+/* --- Montagem do documento ------------------------------------------ */
+
+MC.docx = (function () {
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function p(texto, estilo) {
+    const pPr = estilo ? `<w:pPr><w:pStyle w:val="${estilo}"/></w:pPr>` : '';
+    return `<w:p>${pPr}<w:r><w:t xml:space="preserve">${esc(texto)}</w:t></w:r></w:p>`;
+  }
+
+  function celula(texto, largura, negrito, fundo) {
+    const sombra = fundo ? `<w:shd w:val="clear" w:fill="${fundo}"/>` : '';
+    const rPr = negrito ? '<w:rPr><w:b/></w:rPr>' : '';
+    return `<w:tc><w:tcPr><w:tcW w:w="${largura}" w:type="dxa"/>${sombra}` +
+      `</w:tcPr><w:p><w:r>${rPr}<w:t xml:space="preserve">${esc(texto)}</w:t></w:r></w:p></w:tc>`;
+  }
+
+  /** Tabela a partir de cabeçalho e matriz de linhas. */
+  function tabela(cabecalho, linhas, larguras) {
+    const l = larguras || cabecalho.map(() => Math.floor(9000 / cabecalho.length));
+    let x = '<w:tbl><w:tblPr><w:tblStyle w:val="Grade"/>' +
+      '<w:tblW w:w="0" w:type="auto"/><w:tblBorders>' +
+      ['top', 'left', 'bottom', 'right', 'insideH', 'insideV'].map(b =>
+        `<w:${b} w:val="single" w:sz="4" w:space="0" w:color="BFC6CC"/>`).join('') +
+      '</w:tblBorders></w:tblPr>';
+    x += '<w:tblGrid>' + l.map(w => `<w:gridCol w:w="${w}"/>`).join('') + '</w:tblGrid>';
+    x += '<w:tr>' + cabecalho.map((c, i) => celula(c, l[i], true, 'E7EBEE')).join('') + '</w:tr>';
+    linhas.forEach(linha => {
+      x += '<w:tr>' + linha.map((c, i) => celula(c, l[i], false)).join('') + '</w:tr>';
+    });
+    return x + '</w:tbl>' + p('');
+  }
+
+  const ESTILOS = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+<w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/><w:sz w:val="21"/></w:rPr></w:rPrDefault></w:docDefaults>
+<w:style w:type="paragraph" w:styleId="Titulo"><w:name w:val="Title"/><w:pPr><w:spacing w:after="240"/></w:pPr><w:rPr><w:b/><w:sz w:val="40"/><w:color w:val="1B1F24"/></w:rPr></w:style>
+<w:style w:type="paragraph" w:styleId="Secao"><w:name w:val="heading 1"/><w:pPr><w:spacing w:before="320" w:after="140"/></w:pPr><w:rPr><w:b/><w:sz w:val="26"/><w:color w:val="A75F2B"/></w:rPr></w:style>
+<w:style w:type="paragraph" w:styleId="Sub"><w:name w:val="heading 2"/><w:pPr><w:spacing w:before="200" w:after="100"/></w:pPr><w:rPr><w:b/><w:sz w:val="22"/></w:rPr></w:style>
+<w:style w:type="paragraph" w:styleId="Nota"><w:name w:val="Nota"/><w:rPr><w:i/><w:sz w:val="18"/><w:color w:val="5A6672"/></w:rPr></w:style>
+<w:style w:type="table" w:styleId="Grade"><w:name w:val="Table Grid"/></w:style>
+</w:styles>`;
+
+  const TIPOS = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
+<Default Extension="xml" ContentType="application/xml"/>
+<Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>
+<Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/>
+</Types>`;
+
+  const RELS = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>
+</Relationships>`;
+
+  const RELS_DOC = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>
+</Relationships>`;
+
+  /** Empacota um corpo OOXML em bytes de arquivo .docx. */
+  function empacotar(corpo) {
+    const doc = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>${corpo}
+<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1134" w:right="1134" w:bottom="1134" w:left="1418"/></w:sectPr>
+</w:body></w:document>`;
+    return MC.zip.criar({
+      '[Content_Types].xml': TIPOS,
+      '_rels/.rels': RELS,
+      'word/document.xml': doc,
+      'word/_rels/document.xml.rels': RELS_DOC,
+      'word/styles.xml': ESTILOS
+    });
+  }
+
+  return { p, tabela, empacotar, esc };
+})();
+
+
+
+/* ---------- 04-relatorio.js ---------- */
+/* =====================================================================
+   MOTORCALC — RELATÓRIO TÉCNICO DE SELEÇÃO
+   ===================================================================== */
+
+MC.fmt = {
+  brl: v => 'R$ ' + Number(v || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+  brl0: v => 'R$ ' + Math.round(Number(v || 0)).toLocaleString('pt-BR'),
+  num: (v, d) => Number(v || 0).toLocaleString('pt-BR', { minimumFractionDigits: d || 0, maximumFractionDigits: d || 0 }),
+  data: d => (d || new Date()).toLocaleDateString('pt-BR'),
+  polos: p => ({ 2: '2 polos', 4: '4 polos', 6: '6 polos', 8: '8 polos' }[p] || p + ' polos')
+};
+
+/**
+ * Constrói o corpo OOXML do relatório.
+ * @param ctx {resultado, entrada, cfgCusto, selecionados, catalogo}
+ */
+MC.montarRelatorio = function (ctx) {
+  const D = MC.docx, F = MC.fmt;
+  const r = ctx.resultado, e = ctx.entrada, c = ctx.cfgCusto;
+  const top = r.elegiveis.slice(0, 3);
+  let x = '';
+
+  x += D.p('Relatório de seleção de motor elétrico', 'Titulo');
+  x += D.p(`Emitido em ${F.data()} · MotorCalc · catálogo de referência com ${r.total} itens`, 'Nota');
+
+  /* 1. Requisito */
+  x += D.p('1. Requisito de projeto', 'Secao');
+  x += D.tabela(['Parâmetro', 'Valor'], [
+    ['Aplicação', (MC.APLICACOES[e.aplicacao] || {}).nome || 'Uso geral'],
+    ['Potência requerida no eixo', F.num(r.req.potenciaEixo, 2) + ' kW'],
+    ['Fator de serviço adotado', F.num(r.req.fServico, 2)],
+    ['Regime de serviço', (MC.REGIMES[e.regime] || MC.REGIMES.S1).nome],
+    ['Rotação requerida', e.polos ? F.polos(e.polos) + ' (' + MC.ROTACAO[e.polos] + ' rpm síncronos)' : 'Livre'],
+    ['Tensão de alimentação', e.tensao ? e.tensao + ' V, 60 Hz, trifásico' : 'Livre'],
+    ['Ambiente de instalação', (MC.AMBIENTES[e.ambiente] || {}).nome || 'Não especificado'],
+    ['Altitude', F.num(e.altitude_m || 0) + ' m — fator de correção ' + F.num(r.req.fAlt, 3)],
+    ['Temperatura ambiente máxima', F.num(e.temp_ambiente_c != null ? e.temp_ambiente_c : 40) + ' °C — fator ' + F.num(r.req.fTemp, 3)],
+    ['Classe de rendimento mínima', e.classe_ie_min || 'Não restringida'],
+    ['Potência nominal mínima exigida', F.num(r.req.potenciaExigida, 2) + ' kW']
+  ], [3400, 5600]);
+  x += D.p('A potência mínima exigida resulta da potência no eixo multiplicada pelo fator de serviço e dividida pelos fatores de correção de altitude e de temperatura ambiente, conforme IEC 60034-1.', 'Nota');
+
+  /* 2. Critério */
+  x += D.p('2. Critério de julgamento técnico', 'Secao');
+  x += D.p(`Perfil de decisão: ${r.perfil}. Critério primário de ordenação: ${r.criterioPrimario}.`);
+  const perfil = MC.PERFIS[e.prioridade] || MC.PERFIS.balanceado;
+  x += D.tabela(['Critério', 'Peso na nota global'], [
+    ['Preço de aquisição', F.num(perfil.pesos.preco * 100, 0) + '%'],
+    ['Custo de ciclo de vida', F.num(perfil.pesos.tco * 100, 0) + '%'],
+    ['Rendimento nominal', F.num(perfil.pesos.rendimento * 100, 0) + '%'],
+    ['Prazo de entrega', F.num(perfil.pesos.prazo * 100, 0) + '%'],
+    ['Desempenho mecânico', F.num(perfil.pesos.desempenho * 100, 0) + '%']
+  ], [5600, 3400]);
+  x += D.p(`De ${r.total} itens do catálogo, ${r.elegiveis.length} atenderam simultaneamente a todos os requisitos obrigatórios e ${r.rejeitados.length} foram descartados.`);
+
+  /* 3. Resultado */
+  x += D.p('3. Motores recomendados', 'Secao');
+  x += D.tabela(
+    ['#', 'Fabricante e modelo', 'kW', 'rpm', 'Rend.', 'IP', 'Massa', 'Preço', 'Nota'],
+    top.map(m => [
+      String(m.posicao), m.fabricante + ' ' + m.modelo, F.num(m.potencia_kw, 2),
+      F.num(m.rpm), F.num(m.rendimento, 1) + '%', 'IP' + m.grau_protecao,
+      F.num(m.massa_kg) + ' kg', F.brl0(m.preco), F.num(m.score * 100, 1)
+    ]),
+    [500, 2300, 700, 800, 800, 700, 900, 1400, 700]
+  );
+
+  /* 4. Detalhamento do primeiro colocado */
+  if (top[0]) {
+    const m = top[0];
+    x += D.p('4. Detalhamento da solução recomendada', 'Secao');
+    x += D.p(`${m.fabricante} ${m.modelo}`, 'Sub');
+    x += D.tabela(['Característica', 'Valor', 'Característica', 'Valor'], [
+      ['Potência nominal', F.num(m.potencia_kw, 2) + ' kW', 'Carcaça IEC', m.carcaca],
+      ['Polaridade', F.polos(m.polos), 'Rotação nominal', F.num(m.rpm) + ' rpm'],
+      ['Tensão de cálculo', F.num(m.tensao_calculo) + ' V', 'Corrente nominal', F.num(m.corrente_a, 1) + ' A'],
+      ['Rendimento nominal', F.num(m.rendimento, 1) + '%', 'Classe de rendimento', m.classe_ie],
+      ['Fator de potência', F.num(m.fator_potencia, 3), 'Ip/In', F.num(m.ip_in, 1)],
+      ['Torque nominal', F.num(m.torque_nm, 1) + ' N·m', 'Cmáx/Cn', F.num(m.cmax_cn, 2)],
+      ['Classe de isolamento', m.classe_isolamento, 'Grau de proteção', 'IP' + m.grau_protecao],
+      ['Fator de serviço', F.num(m.fator_servico, 2), 'Massa', F.num(m.massa_kg) + ' kg'],
+      ['Ruído', F.num(m.ruido_db) + ' dB(A)', 'Prazo de entrega', F.num(m.prazo_dias) + ' dias']
+    ], [2300, 2200, 2300, 2200]);
+
+    x += D.p('Ponto de operação', 'Sub');
+    x += D.tabela(['Grandeza', 'Valor'], [
+      ['Carga sobre a nominal', F.num(m.calc.carga * 100, 1) + '%'],
+      ['Rendimento no ponto de operação', F.num(m.calc.rendimento_operacao, 1) + '%'],
+      ['Potência absorvida da rede', F.num(m.calc.kw_rede, 2) + ' kW'],
+      ['Consumo anual estimado', F.num(m.calc.consumo_ano_kwh) + ' kWh'],
+      ['Custo anual de energia', F.brl(m.calc.custo_energia_ano)],
+      [`Valor presente em ${c.anos} anos`, F.brl(m.calc.vpl)]
+    ], [5600, 3400]);
+    x += D.p(`Premissas de operação: ${F.num(c.horas_ano)} h/ano, tarifa de ${F.brl(c.tarifa)}/kWh, taxa de desconto de ${F.num(c.taxa_desconto, 1)}% a.a. e manutenção anual de ${F.num(c.manutencao_pct, 1)}% do valor do equipamento.`, 'Nota');
+  }
+
+  /* 5. Comparação */
+  if (top.length > 1) {
+    x += D.p('5. Comparação entre as alternativas', 'Secao');
+    x += D.tabela(
+      ['Grandeza'].concat(top.map(m => m.fabricante + ' ' + F.num(m.potencia_kw, 1) + ' kW ' + m.classe_ie)),
+      [
+        ['Preço de aquisição'].concat(top.map(m => F.brl0(m.preco))),
+        ['Rendimento nominal'].concat(top.map(m => F.num(m.rendimento, 1) + '%')),
+        ['Consumo anual'].concat(top.map(m => F.num(m.calc.consumo_ano_kwh) + ' kWh')),
+        ['Custo anual de energia'].concat(top.map(m => F.brl0(m.calc.custo_energia_ano))),
+        [`Valor presente (${c.anos} anos)`].concat(top.map(m => F.brl0(m.calc.vpl))),
+        ['Massa'].concat(top.map(m => F.num(m.massa_kg) + ' kg')),
+        ['Ruído'].concat(top.map(m => F.num(m.ruido_db) + ' dB(A)')),
+        ['Prazo de entrega'].concat(top.map(m => F.num(m.prazo_dias) + ' dias'))
+      ],
+      [2400].concat(top.map(() => Math.floor(6600 / top.length)))
+    );
+    const c1 = MC.comparaEnergia(top[0], top[1], r.req, ctx.cfgCusto);
+    if (c1.economia_ano !== 0) {
+      const sentido = c1.economia_ano > 0 ? 'economiza' : 'consome a mais';
+      x += D.p(`Em relação ao segundo colocado, a solução recomendada ${sentido} ${F.brl(Math.abs(c1.economia_ano))} por ano em energia, com diferença de aquisição de ${F.brl(c1.sobrepreco)}` +
+        (c1.payback_anos ? `, o que corresponde a um retorno em ${F.num(c1.payback_anos, 1)} anos.` : '.'));
+    }
+  }
+
+  /* 6. Conformidade */
+  x += D.p('6. Conformidade normativa', 'Secao');
+  x += D.tabela(['Norma ou dispositivo', 'Objeto', 'Situação'], [
+    ['ABNT NBR 17094-1', 'Motores de indução trifásicos — requisitos', 'Aplicada na especificação'],
+    ['IEC 60034-1', 'Características nominais e de funcionamento; regimes S1 a S9', 'Aplicada nas correções de altitude e temperatura'],
+    ['IEC 60034-30-1', 'Classes de rendimento IE1 a IE4', top[0] ? `Solução em ${top[0].classe_ie}` : 'Não avaliada'],
+    ['ABNT NBR IEC 60529', 'Graus de proteção IP', top[0] ? `Solução em IP${top[0].grau_protecao}` : 'Não avaliada'],
+    ['Lei 14.133/2021, art. 45', 'Eficiência energética e sustentabilidade na contratação',
+      top[0] && ['IE3', 'IE4'].indexOf(top[0].classe_ie) >= 0 ? 'Atendida — classe IE3 ou superior' : 'Verificar justificativa técnica']
+  ], [2600, 3800, 2600]);
+
+  /* 7. Descartes */
+  if (r.rejeitados.length) {
+    const contagem = {};
+    r.rejeitados.forEach(x2 => x2.motivos.forEach(mo => { contagem[mo] = (contagem[mo] || 0) + 1; }));
+    const ordenado = Object.keys(contagem).sort((a, b) => contagem[b] - contagem[a]).slice(0, 8);
+    x += D.p('7. Motivos de descarte', 'Secao');
+    x += D.tabela(['Motivo', 'Itens descartados'],
+      ordenado.map(k => [k, F.num(contagem[k])]), [6600, 2400]);
+  }
+
+  /* 8. Limitações */
+  x += D.p('8. Limitações e uso dos resultados', 'Secao');
+  x += D.p('O catálogo embarcado é paramétrico: rendimentos derivam dos limites mínimos da IEC 60034-30-1 e as demais grandezas de correlações de engenharia declaradas no manual da ferramenta. Os preços são valores de referência de ordem de grandeza, não cotações. Antes de qualquer uso em orçamento, projeto básico, termo de referência ou julgamento de proposta, os dados do modelo escolhido devem ser confrontados com a folha de dados do fabricante e com cotações formais.');
+  x += D.p('Este relatório registra o método e as premissas da seleção; a responsabilidade técnica pela especificação permanece do profissional habilitado que a subscreve.', 'Nota');
+
+  return x;
+};
+
+
+
+/* ---------- 05-ui.js ---------- */
+/* =====================================================================
+   MOTORCALC — INTERFACE
+   ===================================================================== */
+(function () {
+  'use strict';
+  const F = MC.fmt;
+  const $ = s => document.querySelector(s);
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+  /* --- Persistência tolerante a ambientes sem localStorage ---------- */
+  const memoria = {};
+  const guardar = {
+    ler(chave, padrao) {
+      try { const v = localStorage.getItem('motorcalc.' + chave); return v ? JSON.parse(v) : padrao; }
+      catch (e) { return memoria[chave] !== undefined ? memoria[chave] : padrao; }
+    },
+    gravar(chave, valor) {
+      memoria[chave] = valor;
+      try { localStorage.setItem('motorcalc.' + chave, JSON.stringify(valor)); } catch (e) { /* sessão apenas */ }
+    }
+  };
+
+  /* --- Estado ------------------------------------------------------- */
+  const CATALOGO_BASE = MC.gerarCatalogo();
+  const estado = {
+    aba: 'selecao',
+    resultado: null,
+    comparar: guardar.ler('comparar', []),
+    orcamento: guardar.ler('orcamento', {}),
+    precos: guardar.ler('precos', {}),
+    cenarios: guardar.ler('cenarios', {}),
+    fabricantes: guardar.ler('fabricantes', Object.keys(MC.FABRICANTES)),
+    ordem: { campo: 'posicao', asc: true },
+    filtroCatalogo: ''
+  };
+
+  /** Catálogo com os preços eventualmente ajustados pelo usuário. */
+  function catalogo() {
+    return CATALOGO_BASE.map(m => estado.precos[m.id] != null
+      ? Object.assign({}, m, { preco: estado.precos[m.id], preco_ajustado: true })
+      : m);
+  }
+
+  /* --- Leitura do formulário ---------------------------------------- */
+  function lerEntrada() {
+    const n = id => { const v = parseFloat($('#' + id).value); return isNaN(v) ? null : v; };
+    return {
+      aplicacao: $('#aplicacao').value,
+      potencia_kw: n('potencia'),
+      torque_nm: n('torque'),
+      rpm_alvo: n('rpmAlvo'),
+      polos: $('#polos').value ? Number($('#polos').value) : null,
+      regime: $('#regime').value,
+      fator_servico: n('fs') || 1,
+      tensao: $('#tensao').value ? Number($('#tensao').value) : null,
+      ambiente: $('#ambiente').value,
+      altitude_m: n('altitude') || 0,
+      temp_ambiente_c: n('temp') != null ? n('temp') : 40,
+      classe_ie_min: $('#ieMin').value,
+      isolamento_min: $('#isolMin').value,
+      ruido_max_db: n('ruidoMax'),
+      prazo_max_dias: n('prazoMax'),
+      orcamento_max: n('orcamento'),
+      limite_sobredim: parseFloat($('#limiteSobre').value),
+      fabricantes: estado.fabricantes.slice(),
+      prioridade: $('#prioridade').value
+    };
+  }
+  function lerCusto() {
+    const n = id => { const v = parseFloat($('#' + id).value); return isNaN(v) ? 0 : v; };
+    return { horas_ano: n('horas'), tarifa: n('tarifa'), anos: Math.max(1, Math.round(n('anos'))), taxa_desconto: n('taxa'), manutencao_pct: n('manut') };
+  }
+  function aplicarEntrada(e) {
+    const set = (id, v) => { if (v !== undefined && v !== null) $('#' + id).value = v; };
+    set('aplicacao', e.aplicacao); set('potencia', e.potencia_kw); set('polos', e.polos == null ? '' : e.polos);
+    set('regime', e.regime); set('fs', e.fator_servico); set('tensao', e.tensao == null ? '' : e.tensao);
+    set('ambiente', e.ambiente); set('altitude', e.altitude_m); set('temp', e.temp_ambiente_c);
+    set('ieMin', e.classe_ie_min); set('isolMin', e.isolamento_min);
+    set('limiteSobre', e.limite_sobredim); set('prioridade', e.prioridade);
+    $('#torque').value = e.torque_nm || ''; $('#rpmAlvo').value = e.rpm_alvo || '';
+    $('#ruidoMax').value = e.ruido_max_db || ''; $('#prazoMax').value = e.prazo_max_dias || '';
+    $('#orcamento').value = e.orcamento_max || '';
+    if (e.fabricantes) { estado.fabricantes = e.fabricantes.slice(); montarChips(); }
+  }
+
+  /* --- Gráficos SVG -------------------------------------------------- */
+  const COR_IE = { IE1: 'var(--ie1)', IE2: 'var(--ie2)', IE3: 'var(--ie3)', IE4: 'var(--ie4)' };
+
+  function eixos(L, A, m, xTicks, yTicks, rotX, rotY) {
+    let s = '';
+    yTicks.forEach(t => {
+      s += `<line class="grade" x1="${m.e}" y1="${t.p}" x2="${L - m.d}" y2="${t.p}"/>`;
+      s += `<text x="${m.e - 7}" y="${t.p + 4}" text-anchor="end" font-size="10.5">${esc(t.r)}</text>`;
+    });
+    xTicks.forEach(t => {
+      s += `<text x="${t.p}" y="${A - m.b + 15}" text-anchor="middle" font-size="10.5">${esc(t.r)}</text>`;
+    });
+    s += `<line class="eixo" x1="${m.e}" y1="${m.t}" x2="${m.e}" y2="${A - m.b}"/>`;
+    s += `<line class="eixo" x1="${m.e}" y1="${A - m.b}" x2="${L - m.d}" y2="${A - m.b}"/>`;
+    if (rotX) s += `<text x="${(m.e + L - m.d) / 2}" y="${A - 4}" text-anchor="middle" font-size="11">${esc(rotX)}</text>`;
+    if (rotY) s += `<text transform="translate(12,${(m.t + A - m.b) / 2}) rotate(-90)" text-anchor="middle" font-size="11">${esc(rotY)}</text>`;
+    return s;
+  }
+
+  /** Dispersão preço × rendimento; raio proporcional à massa. */
+  function graficoDispersao(motores) {
+    const L = 720, A = 330, m = { e: 62, d: 18, t: 16, b: 42 };
+    if (!motores.length) return '';
+    const xs = motores.map(o => o.preco), ys = motores.map(o => o.rendimento), ms = motores.map(o => o.massa_kg);
+    const x0 = Math.min.apply(null, xs) * 0.92, x1 = Math.max.apply(null, xs) * 1.06;
+    const y0 = Math.min.apply(null, ys) - 0.5, y1 = Math.max.apply(null, ys) + 0.5;
+    const mMax = Math.max.apply(null, ms);
+    const px = v => m.e + (v - x0) / (x1 - x0 || 1) * (L - m.e - m.d);
+    const py = v => A - m.b - (v - y0) / (y1 - y0 || 1) * (A - m.t - m.b);
+    const yT = [], xT = [];
+    for (let i = 0; i <= 4; i++) { const v = y0 + (y1 - y0) * i / 4; yT.push({ p: py(v), r: F.num(v, 1) + '%' }); }
+    for (let i = 0; i <= 4; i++) { const v = x0 + (x1 - x0) * i / 4; xT.push({ p: px(v), r: F.num(v / 1000, 0) + 'k' }); }
+    let s = `<svg class="grafico" viewBox="0 0 ${L} ${A}" role="img" aria-label="Dispersão de preço por rendimento">`;
+    s += eixos(L, A, m, xT, yT, 'Preço de aquisição (R$)', 'Rendimento nominal');
+    motores.forEach(o => {
+      const r = 5 + 9 * Math.sqrt(o.massa_kg / mMax);
+      s += `<circle cx="${px(o.preco).toFixed(1)}" cy="${py(o.rendimento).toFixed(1)}" r="${r.toFixed(1)}" ` +
+        `style="fill:${COR_IE[o.classe_ie]};stroke:${COR_IE[o.classe_ie]}" ` +
+        `fill-opacity="${o.posicao === 1 ? 0.95 : 0.42}" stroke-width="${o.posicao === 1 ? 2.5 : 1}">` +
+        `<title>${esc(o.fabricante + ' ' + o.modelo)}\n${F.brl0(o.preco)} · ${F.num(o.rendimento, 1)}% · ${o.massa_kg} kg</title></circle>`;
+      if (o.posicao <= 3) s += `<text x="${px(o.preco).toFixed(1)}" y="${(py(o.rendimento) - r - 5).toFixed(1)}" text-anchor="middle" font-size="10.5" font-weight="600" style="fill:var(--tinta)">${o.posicao}</text>`;
+    });
+    return s + '</svg>';
+  }
+
+  /** Barras horizontais genéricas. */
+  function graficoBarras(itens, unidade, decimais) {
+    const larg = 720, alturaLinha = 26, m = { e: 168, d: 66, t: 8, b: 8 };
+    const A = m.t + m.b + itens.length * alturaLinha;
+    if (!itens.length) return '';
+    const max = Math.max.apply(null, itens.map(i => i.valor)) * 1.04 || 1;
+    let s = `<svg class="grafico" viewBox="0 0 ${larg} ${A}" role="img" aria-label="Comparação em barras">`;
+    itens.forEach((it, k) => {
+      const y = m.t + k * alturaLinha;
+      const w = (it.valor / max) * (larg - m.e - m.d);
+      s += `<text x="${m.e - 8}" y="${y + 17}" text-anchor="end" font-size="11.5">${esc(it.rotulo)}</text>`;
+      s += `<rect x="${m.e}" y="${y + 6}" width="${Math.max(1, w).toFixed(1)}" height="14" rx="2" style="fill:${it.cor || 'var(--cobre)'}" fill-opacity="${it.destaque ? 1 : 0.62}"/>`;
+      s += `<text x="${m.e + w + 7}" y="${y + 17}" font-size="11.5" style="font-family:var(--mono)">${F.num(it.valor, decimais || 0)}${unidade ? ' ' + unidade : ''}</text>`;
+    });
+    return s + '</svg>';
+  }
+
+  /** Custo acumulado ao longo dos anos, uma linha por motor. */
+  function graficoTCO(motores, anos) {
+    const L = 720, A = 340, m = { e: 74, d: 130, t: 14, b: 42 };
+    if (!motores.length) return '';
+    const maxV = Math.max.apply(null, motores.map(o => o.calc.fluxo[o.calc.fluxo.length - 1].acumulado));
+    const px = a => m.e + (a / anos) * (L - m.e - m.d);
+    const py = v => A - m.b - (v / maxV) * (A - m.t - m.b);
+    const yT = [], xT = [];
+    for (let i = 0; i <= 4; i++) { const v = maxV * i / 4; yT.push({ p: py(v), r: F.num(v / 1000, 0) + 'k' }); }
+    const passo = Math.max(1, Math.round(anos / 5));
+    for (let a = 0; a <= anos; a += passo) xT.push({ p: px(a), r: String(a) });
+    const cores = ['var(--cobre)', 'var(--ie4)', 'var(--ie2)', 'var(--aco)'];
+    let s = `<svg class="grafico" viewBox="0 0 ${L} ${A}" role="img" aria-label="Custo acumulado ao longo do tempo">`;
+    s += eixos(L, A, m, xT, yT, 'Anos de operação', 'Custo acumulado (R$ mil)');
+    motores.forEach((o, k) => {
+      const pts = [[px(0), py(o.preco)]].concat(o.calc.fluxo.map(f => [px(f.ano), py(f.acumulado)]));
+      s += `<polyline style="fill:none;stroke:${cores[k % 4]}" stroke-width="2" stroke-linejoin="round" points="${pts.map(p => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ')}"/>`;
+      const fim = pts[pts.length - 1];
+      s += `<circle cx="${fim[0].toFixed(1)}" cy="${fim[1].toFixed(1)}" r="3.5" style="fill:${cores[k % 4]}"/>`;
+      s += `<text x="${(fim[0] + 8).toFixed(1)}" y="${(fim[1] + 4).toFixed(1)}" font-size="10.5" style="fill:${cores[k % 4]}">${esc(o.fabricante + ' ' + F.num(o.potencia_kw, 1) + 'kW ' + o.classe_ie)}</text>`;
+    });
+    return s + '</svg>';
+  }
+
+  /* --- Placa de identificação --------------------------------------- */
+  function placa(m) {
+    const campo = (rot, val, un) => `<div class="placa-campo"><div class="rot">${esc(rot)}</div>` +
+      `<div class="val">${esc(val)}${un ? `<span class="un">${esc(un)}</span>` : ''}</div></div>`;
+    return `<div class="placa">
+      <span class="rebite-b e"></span><span class="rebite-b d"></span>
+      <div class="placa-topo">
+        <div>
+          <div class="placa-marca">${esc(m.fabricante)}</div>
+          <div class="placa-modelo">${esc(m.modelo)} · carcaça ${esc(m.carcaca)} · ${esc(m.id)}</div>
+        </div>
+        <div class="placa-selo" style="background:${COR_IE[m.classe_ie]}">${esc(m.classe_ie)}</div>
+      </div>
+      <div class="placa-campos">
+        ${campo('Potência', F.num(m.potencia_kw, 2), 'kW')}
+        ${campo('Rotação', F.num(m.rpm), 'rpm')}
+        ${campo('Tensão', F.num(m.tensao_calculo), 'V')}
+        ${campo('Corrente', F.num(m.corrente_a, 1), 'A')}
+        ${campo('Rendimento', F.num(m.rendimento, 1), '%')}
+        ${campo('cos φ', F.num(m.fator_potencia, 2))}
+        ${campo('Torque', F.num(m.torque_nm, 1), 'N·m')}
+        ${campo('Ip/In', F.num(m.ip_in, 1))}
+        ${campo('Isolamento', m.classe_isolamento)}
+        ${campo('Proteção', 'IP' + m.grau_protecao)}
+        ${campo('F. serviço', F.num(m.fator_servico, 2))}
+        ${campo('Massa', F.num(m.massa_kg), 'kg')}
+      </div>
+      <div class="placa-rodape">
+        <span>60 Hz · trifásico</span>
+        <span>Cmáx/Cn ${F.num(m.cmax_cn, 2)}</span>
+        <span>${F.num(m.ruido_db)} dB(A)</span>
+        <span>Entrega ${F.num(m.prazo_dias)} dias</span>
+        <span>${F.brl0(m.preco)}${m.preco_ajustado ? ' · preço ajustado' : ''}</span>
+      </div>
+    </div>`;
+  }
+
+  /* --- Aba: seleção -------------------------------------------------- */
+  const COLUNAS = [
+    { c: 'posicao', r: '#', n: true, v: m => `<span class="pos">${m.posicao}</span>` },
+    { c: 'fabricante', r: 'Fabricante', v: m => esc(m.fabricante) },
+    { c: 'modelo', r: 'Modelo', v: m => esc(m.linha + ' ' + F.polos(m.polos)) },
+    { c: 'potencia_kw', r: 'kW', n: true, v: m => F.num(m.potencia_kw, 2) },
+    { c: 'rpm', r: 'rpm', n: true, v: m => F.num(m.rpm) },
+    { c: 'classe_ie', r: 'Classe', v: m => `<span class="selo ie-${m.classe_ie}">${m.classe_ie}</span>` },
+    { c: 'rendimento', r: 'Rend.', n: true, v: m => F.num(m.rendimento, 1) + '%' },
+    { c: 'carga', r: 'Carga', n: true, v: m => F.num(m.calc.carga * 100, 0) + '%' },
+    { c: 'corrente_a', r: 'In (A)', n: true, v: m => F.num(m.corrente_a, 1) },
+    { c: 'torque_nm', r: 'Cn (N·m)', n: true, v: m => F.num(m.torque_nm, 1) },
+    { c: 'grau_protecao', r: 'IP', n: true, v: m => 'IP' + m.grau_protecao },
+    { c: 'massa_kg', r: 'Massa', n: true, v: m => F.num(m.massa_kg) },
+    { c: 'ruido_db', r: 'dB(A)', n: true, v: m => F.num(m.ruido_db) },
+    { c: 'prazo_dias', r: 'Prazo', n: true, v: m => F.num(m.prazo_dias) + 'd' },
+    { c: 'preco', r: 'Preço', n: true, v: m => F.brl0(m.preco) },
+    { c: 'vpl', r: 'VPL', n: true, v: m => F.brl0(m.calc.vpl) },
+    { c: 'score', r: 'Nota', n: true, v: m => `<span class="barra-nota" title="${F.num(m.score * 100, 1)}"><i style="width:${(m.score * 100).toFixed(0)}%"></i></span>` }
+  ];
+
+  function valorOrdem(m, campo) {
+    if (campo === 'vpl') return m.calc.vpl;
+    if (campo === 'carga') return m.calc.carga;
+    return m[campo];
+  }
+
+  function renderSelecao() {
+    const alvo = $('#painel-selecao');
+    const r = estado.resultado;
+    if (!r) { alvo.innerHTML = `<div class="vazio">Informe os parâmetros da carga no painel lateral e selecione os motores.</div>`; return; }
+
+    if (!r.elegiveis.length) {
+      const contagem = {};
+      r.rejeitados.forEach(x => x.motivos.forEach(mo => { contagem[mo] = (contagem[mo] || 0) + 1; }));
+      const lista = Object.keys(contagem).sort((a, b) => contagem[b] - contagem[a]).slice(0, 6);
+      alvo.innerHTML = `<div class="bloco"><h2>Nenhum motor atende ao conjunto de requisitos</h2>
+        <p class="legenda">A potência mínima exigida é de ${F.num(r.req.potenciaExigida, 2)} kW. Os ${F.num(r.total)} itens do catálogo foram descartados pelos motivos abaixo. Afrouxe o requisito mais restritivo e refaça a seleção.</p>
+        <div class="rolagem"><table><thead><tr><th>Motivo do descarte</th><th class="n">Itens</th></tr></thead><tbody>
+        ${lista.map(k => `<tr><td>${esc(k)}</td><td class="n">${F.num(contagem[k])}</td></tr>`).join('')}
+        </tbody></table></div></div>`;
+      return;
+    }
+
+    const lista = r.elegiveis.slice();
+    const o = estado.ordem;
+    if (o.campo !== 'posicao') {
+      lista.sort((a, b) => {
+        const va = valorOrdem(a, o.campo), vb = valorOrdem(b, o.campo);
+        const d = typeof va === 'string' ? String(va).localeCompare(String(vb)) : va - vb;
+        return o.asc ? d : -d;
+      });
+    }
+    const primeiro = r.elegiveis[0];
+
+    let h = '';
+    h += `<div class="indicadores">
+      <div class="ind"><div class="rot">Potência exigida</div><div class="val">${F.num(r.req.potenciaExigida, 2)}<small> kW</small></div></div>
+      <div class="ind"><div class="rot">Correção altitude</div><div class="val">${F.num(r.req.fAlt, 3)}</div></div>
+      <div class="ind"><div class="rot">Correção temperatura</div><div class="val">${F.num(r.req.fTemp, 3)}</div></div>
+      <div class="ind"><div class="rot">Elegíveis</div><div class="val">${F.num(r.elegiveis.length)}<small> de ${F.num(r.total)}</small></div></div>
+      <div class="ind"><div class="rot">Consumo anual</div><div class="val">${F.num(primeiro.calc.consumo_ano_kwh / 1000, 1)}<small> MWh</small></div></div>
+      <div class="ind"><div class="rot">Energia por ano</div><div class="val">${F.num(primeiro.calc.custo_energia_ano / 1000, 1)}<small> mil R$</small></div></div>
+    </div>`;
+
+    h += placa(primeiro);
+    h += `<div class="bloco"><h2>Por que este motor lidera</h2>
+      <p class="legenda">Critério ${esc(r.perfil.toLowerCase())} — ordenação primária por ${esc(r.criterioPrimario)}.</p>
+      <div class="rolagem"><table><thead><tr><th>Critério</th><th class="n">Peso</th><th class="n">Nota do 1º</th><th>Posição relativa</th></tr></thead><tbody>
+      ${[['preco', 'Preço de aquisição'], ['tco', 'Custo de ciclo de vida'], ['rendimento', 'Rendimento nominal'], ['prazo', 'Prazo de entrega'], ['desempenho', 'Desempenho mecânico']]
+        .map(([k, rot]) => {
+          const peso = (MC.PERFIS[r.chavePerfil] || MC.PERFIS.balanceado).pesos[k];
+          return `<tr><td>${rot}</td><td class="n">${F.num(peso * 100, 0)}%</td><td class="n">${F.num(primeiro.notas[k] * 100, 0)}</td>
+            <td><span class="barra-nota" style="min-width:120px"><i style="width:${(primeiro.notas[k] * 100).toFixed(0)}%"></i></span></td></tr>`;
+        }).join('')}
+      </tbody></table></div>
+      <div class="linha-btn">
+        <button class="mini" id="btnDocx" type="button">Baixar relatório .docx</button>
+        <button class="mini secundario" id="btnCsvRank" type="button">Exportar ranking .csv</button>
+        <span class="status" id="statusExport"></span>
+      </div></div>`;
+
+    h += `<div class="bloco"><h2>Motores elegíveis</h2>
+      <p class="legenda">Marque até quatro para comparar. Clique no cabeçalho para reordenar.</p>
+      <div class="rolagem"><table><thead><tr><th></th>
+      ${COLUNAS.map(c => `<th class="${c.n ? 'n' : ''}" data-ord="${c.c}">${esc(c.r)}${o.campo === c.c ? (o.asc ? ' ↑' : ' ↓') : ''}</th>`).join('')}
+      <th></th></tr></thead><tbody>
+      ${lista.map(m => `<tr class="${m.posicao === 1 ? 'destaque' : ''}">
+        <td><input type="checkbox" data-comp="${esc(m.id)}" ${estado.comparar.indexOf(m.id) >= 0 ? 'checked' : ''} aria-label="Comparar ${esc(m.id)}"></td>
+        ${COLUNAS.map(c => `<td class="${c.n ? 'n' : ''}">${c.v(m)}</td>`).join('')}
+        <td><button class="mini secundario" data-add="${esc(m.id)}" type="button">Orçar</button></td>
+      </tr>`).join('')}
+      </tbody></table></div></div>`;
+
+    if (r.rejeitados.length) {
+      const contagem = {};
+      r.rejeitados.forEach(x => x.motivos.forEach(mo => { contagem[mo] = (contagem[mo] || 0) + 1; }));
+      const ord = Object.keys(contagem).sort((a, b) => contagem[b] - contagem[a]);
+      h += `<div class="bloco"><h2>Descartes</h2>
+        <p class="legenda">${F.num(r.rejeitados.length)} itens do catálogo não atenderam a pelo menos um requisito obrigatório.</p>
+        ${graficoBarras(ord.slice(0, 8).map(k => ({ rotulo: k.length > 34 ? k.slice(0, 32) + '…' : k, valor: contagem[k], cor: 'var(--aco)' })), 'itens')}</div>`;
+    }
+    alvo.innerHTML = h;
+    ligarSelecao();
+  }
+
+  function ligarSelecao() {
+    document.querySelectorAll('[data-ord]').forEach(th => th.addEventListener('click', () => {
+      const c = th.getAttribute('data-ord');
+      estado.ordem = { campo: c, asc: estado.ordem.campo === c ? !estado.ordem.asc : (c === 'posicao' || c === 'preco' || c === 'vpl' || c === 'prazo_dias') };
+      renderSelecao();
+    }));
+    document.querySelectorAll('[data-comp]').forEach(cb => cb.addEventListener('change', () => {
+      const id = cb.getAttribute('data-comp');
+      const i = estado.comparar.indexOf(id);
+      if (cb.checked && i < 0) { if (estado.comparar.length >= 4) { cb.checked = false; return; } estado.comparar.push(id); }
+      else if (!cb.checked && i >= 0) estado.comparar.splice(i, 1);
+      guardar.gravar('comparar', estado.comparar);
+      atualizarContadores();
+    }));
+    document.querySelectorAll('[data-add]').forEach(b => b.addEventListener('click', () => {
+      const id = b.getAttribute('data-add');
+      estado.orcamento[id] = (estado.orcamento[id] || 0) + 1;
+      guardar.gravar('orcamento', estado.orcamento);
+      atualizarContadores();
+      b.textContent = 'Adicionado';
+      setTimeout(() => { b.textContent = 'Orçar'; }, 1200);
+    }));
+    const bd = $('#btnDocx'); if (bd) bd.addEventListener('click', baixarDocx);
+    const bc = $('#btnCsvRank'); if (bc) bc.addEventListener('click', baixarCsvRanking);
+  }
+
+  /* --- Aba: comparação ----------------------------------------------- */
+  function renderComparacao() {
+    const alvo = $('#painel-comparacao');
+    const r = estado.resultado;
+    const sel = r ? r.elegiveis.filter(m => estado.comparar.indexOf(m.id) >= 0) : [];
+    if (sel.length < 2) {
+      alvo.innerHTML = `<div class="vazio">Marque de dois a quatro motores na aba de seleção para compará-los lado a lado.</div>`;
+      return;
+    }
+    const linhas = [
+      { r: 'Potência nominal', v: m => F.num(m.potencia_kw, 2) + ' kW', melhor: null },
+      { r: 'Polaridade', v: m => F.polos(m.polos) },
+      { r: 'Rotação nominal', v: m => F.num(m.rpm) + ' rpm' },
+      { r: 'Classe de rendimento', v: m => m.classe_ie },
+      { r: 'Rendimento nominal', v: m => F.num(m.rendimento, 1) + '%', k: m => m.rendimento, maior: true },
+      { r: 'Rendimento no ponto de operação', v: m => F.num(m.calc.rendimento_operacao, 1) + '%', k: m => m.calc.rendimento_operacao, maior: true },
+      { r: 'Carga sobre a nominal', v: m => F.num(m.calc.carga * 100, 0) + '%' },
+      { r: 'Corrente nominal', v: m => F.num(m.corrente_a, 1) + ' A', k: m => m.corrente_a, maior: false },
+      { r: 'Corrente de partida', v: m => F.num(m.corrente_partida_a, 0) + ' A', k: m => m.corrente_partida_a, maior: false },
+      { r: 'Torque nominal', v: m => F.num(m.torque_nm, 1) + ' N·m', k: m => m.torque_nm, maior: true },
+      { r: 'Torque máximo / nominal', v: m => F.num(m.cmax_cn, 2), k: m => m.cmax_cn, maior: true },
+      { r: 'Grau de proteção', v: m => 'IP' + m.grau_protecao, k: m => m.grau_protecao, maior: true },
+      { r: 'Classe de isolamento', v: m => m.classe_isolamento },
+      { r: 'Massa', v: m => F.num(m.massa_kg) + ' kg', k: m => m.massa_kg, maior: false },
+      { r: 'Ruído', v: m => F.num(m.ruido_db) + ' dB(A)', k: m => m.ruido_db, maior: false },
+      { r: 'Prazo de entrega', v: m => F.num(m.prazo_dias) + ' dias', k: m => m.prazo_dias, maior: false },
+      { r: 'Preço de aquisição', v: m => F.brl0(m.preco), k: m => m.preco, maior: false },
+      { r: 'Consumo anual', v: m => F.num(m.calc.consumo_ano_kwh) + ' kWh', k: m => m.calc.consumo_ano_kwh, maior: false },
+      { r: 'Custo anual de energia', v: m => F.brl0(m.calc.custo_energia_ano), k: m => m.calc.custo_energia_ano, maior: false },
+      { r: 'Valor presente do ciclo de vida', v: m => F.brl0(m.calc.vpl), k: m => m.calc.vpl, maior: false }
+    ];
+    let h = `<div class="bloco"><h2>Comparação lado a lado</h2>
+      <p class="legenda">O valor destacado em cada linha é o melhor entre os selecionados.</p>
+      <div class="rolagem"><table><thead><tr><th>Grandeza</th>
+      ${sel.map(m => `<th class="n">${esc(m.fabricante)} ${F.num(m.potencia_kw, 1)} kW<br>${m.classe_ie} · ${F.polos(m.polos)}</th>`).join('')}
+      </tr></thead><tbody>`;
+    linhas.forEach(l => {
+      let melhorIdx = -1;
+      if (l.k) {
+        const vals = sel.map(l.k);
+        const alvoV = l.maior ? Math.max.apply(null, vals) : Math.min.apply(null, vals);
+        if (vals.filter(v => v === alvoV).length < vals.length) melhorIdx = vals.indexOf(alvoV);
+      }
+      h += `<tr><td>${esc(l.r)}</td>${sel.map((m, i) => `<td class="n ${i === melhorIdx ? 'melhor' : ''}">${l.v(m)}</td>`).join('')}</tr>`;
+    });
+    h += `</tbody></table></div></div>`;
+
+    const base = sel.reduce((a, b) => a.preco <= b.preco ? a : b);
+    const outros = sel.filter(m => m.id !== base.id);
+    h += `<div class="bloco"><h2>Retorno do investimento adicional</h2>
+      <p class="legenda">Tomando ${esc(base.fabricante)} ${F.num(base.potencia_kw, 1)} kW ${base.classe_ie} como referência, por ser o de menor preço.</p>
+      <div class="rolagem"><table><thead><tr><th>Alternativa</th><th class="n">Sobrepreço</th><th class="n">Economia anual</th><th class="n">kWh evitados/ano</th><th class="n">Retorno</th></tr></thead><tbody>
+      ${outros.map(m => {
+        const c = MC.comparaEnergia(m, base, estado.resultado.req, lerCusto());
+        return `<tr><td>${esc(m.fabricante)} ${F.num(m.potencia_kw, 1)} kW ${m.classe_ie}</td>
+          <td class="n">${F.brl0(c.sobrepreco)}</td>
+          <td class="n">${F.brl0(c.economia_ano)}</td>
+          <td class="n">${F.num(c.economia_kwh_ano)}</td>
+          <td class="n">${c.payback_anos ? F.num(c.payback_anos, 1) + ' anos' : (c.economia_ano > 0 ? 'imediato' : 'não há')}</td></tr>`;
+      }).join('')}
+      </tbody></table></div></div>`;
+
+    h += `<div class="bloco"><h2>Ruído comparado</h2>
+      ${graficoBarras(sel.map(m => ({ rotulo: m.fabricante + ' ' + F.num(m.potencia_kw, 1) + 'kW', valor: m.ruido_db, cor: COR_IE[m.classe_ie], destaque: true })), 'dB(A)')}</div>`;
+    alvo.innerHTML = h;
+  }
+
+  /* --- Aba: energia --------------------------------------------------- */
+  function renderEnergia() {
+    const alvo = $('#painel-energia');
+    const r = estado.resultado;
+    if (!r || !r.elegiveis.length) { alvo.innerHTML = `<div class="vazio">Execute uma seleção para ver a análise de energia.</div>`; return; }
+    const c = lerCusto();
+    const sel = estado.comparar.length >= 2 ? r.elegiveis.filter(m => estado.comparar.indexOf(m.id) >= 0) : r.elegiveis.slice(0, 4);
+    const p = r.elegiveis[0];
+
+    let h = `<div class="indicadores">
+      <div class="ind"><div class="rot">Potência absorvida</div><div class="val">${F.num(p.calc.kw_rede, 2)}<small> kW</small></div></div>
+      <div class="ind"><div class="rot">Consumo anual</div><div class="val">${F.num(p.calc.consumo_ano_kwh)}<small> kWh</small></div></div>
+      <div class="ind"><div class="rot">Custo anual de energia</div><div class="val">${F.num(p.calc.custo_energia_ano / 1000, 1)}<small> mil R$</small></div></div>
+      <div class="ind"><div class="rot">Energia em ${c.anos} anos</div><div class="val">${F.num(p.calc.custo_energia_ano * c.anos / 1000, 0)}<small> mil R$</small></div></div>
+      <div class="ind"><div class="rot">Energia sobre o total</div><div class="val">${F.num(p.calc.custo_energia_ano * c.anos / (p.calc.vpl) * 100, 0)}<small>%</small></div></div>
+    </div>`;
+
+    h += `<div class="bloco"><h2>Custo acumulado ao longo da vida útil</h2>
+      <p class="legenda">Aquisição no ano zero mais energia e manutenção descontadas a ${F.num(c.taxa_desconto, 1)}% ao ano, com ${F.num(c.horas_ano)} h/ano e tarifa de ${F.brl(c.tarifa)}/kWh.</p>
+      ${graficoTCO(sel, c.anos)}
+      <p class="legenda" style="margin-top:10px">O cruzamento entre duas linhas marca o ponto em que o motor mais caro passa a ser o mais barato no acumulado.</p></div>`;
+
+    h += `<div class="bloco"><h2>Preço contra rendimento</h2>
+      <p class="legenda">Cada círculo é um motor elegível; o diâmetro representa a massa e a cor, a classe de rendimento.</p>
+      ${graficoDispersao(r.elegiveis)}
+      <div class="legenda-graf">${['IE2', 'IE3', 'IE4'].map(k => `<span><i style="background:${COR_IE[k]}"></i>${k}</span>`).join('')}</div></div>`;
+
+    h += `<div class="bloco"><h2>Decomposição do custo em ${c.anos} anos</h2>
+      <div class="rolagem"><table><thead><tr><th>Motor</th><th class="n">Aquisição</th><th class="n">Energia</th><th class="n">Manutenção</th><th class="n">Valor presente</th><th class="n">Energia sobre total</th></tr></thead><tbody>
+      ${sel.map(m => {
+        const energia = m.calc.fluxo.reduce((s, f) => s + f.energia / Math.pow(1 + c.taxa_desconto / 100, f.ano), 0);
+        const manut = m.calc.fluxo.reduce((s, f) => s + f.manutencao / Math.pow(1 + c.taxa_desconto / 100, f.ano), 0);
+        return `<tr><td>${esc(m.fabricante)} ${F.num(m.potencia_kw, 1)} kW ${m.classe_ie}</td>
+          <td class="n">${F.brl0(m.preco)}</td><td class="n">${F.brl0(energia)}</td>
+          <td class="n">${F.brl0(manut)}</td><td class="n">${F.brl0(m.calc.vpl)}</td>
+          <td class="n">${F.num(energia / m.calc.vpl * 100, 0)}%</td></tr>`;
+      }).join('')}
+      </tbody></table></div>
+      <p class="legenda" style="margin-top:10px">Em regime contínuo a energia costuma responder pela maior parte do custo total, o que justifica pagar mais caro por rendimento.</p></div>`;
+    alvo.innerHTML = h;
+  }
+
+  /* --- Aba: orçamento ------------------------------------------------- */
+  function renderOrcamento() {
+    const alvo = $('#painel-orcamento');
+    const ids = Object.keys(estado.orcamento).filter(id => estado.orcamento[id] > 0);
+    if (!ids.length) { alvo.innerHTML = `<div class="vazio">Nenhum item. Use o botão “Orçar” na tabela de motores elegíveis.</div>`; return; }
+    const cat = catalogo();
+    const itens = ids.map(id => ({ m: cat.find(x => x.id === id), q: estado.orcamento[id] })).filter(i => i.m);
+    const total = itens.reduce((s, i) => s + i.m.preco * i.q, 0);
+    const massa = itens.reduce((s, i) => s + i.m.massa_kg * i.q, 0);
+    const prazo = Math.max.apply(null, itens.map(i => i.m.prazo_dias));
+    let h = `<div class="indicadores">
+      <div class="ind"><div class="rot">Itens</div><div class="val">${F.num(itens.reduce((s, i) => s + i.q, 0))}</div></div>
+      <div class="ind"><div class="rot">Total</div><div class="val">${F.num(total / 1000, 1)}<small> mil R$</small></div></div>
+      <div class="ind"><div class="rot">Massa total</div><div class="val">${F.num(massa)}<small> kg</small></div></div>
+      <div class="ind"><div class="rot">Prazo determinante</div><div class="val">${F.num(prazo)}<small> dias</small></div></div>
+    </div>
+    <div class="bloco"><h2>Relação de equipamentos</h2>
+    <div class="rolagem"><table><thead><tr><th>Item</th><th>Especificação</th><th class="n">Qtd</th><th class="n">Unitário</th><th class="n">Total</th><th></th></tr></thead><tbody>
+    ${itens.map(i => `<tr><td>${esc(i.m.fabricante)} ${esc(i.m.linha)}</td>
+      <td>${F.num(i.m.potencia_kw, 2)} kW · ${F.polos(i.m.polos)} · ${i.m.classe_ie} · IP${i.m.grau_protecao}</td>
+      <td class="n"><input type="number" min="0" step="1" value="${i.q}" data-qtd="${esc(i.m.id)}" style="width:64px"></td>
+      <td class="n">${F.brl0(i.m.preco)}</td><td class="n">${F.brl0(i.m.preco * i.q)}</td>
+      <td><button class="mini secundario" data-rem="${esc(i.m.id)}" type="button">Remover</button></td></tr>`).join('')}
+    <tr><td colspan="4" class="n"><strong>Total</strong></td><td class="n"><strong>${F.brl0(total)}</strong></td><td></td></tr>
+    </tbody></table></div>
+    <div class="linha-btn">
+      <button class="mini" id="btnCsvOrc" type="button">Exportar relação .csv</button>
+      <button class="mini secundario" id="btnLimparOrc" type="button">Esvaziar</button>
+    </div>
+    <p class="legenda" style="margin-top:10px">Valores de referência do catálogo paramétrico, sem BDI, frete, montagem ou tributos. Servem para ordem de grandeza, não substituem cotação.</p></div>`;
+    alvo.innerHTML = h;
+    document.querySelectorAll('[data-qtd]').forEach(inp => inp.addEventListener('change', () => {
+      const q = Math.max(0, Math.round(parseFloat(inp.value) || 0));
+      estado.orcamento[inp.getAttribute('data-qtd')] = q;
+      guardar.gravar('orcamento', estado.orcamento); atualizarContadores(); renderOrcamento();
+    }));
+    document.querySelectorAll('[data-rem]').forEach(b => b.addEventListener('click', () => {
+      delete estado.orcamento[b.getAttribute('data-rem')];
+      guardar.gravar('orcamento', estado.orcamento); atualizarContadores(); renderOrcamento();
+    }));
+    $('#btnLimparOrc').addEventListener('click', () => {
+      estado.orcamento = {}; guardar.gravar('orcamento', {}); atualizarContadores(); renderOrcamento();
+    });
+    $('#btnCsvOrc').addEventListener('click', () => {
+      const linhas = [['Fabricante', 'Modelo', 'kW', 'Polos', 'Classe', 'IP', 'Quantidade', 'Unitario_BRL', 'Total_BRL']];
+      itens.forEach(i => linhas.push([i.m.fabricante, i.m.modelo, i.m.potencia_kw, i.m.polos, i.m.classe_ie, 'IP' + i.m.grau_protecao, i.q, i.m.preco, i.m.preco * i.q]));
+      baixarCsv(linhas, 'motorcalc-orcamento.csv');
+    });
+  }
+
+  /* --- Aba: catálogo -------------------------------------------------- */
+  function renderCatalogo() {
+    const alvo = $('#painel-catalogo');
+    const cat = catalogo();
+    const f = estado.filtroCatalogo.toLowerCase().trim();
+    const lista = (f ? cat.filter(m => (m.fabricante + ' ' + m.modelo + ' ' + m.id + ' ' + m.classe_ie).toLowerCase().indexOf(f) >= 0) : cat).slice(0, 300);
+    const ajustados = Object.keys(estado.precos).length;
+
+    alvo.innerHTML = `<div class="aviso">
+      <strong>Catálogo paramétrico.</strong> Os rendimentos partem dos limites mínimos da IEC 60034-30-1 e as demais
+      grandezas de correlações de engenharia declaradas no manual. Os preços são valores de referência de ordem de
+      grandeza, não cotações. Ajuste-os abaixo com dados de cotação antes de usar o resultado em orçamento ou termo de referência.
+    </div>
+    <div class="bloco"><h2>${F.num(cat.length)} itens · ${Object.keys(MC.FABRICANTES).length} fabricantes</h2>
+      <p class="legenda">${ajustados ? F.num(ajustados) + ' preço(s) ajustado(s) manualmente.' : 'Nenhum preço ajustado.'} Os ajustes ficam salvos neste navegador.</p>
+      <div class="dupla" style="max-width:520px">
+        <div class="campo"><label for="buscaCat">Buscar</label><input id="buscaCat" value="${esc(estado.filtroCatalogo)}" placeholder="fabricante, potência, classe"></div>
+        <div class="campo"><label>Preços</label>
+          <div class="linha-btn" style="margin-top:0">
+            <button class="mini secundario" id="btnExpPrecos" type="button">Exportar</button>
+            <button class="mini secundario" id="btnImpPrecos" type="button">Importar</button>
+            <button class="mini secundario" id="btnResetPrecos" type="button">Zerar</button>
+          </div></div>
+      </div>
+      <div class="rolagem" style="max-height:66vh;overflow-y:auto"><table><thead><tr>
+        <th>Identificador</th><th>Fabricante</th><th class="n">kW</th><th class="n">Polos</th><th class="n">rpm</th>
+        <th>Classe</th><th class="n">Rend.</th><th class="n">cos φ</th><th>Tensões</th><th class="n">IP</th>
+        <th>Isol.</th><th class="n">Massa</th><th class="n">dB(A)</th><th class="n">Prazo</th><th class="n">Preço R$</th>
+      </tr></thead><tbody>
+      ${lista.map(m => `<tr><td style="font-family:var(--mono);font-size:11.5px">${esc(m.id)}</td>
+        <td>${esc(m.fabricante)}</td><td class="n">${F.num(m.potencia_kw, 2)}</td><td class="n">${m.polos}</td>
+        <td class="n">${F.num(m.rpm)}</td><td><span class="selo ie-${m.classe_ie}">${m.classe_ie}</span></td>
+        <td class="n">${F.num(m.rendimento, 1)}</td><td class="n">${F.num(m.fator_potencia, 2)}</td>
+        <td style="font-size:12px">${m.tensoes.join(' / ')}</td><td class="n">${m.grau_protecao}</td>
+        <td>${m.classe_isolamento}</td><td class="n">${F.num(m.massa_kg)}</td><td class="n">${F.num(m.ruido_db)}</td>
+        <td class="n">${F.num(m.prazo_dias)}d</td>
+        <td class="n"><input class="preco-edit" type="number" min="0" step="10" value="${m.preco}" data-preco="${esc(m.id)}" aria-label="Preço de ${esc(m.id)}"></td></tr>`).join('')}
+      </tbody></table></div>
+      ${lista.length >= 300 ? '<p class="legenda" style="margin-top:8px">Exibindo os 300 primeiros. Refine a busca para ver os demais.</p>' : ''}
+    </div>`;
+
+    $('#buscaCat').addEventListener('input', ev => {
+      estado.filtroCatalogo = ev.target.value;
+      const pos = ev.target.selectionStart;
+      renderCatalogo();
+      const novo = $('#buscaCat'); novo.focus(); novo.setSelectionRange(pos, pos);
+    });
+    document.querySelectorAll('[data-preco]').forEach(inp => inp.addEventListener('change', () => {
+      const id = inp.getAttribute('data-preco');
+      const v = parseFloat(inp.value);
+      const orig = CATALOGO_BASE.find(x => x.id === id);
+      if (isNaN(v) || v < 0) { inp.value = orig.preco; return; }
+      if (v === orig.preco) delete estado.precos[id]; else estado.precos[id] = v;
+      guardar.gravar('precos', estado.precos);
+    }));
+    $('#btnResetPrecos').addEventListener('click', () => {
+      estado.precos = {}; guardar.gravar('precos', {}); renderCatalogo();
+    });
+    $('#btnExpPrecos').addEventListener('click', () => {
+      baixarArquivo(JSON.stringify({ gerado_em: new Date().toISOString(), precos: estado.precos }, null, 2),
+        'motorcalc-precos.json', 'application/json');
+    });
+    $('#btnImpPrecos').addEventListener('click', () => {
+      const inp = document.createElement('input');
+      inp.type = 'file'; inp.accept = '.json,application/json';
+      inp.onchange = () => {
+        const f2 = inp.files[0]; if (!f2) return;
+        const fr = new FileReader();
+        fr.onload = () => {
+          try {
+            const d = JSON.parse(fr.result);
+            const p = d.precos || d;
+            let n = 0;
+            Object.keys(p).forEach(k => { if (typeof p[k] === 'number' && p[k] >= 0) { estado.precos[k] = p[k]; n++; } });
+            guardar.gravar('precos', estado.precos);
+            renderCatalogo();
+            alert(n + ' preço(s) importado(s).');
+          } catch (e) { alert('Arquivo inválido: esperado JSON com um objeto de preços por identificador.'); }
+        };
+        fr.readAsText(f2);
+      };
+      inp.click();
+    });
+  }
+
+  /* --- Exportações ---------------------------------------------------- */
+  function baixarArquivo(conteudo, nome, tipo) {
+    const blob = conteudo instanceof Uint8Array ? new Blob([conteudo], { type: tipo }) : new Blob([conteudo], { type: tipo + ';charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = nome; document.body.appendChild(a); a.click();
+    setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 300);
+  }
+  function baixarCsv(linhas, nome) {
+    const txt = '\ufeff' + linhas.map(l => l.map(c => {
+      const s = String(c == null ? '' : c);
+      return /[";\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+    }).join(';')).join('\r\n');
+    baixarArquivo(txt, nome, 'text/csv');
+  }
+  function baixarCsvRanking() {
+    const r = estado.resultado; if (!r) return;
+    const linhas = [['Posicao', 'Id', 'Fabricante', 'Modelo', 'kW', 'Polos', 'rpm', 'Classe', 'Rendimento_pct',
+      'Carga_pct', 'Corrente_A', 'Torque_Nm', 'IP', 'Massa_kg', 'Ruido_dB', 'Prazo_dias', 'Preco_BRL', 'VPL_BRL', 'Nota']];
+    r.elegiveis.forEach(m => linhas.push([m.posicao, m.id, m.fabricante, m.modelo, m.potencia_kw, m.polos, m.rpm,
+      m.classe_ie, m.rendimento, Math.round(m.calc.carga * 100), m.corrente_a, m.torque_nm, m.grau_protecao,
+      m.massa_kg, m.ruido_db, m.prazo_dias, m.preco, Math.round(m.calc.vpl), (m.score * 100).toFixed(1)]));
+    baixarCsv(linhas, 'motorcalc-ranking.csv');
+  }
+  function baixarDocx() {
+    const r = estado.resultado; if (!r || !r.elegiveis.length) return;
+    const st = $('#statusExport');
+    try {
+      const corpo = MC.montarRelatorio({ resultado: r, entrada: lerEntrada(), cfgCusto: lerCusto(), catalogo: catalogo() });
+      baixarArquivo(MC.docx.empacotar(corpo), 'motorcalc-relatorio.docx',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+      if (st) { st.textContent = 'Relatório gerado.'; setTimeout(() => { st.textContent = ''; }, 2500); }
+    } catch (e) {
+      if (st) { st.style.color = 'var(--erro)'; st.textContent = 'Falha ao gerar o arquivo: ' + e.message; }
+    }
+  }
+
+  /* --- Contadores e abas ---------------------------------------------- */
+  function atualizarContadores() {
+    $('#cntComp').textContent = estado.comparar.length;
+    $('#cntOrc').textContent = Object.keys(estado.orcamento).filter(k => estado.orcamento[k] > 0).length;
+  }
+  function trocarAba(nome) {
+    estado.aba = nome;
+    document.querySelectorAll('.abas button').forEach(b => b.setAttribute('aria-selected', String(b.getAttribute('data-aba') === nome)));
+    ['selecao', 'comparacao', 'energia', 'orcamento', 'catalogo', 'manual'].forEach(a => { $('#painel-' + a).hidden = a !== nome; });
+    if (nome === 'comparacao') renderComparacao();
+    if (nome === 'energia') renderEnergia();
+    if (nome === 'orcamento') renderOrcamento();
+    if (nome === 'catalogo') renderCatalogo();
+    if (nome === 'manual') MC.renderManual();
+  }
+
+  /* --- Cálculo --------------------------------------------------------- */
+  function calcular() {
+    const entrada = lerEntrada();
+    estado.resultado = MC.selecionar(catalogo(), entrada, lerCusto());
+    estado.resultado.chavePerfil = entrada.prioridade;
+    estado.ordem = { campo: 'posicao', asc: true };
+    const validos = estado.resultado.elegiveis.map(m => m.id);
+    estado.comparar = estado.comparar.filter(id => validos.indexOf(id) >= 0);
+    if (estado.comparar.length < 2) estado.comparar = validos.slice(0, Math.min(3, validos.length));
+    guardar.gravar('comparar', estado.comparar);
+    guardar.gravar('entrada', entrada);
+    atualizarContadores();
+    renderSelecao();
+    if (estado.aba !== 'selecao') trocarAba(estado.aba);
+    const corpo = $('#railCorpo');
+    if (corpo && window.innerWidth <= 900 && !corpo.hidden && estado.iniciado) {
+      corpo.hidden = true;
+      $('#btnRecolher').setAttribute('aria-expanded', 'false');
+      $('#btnRecolher').textContent = 'Mostrar parâmetros';
+    }
+  }
+
+  /* --- Montagem dos controles ----------------------------------------- */
+  function montarChips() {
+    $('#chipsFab').innerHTML = Object.keys(MC.FABRICANTES).map(f =>
+      `<button type="button" class="chip" data-fab="${esc(f)}" aria-pressed="${estado.fabricantes.indexOf(f) >= 0}">${esc(f)}</button>`).join('');
+    document.querySelectorAll('[data-fab]').forEach(b => b.addEventListener('click', () => {
+      const f = b.getAttribute('data-fab');
+      const i = estado.fabricantes.indexOf(f);
+      if (i >= 0) { if (estado.fabricantes.length === 1) return; estado.fabricantes.splice(i, 1); }
+      else estado.fabricantes.push(f);
+      b.setAttribute('aria-pressed', String(estado.fabricantes.indexOf(f) >= 0));
+      guardar.gravar('fabricantes', estado.fabricantes);
+    }));
+  }
+  function montarSelects() {
+    $('#aplicacao').innerHTML = Object.keys(MC.APLICACOES).map(k =>
+      `<option value="${k}"${k === 'bomba_recalque' ? ' selected' : ''}>${esc(MC.APLICACOES[k].nome)}</option>`).join('');
+    $('#regime').innerHTML = Object.keys(MC.REGIMES).map(k => `<option value="${k}">${esc(MC.REGIMES[k].nome)}</option>`).join('');
+    $('#ambiente').innerHTML = Object.keys(MC.AMBIENTES).map(k =>
+      `<option value="${k}"${k === 'interno_umido' ? ' selected' : ''}>${esc(MC.AMBIENTES[k].nome)}</option>`).join('');
+    $('#prioridade').innerHTML = Object.keys(MC.PERFIS).map(k =>
+      `<option value="${k}"${k === 'balanceado' ? ' selected' : ''}>${esc(MC.PERFIS[k].nome)}</option>`).join('');
+    atualizarDicas();
+  }
+  function atualizarDicas() {
+    const reg = MC.REGIMES[$('#regime').value];
+    $('#dicaRegime').textContent = reg ? reg.descricao : '';
+    const amb = MC.AMBIENTES[$('#ambiente').value];
+    $('#dicaAmbiente').textContent = amb ? `${amb.descricao} Exige no mínimo IP${amb.ipMin}${amb.corrosivo ? ' e proteção declarada contra atmosfera agressiva.' : '.'}` : '';
+  }
+  function atualizarCenarios() {
+    const nomes = Object.keys(estado.cenarios);
+    $('#cenarios').innerHTML = '<option value="">Nenhum</option>' +
+      nomes.map(n => `<option value="${esc(n)}">${esc(n)}</option>`).join('');
+  }
+
+  /* --- Inicialização ---------------------------------------------------- */
+  function iniciar() {
+    montarSelects();
+    montarChips();
+    atualizarCenarios();
+    atualizarContadores();
+
+    const tema = guardar.ler('tema', 'claro');
+    document.documentElement.setAttribute('data-tema', tema);
+    $('#btnTema').textContent = tema === 'claro' ? 'Tema escuro' : 'Tema claro';
+
+    const salva = guardar.ler('entrada', null);
+    if (salva) { try { aplicarEntrada(salva); } catch (e) { /* entrada antiga incompatível */ } }
+
+    $('#btnCalcular').addEventListener('click', calcular);
+    $('#regime').addEventListener('change', () => {
+      atualizarDicas();
+      const reg = MC.REGIMES[$('#regime').value];
+      if (reg) $('#fs').value = reg.fs;
+    });
+    $('#ambiente').addEventListener('change', atualizarDicas);
+    $('#aplicacao').addEventListener('change', () => {
+      const a = MC.APLICACOES[$('#aplicacao').value];
+      if (a) { $('#fs').value = a.fs; $('#polos').value = a.polos; }
+    });
+    $('#btnTema').addEventListener('click', () => {
+      const novo = document.documentElement.getAttribute('data-tema') === 'claro' ? 'escuro' : 'claro';
+      document.documentElement.setAttribute('data-tema', novo);
+      $('#btnTema').textContent = novo === 'claro' ? 'Tema escuro' : 'Tema claro';
+      guardar.gravar('tema', novo);
+    });
+    $('#btnLimpar').addEventListener('click', () => {
+      ['potencia:20', 'fs:1.15', 'altitude:0', 'temp:40', 'horas:6000', 'tarifa:0.72', 'anos:10', 'taxa:8', 'manut:2']
+        .forEach(p => { const [k, v] = p.split(':'); $('#' + k).value = v; });
+      ['torque', 'rpmAlvo', 'ruidoMax', 'prazoMax', 'orcamento'].forEach(k => { $('#' + k).value = ''; });
+      $('#polos').value = '4'; $('#tensao').value = '380'; $('#ieMin').value = 'IE3'; $('#isolMin').value = '';
+      $('#ambiente').value = 'interno_umido'; $('#regime').value = 'S1'; $('#prioridade').value = 'balanceado';
+      $('#limiteSobre').value = '1.6'; $('#aplicacao').value = 'bomba_recalque';
+      estado.fabricantes = Object.keys(MC.FABRICANTES); montarChips(); atualizarDicas();
+    });
+    $('#btnSalvar').addEventListener('click', () => {
+      const nome = prompt('Nome do cenário:');
+      if (!nome) return;
+      estado.cenarios[nome] = { entrada: lerEntrada(), custo: lerCusto() };
+      guardar.gravar('cenarios', estado.cenarios);
+      atualizarCenarios();
+      $('#cenarios').value = nome;
+    });
+    $('#cenarios').addEventListener('change', ev => {
+      const c = estado.cenarios[ev.target.value];
+      if (!c) return;
+      aplicarEntrada(c.entrada);
+      Object.keys(c.custo).forEach(k => {
+        const mapa = { horas_ano: 'horas', tarifa: 'tarifa', anos: 'anos', taxa_desconto: 'taxa', manutencao_pct: 'manut' };
+        if (mapa[k]) $('#' + mapa[k]).value = c.custo[k];
+      });
+      calcular();
+    });
+    $('#btnRecolher').addEventListener('click', () => {
+      const corpo = $('#railCorpo');
+      const aberto = !corpo.hidden;
+      corpo.hidden = aberto;
+      $('#btnRecolher').setAttribute('aria-expanded', String(!aberto));
+      $('#btnRecolher').textContent = aberto ? 'Mostrar parâmetros' : 'Ocultar parâmetros';
+    });
+    document.querySelectorAll('.abas button').forEach(b =>
+      b.addEventListener('click', () => trocarAba(b.getAttribute('data-aba'))));
+
+    calcular();
+    estado.iniciado = true;
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', iniciar);
+  else iniciar();
+})();
+
+/* ---------- 06-manual.js ---------- */
+/* =====================================================================
+   MOTORCALC — MANUAL
+   ===================================================================== */
+MC.renderManual = (function () {
+  let montado = false;
+
+  const SECOES = [
+    { id: 'inicio', t: 'Como usar', h: `
+      <p>A ferramenta parte de uma carga a acionar e devolve os motores de catálogo que a atendem, ordenados por um critério de decisão que você escolhe. O fluxo tem quatro passos.</p>
+      <p><strong>Descreva a carga.</strong> Informe a potência requerida no eixo, ou o torque e a rotação, se for o que você tem em mãos. A aplicação selecionada preenche automaticamente um fator de serviço e uma polaridade típicos, que você pode sobrescrever.</p>
+      <p><strong>Descreva a instalação.</strong> Tensão, ambiente, altitude e temperatura ambiente. Esses três últimos alteram a potência que o motor consegue entregar, e portanto o tamanho do motor necessário.</p>
+      <p><strong>Fixe as exigências.</strong> Classe de rendimento, classe de isolamento, limites de ruído, prazo e preço. Tudo que estiver preenchido vira requisito obrigatório: quem não atende é descartado, com o motivo registrado.</p>
+      <p><strong>Escolha o critério de decisão.</strong> É ele que define quem fica em primeiro lugar. Um mesmo conjunto de motores elegíveis produz rankings diferentes conforme você priorize preço de aquisição, custo de ciclo de vida, rendimento ou desempenho mecânico.</p>` },
+
+    { id: 'requisito', t: 'Potência exigida', h: `
+      <p>A potência nominal mínima que o motor precisa ter não é a potência da carga. Ela resulta da potência no eixo majorada pelo fator de serviço e dividida pelos fatores de correção do ambiente:</p>
+      <div class="formula">P<sub>mín</sub> = P<sub>eixo</sub> × FS ÷ (f<sub>altitude</sub> × f<sub>temperatura</sub>)</div>
+      <p>O fator de serviço cobre sobrecargas admissíveis em regime; os fatores de correção cobrem a perda de capacidade de dissipação térmica do motor. Um motor não perde potência mecânica com a altitude: ele perde capacidade de se resfriar, e por isso precisa ser maior.</p>
+      <p>Se você preencher torque e rotação em vez de potência, a conversão é direta:</p>
+      <div class="formula">P (kW) = C (N·m) × n (rpm) ÷ 9550</div>` },
+
+    { id: 'correcoes', t: 'Altitude e temperatura', h: `
+      <p>Conforme a IEC 60034-1, os valores nominais de um motor valem para instalação até 1000 m de altitude e temperatura ambiente de até 40 °C. Fora dessa faixa a potência admissível cai.</p>
+      <p>Para a altitude, a ferramenta aplica uma redução de 1% por 100 m acima dos primeiros 1000 m:</p>
+      <div class="formula">f<sub>altitude</sub> = 1 − 0,01 × (h − 1000) ÷ 100,  para h &gt; 1000 m</div>
+      <p>Para a temperatura ambiente, a correção segue a tabela usual dos fabricantes, com interpolação linear entre os pontos: 30 °C → 1,07; 40 °C → 1,00; 50 °C → 0,92; 60 °C → 0,82; 80 °C → 0,60. Note que ambiente mais frio bonifica, e não apenas ambiente quente penaliza.</p>
+      <p><strong>Laboratório.</strong> Altere os valores e veja o efeito sobre a potência mínima exigida.</p>
+      <div class="bloco" style="background:var(--papel)">
+        <div class="tripla">
+          <div class="campo"><label for="labP">Potência no eixo (kW)</label><input type="number" id="labP" value="30" step="0.5"></div>
+          <div class="campo"><label for="labH">Altitude (m)</label><input type="number" id="labH" value="1800" step="100"></div>
+          <div class="campo"><label for="labT">Temperatura (°C)</label><input type="number" id="labT" value="50" step="1"></div>
+        </div>
+        <div class="indicadores" style="margin-bottom:0">
+          <div class="ind"><div class="rot">f altitude</div><div class="val" id="labFA">—</div></div>
+          <div class="ind"><div class="rot">f temperatura</div><div class="val" id="labFT">—</div></div>
+          <div class="ind"><div class="rot">Potência mínima</div><div class="val" id="labPM">—</div></div>
+        </div>
+      </div>` },
+
+    { id: 'eletrico', t: 'Grandezas elétricas', h: `
+      <p>A corrente nominal de um motor trifásico depende da tensão, do rendimento e do fator de potência:</p>
+      <div class="formula">I<sub>n</sub> = P (kW) × 1000 ÷ (√3 × U × η × cos φ)</div>
+      <p>A corrente de partida direta é obtida pela relação Ip/In característica do projeto do motor. Ela importa para dimensionar a proteção, verificar a queda de tensão na partida e decidir entre partida direta, compensada, estrela-triângulo ou por partida suave.</p>
+      <p>A potência absorvida da rede é sempre maior que a potência no eixo, na proporção inversa do rendimento:</p>
+      <div class="formula">P<sub>rede</sub> = P<sub>eixo</sub> ÷ η</div>
+      <p><strong>Laboratório.</strong> Um cálculo elétrico rápido com o mesmo motor de cálculo da ferramenta.</p>
+      <div class="bloco" style="background:var(--papel)">
+        <div class="tripla">
+          <div class="campo"><label for="labEP">Potência (kW)</label><input type="number" id="labEP" value="22" step="0.5"></div>
+          <div class="campo"><label for="labEU">Tensão (V)</label><input type="number" id="labEU" value="380" step="10"></div>
+          <div class="campo"><label for="labEN">Rendimento (%)</label><input type="number" id="labEN" value="93.6" step="0.1"></div>
+        </div>
+        <div class="tripla">
+          <div class="campo"><label for="labEC">cos φ</label><input type="number" id="labEC" value="0.86" step="0.01"></div>
+          <div class="campo"><label for="labER">Rotação (rpm)</label><input type="number" id="labER" value="1760" step="10"></div>
+          <div class="campo"><label for="labEI">Ip/In</label><input type="number" id="labEI" value="7.5" step="0.1"></div>
+        </div>
+        <div class="indicadores" style="margin-bottom:0">
+          <div class="ind"><div class="rot">Corrente nominal</div><div class="val" id="labEIn">—</div></div>
+          <div class="ind"><div class="rot">Corrente de partida</div><div class="val" id="labEIp">—</div></div>
+          <div class="ind"><div class="rot">Torque nominal</div><div class="val" id="labECn">—</div></div>
+          <div class="ind"><div class="rot">Potência da rede</div><div class="val" id="labEPr">—</div></div>
+        </div>
+      </div>` },
+
+    { id: 'rendimento', t: 'Classes de rendimento', h: `
+      <p>A IEC 60034-30-1 organiza os motores em classes de rendimento, de IE1 a IE4, definidas por valores mínimos que variam com a potência, a polaridade e a frequência. Quanto maior a potência, maior o rendimento mínimo exigido; quanto mais polos, menor.</p>
+      <p>A diferença entre classes parece pequena em pontos percentuais e é grande em dinheiro. Um motor de 30 kW operando 6000 h por ano consome cerca de 190 MWh anuais. Um ganho de dois pontos de rendimento economiza aproximadamente 4 MWh por ano, todos os anos da vida do equipamento.</p>
+      <p>O rendimento também varia com a carga. A curva típica tem máximo entre 70% e 85% da carga nominal e cai rápido abaixo de 50%. É por isso que sobredimensionar um motor não é conservador: é caro na compra e caro na conta de energia.</p>
+      <p>A ferramenta modela essa queda e usa o rendimento no ponto de operação, não o nominal, para calcular consumo e custo.</p>` },
+
+    { id: 'ciclo', t: 'Custo de ciclo de vida', h: `
+      <p>O preço de aquisição costuma ser a menor parcela do custo de um motor em regime contínuo. A ferramenta calcula o valor presente da soma de aquisição, energia e manutenção ao longo do horizonte escolhido:</p>
+      <div class="formula">VP = P<sub>aquisição</sub> + Σ<sub>t=1..n</sub> (C<sub>energia</sub> + C<sub>manutenção</sub>) ÷ (1 + i)<sup>t</sup></div>
+      <p>O custo anual de energia decorre da potência absorvida no ponto de operação, das horas anuais e da tarifa. A manutenção entra como percentual anual do valor do equipamento.</p>
+      <p>Para comparar duas alternativas, o retorno do investimento adicional é o sobrepreço dividido pela economia anual de energia:</p>
+      <div class="formula">retorno (anos) = (P<sub>A</sub> − P<sub>B</sub>) ÷ (C<sub>energia,B</sub> − C<sub>energia,A</sub>)</div>
+      <p>Um retorno de dois ou três anos em um equipamento com vida útil de quinze é um argumento técnico e econômico sólido para justificar a alternativa mais cara na aquisição.</p>` },
+
+    { id: 'criterios', t: 'Critérios de decisão', h: `
+      <p>Cada critério de decisão declara uma ordenação primária e um conjunto de pesos. A ordenação primária garante que o primeiro colocado seja de fato o melhor naquilo que dá nome ao critério; os pesos produzem a nota global exibida e resolvem empates.</p>
+      <ul>
+        <li><strong>Menor investimento inicial</strong> — ordena pelo menor preço de aquisição.</li>
+        <li><strong>Menor custo de ciclo de vida</strong> — ordena pelo menor valor presente no horizonte definido.</li>
+        <li><strong>Máxima eficiência energética</strong> — ordena pelo maior rendimento nominal.</li>
+        <li><strong>Melhor desempenho mecânico</strong> — ordena por um índice que combina reserva de torque, densidade de potência e ruído.</li>
+        <li><strong>Balanceado</strong> — ordena pela nota global ponderada, sem critério dominante.</li>
+      </ul>
+      <p>As notas de cada critério são normalizadas entre 0 e 1 dentro do conjunto de motores elegíveis daquela consulta. Isso significa que a nota é relativa: ela compara o motor com os concorrentes daquele caso, não com um padrão absoluto.</p>` },
+
+    { id: 'catalogo', t: 'O catálogo e seus limites', h: `
+      <p>O catálogo embarcado é paramétrico, e isso precisa estar claro para quem usa o resultado. Ele não é uma cópia de folhas de dados de fabricante. Cada item é gerado por um modelo declarado:</p>
+      <ul>
+        <li><strong>Rendimento</strong> — parte dos limites mínimos da IEC 60034-30-1 para IE3 a 60 Hz e quatro polos, com deslocamentos documentados para as demais classes e polaridades.</li>
+        <li><strong>Fator de potência, massa, ruído e relação Ip/In</strong> — correlações de engenharia em função de potência e polaridade, calibradas na ordem de grandeza de catálogos comerciais.</li>
+        <li><strong>Preço</strong> — modelo de escala do tipo <span style="font-family:var(--mono)">k · P<sup>0,86</sup></span>, com multiplicadores por classe de rendimento, polaridade e posicionamento do fabricante.</li>
+        <li><strong>Disponibilidade comercial</strong> — nem toda combinação de potência, polaridade e classe existe em linha; a cobertura é decidida por uma função determinística, de modo que o catálogo é idêntico em toda execução.</li>
+      </ul>
+      <p>O que isso permite: comparar alternativas, entender a sensibilidade do resultado às premissas, dimensionar corretamente e produzir a memória de cálculo da escolha.</p>
+      <p>O que isso não permite: usar um número do catálogo como se fosse dado de fabricante. Antes de levar qualquer resultado a projeto, orçamento, termo de referência ou julgamento de proposta, confronte o modelo escolhido com a folha de dados do fabricante e substitua os preços por cotações. A aba do catálogo permite editar preço a preço e exportar ou importar esses ajustes em JSON.</p>` },
+
+    { id: 'normas', t: 'Base normativa', h: `
+      <ul>
+        <li><strong>ABNT NBR 17094-1</strong> — máquinas elétricas girantes: motores de indução trifásicos, requisitos.</li>
+        <li><strong>IEC 60034-1</strong> — características nominais e de funcionamento; regimes de serviço S1 a S9; correções de altitude e temperatura.</li>
+        <li><strong>IEC 60034-30-1</strong> — classes de rendimento IE1 a IE4 para motores de velocidade única.</li>
+        <li><strong>ABNT NBR IEC 60529</strong> — graus de proteção providos por invólucros, a codificação IP.</li>
+        <li><strong>Lei 14.133/2021</strong> — no art. 45 e nos dispositivos sobre sustentabilidade, dá base para exigir eficiência energética como requisito da contratação, e não apenas como diferencial de pontuação.</li>
+      </ul>
+      <p>A exigência de classe mínima de rendimento em edital precisa de motivação no processo. O relatório gerado pela ferramenta registra as premissas, a comparação e o retorno econômico, que é exatamente o tipo de justificativa que sustenta a exigência sem restringir indevidamente a competição.</p>` },
+
+    { id: 'exportar', t: 'Relatório e exportações', h: `
+      <p><strong>Relatório .docx</strong> — documento editável com requisito, critério de julgamento, ranking, detalhamento do primeiro colocado, comparação entre as três primeiras alternativas, quadro de conformidade normativa, motivos de descarte e as limitações do catálogo. O arquivo é montado inteiramente no seu navegador, sem envio de dados a servidor algum.</p>
+      <p><strong>Ranking .csv</strong> — todos os motores elegíveis com suas grandezas, para levar a uma planilha.</p>
+      <p><strong>Relação de equipamentos .csv</strong> — os itens adicionados ao orçamento com quantidades e totais.</p>
+      <p><strong>Preços .json</strong> — seus ajustes de preço, para reaproveitar em outra máquina ou compartilhar com a equipe.</p>
+      <p>Cenários de entrada ficam salvos no navegador e podem ser recarregados pelo seletor no fim do painel lateral. A ferramenta funciona integralmente offline: nada é transmitido.</p>` }
+  ];
+
+  function calcularLabs() {
+    const g = id => { const e = document.getElementById(id); return e ? parseFloat(e.value) : NaN; };
+    const s = (id, v) => { const e = document.getElementById(id); if (e) e.innerHTML = v; };
+
+    const P = g('labP'), H = g('labH'), T = g('labT');
+    if (!isNaN(P) && !isNaN(H) && !isNaN(T)) {
+      const fa = MC.fatorAltitude(H), ft = MC.fatorTemperatura(T);
+      s('labFA', MC.fmt.num(fa, 3));
+      s('labFT', MC.fmt.num(ft, 3));
+      s('labPM', MC.fmt.num(P / (fa * ft), 2) + '<small> kW</small>');
+    }
+    const EP = g('labEP'), EU = g('labEU'), EN = g('labEN'), EC = g('labEC'), ER = g('labER'), EI = g('labEI');
+    if (![EP, EU, EN, EC, ER, EI].some(isNaN)) {
+      const In = MC.corrente(EP, EU, EN, EC, 3);
+      s('labEIn', MC.fmt.num(In, 1) + '<small> A</small>');
+      s('labEIp', MC.fmt.num(In * EI, 0) + '<small> A</small>');
+      s('labECn', MC.fmt.num(MC.torque(EP, ER), 1) + '<small> N·m</small>');
+      s('labEPr', MC.fmt.num(MC.potenciaAbsorvida(EP, EN), 2) + '<small> kW</small>');
+    }
+  }
+
+  function filtrar(termo) {
+    const t = termo.toLowerCase().trim();
+    let achou = 0;
+    SECOES.forEach(sec => {
+      const bloco = document.getElementById('sec-' + sec.id);
+      const link = document.querySelector(`.manual-nav a[href="#sec-${sec.id}"]`);
+      const casa = !t || (sec.t + ' ' + sec.h).toLowerCase().indexOf(t) >= 0;
+      if (bloco) bloco.classList.toggle('oculto', !casa);
+      if (link) link.style.display = casa ? '' : 'none';
+      if (casa) achou++;
+    });
+    const vazio = document.getElementById('manualVazio');
+    if (vazio) vazio.hidden = achou > 0;
+  }
+
+  return function () {
+    const alvo = document.getElementById('painel-manual');
+    if (!montado) {
+      alvo.innerHTML = `<div class="manual">
+        <nav class="manual-nav" aria-label="Seções do manual">
+          <div class="campo"><input id="buscaManual" placeholder="Buscar no manual" aria-label="Buscar no manual"></div>
+          ${SECOES.map((s, i) => `<a href="#sec-${s.id}" class="${i === 0 ? 'ativo' : ''}">${s.t}</a>`).join('')}
+        </nav>
+        <div class="manual-txt">
+          ${SECOES.map(s => `<div id="sec-${s.id}"><h3>${s.t}</h3>${s.h}</div>`).join('')}
+          <div class="vazio" id="manualVazio" hidden>Nenhuma seção corresponde à busca.</div>
+        </div></div>`;
+      montado = true;
+
+      document.getElementById('buscaManual').addEventListener('input', ev => filtrar(ev.target.value));
+      ['labP', 'labH', 'labT', 'labEP', 'labEU', 'labEN', 'labEC', 'labER', 'labEI'].forEach(id => {
+        const e = document.getElementById(id);
+        if (e) e.addEventListener('input', calcularLabs);
+      });
+      document.querySelectorAll('.manual-nav a').forEach(a => a.addEventListener('click', () => {
+        document.querySelectorAll('.manual-nav a').forEach(x => x.classList.remove('ativo'));
+        a.classList.add('ativo');
+      }));
+      calcularLabs();
+    }
+  };
+})();
+</script>
+<!-- ===================== TELA DE ABERTURA ===================== -->
+<style>
+#abertura{position:fixed;inset:0;z-index:9999;background:#0B0E11;
+  background-image:radial-gradient(120% 90% at 50% 42%,#1A2129 0%,#0E1216 45%,#070909 100%);
+  display:grid;place-items:center;overflow:hidden;
+  font:400 15px/1.55 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  color:#DEE5E9;transition:opacity .45s ease}
+#abertura.saindo{opacity:0;pointer-events:none}
+#abertura canvas{position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity .4s ease}
+#abertura canvas.visivel{opacity:1}
+
+#marcaAbertura{grid-area:1/1;position:relative;text-align:center;pointer-events:none;
+  opacity:0;transform:translateY(10px);transition:opacity .8s ease,transform .8s ease}
+#marcaAbertura.visivel{opacity:1;transform:none}
+#marcaAbertura .nome{font-size:clamp(34px,6vw,64px);font-weight:600;letter-spacing:-.02em;
+  text-shadow:0 2px 30px rgba(0,0,0,.6)}
+#marcaAbertura .nome b{color:#D89257;font-weight:600}
+#marcaAbertura .fio{width:64px;height:1px;background:#C87F45;margin:16px auto;opacity:.8}
+#marcaAbertura .sub{font:400 12.5px/1.6 ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  letter-spacing:.13em;text-transform:uppercase;color:#8FA0AD}
+
+#pular{position:absolute;top:18px;right:20px;z-index:3;background:transparent;
+  border:1px solid #2C353D;color:#8FA0AD;border-radius:3px;padding:6px 11px;
+  font:500 12px ui-sans-serif,system-ui,sans-serif;cursor:pointer;transition:.2s}
+#pular:hover{border-color:#C87F45;color:#E4D2C3}
+
+#legal{grid-area:1/1;position:relative;z-index:4;display:none;width:min(760px,calc(100vw - 32px));
+  max-height:min(86vh,760px);background:#151A1F;border:1px solid #2A333A;border-radius:6px;
+  box-shadow:0 40px 90px -30px rgba(0,0,0,.9);grid-template-rows:auto minmax(0,1fr) auto;
+  opacity:0;transform:translateY(14px);transition:opacity .5s ease,transform .5s ease}
+#legal.ativo{display:grid}
+#legal.entrou{opacity:1;transform:none}
+#legal header{padding:20px 26px 16px;border-bottom:1px solid #2A333A;display:flex;
+  align-items:baseline;gap:12px;flex-wrap:wrap}
+#legal header h2{margin:0;font-size:17px;font-weight:600;letter-spacing:-.01em}
+#legal header .versao{font:500 11px/1 ui-monospace,Menlo,Consolas,monospace;color:#8FA0AD;
+  border:1px solid #2A333A;border-radius:2px;padding:3px 6px}
+#legalTexto{overflow-y:auto;padding:18px 26px 22px;font-size:13.5px;line-height:1.62;color:#B7C3CC;
+  scrollbar-width:thin}
+#legalTexto h3{margin:18px 0 5px;font-size:12px;font-weight:600;letter-spacing:.06em;
+  text-transform:uppercase;color:#D89257}
+#legalTexto h3:first-child{margin-top:0}
+#legalTexto p{margin:0 0 9px}
+#legalTexto ul{margin:0 0 9px;padding-left:20px}
+#legalTexto li{margin-bottom:5px}
+#legalTexto strong{color:#DEE5E9;font-weight:600}
+#legal footer{padding:16px 26px 18px;border-top:1px solid #2A333A;display:flex;gap:16px;
+  align-items:center;justify-content:space-between;flex-wrap:wrap}
+#legal .aceite{display:flex;gap:10px;align-items:flex-start;font-size:13px;color:#B7C3CC;
+  cursor:pointer;max-width:400px}
+#legal .aceite input{width:16px;height:16px;margin:2px 0 0;accent-color:#C87F45;flex:0 0 auto;cursor:pointer}
+#legal .acoes{display:flex;gap:10px;align-items:center}
+#legal button.rec{background:transparent;border:1px solid #2C353D;color:#8FA0AD;border-radius:3px;
+  padding:9px 14px;font:500 13px ui-sans-serif,system-ui,sans-serif;cursor:pointer}
+#legal button.rec:hover{border-color:#4A555E;color:#B7C3CC}
+#legal button.ok{background:#A2592A;border:1px solid #A2592A;color:#fff;border-radius:3px;
+  padding:9px 18px;font:600 13px ui-sans-serif,system-ui,sans-serif;cursor:pointer}
+#legal button.ok:hover:not(:disabled){background:#B96A34;border-color:#B96A34}
+#legal button.ok:disabled{opacity:.38;cursor:not-allowed}
+#legal .recusado{color:#D96A5C;font-size:13px;padding:0 26px 18px;display:none}
+#legal.negado .recusado{display:block}
+body.abertura-ativa{overflow:hidden}
+@media (prefers-reduced-motion:reduce){#abertura canvas{opacity:1}}
+</style>
+
+<div id="abertura" role="dialog" aria-modal="true" aria-label="Abertura e avisos legais do MotorCalc">
+  <canvas id="cenaMotor" aria-hidden="true"></canvas>
+  <button id="pular" type="button">Pular</button>
+
+  <div id="marcaAbertura">
+    <div class="nome">Motor<b>Calc</b></div>
+    <div class="fio"></div>
+    <div class="sub">Seleção de motores de indução trifásicos</div>
+  </div>
+
+  <section id="legal" aria-labelledby="legalTitulo">
+    <header>
+      <h2 id="legalTitulo">Avisos legais e condições de uso</h2>
+      <span class="versao">v1.0</span>
+    </header>
+    <div id="legalTexto" tabindex="0">
+      <h3>1. Natureza da ferramenta</h3>
+      <p>O <strong>MotorCalc</strong> é uma ferramenta de <strong>apoio à decisão</strong> para pré-seleção e
+      dimensionamento estimativo de motores de indução trifásicos. Seus resultados têm caráter
+      <strong>indicativo e preliminar</strong> e não constituem projeto, memorial de cálculo, laudo, parecer
+      nem substituem a análise de profissional legalmente habilitado.</p>
+
+      <h3>2. Responsabilidade técnica</h3>
+      <p>A especificação final do acionamento, da proteção, do cabeamento e da partida é de responsabilidade
+      exclusiva do usuário e do responsável técnico do empreendimento, devendo observar as normas aplicáveis,
+      entre elas ABNT NBR 17094-1, ABNT NBR 5410, IEC 60034 e os requisitos do fabricante.</p>
+
+      <h3>3. Dados, catálogo e premissas</h3>
+      <ul>
+        <li>Os dados de catálogo embutidos são <strong>paramétricos e aproximados</strong>, gerados para fins de
+        comparação técnica; não representam produto comercial específico nem compromisso de desempenho.</li>
+        <li>Rendimento, fator de potência, correntes, torques e custos de ciclo de vida dependem de premissas
+        de tarifa, regime de carga e condições ambientais informadas pelo usuário.</li>
+        <li>Sempre confirme os valores na folha de dados oficial do fabricante antes da compra ou da instalação.</li>
+      </ul>
+
+      <h3>4. Segurança</h3>
+      <p>Instalação, ensaio e manutenção de máquinas elétricas envolvem <strong>risco elétrico e mecânico</strong>.
+      Nenhum resultado desta ferramenta autoriza intervenção em instalações energizadas. Aplicam-se integralmente
+      os requisitos de segurança do trabalho vigentes, incluindo a NR-10 e a NR-12.</p>
+
+      <h3>5. Ausência de garantia e limitação de responsabilidade</h3>
+      <p>O software é fornecido <strong>“no estado em que se encontra”</strong>, sem garantias expressas ou implícitas
+      de adequação a finalidade específica. Os autores não respondem por perdas, danos diretos ou indiretos,
+      lucros cessantes, paradas de produção ou falhas de equipamento decorrentes do uso ou da impossibilidade
+      de uso dos resultados aqui apresentados.</p>
+
+      <h3>6. Dados do usuário</h3>
+      <p>Os parâmetros informados são processados <strong>localmente no seu navegador</strong>. A ferramenta funciona
+      offline e não transmite dados de projeto a servidores externos.</p>
+
+      <h3>7. Propriedade intelectual</h3>
+      <p>O código, a interface e os modelos de cálculo são protegidos por direito autoral. É vedada a redistribuição
+      ou a comercialização sem autorização expressa do titular.</p>
+
+      <h3>8. Aceite</h3>
+      <p>Ao prosseguir, você declara ter lido e compreendido estes avisos, que atuará dentro dos limites da sua
+      habilitação profissional e que assume integralmente a responsabilidade pelo uso dos resultados.</p>
+    </div>
+    <p class="recusado" role="alert">Sem o aceite dos avisos legais o sistema não pode ser aberto. Você pode fechar
+    esta aba ou marcar a concordância para continuar.</p>
+    <footer>
+      <label class="aceite" for="chkAceite">
+        <input type="checkbox" id="chkAceite">
+        <span>Li, compreendi e concordo com os avisos legais e as condições de uso.</span>
+      </label>
+      <div class="acoes">
+        <button type="button" class="rec" id="btnRecusar">Não concordo</button>
+        <button type="button" class="ok" id="btnAceitar" disabled>Abrir o MotorCalc</button>
+      </div>
+    </footer>
+  </section>
+</div>
+
+<script>
+/* ---------- Abertura: animação 3D (WebGL) + aceite legal ---------- */
+(function(){
+  const DURACAO = 4.0;
+  const abertura = document.getElementById('abertura');
+  const marca    = document.getElementById('marcaAbertura');
+  const legal    = document.getElementById('legal');
+  const chk      = document.getElementById('chkAceite');
+  const btnOk    = document.getElementById('btnAceitar');
+  const btnNao   = document.getElementById('btnRecusar');
+  const btnPular = document.getElementById('pular');
+  const canvas   = document.getElementById('cenaMotor');
+  const appPartes = [].slice.call(document.querySelectorAll('body > header.topo, body > div.corpo, body > footer'));
+
+  document.body.classList.add('abertura-ativa');
+  appPartes.forEach(function(el){ el.setAttribute('aria-hidden','true'); el.setAttribute('inert',''); });
+
+  /* ---------- álgebra 4x4 ---------- */
+  function ident(){ return new Float32Array([1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1]); }
+  function mul(a,b){ const o=new Float32Array(16);
+    for(let c=0;c<4;c++) for(let r=0;r<4;r++){ let s=0;
+      for(let k=0;k<4;k++) s+=a[k*4+r]*b[c*4+k]; o[c*4+r]=s; } return o; }
+  function T(x,y,z){ const m=ident(); m[12]=x;m[13]=y;m[14]=z; return m; }
+  function S(s){ const m=ident(); m[0]=m[5]=m[10]=s; return m; }
+  function Rx(a){ const m=ident(),c=Math.cos(a),s=Math.sin(a); m[5]=c;m[6]=s;m[9]=-s;m[10]=c; return m; }
+  function Ry(a){ const m=ident(),c=Math.cos(a),s=Math.sin(a); m[0]=c;m[2]=-s;m[8]=s;m[10]=c; return m; }
+  function Rz(a){ const m=ident(),c=Math.cos(a),s=Math.sin(a); m[0]=c;m[1]=s;m[4]=-s;m[5]=c; return m; }
+  function persp(f,asp,n,fa){ const t=1/Math.tan(f/2), m=new Float32Array(16);
+    m[0]=t/asp; m[5]=t; m[10]=(fa+n)/(n-fa); m[11]=-1; m[14]=2*fa*n/(n-fa); return m; }
+  function look(e,c,u){
+    let z=[e[0]-c[0],e[1]-c[1],e[2]-c[2]]; let l=Math.hypot(z[0],z[1],z[2]); z=[z[0]/l,z[1]/l,z[2]/l];
+    let x=[u[1]*z[2]-u[2]*z[1], u[2]*z[0]-u[0]*z[2], u[0]*z[1]-u[1]*z[0]];
+    l=Math.hypot(x[0],x[1],x[2])||1; x=[x[0]/l,x[1]/l,x[2]/l];
+    const y=[z[1]*x[2]-z[2]*x[1], z[2]*x[0]-z[0]*x[2], z[0]*x[1]-z[1]*x[0]];
+    return new Float32Array([x[0],y[0],z[0],0, x[1],y[1],z[1],0, x[2],y[2],z[2],0,
+      -(x[0]*e[0]+x[1]*e[1]+x[2]*e[2]), -(y[0]*e[0]+y[1]*e[1]+y[2]*e[2]), -(z[0]*e[0]+z[1]*e[1]+z[2]*e[2]), 1]);
+  }
+
+  /* ---------- geometria ---------- */
+  function malha(){ return {p:[],n:[],i:[]}; }
+  function anexar(dst, src, m){
+    const off = dst.p.length/3;
+    for(let k=0;k<src.p.length;k+=3){
+      const x=src.p[k], y=src.p[k+1], z=src.p[k+2];
+      dst.p.push(m[0]*x+m[4]*y+m[8]*z+m[12], m[1]*x+m[5]*y+m[9]*z+m[13], m[2]*x+m[6]*y+m[10]*z+m[14]);
+      const nx=src.n[k], ny=src.n[k+1], nz=src.n[k+2];
+      dst.n.push(m[0]*nx+m[4]*ny+m[8]*nz, m[1]*nx+m[5]*ny+m[9]*nz, m[2]*nx+m[6]*ny+m[10]*nz);
+    }
+    for(let k=0;k<src.i.length;k++) dst.i.push(src.i[k]+off);
+    return dst;
+  }
+  function revolver(perfil, segs){
+    const g = malha();
+    const N = perfil.length;
+    const nr = [];
+    for(let i=0;i<N;i++){
+      const a = perfil[Math.max(0,i-1)], b = perfil[Math.min(N-1,i+1)];
+      let dr=b[0]-a[0], dz=b[1]-a[1], l=Math.hypot(dr,dz)||1;
+      nr.push([dz/l, -dr/l]);
+    }
+    for(let i=0;i<N;i++){
+      const r=perfil[i][0], z=perfil[i][1];
+      for(let j=0;j<=segs;j++){
+        const a=j/segs*Math.PI*2, c=Math.cos(a), s=Math.sin(a);
+        g.p.push(r*c, r*s, z);
+        g.n.push(nr[i][0]*c, nr[i][0]*s, nr[i][1]);
+      }
+    }
+    for(let i=0;i<N-1;i++) for(let j=0;j<segs;j++){
+      const a=i*(segs+1)+j, b=a+1, c=a+segs+1, d=c+1;
+      g.i.push(a,c,b, b,c,d);
+    }
+    return g;
+  }
+  function toro(R, r, sm, sn){
+    const g = malha();
+    for(let i=0;i<=sm;i++){
+      const u=i/sm*Math.PI*2, cu=Math.cos(u), su=Math.sin(u);
+      for(let j=0;j<=sn;j++){
+        const v=j/sn*Math.PI*2, cv=Math.cos(v), sv=Math.sin(v);
+        g.p.push((R+r*cv)*cu, (R+r*cv)*su, r*sv);
+        g.n.push(cv*cu, cv*su, sv);
+      }
+    }
+    for(let i=0;i<sm;i++) for(let j=0;j<sn;j++){
+      const a=i*(sn+1)+j, b=a+1, c=a+sn+1, d=c+1;
+      g.i.push(a,c,b, b,c,d);
+    }
+    return g;
+  }
+  function caixa(w,h,d){
+    const g=malha(), x=w/2,y=h/2,z=d/2;
+    const faces=[[[ x,-y,-z],[ x, y,-z],[ x, y, z],[ x,-y, z],[1,0,0]],
+                 [[-x,-y, z],[-x, y, z],[-x, y,-z],[-x,-y,-z],[-1,0,0]],
+                 [[-x, y,-z],[-x, y, z],[ x, y, z],[ x, y,-z],[0,1,0]],
+                 [[-x,-y, z],[-x,-y,-z],[ x,-y,-z],[ x,-y, z],[0,-1,0]],
+                 [[-x,-y, z],[ x,-y, z],[ x, y, z],[-x, y, z],[0,0,1]],
+                 [[ x,-y,-z],[-x,-y,-z],[-x, y,-z],[ x, y,-z],[0,0,-1]]];
+    faces.forEach(function(f){
+      const o=g.p.length/3;
+      for(let k=0;k<4;k++){ g.p.push(f[k][0],f[k][1],f[k][2]); g.n.push(f[4][0],f[4][1],f[4][2]); }
+      g.i.push(o,o+1,o+2, o,o+2,o+3);
+    });
+    return g;
+  }
+  const cilindro = function(r, z0, z1, segs){
+    return revolver([[0,z0],[r*0.999,z0],[r,z0+0.0001],[r,z1-0.0001],[r*0.999,z1],[0,z1]], segs);
+  };
+
+  /* estator (estático) */
+  const estator = malha();
+  anexar(estator, revolver([[0.62,-0.85],[0.95,-0.85],[0.95,0.85],[0.62,0.85],[0.62,-0.85]], 96), ident());
+  const fin = caixa(0.19,0.035,1.52);
+  for(let i=0;i<34;i++) anexar(estator, fin, mul(Rz(i/34*Math.PI*2), T(1.03,0,0)));
+  const bornes = malha();
+  anexar(bornes, caixa(0.34,0.30,0.58), T(0,1.03,-0.1));
+  anexar(bornes, caixa(0.12,0.10,0.12), T(0,1.22,-0.1));
+
+  /* enrolamentos (cobre) */
+  const enrol = malha();
+  const barra = caixa(0.115,0.06,1.78);
+  for(let i=0;i<30;i++) anexar(enrol, barra, mul(Rz((i+0.5)/30*Math.PI*2), T(0.675,0,0)));
+  anexar(enrol, toro(0.735,0.135,72,20), T(0,0,0.99));
+  anexar(enrol, toro(0.735,0.135,72,20), T(0,0,-0.99));
+
+  /* rotor (gira) */
+  const rotorAco = malha();
+  anexar(rotorAco, cilindro(0.55,-0.9,0.9,72), ident());
+  anexar(rotorAco, revolver([[0,-1.95],[0.125,-1.95],[0.125,1.62],[0,1.62]], 40), ident());
+  const gaiola = malha();
+  const rod = cilindro(0.032,-0.96,0.96,14);
+  for(let i=0;i<26;i++) anexar(gaiola, rod, mul(Rz(i/26*Math.PI*2), T(0.505,0,0)));
+  anexar(gaiola, toro(0.505,0.05,64,14), T(0,0,0.97));
+  anexar(gaiola, toro(0.505,0.05,64,14), T(0,0,-0.97));
+  const ventoinha = malha();
+  const pa = caixa(0.34,0.028,0.20);
+  for(let i=0;i<9;i++) anexar(ventoinha, pa, mul(mul(Rz(i/9*Math.PI*2), T(0.40,0,1.24)), Rx(0.62)));
+  anexar(ventoinha, cilindro(0.24,1.12,1.36,40), ident());
+
+  /* ---------- WebGL ---------- */
+  const gl = canvas.getContext('webgl', {antialias:true, alpha:true, premultipliedAlpha:false, preserveDrawingBuffer:true});
+  let pronto = !!gl, progr, buffers = [];
+
+  const VS = `attribute vec3 aP; attribute vec3 aN;
+  uniform mat4 uProj, uView, uModel;
+  varying vec3 vN, vW;
+  void main(){ vec4 w = uModel * vec4(aP,1.0); vW = w.xyz;
+    vN = mat3(uModel) * aN; gl_Position = uProj * uView * w; }`;
+
+  const FS = `precision highp float;
+  varying vec3 vN, vW;
+  uniform vec3 uCor, uOlho; uniform float uBrilho, uMetal;
+  vec3 luz(vec3 N, vec3 V, vec3 L, vec3 cor, float inten){
+    float d = max(dot(N,L), 0.0);
+    vec3 H = normalize(L+V);
+    float s = pow(max(dot(N,H),0.0), uBrilho);
+    return cor * inten * (uCor*d + vec3(1.0)*s*uMetal);
+  }
+  void main(){
+    vec3 N = normalize(vN);
+    vec3 V = normalize(uOlho - vW);
+    if(dot(N,V) < 0.0) N = -N;
+    vec3 c = uCor * (0.14 + 0.10*max(N.y,0.0));
+    c += luz(N,V, normalize(vec3(-0.55,0.85,0.65)), vec3(1.0,0.96,0.90), 1.05);
+    c += luz(N,V, normalize(vec3(0.90,0.15,0.35)), vec3(0.55,0.70,0.95), 0.42);
+    c += luz(N,V, normalize(vec3(0.10,-0.45,-0.95)), vec3(1.0,0.72,0.45), 0.34);
+    float f = pow(1.0 - max(dot(N,V),0.0), 3.0);
+    c += vec3(0.36,0.46,0.58) * f * 0.30;
+    float neb = clamp((length(vW.xy)*0.14 + 0.02), 0.0, 0.35);
+    c = mix(c, vec3(0.055,0.070,0.085), neb*0.5);
+    gl_FragColor = vec4(pow(max(c,0.0), vec3(1.0/2.2)), 1.0);
+  }`;
+
+  function compilar(tipo, src){
+    const s = gl.createShader(tipo); gl.shaderSource(s, src); gl.compileShader(s);
+    if(!gl.getShaderParameter(s, gl.COMPILE_STATUS)){ console.warn(gl.getShaderInfoLog(s)); return null; }
+    return s;
+  }
+  function subir(g){
+    const vp = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, vp);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(g.p), gl.STATIC_DRAW);
+    const vn = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, vn);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(g.n), gl.STATIC_DRAW);
+    const ib = gl.createBuffer(); gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ib);
+    const grande = g.p.length/3 > 65535;
+    const arr = grande ? new Uint32Array(g.i) : new Uint16Array(g.i);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, arr, gl.STATIC_DRAW);
+    return {vp:vp, vn:vn, ib:ib, n:g.i.length, tipo: grande ? gl.UNSIGNED_INT : gl.UNSIGNED_SHORT};
+  }
+
+  let pecas = [];
+  if(pronto){
+    const vs = compilar(gl.VERTEX_SHADER, VS), fs = compilar(gl.FRAGMENT_SHADER, FS);
+    if(!vs || !fs){ pronto = false; }
+    else {
+      progr = gl.createProgram(); gl.attachShader(progr, vs); gl.attachShader(progr, fs);
+      gl.linkProgram(progr);
+      if(!gl.getProgramParameter(progr, gl.LINK_STATUS)){ pronto = false; }
+    }
+  }
+  if(pronto){
+    if(gl.getExtension('OES_element_index_uint') === null){ /* fatiado abaixo se preciso */ }
+    gl.useProgram(progr);
+    gl.enable(gl.DEPTH_TEST);
+    pecas = [
+      {b:subir(estator),   cor:[0.215,0.245,0.275], brilho:26, metal:0.55, grupo:'e'},
+      {b:subir(bornes),    cor:[0.130,0.150,0.170], brilho:18, metal:0.35, grupo:'e'},
+      {b:subir(enrol),     cor:[0.520,0.245,0.095], brilho:44, metal:0.75, grupo:'c'},
+      {b:subir(rotorAco),  cor:[0.420,0.455,0.490], brilho:60, metal:0.95, grupo:'r'},
+      {b:subir(gaiola),    cor:[0.640,0.360,0.150], brilho:52, metal:0.85, grupo:'r'},
+      {b:subir(ventoinha), cor:[0.105,0.120,0.135], brilho:22, metal:0.40, grupo:'r'}
+    ];
+  }
+
+  function medir(){
+    if(!pronto) return;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width  = Math.round(canvas.clientWidth  * dpr);
+    canvas.height = Math.round(canvas.clientHeight * dpr);
+    gl.viewport(0,0,canvas.width,canvas.height);
+  }
+  window.addEventListener('resize', medir);
+
+  const eio = function(t){ return t<0.5 ? 4*t*t*t : 1-Math.pow(-2*t+2,3)/2; };
+  const eout = function(t){ return 1-Math.pow(1-t,3); };
+  const faixa = function(t,a,b){ return Math.max(0, Math.min(1, (t-a)/(b-a))); };
+
+  const uP = pronto ? {
+    proj: gl.getUniformLocation(progr,'uProj'), view: gl.getUniformLocation(progr,'uView'),
+    model: gl.getUniformLocation(progr,'uModel'), cor: gl.getUniformLocation(progr,'uCor'),
+    olho: gl.getUniformLocation(progr,'uOlho'), brilho: gl.getUniformLocation(progr,'uBrilho'),
+    metal: gl.getUniformLocation(progr,'uMetal'),
+    aP: gl.getAttribLocation(progr,'aP'), aN: gl.getAttribLocation(progr,'aN')
+  } : null;
+
+  let t0 = null, giro = 0, encerrado = false;
+
+  function quadro(agora){
+    if(t0 === null){ t0 = agora; }
+    const t = Math.min((agora - t0)/1000, DURACAO);
+    const dt = Math.min(0.05, (agora - (quadro.ult || agora))/1000); quadro.ult = agora;
+
+    if(pronto){
+      const asp = canvas.width / Math.max(1, canvas.height);
+      const k = eio(t/DURACAO);
+      const raio = 3.05 + 1.75*k;
+      const az = 2.00 - 1.15*k, el = 0.62 - 0.34*k;
+      const olho = [raio*Math.sin(az)*Math.cos(el), raio*Math.sin(el), raio*Math.cos(az)*Math.cos(el)];
+      const view = look(olho, [0, 0.02, 0], [0,1,0]);
+      gl.uniformMatrix4fv(uP.proj, false, persp(0.80, asp, 0.1, 60));
+      gl.uniformMatrix4fv(uP.view, false, view);
+      gl.uniform3fv(uP.olho, new Float32Array(olho));
+
+      const zE = -8 * (1 - eout(faixa(t,0,0.95)));
+      const zR =  8 * (1 - eout(faixa(t,0.18,1.15)));
+      const esc = faixa(t,0.85,1.35);
+      const escC = esc < 1 ? eout(esc) * (1 + 0.10*Math.sin(esc*Math.PI)) : 1;
+      const rpm = eout(faixa(t,1.15,DURACAO)) * 26;
+      giro += rpm * dt;
+
+      const mE = mul(T(0,0,zE), Rz(0.06*Math.sin(t*1.1)));
+      const mR = mul(T(0,0,zR), Rz(giro));
+      const mC = mul(mE, S(Math.max(0.001, escC)));
+
+      gl.clearColor(0,0,0,0);
+      gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+      pecas.forEach(function(p){
+        const m = p.grupo === 'r' ? mR : (p.grupo === 'c' ? mC : mE);
+        gl.uniformMatrix4fv(uP.model, false, m);
+        gl.uniform3fv(uP.cor, new Float32Array(p.cor));
+        gl.uniform1f(uP.brilho, p.brilho);
+        gl.uniform1f(uP.metal, p.metal);
+        gl.bindBuffer(gl.ARRAY_BUFFER, p.b.vp);
+        gl.enableVertexAttribArray(uP.aP); gl.vertexAttribPointer(uP.aP,3,gl.FLOAT,false,0,0);
+        gl.bindBuffer(gl.ARRAY_BUFFER, p.b.vn);
+        gl.enableVertexAttribArray(uP.aN); gl.vertexAttribPointer(uP.aN,3,gl.FLOAT,false,0,0);
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, p.b.ib);
+        gl.drawElements(gl.TRIANGLES, p.b.n, p.b.tipo, 0);
+      });
+    }
+
+    if(t >= 1.55 && !marca.classList.contains('visivel')) marca.classList.add('visivel');
+    if(t >= DURACAO){ if(!encerrado) mostrarLegal(); return; }
+    requestAnimationFrame(quadro);
+  }
+
+  function mostrarLegal(){
+    encerrado = true;
+    marca.classList.remove('visivel');
+    marca.style.display = 'none';
+    btnPular.style.display = 'none';
+    canvas.style.transition = 'opacity .6s ease';
+    canvas.style.opacity = '0.18';
+    legal.classList.add('ativo');
+    setTimeout(function(){ legal.classList.add('entrou'); chk.focus(); }, 20);
+  }
+
+  function abrirSistema(){
+    abertura.classList.add('saindo');
+    document.body.classList.remove('abertura-ativa');
+    appPartes.forEach(function(el){ el.removeAttribute('aria-hidden'); el.removeAttribute('inert'); });
+    setTimeout(function(){ abertura.remove(); window.dispatchEvent(new Event('resize')); }, 500);
+  }
+
+  chk.addEventListener('change', function(){
+    btnOk.disabled = !chk.checked;
+    if(chk.checked) legal.classList.remove('negado');
+  });
+  btnOk.addEventListener('click', function(){ if(chk.checked) abrirSistema(); });
+  btnNao.addEventListener('click', function(){ legal.classList.add('negado'); chk.checked=false; btnOk.disabled=true; });
+  btnPular.addEventListener('click', mostrarLegal);
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape' && !encerrado) mostrarLegal();
+  });
+
+  if(pronto){
+    medir();
+    canvas.classList.add('visivel');
+    requestAnimationFrame(quadro);
+  } else {
+    canvas.style.display = 'none';
+    marca.classList.add('visivel');
+    setTimeout(mostrarLegal, 1200);
+  }
+})();
+</script>
+
+</body>
+</html>
