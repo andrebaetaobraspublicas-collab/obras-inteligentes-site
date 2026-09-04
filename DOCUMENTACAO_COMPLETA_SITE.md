@@ -187,7 +187,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/cimbrepro/` | 188067 bytes | 188067 caracteres |
 | `/alvenariapro/` | 474835 bytes | 474835 caracteres |
 | `/andaimefach-pro/` | 227525 bytes | 224792 caracteres |
-| `/recebeobra-pro/` | 617407 bytes | 617407 caracteres |
+| `/recebeobra-pro/` | 686289 bytes | 674003 caracteres |
 | `/criticaopex/` | 631053 bytes | 631053 caracteres |
 | `/pmoc-manager/` | 656063 bytes | 652005 caracteres |
 | `/mobilizasicro/` | 1337033 bytes | 1337033 caracteres |
@@ -1495,6 +1495,13 @@ Ultima inclusao:
 - Fonte: `C:\Users\ACER\Documents\Downloads\RecebeObraPro_v1.2B (1) (1).html`
 - Data: 14/08/2026
 - Alteracao: inclusao de novo card na home e publicacao do aplicativo RecebeObra Pro v1.2B como HTML standalone.
+
+Ultima atualizacao:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\RecebeObra_Pro_v1.2C_Manual_Interativo.html`
+- Data: 04/09/2026
+- Alteracao: substituicao integral de `recebeobra-pro/index.html` pela versao RecebeObra Pro v1.2C com manual interativo.
+- Backup da versao anterior salvo em `C:\Obras Inteligentes\backups\recebeobra-pro-index-before-v1-2c-manual-interativo-20260904-0924.html`.
 
 Observacoes:
 

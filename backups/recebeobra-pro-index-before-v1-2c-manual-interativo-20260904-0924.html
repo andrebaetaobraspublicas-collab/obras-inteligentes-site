@@ -341,56 +341,12 @@ body.app-locked{overflow:hidden}body.app-locked .topbar,body.app-locked .sidebar
 .report-card h4{margin:0 0 6px;color:var(--navy)}
 .report-card p{font-size:12px;color:var(--muted);margin:0 0 12px}
 
-/* ajuda / manual interativo */
-.help-flow{display:grid;grid-template-columns:repeat(auto-fit,minmax(245px,1fr));gap:12px}
-.help-step{border:1px solid var(--line);border-radius:11px;padding:14px;background:#fff;position:relative;overflow:hidden;transition:border .15s,box-shadow .15s,transform .15s}
-.help-step:hover{border-color:#bdc7d6;box-shadow:0 7px 20px rgba(23,35,61,.08);transform:translateY(-2px)}
-.help-step .num{width:32px;height:32px;border-radius:9px;background:var(--orange);color:var(--navy);font-weight:900;display:grid;place-items:center;margin-bottom:9px}
-.help-step h4{margin:0 0 6px;color:var(--navy);font-size:14px}.help-step p{margin:0;color:var(--muted);font-size:12px;line-height:1.48}
-.help-step .manual-step-why{margin-top:9px;padding-top:9px;border-top:1px dashed var(--line);font-size:11.4px;color:#4b5970;line-height:1.45}
-.help-step .manual-step-actions{display:flex;gap:7px;align-items:center;margin-top:11px}
-
-.manual-root{--manual-side:250px;scroll-margin-top:86px}
-.manual-hero{position:relative;overflow:hidden;background:linear-gradient(135deg,var(--navy) 0%,var(--navy-2) 55%,var(--navy-3) 100%);color:#fff;border-radius:16px;padding:25px 27px;margin-bottom:15px;box-shadow:0 12px 32px rgba(23,35,61,.18);display:grid;grid-template-columns:minmax(0,1.35fr) minmax(310px,.65fr);gap:22px;align-items:center}
-.manual-hero:before{content:"";position:absolute;width:330px;height:330px;border-radius:50%;right:-115px;top:-170px;background:radial-gradient(circle,rgba(232,120,25,.35),rgba(232,120,25,0) 68%)}
-.manual-hero:after{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:30px 30px;mask-image:linear-gradient(90deg,#000,transparent 85%);pointer-events:none}
-.manual-hero-copy,.manual-hero-stats{position:relative;z-index:1}.manual-kicker{text-transform:uppercase;letter-spacing:.13em;font-size:10.5px;color:#f5aa5c;font-weight:850;margin-bottom:8px}
-.manual-hero h2{font-size:clamp(23px,3vw,36px);line-height:1.1;margin:0 0 9px}.manual-hero p{margin:0;color:#cdd7e8;line-height:1.58;max-width:72ch}
-.manual-hero-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}.manual-hero .btn{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.2);color:#fff}.manual-hero .btn:hover{background:rgba(255,255,255,.17)}.manual-hero .btn.primary{background:var(--orange);border-color:var(--orange);color:var(--navy)}
-.manual-hero-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.manual-stat{border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.075);border-radius:11px;padding:12px;backdrop-filter:blur(5px)}.manual-stat b{font-size:21px;display:block;color:#fff}.manual-stat span{font-size:10.5px;color:#bdc9dd;text-transform:uppercase;letter-spacing:.045em;display:block;margin-top:3px}
-
-.manual-search-panel{background:#fff;border:1px solid var(--line);border-radius:12px;padding:13px 15px;margin-bottom:15px;display:flex;gap:10px;align-items:center;box-shadow:0 2px 8px rgba(23,35,61,.04)}
-.manual-search-icon{width:36px;height:36px;border-radius:9px;background:#fff0e3;color:#a94d08;display:grid;place-items:center;font-weight:900;flex:none}.manual-search-panel .input{font-size:14px}.manual-search-meta{font-size:11px;color:var(--muted);white-space:nowrap}.manual-search-empty{display:none;margin:0 0 14px}.manual-search-empty.visible{display:block}.manual-filtered-out,.manual-section-filtered{display:none!important}
-
-.manual-layout{display:grid;grid-template-columns:var(--manual-side) minmax(0,1fr);gap:16px;align-items:start}.manual-nav{position:sticky;top:84px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:11px;box-shadow:0 3px 12px rgba(23,35,61,.05)}
-.manual-nav-title{font-size:10.5px;text-transform:uppercase;letter-spacing:.09em;color:#8996aa;font-weight:850;padding:7px 9px 8px}.manual-nav button{width:100%;border:0;background:transparent;border-radius:8px;padding:9px 10px;text-align:left;color:#40506a;font-size:12px;font-weight:720;display:flex;gap:8px;align-items:center}.manual-nav button:hover{background:#f2f5f9;color:var(--navy)}.manual-nav button span{width:23px;height:23px;border-radius:6px;display:grid;place-items:center;background:#eef2f7;color:var(--navy);font-size:10px;font-weight:900;flex:none}.manual-nav-note{border-top:1px solid var(--line);margin-top:8px;padding:10px 9px 4px;color:var(--muted);font-size:10.8px;line-height:1.45}
-.manual-content{min-width:0}.manual-section{scroll-margin-top:86px;margin-bottom:18px}.manual-section-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin:0 0 11px;padding:2px 2px 0}.manual-section-title{display:flex;gap:11px;align-items:flex-start}.manual-section-no{width:34px;height:34px;border-radius:10px;background:var(--navy);color:#fff;display:grid;place-items:center;font-weight:900;font-size:11px;flex:none}.manual-section-head h2{font-size:20px;line-height:1.2;margin:0;color:var(--navy)}.manual-section-head p{font-size:12px;color:var(--muted);line-height:1.45;margin:4px 0 0}.manual-section-tools{display:flex;gap:7px;flex-wrap:wrap}
-
-.manual-intro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}.manual-intro-card{background:#fff;border:1px solid var(--line);border-radius:11px;padding:14px}.manual-intro-card .mic-icon{width:34px;height:34px;border-radius:9px;background:#edf3fb;color:var(--blue);display:grid;place-items:center;font-weight:900;margin-bottom:9px}.manual-intro-card h3{font-size:13.5px;margin:0 0 5px;color:var(--navy)}.manual-intro-card p{font-size:11.7px;color:var(--muted);line-height:1.48;margin:0}
-.manual-callout{border:1px solid #c8d8ea;border-left:5px solid var(--blue);background:linear-gradient(135deg,#edf5ff,#fff);border-radius:10px;padding:13px 14px;font-size:12.2px;color:#344e6e;line-height:1.55;margin:11px 0}.manual-callout strong{color:var(--navy)}.manual-callout.orange{border-color:#f0d1b4;border-left-color:var(--orange);background:linear-gradient(135deg,#fff4e9,#fff);color:#65441f}.manual-callout.green{border-color:#bfdfce;border-left-color:var(--green);background:linear-gradient(135deg,#ecf8f2,#fff);color:#2f5a45}.manual-callout.red{border-color:#ecc5c5;border-left-color:var(--red);background:linear-gradient(135deg,#fdf0f0,#fff);color:#713939}
-
-.manual-accordion{background:#fff;border:1px solid var(--line);border-radius:11px;margin-bottom:9px;overflow:hidden;transition:border .15s,box-shadow .15s}.manual-accordion[open]{border-color:#bdc8d8;box-shadow:0 5px 17px rgba(23,35,61,.06)}.manual-accordion>summary{list-style:none;cursor:pointer;padding:14px 46px 14px 15px;position:relative;display:flex;gap:11px;align-items:flex-start}.manual-accordion>summary::-webkit-details-marker{display:none}.manual-accordion>summary:after{content:"+";position:absolute;right:15px;top:12px;width:25px;height:25px;border-radius:7px;background:#eef2f7;color:var(--navy);display:grid;place-items:center;font-size:17px;font-weight:700}.manual-accordion[open]>summary:after{content:"−";background:var(--navy);color:#fff}.manual-accordion>summary:hover{background:#fafbfd}.manual-accordion-icon{width:34px;height:34px;border-radius:9px;background:#fff0e3;color:#aa4c07;display:grid;place-items:center;font-weight:900;flex:none}.manual-accordion-title{font-size:13.8px;font-weight:830;color:var(--navy)}.manual-accordion-summary{font-size:11.6px;color:var(--muted);line-height:1.4;margin-top:3px}.manual-accordion-body{border-top:1px solid var(--line);padding:15px 17px 16px;color:#445168;font-size:12.4px;line-height:1.62}.manual-accordion-body p{margin:0 0 10px}.manual-accordion-body p:last-child{margin-bottom:0}.manual-accordion-body ul,.manual-accordion-body ol{margin:8px 0 10px;padding-left:20px}.manual-accordion-body li{margin:5px 0}.manual-distinction{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:10px 0}.manual-distinction>div{border:1px solid var(--line);border-radius:9px;padding:10px;background:#fafbfd}.manual-distinction b{display:block;color:var(--navy);margin-bottom:3px}.manual-topic-tag{display:inline-flex;border-radius:999px;padding:3px 7px;background:#eef2f7;color:#58667d;font-size:9.7px;font-weight:800;text-transform:uppercase;letter-spacing:.045em;margin-bottom:5px}
-
-.manual-phase-flow{display:flex;align-items:stretch;gap:7px;overflow-x:auto;padding:5px 1px 10px}.manual-phase{min-width:145px;flex:1;border:1px solid var(--line);border-top:4px solid var(--orange);border-radius:9px;background:#fff;padding:10px}.manual-phase b{display:block;color:var(--navy);font-size:11.5px}.manual-phase span{display:block;color:var(--muted);font-size:10.5px;line-height:1.42;margin-top:4px}.manual-phase-arrow{display:grid;place-items:center;color:var(--orange);font-weight:900;flex:none}
-
-.manual-formula-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.manual-formula{background:#fff;border:1px solid var(--line);border-radius:11px;padding:14px;position:relative;overflow:hidden}.manual-formula:before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--orange)}.manual-formula-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.manual-formula-symbol{font-size:18px;font-weight:900;color:var(--navy)}.manual-formula-current{border-radius:999px;background:#eef2f7;color:#4f5d74;padding:4px 8px;font-size:10.5px;font-weight:800;white-space:nowrap}.manual-equation{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#f5f7fa;border:1px solid var(--line);border-radius:7px;padding:8px 9px;margin:9px 0;color:#2e3f58;font-size:11.4px}.manual-formula p{font-size:11.5px;color:var(--muted);line-height:1.48;margin:0}
-.manual-live-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;margin-top:11px}.manual-readiness{border:1px solid var(--line);border-radius:11px;background:#fff;overflow:hidden}.manual-readiness-head{padding:12px 14px;color:#fff;display:flex;justify-content:space-between;gap:10px;align-items:center}.manual-readiness.green .manual-readiness-head{background:var(--green)}.manual-readiness.yellow .manual-readiness-head{background:var(--amber)}.manual-readiness.red .manual-readiness-head{background:var(--red)}.manual-readiness-head b{font-size:13px}.manual-readiness-head span{font-size:10px;text-transform:uppercase;letter-spacing:.05em;opacity:.88}.manual-readiness-body{padding:12px 14px}.manual-readiness-body p{font-size:11.5px;color:var(--muted);line-height:1.45;margin:0 0 9px}.manual-counts{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
-
-.manual-screen-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.manual-screen-card{background:#fff;border:1px solid var(--line);border-radius:11px;overflow:hidden}.manual-screen-card>summary{list-style:none;cursor:pointer;padding:13px 42px 13px 13px;position:relative;display:flex;gap:10px;align-items:center}.manual-screen-card>summary::-webkit-details-marker{display:none}.manual-screen-card>summary:after{content:"+";position:absolute;right:12px;top:11px;width:24px;height:24px;border-radius:7px;background:#eef2f7;display:grid;place-items:center;color:var(--navy);font-weight:800}.manual-screen-card[open]>summary:after{content:"−";background:var(--navy);color:#fff}.manual-screen-card[open]{box-shadow:0 5px 15px rgba(23,35,61,.06);border-color:#bdc8d8}.manual-screen-no{width:31px;height:31px;border-radius:8px;background:var(--navy);color:#fff;display:grid;place-items:center;font-size:10px;font-weight:900;flex:none}.manual-screen-card h3{font-size:13.2px;margin:0;color:var(--navy)}.manual-screen-card .manual-screen-sub{font-size:10.7px;color:var(--muted);margin-top:2px}.manual-screen-body{border-top:1px solid var(--line);padding:13px}.manual-screen-body dl{margin:0}.manual-screen-body dt{font-size:10px;text-transform:uppercase;letter-spacing:.045em;font-weight:850;color:#6d798c;margin-top:9px}.manual-screen-body dt:first-child{margin-top:0}.manual-screen-body dd{font-size:11.7px;line-height:1.48;color:#40506a;margin:3px 0 0}.manual-screen-action{margin-top:11px;display:flex;gap:7px;align-items:center;flex-wrap:wrap}
-
-.manual-status-flow{display:flex;gap:7px;align-items:center;overflow-x:auto;padding:4px 1px 10px}.manual-status-node{min-width:132px;border:1px solid var(--line);border-radius:9px;background:#fff;padding:9px 10px;text-align:center}.manual-status-node b{display:block;font-size:11px;color:var(--navy)}.manual-status-node span{display:block;font-size:9.9px;color:var(--muted);margin-top:3px;line-height:1.35}.manual-status-arrow{color:var(--orange);font-weight:900;flex:none}
-.manual-matrix{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.manual-matrix-card{border:1px solid var(--line);border-radius:9px;background:#fff;padding:11px}.manual-matrix-card h4{margin:0 0 5px;color:var(--navy);font-size:12.4px}.manual-matrix-card p{margin:0;font-size:11px;color:var(--muted);line-height:1.45}
-
-.manual-glossary-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.manual-glossary{border:1px solid var(--line);border-radius:10px;background:#fff;padding:11px}.manual-glossary b{display:block;color:var(--navy);font-size:12.3px;margin-bottom:4px}.manual-glossary p{font-size:10.9px;color:var(--muted);line-height:1.44;margin:0}
-
-.manual-checklist{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.manual-checkitem{display:flex;gap:9px;align-items:flex-start;border:1px solid var(--line);background:#fff;border-radius:9px;padding:10px;font-size:11.7px;color:#40506a;line-height:1.42}.manual-checkitem input{margin-top:3px;accent-color:var(--orange)}
-.manual-question{border:1px solid var(--line);border-radius:11px;background:#fff;padding:14px;margin-bottom:9px}.manual-question legend{font-weight:820;color:var(--navy);font-size:12.7px;padding:0 5px}.manual-options{display:grid;gap:6px;margin-top:8px}.manual-option{display:flex;gap:8px;align-items:flex-start;border:1px solid #e2e6ed;border-radius:8px;padding:8px 9px;font-size:11.6px;color:#445168;background:#fafbfd}.manual-option:hover{border-color:#c2cada;background:#fff}.manual-option input{margin-top:2px;accent-color:var(--navy)}.manual-question.correct{border-color:#9fd2b6;background:#f5fbf8}.manual-question.incorrect{border-color:#e4adad;background:#fff8f8}.manual-q-result{font-size:11.4px;line-height:1.45;margin-top:9px;min-height:1em;color:var(--muted)}.manual-question.correct .manual-q-result{color:#236342}.manual-question.incorrect .manual-q-result{color:#873b3b}.manual-quiz-feedback{border-radius:10px;padding:11px 13px;background:#eef2f7;color:#425069;font-size:12px;font-weight:720;margin-top:10px;display:none}.manual-quiz-feedback.visible{display:block}.manual-quiz-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-
-.manual-faq-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.manual-tipline{font-size:11px;color:var(--muted);display:flex;gap:7px;align-items:flex-start;margin-top:8px}.manual-tipline:before{content:"i";width:18px;height:18px;border-radius:50%;background:#eaf3fd;color:var(--blue);display:grid;place-items:center;font-weight:900;flex:none;font-size:10px}
-
-@media(max-width:1180px){.manual-hero{grid-template-columns:1fr}.manual-layout{grid-template-columns:210px minmax(0,1fr)}.manual-intro-grid,.manual-glossary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:900px){.manual-layout{grid-template-columns:1fr}.manual-nav{position:static;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}.manual-nav-title,.manual-nav-note{grid-column:1/-1}.manual-nav button{padding:8px}.manual-screen-grid,.manual-formula-grid,.manual-live-grid{grid-template-columns:1fr}}
-@media(max-width:620px){.manual-hero{padding:19px 16px}.manual-hero-stats,.manual-intro-grid,.manual-glossary-grid,.manual-matrix,.manual-checklist,.manual-faq-grid{grid-template-columns:1fr}.manual-search-panel{align-items:stretch;flex-wrap:wrap}.manual-search-panel .input{order:1;flex-basis:calc(100% - 48px)}.manual-search-meta{order:3;width:100%;white-space:normal}.manual-nav{grid-template-columns:repeat(2,minmax(0,1fr))}.manual-distinction{grid-template-columns:1fr}.manual-section-head{flex-direction:column}.manual-section-tools{width:100%}}
+/* ajuda */
+.help-flow{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.help-step{border:1px solid var(--line);border-radius:9px;padding:13px;background:#fff}
+.help-step .num{width:28px;height:28px;border-radius:50%;background:var(--orange);color:var(--navy);font-weight:900;display:grid;place-items:center;margin-bottom:8px}
+.help-step h4{margin:0 0 5px;color:var(--navy);font-size:13.5px}
+.help-step p{margin:0;color:var(--muted);font-size:11.8px}
 
 /* responsividade */
 @media(max-width:1180px){
@@ -455,7 +411,7 @@ body.app-locked{overflow:hidden}body.app-locked .topbar,body.app-locked .sidebar
       <div class="splash-kicker">Prontuário digital da entrega da obra</div>
       <div class="splash-logo"><div class="splash-logo-mark">RO</div><div><h1>RecebeObra <span>Pro</span></h1></div></div>
       <p>Comissionamento, ensaios, vistoria, punch list e recebimento técnico de obras públicas em uma única base rastreável.</p>
-      <div class="splash-version">Versão 1.2C · manual interativo ampliado</div>
+      <div class="splash-version">Versão 1.2B · aplicação local</div>
     </div>
   </div>
   <div class="splash-progress-wrap"><div class="splash-progress"><span></span></div>Preparando o ambiente técnico e o armazenamento local</div>
@@ -463,7 +419,7 @@ body.app-locked{overflow:hidden}body.app-locked .topbar,body.app-locked .sidebar
 
 <div class="opening-layer legal-gate" id="legalGate" role="dialog" aria-modal="true" aria-labelledby="legalTitle">
   <div class="legal-card">
-    <div class="legal-head"><div class="legal-head-mark">RO</div><div><h2 id="legalTitle">Avisos legais e condições de uso</h2><p>Leia atentamente antes de acessar o RecebeObra Pro v1.2C.</p></div></div>
+    <div class="legal-head"><div class="legal-head-mark">RO</div><div><h2 id="legalTitle">Avisos legais e condições de uso</h2><p>Leia atentamente antes de acessar o RecebeObra Pro v1.2B.</p></div></div>
     <div class="legal-body">
       <h3>Responsabilidade técnica e administrativa</h3>
       <div class="legal-list">
@@ -482,7 +438,7 @@ body.app-locked{overflow:hidden}body.app-locked .topbar,body.app-locked .sidebar
   <button class="menu-toggle" id="menuToggle" type="button" aria-label="Abrir menu">☰</button>
   <div class="brand">
     <div class="brand-mark">RO</div>
-    <div><div class="brand-title">RecebeObra <span>Pro</span></div><div class="brand-sub">Comissionamento e recebimento · v1.2C</div></div>
+    <div><div class="brand-title">RecebeObra <span>Pro</span></div><div class="brand-sub">Comissionamento e recebimento · v1.2B</div></div>
   </div>
   <div class="project-head">
     <div class="project-name" id="headerProjectName">Nova obra pública</div>
@@ -493,7 +449,6 @@ body.app-locked{overflow:hidden}body.app-locked .topbar,body.app-locked .sidebar
   <div class="top-actions">
     <button class="btn" type="button" data-action="save-now">Salvar</button>
     <button class="btn" type="button" data-action="export-backup"><span class="desktop-label">Backup</span> ↓</button>
-    <button class="btn" type="button" data-view-jump="help" title="Abrir o manual interativo"><span class="desktop-label">Manual</span> ?</button>
     <button class="btn primary" type="button" data-view-jump="reports"><span class="desktop-label">Relatórios</span> ▣</button>
   </div>
 </header>
@@ -524,7 +479,7 @@ body.app-locked{overflow:hidden}body.app-locked .topbar,body.app-locked .sidebar
   <div class="nav-group">Saídas e administração</div>
   <button class="nav-btn" data-view="reports"><span class="nav-icon">17</span>Relatórios</button>
   <button class="nav-btn" data-view="settings"><span class="nav-icon">18</span>Configurações</button>
-  <button class="nav-btn" data-view="help"><span class="nav-icon">?</span>Manual interativo</button>
+  <button class="nav-btn" data-view="help"><span class="nav-icon">?</span>Ajuda / Manual</button>
   <div class="sidebar-foot">Dados mantidos localmente no navegador. Anexos só saem do dispositivo mediante ação explícita de exportação.</div>
 </aside>
 
@@ -543,9 +498,9 @@ body.app-locked{overflow:hidden}body.app-locked .topbar,body.app-locked .sidebar
 'use strict';
 
 // ============================================================
-// RecebeObra Pro v1.2C — manual interativo, punch list, prontidão e relatórios profissionais
+// RecebeObra Pro v1.2B — punch list avançado, prontidão e relatórios profissionais
 // ============================================================
-const APP_VERSION = '1.2C.0';
+const APP_VERSION = '1.2B.0';
 const TECHNICAL_LIBRARY_VERSION = '1.2A-2026-08';
 const STORAGE_KEY = 'recebeobra_pro_project_v1';
 const CUSTOM_MODELS_KEY = 'recebeobra_pro_custom_models_v1';
@@ -2717,7 +2672,7 @@ function renderSettings(){
   <div class="card"><h3 class="section-title">Gestão dos dados</h3><div class="page-actions" style="justify-content:flex-start">
     <button class="btn outline" data-action="save-now">Salvar agora</button><button class="btn outline" data-action="export-backup">Backup completo</button><button class="btn outline" data-action="import-backup">Restaurar backup</button><button class="btn outline" data-action="export-metadata">JSON sem anexos</button><button class="btn danger" data-action="new-project">Criar novo projeto</button>
   </div><div class="notice warning" style="margin-top:14px">O backup completo incorpora os anexos em Base64 e pode gerar um arquivo grande. O JSON sem anexos contém apenas os cadastros e metadados.</div></div></div>`+
-  `<div class="card"><div class="card-head"><div><h3 class="card-title">Identidade dos relatórios</h3><div class="card-note">Informações institucionais aplicadas às capas, cabeçalhos e rodapés.</div></div><span class="badge purple">v1.2C</span></div><div class="grid three">
+  `<div class="card"><div class="card-head"><div><h3 class="card-title">Identidade dos relatórios</h3><div class="card-note">Informações institucionais aplicadas às capas, cabeçalhos e rodapés.</div></div><span class="badge purple">v1.2B</span></div><div class="grid three">
     ${field('Instituição / órgão','settings.reportProfile.institution',project.settings.reportProfile.institution)}
     ${field('Unidade / setor','settings.reportProfile.unit',project.settings.reportProfile.unit)}
     ${field('Responsável pela emissão','settings.reportProfile.responsible',project.settings.reportProfile.responsible)}
@@ -2740,305 +2695,28 @@ function renderSettings(){
 }
 
 function renderHelp(){
-  const m=metrics();
-  const model=getModel(project.work.type);
-  const provisional=readinessAssessment('provisional');
-  const final=readinessAssessment('final');
-
   const steps=[
-    {title:'Cadastre contrato e obra',desc:'Identifique órgão, contratação, objeto, prazos, valores e localização do empreendimento.',why:'Esses dados contextualizam todos os registros, relatórios e termos emitidos pelo sistema.',view:'contract'},
-    {title:'Escolha o modelo técnico',desc:'Selecione o tipo de obra e mantenha somente os módulos efetivamente aplicáveis.',why:'O modelo determina a biblioteca inicial de requisitos, procedimentos de comissionamento, ensaios e documentos.',view:'worktype'},
-    {title:'Defina a equipe',desc:'Cadastre fiscalização, gestão, comissão, especialistas, contratada e operação.',why:'A identificação de papéis melhora a responsabilização, a assinatura e a rastreabilidade dos registros.',view:'team'},
-    {title:'Organize os documentos',desc:'Controle requisitos e vincule projetos, as built, registros profissionais, laudos, licenças e manuais.',why:'Documento exigido e arquivo anexado são conceitos distintos; a matriz permite verificar o atendimento de cada exigência.',view:'documents'},
-    {title:'Execute o checklist',desc:'Verifique requisito, localização, método, critério de aceitação, situação, observação e evidências.',why:'O checklist converte o escopo técnico em verificações rastreáveis, sem substituir a inspeção em campo.',view:'checklist'},
-    {title:'Comissione os sistemas',desc:'Percorra verificação documental, instalação, pré-comissionamento e testes individual, funcional, integrado, de desempenho e de segurança.',why:'A sequência reduz o risco de testar sistemas incompletos ou sem pré-requisitos liberados.',view:'commissioning'},
-    {title:'Registre os ensaios',desc:'Informe finalidade, método, frequência, lote, amostra, instrumento, resultado e laudo.',why:'O plano de ensaios demonstra como o critério técnico foi verificado e qual evidência sustenta a conclusão.',view:'tests'},
-    {title:'Cadastre equipamentos',desc:'Registre TAG, fabricante, modelo, série, condição, garantia, manual e certificados.',why:'O inventário conecta o ativo instalado aos testes, documentos e responsabilidades de operação e manutenção.',view:'equipment'},
-    {title:'Colete evidências',desc:'Inclua fotografias identificadas por local, data, categoria e vínculo com checklist, procedimento ou pendência.',why:'Uma evidência útil precisa demonstrar o fato e permitir sua localização e interpretação posterior.',view:'photos'},
-    {title:'Revise a rastreabilidade',desc:'Procure lacunas entre requisito, inspeção, evidência, documento, ensaio, pendência, correção e aceite.',why:'A ausência de vínculo pode transformar uma inspeção realizada em uma conclusão não demonstrável.',view:'traceability'},
-    {title:'Gerencie a punch list',desc:'Classifique não conformidades por gravidade, prioridade, impacto no recebimento, responsável, prazo, causa e ação.',why:'A pendência precisa ter ciclo de vida completo, evidência antes/depois e critério objetivo de encerramento.',view:'nonconformities'},
-    {title:'Formalize e acompanhe',desc:'Registre vistorias, recebimento provisório, correções, reinspeções e recebimento definitivo.',why:'A decisão deve refletir o estado real dos requisitos e preservar ressalvas, responsabilidades e evidências.',view:'provisional'},
-    {title:'Emita relatórios',desc:'Gere saídas executivas, técnicas, por sistema, de prontidão e de correções.',why:'Os relatórios consolidam o prontuário, mas devem ser revisados antes de assinatura ou juntada ao processo.',view:'reports'},
-    {title:'Salve e faça backup',desc:'Use o salvamento local e exporte periodicamente o backup completo do projeto.',why:'A limpeza, a troca de perfil ou a perda do navegador pode eliminar os dados mantidos no IndexedDB.',view:'settings'}
+    ['Cadastre o contrato','Informe órgão, contratada, objeto, prazos e localização.'],
+    ['Selecione o modelo','Escolha o tipo de obra e os módulos aplicáveis.'],
+    ['Organize documentos','Use a matriz para controlar projetos, ART/RRT/TRT, as built, laudos e licenças.'],
+    ['Execute o checklist','Registre situação, localização, observação e fotografia por requisito.'],
+    ['Comissione os sistemas','Use a biblioteca por módulo, execute a sequência documental, instalação, pré-comissionamento, testes individuais, funcionais, integrados, desempenho e segurança.'],
+    ['Execute o plano de ensaios','Ajuste frequência e amostragem ao PIT; registre lote, resultado, laudo e impacto no recebimento.'],
+    ['Revise a rastreabilidade','Localize lacunas entre requisito, evidência, ensaio, pendência, correção e aceite.'],
+    ['Gerencie a punch list','Classifique prioridade, impacto no recebimento, empresa, prazo, causa, ação, evidências e histórico de cada pendência.'],
+    ['Emita o provisório','Consolide os achados, o prazo de correção e as responsabilidades.'],
+    ['Reinspecione','Registre a correção, as novas evidências e o aceite ou rejeição.'],
+    ['Emita o definitivo','Confirme o fechamento das pendências e a documentação final.'],
+    ['Faça o backup','Exporte periodicamente o arquivo completo do projeto.']
   ];
-
-  const concepts=[
-    {icon:'PR',tag:'Visão sistêmica',title:'Prontuário digital de recebimento',summary:'Base única que conecta o que deveria ser verificado ao que foi efetivamente observado, testado, corrigido e aceito.',body:`<p>No RecebeObra Pro, o prontuário não é apenas uma pasta de arquivos. Ele é uma <strong>rede de registros relacionados</strong>: contrato, modelo técnico, requisito documental, item de checklist, procedimento de comissionamento, ensaio, equipamento, fotografia, não conformidade, vistoria, reinspeção e termo.</p><p>A qualidade do prontuário depende de três atributos: <strong>completude</strong> (os registros necessários existem), <strong>coerência</strong> (eles não se contradizem) e <strong>rastreabilidade</strong> (é possível seguir a cadeia até a evidência e a decisão).</p>`},
-    {icon:'CK',tag:'Inspeção',title:'Checklist, requisito e critério de aceitação',summary:'O checklist organiza o objeto da verificação; o critério define a condição mínima para classificar o resultado.',body:`<p>O <strong>requisito</strong> descreve o que deve existir, funcionar ou estar documentado. O <strong>critério de aceitação</strong> descreve a condição objetiva esperada. O método e o instrumento indicam como a equipe pretende verificar essa condição.</p><div class="manual-distinction"><div><b>Exemplo de requisito</b>“Rede de água estanque e identificada.”</div><div><b>Exemplo de critério</b>“Sem vazamento ou queda anormal de pressão no período definido.”</div></div><p>Marcar um item como “não conforme” registra o resultado no checklist, mas <strong>não substitui a abertura e o tratamento formal da NC</strong>. O botão “Criar NC” é usado para construir o ciclo de responsabilização, correção e reinspeção.</p>`},
-    {icon:'CX',tag:'Verificação progressiva',title:'Comissionamento',summary:'Processo estruturado para demonstrar que sistemas, componentes e interfaces foram concluídos, testados e documentados.',body:`<p>No fluxo do sistema, o comissionamento avança do documento para o campo e do componente isolado para o desempenho integrado. A ordem reduz retrabalho e evita que um teste de desempenho seja executado antes da conclusão física, da calibração ou da liberação de segurança.</p><p>Os procedimentos registram pré-requisitos, sequência, resultado esperado, parâmetros medidos, tolerância, instrumentos, responsáveis, data, evidências e impacto no recebimento. “Aprovado com ressalva” deve ser acompanhado de justificativa e de tratamento compatível com o risco.</p>`},
-    {icon:'EN',tag:'Controle tecnológico',title:'Ensaio, amostragem, lote e PIT',summary:'O ensaio fornece evidência mensurável; sua representatividade depende da frequência, do lote e da amostra.',body:`<p>O sistema distingue o <strong>procedimento de comissionamento</strong> do <strong>ensaio de qualidade</strong>. O primeiro verifica a sequência e o funcionamento do sistema; o segundo mede uma propriedade, condição ou desempenho segundo método definido.</p><p>O Plano de Inspeção e Testes (PIT) deve orientar o que será verificado, quando, com qual frequência, por quem e segundo qual critério. Lote e amostra devem permitir relacionar o resultado ao trecho, elemento, equipamento ou fornecimento efetivamente representado.</p>`},
-    {icon:'EV',tag:'Prova e contexto',title:'Evidência técnica',summary:'Registro capaz de sustentar uma conclusão e permitir que outra pessoa compreenda onde, quando, como e por quem a verificação foi feita.',body:`<p>Uma fotografia sem código, local ou vínculo pode ter baixo valor demonstrativo. Da mesma forma, um laudo sem identificação do lote, método, instrumento, data e responsável pode não sustentar a conclusão pretendida.</p><p>O sistema permite combinar evidências documentais, fotográficas, medições, resultados de ensaios e registros de comissionamento. A força da conclusão decorre do <strong>conjunto coerente</strong>, não da quantidade isolada de anexos.</p>`},
-    {icon:'RT',tag:'Cadeia de vínculos',title:'Rastreabilidade',summary:'Capacidade de navegar do requisito até a evidência, a pendência, a correção, a reinspeção e o aceite.',body:`<p>A cadeia-base do sistema é: <strong>Requisito → Inspeção → Evidência → Pendência → Correção → Reinspeção → Aceite</strong>. Também podem participar documentos, equipamentos, procedimentos e ensaios.</p><p>A tela de Rastreabilidade identifica lacunas por módulo e por item. Uma lacuna não prova automaticamente que o serviço está inadequado; indica que o prontuário ainda não demonstra de forma suficiente a verificação ou o fechamento daquele ponto.</p>`},
-    {icon:'NC',tag:'Tratamento de desvios',title:'Não conformidade e punch list',summary:'Registro estruturado de uma condição que exige comunicação, correção, verificação e decisão de encerramento.',body:`<p>A punch list é a carteira de pendências do recebimento. Cada NC deve indicar origem, descrição, requisito descumprido, localização, gravidade, prioridade, impacto no recebimento, responsável, prazo, causa, ação corretiva, método de verificação e critério de encerramento.</p><p>O histórico de situação preserva a evolução do tratamento. Evidências “antes” demonstram a condição encontrada; evidências de “correção” e a reinspeção demonstram se o critério de encerramento foi atendido.</p>`},
-    {icon:'SP',tag:'Classificação',title:'Gravidade, prioridade e impacto no recebimento',summary:'Três dimensões complementares; uma não deve ser usada como sinônimo da outra.',body:`<div class="manual-distinction"><div><b>Gravidade</b>Expressa a relevância técnica da condição: crítica, alta, média ou baixa.</div><div><b>Prioridade</b>Expressa a urgência de atuação: imediata, alta, normal ou baixa.</div><div><b>Impacto no recebimento</b>Define se a NC bloqueia o provisório, bloqueia o definitivo, condiciona a decisão ou apenas requer acompanhamento.</div><div><b>Prazo</b>É a data pactuada para resposta ou correção; pode ser urgente mesmo em uma NC de menor gravidade.</div></div><p>No algoritmo atual, uma NC crítica aberta é tratada como bloqueante. A equipe deve validar toda classificação à luz do contrato, do risco e da condição real observada.</p>`},
-    {icon:'RP',tag:'Marcos decisórios',title:'Recebimento provisório, correções e definitivo',summary:'Etapas distintas do fluxo; o sistema separa a primeira decisão, o período de correção e a verificação final.',body:`<p>Para o recebimento provisório, o sistema verifica conclusão física, checklist, pendências impeditivas, procedimentos e ensaios bloqueantes e requisitos documentais. Alertas adicionais destacam, entre outros pontos, as built e registros profissionais.</p><p>Após o provisório, as correções são acompanhadas e reinspecionadas. Para o definitivo, o sistema exige o registro do provisório, o encerramento das pendências e resultados técnicos/documentais satisfatórios. A análise automática é <strong>orientativa</strong> e não substitui a decisão competente.</p>`},
-    {icon:'DC',tag:'Gestão documental',title:'Requisito documental, documento e as built',summary:'A exigência, o arquivo apresentado e sua situação de análise são registros diferentes.',body:`<p>O requisito documental expressa o que deve ser entregue. O documento é o arquivo efetivamente recebido. O vínculo entre ambos permite saber se uma exigência foi atendida, por qual versão, em que data e com qual situação.</p><p>O projeto <strong>as built</strong> deve representar a condição executada. No sistema, ele é tratado como peça de rastreabilidade e deve ser confrontado com a inspeção de campo, principalmente nos pontos críticos, trajetos, cotas, equipamentos e alterações.</p>`},
-    {icon:'EQ',tag:'Ativos e metrologia',title:'Equipamentos, TAG e calibração',summary:'Identificação inequívoca dos ativos e validade dos instrumentos são pré-condições para resultados confiáveis.',body:`<p>A TAG conecta o equipamento físico aos documentos, ensaios, comissionamento, garantias e manutenção. Fabricante, modelo e número de série reduzem ambiguidades em sistemas com unidades semelhantes.</p><p>Instrumentos usados em medições críticas devem ter identificação e condição metrológica compatíveis com o procedimento. O campo de calibração existe para registrar essa verificação; ele não substitui o certificado ou a validação técnica.</p>`},
-    {icon:'ID',tag:'Leitura gerencial',title:'Indicadores e prontidão',summary:'Sínteses quantitativas que ajudam a localizar lacunas; não são atestados automáticos de qualidade ou aceite.',body:`<p>IC, IEP, ID e ICOM resumem conformidade, fechamento de pendências, atendimento documental e comissionamento. O painel também calcula idade, atrasos, custo informado, impacto de prazo e backlog ponderado.</p><p>O semáforo de prontidão considera impeditivos, alertas e confirmações. Mesmo com 100%, a equipe deve revisar a qualidade das evidências, a representatividade dos ensaios, as ressalvas e os requisitos não capturados automaticamente.</p>`},
-    {icon:'BD',tag:'Aplicação local',title:'IndexedDB, privacidade e backup',summary:'Projeto e anexos permanecem no armazenamento do navegador até que o usuário execute uma exportação.',body:`<p>O banco principal é o IndexedDB. Ele armazena o projeto, modelos e anexos no perfil do navegador. O LocalStorage é usado somente na migração de versões antigas.</p><p>O HTML não envia automaticamente documentos ou fotografias. Contudo, dados locais podem ser perdidos por limpeza do navegador, mudança de computador, troca de perfil ou políticas institucionais. Por isso, o backup completo deve integrar a rotina do projeto.</p>`}
-  ];
-
-  const phases=[
-    ['1','Verificação documental','Confirma projetos, revisões, procedimentos, responsabilidades e registros.'],
-    ['2','Inspeção de instalação','Compara o executado com projeto, identificação, acesso, acabamento e interfaces.'],
-    ['3','Pré-comissionamento','Libera limpeza, conclusão física, calibração, energização e condições seguras.'],
-    ['4','Teste individual','Verifica cada componente, trecho, circuito, equipamento ou elemento isolado.'],
-    ['5','Teste funcional','Executa comandos, estados, alarmes, intertravamentos e modos de operação.'],
-    ['6','Teste integrado','Valida interfaces entre sistemas, energia, automação, segurança e operação.'],
-    ['7','Teste de desempenho','Mede capacidade, vazão, pressão, potência, tempo, estabilidade ou parâmetros aplicáveis.'],
-    ['8','Teste de segurança','Simula falhas e emergências e verifica o estado seguro e a recuperação controlada.']
-  ];
-
-  const formulas=[
-    {symbol:'IC',name:'Índice de conformidade',equation:'(conformes + conformes com ressalva) ÷ itens aplicáveis × 100',current:fmtPct(m.ic),text:'O denominador exclui “não aplicável”. Itens ainda não verificados permanecem no universo aplicável e reduzem o índice.'},
-    {symbol:'IEP',name:'Índice de encerramento de pendências',equation:'NCs aceitas ou encerradas ÷ total de NCs registradas × 100',current:fmtPct(m.iep),text:'Mostra o avanço do tratamento da punch list. Quando não há NC registrada, o sistema apresenta 0%; interprete junto com o total.'},
-    {symbol:'ID',name:'Índice documental',equation:'requisitos obrigatórios apresentados ou aprovados ÷ requisitos exigíveis × 100',current:fmtPct(m.id),text:'“Apresentado” conta como atendido no indicador, embora a equipe ainda possa precisar concluir a análise e aprovação.'},
-    {symbol:'ICOM',name:'Índice de comissionamento',equation:'procedimentos aprovados ou aprovados com ressalva ÷ procedimentos aplicáveis × 100',current:fmtPct(m.icom),text:'Procedimentos “não aplicáveis” são excluídos. A ressalva deve ser tecnicamente compreendida antes da decisão.'},
-    {symbol:'BP',name:'Backlog ponderado',equation:'Σ [peso da gravidade × fator da prioridade] para NCs abertas',current:String(m.weightedBacklog),text:'Pesos atuais: crítica 8, alta 5, média 3 e baixa 1; fatores de prioridade: imediata 1,4, alta 1,2, normal 1 e baixa 0,8.'},
-    {symbol:'PR',name:'Índice orientativo de prontidão',equation:'(confirmações + 0,45 × alertas) ÷ total de verificações × 100',current:`${provisional.score}%`,text:'A existência de qualquer impeditivo mantém o semáforo vermelho, independentemente do percentual. Sem impeditivo, alertas geram amarelo; sem ambos, verde.'}
-  ];
-
-  const screens=[
-    {view:'dashboard',no:'01',title:'Painel',sub:'Síntese e alertas',purpose:'Consolidar o estágio, os indicadores, a prontidão, o backlog, os alertas e os registros recentes.',use:'Leia primeiro os impeditivos; depois confirme a origem de cada número nas telas detalhadas.',output:'Visão gerencial do estado do recebimento e atalhos para as ações prioritárias.',attention:'Indicador elevado não elimina a análise qualitativa das evidências.'},
-    {view:'contract',no:'02',title:'Contrato e obra',sub:'Contexto do projeto',purpose:'Cadastrar contratante, contratada, objeto, valores, prazos, conclusão informada e identificação do empreendimento.',use:'Preencha antes de emitir relatórios e mantenha os dados atualizados após aditivos ou prorrogações.',output:'Cabeçalhos, identificação institucional e contexto dos registros.',attention:'A “conclusão informada” participa da análise de prontidão do provisório.'},
-    {view:'worktype',no:'03',title:'Tipo de obra',sub:'Modelo e módulos',purpose:'Selecionar o modelo técnico e os módulos aplicáveis ao escopo real.',use:'Revise os módulos antes de aplicar. “Adicionar” preserva registros; “Substituir” reconstrói checklist, comissionamento, ensaios e requisitos.',output:'Biblioteca inicial ajustada ao tipo de obra.',attention:'A substituição pode remover vínculos diretos de itens existentes; faça backup.'},
-    {view:'team',no:'04',title:'Equipe',sub:'Papéis e responsáveis',purpose:'Identificar agentes do contratante, especialistas, comissão, contratada e operação.',use:'Informe função, organização, registro profissional e contatos quando pertinentes.',output:'Responsáveis disponíveis para vistorias, termos e rastreabilidade.',attention:'Cadastro não altera competências formais definidas no contrato ou ato de designação.'},
-    {view:'documents',no:'05',title:'Documentos',sub:'Matriz e anexos',purpose:'Controlar requisitos documentais e armazenar os arquivos correspondentes.',use:'Primeiro revise a exigência; depois anexe o arquivo, escolha a categoria e vincule ao requisito.',output:'Índice documental, situação por requisito e evidências acessíveis.',attention:'Evite considerar atendida uma exigência apenas porque existe um arquivo com nome semelhante.'},
-    {view:'checklist',no:'06',title:'Checklist',sub:'Inspeção por requisito',purpose:'Registrar a verificação de cada requisito técnico do modelo.',use:'Preencha localização, observação, situação e vínculos; use “Criar NC” quando o desvio exigir tratamento formal.',output:'Cobertura da inspeção, índice de conformidade e base para pendências.',attention:'“Conforme com ressalva” conta no IC; documente claramente a ressalva.'},
-    {view:'commissioning',no:'07',title:'Comissionamento',sub:'Sequência funcional',purpose:'Planejar e registrar procedimentos documentais, individuais, funcionais, integrados, de desempenho e segurança.',use:'Valide pré-requisitos e instrumentos antes da execução; registre valor medido, tolerância, resultado e evidência.',output:'ICOM, resultados por sistema e identificação de procedimentos bloqueantes.',attention:'Não aprove etapas posteriores apenas porque uma etapa anterior foi aprovada.'},
-    {view:'tests',no:'08',title:'Ensaios',sub:'Plano de qualidade',purpose:'Controlar ensaios e medições associados aos módulos e critérios técnicos.',use:'Ajuste frequência e amostragem ao PIT; identifique lote, amostra, local, laboratório, responsável e laudo.',output:'Resultados rastreáveis por material, elemento, trecho, sistema ou equipamento.',attention:'O catálogo é referência inicial; o contrato e o procedimento aprovado prevalecem.'},
-    {view:'equipment',no:'09',title:'Equipamentos',sub:'Inventário de ativos',purpose:'Cadastrar os equipamentos efetivamente instalados e sua condição de entrega.',use:'Use TAG única e registre fabricante, modelo, série, garantia, manual, nota e certificado.',output:'Inventário técnico para operação, manutenção e relatórios.',attention:'Não confunda instrumento de ensaio com equipamento incorporado à obra.'},
-    {view:'photos',no:'10',title:'Fotos',sub:'Evidência visual',purpose:'Organizar registros fotográficos e seus vínculos.',use:'Dê título objetivo, informe local e categoria e associe a checklist, NC ou comissionamento quando aplicável.',output:'Galeria rastreável e evidências antes/depois.',attention:'Fotografia sem escala, contexto ou identificação pode ser insuficiente.'},
-    {view:'traceability',no:'11',title:'Rastreabilidade',sub:'Cobertura dos vínculos',purpose:'Conferir se cada requisito possui evidência e desdobramentos técnicos suficientes.',use:'Filtre lacunas, abra o item de origem e complete vínculos ausentes ou justifique a não aplicabilidade.',output:'Mapa de cobertura por módulo e exportação da matriz.',attention:'Lacuna é um alerta documental/técnico, não uma conclusão automática de desconformidade.'},
-    {view:'nonconformities',no:'12',title:'Pendências',sub:'Punch list avançada',purpose:'Gerenciar o ciclo completo das não conformidades.',use:'Classifique gravidade, prioridade e impacto separadamente; defina prazo, responsável, causa, ações e critério de encerramento.',output:'Quadro por estágio, histórico, impactos, evidências e backlog.',attention:'Somente “aceita” e “encerrada” são tratadas como fechadas pelo motor.'},
-    {view:'inspections',no:'13',title:'Vistorias',sub:'Atos de inspeção',purpose:'Registrar as vistorias realizadas, participantes, escopo e conclusão.',use:'Identifique tipo, data, equipe, áreas examinadas e observações relevantes.',output:'Histórico cronológico das inspeções do recebimento.',attention:'A vistoria deve apontar para os registros detalhados que sustentam sua conclusão.'},
-    {view:'provisional',no:'14',title:'Recebimento provisório',sub:'Primeiro marco decisório',purpose:'Consolidar os requisitos e redigir o resultado do recebimento provisório.',use:'Revise o semáforo, confirme manualmente as condições pertinentes e registre prazo e ressalvas.',output:'Minuta/registro do termo provisório e início formal do período de correções.',attention:'Não ignore impeditivos automáticos sem fundamentação e validação competentes.'},
-    {view:'reinspections',no:'15',title:'Reinspeções',sub:'Verificação da correção',purpose:'Avaliar se a ação corretiva atende ao critério de encerramento da NC.',use:'Selecione a pendência, descreva a verificação, vincule evidências e registre aceite, rejeição ou nova correção.',output:'Atualização do status da NC e trilha de fechamento.',attention:'A simples comunicação de correção não equivale à aceitação técnica.'},
-    {view:'final',no:'16',title:'Recebimento definitivo',sub:'Conclusão do fluxo',purpose:'Verificar o fechamento da punch list e a suficiência final dos resultados e documentos.',use:'Confirme o provisório, o comportamento pós-entrega, as pendências, ensaios, comissionamento e documentação.',output:'Minuta/registro do termo definitivo com justificativa e assinaturas.',attention:'O termo não afasta garantias nem responsabilidades remanescentes.'},
-    {view:'reports',no:'17',title:'Relatórios',sub:'Saídas técnicas',purpose:'Gerar consolidações executivas, de prontidão, por sistema, punch list e correções.',use:'Escolha o relatório adequado ao destinatário e revise identidade institucional, filtros e conteúdo antes da impressão.',output:'Documento imprimível baseado no estado atual do projeto.',attention:'Relatório gerado é minuta e deve ser validado.'},
-    {view:'settings',no:'18',title:'Configurações',sub:'Administração local',purpose:'Definir etapa atual, usuário, autosave, perfil de relatório, critérios de gravidade, armazenamento e auditoria.',use:'Teste o IndexedDB, revise os critérios internos e mantenha o log quando necessário à rastreabilidade.',output:'Comportamento do aplicativo e identidade das saídas.',attention:'Limpar log ou criar novo projeto são ações relevantes; faça backup previamente.'},
-    {view:'help',no:'19',title:'Manual interativo',sub:'Referência incorporada',purpose:'Explicar o fluxo, conceitos, indicadores, telas e cuidados de uso.',use:'Pesquise termos, abra capítulos, use os atalhos e faça a autoavaliação.',output:'Apoio ao treinamento e à padronização de procedimentos.',attention:'O manual descreve a lógica do sistema; valide sempre contrato, normas e procedimentos vigentes.'}
-  ];
-
-  const glossary=[
-    ['Aceite','Decisão registrada após verificar o atendimento do critério aplicável.'],
-    ['Amostra','Parcela do lote ou universo efetivamente examinada para representar determinada condição.'],
-    ['ART / RRT / TRT','Registros de responsabilidade técnica associados às atividades profissionais, conforme aplicável.'],
-    ['As built','Representação final daquilo que foi efetivamente executado.'],
-    ['Backlog','Conjunto de pendências ainda abertas; no painel também recebe ponderação por gravidade e prioridade.'],
-    ['Bloqueante','Classificação de impacto que impede avançar no recebimento enquanto a condição permanecer aberta ou insatisfatória.'],
-    ['Checklist','Lista estruturada de requisitos, critérios, métodos, situações e evidências.'],
-    ['Comissionamento','Sequência planejada de verificações e testes destinada a demonstrar a conclusão e o funcionamento dos sistemas.'],
-    ['Condicionante','Questão que exige tratamento, ressalva ou condição para a decisão, sem bloqueio automático equivalente ao impeditivo.'],
-    ['Critério de aceitação','Condição objetiva usada para comparar o resultado observado ou medido.'],
-    ['Databook / dossiê','Conjunto organizado de documentos e registros técnicos da entrega.'],
-    ['Evidência','Registro que sustenta uma conclusão: documento, foto, medição, laudo, teste ou vínculo equivalente.'],
-    ['Gravidade','Relevância técnica da não conformidade.'],
-    ['ICOM','Percentual de procedimentos de comissionamento aplicáveis com resultado aprovado ou aprovado com ressalva.'],
-    ['ID','Percentual de requisitos documentais obrigatórios apresentados ou aprovados.'],
-    ['IEP','Percentual de não conformidades registradas que foram aceitas ou encerradas.'],
-    ['Índice de conformidade — IC','Percentual de itens aplicáveis classificados como conformes ou conformes com ressalva.'],
-    ['IndexedDB','Banco local do navegador usado para guardar projeto, modelos e anexos.'],
-    ['Instrumento','Recurso de medição ou teste cuja identificação e condição devem ser compatíveis com o procedimento.'],
-    ['Lote','Conjunto de produção, fornecimento, trecho ou execução ao qual uma amostra e um resultado são associados.'],
-    ['Não conformidade — NC','Desvio formalizado que requer comunicação, tratamento, verificação e encerramento.'],
-    ['Não aplicável','Situação que retira o item do denominador dos indicadores correspondentes.'],
-    ['PCT','Plano de Controle Tecnológico, referido no sistema como fonte para frequências e critérios de ensaio.'],
-    ['PIT','Plano de Inspeção e Testes, base para métodos, frequências, responsabilidades e critérios.'],
-    ['Pré-comissionamento','Verificação de que o sistema está concluído e seguro para iniciar testes.'],
-    ['Prioridade','Urgência operacional atribuída ao tratamento de uma pendência.'],
-    ['Prontidão','Síntese orientativa de impeditivos, alertas e confirmações para uma etapa do recebimento.'],
-    ['Punch list','Carteira estruturada de pendências a corrigir, reinspecionar e encerrar.'],
-    ['Rastreabilidade','Capacidade de seguir os vínculos entre requisito, verificação, evidência, pendência e decisão.'],
-    ['Reinspeção','Verificação posterior destinada a aceitar, rejeitar ou devolver para nova correção uma pendência.'],
-    ['Ressalva','Condição registrada que acompanha uma aprovação ou decisão e precisa ser claramente descrita.'],
-    ['TAG','Identificador único de um equipamento ou ativo.'],
-    ['Teste de desempenho','Medição do comportamento do sistema sob condições definidas de operação.'],
-    ['Teste funcional','Verificação da função e das sequências previstas de um sistema ou componente.'],
-    ['Teste integrado','Verificação coordenada das interfaces entre sistemas.']
-  ];
-
-  const faqs=[
-    ['Marcar “não conforme” cria automaticamente uma NC?','Não. O item recebe a situação não conforme e o sistema orienta o uso do comando “Criar NC”. Essa etapa adicional permite definir responsável, prazo, gravidade, prioridade, impacto, ação e critério de encerramento.'],
-    ['Por que um requisito pode estar “apresentado”, mas ainda exigir análise?','O índice documental considera apresentado ou aprovado como atendimento. Contudo, “apresentado” informa recebimento, não necessariamente validação técnica do conteúdo.'],
-    ['O catálogo técnico substitui o PIT ou o contrato?','Não. A biblioteca é uma base inicial. Frequências, critérios, amostragem, normas e procedimentos devem ser ajustados ao objeto e validados.'],
-    ['Uma pontuação de prontidão alta autoriza o recebimento?','Não. O índice é orientativo. Além disso, qualquer impeditivo mantém o semáforo vermelho, mesmo com percentual elevado.'],
-    ['O que ocorre ao selecionar “Substituir” no modelo de obra?','Checklist, comissionamento, ensaios e requisitos documentais são reconstruídos. Pendências permanecem, mas podem perder o vínculo direto com itens removidos.'],
-    ['Onde ficam documentos e fotografias?','No IndexedDB do perfil do navegador. Eles não são enviados automaticamente, mas podem ser perdidos se o armazenamento local for apagado.'],
-    ['Como transferir o projeto para outro computador?','Exporte o backup completo e importe-o no outro ambiente. O arquivo HTML sozinho não transporta os dados armazenados no navegador.'],
-    ['Qual a diferença entre “corrigida” e “aceita”?','“Corrigida” informa que a execução da correção foi declarada ou registrada. “Aceita” indica que a verificação reconheceu o atendimento do critério.'],
-    ['Aprovação com ressalva é igual à conformidade plena?','Não. O sistema a inclui em alguns indicadores, mas a ressalva continua exigindo compreensão, registro e tratamento compatível com seu impacto.'],
-    ['Os relatórios podem ser assinados sem revisão?','Não. Eles são gerados a partir dos dados cadastrados e devem ser conferidos, complementados e validados pelos responsáveis competentes.']
-  ];
-
-  const quiz=[
-    {id:'q1',question:'Um item do checklist foi marcado como “não conforme”. Qual é a próxima ação adequada no sistema?',correct:'b',options:[['a','Considerá-lo automaticamente encerrado.'],['b','Criar uma NC quando o desvio exigir tratamento formal e completar sua classificação.'],['c','Alterar o item para “não aplicável”.']],explanation:'A situação do checklist registra o achado; a NC estrutura comunicação, responsável, prazo, correção, evidências e reinspeção.'},
-    {id:'q2',question:'Quais situações entram no numerador do Índice de Conformidade (IC)?',correct:'c',options:[['a','Somente “conforme”.'],['b','Todos os itens já verificados.'],['c','“Conforme” e “conforme com ressalva”.']],explanation:'O motor considera essas duas situações como conformidade para o IC; a ressalva, porém, deve continuar documentada e analisada.'},
-    {id:'q3',question:'O que acontece com a prontidão quando existe ao menos um impeditivo?',correct:'a',options:[['a','O semáforo permanece vermelho, independentemente do percentual.'],['b','O semáforo fica verde se o índice ultrapassar 80%.'],['c','O impeditivo é tratado apenas como alerta amarelo.']],explanation:'O percentual é uma síntese; a regra de nível dá precedência à existência de impeditivos.'},
-    {id:'q4',question:'Qual afirmação descreve melhor a rastreabilidade?',correct:'b',options:[['a','Quantidade total de fotografias anexadas.'],['b','Capacidade de seguir os vínculos entre requisito, verificação, evidência, pendência, correção e aceite.'],['c','Somente o histórico de salvamentos do navegador.']],explanation:'Rastreabilidade é uma cadeia de relações; muitos anexos sem vínculo podem continuar deixando lacunas.'},
-    {id:'q5',question:'O arquivo HTML, sozinho, transporta todo o projeto para outro computador?',correct:'c',options:[['a','Sim, porque todos os anexos ficam dentro do HTML.'],['b','Sim, desde que o nome do arquivo seja mantido.'],['c','Não; é necessário exportar e importar o backup completo.']],explanation:'Os dados persistentes ficam no IndexedDB do navegador; o HTML contém o aplicativo, não o banco local do projeto.'}
-  ];
-
-  const renderAssessment=(a,title,view)=>`<div class="manual-readiness ${a.level}"><div class="manual-readiness-head"><b>${esc(title)}</b><span>${esc(a.label)}</span></div><div class="manual-readiness-body"><div class="manual-counts"><span class="badge no">${a.blockers.length} impeditivo(s)</span><span class="badge warn">${a.warnings.length} alerta(s)</span><span class="badge ok">${a.ok.length} confirmação(ões)</span><span class="badge dark">${a.score}%</span></div><p>Leitura calculada com os dados atualmente cadastrados. Abra a etapa para examinar cada condição.</p><button class="btn small outline" data-view-jump="${view}">Abrir etapa</button></div></div>`;
-
-  const conceptHTML=concepts.map(c=>`<details class="manual-accordion" data-manual-searchable><summary><div class="manual-accordion-icon">${esc(c.icon)}</div><div><span class="manual-topic-tag">${esc(c.tag)}</span><div class="manual-accordion-title">${esc(c.title)}</div><div class="manual-accordion-summary">${esc(c.summary)}</div></div></summary><div class="manual-accordion-body">${c.body}</div></details>`).join('');
-  const phaseHTML=phases.map((p,i)=>`${i?'<div class="manual-phase-arrow">→</div>':''}<div class="manual-phase" data-manual-searchable><b>${esc(p[0])}. ${esc(p[1])}</b><span>${esc(p[2])}</span></div>`).join('');
-  const formulaHTML=formulas.map(f=>`<div class="manual-formula" data-manual-searchable><div class="manual-formula-head"><div><div class="manual-formula-symbol">${esc(f.symbol)}</div><strong>${esc(f.name)}</strong></div><span class="manual-formula-current">Agora: ${esc(f.current)}</span></div><div class="manual-equation">${esc(f.equation)}</div><p>${esc(f.text)}</p></div>`).join('');
-  const screenHTML=screens.map(s=>`<details class="manual-screen-card" data-manual-searchable><summary><div class="manual-screen-no">${esc(s.no)}</div><div><h3>${esc(s.title)}</h3><div class="manual-screen-sub">${esc(s.sub)}</div></div></summary><div class="manual-screen-body"><dl><dt>Finalidade</dt><dd>${esc(s.purpose)}</dd><dt>Como usar</dt><dd>${esc(s.use)}</dd><dt>Resultado esperado</dt><dd>${esc(s.output)}</dd><dt>Ponto de atenção</dt><dd>${esc(s.attention)}</dd></dl><div class="manual-screen-action"><button class="btn small dark" data-view-jump="${escAttr(s.view)}">Abrir esta tela</button></div></div></details>`).join('');
-  const glossaryHTML=glossary.map(g=>`<div class="manual-glossary" data-manual-searchable><b>${esc(g[0])}</b><p>${esc(g[1])}</p></div>`).join('');
-  const faqHTML=faqs.map((f,i)=>`<details class="manual-accordion" data-manual-searchable ${i===0?'open':''}><summary><div class="manual-accordion-icon">?</div><div><div class="manual-accordion-title">${esc(f[0])}</div></div></summary><div class="manual-accordion-body"><p>${esc(f[1])}</p></div></details>`).join('');
-  const quizHTML=quiz.map((q,i)=>`<fieldset class="manual-question" data-question="${escAttr(q.id)}" data-correct="${escAttr(q.correct)}" data-explanation="${escAttr(q.explanation)}"><legend>${i+1}. ${esc(q.question)}</legend><div class="manual-options">${q.options.map(o=>`<label class="manual-option"><input type="radio" name="${escAttr(q.id)}" value="${escAttr(o[0])}"><span>${esc(o[1])}</span></label>`).join('')}</div><div class="manual-q-result" aria-live="polite"></div></fieldset>`).join('');
-
-  return pageHead('Manual interativo','Guia incorporado do RecebeObra Pro: conceitos, fluxo, indicadores, telas, boas práticas e autoavaliação.',
-    `<button class="btn outline" data-action="manual-expand-all">Expandir tudo</button><button class="btn outline" data-action="manual-collapse-all">Recolher tudo</button><button class="btn dark" data-action="manual-print">Imprimir manual</button>`)+
-  `<div class="manual-root" id="manualRoot">
-    <section class="manual-hero">
-      <div class="manual-hero-copy"><div class="manual-kicker">Edição 1.2C · aprendizagem integrada ao aplicativo</div><h2>Da preparação da vistoria ao recebimento definitivo</h2><p>Use este manual para compreender não apenas onde clicar, mas por que cada registro existe, como os módulos se relacionam e quais cuidados preservam a confiabilidade do prontuário técnico.</p><div class="manual-hero-actions"><button class="btn primary" data-action="manual-scroll" data-target="manual-quickstart">Começar pelo fluxo</button><button class="btn" data-action="manual-scroll" data-target="manual-concepts">Explorar conceitos</button><button class="btn" data-view-jump="dashboard">Voltar ao painel</button></div></div>
-      <div class="manual-hero-stats"><div class="manual-stat"><b>${esc(model.label)}</b><span>modelo atual</span></div><div class="manual-stat"><b>${(project.work.selectedModules||[]).length}</b><span>módulos selecionados</span></div><div class="manual-stat"><b>${m.checkTotal}</b><span>itens de checklist</span></div><div class="manual-stat"><b>${m.commTotal+m.testsTotal}</b><span>procedimentos + ensaios</span></div></div>
-    </section>
-
-    <div class="manual-search-panel"><div class="manual-search-icon">⌕</div><input class="input" id="manualSearch" type="search" data-manual-search placeholder="Pesquisar no manual: punch list, ICOM, as built, backup…" autocomplete="off"><button class="btn small outline" data-action="manual-clear-search">Limpar</button><div class="manual-search-meta" id="manualSearchMeta">Pesquisa instantânea · atalho “/”</div></div>
-    <div class="notice warning manual-search-empty" id="manualSearchEmpty"><strong>Nenhum tópico localizado.</strong> Tente uma palavra mais ampla ou limpe a pesquisa.</div>
-
-    <div class="manual-layout">
-      <nav class="manual-nav" aria-label="Capítulos do manual"><div class="manual-nav-title">Navegação do manual</div>
-        <button data-action="manual-scroll" data-target="manual-intro"><span>01</span>Como usar</button>
-        <button data-action="manual-scroll" data-target="manual-quickstart"><span>02</span>Fluxo recomendado</button>
-        <button data-action="manual-scroll" data-target="manual-concepts"><span>03</span>Conceitos</button>
-        <button data-action="manual-scroll" data-target="manual-commissioning"><span>04</span>Comissionamento</button>
-        <button data-action="manual-scroll" data-target="manual-indicators"><span>05</span>Indicadores</button>
-        <button data-action="manual-scroll" data-target="manual-screens"><span>06</span>Guia das telas</button>
-        <button data-action="manual-scroll" data-target="manual-glossary"><span>07</span>Glossário</button>
-        <button data-action="manual-scroll" data-target="manual-quiz"><span>08</span>Autoavaliação</button>
-        <button data-action="manual-scroll" data-target="manual-faq"><span>09</span>Dúvidas frequentes</button>
-        <div class="manual-nav-note">Os botões “Abrir tela” levam diretamente ao módulo correspondente. O estado do projeto não é alterado pela navegação do manual.</div>
-      </nav>
-
-      <div class="manual-content">
-        <section class="manual-section" id="manual-intro"><div class="manual-section-head"><div class="manual-section-title"><div class="manual-section-no">01</div><div><h2>Como usar este manual</h2><p>Três modos de consulta para públicos e momentos diferentes.</p></div></div></div>
-          <div class="manual-intro-grid">
-            <div class="manual-intro-card" data-manual-searchable><div class="mic-icon">▶</div><h3>Primeiro acesso</h3><p>Siga o fluxo recomendado, abra cada tela pelo atalho e conclua o roteiro básico de preparação do projeto.</p></div>
-            <div class="manual-intro-card" data-manual-searchable><div class="mic-icon">⌕</div><h3>Consulta durante a vistoria</h3><p>Pesquise um termo, abra somente o conceito necessário e retorne ao módulo sem perder os dados registrados.</p></div>
-            <div class="manual-intro-card" data-manual-searchable><div class="mic-icon">✓</div><h3>Treinamento da equipe</h3><p>Use conceitos, glossário e autoavaliação para alinhar terminologia, sequência e critérios de registro.</p></div>
-          </div>
-          <div class="manual-callout orange"><strong>Regra de ouro:</strong> o sistema organiza a evidência e sinaliza lacunas; a equipe competente continua responsável por planejar a inspeção, executar os testes, interpretar os resultados e decidir.</div>
-          <div class="card" data-manual-searchable><div class="card-head"><div><h3 class="card-title">Roteiro temporário de preparação</h3><div class="card-note">Marque durante a leitura. Estas caixas não alteram nem são salvas no projeto.</div></div></div><div class="manual-checklist">
-            ${['Contrato e empreendimento identificados','Modelo e módulos conferidos com o escopo','Equipe e papéis cadastrados','Matriz documental revisada','PIT e procedimentos ajustados','Instrumentos e calibrações verificados','Estratégia de evidências definida','Rotina de backup combinada'].map(x=>`<label class="manual-checkitem"><input type="checkbox"><span>${esc(x)}</span></label>`).join('')}
-          </div></div>
-        </section>
-
-        <section class="manual-section" id="manual-quickstart"><div class="manual-section-head"><div class="manual-section-title"><div class="manual-section-no">02</div><div><h2>Fluxo recomendado de trabalho</h2><p>Sequência operacional em quatorze passos, com a finalidade de cada etapa.</p></div></div></div><div class="help-flow">${steps.map((s,i)=>`<div class="help-step" data-manual-searchable><div class="num">${i+1}</div><h4>${esc(s.title)}</h4><p>${esc(s.desc)}</p><div class="manual-step-why"><strong>Por que importa:</strong> ${esc(s.why)}</div><div class="manual-step-actions"><button class="btn small outline" data-view-jump="${escAttr(s.view)}">Abrir tela</button></div></div>`).join('')}</div></section>
-
-        <section class="manual-section" id="manual-concepts"><div class="manual-section-head"><div class="manual-section-title"><div class="manual-section-no">03</div><div><h2>Conceitos essenciais</h2><p>Abra cada tópico para compreender a lógica e as distinções que evitam registros inconsistentes.</p></div></div><div class="manual-section-tools"><button class="btn small outline" data-action="manual-expand-section" data-target="manual-concepts">Abrir conceitos</button></div></div>${conceptHTML}</section>
-
-        <section class="manual-section" id="manual-commissioning"><div class="manual-section-head"><div class="manual-section-title"><div class="manual-section-no">04</div><div><h2>Escada do comissionamento</h2><p>Da completude documental à resposta segura do sistema integrado.</p></div></div></div>
-          <div class="manual-phase-flow">${phaseHTML}</div>
-          <div class="manual-callout green"><strong>Leitura prática:</strong> uma etapa posterior pressupõe que os pré-requisitos pertinentes das etapas anteriores foram liberados. O sistema permite registrar resultados, mas não deve ser usado para “pular” verificações.</div>
-          <div class="manual-matrix">
-            <div class="manual-matrix-card" data-manual-searchable><h4>Checklist</h4><p>Pergunta se um requisito está conforme no local ou elemento examinado.</p></div>
-            <div class="manual-matrix-card" data-manual-searchable><h4>Comissionamento</h4><p>Demonstra sequência, função, integração, desempenho e segurança do sistema.</p></div>
-            <div class="manual-matrix-card" data-manual-searchable><h4>Ensaio</h4><p>Mede uma propriedade ou condição em lote, amostra, trecho, elemento ou equipamento.</p></div>
-            <div class="manual-matrix-card" data-manual-searchable><h4>Documento</h4><p>Registra projeto, responsabilidade, procedimento, certificado, laudo ou entrega técnica.</p></div>
-            <div class="manual-matrix-card" data-manual-searchable><h4>Evidência</h4><p>Sustenta a conclusão e cria contexto verificável para o registro.</p></div>
-            <div class="manual-matrix-card" data-manual-searchable><h4>NC / punch list</h4><p>Trata o desvio até a correção, reinspeção e decisão de encerramento.</p></div>
-          </div>
-        </section>
-
-        <section class="manual-section" id="manual-indicators"><div class="manual-section-head"><div class="manual-section-title"><div class="manual-section-no">05</div><div><h2>Indicadores e análise de prontidão</h2><p>Fórmulas realmente empregadas pelo aplicativo e leitura do projeto atual.</p></div></div></div>
-          <div class="manual-formula-grid">${formulaHTML}</div>
-          <div class="manual-callout red"><strong>Não confunda medição com decisão:</strong> os índices resumem os dados cadastrados. Erros de classificação, amostragem insuficiente ou evidências frágeis também podem produzir números aparentemente favoráveis.</div>
-          <div class="manual-live-grid">${renderAssessment(provisional,'Recebimento provisório','provisional')}${renderAssessment(final,'Recebimento definitivo','final')}</div>
-          <details class="manual-accordion" data-manual-searchable><summary><div class="manual-accordion-icon">PV</div><div><div class="manual-accordion-title">Portas de prontidão verificadas pelo sistema</div><div class="manual-accordion-summary">Entenda os bloqueios e alertas usados no semáforo.</div></div></summary><div class="manual-accordion-body"><div class="manual-distinction"><div><b>No provisório</b>Conclusão física; checklist integralmente verificado; ausência de NC impeditiva; comissionamento e ensaios bloqueantes aprovados; requisitos documentais atendidos.</div><div><b>Alertas no provisório</b>Ausência de as built ou ART/RRT/TRT apresentada/aprovada; NC aberta não impeditiva; prazo vencido ou próximo.</div><div><b>No definitivo</b>Data do provisório; punch list encerrada; resultados finais satisfatórios de comissionamento e ensaios; documentação atendida.</div><div><b>Alerta no definitivo</b>Funcionamento no período pós-provisório ainda não confirmado, além de prazos vencidos ou próximos.</div></div></div></details>
-          <details class="manual-accordion" data-manual-searchable><summary><div class="manual-accordion-icon">ST</div><div><div class="manual-accordion-title">Ciclo de situação da não conformidade</div><div class="manual-accordion-summary">Estados, correção, reinspeção e encerramento.</div></div></summary><div class="manual-accordion-body"><div class="manual-status-flow"><div class="manual-status-node"><b>Aberta</b><span>Achado registrado</span></div><div class="manual-status-arrow">→</div><div class="manual-status-node"><b>Comunicada</b><span>Responsável cientificado</span></div><div class="manual-status-arrow">→</div><div class="manual-status-node"><b>Em correção</b><span>Ação em andamento</span></div><div class="manual-status-arrow">→</div><div class="manual-status-node"><b>Corrigida</b><span>Correção declarada</span></div><div class="manual-status-arrow">→</div><div class="manual-status-node"><b>Aguardando reinspeção</b><span>Pronta para verificar</span></div><div class="manual-status-arrow">→</div><div class="manual-status-node"><b>Aceita / encerrada</b><span>Critério reconhecido</span></div></div><p>A reinspeção também pode rejeitar a correção ou devolver a NC para nova correção. Para as métricas, apenas “aceita” e “encerrada” são situações fechadas.</p></div></details>
-        </section>
-
-        <section class="manual-section" id="manual-screens"><div class="manual-section-head"><div class="manual-section-title"><div class="manual-section-no">06</div><div><h2>Guia detalhado das telas</h2><p>Finalidade, modo de uso, resultado esperado e principal ponto de atenção de cada módulo.</p></div></div></div><div class="manual-screen-grid">${screenHTML}</div></section>
-
-        <section class="manual-section" id="manual-glossary"><div class="manual-section-head"><div class="manual-section-title"><div class="manual-section-no">07</div><div><h2>Glossário técnico do sistema</h2><p>Definições curtas para consulta durante o preenchimento e o treinamento.</p></div></div></div><div class="manual-glossary-grid">${glossaryHTML}</div></section>
-
-        <section class="manual-section" id="manual-quiz"><div class="manual-section-head"><div class="manual-section-title"><div class="manual-section-no">08</div><div><h2>Autoavaliação</h2><p>Cinco questões sobre a lógica efetivamente usada pelo RecebeObra Pro.</p></div></div></div><div id="manualQuiz">${quizHTML}</div><div class="manual-quiz-actions"><button class="btn primary" data-action="manual-check-quiz">Corrigir respostas</button><button class="btn outline" data-action="manual-reset-quiz">Recomeçar</button></div><div class="manual-quiz-feedback" id="manualQuizFeedback" aria-live="polite"></div></section>
-
-        <section class="manual-section" id="manual-faq"><div class="manual-section-head"><div class="manual-section-title"><div class="manual-section-no">09</div><div><h2>Dúvidas frequentes e cuidados</h2><p>Respostas diretas para situações recorrentes de uso.</p></div></div></div><div class="manual-faq-grid">${faqHTML}</div>
-          <div class="card" data-manual-searchable style="margin-top:11px"><h3 class="section-title">Limites de uso</h3><ul class="small muted" style="line-height:1.65"><li>Referências normativas, frequências, métodos e critérios devem ser conferidos na edição vigente e no contexto do contrato, projeto, PIT e procedimento aprovado.</li><li>Alertas e índices não substituem a inspeção, a medição, o ensaio, a responsabilidade técnica, a fiscalização, a comissão ou a decisão da autoridade competente.</li><li>Os documentos gerados não emitem ART/RRT/TRT nem afastam garantias e responsabilidades legais, civis, contratuais ou técnico-profissionais.</li><li>Mantenha backups periódicos em repositório institucional seguro e teste a restauração antes de depender exclusivamente do arquivo.</li></ul></div>
-          <div class="notice"><strong>RecebeObra Pro v${APP_VERSION}</strong> · Aplicação local para comissionamento, vistoria e recebimento de obras públicas · Manual interativo edição 1.2C.</div>
-        </section>
-      </div>
-    </div>
-  </div>`;
+  return pageHead('Ajuda e manual do usuário','Fluxo recomendado para estruturar o prontuário digital de recebimento da obra pública.')+
+  `<div class="card"><h3 class="section-title">Fluxo de trabalho</h3><div class="help-flow">${steps.map((s,i)=>`<div class="help-step"><div class="num">${i+1}</div><h4>${esc(s[0])}</h4><p>${esc(s[1])}</p></div>`).join('')}</div></div>`+
+  `<div class="grid two"><div class="card"><h3 class="section-title">Rastreabilidade</h3><p class="small">O sistema relaciona:</p><div class="notice success"><strong>Requisito → Inspeção → Evidência → Pendência → Correção → Reinspeção → Aceite</strong></div><p class="small muted">A aba Rastreabilidade apresenta cobertura por módulo e por requisito, com alertas de falta de evidência, comissionamento/ensaio pendente e NC não encerrada.</p></div>
+  <div class="card"><h3 class="section-title">Armazenamento e privacidade</h3><p class="small muted">Projeto, cadastros, checklists, modelos, fotografias e documentos ficam no IndexedDB do navegador. O LocalStorage é usado apenas para migração automática de versões anteriores. Nenhum anexo é enviado automaticamente para serviços externos. O backup completo somente é criado após comando explícito.</p><div class="notice warning"><strong>Recomendação:</strong> mantenha cópias periódicas do backup em repositório institucional seguro.</div></div></div>`+
+  `<div class="card"><h3 class="section-title">Punch list avançada e relatórios</h3><p class="small muted">A versão 1.2B acrescenta quadro por estágio, prioridade, impacto no recebimento, prazo, histórico de situação, notas de acompanhamento, evidências antes/depois, análise de prontidão e relatórios executivo, por sistema e comparativo de correções.</p></div>`+
+  `<div class="card"><h3 class="section-title">Critérios técnicos</h3><ul class="small muted"><li>As referências normativas são indicativas e devem ser conferidas na edição vigente e no contexto contratual.</li><li>Os alertas automáticos não substituem o juízo profissional da fiscalização, da comissão ou do responsável técnico.</li><li>O recebimento provisório ou definitivo não elimina as responsabilidades legais, civis, contratuais e técnico-profissionais.</li><li>O sistema não deve ser usado como substituto dos ensaios, medições, projetos e procedimentos formais de inspeção.</li></ul></div>`+
+  `<div class="notice"><strong>RecebeObra Pro v${APP_VERSION}</strong> · Aplicação local para comissionamento, vistoria e recebimento de obras públicas.</div>`;
 }
-
-function filterManualContent(value=''){
-  const root=document.getElementById('manualRoot');if(!root)return;
-  const input=document.getElementById('manualSearch');if(input&&input.value!==value)input.value=value;
-  const q=normalizeText(String(value||'').trim());
-  const items=[...root.querySelectorAll('[data-manual-searchable]')];
-  let visible=0;
-  items.forEach(el=>{
-    const hit=!q||normalizeText(el.textContent).includes(q);
-    el.classList.toggle('manual-filtered-out',!hit);
-    if(hit){visible++;if(q&&el.tagName==='DETAILS')el.open=true;}
-  });
-  const sections=[...root.querySelectorAll('.manual-section')];
-  sections.forEach(section=>{
-    const heading=normalizeText(section.querySelector('.manual-section-head')?.textContent||'');
-    const sectionHit=!!q&&heading.includes(q);
-    const childItems=[...section.querySelectorAll('[data-manual-searchable]')];
-    if(sectionHit)childItems.forEach(el=>{el.classList.remove('manual-filtered-out');if(el.tagName==='DETAILS')el.open=true;});
-    const hasVisible=sectionHit||childItems.some(el=>!el.classList.contains('manual-filtered-out'));
-    section.classList.toggle('manual-section-filtered',!!q&&!hasVisible);
-  });
-  visible=[...root.querySelectorAll('[data-manual-searchable]:not(.manual-filtered-out)')].length;
-  const meta=document.getElementById('manualSearchMeta');
-  if(meta)meta.textContent=q?`${visible} tópico(s) localizado(s)`:'Pesquisa instantânea · atalho “/”';
-  document.getElementById('manualSearchEmpty')?.classList.toggle('visible',!!q&&visible===0);
-}
-
-function setManualDetails(open,targetId=''){
-  const root=targetId?document.getElementById(targetId):document.getElementById('manualRoot');if(!root)return;
-  root.querySelectorAll('details:not(.manual-filtered-out)').forEach(d=>d.open=open);
-}
-
-function scrollManualTo(target){
-  const el=document.getElementById(target);if(!el)return;
-  el.scrollIntoView({behavior:'smooth',block:'start'});
-  setTimeout(()=>el.querySelector('summary')?.focus({preventScroll:true}),420);
-}
-
-function checkManualQuiz(){
-  const questions=[...document.querySelectorAll('#manualQuiz .manual-question')];if(!questions.length)return;
-  let score=0,answered=0;
-  questions.forEach(q=>{
-    q.classList.remove('correct','incorrect');
-    const selected=q.querySelector('input:checked');const result=q.querySelector('.manual-q-result');
-    if(!selected){if(result)result.textContent='Selecione uma alternativa.';return;}
-    answered++;const ok=selected.value===q.dataset.correct;if(ok)score++;
-    q.classList.add(ok?'correct':'incorrect');
-    if(result)result.textContent=`${ok?'Correto.':'Resposta a rever.'} ${q.dataset.explanation||''}`;
-  });
-  const feedback=document.getElementById('manualQuizFeedback');if(!feedback)return;
-  feedback.classList.add('visible');
-  if(answered<questions.length)feedback.textContent=`Você respondeu ${answered} de ${questions.length} questão(ões). Pontuação parcial: ${score}.`;
-  else if(score===questions.length)feedback.textContent=`${score}/${questions.length}. Excelente: a lógica central do sistema foi compreendida.`;
-  else if(score>=3)feedback.textContent=`${score}/${questions.length}. Bom resultado; revise as explicações destacadas em vermelho.`;
-  else feedback.textContent=`${score}/${questions.length}. Retome os capítulos Conceitos, Indicadores e Armazenamento antes de repetir.`;
-  feedback.scrollIntoView({behavior:'smooth',block:'nearest'});
-}
-
-function resetManualQuiz(){
-  document.querySelectorAll('#manualQuiz input[type=radio]').forEach(x=>x.checked=false);
-  document.querySelectorAll('#manualQuiz .manual-question').forEach(q=>{q.classList.remove('correct','incorrect');const r=q.querySelector('.manual-q-result');if(r)r.textContent='';});
-  const feedback=document.getElementById('manualQuizFeedback');if(feedback){feedback.classList.remove('visible');feedback.textContent='';}
-}
-
-function printManual(){
-  const details=[...document.querySelectorAll('#manualRoot details')];const states=details.map(d=>d.open);
-  details.forEach(d=>d.open=true);
-  const restore=()=>details.forEach((d,i)=>d.open=states[i]);
-  window.addEventListener('afterprint',restore,{once:true});
-  setTimeout(()=>window.print(),80);
-  setTimeout(restore,2500);
-}
-
 // ============================================================
 // Modal, notificações e formulários de cadastro
 // ============================================================
@@ -3403,7 +3081,6 @@ document.addEventListener('input',e=>{
   const el=e.target;
   if(el.dataset.bind){setPath(project,el.dataset.bind,coerceBound(el.dataset.bind,el.value));markDirty();if(['work.name','metadata.name','contract.contractNumber'].includes(el.dataset.bind))updateHeader();}
   if(el.dataset.uiInput!==undefined){ui[el.dataset.uiInput]=el.value;if(el.dataset.uiInput==='checkSearch')ui.checkPage=1;if(el.dataset.uiInput==='photoSearch')ui.photoPage=1;if(el.dataset.uiInput==='commSearch')ui.commPage=1;if(el.dataset.uiInput==='testSearch')ui.testPage=1;clearTimeout(el._renderTimer);el._renderTimer=setTimeout(renderCurrentView,220);}
-  if(el.dataset.manualSearch!==undefined)filterManualContent(el.value);
   if(el.dataset.checkField){const c=findById(project.checklist,el.dataset.id);if(c){c[el.dataset.checkField]=el.value;c.updatedAt=nowISO();markDirty();}}
   if(el.dataset.commField){const t=findById(project.commissioning,el.dataset.id);if(t){t[el.dataset.commField]=el.value;t.updatedAt=nowISO();markDirty();}}
   if(el.dataset.testField){const t=findById(project.tests,el.dataset.id);if(t){t[el.dataset.testField]=el.value;t.updatedAt=nowISO();markDirty();}}
@@ -3502,25 +3179,13 @@ document.addEventListener('click',async e=>{
       case 'export-traceability-csv':exportTraceabilityCSV();break;
       case 'export-equipment-csv':exportEquipmentCSV();break;
       case 'clear-audit':if(confirm('Limpar o log de alterações deste projeto?')){project.auditLog=[];markDirty();renderCurrentView();}break;
-      case 'manual-expand-all':setManualDetails(true);break;
-      case 'manual-collapse-all':setManualDetails(false);break;
-      case 'manual-expand-section':setManualDetails(true,a.dataset.target||'');break;
-      case 'manual-scroll':scrollManualTo(a.dataset.target||'');break;
-      case 'manual-clear-search':filterManualContent('');document.getElementById('manualSearch')?.focus();break;
-      case 'manual-check-quiz':checkManualQuiz();break;
-      case 'manual-reset-quiz':resetManualQuiz();break;
-      case 'manual-print':printManual();break;
       case 'load-demo':await loadDemo(a.dataset.demo);break;
     }
   }catch(err){console.error(err);toast(err.message||'Não foi possível concluir a ação.','error',6000);}
 });
 
 document.getElementById('menuToggle').addEventListener('click',()=>document.body.classList.toggle('sidebar-open'));
-document.addEventListener('keydown',e=>{
-  if(e.key==='Escape')closeModal();
-  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='s'){e.preventDefault();saveProject(true);}
-  if(ui.activeView==='help'&&e.key==='/'&&!['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName)){e.preventDefault();document.getElementById('manualSearch')?.focus();}
-});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='s'){e.preventDefault();saveProject(true);}});
 
 document.addEventListener('dragover',e=>{const z=e.target.closest('.drop-zone');if(z){e.preventDefault();z.classList.add('over');}});
 document.addEventListener('dragleave',e=>{const z=e.target.closest('.drop-zone');if(z)z.classList.remove('over');});
