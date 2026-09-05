@@ -19,7 +19,7 @@ O site `www.obrasinteligentes.ia.br` e uma pagina estatica hospedada na Hostinge
 C:\Obras Inteligentes\index.html
 ```
 
-A tela inicial possui atualmente 73 cards de aplicativos. Cada card aponta para uma rota estatica dentro do dominio. A regra geral e:
+A tela inicial possui atualmente 74 cards de aplicativos. Cada card aponta para uma rota estatica dentro do dominio. A regra geral e:
 
 ```text
 https://www.obrasinteligentes.ia.br/nome-da-rota/
@@ -49,7 +49,7 @@ Excecoes/observacoes:
 
 ## Inventario verificado dos aplicativos
 
-Inventario originalmente verificado em 21/07/2026 e atualizado em 27/08/2026 para reorganizacao dos filtros `Equipamentos, Apoios e Montagens`, `Instalacoes Eletricas`, `Instalacoes Hidrosanitarias` e `Ar condicionado e ventilacao`. Todos os cards listados possuem arquivo local correspondente.
+Inventario originalmente verificado em 21/07/2026 e atualizado em 05/09/2026 para reorganizacao dos filtros `Equipamentos, Apoios e Montagens`, `Instalacoes Eletricas`, `Instalacoes Hidrosanitarias e de Incendio` e `Ar condicionado e ventilacao`. Todos os cards listados possuem arquivo local correspondente.
 
 | Card | Aplicativo | Rota publicada | Arquivo local principal | Status local | Status site |
 |---|---|---|---|---|---|
@@ -126,6 +126,7 @@ Inventario originalmente verificado em 21/07/2026 e atualizado em 27/08/2026 par
 | 71 / CURVA S | Cronograma Curva S | `/cronograma-curva-s/` | `C:\Obras Inteligentes\cronograma-curva-s\index.html` | existe | 200 |
 | 72 / MOTORES | MotorCalc | `/motorcalc/` | `C:\Obras Inteligentes\motorcalc\index.html` | existe | 200 |
 | 73 / SANCOES | SancionaPro | `/sancionapro/` | `C:\Obras Inteligentes\sancionapro\index.html` | existe | 200 |
+| 74 / INCENDIO | IncendioCalc | `/incendiocalc/` | `C:\Obras Inteligentes\incendiocalc\index.html` | existe | 200 |
 
 ## Tamanhos verificados
 
@@ -206,6 +207,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/cronograma-curva-s/` | 451356 bytes | 448871 caracteres |
 | `/motorcalc/` | 148249 bytes | 147037 caracteres |
 | `/sancionapro/` | 240912 bytes | 237881 caracteres |
+| `/incendiocalc/` | 327091 bytes | 317433 caracteres |
 | `/abc-fiscal/` | 351255 bytes | 349022 caracteres |
 
 ## Estrutura local principal
@@ -533,7 +535,7 @@ Observacoes:
 
 - Aplicativo standalone.
 - Tela inicial do site aponta para `/reservatoriopro/`.
-- O card foi remanejado do filtro `Instalacoes` para `Instalacoes Hidrosanitarias` em 27/08/2026.
+- O card foi remanejado do filtro `Instalacoes` para `Instalacoes Hidrosanitarias` em 27/08/2026 e para `Instalacoes Hidrosanitarias e de Incendio` em 05/09/2026.
 - Validar apos futuras alteracoes se a tela de abertura, calculos, exportacoes e relatorios continuam carregando sem dependencias externas.
 
 ### BombaPro
@@ -552,7 +554,7 @@ Observacoes:
 
 - Aplicativo standalone com tela de abertura e aviso legal.
 - Usa bibliotecas via CDN: Chart.js, xlsx e jsPDF.
-- O card foi remanejado do filtro `Instalacoes` para `Instalacoes Hidrosanitarias` em 27/08/2026.
+- O card foi remanejado do filtro `Instalacoes` para `Instalacoes Hidrosanitarias` em 27/08/2026 e para `Instalacoes Hidrosanitarias e de Incendio` em 05/09/2026.
 - Tela inicial do site aponta para `/bombapro/`.
 - Validar apos futuras alteracoes se graficos, catalogo de bombas, selecao inteligente, otimizacao tecnico-economica, memoria de calculo, especificacao profissional, exportacao Excel e relatorios PDF continuam carregando corretamente.
 
@@ -1359,7 +1361,7 @@ Observacoes:
 
 - Aplicativo standalone empacotado em HTML unico, com tela de abertura e aviso de responsabilidade.
 - Tela inicial do site aponta para `/hidrosan-pro/`.
-- O card foi classificado no filtro `Instalacoes Hidrosanitarias`.
+- O card foi classificado no filtro `Instalacoes Hidrosanitarias` e remanejado para `Instalacoes Hidrosanitarias e de Incendio` em 05/09/2026.
 - Validar apos futuras alteracoes se os modulos de agua fria, esgoto sanitario, ventilacao sanitaria, reservatorios, criterios normativos, exemplos, relatorios e memorias de calculo continuam carregando corretamente.
 
 ### TerceirizaPro
@@ -1752,6 +1754,25 @@ Observacoes:
 - O card foi classificado no filtro `Gestao de Obras e de Contratos`.
 - Validar apos futuras alteracoes se triagem, enquadramento, dosimetria, prazos, decisao, recursos, execucao, reabilitacao, backup local e relatorios continuam carregando corretamente.
 
+### IncendioCalc
+
+Rota: `/incendiocalc/`  
+Arquivo: `incendiocalc/index.html`
+
+Ultima inclusao:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\IncendioCalc-abertura.html`
+- Data: 05/09/2026
+- Alteracao: inclusao de novo card na home, no filtro renomeado `Instalacoes Hidrosanitarias e de Incendio`, e publicacao do aplicativo IncendioCalc - Dimensionamento de hidrantes e chuveiros automaticos como HTML standalone.
+
+Observacoes:
+
+- Aplicativo standalone empacotado em HTML unico, com tela de abertura e manual incorporado.
+- Tela inicial do site aponta para `/incendiocalc/`.
+- O menu/filtro `Instalacoes Hidrosanitarias` foi renomeado para `Instalacoes Hidrosanitarias e de Incendio`.
+- O card foi classificado no filtro `Instalacoes Hidrosanitarias e de Incendio`.
+- Validar apos futuras alteracoes se dimensionamento de hidrantes, chuveiros automaticos, vazoes, pressoes, reserva tecnica, bombas e relatorios continuam carregando corretamente.
+
 ## Artigos publicados na home
 
 Em 20/07/2026, os tres cards iniciais do bloco `Conteudo` da home foram substituidos por artigos reais enviados em PDF. Em 21/07/2026, foi incluido um quarto artigo. A estrategia adotada foi renderizar cada pagina do PDF como PNG dentro de uma pagina HTML propria, preservando a diagramacao original, tabelas, figuras e paginacao. Cada pagina tambem oferece link para abrir/baixar o PDF original.
@@ -1968,7 +1989,11 @@ $headers=@{ 'User-Agent'='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
   '/canteiro-sicro/',
   '/acesscheck/',
   '/orcamento-forense/',
-  '/gro-pgr-pro/'
+  '/gro-pgr-pro/',
+  '/cronograma-curva-s/',
+  '/motorcalc/',
+  '/sancionapro/',
+  '/incendiocalc/'
 ) | ForEach-Object {
   $url = "https://www.obrasinteligentes.ia.br$_?v=check"
   $r = Invoke-WebRequest -UseBasicParsing -Headers $headers -Uri $url -TimeoutSec 30

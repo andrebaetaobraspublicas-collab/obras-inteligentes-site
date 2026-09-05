@@ -524,7 +524,7 @@ body.modal-open{overflow:hidden}
       <button class="filter-btn is-active" type="button" data-filter="todos">Todos</button>
       <button class="filter-btn" type="button" data-filter="Estruturas">Estruturas</button>
       <button class="filter-btn" type="button" data-filter="Instalacoes Eletricas">Instala&ccedil;&otilde;es El&eacute;tricas</button>
-      <button class="filter-btn" type="button" data-filter="Instalacoes Hidrosanitarias">Instala&ccedil;&otilde;es Hidrosanit&aacute;rias</button>
+      <button class="filter-btn" type="button" data-filter="Instalacoes Hidrosanitarias e de Incendio">Instala&ccedil;&otilde;es Hidrosanit&aacute;rias e de Inc&ecirc;ndio</button>
       <button class="filter-btn" type="button" data-filter="Ar condicionado e ventilacao">Ar condicionado e ventila&ccedil;&atilde;o</button>
       <button class="filter-btn" type="button" data-filter="Pavimentacao, Saneamento e Infraestrutura">Pavimenta&ccedil;&atilde;o, Saneamento e Infraestrutura</button>
       <button class="filter-btn" type="button" data-filter="Engenharia Mecanica">Engenharia Mec&acirc;nica</button>
@@ -535,7 +535,7 @@ body.modal-open{overflow:hidden}
       <button class="filter-btn" type="button" data-filter="Orcamento">Or&ccedil;amento</button>
       <button class="filter-btn" type="button" data-filter="Artigos">Artigos</button>
     </div>
-    <div class="app-filter-status" id="appFilterStatus">73 aplicativos encontrados</div>
+    <div class="app-filter-status" id="appFilterStatus">74 aplicativos encontrados</div>
   </div>
 
   <div class="apps">
@@ -1342,6 +1342,17 @@ body.modal-open{overflow:hidden}
       <div class="meta">Abrir sistema &middot; processos sancionat&oacute;rios</div>
     </a>
 
+    <a class="app" href="/incendiocalc/" aria-label="Abrir IncendioCalc - Dimensionamento de hidrantes e chuveiros automaticos">
+      <span class="arrow">&rarr;</span>
+      <div class="app-num">74 / INC&Ecirc;NDIO</div>
+      <svg class="app-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M24 5c5 7 11 12 11 22a11 11 0 0 1-22 0c0-5 3-9 7-13 0 5 2 8 5 10 2-5 1-10-1-19z"/><path d="M18 38h12"/><path d="M10 43h28"/><path d="M35 14h7"/><path d="M39 10v8"/>
+      </svg>
+      <h3>Inc&ecirc;ndioCalc</h3>
+      <p>Dimensionamento de sistemas prediais de combate a inc&ecirc;ndio, com apoio a hidrantes, chuveiros autom&aacute;ticos, vaz&otilde;es, press&otilde;es, reserva t&eacute;cnica e relat&oacute;rios.</p>
+      <div class="meta">Abrir sistema &middot; hidrantes e sprinklers</div>
+    </a>
+
   </div>
 </section>
 
@@ -1434,6 +1445,7 @@ body.modal-open{overflow:hidden}
         <a href="/spdapro/">SPDAPro - SPDA e Aterramento</a>
         <a href="/lumipro/">LumiPro - Dimensionamento Luminot&eacute;cnico</a>
         <a href="/hidrosan-pro/">HidroSan Pro - Instala&ccedil;&otilde;es Hidrossanit&aacute;rias</a>
+        <a href="/incendiocalc/">Inc&ecirc;ndioCalc - Hidrantes e Sprinklers</a>
         <a href="/brucknercalc/">Br&uuml;cknerCalc - Curva de Massas</a>
         <a href="/molapro/">MolaPro - Calculadora de Molas</a>
         <a href="/calculadora-eixos/">Calculadora de Eixos</a>
@@ -1564,8 +1576,8 @@ body.modal-open{overflow:hidden}
     ["/casa-parametrica/", ["Orcamento", "casa parametrica area programa custos habitacao"]],
     ["/termopro/", ["Ar condicionado e ventilacao", "termopro carga termica climatizacao ar condicionado hvac ventilacao avac"]],
     ["/circuitopro/", ["Instalacoes Eletricas", "circuitopro cabos circuitos eletricos queda tensao instalacoes eletricas"]],
-    ["/reservatoriopro/", ["Instalacoes Hidrosanitarias", "reservatoriopro reservatorio edificacoes agua consumo instalacoes hidrosanitarias"]],
-    ["/bombapro/", ["Instalacoes Hidrosanitarias", "bombapro bombas hidraulica vazao altura manometrica instalacoes hidrosanitarias"]],
+    ["/reservatoriopro/", ["Instalacoes Hidrosanitarias e de Incendio", "reservatoriopro reservatorio edificacoes agua consumo instalacoes hidrosanitarias incendio"]],
+    ["/bombapro/", ["Instalacoes Hidrosanitarias e de Incendio", "bombapro bombas hidraulica vazao altura manometrica instalacoes hidrosanitarias incendio"]],
     ["/paraboltpro/", ["Estruturas", "paraboltpro chumbadores mecanicos ancoragem concreto"]],
     ["/steelpro/", ["Estruturas", "steelpro estrutura metalica aco perfis ligacoes"]],
     ["/cronogramapro/", ["Gestao de Obras e de Contratos", "cronogramapro prazo parametrico cronograma obras planejamento"]],
@@ -1606,7 +1618,7 @@ body.modal-open{overflow:hidden}
     ["/lumipro/", ["Instalacoes Eletricas", "lumipro iluminacao luminotecnica luminarias iluminancia lux fluxo luminoso projeto luminotecnico eficiencia energia instalacoes eletricas"]],
     ["/esgotocalcpro/", ["Pavimentacao, Saneamento e Infraestrutura", "esgotocalc pro esgoto sanitario saneamento redes coletoras rede coletora nbr 9649 nbr 14486 diametro declividade vazao tensao trativa infraestrutura"]],
     ["/equivaleclt/", ["Orcamento", "equivaleclt clt pj pessoa juridica remuneracao encargos sinapi beneficios tributos fgts ferias decimo terceiro equivalencia orcamento"]],
-    ["/hidrosan-pro/", ["Instalacoes Hidrosanitarias", "hidrosan pro hidrossanitario hidrossanitaria instalacoes prediais agua fria esgoto sanitario ventilacao sanitaria reservatorios nbr 5626 nbr 8160 memoria calculo"]],
+    ["/hidrosan-pro/", ["Instalacoes Hidrosanitarias e de Incendio", "hidrosan pro hidrossanitario hidrossanitaria instalacoes prediais agua fria esgoto sanitario ventilacao sanitaria reservatorios nbr 5626 nbr 8160 memoria calculo incendio"]],
     ["/terceirizapro/", ["Gestao de Obras e de Contratos", "terceirizapro terceirizacao terceirizacao conta vinculada conta deposito vinculada contratos gestao fiscalizacao medicao glosa provisoes trabalhistas encargos fato gerador lei 14133"]],
     ["/cimbrepro/", ["Equipamentos, Apoios e Montagens", "cimbrepro cimbres escoramentos metalicos lajes formas longarinas torres escoras desforma reescoramento cargas ifc estruturas equipamentos apoios montagens"]],
     ["/alvenariapro/", ["Estruturas", "alvenariapro alvenaria estrutural blocos graute armaduras cintas paredes cargas verticais flexo compressao cisalhamento nbr 16868 estruturas"]],
@@ -1624,7 +1636,8 @@ body.modal-open{overflow:hidden}
     ["/gro-pgr-pro/", ["Riscos", "gro pgr pro gerenciamento riscos ocupacionais nr 1 nr1 seguranca trabalho inventario perigos avaliacao risco plano acao relatorios"]],
     ["/cronograma-curva-s/", ["Gestao de Obras e de Contratos", "cronograma curva s cronograma fisico financeiro linha de base diagnostico nota acompanhamento planejamento controle obras contratos gestao"]],
     ["/motorcalc/", ["Equipamentos, Apoios e Montagens", "motorcalc motor motores eletricos seleção selecao dimensionamento potencia rendimento partida regime operacao equipamentos apoios montagens"]],
-    ["/sancionapro/", ["Gestao de Obras e de Contratos", "sancionapro sancoes sanções processo sancionatorio sancionatorio penalidade multa advertencia impedimento inidoneidade lei 14133 contratos licitantes contratados dosimetria recursos gestao obras contratos"]]
+    ["/sancionapro/", ["Gestao de Obras e de Contratos", "sancionapro sancoes sanções processo sancionatorio sancionatorio penalidade multa advertencia impedimento inidoneidade lei 14133 contratos licitantes contratados dosimetria recursos gestao obras contratos"]],
+    ["/incendiocalc/", ["Instalacoes Hidrosanitarias e de Incendio", "incendiocalc incendio incêndio combate incendio hidrantes sprinklers chuveiros automaticos reserva tecnica incendio vazao pressao bomba instalacoes hidrosanitarias incendio"]]
   ]);
 
   const appCards = Array.from(document.querySelectorAll(".apps .app"));
