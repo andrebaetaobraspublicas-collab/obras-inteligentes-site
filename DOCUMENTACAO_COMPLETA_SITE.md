@@ -19,7 +19,7 @@ O site `www.obrasinteligentes.ia.br` e uma pagina estatica hospedada na Hostinge
 C:\Obras Inteligentes\index.html
 ```
 
-A tela inicial possui atualmente 72 cards de aplicativos. Cada card aponta para uma rota estatica dentro do dominio. A regra geral e:
+A tela inicial possui atualmente 73 cards de aplicativos. Cada card aponta para uma rota estatica dentro do dominio. A regra geral e:
 
 ```text
 https://www.obrasinteligentes.ia.br/nome-da-rota/
@@ -125,6 +125,7 @@ Inventario originalmente verificado em 21/07/2026 e atualizado em 27/08/2026 par
 | 70 / GRO-PGR | GRO/PGR Pro | `/gro-pgr-pro/` | `C:\Obras Inteligentes\gro-pgr-pro\index.html` | existe | 200 |
 | 71 / CURVA S | Cronograma Curva S | `/cronograma-curva-s/` | `C:\Obras Inteligentes\cronograma-curva-s\index.html` | existe | 200 |
 | 72 / MOTORES | MotorCalc | `/motorcalc/` | `C:\Obras Inteligentes\motorcalc\index.html` | existe | 200 |
+| 73 / SANCOES | SancionaPro | `/sancionapro/` | `C:\Obras Inteligentes\sancionapro\index.html` | existe | 200 |
 
 ## Tamanhos verificados
 
@@ -204,6 +205,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/gro-pgr-pro/` | 663600 bytes | 659150 caracteres |
 | `/cronograma-curva-s/` | 451356 bytes | 448871 caracteres |
 | `/motorcalc/` | 148249 bytes | 147037 caracteres |
+| `/sancionapro/` | 240912 bytes | 237881 caracteres |
 | `/abc-fiscal/` | 351255 bytes | 349022 caracteres |
 
 ## Estrutura local principal
@@ -1729,6 +1731,26 @@ Observacoes:
 - Tela inicial do site aponta para `/motorcalc/`.
 - O card foi classificado no filtro `Equipamentos, Apoios e Montagens`.
 - Validar apos futuras alteracoes se selecao de motores eletricos, dados de potencia, rendimento, partida, regime de operacao e relatorios continuam carregando corretamente.
+
+### SancionaPro
+
+Rota: `/sancionapro/`  
+Arquivo: `sancionapro/index.html`
+
+Ultima inclusao:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\SancionaPro_para_Codex_ObrasInteligentes_v1.2.zip`
+- Arquivo publicado: `SancionaPro_Codex_Package_v1.2\reference\SancionaPro_v1.1.html`
+- Data: 05/09/2026
+- Alteracao: inclusao de novo card na home, no filtro `Gestao de Obras e de Contratos`, e publicacao do aplicativo SancionaPro - Gestao de Processos Sancionatorios como HTML standalone.
+
+Observacoes:
+
+- Aplicativo standalone publicado como HTML unico, com dados locais em IndexedDB/localStorage e manual incorporado.
+- O pacote enviado tambem contem backend Node de referencia para integracao com OpenAI; a publicacao atual preserva o padrao estatico do site Hostinger/GitHub e nao implanta servidor Node.
+- Tela inicial do site aponta para `/sancionapro/`.
+- O card foi classificado no filtro `Gestao de Obras e de Contratos`.
+- Validar apos futuras alteracoes se triagem, enquadramento, dosimetria, prazos, decisao, recursos, execucao, reabilitacao, backup local e relatorios continuam carregando corretamente.
 
 ## Artigos publicados na home
 
