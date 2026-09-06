@@ -19,7 +19,7 @@ O site `www.obrasinteligentes.ia.br` e uma pagina estatica hospedada na Hostinge
 C:\Obras Inteligentes\index.html
 ```
 
-A tela inicial possui atualmente 74 cards de aplicativos. Cada card aponta para uma rota estatica dentro do dominio. A regra geral e:
+A tela inicial possui atualmente 75 cards de aplicativos. Cada card aponta para uma rota estatica dentro do dominio. A regra geral e:
 
 ```text
 https://www.obrasinteligentes.ia.br/nome-da-rota/
@@ -127,6 +127,7 @@ Inventario originalmente verificado em 21/07/2026 e atualizado em 05/09/2026 par
 | 72 / MOTORES | MotorCalc | `/motorcalc/` | `C:\Obras Inteligentes\motorcalc\index.html` | existe | 200 |
 | 73 / SANCOES | SancionaPro | `/sancionapro/` | `C:\Obras Inteligentes\sancionapro\index.html` | existe | 200 |
 | 74 / INCENDIO | IncendioCalc | `/incendiocalc/` | `C:\Obras Inteligentes\incendiocalc\index.html` | existe | 200 |
+| 75 / UPS | UPSPro | `/upspro/` | `C:\Obras Inteligentes\upspro\index.html` | existe | 200 |
 
 ## Tamanhos verificados
 
@@ -208,6 +209,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/motorcalc/` | 148249 bytes | 147037 caracteres |
 | `/sancionapro/` | 240912 bytes | 237881 caracteres |
 | `/incendiocalc/` | 327091 bytes | 317433 caracteres |
+| `/upspro/` | 1180691 bytes | 1165941 caracteres |
 | `/abc-fiscal/` | 351255 bytes | 349022 caracteres |
 
 ## Estrutura local principal
@@ -1780,6 +1782,24 @@ Observacoes:
 - O card foi classificado no filtro `Instalacoes Hidrosanitarias e de Incendio`.
 - Validar apos futuras alteracoes se dimensionamento de hidrantes, chuveiros automaticos, vazoes, pressoes, reserva tecnica, bombas e relatorios continuam carregando corretamente.
 
+### UPSPro
+
+Rota: `/upspro/`  
+Arquivo: `upspro/index.html`
+
+Ultima inclusao:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\UPSPro_v1.7.html`
+- Data: 06/09/2026
+- Alteracao: inclusao de novo card na home, no filtro `Instalacoes Eletricas`, e publicacao do aplicativo UPSPro - Energia Critica como HTML standalone.
+
+Observacoes:
+
+- Aplicativo standalone empacotado em HTML unico, com tela de abertura e manual incorporado.
+- Tela inicial do site aponta para `/upspro/`.
+- O card foi classificado no filtro `Instalacoes Eletricas`.
+- Validar apos futuras alteracoes se dimensionamento de UPS, bancos de baterias, autonomia, cargas, catalogo tecnico, calculos rastreaveis e relatorios continuam carregando corretamente.
+
 ## Artigos publicados na home
 
 Em 20/07/2026, os tres cards iniciais do bloco `Conteudo` da home foram substituidos por artigos reais enviados em PDF. Em 21/07/2026, foi incluido um quarto artigo. A estrategia adotada foi renderizar cada pagina do PDF como PNG dentro de uma pagina HTML propria, preservando a diagramacao original, tabelas, figuras e paginacao. Cada pagina tambem oferece link para abrir/baixar o PDF original.
@@ -2000,7 +2020,8 @@ $headers=@{ 'User-Agent'='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
   '/cronograma-curva-s/',
   '/motorcalc/',
   '/sancionapro/',
-  '/incendiocalc/'
+  '/incendiocalc/',
+  '/upspro/'
 ) | ForEach-Object {
   $url = "https://www.obrasinteligentes.ia.br$_?v=check"
   $r = Invoke-WebRequest -UseBasicParsing -Headers $headers -Uri $url -TimeoutSec 30
