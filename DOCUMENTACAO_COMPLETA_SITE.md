@@ -149,7 +149,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/reservatoriopro/` | 209145 bytes | 206623 caracteres |
 | `/bombapro/` | 788470 bytes | 779784 caracteres |
 | `/paraboltpro/` | 1203461 bytes | 1183789 caracteres |
-| `/steelpro/` | 278012 bytes | 275650 caracteres |
+| `/steelpro/` | 1170248 bytes | 1154716 caracteres |
 | `/cronogramapro/` | 402158 bytes | 402158 caracteres |
 | `/drenapro/` | 249087 bytes | 249037 caracteres |
 | `/taludepro/` | 182065 bytes | 179465 caracteres |
@@ -587,6 +587,13 @@ Ultima inclusao:
 - Data: 20/08/2026
 - Alteracao: substituicao integral de `steelpro/index.html` pela versao 1.1, com manual interativo incorporado.
 - Backup da versao anterior: `C:\Obras Inteligentes\backups\steelpro-index-before-v1-1-manual-interativo-20260820-1930.html`
+
+Ultima atualizacao:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\SteelPro_v2.0.html`
+- Data: 06/09/2026
+- Alteracao: substituicao integral de `steelpro/index.html` pela versao SteelPro 2.0 - Projeto integrado, com manual interativo.
+- Backup da versao anterior salvo em `C:\Obras Inteligentes\backups\steelpro-index-before-v2-0-20260906-0001.html`.
 
 Observacoes:
 
