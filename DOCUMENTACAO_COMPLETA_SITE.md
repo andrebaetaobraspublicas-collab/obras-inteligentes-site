@@ -212,8 +212,8 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/sancionapro/` | 240912 bytes | 237881 caracteres |
 | `/incendiocalc/` | 327091 bytes | 317433 caracteres |
 | `/upspro/` | 1464093 bytes | 1445745 caracteres |
-| `/ambienta/` | 1024981 bytes | 1016482 caracteres |
-| `/solarincidence-pro/` | 260302 bytes | 258282 caracteres |
+| `/ambienta/` | 1146296 bytes | 1136473 caracteres |
+| `/solarincidence-pro/` | 282551 bytes | 280392 caracteres |
 | `/abc-fiscal/` | 351255 bytes | 349022 caracteres |
 
 ## Estrutura local principal
@@ -1809,11 +1809,11 @@ Observacoes:
 Rota: `/ambienta/`  
 Arquivo: `ambienta/index.html`
 
-Ultima inclusao:
+Ultima atualizacao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\Ambienta_v2.8.html`
+- Fonte: `C:\Users\ACER\Documents\Downloads\Ambienta_v2.9.html`
 - Data: 07/09/2026
-- Alteracao: inclusao de novo card na home, criacao do filtro `Arquitetura e Design de Interiores`, e publicacao do aplicativo Ambienta como HTML standalone.
+- Alteracao: substituicao integral de `ambienta/index.html` pela nova versao enviada. A versao anterior foi preservada em `C:\Obras Inteligentes\backups\ambienta-index-before-v2-9-20260907-1728.html`.
 
 Observacoes:
 
@@ -1827,11 +1827,11 @@ Observacoes:
 Rota: `/solarincidence-pro/`  
 Arquivo: `solarincidence-pro/index.html`
 
-Ultima inclusao:
+Ultima atualizacao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\solarincidence-pro (2).html`
+- Fonte: `C:\Users\ACER\Documents\Downloads\solarincidence-pro-v2.html`
 - Data: 07/09/2026
-- Alteracao: inclusao de novo card na home, no filtro `Arquitetura e Design de Interiores`, e publicacao do aplicativo SolarIncidence Pro como HTML standalone.
+- Alteracao: substituicao integral de `solarincidence-pro/index.html` pela nova versao enviada. A versao anterior foi preservada em `C:\Obras Inteligentes\backups\solarincidence-pro-index-before-v2-20260907-1728.html`.
 
 Observacoes:
 

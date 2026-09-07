@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Ambienta 2.8 — plantas e interiores</title>
+<title>Ambienta 2.9 — interiores e iluminação</title>
 <meta name="description" content="Ferramenta offline para projeto de interiores: ambiente, aberturas, biblioteca de mobiliário, arranjo otimizado, exportação IFC 4, SketchUp e memorial descritivo.">
 <style>
 /* ============================================================
@@ -762,7 +762,8 @@ input[type=search],input[type=url],input[type=date]{background:var(--paper);bord
 
 
 
-<script data-worker-source>
+<script data-worker-source="true">
+
 
 /* ============================================================
    CATÁLOGO DE MOBILIÁRIO
@@ -1211,8 +1212,10 @@ const KITS = {
 
 const porId = id => INDICE_CATALOGO.get(id);
 
+
 </script>
-<script data-worker-source>
+<script data-worker-source="true">
+
 
 /* ============================================================
    NÚCLEO — modelo de dados, geometria e persistência
@@ -1492,8 +1495,10 @@ function baixar(nomeArq, conteudo, mime){
   setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 400);
 }
 
+
 </script>
-<script data-worker-source>
+<script data-worker-source="true">
+
 
 /* ============================================================
    ACABAMENTOS E TEXTURAS
@@ -1710,8 +1715,10 @@ function custoAcabamentos(){
   return {itens:it, total:it.reduce((s, x) => s + x.total, 0), areas:A};
 }
 
+
 </script>
-<script data-worker-source>
+<script data-worker-source="true">
+
 
 /* ============================================================
    SOL E INSOLAÇÃO
@@ -1841,8 +1848,10 @@ function textoInsolacao(){
   return {linhas, jun, dez};
 }
 
+
 </script>
-<script data-worker-source>
+<script data-worker-source="true">
+
 
 /* ============================================================
    MOTOR DE ARRANJO
@@ -2526,12 +2535,14 @@ function ocupacao(){
 /** Diâmetro do maior círculo livre inscrito, para a área de giro. */
 function maiorGiro(){ return giroLivre(P.moveis).diametro; }
 
+
 </script>
-<script data-worker-source>
+<script data-worker-source="true">
+
 /* Ambienta 2.2 — integridade, regras semânticas e solver reproduzível.
    Núcleo compartilhado literalmente com o Web Worker; sem dependências de DOM. */
-const VERSAO_APP = '2.8.0';
-const SCHEMA_PROJETO = 8;
+const VERSAO_APP = '2.9.0';
+const SCHEMA_PROJETO = 9;
 const SOL_PADRAO = {ativo:false,lat:-15.79,lon:-47.88,fuso:-3,dia:172,hora:14,norte:0};
 const SOLVER_PADRAO = {seed:42671,iteracoes:1000,ciclos:2,quantidade:3};
 let rngSolver = semeado(42671);
@@ -2834,8 +2845,10 @@ function* semearProgressivo(moveis){
   }
 }
 
+
 </script>
 <script>
+
 
 /* ============================================================
    SÍMBOLOS EM VISTA SUPERIOR
@@ -3043,8 +3056,10 @@ function simbolo(ctx, c, cor, lw){
   }
 }
 
+
 </script>
 <script>
+
 
 /* ============================================================
    PLANTA BAIXA — desenho e edição direta
@@ -3381,8 +3396,10 @@ function atualizaHud(x, y){
   el.textContent = `x ${fmt(x)} m   y ${fmt(y)} m${s}`;
 }
 
+
 </script>
 <script>
+
 
 /* ============================================================
    VISTA 3D — renderizador próprio sobre canvas 2D
@@ -3844,8 +3861,10 @@ function liga3d(cv){
   }, {passive:false});
 }
 
+
 </script>
 <script>
+
 
 /* ============================================================
    EXPORTAÇÃO DE MODELO — IFC 4, COLLADA (.dae) e Ruby do SketchUp
@@ -4248,8 +4267,10 @@ function geraOBJ(){
   return li.join('\n') + '\n';
 }
 
+
 </script>
 <script>
+
 
 /* ============================================================
    ESCRITOR ZIP + DOCX
@@ -4492,8 +4513,10 @@ function bytesDePng(dataUrl){
   return arr;
 }
 
+
 </script>
 <script>
+
 
 /* ============================================================
    MEMORIAL DESCRITIVO
@@ -4703,8 +4726,10 @@ function memorialHtml(blocos){
   return partes.join('');
 }
 
+
 </script>
 <script>
+
 
 /* ============================================================
    INTERFACE
@@ -5390,8 +5415,10 @@ function iniciar(){
   requestAnimationFrame(() => { enquadrar($('#telaPlanta')); pintar(); });
 }
 
+
 </script>
 <script>
+
 
 /* ============================================================
    MANUAL INTERATIVO
@@ -5813,8 +5840,10 @@ function abreSecao(id, silencioso){
   if(!silencioso) $('#manCorpo').scrollTop = 0;
 }
 
+
 </script>
 <script>
+
 
 /* ============================================================
    AUTOTESTE
@@ -6395,8 +6424,10 @@ async function rodarTestes(botao){
   return res;
 }
 
+
 </script>
 <script>
+
 /* Interface 2.2 — persistência transacional, projetos, solver e comparador.
    Mantém a distribuição em HTML único, incluindo o código do worker no próprio arquivo. */
 const estadoSolver={worker:null,url:null,resultados:[],base:null,emCurso:false,ultimaFalha:null};
@@ -6798,8 +6829,10 @@ async function iniciarV22(){
   window.addEventListener('unhandledrejection',e=>{console.error(e.reason);nota('Operação não concluída: '+(e.reason?.message||e.reason),true);});
 }
 
+
 </script>
 <script>
+
 /* Manual atualizado junto com a versão: não mantém promessas do protótipo. */
 achaSecao('inicio').corpo=()=>`<h2>Ambienta 2.2</h2><p>Projete um ambiente retangular, cadastre as aberturas, escolha acabamentos e mobiliário e compare alternativas de arranjo. A aplicação é um arquivo HTML autônomo: não envia os projetos a servidores.</p><h3>Fluxo recomendado</h3><ol><li>Abra <b>Projetos</b> e crie um projeto ou carregue um dos sete exemplos.</li><li>Confira medidas, aberturas, circulação e acabamentos.</li><li>Escolha peças na biblioteca ou personalize uma ficha técnica.</li><li>Use <b>Organizar ambiente</b>, escolha semente e esforço e gere até cinco alternativas.</li><li>Compare os resultados e aplique explicitamente uma alternativa. Corrija pendências na planta.</li><li>Guarde uma revisão e exporte JSON, IFC, OBJ + MTL, COLLADA ou memorial DOCX.</li></ol><p>O botão Salvar grava o estado completo localmente. O botão Abrir importa JSON. O manual, acessível também no topo, contém laboratórios que chamam as funções reais do aplicativo.</p>`;
 achaSecao('custo').corpo=()=>`<h2>Solver 2.0: viabilidade antes de composição</h2><p>A busca ocorre em um Web Worker, usando uma cópia do projeto. A interface recebe mensagens de progresso. Cancelar termina o processamento e mantém o arranjo original; alternativas já concluídas são preservadas para comparação.</p><h3>Restrições e preferências</h3><p>Sobreposição, saída do ambiente, varredura e faixa de porta, obstrução vertical de aberturas, falta de parede ou apoio e certos requisitos de acesso são tratados como restrições. A busca primeiro reduz sua magnitude. Uma solução sem violações não é trocada por uma solução geometricamente inválida para melhorar estética.</p><p>Folgas, alinhamento, agrupamento, ponto focal e equilíbrio têm pesos distintos por perfil. A circulação é recalculada periodicamente e na conferência final. O método é heurístico: não demonstra ótimo global nem prova que um problema é impossível.</p><h3>Reproduzir e comparar</h3><p>O resultado é reproduzível com o mesmo estado inicial, catálogo, semente e parâmetros. Os perfis são Equilíbrio, Circulação, Conforto de uso, Agrupamento funcional e Alinhamento. Como o solver não troca o conjunto de peças, preço e ocupação podem ser iguais. Não existe nesta versão otimização de compras ou dimensionamento luminotécnico.</p><div class="lab"><h4>Laboratório — parcelas do arranjo</h4><button class="btn" id="labCustoBt">Avaliar arranjo atual</button><div class="out" id="labCustoOut">—</div></div>`;
@@ -6821,8 +6854,10 @@ const textoSolAnt=achaSecao('sol').corpo;
 achaSecao('sol').corpo=()=>textoSolAnt().replace('A precisão é da ordem de um grau — suficiente para estudo de\n   projeto, não para cálculo de sombreamento fino.','Trata-se de um modelo solar aproximado, sem validação metrológica; não use para cálculo fino de sombreamento.').replace('No hemisfério sul,\n   a face norte recebe sol no inverno e a sul no verão — o oposto do que se lê na maior parte da bibliografia\n   estrangeira, e um erro comum em projeto.','A distribuição depende da latitude, da data e da orientação; não é generalizável apenas pelo hemisfério.');
 QUIZ[3].exp='O Ambienta fornece DAE e Ruby; não inclui um exportador SKP nativo.';
 
+
 </script>
 <script>
+
 /* Regressões da consolidação. Testes de navegador usam as mesmas funções que a UI. */
 function perto(a,b,tol=1e-6,msg='valor'){
   if(!Number.isFinite(a)||!Number.isFinite(b)||Math.abs(a-b)>tol)throw new Error(msg+`: esperado ${b}, obtido ${a}`);
@@ -6897,8 +6932,10 @@ async function executaTestes(){
   ultimoRelatorioTestes=res;return res;
 }
 
+
 </script>
-<script data-worker-source>/* Ambienta 2.3 / 2.4. Extensões de dados compartilhadas com o worker.
+<script data-worker-source="true">
+/* Ambienta 2.3 / 2.4. Extensões de dados compartilhadas com o worker.
  * As fichas incorporadas ao projeto são snapshots: o catálogo global nunca
  * modifica um projeto implicitamente. Nenhuma mídia remota é requisitada. */
 const LIMITES24={imagem:360000,modelo:16000000,backup:80000000,catalogo:1000,revisoes:20};
@@ -6929,8 +6966,10 @@ function validarBackup24(raw){objeto(raw,'Backup');if(raw.tipo!=='ambienta-backu
  const catalogo=validarCatalogoPortatil24({tipo:'ambienta-catalogo',versao:1,itens:raw.catalogo||[]});return {tipo:'ambienta-backup',versao:1,projetos,revisoes,catalogo};}
 function filtroProjetos24(registros,f){const busca=String(f.busca||'').toLocaleLowerCase('pt-BR').normalize('NFD').replace(/\p{Diacritic}/gu,'');return registros.filter(r=>{const g=gestao24(r.projeto.gestao),lixo=!!r.excluido;if(f.grupo==='lixeira'?!lixo:lixo)return false;if(f.grupo==='arquivados'&&!g.arquivado)return false;if(f.grupo==='ativos'&&g.arquivado)return false;if(f.grupo==='favoritos'&&!g.favorito)return false;if(f.etapa&&g.etapa!==f.etapa)return false;if(f.pasta&&g.pasta!==f.pasta)return false;
  return !busca||[r.nome,g.cliente,g.pasta,...g.tags].join(' ').toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu,'').includes(busca);}).sort((a,b)=>f.ordem==='nome'?a.nome.localeCompare(b.nome,'pt-BR'):f.ordem==='area'?(b.projeto.amb.larg*b.projeto.amb.comp-a.projeto.amb.larg*a.projeto.amb.comp):String(b.modificado||'').localeCompare(String(a.modificado||'')));}
+
 </script>
-<script>/* Gestão 2.3 — IndexedDB nativo, controle de concorrência, lixeira e revisões.
+<script>
+/* Gestão 2.3 — IndexedDB nativo, controle de concorrência, lixeira e revisões.
  * Esquema 2 preserva as stores da versão 2.2. Commit de projeto + revisão é atômico.
  * Versões otimistas evitam sobrescrita de outra aba; exclusão final mantém tombstone. */
 Object.assign(BD,{versoes:new Map(),conflito:false,canal:null,suspenso:false});
@@ -6992,8 +7031,10 @@ async function restaurarBackup24(b,selecionados=null){b=validarBackup24(b);const
  if(bibliotecaGlobal24.length+b.catalogo.length>LIMITES24.catalogo)throw new Error('A restauração excederia 1.000 fichas compartilhadas. Exporte a biblioteca atual e reduza o pacote antes de restaurar.');const ids=new Set(bibliotecaGlobal24.map(c=>c.id)),mapaCatalogo=new Map();for(const c of b.catalogo){const id=ids.has(c.id)?uid('usr'):c.id;ids.add(id);mapaCatalogo.set(c.id,id);}const catalogo=b.catalogo.map(c=>{const n=copia(c);n.id=mapaCatalogo.get(c.id);if(n.id!==c.id){n.tecnica.origemId=c.id;n.nome+=' — restaurado';}n.familias=(n.familias||[]).map(x=>mapaCatalogo.get(x)||x);n.host=Array.isArray(n.host)?n.host.map(x=>mapaCatalogo.get(x)||x):(mapaCatalogo.get(n.host)||n.host);return {id:n.id,item:n};});
  if(BD.db)await tx24(['projects','snapshots','catalog'],tx=>{novo.forEach(r=>tx.objectStore('projects').put(r));snapshots.forEach(r=>tx.objectStore('snapshots').put(r));catalogo.forEach(r=>tx.objectStore('catalog').put(r));novo.forEach(r=>retencao24(tx,r.id));});else{const d=fallbackLer24();d.projects.push(...novo);d.catalog.push(...catalogo);fallbackEscrever24(d);}
  novo.forEach(r=>BD.versoes.set(r.id,r.versao));await carregarCatalogoGlobal24();anuncia24('restauracao','');return {projetos:novo.length,revisoes:BD.db?snapshots.length:0,catalogo:catalogo.length};}
+
 </script>
-<script>/* Telas e fluxos da gestão de projetos. */
+<script>
+/* Telas e fluxos da gestão de projetos. */
 const FILTRO_PROJETOS24={busca:'',grupo:'ativos',pasta:'',etapa:'',ordem:'recentes',mini:'planta'};
 let tokenProjetos24=0;
 function executarUI24(fn){return async function(...args){try{return await fn(...args);}catch(e){console.error(e);nota(e.message||String(e),true);}};}
@@ -7028,8 +7069,10 @@ revisoesProjeto=async function(){try{if(!BD.db)throw new Error('Revisões requer
  $('#revisaoNova24').onclick=executarUI24(async()=>{await guardarRevisao();revisoesProjeto();});d.querySelectorAll('[data-rev24]').forEach(b=>b.onclick=executarUI24(async()=>{if(await restaurarRevisao24(revs[+b.dataset.rev24]))d.close();}));d.querySelectorAll('[data-diff24]').forEach(b=>b.onclick=()=>{const diff=diferencas24(revs[+b.dataset.diff24].projeto,serializarProjeto());$('#diffRevisao24').innerHTML=`<h3>Revisão selecionada → estado atual</h3><p>${diff.length} diferença(s)</p><div class="table-wrap24"><table class="tab"><thead><tr><th>Campo</th><th>Na revisão</th><th>Agora</th></tr></thead><tbody>${diff.slice(0,150).map(x=>`<tr><td>${xmlEsc(x.campo)}</td><td>${xmlEsc(x.antes)}</td><td>${xmlEsc(x.depois)}</td></tr>`).join('')}</tbody></table></div>`;});}catch(e){nota(e.message,true);}};
 function importarBackupUI24(){const input=document.createElement('input');input.type='file';input.accept='.zip,.json';input.onchange=executarUI24(async()=>{const f=input.files[0];if(!f)return;const b=await lerBackupArquivo24(f);const d=dialogo('Conferir restauração do backup',`<p><b>${b.projetos.length} projetos</b> · ${b.revisoes.length} revisões · ${b.catalogo.length} fichas compartilhadas</p><p>Nenhum projeto existente será sobrescrito. Projetos e fichas conflitantes serão restaurados como cópias. ${BD.db?'':'Neste modo de contingência, as revisões não poderão ser restauradas.'}</p><div class="restore-list24">${b.projetos.map((r,i)=>`<label><input type="checkbox" data-restore24="${i}" checked> ${xmlEsc(r.projeto.nome)}${r.excluido?' • estava na lixeira':''}</label>`).join('')}</div><button class="btn primario" id="confirmarRestore24">Restaurar selecionados</button><p id="restoreInfo24" role="status"></p>`);$('#confirmarRestore24').onclick=executarUI24(async()=>{const ids=[...d.querySelectorAll('[data-restore24]:checked')].map(el=>b.projetos[+el.dataset.restore24].projeto.id);$('#confirmarRestore24').disabled=true;try{const r=await restaurarBackup24(b,ids);d.close();await renderProjetos();nota(`${r.projetos} projetos, ${r.revisoes} revisões e ${r.catalogo} fichas restaurados.`);}finally{if($('#confirmarRestore24'))$('#confirmarRestore24').disabled=false;}});});input.click();}
 async function painelArmazenamento24(){let estimativa=null,persistido=false;try{estimativa=await navigator.storage?.estimate?.();persistido=await navigator.storage?.persisted?.();}catch(e){}const ps=await listarRegistros(),sn=await tudoStore24('snapshots'),cat=await carregarCatalogoGlobal24();const d=dialogo('Armazenamento local',`<div class="metricas24"><div><span>Projetos</span><strong>${ps.length}</strong></div><div><span>Revisões</span><strong>${sn.length}</strong></div><div><span>Fichas compartilhadas</span><strong>${cat.length}</strong></div></div><p><b>Modo:</b> ${xmlEsc(BD.modo)}.</p><p>${estimativa?`Uso estimado desta origem: ${fmt(estimativa.usage/1048576)} MB de ${fmt(estimativa.quota/1048576)} MB. Esta estimativa pode incluir outros aplicativos da mesma origem.`:'O navegador não informou uma estimativa de quota.'}</p><p id="persistInfo24">Armazenamento persistente: ${persistido?'concedido pelo navegador':'não confirmado'}.</p><div class="linha-btn"><button class="btn" id="pedirPersist24">Solicitar persistência</button><button class="btn primario" id="storageBackup24">Backup completo</button></div><p class="nota-tecnica">Persistência não é backup. Limpar os dados do navegador remove os projetos. O acesso por file:// depende do navegador e do caminho do arquivo. Nenhum dado de outra aplicação é apagado por esta tela. A contingência em localStorage tem quota menor, sem revisões e sem garantia de exclusão mútua entre abas.</p>`);$('#pedirPersist24').onclick=executarUI24(async()=>{if(!navigator.storage?.persist)throw new Error('Solicitação indisponível neste contexto.');const ok=await navigator.storage.persist();$('#persistInfo24').textContent=ok?'Persistência concedida. Continue fazendo backups.':'O navegador não concedeu persistência. Use backups regulares.';});$('#storageBackup24').onclick=()=>{d.close();backupProjetos();};}
+
 </script>
-<script>/* Biblioteca 2.4. Referências genéricas + fichas do projeto + catálogo compartilhado.
+<script>
+/* Biblioteca 2.4. Referências genéricas + fichas do projeto + catálogo compartilhado.
  * Mídia local opcional: foto é rasterizada; OBJ/GLB são anexos, não código executável.
  * Os anexos 3D não substituem os envelopes analíticos do solver. */
 const BIB24={origem:'todas',categoria:'todos',uso:'',maxL:'',maxP:'',maxH:'',maxPreco:'',busca:'',somenteFav:false,limite:36,favoritos:new Set(),comparar:new Map(),itens:[]};
@@ -7088,8 +7131,10 @@ painelBiblioteca=function(){const all=registrosBiblioteca24();let erros=[];const
 function exportarBiblioteca24(){const d=dialogo('Exportar biblioteca',`<p>Escolha a coleção. Imagens, anexos, histórico de preços e requisitos acompanham o JSON. As 124 referências genéricas já fazem parte do aplicativo.</p><div class="linha-btn"><button class="btn primario" id="exGlobal24">Compartilhada (${bibliotecaGlobal24.length})</button><button class="btn" id="exProjeto24">Deste projeto (${P.catalogoPersonalizado.length})</button></div>`);const ex=cs=>{baixar('biblioteca-ambienta-v24.json',JSON.stringify({tipo:'ambienta-catalogo',versao:1,appVersion:VERSAO_APP,itens:cs},null,2),'application/json');d.close();};$('#exGlobal24').onclick=()=>ex(bibliotecaGlobal24);$('#exProjeto24').onclick=()=>ex(P.catalogoPersonalizado);}
 async function importarFichas24(itens,politica='duplicar'){const c=validarCatalogoPortatil24({tipo:'ambienta-catalogo',versao:1,itens});const ids=new Set(bibliotecaGlobal24.map(x=>x.id)),mapa=new Map(),novos=[];for(const x of c){if(ids.has(x.id)&&politica==='ignorar')continue;const n=copia(x);if(ids.has(n.id)){mapa.set(n.id,uid('usr'));n.tecnica.origemId=n.id;n.id=mapa.get(n.id);n.nome+=' — importada';}ids.add(n.id);novos.push(n);}for(const n of novos){if(n.host&&mapa.has(n.host))n.host=mapa.get(n.host);n.familias=(n.familias||[]).map(f=>mapa.get(f)||f);}if(bibliotecaGlobal24.length+novos.length>LIMITES24.catalogo)throw new Error('Limite de 1.000 fichas compartilhadas.');if(BD.db)await tx24(['catalog'],tx=>novos.forEach(item=>tx.objectStore('catalog').put({id:item.id,item})));else{const d=fallbackLer24();d.catalog.push(...novos.map(item=>({id:item.id,item})));fallbackEscrever24(d);}await carregarCatalogoGlobal24();anuncia24('catalogo','');return novos.length;}
 function importarCatalogoUI24(){const input=document.createElement('input');input.type='file';input.accept='.json';input.onchange=executarUI24(async()=>{const f=input.files[0];if(!f)return;if(f.size>LIMITES24.backup)throw new Error('Biblioteca maior que 80 MB.');const itens=validarCatalogoPortatil24(seguroJSON(await f.text())),conflitos=itens.filter(c=>bibliotecaGlobal24.some(x=>x.id===c.id)).length;const d=dialogo('Conferir importação da biblioteca',`<p>${itens.length} fichas válidas; ${conflitos} IDs já existentes. O projeto aberto não será alterado.</p>${select24('politicaCat24','IDs já existentes',[['duplicar','Importar como novas fichas'],['ignorar','Ignorar fichas com o mesmo ID']],'duplicar')}<div class="restore-list24">${itens.slice(0,60).map(c=>`<p>${xmlEsc(c.nome)} · ${fmt(c.l)} × ${fmt(c.p)} × ${fmt(c.h)} m</p>`).join('')}</div><button class="btn primario" id="confirmarCat24">Importar na compartilhada</button>`);$('#confirmarCat24').onclick=executarUI24(async()=>{const n=await importarFichas24(itens,$('#politicaCat24').value);d.close();BIB24.origem='global';$('#bibOrigem24').value='global';renderBiblioteca();nota(n+' fichas importadas.');});});input.click();}
+
 </script>
-<script>/* Integração final: snapshots explícitos, exportações e inicialização. */
+<script>
+/* Integração final: snapshots explícitos, exportações e inicialização. */
 const verFichaSemAtualizacao24=verFicha24;
 verFicha24=function(r){verFichaSemAtualizacao24(r);if(r.origem!=='projeto')return;const c=r.item,g=bibliotecaGlobal24.find(x=>x.id===(c.tecnica?.origemId||c.id));if(!g)return;const b=document.createElement('button');b.className='btn';b.id='atualizarDaBiblioteca24';b.textContent='Conferir versão compartilhada';$('#dialogoV22 .modal-corpo>.linha-btn').append(b);b.onclick=()=>previewAtualizacao24(c,g);};
 function previewAtualizacao24(local,global){const campos=[['Nome','nome'],['Largura','l'],['Profundidade','p'],['Altura','h'],['Preço unitário','custo'],['Material','mat'],['Folgas','folga']];const linhas=campos.map(([n,k])=>{const f=v=>typeof v==='object'?JSON.stringify(v):String(v??'');return `<tr><td>${n}</td><td>${xmlEsc(f(local[k]))}</td><td>${xmlEsc(f(global[k]))}</td></tr>`;}).join('');const qtd=P.moveis.filter(m=>m.catId===local.id).length;const d=dialogo('Atualização explícita da ficha',`<p>${qtd} ocorrência(s) no arranjo atual serão atualizadas. As alternativas salvas continuarão com suas fichas anteriores. A atualização pode criar conflitos geométricos; revise o diagnóstico.</p><div class="table-wrap24"><table class="tab"><thead><tr><th>Campo</th><th>Snapshot do projeto</th><th>Compartilhada</th></tr></thead><tbody>${linhas}</tbody></table></div><button class="btn primario espac24" id="aplicarAtualizacao24">Atualizar somente o arranjo atual</button>`);$('#aplicarAtualizacao24').onclick=executarUI24(async()=>{if(BD.db){if(!await salvar(false))return;await revisar24('Antes de atualizar ficha compartilhada');}const n=normalizaCatalogo([{...copia(global),id:local.id,tecnica:{...global.tecnica,origemId:global.id}}])[0];validarUsoFicha24(n);P.catalogoPersonalizado=P.catalogoPersonalizado.map(c=>c.id===local.id?n:c);sincronizaCatalogo(P);marcar();salvar(true);d.close();renderBiblioteca();pintar();inspetor();nota('Snapshot atualizado. Confira as verificações do arranjo.');});}
@@ -7136,8 +7181,10 @@ async function iniciarV24(){
 }
 
 importarTexto=async function(texto){const candidato=desserializarProjeto(texto),problemas=validarAberturas(candidato.amb,candidato.aberturas);if(problemas.length)throw new Error(problemas[0].txt);if(!await salvarAntesDeTrocar())throw new Error('Salve ou exporte o projeto aberto antes de importar outro.');if(await registro24(candidato.id)){const novo=novaCopia24(candidato,' — importado');Object.assign(candidato,novo);}if(!await gravaProjeto(candidato,-1))throw new Error('O projeto importado não pôde ser gravado. O projeto anterior foi mantido.');const r=await registro24(candidato.id);ativarProjeto(normalizaProjeto(r.projeto));await setting24('ativo',P.id);statusSalvo('Importado • '+BD.modo,'ok');trocaVista('arranjo');nota('Projeto e suas fichas importados sem sobrescrever dados existentes.');return P;};
+
 </script>
-<script>/* Manual das versões 2.3/2.4 e testes puros adicionais. */
+<script>
+/* Manual das versões 2.3/2.4 e testes puros adicionais. */
 achaSecao('projetos22').corpo=()=>`<h2>Projetos, pastas e revisões</h2><p>A tela Projetos reúne busca por nome, cliente, pasta e etiquetas. Favoritos e arquivamento são modos de organização; não validam a engenharia do projeto.</p><h3>Salvar e recuperar</h3><p>O autosave salva após uma pausa de edição. O indicador superior informa gravações pendentes ou erros. No IndexedDB, uma revisão do estado anterior é preservada no máximo uma vez a cada cinco minutos de alterações. Até 20 revisões são retidas, incluindo as nomeadas; as mais antigas são removidas quando esse limite é atingido.</p><p>Em Arranjo, use Guardar revisão para um marco nomeado. Em Revisões, Compare a revisão com o estado atual e restaure apenas após conferir. O estado anterior à restauração é guardado automaticamente.</p><h3>Lixeira e arquivamento</h3><p>Arquivar retira o projeto da coleção Ativos. A lixeira conserva o projeto e suas revisões até a exclusão definitiva, que exige confirmação. Os backups incluem também os projetos na lixeira.</p><h3>Duas abas</h3><p>Gravações em IndexedDB com versões divergentes são recusadas. A versão local permanece na memória: exporte o JSON, salve como cópia ou reabra a versão salva. No modo de contingência localStorage não há garantia transacional entre abas.</p>`;
 achaSecao('biblioteca22').corpo=()=>`<h2>Biblioteca técnica 2.4</h2><p>Existem três origens: Referências genéricas, Neste projeto e Compartilhadas. As 124 referências genéricas integram o arquivo do aplicativo; uma cópia editada recebe um identificador próprio.</p><p>Uma ficha compartilhada pode ser reutilizada em qualquer projeto da mesma base local. Ao inserir, um snapshot é incorporado ao projeto. Alterar o catálogo global não modifica peças já implantadas. Para atualizar uma ficha local, abra-a e use Conferir versão compartilhada: o diálogo mostra as diferenças e pede adoção explícita.</p><h3>Metadados e regras</h3><p>Dimensões, cotas, folgas, ancoragem, famílias e relações estruturadas participam dos cálculos. Descrições de requisitos, garantias e referências documentais são registros textuais, não regras automaticamente verificadas.</p><h3>Conferência e preço</h3><p>Conferida pelo usuário exige fonte dimensional, data e responsável. Não significa certificação externa. Valores são em reais e devem indicar fonte e data. A alteração de preço, fonte ou data gera uma nova referência no histórico, limitado a 30.</p><h3>Mídia</h3><p>Fotos locais PNG/JPEG/WebP são reduzidas para até 800 px e aproximadamente 270 kB. Anexos OBJ ou GLB têm limite de 3 MB e seguem nos backups. São referências para download; não substituem a geometria paramétrica da planta, do 3D nem do solver. Nenhuma imagem ou URL remota é carregada automaticamente.</p>`;
 MANUAL.push({grupo:'Gestão 2.3 e Biblioteca 2.4',itens:[
@@ -7183,8 +7230,10 @@ TESTES.push(
  {nome:'v2.4: miniatura volumétrica é SVG independente',f:()=>laboratorio(()=>{addMovel('sofa3',2,2);const t=thumbIso24(serializarProjeto());afirma(t.includes('<svg')&&t.includes('<polygon'));afirma(!/NaN|undefined/.test(t));})},
  {nome:'v2.4: memorial inclui cliente sem perder a numeração',f:()=>laboratorio(()=>{P.gestao=gestao24({cliente:'Instituição de teste'});const B=blocosMemorial();afirma(B.some(b=>b.txt?.includes('Instituição de teste')));afirma(B.filter(b=>b.t==='h1').length===11);})}
 );
+
 </script>
-<script data-worker-source>/* Ambienta 2.5 — geometria vetorial compartilhada pelo editor e Worker.
+<script data-worker-source="true">
+/* Ambienta 2.5 — geometria vetorial compartilhada pelo editor e Worker.
    Contornos simples CCW, coordenadas internas em metros. Sem serviços externos. */
 const EPS25=1e-8, CACHE_G25=new WeakMap(), CACHE_M25=new WeakMap();
 function direcoes(rot){const a=normRot(rot)*Math.PI/180,c=Math.cos(a),s=Math.sin(a);return {frente:[-s,c],tras:[s,-c],esq:[-c,-s],dir:[c,s]};}
@@ -7244,8 +7293,10 @@ paredesAmb=function(amb=P.amb){if(amb.contorno)return paredesPol25(amb);const W=
 const insolacaoRet25=insolacaoDia;
 insolacaoDia=function(dia){if(!P.amb.contorno)return insolacaoRet25(dia);const res=Object.fromEntries(idsParedes().map(k=>[k,0])),janelas=P.aberturas.filter(a=>a.tipo==='janela').map(a=>({a,horas:0}));let nascer=null,poente=null;for(let i=0;i<144;i++){const h=i/6,s=posicaoSolar(SOL.lat,SOL.lon,dia,h,SOL.fuso);if(s.alt<=0)continue;if(nascer===null)nascer=h;poente=h;const az=s.az+SOL.norte*GRAU,v=[Math.sin(az),Math.cos(az)];for(const w of paredesAmb())if(-w.n[0]*v[0]-w.n[1]*v[1]>0)res[w.id]+=1/6;for(const j of janelas){const w=paredeDados(j.a.parede);if(-w.n[0]*v[0]-w.n[1]*v[1]>0)j.horas+=1/6;}}return {paredes:res,janelas,nascer,poente,dia};};
 textoInsolacao=function(){const jun=insolacaoDia(172),dez=insolacaoDia(355);return {jun,dez,linhas:idsParedes().map(k=>[nomeParede(k),fmt(jun.paredes[k],1)+' h',fmt(dez.paredes[k],1)+' h'])};};
+
 </script>
-<script data-worker-source>/* Importadores CAD/BIM locais: gramáticas estritas, sem eval ou execução de anexos.
+<script data-worker-source="true">
+/* Importadores CAD/BIM locais: gramáticas estritas, sem eval ou execução de anexos.
  * DXF ASCII com entidades planas; IFC STEP2x3/4 com perfis/extrusões e BREP.
  * Formas não interpretadas são contabilizadas; nunca substituídas por envelopes. */
 function arcoBulge25(a,b,bulge){if(Math.abs(bulge)<1e-9)return [a];const dx=b[0]-a[0],dy=b[1]-a[1],d=Math.hypot(dx,dy),k=(1-bulge*bulge)/(4*bulge),cx=(a[0]+b[0])/2-dy*k,cy=(a[1]+b[1])/2+dx*k,r=Math.hypot(a[0]-cx,a[1]-cy),ini=Math.atan2(a[1]-cy,a[0]-cx),ang=4*Math.atan(bulge),n=Math.max(2,Math.min(64,Math.ceil(Math.abs(ang)/(Math.PI/36))));return Array.from({length:n},(_,i)=>[cx+r*Math.cos(ini+ang*i/n),cy+r*Math.sin(ini+ang*i/n)]);}
@@ -7268,8 +7319,10 @@ function lerIFC25(text){if(typeof text!=='string'||text.length>40000000)throw ne
  function shape(ref,m,depth=0){if(depth>25)return [];const e=ent(ref);if(!e)return [];if(e.type==='IFCPRODUCTDEFINITIONSHAPE')return (e.a[2]||[]).flatMap(r=>shape(r,m,depth+1));if(e.type==='IFCSHAPEREPRESENTATION')return (e.a[3]||[]).flatMap(r=>shape(r,m,depth+1));if(e.type==='IFCEXTRUDEDAREASOLID'){const p=profile(e.a[0]);if(!p)return [];const mm=mul(m,axis(e.a[1])),v=vec(e.a[2]),dir=apply(mm,v).map((x,i)=>x-apply(mm,[0,0,0])[i]);if(Math.hypot(dir[0],dir[1])>1e-5)return [];return [{pol:p.pol.map(q=>apply(mm,q)),holes:p.holes.map(h=>h.map(q=>apply(mm,q))),altura:Math.abs(e.a[3]*dir[2])*scale,modo:'Perfil extrudado'}];}if(e.type==='IFCFACETEDBREP'){const shell=ent(e.a[0]),res=[];for(const fr of shell?.a[0]||[]){const face=ent(fr),rings=[];for(const br of face?.a[0]||[]){const bound=ent(br),loop=ent(bound?.a[0]);if(loop?.type!=='IFCPOLYLOOP')continue;const p=loop.a[0].map(vec).map(q=>apply(m,q));if(p.length>=3&&Math.max(...p.map(q=>q[2]))-Math.min(...p.map(q=>q[2]))<1e-5)rings.push({p,outer:bound.type==='IFCFACEOUTERBOUND'});}if(rings.length){const outer=rings.find(r=>r.outer)||rings[0];res.push({pol:outer.p,holes:rings.filter(r=>r!==outer).map(r=>r.p),altura:0,modo:'Face horizontal BREP'});}}return res;}return [];}
  const candidatos=[],paths=[],avisos=[],ignorados={},tipos=['IFCSPACE','IFCSLAB'];const all=[...ents.values()].filter(e=>tipos.includes(e.type));for(const e of all){const shapes=shape(e.a[6],placement(e.a[5]));if(!shapes.length){ignorados[e.type]=(ignorados[e.type]||0)+1;continue;}let bestZ=Infinity;for(const s of shapes)bestZ=Math.min(bestZ,Math.min(...s.pol.map(p=>p[2])));const vistos=new Set();for(const s of shapes){const z=Math.min(...s.pol.map(p=>p[2]));if(z>bestZ+1e-4||Math.max(...s.pol.map(p=>p[2]))-z>1e-5)continue;let poly=limpaContorno25(s.pol.map(p=>[p[0]*scale,p[1]*scale]));if(poly.length<3||poly.length>240||!poly.every(p=>p.every(Number.isFinite))||areaPoligono(poly)<.01)continue;const key=JSON.stringify(poly);if(vistos.has(key))continue;vistos.add(key);const layer=e.type==='IFCSPACE'?'Espaços':'Lajes';candidatos.push({pol:poly,holes:s.holes.map(h=>limpaContorno25(h.map(p=>[p[0]*scale,p[1]*scale]))),nome:(e.a[2]||layer+' #'+e.id)+' · cota '+(z*scale).toFixed(2)+' m',layer,tipo:e.type,altura:e.type==='IFCSPACE'?s.altura:0,globalId:e.a[0],cota:z*scale,modo:s.modo});paths.push({p:poly,closed:true,layer,tipo:e.type});}}
  if(!candidatos.length)throw new Error('Nenhum IfcSpace ou IfcSlab horizontal com perfil suportado foi encontrado. Exporte espaços com extrusão/perfil fechado ou BREP, ou use a planta DXF/PDF. Booleanos, malhas trianguladas, perfis indexados curvos e mapped items ainda não são convertidos.');if(Object.keys(ignorados).length)avisos.push('Elementos sem perfil suportado: '+Object.entries(ignorados).map(([k,v])=>k+' ('+v+')').join(', '));avisos.push('Importa um espaço por projeto. Lajes são referências: confirme a face interna do ambiente. Portas/janelas não são deduzidas do IFC; cadastre-as após aplicar.');return {formato:'IFC',paths,candidatos,unidade:unitName,fator:scale,unidadeConhecida:true,avisos,ignorados};}
+
 </script>
-<script>/* Vistas, exportações e textos consomem o mesmo contorno do solver. */
+<script>
+/* Vistas, exportações e textos consomem o mesmo contorno do solver. */
 const IMAGENS_BASE25=new Map();
 function baseImagem25(base){if(!base?.imagem)return null;let im=IMAGENS_BASE25.get(base.imagem);if(!im){im=new Image();im.onload=()=>pintar();im.src=base.imagem;IMAGENS_BASE25.set(base.imagem,im);if(IMAGENS_BASE25.size>6)IMAGENS_BASE25.delete(IMAGENS_BASE25.keys().next().value);}return im.complete&&im.naturalWidth?im:null;}
 function caminho25(ctx,pts,fecha=true){if(!pts.length)return;ctx.moveTo(...pts[0]);for(const p of pts.slice(1))ctx.lineTo(...p);if(fecha)ctx.closePath();}
@@ -7309,8 +7362,10 @@ blocosMemorial=function(){const B=memorialAnt25();if(P.amb.contorno){const i=B.f
 const thumbAnt25=thumbProjeto,thumbIsoAnt25=thumbIso24;
 thumbProjeto=function(q){const w=q.amb.larg,h=q.amb.comp,pts=p=>p.map(a=>a[0]+','+(h-a[1])).join(' ');return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-.3 -.3 ${w+.6} ${h+.6}" aria-label="Planta do contorno real"><polygon points="${pts(contornoAmb(q.amb))}" fill="#F4F5EF" stroke="#233F35" stroke-width=".05"/>${(q.amb.obstaculos||[]).map(o=>`<polygon points="${pts(o.pontos)}" fill="#45564D"/>`).join('')}${q.moveis.map(m=>{const c=(q.catalogoPersonalizado||[]).find(c=>c.id===m.catId)||CATALOGO_BASE.find(c=>c.id===m.catId);if(!c)return '';return `<rect x="${-c.l/2}" y="${-c.p/2}" width="${c.l}" height="${c.p}" fill="${corValida(m.cor,c.cor)}" opacity=".8" transform="translate(${m.x},${h-m.y}) rotate(${-m.rot})" stroke="#30483F" stroke-width=".015"/>`;}).join('')}</svg>`;};
 thumbIso24=function(q){let svg=thumbIsoAnt25(q);const scale=180/(q.amb.larg+q.amb.comp),pts=contornoAmb(q.amb).map(([x,y])=>[160+(x-y)*scale,195-(x+y)*scale*.43].join(',')).join(' ');svg=svg.replace(/<polygon[^>]*>/,`<polygon points="${pts}" fill="#DFE9E1" stroke="#365348" stroke-width=".6"/>`);return svg;};
+
 </script>
-<script>/* Editor de planta: estágio reversível, escala explícita e confirmação antes de substituir geometria. */
+<script>
+/* Editor de planta: estágio reversível, escala explícita e confirmação antes de substituir geometria. */
 const IMP25={carregando:false,dados:null,nome:'',imagem:null,img:null,pdf:null,pagina:1,pontos:[],obstaculos:[],rascunho:[],modo:'selecionar',fechado:false,escala:1,confirmada:false,calib:[],vp:{e:1,x:0,y:0},selecionado:-1,arr:null,worker:null,job:0};
 const LIMITES_PLANTA25={DXF:30e6,IFC:40e6,PDF:40e6,imagem:20e6};
 function mensagemImp25(msg,erro=false){const el=$('#impMensagem25');if(el){el.textContent=msg;el.className='imp-mensagem25'+(erro?' erro':'');}}
@@ -7354,8 +7409,10 @@ function incorporaPDF25(html,sources){const encode=t=>{const a=utf8(t);let s='';
 async function baixarOffline25(){const bt=$('#baixarOffline25');bt.disabled=true;bt.textContent='Preparando leitor…';try{await leitorPDF25();if(!PDF25_SOURCE)throw new Error('Leitor não disponível.');if(!FONTE_ORIGINAL25)throw new Error('Fonte original não disponível para gerar HTML.');const html=document.getElementById('pdfjs-bundle25')?FONTE_ORIGINAL25:incorporaPDF25(FONTE_ORIGINAL25,PDF25_SOURCE);baixar('Ambienta_v2.5_PDF_offline.html',html,'text/html;charset=utf-8');nota('HTML com leitor PDF incorporado gerado. Não inclui seus projetos: faça backup JSON/ZIP separadamente.');}catch(e){mensagemImp25(e.message,true);}finally{bt.disabled=false;bt.textContent='HTML com PDF offline';}}
 
 async function editarBaseExistente25(){if(IMP25.carregando)return;IMP25.carregando=true;atualizaCampos25();try{const q=serializarProjeto(),base=q.plantaBase,im=new Image();await new Promise((resolve,reject)=>{im.onload=resolve;im.onerror=()=>reject(new Error('A referência não pôde ser aberta.'));im.src=base.imagem;});const sx=base.larg/im.naturalWidth,sy=base.alt/im.naturalHeight;if(Math.abs(sx-sy)>Math.max(sx,sy)*.005)throw new Error('Referência com escalas X/Y diferentes. Reimporte para calibrar.');const raw=p=>[(p[0]-base.x)/sx,(p[1]-base.y)/sx];IMP25.pdf=null;novaCena25({formato:'PNG',formatoOriginal:base.formato,paths:[],candidatos:[],avisos:['Edição sobre a referência calibrada existente. A escala e a imagem são preservadas. Ao aplicar, as aberturas devem ser recadastradas.']},base.nome,base.imagem);IMP25.img=im;IMP25.pontos=contornoAmb(q.amb).map(raw);IMP25.obstaculos=(q.amb.obstaculos||[]).map(o=>({...o,pontos:o.pontos.map(raw)}));IMP25.escala=sx;IMP25.confirmada=true;IMP25.fechado=true;IMP25.modo='editar';IMP25.pagina=base.pagina;atualizaCampos25();enquadraImp25();desenhaImp25();mensagemImp25('Referência calibrada carregada. Edite os vértices; a escala e as coordenadas são preservadas.');}catch(e){mensagemImp25(e.message,true);}finally{IMP25.carregando=false;atualizaCampos25();}}
+
 </script>
-<script>/* Abertura 3D WebGL real. Geometria local, sem vídeo, serviços ou imagens externas.
+<script>
+/* Abertura 3D WebGL real. Geometria local, sem vídeo, serviços ou imagens externas.
    A aplicação só é inicializada após consentimento explícito nesta sessão. */
 let FONTE_ORIGINAL25='';
 function cenaIntro25(){const objects=[],box=(x,y,z,l,d,h,c,at=0)=>{const verts=[],xs=[x-l/2,x+l/2],ys=[y-d/2,y+d/2],zs=[z,z+h],p=[[xs[0],ys[0],zs[0]],[xs[1],ys[0],zs[0]],[xs[1],ys[1],zs[0]],[xs[0],ys[1],zs[0]],[xs[0],ys[0],zs[1]],[xs[1],ys[0],zs[1]],[xs[1],ys[1],zs[1]],[xs[0],ys[1],zs[1]]],faces=[[4,5,6,7,0,0,1],[3,2,1,0,0,0,-1],[0,1,5,4,0,-1,0],[1,2,6,5,1,0,0],[2,3,7,6,0,1,0],[3,0,4,7,-1,0,0]];for(const f of faces)for(const idx of [0,1,2,0,2,3])verts.push(...p[f[idx]],...f.slice(4),...c);objects.push({verts,at,camada:at===0?(z<0?0:1):(z<.025&&h<.03?.5:2)});},green=[.26,.43,.34],light=[.94,.91,.83],wood=[.60,.42,.23],gold=[.70,.57,.30];
@@ -7392,8 +7449,10 @@ const TESTES25=[
  {nome:'v2.5 escape STEP preserva apóstrofo e Unicode',f:()=>{const m=parseSTEP25("#42=IFCPERSON($,'D''Ávila',$,$,$,$,$,$);");afirma(m.get(42).a[1]==="D'Ávila");}},
  {nome:'v2.5 escala de referência inválida é recusada',f:()=>{let ok=false;try{normalizaBase25({larg:-1});}catch{ok=true;}afirma(ok);}}
 ];TESTES.push(...TESTES25);
+
 </script>
-<script data-worker-source>/* Ambienta 2.6 — escadas paramétricas. Núcleo sem DOM, compartilhado com Workers.
+<script data-worker-source="true">
+/* Ambienta 2.6 — escadas paramétricas. Núcleo sem DOM, compartilhado com Workers.
  * Unidades SI. Pisos são placas de espessura informada: não há cálculo estrutural.
  * Geometria é derivada dos parâmetros; não é persistida nem usada como catálogo.
  */
@@ -7609,8 +7668,10 @@ function* buscarEncaixes26(base,projeto,caixa,{considerarMoveis=true}={}){
  }
  return resultados;
 }
+
 </script>
-<script>/* Escadas: a mesma geometria alimenta planta, preview, 3D e exportações. */
+<script>
+/* Escadas: a mesma geometria alimenta planta, preview, 3D e exportações. */
 function tuboEsc26(a,b,larg=.04,cor='#40564E'){
  const d=b.map((x,i)=>x-a[i]),len=Math.hypot(...d);if(len<1e-7)return [];
  const n=d.map(x=>x/len),ref=Math.abs(n[2])>.95?[1,0,0]:[0,0,1],cross=(u,v)=>[u[1]*v[2]-u[2]*v[1],u[2]*v[0]-u[0]*v[2],u[0]*v[1]-u[1]*v[0]];
@@ -7686,8 +7747,10 @@ blocosMemorial=function(){const B=memoriaAntes26();if(!escadasProjeto26().length
 
 // Giros livres podem ter cossenos residuais: não indexar nomes por floats.
 rumoFrente=function(m){const r=normRot(m.rot),k=Math.round(r/90);if(Math.abs(r-k*90)<1e-6)return ['norte','oeste','sul','leste'][k%4];return 'direção '+fmt(r,1)+'° (anti-horário a partir do eixo +Y da planta)';};
+
 </script>
-<script>/* v2.6 — editor com prévia independente; confirmação explícita para aplicar. */
+<script>
+/* v2.6 — editor com prévia independente; confirmação explícita para aplicar. */
 const ESC_UI26={rascunho:null,projectId:null,editId:null,sujo:false,vista:'planta',az:-.72,plantaId:null,editarPlanta:false};
 const ESC_JOB26={worker:null,url:null,resultados:[],base:null,projeto:null};
 function inputEsc26(label,key,val,step=.01,extra=''){return `<label class="campo"><span>${label}</span><input data-e26="${key}" type="number" step="${step}" value="${Number(val)}" ${extra}></label>`;}
@@ -7780,8 +7843,10 @@ function instalaEscadas26(){if($('#v-escadas'))return;
 }
 const trocaVistaAntes26=trocaVista;
 trocaVista=function(v){trocaVistaAntes26(v);if(v==='escadas'){document.body.classList.add('sem-inspetor');renderEscadas26();}};
+
 </script>
-<script>/* Manual de engenharia e regressões da versão 2.6. */
+<script>
+/* Manual de engenharia e regressões da versão 2.6. */
 MANUAL.unshift({grupo:'Escadas • v2.6',itens:[
  {id:'escadas26',t:'Escadas: fluxo de projeto',corpo:()=>`<h2>Escadas paramétricas</h2><p>Entre em <b>Escadas</b>, escolha a tipologia e informe altura piso a piso, largura, pisos e patamares. A planta e o volume mostram uma <b>prévia independente</b>. Use Incluir/Atualizar para aplicar ao projeto.</p><p>O módulo não dimensiona lajes, vigas, longarinas, armaduras, fundações, ligações ou cargas. Degraus são placas geométricas de espessura informada. O volume de placas não é orçamento nem quantitativo estrutural.</p><h3>Como contar corretamente</h3><p>A altura uniforme é <code>e = H / n</code>, com número inteiro de espelhos. No modo automático, o sistema arredonda <code>H / espelho-alvo</code> e recalcula o espelho real. A escolha automática pode ficar fora dos limites de conferência; o aviso não é suprimido.</p><p>Em um lance entre dois níveis com <code>n</code> espelhos, o nível de chegada completa a subida: há <code>n − 1</code> pisos intermediários. Em L/U com patamar, são <code>n − 2</code> pisos e um patamar. Na X, o número exibido é por percurso; os quatro lances e o patamar comum são quantificados separadamente.</p><h3>Blondel e parâmetros</h3><p>A expressão <code>2e + p</code> é conferida contra a faixa que você adotou. Os valores iniciais são referências ajustáveis, não uma seleção automática de norma. Dimensões, largura, patamares, corrimãos, guarda-corpos, condições de uso e regras locais devem ser analisados em conjunto.</p><p>A referência pública consultada para a terminologia e exemplos dimensionais foi a NT 10/2015 do CBMDF, publicada no SINJ-DF. Ela não foi convertida em um perfil de certificação nem substitui a conferência das normas aplicáveis ao seu projeto. <a href="https://www.sinj.df.gov.br/sinj/Norma/78900/Portaria_2_14_01_2015.html" target="_blank" rel="noopener noreferrer">Consultar a fonte oficial</a>.</p><h3>Experimentar sem perder seu trabalho</h3><p>Os botões de exemplo criam outro projeto após salvar o atual. Use o histórico, revisões e backup para guardar decisões. A biblioteca de mobiliário permanece separada das escadas arquitetônicas.</p>`},
  {id:'tiposEsc26',t:'Tipos, leques e arranjo em X',corpo:()=>`<h2>Sete tipologias</h2><p><b>Reta:</b> um lance. <b>L:</b> dois lances ortogonais com patamar. <b>U:</b> dois lances paralelos e opostos com patamar. <b>L e U em leque:</b> transição radial por pisos curvos, sem patamar nesse trecho. <b>Helicoidal:</b> pisos em setores de anel em torno de um núcleo central.</p><p><b>X com patamar comum:</b> dois lances inferiores chegam ao mesmo patamar e dois superiores partem dele. A forma cruciforme é rotacionada 45° no modelo local. Não é uma escada-tesoura enclausurada e não fornece duas rotas independentes.</p><h3>Leque não equivale a compensação normativa</h3><p>O modelo radial calcula o piso pelo comprimento de arco na linha de percurso: <code>p = (raio interno + afastamento da linha) × ângulo por degrau</code>, em radianos. O bordo estreito é conferido pela corda. A largura pode diferir do piso reto; o sistema explicita essa diferença.</p><p>O balanceamento/compensação exigido em projeto deve ser detalhado pelo profissional. Modelar ou encontrar espaço para leque ou helicoidal não significa que a tipologia seja admissível em uma saída de emergência.</p><h3>Representação das proteções</h3><p>As bordas dos lances recebem barras e montantes esquemáticos quando a opção está ativa. Não há desenho executivo de fechamento, prolongamentos, distâncias entre barras, alturas normativas ou proteção integral dos patamares. Não utilize a imagem para execução.</p>`},
@@ -7848,8 +7913,10 @@ TESTES.push(
  {nome:'v2.6 memorial descreve giro livre sem rótulo vazio',f:()=>{afirma(rumoFrente({rot:30}).includes('30,0'));}},
  {nome:'v2.6 memorial explicita exclusão do custo da escada',f:()=>labEsc26(()=>{P.escadas=[escadaPadrao26()];afirma(blocosMemorial().some(b=>b.t==='p'&&b.txt.includes('estimativa monetária do ambiente não inclui')));})}
 );
+
 </script>
-<script data-worker-source>/* Ambienta 2.7 — malhas estáticas locais. glTF 2.0 / GLB / OBJ / subconjunto IFC.
+<script data-worker-source="true">
+/* Ambienta 2.7 — malhas estáticas locais. glTF 2.0 / GLB / OBJ / subconjunto IFC.
  * Não usa eval, não executa scripts de modelos e não busca URIs de rede.
  * A malha visual é separada das dimensões analíticas utilizadas pelo solver. */
 const LIM27={arquivo:16000000,conjunto:40000000,triangulos:180000,vertices:700000,nos:8000,texturas:32,imagem:6000000};
@@ -7921,8 +7988,10 @@ function lerMoveisIFC27(text){if(typeof text!=='string'||text.length>LIM27.conju
  if(e.type==='IFCPOLYGONALFACESET'){const pts=ent(e.a[0])?.a[0],pn=e.a[3];for(const fr of e.a[2]||[]){const face=ent(fr);if(face?.type!=='IFCINDEXEDPOLYGONALFACE')throw Error('Face poligonal com furos não suportada.');const q=face.a[0].map(i=>pts[(pn?pn[i-1]:i)-1]);if(q.some(p=>!p))throw Error('Índice poligonal IFC inválido.');polygon(q,m);}return;}throw Error(e.type+' não suportado no importador de mobiliário.');}
  shape(obj.a[6],place(obj.a[5]));const pos=Float32Array.from(positions),normal=new Float32Array(pos.length);for(let i=0;i<pos.length;i+=9){const n=unit27(cross27([0,1,2].map(k=>pos[i+3+k]-pos[i+k]),[0,1,2].map(k=>pos[i+6+k]-pos[i+k])));for(let k=0;k<3;k++)normal.set(n,i+k*3);}const pr={pos,normal,uv:new Float32Array(pos.length/3*2),color:new Float32Array(pos.length/3*4).fill(1),material:0};const mesh={primitives:[pr],materials:[{nome:'IFC',cor:[.66,.72,.69,1],imagem:'',alpha:'OPAQUE'}],bounds:bounds27([pr]),avisos:['IFC: geometria estática; materiais e texturas são aproximados pela cor neutra.'],formato:'IFC'};candidates.push({nome:textoSeguro(obj.a[2]||'Mobiliário #'+obj.id,120),id:obj.id,globalId:obj.a[0],tipo:obj.type,mesh});}catch(e){rejeitados.push({nome:obj.a[2]||'#'+obj.id,erro:e.message});}}
  if(!candidates.length)throw Error('Nenhum mobiliário com geometria suportada. '+(rejeitados[0]?.erro||'O arquivo deve conter IfcFurniture/IfcFurnishingElement ou equipamento suportado.'));return {candidatos:candidates,rejeitados,unidade:scale};}
+
 </script>
-<script>/* Produtos comerciais: dados dimensionais transcritos de fontes primárias em 07/09/2026.
+<script>
+/* Produtos comerciais: dados dimensionais transcritos de fontes primárias em 07/09/2026.
    Sem scraping, sem preços inventados e sem fotografias/modelos proprietários redistribuídos. */
 const DADOS_REAIS27 = [
   {
@@ -8604,8 +8673,10 @@ const DADOS_REAIS27 = [
   }
 ];
 const CATALOGO_REAL27 = normalizaCatalogo(DADOS_REAIS27);
+
 </script>
-<script>/* Malhas de mobiliário na cena existente. Prévia técnica, não render PBR final.
+<script>
+/* Malhas de mobiliário na cena existente. Prévia técnica, não render PBR final.
  * WebGL com profundidade, cores/UVs; fallback Canvas sem texturas de malha. */
 const CACHE_MALHA27=new Map(),CACHE_ERRO27=new Map();
 let USAR_MODELOS27=true,SUPRIMIR27=false,GL27=null,ULTIMA_CENA27=null;
@@ -8636,8 +8707,10 @@ const desenha3dAntes27=desenha3d;
 desenha3d=function(cv){if(!USAR_MODELOS27||!P.moveis.some(m=>catDe(m)?.tecnica?.visual27?.ativo))return desenha3dAntes27(cv);try{const c=malhasCena27(),ok=desenharGL27(cv,c.batches,matrizCam(),()=>{if(cv.isConnected&&vistaAtual==='tresd')desenha3d(cv);});if(!ok)desenharCanvas27(cv,c.batches,matrizCam());const hud=$('#hud3d');if(hud)hud.textContent=c.real+' modelo(s) 3D · '+fmt(c.count,0)+' triângulos · '+(ok?'WebGL':'Canvas, sem texturas')+' · arraste para girar';if(c.erros.length&&hud)hud.textContent+=' · '+c.erros.length+' modelo(s) indisponível(is), usando envoltória';}catch(e){desenha3dAntes27(cv);const hud=$('#hud3d');if(hud)hud.textContent='Modo esquemático: '+e.message;}};
 const malhaMovelAntes27=malhaMovel;
 malhaMovel=function(m){const c=catDe(m),mod=modeloMundo27(c,m,alturaBase(m));if(!mod)return malhaMovelAntes27(m);const tris=[];for(const p of mod.primitives)for(let i=0;i<p.pos.length;i+=3)tris.push(Array.from(p.pos.subarray(i,i+3)));return tris;};
+
 </script>
-<script>/* v2.7 — fluxos explícitos de incorporação de modelos e substituição comercial. */
+<script>
+/* v2.7 — fluxos explícitos de incorporação de modelos e substituição comercial. */
 let IMPORT_JOB27=null;
 function cancelarImport27(){if(IMPORT_JOB27){IMPORT_JOB27.worker.terminate();URL.revokeObjectURL(IMPORT_JOB27.url);IMPORT_JOB27.reject(Error('Importação cancelada; projeto preservado.'));IMPORT_JOB27=null;}}
 function decodificarWorker27(tipo,dados,recursos={}){cancelarImport27();return new Promise((resolve,reject)=>{const source=[...document.querySelectorAll('script[data-worker-source]')].map(s=>s.textContent).join('\n')+`\nself.onmessage=e=>{try{const {tipo,dados,recursos}=e.data;const result=tipo==='glb'?lerGLB27(dados,recursos):tipo==='gltf'?lerGLTF27(dados,recursos):tipo==='obj'?lerOBJ27(dados):lerMoveisIFC27(dados);self.postMessage({ok:true,result});}catch(e){self.postMessage({ok:false,erro:e.message});}};`,url=URL.createObjectURL(new Blob([source],{type:'text/javascript'}));let w;try{w=new Worker(url);}catch(e){URL.revokeObjectURL(url);reject(Error('Leitor isolado indisponível: '+e.message));return;}const finish=()=>{w.terminate();URL.revokeObjectURL(url);if(IMPORT_JOB27?.worker===w)IMPORT_JOB27=null;};IMPORT_JOB27={worker:w,url,reject};w.onmessage=e=>{finish();e.data.ok?resolve(e.data.result):reject(Error(e.data.erro));};w.onerror=e=>{e.preventDefault();finish();reject(Error(e.message||'Falha no leitor 3D.'));};w.postMessage({tipo,dados,recursos});});}
@@ -8691,8 +8764,10 @@ const instalaEscadasAntes27=instalaEscadas26;
 instalaEscadas26=function(){instalaEscadasAntes27();if($('#chModelos27'))return;const barra=$('#v-tresd .barra-vista');const b=document.createElement('button');b.id='chModelos27';b.className='chip on';b.setAttribute('aria-pressed','true');b.textContent='Modelos reais';b.onclick=()=>{USAR_MODELOS27=!USAR_MODELOS27;b.classList.toggle('on',USAR_MODELOS27);b.setAttribute('aria-pressed',String(USAR_MODELOS27));ULTIMA_CENA27=null;pintar();};barra.append(b);document.title='Ambienta 2.7 — mobiliário real e interiores';const brand=$('#topo .marca span');if(brand)brand.textContent='v2.7 · interiores';window.AMBIENTA27_PRONTO=true;};
 const diagnosticoAntes27=diagnostico;
 diagnostico=function(){const r=diagnosticoAntes27(),seen=new Set();for(const m of P.moveis){const c=catDe(m),v=c?.tecnica?.visual27;if(!v?.ativo||seen.has(c.id))continue;seen.add(c.id);if(v.dimensoes.length!==3){r.itens.push({nivel:'aviso',txt:c.nome+': modelo visual sem dimensões calibradas; confira a malha na ficha.'});continue;}const dims=[c.l,c.p,c.h],diff=Math.max(...dims.map((d,i)=>Math.abs(d-v.dimensoes[i])/Math.max(.005,d)));if(diff>.05)r.itens.push({nivel:'aviso',txt:c.nome+': a malha visual difere até '+fmt(diff*100,1)+'% da envoltória do solver; conferir escala e dimensões.'});}return r;};
+
 </script>
-<script>/* v2.7 — demonstração original e documentação integrada. */
+<script>
+/* v2.7 — demonstração original e documentação integrada. */
 function modeloDemo27(){
  const primitives=[],materials=[{nome:'Tecido demonstrativo verde',cor:[.28,.47,.39,1],imagem:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAAAAS0lEQVR4nO3RsQ0AIAhEUbG8sP9W7EDCIhaOgMTmU13Jz7OIkOTukjLz+d5r+Kyqhn6/e74AAwz6BRhg0C/AAIN+AQYY9Asw+G5wAFYukqBn8NIfAAAAAElFTkSuQmCC',alpha:'OPAQUE'},{nome:'Madeira demonstrativa',cor:[.32,.18,.085,1],imagem:'',alpha:'OPAQUE'},{nome:'Costura',cor:[.16,.29,.22,1],imagem:'',alpha:'OPAQUE'}];
  function round(cx,cy,cz,l,p,h,mat,power=.45){const pos=[],normal=[],uv=[],N=28,M=16,signpow=(v,a)=>Math.sign(v)*Math.pow(Math.abs(v),a);function point(i,j){const u=i/N*Math.PI*2,v=-Math.PI/2+j/M*Math.PI;return [cx+l/2*signpow(Math.cos(v),power)*signpow(Math.cos(u),power),cy+p/2*signpow(Math.cos(v),power)*signpow(Math.sin(u),power),cz+h/2*signpow(Math.sin(v),power)];}for(let j=0;j<M;j++)for(let i=0;i<N;i++){const a=point(i,j),b=point(i+1,j),c=point(i+1,j+1),d=point(i,j+1);for(const tri of [[a,b,c],[a,c,d]]){const n=unit27(cross27(tri[1].map((x,k)=>x-tri[0][k]),tri[2].map((x,k)=>x-tri[0][k])));for(let k=0;k<3;k++){pos.push(...tri[k]);normal.push(...n);uv.push((i+(k?1:0))/N,(j+(k===2?1:0))/M);}}}primitives.push({pos:Float32Array.from(pos),normal:Float32Array.from(normal),uv:Float32Array.from(uv),color:new Float32Array(pos.length/3*4).fill(1),material:mat});}
@@ -8756,8 +8831,10 @@ const TESTES27=[
  ['memorial declara preço parcial e modelo esquemático',()=>isolado27(()=>{P.catalogoPersonalizado=[CATALOGO_REAL27[0]];sincronizaCatalogo(P);addMovel(CATALOGO_REAL27[0].id,2,2);const text=blocosMemorial().filter(b=>typeof b.txt==='string').map(b=>b.txt).join('\n');afirma(text.includes('ESTIMATIVA PARCIAL'));afirma(text.includes('Preço não informado'));afirma(text.includes('não modelo oficial'));})]
 ];
 for(const [nome,f]of TESTES27)TESTES.push({nome:'v2.7 • '+nome,f});
+
 </script>
-<script data-worker-source>/* Ambienta 2.8 — contrato de imutabilidade do solver e parâmetros de apresentação.
+<script data-worker-source="true">
+/* Ambienta 2.8 — contrato de imutabilidade do solver e parâmetros de apresentação.
    Esta parte é pura e também roda no Worker. Arquitetura nunca é um resultado do solver. */
 function canonico28(v){if(Array.isArray(v))return '['+v.map(canonico28).join(',')+']';if(v&&typeof v==='object')return '{'+Object.keys(v).sort().filter(k=>v[k]!==undefined).map(k=>JSON.stringify(k)+':'+canonico28(v[k])).join(',')+'}';return JSON.stringify(v);}
 function arquitetura28(q){return {amb:q.amb,circ:q.circ,aberturas:q.aberturas||[],escadas:q.escadas||[],plantaBase:q.plantaBase||null};}
@@ -8776,8 +8853,10 @@ const normalizaProjetoAntes28=normalizaProjeto;
 normalizaProjeto=function(o,sem=false){const q=normalizaProjetoAntes28(o,sem);q.render28=normalizaRender28(o.render28);if(!sem)for(let i=0;i<q.alternativas.length;i++){const a=q.alternativas[i],s=o.alternativas?.[i];a.origem28=s?.origem28?{tipo:textoSeguro(s.origem28.tipo,40),job:textoSeguro(s.origem28.job,120),projetoId:textoSeguro(s.origem28.projetoId,100)}:null;}return q;};
 const leveAntes28=projetoLeve27;
 projetoLeve27=function(q){const p=leveAntes28(q);delete p.render28;return p;};
+
 </script>
-<script>/* Solver UI: token por cálculo, descarte de resultado obsoleto e aplicação só de poses.
+<script>
+/* Solver UI: token por cálculo, descarte de resultado obsoleto e aplicação só de poses.
    Cenários completos antigos são restauráveis apenas em fluxo separado e confirmado. */
 let RECUPERACAO28=null, RESULTADOS_OBSOLETOS28=[],TESTANDO28=false;
 function resumoArquitetura28(q){return `${q.amb.contorno?'Polígono de '+q.amb.contorno.length+' vértices':'Retângulo'} · ${(q.aberturas||[]).length} abertura(s) · ${(q.escadas||[]).length} escada(s) · ${(q.amb.obstaculos||[]).length} obstáculo(s) · ${q.moveis.length} peça(s)`;}
@@ -8830,8 +8909,10 @@ const ativaAntes28=ativarProjeto;
 ativarProjeto=function(q,limpar=true){if(estadoSolver.emCurso&&P!==q){estadoSolver.resultados=[];finalizarSolver(true);}ativaAntes28(q,limpar);};
 const testesAntes28=executaTestes;
 executaTestes=async function(){if(estadoSolver.emCurso)throw Error('Cancele o solver antes dos testes.');if(TESTANDO28)throw Error('Autotestes já em execução.');TESTANDO28=true;const app=$('#app'),prev=app?.inert;if(app)app.inert=true;try{return await testesAntes28();}finally{TESTANDO28=false;if(app)app.inert=prev;}};
+
 </script>
-<script data-worker-source>/* v2.8: eletrodomésticos e superfícies de apoio. As folgas NÃO são dimensões de nicho. */
+<script data-worker-source="true">
+/* v2.8: eletrodomésticos e superfícies de apoio. As folgas NÃO são dimensões de nicho. */
 const GENERICOS28 = [
  {
   "id": "geladeiraCompacta28",
@@ -11329,8 +11410,10 @@ const DADOS_REAIS28 = [
 ];
 // Catálogo comercial não é necessário no Worker: fichas usadas viajam com o projeto.
 if(typeof CATALOGO_REAL27!=='undefined')CATALOGO_REAL27.push(...normalizaCatalogo(DADOS_REAIS28));
+
 </script>
-<script>/* Símbolos e volumes originais esquemáticos; não reproduzem modelos proprietários. */
+<script>
+/* Símbolos e volumes originais esquemáticos; não reproduzem modelos proprietários. */
 const FORMAS_ELETRO28=new Set(['geladeira','freezerH','fogao','microondas','forno','cooktop','lavaLoucas','lavadora','lavadoraTop','secadora','coifa','adega','cafeteira','bancada','tanque']);
 const simboloAntes28=simbolo;
 simbolo=function(ctx,c,cor,lw){if(!FORMAS_ELETRO28.has(c.forma))return simboloAntes28(ctx,c,cor,lw);const l=c.l,p=c.p,x=-l/2,y=-p/2;ctx.save();ctx.strokeStyle=tomLinha();ctx.lineWidth=lw;ctx.fillStyle=cor||c.cor;retArred(ctx,x,y,l,p,.025);ctx.fill();ctx.stroke();const line=(a,b,d,e)=>{ctx.beginPath();ctx.moveTo(a,b);ctx.lineTo(d,e);ctx.stroke();};
@@ -11360,8 +11443,10 @@ function discosAparelho28(m){const c=catDe(m);if(!c||c.tecnica?.visual27?.ativo)
  const disk=(cx,cy,zz,ra,front,col)=>{const pts=[];for(let i=0;i<40;i++){const a=i*Math.PI/20;pts.push(world(front?[cx+ra*Math.cos(a),cy,zz+ra*Math.sin(a)]:[cx+ra*Math.cos(a),cy+ra*Math.sin(a),zz]));}out.push(faceQuad(pts,col,'detalhe',front?[-sn,cs,0]:[0,0,1]));};
  if(['lavadora','secadora'].includes(c.forma)){disk(0,c.p*.519,c.h*.455,Math.min(c.l*.35,c.h*.29),true,'#BCC6C7');disk(0,c.p*.522,c.h*.455,Math.min(c.l*.285,c.h*.235),true,'#183038');}
  if(['fogao','cooktop'].includes(c.forma))for(const x of [-.26,.26])for(const y of [-.26,.26]){disk(c.l*x,c.p*y,c.h+.028,Math.min(c.l,c.p)*.13,false,'#434D4C');disk(c.l*x,c.p*y,c.h+.029,Math.min(c.l,c.p)*.105,false,'#141E22');}return out;}
+
 </script>
-<script>/* Render Studio: cena física independente das verificações de projeto.
+<script>
+/* Render Studio: cena física independente das verificações de projeto.
    RGB linear, materiais metálico/rugoso, imagens locais e panorama RGBE. */
 const CACHE_TEXTURE28=new Map();
 const V28={add:(a,b)=>a.map((x,i)=>x+b[i]),sub:(a,b)=>a.map((x,i)=>x-b[i]),mul:(a,s)=>a.map(x=>x*s),dot:(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2],cross:(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],unit:a=>{const d=Math.hypot(...a)||1;return a.map(x=>x/d);}};
@@ -11402,8 +11487,10 @@ async function prepararRender28(cena){const mats=[],key=new Map(),texs=[],urls=n
  for(let i=0;i<p.pos.length;i++)pos.push(p.pos[i]);for(let i=0;i<p.normal.length;i++)norm.push(p.normal[i]);for(let i=0;i<p.uv.length;i++)uv.push(p.uv[i]);for(let i=0;i<p.pos.length/3;i++){const C=p.color;col.push(C?.[i*4]??1,C?.[i*4+1]??1,C?.[i*4+2]??1);}for(let i=0;i<p.pos.length/9;i++){indices.push(id);mask.push(cut);}}
  const r=cena.config,scenario=r.cenario;let sunDir=V28.unit([-.45,-.65,.75]),sunColor=[1,.93,.82];if(scenario==='tarde'){sunDir=V28.unit([-.8,-.2,.23]);sunColor=[1,.55,.24];}if(r.usarSolProjeto){const s=posicaoSolar(SOL.lat,SOL.lon,SOL.dia,SOL.hora,SOL.fuso),az=s.az+SOL.norte*GRAU;sunDir=[Math.sin(az)*Math.cos(s.alt),Math.cos(az)*Math.cos(s.alt),Math.sin(s.alt)];}
  return {pos:Float32Array.from(pos),norm:Float32Array.from(norm),uv:Float32Array.from(uv),col:Float32Array.from(col),indices:Uint16Array.from(indices),mask:Uint8Array.from(mask),mats,texs,env:await panoramaRender28(r),config:r,camera,sun:{dir:sunDir,color:sunColor,power:r.sol&&sunDir[2]>0&&scenario!=='noite'?r.forcaSol:0},lights:r.luzes.filter(l=>l.ativo).map(l=>({pos:[l.x,l.y,l.z],power:l.potencia,color:kelvin28(l.kelvin)}))};}
+
 </script>
-<script>/* Path tracing CPU em Worker. BVH, Lambert + GGX, raios de sombra, céu/HDR,
+<script>
+/* Path tracing CPU em Worker. BVH, Lambert + GGX, raios de sombra, céu/HDR,
    reflexão e múltiplas interações. Vidro de lâmina fina, sem caústicas/refração volumétrica. */
 function workerRender28(){
 'use strict';
@@ -11441,8 +11528,10 @@ self.onmessage=async e=>{if(e.data?.tipo==='cancelar'){stopped=true;return;}if(e
  row=0;const im=image(true);self.postMessage({tipo:'concluido',ms:performance.now()-start,samples,...im},[im.pixels.buffer]);
 }catch(err){self.postMessage({tipo:'erro',erro:err.message||String(err)});}};
 }
+
 </script>
-<script>/* Prévia GPU GGX + mapa de sombra solar PCF. O render final CPU resolve as
+<script>
+/* Prévia GPU GGX + mapa de sombra solar PCF. O render final CPU resolve as
    sombras de todas as luzes e as interações indiretas. Sem dependência de CDN. */
 let GPU28=null;
 function criarGPU28(){if(GPU28)return GPU28;const cv=document.createElement('canvas'),gl=cv.getContext('webgl',{alpha:false,antialias:true,preserveDrawingBuffer:true});if(!gl)return null;
@@ -11474,8 +11563,10 @@ async function desenhaPBR28(canvas,cena,prepared){const g=criarGPU28();if(!g)ret
  if(S.env){if(g.envSource!==S.config.ambiente?.dados){if(g.envTexture)gl.deleteTexture(g.envTexture);g.envTexture=gl.createTexture();g.envSource=S.config.ambiente?.dados;gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,g.envTexture);const rgb=new Uint8Array(S.env.w*S.env.h*4);for(let i=0;i<S.env.w*S.env.h;i++){const max=Math.max(S.env.data[i*3],S.env.data[i*3+1],S.env.data[i*3+2],1e-10),e=Math.ceil(Math.log2(max)),scale=Math.pow(2,e);for(let c=0;c<3;c++)rgb[i*4+c]=Math.round(S.env.data[i*3+c]/scale*255);rgb[i*4+3]=clamp(e+128,0,255);}gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,S.env.w,S.env.h,0,gl.RGBA,gl.UNSIGNED_BYTE,rgb);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);}gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,g.envTexture);}else{gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,g.white);}gl.uniform1i(gl.getUniformLocation(prog,'env'),1);gl.uniform1i(gl.getUniformLocation(prog,'tex'),0);
  for(const b of g.buffers){const p=b.p;if(S.config.recorte&&p.casca&&p.center&&V28.dot(p.faceNormal,V28.sub(cam.eye,p.center))>0)continue;for(const [i,n,num]of [[0,'p',3],[1,'n',3],[2,'uv',2],[3,'vc',4]])attr(prog,n,b.buffers[i],num);for(const [n,v]of Object.entries({base:p.mat.base,rough:p.mat.rough,metal:p.mat.metal,trans:p.mat.trans,emission:p.mat.emission,emissive:p.mat.emissive,texOn:p.mat.tex?1:0,pattern:{wood:1,fabric:2,stone:3,tile:4}[p.mat.pattern]||0,mask:p.mat.alpha==='MASK'?1:0,cutoff:p.mat.cutoff}))uniform(prog,n,v);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,b.tex);gl.drawArrays(gl.TRIANGLES,0,p.pos.length/3);}
  const ctx=canvas.getContext('2d');ctx.setTransform(1,0,0,1,0,0);ctx.drawImage(g.cv,0,0,canvas.width,canvas.height);return true;}
+
 </script>
-<script>/* UI de apresentação separada do motor de cálculo e da arquitetura. */
+<script>
+/* UI de apresentação separada do motor de cálculo e da arquitetura. */
 const RENDER28={worker:null,url:null,job:null,scene:null,data:null,last:null,token:0,preparando:false,inicio:0};
 function parametrosRender28(){if(!P.render28)P.render28=normalizaRender28();return P.render28;}
 function instalaRender28(){if($('#v-render28'))return;const nav=document.createElement('button');nav.className='aba';nav.dataset.vista='render28';nav.setAttribute('role','tab');nav.setAttribute('aria-selected','false');nav.innerHTML='<svg viewBox="0 0 24 24"><path d="M3 7h18v13H3zM8 7l2-3h4l2 3"/><circle cx="12" cy="13" r="4"/></svg><span class="txt">Render Studio</span>';nav.onclick=()=>trocaVista('render28');$('.aba[data-vista="tresd"]').after(nav);
@@ -11526,8 +11617,464 @@ instalaEscadas26=function(){instalarAntes28();instalaRender28();};
 const ativarRenderAntes28=ativarProjeto;
 ativarProjeto=function(q,limpar=true){if(RENDER28.worker||RENDER28.preparando)cancelarRenderFinal28();RENDER28.scene=null;RENDER28.data=null;RENDER28.last=null;ativarRenderAntes28(q,limpar);};
 window.addEventListener('resize',()=>{if(vistaAtual==='render28'){if(RENDER28.worker||RENDER28.last)desenhaResultado28();else atualizaRender28(false);}});
+
 </script>
-<script>abrirAmbienta25();
+<script data-worker-source="true">
+/* Ambienta 2.9 — fotometria e iluminância direta. Núcleo independente e idêntico
+ * no navegador, nos testes e no Web Worker. Unidades: m, lm, cd, lux, W.
+ * Método dos lúmens usa fluxo EMITIDO pela luminária e fator de utilização
+ * do recinto (utilance). A malha direta NÃO multiplica por esse fator.
+ * Importação: IES LM-63 tipo C / TILT=NONE e EULUMDAT de um conjunto de lâmpadas.
+ * Referências de implementação no manual e em documentacao/FONTES_LUZ.md. */
+function criarMotorLuz29(){
+ 'use strict';
+ const D=Math.PI/180, EPS=1e-8;
+ const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+ const mod=x=>((x%360)+360)%360;
+ const num=(v,n,a=-Infinity,b=Infinity)=>{const x=Number(v);if(v===''||v===null||!Number.isFinite(x)||x<a||x>b)throw Error(n+': valor inválido.');return x;};
+ const inteiro=(v,n,a,b)=>{const x=num(v,n,a,b);if(!Number.isInteger(x))throw Error(n+': esperado inteiro.');return x;};
+ const clean=v=>String(v??'').replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g,'').slice(0,300);
+ const dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
+ const BUILTINS=[
+  ['painel36','Painel difusor • 3.600 lm',3600,36,120,.6,.6,.045,4000],
+  ['painel18','Painel compacto • 1.800 lm',1800,18,120,.3,.3,.04,4000],
+  ['downlight15','Downlight • 1.500 lm',1500,15,90,.18,.18,.1,3000],
+  ['spot10','Spot • 800 lm / 36°',800,10,36,.1,.1,.15,3000],
+  ['spot24','Spot fechado • 900 lm / 24°',900,12,24,.12,.12,.18,3000],
+  ['linear40','Linear difusa • 4.000 lm',4000,40,110,1.2,.08,.06,4000],
+  ['plafon18','Plafon • 1.800 lm',1800,18,120,.32,.32,.07,3000],
+  ['pendente24','Pendente direto • 2.400 lm',2400,24,100,.4,.4,.2,3000],
+  ['tarefa8','Luz de tarefa • 700 lm',700,8,80,.14,.14,.08,4000],
+  ['difusor60','Difusor amplo • 6.000 lm',6000,60,140,.6,.6,.08,4000]
+ ].map(a=>({id:'lx29-'+a[0],nome:a[1],tipo:'analitica',fluxo:a[2],watts:a[3],abertura:a[4],dim:[a[5],a[6],a[7]],kelvin:a[8],irc:null,fabricante:'Referência genérica Ambienta',fonte:'Modelo analítico cos^m; não é curva ensaiada de fabricante.',avisos:['Distribuição idealizada. Substitua por fotometria do produto antes da especificação.']}));
+ function numeros(s){return s.trim().split(/[\s,]+/).filter(Boolean).map(t=>{if(!/^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eEdD][+-]?\d+)?$/.test(t))throw Error('Valor não numérico na tabela fotométrica: '+t.slice(0,35));return num(t.replace(/[dD]/,'e'),'Tabela');});}
+ function angulos(a,n,min,max){if(!a.length||a.some((v,i)=>!Number.isFinite(v)||v<min-EPS||v>max+EPS||(i&&v<=a[i-1]+EPS)))throw Error(n+': ângulos ausentes, repetidos ou fora de ordem/faixa.');}
+ function span(a,x){if(a.length===1||x<=a[0])return [0,0,0];if(x>=a.at(-1))return [a.length-1,a.length-1,0];let lo=0,hi=a.length-1;while(hi-lo>1){const k=(lo+hi)>>1;if(a[k]>x)hi=k;else lo=k;}return [lo,hi,(x-a[lo])/(a[hi]-a[lo])];}
+ function interpLinha(s,k,g){const [a,b,t]=span(s.gamma,g);return s.cd[k*s.gamma.length+a]*(1-t)+s.cd[k*s.gamma.length+b]*t;}
+ function intensidade(s,C,gamma){
+  if(!Number.isFinite(gamma)||gamma<0||gamma>180)return 0;
+  if(s.tipo==='analitica'){if(gamma>=90)return 0;const m=-Math.log(2)/Math.log(Math.cos(s.abertura*D/2));return s.fluxo*(m+1)/(2*Math.PI)*Math.pow(Math.max(0,Math.cos(gamma*D)),m);}
+  if(gamma<s.gamma[0]-EPS||gamma>s.gamma.at(-1)+EPS)return 0; // hemisfério não medido = zero, declarado no relatório
+  let c=mod(C),h=s.C;
+  if(s.simetria==='rotacional')return interpLinha(s,0,gamma);
+  if(s.simetria==='quadrantes'){if(c>180)c=360-c;if(c>90)c=180-c;}
+  else if(s.simetria==='C0'){if(c>180)c=360-c;}
+  else if(s.simetria==='C90'){if(c>90&&c<270)c=180-c;if(c<0)c+=360;if(c>=270)c-=360;}
+  if(s.simetria==='completa'&&h.at(-1)<360-EPS&&c>h.at(-1)){
+   const t=(c-h.at(-1))/(360-h.at(-1)+h[0]);return interpLinha(s,h.length-1,gamma)*(1-t)+interpLinha(s,0,gamma)*t;
+  }
+  const [i,j,t]=span(h,c);return interpLinha(s,i,gamma)*(1-t)+interpLinha(s,j,gamma)*t;
+ }
+ function integrar(s){if(s.tipo==='analitica')return s.fluxo;let flux=0;const nC=s.simetria==='rotacional'?1:360,dC=2*Math.PI/nC;for(let c=0;c<nC;c++)for(let g=0;g<180;g++){const mid=g+.5;flux+=intensidade(s,(c+.5)*360/nC,mid)*(Math.cos(g*D)-Math.cos((g+1)*D))*dC;}return flux;}
+ function lerIES(text,nome='Fotometria IES'){
+  if(typeof text!=='string'||text.length>1500000)throw Error('IES ausente ou maior que 1,5 MB.');
+  const lines=text.replace(/^\uFEFF/,'').split(/\r?\n/),ti=lines.findIndex(l=>/^\s*TILT\s*=/i.test(l));
+  if(ti<0)throw Error('IES sem declaração TILT.');if(!/^\s*TILT\s*=\s*NONE\s*$/i.test(lines[ti]))throw Error('Somente TILT=NONE é suportado. TILT=INCLUDE/arquivo externo exige conversão prévia.');
+  const id=lines[0].trim();if(/^IES/i.test(id)&&!(/^(IESNA(?::LM-63-(1986|1991|1995|2002))?|IESNA91)$/i.test(id)))throw Error('Edição IES não suportada: '+clean(id)+'. Use LM-63-2002.');
+  const meta={};for(const l of lines.slice(0,ti)){const m=l.match(/^\s*\[([^\]]+)\]\s*(.*)$/);if(m)meta[m[1].toUpperCase()]=clean(m[2]);}
+  const a=numeros(lines.slice(ti+1).join(' '));if(a.length<13)throw Error('Cabeçalho IES incompleto.');
+  const nLamp=inteiro(a[0],'Lâmpadas',1,10000),lm=num(a[1],'lm/lâmpada',-1,1e8),mult=num(a[2],'Multiplicador cd',.0000001,1e6),nv=inteiro(a[3],'Ângulos verticais',2,721),nh=inteiro(a[4],'Planos horizontais',1,721);
+  if(lm!==-1&&lm<=0)throw Error('Fluxo por lâmpada IES deve ser positivo ou -1 para fotometria absoluta.');
+  if(a[5]!==1)throw Error('Fotometria IES tipo A/B não suportada; use tipo C.');if(![1,2].includes(a[6]))throw Error('Unidade IES desconhecida.');
+  if(nv*nh>100000)throw Error('Tabela IES excede 100 mil intensidades.');if(a.length!==13+nv+nh+nv*nh)throw Error('Quantidade de intensidades IES não corresponde ao cabeçalho.');
+  const bf=num(a[10],'Ballast factor',.00001,10),bLamp=a[11];const old=/1986|1991|IESNA91/i.test(id)||!/^IES/i.test(id);if(old&&!(bLamp>0&&bLamp<=10))throw Error('Fator ballast-lamp legado inválido.');
+  const gamma=a.slice(13,13+nv),C=a.slice(13+nv,13+nv+nh);angulos(gamma,'Gama',0,180);angulos(C,'Planos C',0,360);
+  if(!((Math.abs(gamma[0])<EPS&&[90,180].some(v=>Math.abs(v-gamma.at(-1))<EPS))||(Math.abs(gamma[0]-90)<EPS&&Math.abs(gamma.at(-1)-180)<EPS)))throw Error('Faixa gama IES não suportada; use 0–90, 0–180 ou 90–180°.');
+  let simetria;if(nh===1&&Math.abs(C[0])<EPS)simetria='rotacional';else if(Math.abs(C[0])<EPS&&Math.abs(C.at(-1)-90)<EPS)simetria='quadrantes';else if(Math.abs(C[0])<EPS&&Math.abs(C.at(-1)-180)<EPS)simetria='C0';else if(Math.abs(C[0])<EPS&&Math.abs(C.at(-1)-360)<EPS)simetria='completa';else if(Math.abs(C[0]-90)<EPS&&Math.abs(C.at(-1)-270)<EPS){simetria='C90';}else throw Error('Cobertura dos planos C IES ambígua ou incompleta.');
+  let cd=a.slice(13+nv+nh).map(v=>num(v,'Intensidade',0,1e12)*mult*bf*(old?bLamp:1));
+  let hc=C;if(simetria==='C90'){// intervalo [90,270] reflete no plano C90–C270; equivalentemente use [-90,90] por espelho
+   hc=C.map(c=>180-c).reverse();const rows=[];for(let i=nh-1;i>=0;i--)rows.push(...cd.slice(i*nv,(i+1)*nv));cd=rows;
+  }
+  const unit=a[6]===1?.3048:1,dim=a.slice(7,10).map(v=>Math.abs(v)*unit);
+  const s={tipo:'tabela',formato:'IES',nome:meta.LUMINAIRE||nome,fabricante:meta.MANUFAC||'',ensaio:meta.TEST||'',data:meta.ISSUEDATE||'',gamma,C:hc,cd,simetria,dim,watts:a[12]>0?num(a[12],'Potência',0,1e7):null,kelvin:null,irc:null,absoluta:lm===-1,fluxoLampadas:lm>=0?lm*nLamp:null,avisos:[]};
+  if(bf!==1||old&&bLamp!==1)s.avisos.push('Fatores ballast declarados foram incorporados às candelas.');
+  if(gamma[0]>0||gamma.at(-1)<180)s.avisos.push('Hemisfério não medido considerado sem emissão.');
+  if(!s.watts)s.avisos.push('Potência não informada no arquivo.');s.fluxo=integrar(s);if(!(s.fluxo>0))throw Error('IES sem fluxo integrado positivo.');return s;
+ }
+ function lerLDT(text,nome='Fotometria LDT'){
+  if(typeof text!=='string'||text.length>1500000)throw Error('LDT ausente ou maior que 1,5 MB.');
+  const a=text.replace(/^\uFEFF/,'').replace(/\r/g,'').split('\n').map(s=>s.trim());while(a.length&&a.at(-1)==='')a.pop();if(a.length<40)throw Error('EULUMDAT incompleto.');
+  const get=(i,n,lo=-Infinity,hi=Infinity)=>num(a[i],n,lo,hi);
+  const sy=inteiro(get(2,'Simetria'), 'Simetria',0,4),mc=inteiro(get(3,'Planos C'),'Planos C',1,721),ng=inteiro(get(5,'Ângulos gama'),'Ângulos gama',2,721),nset=inteiro(get(25,'Conjuntos'),'Conjuntos',1,20);
+  if(![1,2,3].includes(get(1,'Tipo LDT')))throw Error('Tipo EULUMDAT inválido.');
+  if(nset!==1)throw Error('LDT com vários conjuntos de lâmpadas: separe o conjunto desejado antes de importar.');
+  if(Math.abs(get(24,'Inclinação de ensaio'))>EPS)throw Error('LDT com inclinação de ensaio não nula exige conversão prévia.');
+  const lamps=get(26,'Lâmpadas'),flux=get(28,'Fluxo de referência',.0001,1e9),factor=get(23,'Conversão cd',.000001,1e6),eta=get(22,'Rendimento',0,100);
+  if(!Number.isInteger(lamps)||lamps===0||Math.abs(lamps)>10000)throw Error('Quantidade de lâmpadas LDT inválida.');
+  const watt=get(31,'Potência',0,1e7),ga=42+mc,vi=ga+ng;
+  if(a.length<vi)throw Error('Tabela angular LDT incompleta.');
+  const C=a.slice(42,42+mc).map(Number),gamma=a.slice(ga,vi).map(Number);angulos(C,'C LDT',0,359.999999);angulos(gamma,'Gama LDT',0,180);
+  if(Math.abs(C[0])>EPS||Math.abs(gamma[0])>EPS||Math.abs(gamma.at(-1)-180)>EPS)throw Error('LDT requer C inicial 0° e gama de 0 a 180°.');
+  if(sy===2&&mc%2||[3,4].includes(sy)&&mc%4)throw Error('Simetria LDT incompatível com quantidade de planos C.');
+  let count=[mc,1,mc/2+1,mc/2+1,mc/4+1][sy];if(count*ng>100000)throw Error('Tabela LDT excede 100 mil intensidades.');
+  const vals=numeros(a.slice(vi).join(' '));if(vals.length!==count*ng)throw Error('Quantidade de candelas LDT diferente do esperado para a simetria.');
+  let h=sy===1?[0]:sy===0?C:sy===2?C.slice(0,mc/2+1):sy===4?C.slice(0,mc/4+1):Array.from({length:count},(_,i)=>{let c=C[(3*mc/4+i)%mc];return c>=270?c-360:c;});
+  if(sy!==0&&sy!==1){const ends=sy===4?[0,90]:sy===3?[-90,90]:[0,180];if(Math.abs(h[0]-ends[0])>EPS||Math.abs(h.at(-1)-ends[1])>EPS)throw Error('Planos extremos não correspondem à simetria LDT.');angulos(h,'Simetria C',-90,360);}
+  const s={tipo:'tabela',formato:'LDT',nome:a[8]||nome,fabricante:a[0],ensaio:a[7],data:a[11],gamma,C:h,simetria:['completa','rotacional','C0','C90','quadrantes'][sy],cd:vals.map(v=>num(v,'cd/klm',0,1e12)*factor*flux/1000),dim:[get(12,'Comprimento',0,1e6)/1000,get(13,'Largura',0,1e6)/1000,get(14,'Altura',0,1e6)/1000],watts:watt>0?watt:null,kelvin:/^\d{4,5}$/.test(a[29])?Number(a[29]):null,irc:/^\d+(\.\d+)?$/.test(a[30])&&Number(a[30])<=100?Number(a[30]):null,absoluta:lamps<0,fluxoDeclarado:lamps<0?flux:flux*eta/100,avisos:['Candelas convertidas de cd/klm com o fluxo do conjunto; sem multiplicação adicional pelo número de lâmpadas.']};
+  s.fluxo=integrar(s);if(!(s.fluxo>0))throw Error('LDT sem fluxo integrado positivo.');if(Math.abs(s.fluxo-s.fluxoDeclarado)/Math.max(s.fluxoDeclarado,1)>.12)s.avisos.push('Fluxo integrado difere mais de 12% do declarado. Confira fatores e ensaio; o cálculo usa a tabela cd.');if(!s.watts)s.avisos.push('Potência não informada no arquivo.');return s;
+ }
+ const parse=(t,formato,nome)=>formato==='IES'?lerIES(t,nome):formato==='LDT'?lerLDT(t,nome):(()=>{throw Error('Formato fotométrico desconhecido.');})();
+ function area(poly){let s=0;for(let i=0;i<poly.length;i++){const a=poly[i],b=poly[(i+1)%poly.length];s+=a[0]*b[1]-a[1]*b[0];}return Math.abs(s/2);}
+ function distSeg(p,a,b){const x=b[0]-a[0],y=b[1]-a[1],t=clamp(((p[0]-a[0])*x+(p[1]-a[1])*y)/(x*x+y*y||1),0,1);return Math.hypot(p[0]-a[0]-t*x,p[1]-a[1]-t*y);}
+ function dentro(p,poly){let ok=false;for(let i=0,j=poly.length-1;i<poly.length;j=i++){const a=poly[j],b=poly[i];if(distSeg(p,a,b)<EPS)return true;if((a[1]>p[1])!==(b[1]>p[1])&&p[0]<(b[0]-a[0])*(p[1]-a[1])/(b[1]-a[1])+a[0])ok=!ok;}return ok;}
+ function hitSeg(o,d,a,b){const ex=b[0]-a[0],ey=b[1]-a[1],den=d[0]*ey-d[1]*ex;if(Math.abs(den)<1e-12)return null;const px=a[0]-o[0],py=a[1]-o[1],t=(px*ey-py*ex)/den,u=(px*d[1]-py*d[0])/den;return u>=-EPS&&u<=1+EPS?t:null;}
+ function prismaHit(o,p,b){
+  const d=p.map((v,i)=>v-o[i]);let t0=.00001,t1=.99999;
+  for(let i=0;i<3;i++){const low=i===2?b.z0:b.box[i],high=i===2?b.z1:b.box[i+2];if(Math.abs(d[i])<EPS){if(o[i]<low||o[i]>high)return false;}else {let a=(low-o[i])/d[i],c=(high-o[i])/d[i];if(a>c)[a,c]=[c,a];t0=Math.max(t0,a);t1=Math.min(t1,c);if(t0>t1)return false;}}
+  if(dentro([o[0]+d[0]*t0,o[1]+d[1]*t0],b.pol)||dentro([o[0]+d[0]*t1,o[1]+d[1]*t1],b.pol))return true;
+  for(let i=0;i<b.pol.length;i++){const t=hitSeg(o,d,b.pol[i],b.pol[(i+1)%b.pol.length]);if(t!==null&&t>=t0&&t<=t1)return true;}return false;
+ }
+ function bloqueado(o,p,scene,ignore){const d=p.map((v,i)=>v-o[i]);for(const w of scene.paredes||[]){const t=hitSeg(o,d,w.a,w.b);if(t!==null&&t>1e-6&&t<1-1e-6){const z=o[2]+d[2]*t;if(z>=0&&z<=scene.altura)return true;}}
+  for(const b of scene.prismas||[]){if(ignore&&ignore===b.id)continue;if(prismaHit(o,p,b))return true;}return false;
+ }
+ function base(l){const a=l.azimute*D,t=l.inclinacao*D;return {x:[Math.cos(t)*Math.cos(a),Math.cos(t)*Math.sin(a),Math.sin(t)],y:[-Math.sin(a),Math.cos(a),0],d:[Math.sin(t)*Math.cos(a),Math.sin(t)*Math.sin(a),-Math.cos(t)]};}
+ function contribuicao(l,s,p,scene,conf,detalhe=false){const o=[l.x,l.y,l.z],v=p.map((x,i)=>x-o[i]),r=Math.hypot(...v);if(r<.05)return detalhe?{lux:0,perto:true}:0;const cos=-v[2]/r;if(cos<=0||l.nivel<=0)return detalhe?{lux:0}:0;const b=l.base||base(l),g=Math.acos(clamp(dot(v,b.d)/r,-1,1))/D,c=mod(Math.atan2(dot(v,b.y),dot(v,b.x))/D),I=intensidade(s,c,g)*l.nivel;let lux=I*cos/(r*r)*conf.fm;const sombra=I>0&&conf.sombras&&bloqueado(o,p,scene,l.movelId);if(sombra)lux=0;return detalhe?{lux,candela:I,gamma:g,C:c,distancia:r,cos,sombra,perto:r<5*Math.max(...s.dim,.01)}:lux;}
+ function preparar(scene,progresso){const cfg=scene.config,lookup=new Map(scene.specs.map(s=>[s.id,s]));const lights=scene.luminarias.filter(l=>l.ativo!==false).map(l=>({...l,nivel:l.dimmer*(scene.niveis?.[l.grupo]??1),base:base(l)}));
+  for(const l of lights){if(!lookup.has(l.fotoId))throw Error('Fotometria ausente: '+l.nome);if(!(l.z>0&&l.z<=scene.altura+.001)||!dentro([l.x,l.y],scene.contorno))throw Error(l.nome+': fonte fora do ambiente ou acima do teto. Corrija a posição.');for(const o of scene.obstaculos||[])if(l.z<=o.z1&&dentro([l.x,l.y],o.pol))throw Error(l.nome+': fonte dentro de obstáculo.');}
+  return {cfg,lookup,lights,progresso};}
+ function pontos(scene,zone){const cfg=scene.config,poly=scene.contorno,b=zone.id==='ambiente'?scene.box:[zone.x,zone.y,zone.x+zone.larg,zone.y+zone.comp],nx=Math.ceil((b[2]-b[0])/cfg.passo),ny=Math.ceil((b[3]-b[1])/cfg.passo);if(nx*ny>40000)throw Error('Malha maior que 40 mil células por área. Aumente o passo.');const dx=(b[2]-b[0])/nx,dy=(b[3]-b[1])/ny,ps=[];
+  for(let j=0;j<ny;j++)for(let i=0;i<nx;i++){const x=b[0]+(i+.5)*dx,y=b[1]+(j+.5)*dy,p=[x,y];if(!dentro(p,poly))continue;let bd=Infinity;for(let k=0;k<poly.length;k++)bd=Math.min(bd,distSeg(p,poly[k],poly[(k+1)%poly.length]));if(bd+EPS<cfg.borda)continue;
+   if((scene.obstaculos||[]).some(o=>zone.z>=o.z0-EPS&&zone.z<=o.z1+EPS&&dentro(p,o.pol)))continue;
+   if(cfg.excluirOcupados&&(scene.prismas||[]).some(o=>o.mobiliario&&zone.z>=o.z0-EPS&&zone.z<o.z1-EPS&&dentro(p,o.pol)))continue;
+   ps.push({x,y,z:zone.z,i,j});}
+  return {ps,dx,dy,nx,ny,box:b};}
+ function estudo(scene,progress=()=>{}){
+  const {cfg,lookup,lights}=preparar(scene,progress),zones=[{id:'ambiente',nome:'Plano geral',z:cfg.plano,meta:cfg.meta,umin:cfg.umin},...(scene.areas||[]).filter(a=>a.ativo!==false)],grids=zones.map(z=>({zone:z,...pontos(scene,z)}));let total=grids.reduce((a,g)=>a+g.ps.length,0),done=0;if(!total)throw Error('Nenhum ponto dentro da área útil. Reduza o recuo/passo ou confira o plano.');if(total>50000)throw Error('Limite de 50 mil pontos no conjunto das áreas. Aumente o passo.');
+  const resultados=[],avisos=[],start=Date.now();if(!cfg.sombras)avisos.push('Oclusões desativadas: paredes, móveis e escadas não projetam sombra no cálculo.');if(!lights.some(l=>l.nivel>0))avisos.push('Nenhuma luminária ativa com fluxo: resultados iguais a zero.');
+  const near=new Set();for(const grid of grids){const {zone,ps,dx,dy,nx,ny,box}=grid;let sum=0,min=Infinity,max=0,atingidos=0;const values=[];for(const p of ps){let E=0;for(const l of lights){if(l.nivel<=0)continue;const s=lookup.get(l.fotoId);if(l.z>p.z&&Math.hypot(l.x-p.x,l.y-p.y,l.z-p.z)<5*Math.max(...s.dim,.01))near.add(l.id);E+=contribuicao(l,s,[p.x,p.y,p.z],scene,cfg);}values.push(E);sum+=E;min=Math.min(min,E);max=Math.max(max,E);if(E>=zone.meta)atingidos++;done++;if(done%150===0)progress({feito:done,total,fracao:done/total});}
+   const avg=ps.length?sum/ps.length:0;resultados.push({id:zone.id,nome:zone.nome,z:zone.z,meta:zone.meta,uminAlvo:zone.umin,pontos:ps,values,nx,ny,dx,dy,box,n:ps.length,areaAmostrada:ps.length*dx*dy,media:avg,minimo:ps.length?min:0,maximo:max,uniformidade:avg?min/avg:0,cobertura:ps.length?atingidos/ps.length:0,atendeMedia:ps.length>0&&avg>=zone.meta,atendeUniformidade:ps.length>0&&avg>0&&min/avg>=zone.umin});if(!ps.length)avisos.push(zone.nome+': sem pontos na malha.');}
+  if(near.size)avisos.push(near.size+' fonte(s) a menos de 5 vezes sua maior dimensão de pontos avaliados. A aproximação de fonte pontual é de campo distante; conferir em software especializado.');
+  if(lights.some(l=>l.nivel>0&&l.z<=cfg.plano))avisos.push('Há fontes no nível/abaixo do plano geral: não iluminam sua face superior diretamente.');
+  for(const s of scene.specs)if(lights.some(l=>l.fotoId===s.id&&l.nivel>0))for(const w of s.avisos||[])avisos.push(s.nome+': '+w);
+  progress({feito:total,total,fracao:1});return {resultados,avisos:[...new Set(avisos)],total,ms:Date.now()-start,metodo:'Iluminância direta mantida: Σ I(C,γ) cos(θ) / d² × FM × nível. Sem inter-reflexões, luz natural, UGR ou cálculo elétrico.',potencia:potencias(scene),lumens:lumens(scene)};
+ }
+ function potencias(scene){let instalada=0,ligada=0,faltantes=0;const map=new Map(scene.specs.map(s=>[s.id,s]));for(const l of scene.luminarias){const w=Object.prototype.hasOwnProperty.call(l,'watts')?l.watts:map.get(l.fotoId)?.watts;if(w===null||w===undefined){faltantes++;continue;}instalada+=w;if(l.ativo!==false&&l.dimmer>0&&(scene.niveis?.[l.grupo]??1)>0)ligada+=w;}return {instalada,ligada,faltantes,densidade:scene.area>0?instalada/scene.area:0,kWhMes:ligada*scene.config.horas*scene.config.dias/1000};}
+ function lumens(scene){const map=new Map(scene.specs.map(s=>[s.id,s]));let flux=0;for(const l of scene.luminarias)if(l.ativo!==false)flux+=(map.get(l.fotoId)?.fluxo||0)*l.dimmer*(scene.niveis?.[l.grupo]??1);const f=scene.config;return {fluxo:flux,area:scene.area,fu:f.fu,fm:f.fm,media:scene.area?flux*f.fu*f.fm/scene.area:0};}
+ function quantidade(meta,A,flux,fu,fm){return Math.ceil(num(meta,'Meta',1,1e5)*num(A,'Área',.001,1e6)/(num(flux,'Fluxo',.001,1e9)*num(fu,'FU',.001,1)*num(fm,'FM',.001,1)));}
+ return {versao:'2.9.0',BUILTINS,parse,lerIES,lerLDT,intensidade,integrar,quantidade,area,dentro,distSeg,bloqueado,prismaHit,base,contribuicao,pontos,preparar,estudo,potencias,lumens};
+}
+const LUZ29=criarMotorLuz29();
+
+</script>
+<script data-worker-source="true">
+/* Dados da luminotécnica. Resultados são transitórios e não são persistidos como
+ * aprovação: sempre recalculados da geometria e dos parâmetros do snapshot. */
+const LIMITES_LUZ29={fotometrias:32,luminarias:256,areas:8,cenas:12};
+const CACHE_FOTO29=new Map();
+function fotoImportada29(f){let s=CACHE_FOTO29.get(f.texto);if(!s){s=LUZ29.parse(f.texto,f.formato,f.nome);CACHE_FOTO29.set(f.texto,s);while(CACHE_FOTO29.size>32)CACHE_FOTO29.delete(CACHE_FOTO29.keys().next().value);}return {...s,id:f.id,nome:f.nome||s.nome,fonte:f.fonte,licenca:f.licenca,arquivo:f.arquivo,origem:'importada'};}
+function luzPadrao29(){return {config:{plano:.75,passo:.25,borda:.20,meta:300,umin:.4,fu:.6,fm:.8,sombras:true,excluirOcupados:false,horas:8,dias:22,metaFonte:'Hipótese de estudo; confirmar tarefa, ocupação e referência aplicável.'},fotometrias:[],luminarias:[],areas:[],cenas:[],cenaId:''};}
+function normalizaLuz29(raw){const d=luzPadrao29(),o=raw||d;objeto(o,'Luminotécnica');const c=o.config||{};
+ const ids=new Set(),id=(v,pre)=>{const s=textoSeguro(v,100)||uid(pre);if(!/^[A-Za-z0-9_.:-]{1,100}$/.test(s)||ids.has(s))throw Error('Identificador de iluminação inválido/duplicado: '+s);ids.add(s);return s;};
+ const q={config:{},fotometrias:[],luminarias:[],areas:[],cenas:[],cenaId:textoSeguro(o.cenaId,100)};
+ for(const [k,lo,hi]of [['plano',0,12],['passo',.05,2],['borda',0,3],['meta',1,100000],['umin',0,1],['fu',.01,1],['fm',.01,1],['horas',0,24],['dias',0,31]])q.config[k]=numeroValido(c[k],d.config[k],lo,hi,'Iluminação: '+k);
+ q.config.sombras=c.sombras!==false;q.config.excluirOcupados=!!c.excluirOcupados;q.config.metaFonte=textoSeguro(c.metaFonte,800)||d.config.metaFonte;
+ let rawBytes=0;
+ q.fotometrias=lista(o.fotometrias||[],'Fotometrias',LIMITES_LUZ29.fotometrias).map(f=>{objeto(f,'Fotometria');if(!['IES','LDT'].includes(f.formato))throw Error('Formato de fotometria inválido.');if(typeof f.texto!=='string'||f.texto.length>1500000)throw Error('Fotometria excede 1,5 MB.');rawBytes+=f.texto.length;if(rawBytes>8000000)throw Error('Fotometrias excedem 8 MB por projeto.');if(f.autorizado!==true)throw Error('Arquivo fotométrico sem declaração de direito de uso.');const n={id:id(f.id,'foto'),formato:f.formato,texto:f.texto,nome:textoSeguro(f.nome,150),arquivo:textoSeguro(f.arquivo,180),fonte:textoSeguro(f.fonte,1000),autor:textoSeguro(f.autor,200),licenca:textoSeguro(f.licenca,500),autorizado:true,importado:textoSeguro(f.importado,40)};fotoImportada29(n);return n;});
+ const known=new Set([...LUZ29.BUILTINS.map(x=>x.id),...q.fotometrias.map(x=>x.id)]);
+ q.luminarias=lista(o.luminarias||[],'Luminárias fotométricas',LIMITES_LUZ29.luminarias).map(l=>{objeto(l,'Luminária');if(!known.has(l.fotoId))throw Error('Fotometria não encontrada: '+textoSeguro(l.fotoId));return {id:id(l.id,'lum'),nome:textoSeguro(l.nome,100)||'Luminária',fotoId:l.fotoId,x:numeroValido(l.x,1,-50,90,'Luminária X'),y:numeroValido(l.y,1,-50,90,'Luminária Y'),z:numeroValido(l.z,2.65,.05,20,'Cota luminária'),azimute:normRot(numeroValido(l.azimute,0,-360,720,'Orientação C0')),inclinacao:numeroValido(l.inclinacao,0,0,180,'Inclinação da fonte'),dimmer:numeroValido(l.dimmer,1,0,1,'Regulagem de fluxo'),grupo:textoSeguro(l.grupo,60)||'Geral',ativo:l.ativo!==false,travado:!!l.travado,watts:l.watts==null||l.watts===''?null:numeroValido(l.watts,0,0,100000,'Potência'),kelvin:l.kelvin==null?null:numeroValido(l.kelvin,4000,1000,20000,'CCT'),movelId:textoSeguro(l.movelId,100),observacao:textoSeguro(l.observacao,1000)};});
+ q.areas=lista(o.areas||[],'Áreas de tarefa',LIMITES_LUZ29.areas).map(a=>({id:id(a.id,'area'),nome:textoSeguro(a.nome,100)||'Área de tarefa',x:numeroValido(a.x,0,0,40,'Área X'),y:numeroValido(a.y,0,0,40,'Área Y'),larg:numeroValido(a.larg,1,.1,40,'Largura da área'),comp:numeroValido(a.comp,1,.1,40,'Comprimento da área'),z:numeroValido(a.z,.75,0,12,'Plano da área'),meta:numeroValido(a.meta,300,1,100000,'Meta da área'),umin:numeroValido(a.umin,.4,0,1,'Uniformidade da área'),ativo:a.ativo!==false}));
+ q.cenas=lista(o.cenas||[],'Cenas de iluminação',LIMITES_LUZ29.cenas).map(a=>{const niveis={};for(const [k,v]of Object.entries(a.niveis||{})){if(['__proto__','prototype','constructor'].includes(k))throw Error('Nome de grupo reservado.');niveis[textoSeguro(k,60)]=numeroValido(v,1,0,1,'Nível do grupo');}return {id:id(a.id,'cena'),nome:textoSeguro(a.nome,100)||'Cena',niveis};});
+ for(const l of q.luminarias)if(['__proto__','prototype','constructor'].includes(l.grupo))throw Error('Nome de grupo reservado.');
+ if(q.cenaId&&!q.cenas.some(a=>a.id===q.cenaId))q.cenaId='';return q;
+}
+function bibliotecaLuz29(q=P){return LUZ29.BUILTINS.concat((q.iluminacao29?.fotometrias||[]).map(fotoImportada29));}
+function estadoLuz29(){if(!P.iluminacao29)P.iluminacao29=luzPadrao29();return P.iluminacao29;}
+const normalizaAntesLuz29=normalizaProjeto;
+normalizaProjeto=function(o,sem=false){const q=normalizaAntesLuz29(o,sem);q.iluminacao29=normalizaLuz29(o.iluminacao29);return q;};
+const arquiteturaAntesLuz29=arquitetura28;
+arquitetura28=function(q){return {...arquiteturaAntesLuz29(q),iluminacao29:q.iluminacao29||luzPadrao29()};};
+function assinaturaLuz29(q=P){return canonico28({id:q.id,amb:q.amb,aberturas:q.aberturas,escadas:q.escadas,moveis:q.moveis,catalogo:(q===P?CATALOGO.filter(c=>c.personalizado):(q.catalogoPersonalizado||[])).map(c=>({id:c.id,l:c.l,p:c.p,h:c.h,anc:c.anc,altFix:c.altFix,rel:c.rel})),luz:q.iluminacao29||luzPadrao29()});}
+function cenaLuz29(q=P){
+ const l=normalizaLuz29(q.iluminacao29),specs=bibliotecaLuz29({...q,iluminacao29:l}),contorno=contornoAmb(q.amb),box=box25(contorno),prismas=[],obstaculos=[];
+ const put=(id,pol,z0,z1,mobiliario=false)=>{if(z1<=z0||pol.length<3)return;const b=box25(pol),o={id,pol,z0,z1,box:[b.x0,b.y0,b.x1,b.y1],mobiliario};prismas.push(o);return o;};
+ for(const o of q.amb.obstaculos||[])obstaculos.push(put(o.id,o.pontos,0,o.altura||q.amb.alt));
+ const cs=new Map((q===P?CATALOGO:[...CATALOGO_BASE,...(q.catalogoPersonalizado||[])]).map(c=>[c.id,c]));
+ const baseOf=m=>{const c=cs.get(m.catId);if(c.anc==='alta')return c.altFix??1;if(c.anc==='teto')return q.amb.alt-c.h;if(c.rel==='sobre'){let base=0;for(const o of q.moveis){if(o.id===m.id)continue;const co=cs.get(o.catId);if(!co||co.anc==='alta'||co.anc==='teto'||co.rel==='sobre')continue;const dist=Math.hypot(o.x-m.x,o.y-m.y);if(dist<Math.max(co.l,co.p)/2&&co.h<1.3)base=Math.max(base,co.h);}return base;}return 0;};
+ for(const m of q.moveis){const c=cs.get(m.catId);if(!c||c.cat==='ilumin'||c.sobrepoe)continue;const a=m.rot*GRAU,co=Math.cos(a),si=Math.sin(a),pol=[[-c.l/2,-c.p/2],[c.l/2,-c.p/2],[c.l/2,c.p/2],[-c.l/2,c.p/2]].map(p=>[m.x+p[0]*co-p[1]*si,m.y+p[0]*si+p[1]*co]),z0=baseOf(m);put(m.id,pol,z0,z0+c.h,true);}
+ for(const s of q.escadas||[]){const g=geometriaEsc26(s);for(const a of g.worldParts)put(s.id,a.pol,a.z-a.t,a.z);if(g.coluna)put(s.id,g.coluna.pol.map(p=>moverP26(p,s.x,s.y,s.rot)),s.z,s.z+g.coluna.h);}
+ const niveis=l.cenas.find(c=>c.id===l.cenaId)?.niveis||{};
+ return {config:l.config,specs,luminarias:l.luminarias,areas:l.areas,niveis,contorno,box:[box.x0,box.y0,box.x1,box.y1],altura:q.amb.alt,area:areaAmbiente(q.amb),paredes:paredesAmb(q.amb).map(w=>({a:w.a,b:w.b})),prismas,obstaculos:obstaculos.filter(Boolean)};
+}
+function luminariaNova29(fotoId,x=P.amb.larg/2,y=P.amb.comp/2){const f=bibliotecaLuz29().find(s=>s.id===fotoId)||LUZ29.BUILTINS[0];return {id:uid('lum'),nome:f.nome,fotoId:f.id,x,y,z:Math.max(.1,P.amb.alt-.06),azimute:0,inclinacao:0,dimmer:1,grupo:'Geral',ativo:true,travado:false,watts:f.watts,kelvin:f.kelvin||4000,movelId:'',observacao:''};}
+
+</script>
+<script>
+/* Interface luminotécnica. Só altera o estudo de luz; nunca troca arquitetura,
+ * escadas, móveis ou alternativas. Cálculos sempre isolados em Worker. */
+const LUI29={aba:'estudo',foto:'lx29-painel36',worker:null,url:null,job:0,resultado:null,assinatura:null,cena:null,area:'ambiente',selecionada:null,modo:'selecionar',proposta:null,numeros:false,isolux:true,sonda:null,drag:null};
+const Q29=id=>document.getElementById(id);
+function acaoLuz29(fn){return async (...a)=>{try{return await fn(...a);}catch(e){nota('Iluminação: '+e.message,true);if(Q29('luzEstado29'))Q29('luzEstado29').textContent=e.message;}};}
+function alterarLuz29(mut){const q=copia(estadoLuz29());mut(q);const clean=normalizaLuz29(q);P.iluminacao29=clean;LUI29.proposta=null;LUI29.sonda=null;ULTIMA_CENA27=null;marcar();salvar(true);atualizarLuz29();return clean;}
+function resultadoAtual29(){return !!(LUI29.resultado&&LUI29.assinatura===assinaturaLuz29());}
+function busyLuz29(){return !!LUI29.worker;}
+function encerrarLuz29(){LUI29.worker?.terminate();if(LUI29.url)URL.revokeObjectURL(LUI29.url);LUI29.worker=null;LUI29.url=null;if(Q29('luzCancelar29'))Q29('luzCancelar29').disabled=true;if(Q29('luzCalcular29'))Q29('luzCalcular29').disabled=false;}
+function cancelarLuz29(){LUI29.job++;encerrarLuz29();if(Q29('luzEstado29'))Q29('luzEstado29').textContent='Cálculo cancelado. Nenhuma alteração na planta, nas escadas ou no mobiliário.';}
+function fonteWorkerLuz29(){return '('+function(factory){const engine=factory();self.onmessage=e=>{try{if(e.data.tipo==='parse'){self.postMessage({tipo:'foto',result:engine.parse(e.data.texto,e.data.formato,e.data.nome)});return;}const result=engine.estudo(e.data.scene,p=>self.postMessage({tipo:'progresso',...p}));self.postMessage({tipo:'resultado',result});}catch(err){self.postMessage({tipo:'erro',erro:err.message});}};}.toString()+')('+criarMotorLuz29.toString()+');';}
+function calcularLuz29(){
+ if(busyLuz29())return;if(TESTANDO28)throw Error('Aguarde os autotestes.');const scene=cenaLuz29(),sig=assinaturaLuz29(),job=++LUI29.job;
+ if(scene.config.plano>=scene.altura)throw Error('O plano de cálculo deve ficar abaixo do teto.');
+ for(const z of scene.areas)if(z.ativo&&z.z>=scene.altura)throw Error(z.nome+': plano acima do teto.');
+ LUI29.aba='estudo';renderLuz29();Q29('luzEstado29').textContent='Preparando estudo em Worker. A planta permanece protegida.';Q29('luzProgresso29').value=0;
+ try{LUI29.url=URL.createObjectURL(new Blob([fonteWorkerLuz29()],{type:'text/javascript'}));const worker=new Worker(LUI29.url);LUI29.worker=worker;Q29('luzCalcular29').disabled=true;Q29('luzCancelar29').disabled=false;
+  worker.onmessage=e=>{if(job!==LUI29.job||worker!==LUI29.worker)return;const d=e.data;if(d.tipo==='progresso'){if(Q29('luzProgresso29'))Q29('luzProgresso29').value=d.fracao;if(Q29('luzEstado29'))Q29('luzEstado29').textContent=`Calculando luz direta: ${d.feito} / ${d.total} pontos (${Math.round(d.fracao*100)}%).`;return;}
+   encerrarLuz29();if(d.tipo==='erro'){nota(d.erro,true);Q29('luzEstado29').textContent='Cálculo não concluído: '+d.erro;return;}
+   if(d.tipo==='resultado'){if(sig!==assinaturaLuz29()){Q29('luzEstado29').textContent='O projeto mudou durante o cálculo. Resultado obsoleto descartado; calcule novamente.';return;}
+    LUI29.resultado=d.result;LUI29.assinatura=sig;LUI29.cena=scene;LUI29.sonda=null;if(!d.result.resultados.some(r=>r.id===LUI29.area))LUI29.area='ambiente';Q29('luzProgresso29').value=1;atualizarLuz29();Q29('luzEstado29').textContent=`Concluído: ${d.result.total} pontos em ${fmt(d.result.ms/1000,2)} s. Luz direta mantida; confira os avisos e as hipóteses.`;
+   }
+  };worker.onerror=e=>{e.preventDefault();if(job!==LUI29.job)return;encerrarLuz29();nota('Falha no Worker: '+e.message,true);Q29('luzEstado29').textContent='Cálculo interrompido. Nenhum resultado parcial foi tratado como final.';};worker.postMessage({tipo:'estudo',scene});
+ }catch(e){encerrarLuz29();throw Error('Worker indisponível: '+e.message);}
+}
+function instalarLuz29(){if(Q29('v-luz29'))return;
+ const css=document.createElement('style');css.textContent=`
+ #v-luz29{font-size:14px}.lx-content.is-study{display:flex;flex-direction:column;overflow:hidden} .lx-tabs{display:flex;gap:7px;padding:9px 14px;background:var(--paper);border-bottom:1px solid var(--line);overflow:auto;flex:none}.lx-tabs .btn{white-space:nowrap}.lx-tabs .ativo{background:var(--viridian);color:white}.lx-layout{display:grid;grid-template-columns:305px minmax(0,1fr);min-height:0;flex:1;overflow:hidden}.lx-aside{overflow:auto;background:var(--panel);padding:15px;border-right:1px solid var(--line)}.lx-aside h3{margin:8px 0 11px;font-size:14px}.lx-aside .campo{margin:7px 0}.lx-aside .grade{gap:8px}.lx-main{overflow:auto;padding:13px;min-width:0}.lx-kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:12px}.lx-kpi{padding:10px 12px;border:1px solid var(--line);border-radius:7px;background:var(--panel)}.lx-kpi span{display:block;font-size:11px;color:var(--ink-3);margin-bottom:2px}.lx-kpi b{font-size:20px;font-family:var(--mono);font-weight:650}.lx-plan{background:var(--paper);border:1px solid var(--line);border-radius:8px;overflow:hidden}.lx-plan canvas{display:block;width:100%;height:470px;touch-action:none}.lx-caption{padding:8px 12px;color:var(--ink-2);font-size:12px;border-top:1px solid var(--line);background:var(--panel)}.lx-toolbar{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:10px}.lx-toolbar select{max-width:230px}.lx-banner{padding:11px 14px;border-left:3px solid var(--brass);background:var(--brass-soft);font-size:12.5px;line-height:1.5;margin:10px 0}.lx-banner p{margin:4px 0}.lx-inset{padding:13px;margin:12px 0;background:var(--panel);border:1px solid var(--line);border-radius:7px}.lx-inset h3{margin:0 0 8px;font-size:14px}.lx-check{display:flex;gap:7px;align-items:flex-start;font-size:12.5px;margin:10px 0}.lx-check input{width:auto;flex:none;margin-top:4px}.lx-catalog{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;padding:18px}.lx-card{padding:16px;background:var(--panel);border:1px solid var(--line);border-radius:10px}.lx-card h3{font-size:15px;margin:8px 0}.lx-card canvas{width:100%;height:145px;display:block}.lx-card .label{font:11px var(--mono);color:var(--viridian)}.lx-card p{font-size:12.5px;color:var(--ink-2)}.lx-card .linha-btn .btn{font-size:12px}.lx-content{overflow:auto;flex:1;min-height:0}.lx-content>.folha{max-width:1280px}.lx-note{font-size:12px;color:var(--ink-3);line-height:1.5}.lx-list{overflow-x:auto;margin:12px 0}.lx-list td{max-width:280px}.lx-list small{display:block;color:var(--ink-3);font-size:11px}.lx-form{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.lx-form label{min-width:0}.lx-status{font-size:12px;max-width:620px}.lx-results{margin-top:10px}.lx-results .item{margin-top:6px}.lx-source{font-size:11px;overflow-wrap:anywhere}#luzProgresso29{width:120px;accent-color:var(--viridian)}
+ @media(max-width:1150px){.lx-layout{grid-template-columns:270px 1fr}.lx-kpi b{font-size:17px}.lx-plan canvas{height:410px}.lx-kpis{gap:6px}}@media(max-width:820px){.lx-layout{display:block;overflow:auto}.lx-aside{border-right:0;border-bottom:1px solid var(--line)}.lx-aside .grade{grid-template-columns:repeat(2,1fr)}.lx-main{overflow:visible}.lx-kpis{grid-template-columns:repeat(2,1fr)}.lx-plan canvas{height:380px}.lx-form{grid-template-columns:repeat(2,minmax(0,1fr))}.lx-toolbar select{max-width:100%}.lx-catalog{padding:10px}.lx-tabs{padding:7px}.lx-status{max-width:100%}}`;
+ document.head.append(css);
+ const b=document.createElement('button');b.className='aba';b.setAttribute('role','tab');b.dataset.vista='luz29';b.innerHTML='<svg viewBox="0 0 24 24"><path d="M8 15c-6-6 1-13 6-9s2 7 1 9v4H8zM8 22h7M4 3l2 2M20 3l-2 2M1 11h3M20 11h3"/></svg><span class="txt">Iluminação</span>';b.onclick=()=>trocaVista('luz29');const before=document.querySelector('[data-vista="render28"]')||document.querySelector('[data-vista="exportar"]');before.before(b);
+ const sec=document.createElement('section');sec.id='v-luz29';sec.className='vista';sec.setAttribute('role','tabpanel');sec.innerHTML=`<div class="barra-vista"><h2>Estudo de iluminação <span class="num" style="font-size:11px;color:var(--ink-3)">v2.9</span></h2><div class="sep"></div><button class="btn primario" id="luzCalcular29">Calcular iluminância</button><button class="btn" id="luzCancelar29" disabled>Cancelar</button><button class="btn" id="luzExport29">Exportar estudo</button><button class="btn" id="luzManual29">Como calcular</button></div><div class="lx-tabs" id="luzAbas29"></div><div class="barra-vista"><progress id="luzProgresso29" max="1" value="0"></progress><span id="luzEstado29" class="lx-status" role="status">Configure o plano, escolha uma fotometria e distribua as luminárias.</span></div><div id="luzCorpo29" class="lx-content"></div>`;Q29('palco').append(sec);
+ Q29('luzCalcular29').onclick=acaoLuz29(calcularLuz29);Q29('luzCancelar29').onclick=cancelarLuz29;Q29('luzExport29').onclick=acaoLuz29(exportarEstudoUI29);Q29('luzManual29').onclick=()=>{trocaVista('manual');abreSecao('luz-metodo29');};
+}
+function renderLuz29(){instalarLuz29();Q29('luzCorpo29').classList.toggle('is-study',LUI29.aba==='estudo');Q29('luzCorpo29').scrollTop=0;const tabs=[['estudo','Projeto e mapa'],['fontes','Fotometrias'],['luminarias','Luminárias'],['areas','Áreas e cenas']];Q29('luzAbas29').innerHTML=tabs.map(([k,n])=>`<button class="btn ${LUI29.aba===k?'ativo':''}" data-tab29="${k}">${n}</button>`).join('');Q29('luzAbas29').querySelectorAll('button').forEach(b=>b.onclick=()=>{LUI29.aba=b.dataset.tab29;renderLuz29();});
+ if(LUI29.aba==='estudo')renderEstudo29();else if(LUI29.aba==='fontes')renderFotos29();else if(LUI29.aba==='luminarias')renderLuminarias29();else renderAreasCenas29();
+ Q29('luzCalcular29').disabled=busyLuz29();Q29('luzCancelar29').disabled=!busyLuz29();
+}
+function campoLX29(id,nome,v,attrs=''){return `<label class="campo"><span>${nome}</span><input type="number" id="${id}" value="${v??''}" ${attrs}></label>`;}
+function opcoesFotos29(selected=LUI29.foto){return bibliotecaLuz29().map(s=>`<option value="${xmlEsc(s.id)}" ${s.id===selected?'selected':''}>${xmlEsc(s.nome)}${s.tipo==='tabela'?' ['+s.formato+']':''}</option>`).join('');}
+function opcoesCenas29(){return '<option value="">Todos os grupos em 100%</option>'+estadoLuz29().cenas.map(c=>`<option value="${c.id}" ${estadoLuz29().cenaId===c.id?'selected':''}>${xmlEsc(c.nome)}</option>`).join('');}
+function renderEstudo29(){const l=estadoLuz29(),c=l.config;
+ Q29('luzCorpo29').innerHTML=`<div class="lx-layout"><aside class="lx-aside"><h3>Plano e critérios de estudo</h3><div class="grade g2">${campoLX29('lxPlane29','Plano de trabalho (m)',c.plano,'min="0" step="0.05"')}${campoLX29('lxStep29','Passo máximo (m)',c.passo,'min=".05" max="2" step=".05"')}${campoLX29('lxTarget29','Meta média (lux)',c.meta,'min="1" step="50"')}${campoLX29('lxUniform29','U₀ mínima',c.umin,'min="0" max="1" step=".05"')}${campoLX29('lxMF29','Manutenção — FM',c.fm,'min=".01" max="1" step=".05"')}${campoLX29('lxBorder29','Recuo da borda (m)',c.borda,'min="0" max="3" step=".05"')}</div><label class="campo"><span>Origem da meta / hipótese</span><textarea id="lxFonteMeta29" rows="2">${xmlEsc(c.metaFonte)}</textarea></label><label class="lx-check"><input type="checkbox" id="lxShadow29" ${c.sombras?'checked':''}>Considerar oclusões por paredes, obstáculos, móveis e escadas</label><label class="lx-check"><input type="checkbox" id="lxExclude29" ${c.excluirOcupados?'checked':''}>Excluir pontos dentro das envoltórias dos móveis na cota do plano</label><label class="campo"><span>Cena ativa / grupos</span><select id="lxScene29">${opcoesCenas29()}</select></label><hr><h3>Pré-dimensionamento por lúmens</h3><label class="campo"><span>Modelo de luminária</span><select id="lxModel29">${opcoesFotos29()}</select></label>${campoLX29('lxUF29','Utilização do recinto — FU',c.fu,'min=".01" max="1" step=".05"')}<p class="lx-note">FU é informado pelo projetista. Fluxo emitido pela luminária; não se aplica FU à malha ponto a ponto.</p><div id="lxLumen29" class="lx-inset"></div><div class="linha-btn"><button class="btn primario" id="lxGrid29">Distribuir na malha…</button><button class="btn" id="lxInsert29">Inserir na planta</button></div><hr><h3>Energia estimada</h3><div class="grade g2">${campoLX29('lxHours29','Horas por dia',c.horas,'min="0" max="24" step=".5"')}${campoLX29('lxDays29','Dias por mês',c.dias,'min="0" max="31" step="1"')}</div><p class="lx-note">Consumo com potência nominal dos pontos ligados. Dimerização não reduz automaticamente a potência estimada.</p><button class="btn" id="lxExemplo29">Carregar estudo de exemplo…</button></aside><div class="lx-main"><div id="lxKpis29" class="lx-kpis"></div><div class="lx-toolbar"><select id="lxArea29" aria-label="Área visualizada"></select><button class="chip" id="lxIsolux29">Isolux</button><button class="chip" id="lxNumbers29">Valores</button><button class="chip" id="lxEdit29">Editar selecionada</button></div><div class="lx-plan"><canvas id="lxCanvas29" aria-label="Planta de iluminação com mapa em lux e luminárias arrastáveis" tabindex="0"></canvas><div class="lx-caption" id="lxCaption29">Arraste um ponto para mover. Duplo clique para editar. Clique no mapa para inspecionar a contribuição de cada luminária.</div></div><div id="lxProbe29"></div><div id="lxSummary29" class="lx-inset"></div><div id="lxAvisos29" class="lx-results"></div></div></div>`;
+ const fields={lxPlane29:'plano',lxStep29:'passo',lxTarget29:'meta',lxUniform29:'umin',lxMF29:'fm',lxBorder29:'borda',lxUF29:'fu',lxHours29:'horas',lxDays29:'dias'};
+ for(const [k,v]of Object.entries(fields))Q29(k).onchange=acaoLuz29(()=>alterarLuz29(o=>o.config[v]=Number(Q29(k).value)));
+ Q29('lxFonteMeta29').onchange=()=>alterarLuz29(o=>o.config.metaFonte=Q29('lxFonteMeta29').value);
+ Q29('lxShadow29').onchange=()=>alterarLuz29(o=>o.config.sombras=Q29('lxShadow29').checked);Q29('lxExclude29').onchange=()=>alterarLuz29(o=>o.config.excluirOcupados=Q29('lxExclude29').checked);
+ Q29('lxModel29').onchange=()=>{LUI29.foto=Q29('lxModel29').value;atualizarLuz29();};Q29('lxScene29').onchange=()=>alterarLuz29(o=>o.cenaId=Q29('lxScene29').value);
+ Q29('lxGrid29').onclick=acaoLuz29(proporGrade29);Q29('lxInsert29').onclick=()=>{LUI29.modo='inserir';Q29('lxCaption29').textContent='Clique no interior da planta para posicionar a nova luminária.';};Q29('lxExemplo29').onclick=exemplosUI29;
+ Q29('lxArea29').onchange=()=>{LUI29.area=Q29('lxArea29').value;LUI29.sonda=null;atualizarLuz29();};Q29('lxIsolux29').onclick=()=>{LUI29.isolux=!LUI29.isolux;desenharLuz29();};Q29('lxNumbers29').onclick=()=>{LUI29.numeros=!LUI29.numeros;desenharLuz29();};Q29('lxEdit29').onclick=()=>{const a=l.luminarias.find(a=>a.id===LUI29.selecionada);if(a)editorLuminaria29(a);else nota('Selecione uma luminária na planta.');};ligarCanvasLuz29();atualizarLuz29();
+}
+function atualizarLuz29(){if(vistaAtual!=='luz29')return;if(LUI29.aba!=='estudo'){renderLuz29();return;}if(!Q29('lxCanvas29'))return;const scene=cenaLuz29(),c=scene.config,f=scene.specs.find(s=>s.id===LUI29.foto)||scene.specs[0],lum=LUZ29.lumens(scene),pw=LUZ29.potencias(scene),n=LUZ29.quantidade(c.meta,scene.area,f.fluxo,c.fu,c.fm);
+ Q29('lxLumen29').innerHTML=`<strong class="num" style="font-size:22px">${n} luminárias</strong><div class="lx-note">Estimativa inicial para ${fmt(scene.area)} m²<br>N = ⌈E × A / (Φ × FU × FM)⌉<br>Com os pontos atuais: <b>${fmt(lum.media,0)} lux</b> pelo método dos lúmens.</div>`;
+ const areas=[{id:'ambiente',nome:'Plano geral'},...estadoLuz29().areas.filter(a=>a.ativo)];if(!areas.some(a=>a.id===LUI29.area))LUI29.area='ambiente';Q29('lxArea29').innerHTML=areas.map(a=>`<option value="${a.id}" ${a.id===LUI29.area?'selected':''}>${xmlEsc(a.nome)}</option>`).join('');
+ const r=resultadoAtual29()?LUI29.resultado.resultados.find(x=>x.id===LUI29.area):null;
+ const kpi=(n,v)=>`<div class="lx-kpi"><span>${n}</span><b>${v}</b></div>`;
+ Q29('lxKpis29').innerHTML=kpi('Iluminância média direta',r?fmt(r.media,0)+' lx':'—')+kpi('Mínima / máxima',r?fmt(r.minimo,0)+' / '+fmt(r.maximo,0)+' lx':'—')+kpi('Uniformidade U₀ = mín./média',r?fmt(r.uniformidade,2):'—')+kpi('Pontos na meta',r?fmt(r.cobertura*100,1)+'%':'—')+kpi('Potência instalada'+(pw.faltantes?' • parcial':''),fmt(pw.instalada,1)+' W')+kpi('Densidade instalada',fmt(pw.densidade,2)+' W/m²');
+ Q29('lxSummary29').innerHTML=`<h3>${r?'Resultado do plano — somente luz direta':'Estudo ainda não calculado ou desatualizado'}</h3>${r?`<p>${r.n} pontos • cota ${fmt(r.z)} m • passo efetivo ${fmt(r.dx,3)} × ${fmt(r.dy,3)} m • área amostrada ${fmt(r.areaAmostrada)} m².</p><p><b>Média:</b> ${r.atendeMedia?'atinge':'não atinge'} a meta escolhida de ${fmt(r.meta,0)} lux. <b>Uniformidade:</b> ${r.atendeUniformidade?'atinge':'não atinge'} U₀ ≥ ${fmt(r.uminAlvo)}.</p>`:'<p>Posicione as luminárias e clique em <b>Calcular iluminância</b>. Alterar o projeto invalida os indicadores anteriores; a planta não é substituída pelo cálculo.</p>'}<p class="lx-note">${scene.luminarias.length} fontes fotométricas • ${fmt(pw.ligada,1)} W nominais ligados • ${fmt(pw.kWhMes,1)} kWh/mês estimados. ${pw.faltantes?pw.faltantes+' fonte(s) sem potência: somas parciais.':''} Custo de fornecimento/instalação das fontes não está incluído no orçamento do mobiliário.</p>`;
+ const warnings=r?LUI29.resultado.avisos:[];Q29('lxAvisos29').innerHTML='<div class="lx-banner"><b>Resultado de engenharia ≠ imagem renderizada.</b><p>A malha não inclui luz natural, inter-reflexões ou UGR. Metas e FU são hipóteses configuradas, não certificação normativa. Móveis usam envoltórias opacas conservadoras; paredes são opacas mesmo nos vãos.</p></div>'+warnings.map(w=>`<div class="lx-note" style="margin:7px 0">⚠ ${xmlEsc(w)}</div>`).join('');
+ Q29('lxProbe29').innerHTML='';desenharLuz29();if(LUI29.sonda)mostrarSonda29(LUI29.sonda);
+}
+function mapaCor29(v,max){const t=clamp(v/Math.max(max,1),0,1),stops=[[18,41,91],[27,107,163],[24,163,154],[169,204,91],[249,198,63],[230,103,46],[161,39,58]],x=t*(stops.length-1),i=Math.min(stops.length-2,Math.floor(x)),f=x-i;return `rgb(${stops[i].map((a,k)=>Math.round(a*(1-f)+stops[i+1][k]*f)).join(',')})`;}
+function desenharLuz29(canvas=Q29('lxCanvas29'),exportando=false){if(!canvas)return;const {w,h,dpr}=ajustaTela(canvas),ctx=canvas.getContext('2d'),q=P,l=estadoLuz29(),poly=contornoAmb(),bounds=box25(poly),margin=exportando?70:48,e=Math.max(1,Math.min((w-margin*2)/(bounds.x1-bounds.x0),(h-margin*2-42)/(bounds.y1-bounds.y0))),ox=w/2-(bounds.x0+bounds.x1)/2*e,oy=(h-35)/2+(bounds.y0+bounds.y1)/2*e;
+ const T=p=>[ox+p[0]*e,oy-p[1]*e];canvas._lx29={e,ox,oy};ctx.setTransform(dpr,0,0,dpr,0,0);ctx.fillStyle=exportando?'#F8FAF7':cssVar('--paper');ctx.fillRect(0,0,w,h);
+ const path=p=>{ctx.beginPath();p.forEach((a,i)=>{const [x,y]=T(a);i?ctx.lineTo(x,y):ctx.moveTo(x,y);});ctx.closePath();};path(poly);ctx.fillStyle='#EEF0EA';ctx.fill();
+ const r=resultadoAtual29()?LUI29.resultado.resultados.find(x=>x.id===LUI29.area):null,max=r?Math.max(r.meta*1.6,Math.ceil(r.maximo/100)*100,100):100;
+ if(r){ctx.save();path(poly);ctx.clip();for(let i=0;i<r.pontos.length;i++){const p=r.pontos[i],[x,y]=T([p.x-r.dx/2,p.y+r.dy/2]);ctx.fillStyle=mapaCor29(r.values[i],max);ctx.fillRect(x,y,r.dx*e+.5,r.dy*e+.5);}if(LUI29.isolux)desenharIsolux29(ctx,r,T);if(LUI29.numeros&&r.n<1800&&Math.min(r.dx,r.dy)*e>19){ctx.font=(exportando?'11':'9')+'px ui-monospace';ctx.textAlign='center';ctx.fillStyle='#FFFFFF';for(let i=0;i<r.pontos.length;i++){const p=r.pontos[i],[x,y]=T([p.x,p.y]);ctx.fillText(Math.round(r.values[i]),x,y+3);}}ctx.restore();}
+ else{ctx.strokeStyle='#D3DBD3';ctx.lineWidth=.5;ctx.save();path(poly);ctx.clip();for(let x=bounds.x0;x<bounds.x1;x+=.5){const a=T([x,bounds.y0]),b=T([x,bounds.y1]);ctx.beginPath();ctx.moveTo(...a);ctx.lineTo(...b);ctx.stroke();}for(let y=bounds.y0;y<bounds.y1;y+=.5){ctx.beginPath();ctx.moveTo(...T([bounds.x0,y]));ctx.lineTo(...T([bounds.x1,y]));ctx.stroke();}ctx.restore();}
+ for(const o of q.amb.obstaculos||[]){path(o.pontos);ctx.fillStyle='#58635E';ctx.fill();}
+ for(const s of q.escadas||[]){const g=geometriaEsc26(s);for(const p of g.worldParts){path(p.pol);ctx.fillStyle='rgba(71,55,36,.24)';ctx.fill();ctx.strokeStyle='rgba(30,30,25,.65)';ctx.lineWidth=.6;ctx.stroke();}}
+ for(const m of q.moveis){const c=catDe(m);if(!c||c.cat==='ilumin'||c.sobrepoe)continue;path(corpoPol(m));ctx.fillStyle='rgba(255,255,255,.12)';ctx.fill();ctx.lineWidth=.75;ctx.strokeStyle=r?'rgba(255,255,255,.7)':'#8A948D';ctx.stroke();}
+ for(const a of l.areas.filter(a=>a.ativo)){path([[a.x,a.y],[a.x+a.larg,a.y],[a.x+a.larg,a.y+a.comp],[a.x,a.y+a.comp]]);ctx.strokeStyle=a.id===LUI29.area?'#FFF':'#495A50';ctx.setLineDash([5,4]);ctx.lineWidth=1.5;ctx.stroke();ctx.setLineDash([]);const t=T([a.x,a.y+a.comp]);ctx.font='11px system-ui';ctx.fillStyle='#263830';ctx.textAlign='left';ctx.fillText(a.nome,t[0]+3,t[1]-5);}
+ path(poly);ctx.lineWidth=4;ctx.strokeStyle='#263630';ctx.stroke();
+ const niveis=l.cenas.find(c=>c.id===l.cenaId)?.niveis||{};
+ l.luminarias.forEach((a,i)=>{let p=[a.x,a.y];if(LUI29.drag?.id===a.id)p=LUI29.drag.pos;const [x,y]=T(p),selected=a.id===LUI29.selecionada;ctx.beginPath();ctx.arc(x,y,selected?8:6,0,Math.PI*2);ctx.fillStyle=a.ativo&&a.dimmer*(niveis[a.grupo]??1)>0?'#FFF1A8':'#B3B9B5';ctx.fill();ctx.lineWidth=selected?2.5:1.5;ctx.strokeStyle=selected?'#0E6A57':'#37463F';ctx.stroke();ctx.beginPath();ctx.moveTo(x-3,y);ctx.lineTo(x+3,y);ctx.moveTo(x,y-3);ctx.lineTo(x,y+3);ctx.stroke();ctx.font='bold 10px ui-monospace';ctx.textAlign='left';ctx.fillStyle=r?'#FFFFFF':'#24392F';ctx.fillText('L'+(i+1),x+9,y-8);});
+ for(const a of LUI29.proposta||[]){const [x,y]=T([a.x,a.y]);ctx.beginPath();ctx.arc(x,y,9,0,Math.PI*2);ctx.strokeStyle='#CE791E';ctx.lineWidth=2;ctx.stroke();}
+ ctx.textAlign='left';ctx.fillStyle='#324A3D';ctx.font='12px system-ui';ctx.fillText(r?`${r.nome} • z = ${fmt(r.z)} m • iluminância direta mantida`:'Planta de iluminação • posicione as fontes e calcule',15,20);
+ if(r){const bx=Math.max(20,w*.15),bw=w-Math.max(20,w*.15)*2,by=h-29;for(let i=0;i<bw;i++){ctx.fillStyle=mapaCor29(i/bw*max,max);ctx.fillRect(bx+i,by,1,9);}ctx.font='10px ui-monospace';ctx.fillStyle='#304237';for(let i=0;i<=4;i++){ctx.textAlign=i===0?'left':i===4?'right':'center';ctx.fillText(Math.round(max*i/4)+' lx',bx+bw*i/4,by+23);}}
+ if(!exportando){Q29('lxIsolux29')?.classList.toggle('on',LUI29.isolux);Q29('lxNumbers29')?.classList.toggle('on',LUI29.numeros);}
+}
+function desenharIsolux29(ctx,r,T){const grid=new Map(r.pontos.map((p,i)=>[p.j*r.nx+p.i,{p,v:r.values[i]}])),levels=[50,100,150,200,300,500,750,1000,1500,2000,3000];ctx.lineWidth=.7;ctx.strokeStyle='rgba(255,255,255,.6)';for(const lev of levels){if(lev>r.maximo||lev<r.minimo)continue;ctx.beginPath();for(const a of grid.values()){const p=a.p,vs=[a,grid.get(p.j*r.nx+p.i+1),grid.get((p.j+1)*r.nx+p.i+1),grid.get((p.j+1)*r.nx+p.i)];if(p.i===r.nx-1||p.j===r.ny-1||vs.some(x=>!x))continue;const cuts=[];for(let i=0;i<4;i++){const x=vs[i],y=vs[(i+1)%4];if((x.v<lev)===(y.v<lev)||x.v===y.v)continue;const t=(lev-x.v)/(y.v-x.v);cuts.push(T([x.p.x+t*(y.p.x-x.p.x),x.p.y+t*(y.p.y-x.p.y)]));}for(let i=0;i+1<cuts.length;i+=2){ctx.moveTo(...cuts[i]);ctx.lineTo(...cuts[i+1]);}}ctx.stroke();}}
+function ligarCanvasLuz29(){const cv=Q29('lxCanvas29'),pos=ev=>{const b=cv.getBoundingClientRect(),v=cv._lx29;return [(ev.clientX-b.left-v.ox)/v.e,(v.oy-ev.clientY+b.top)/v.e];},near=p=>estadoLuz29().luminarias.map(a=>({a,d:Math.hypot(a.x-p[0],a.y-p[1])})).filter(x=>x.d<15/cv._lx29.e).sort((a,b)=>a.d-b.d)[0]?.a;
+ cv.onpointerdown=ev=>{if(ev.button!==0)return;const p=pos(ev);if(LUI29.modo==='inserir'){LUI29.modo='selecionar';if(!pontoNoAmbiente(p)){nota('Escolha um ponto livre dentro do ambiente.',true);return;}editorLuminaria29(luminariaNova29(LUI29.foto,...p),true);return;}const a=near(p);if(a){LUI29.selecionada=a.id;if(!a.travado){LUI29.drag={id:a.id,pos:p,inicial:p,mexeu:false};cv.setPointerCapture(ev.pointerId);}desenharLuz29();}else{LUI29.selecionada=null;LUI29.sonda=p;mostrarSonda29(p);desenharLuz29();}};
+ cv.onpointermove=ev=>{if(!LUI29.drag)return;const p=pos(ev);LUI29.drag.pos=ev.altKey?p:p.map(x=>Math.round(x/.05)*.05);LUI29.drag.mexeu=Math.hypot(p[0]-LUI29.drag.inicial[0],p[1]-LUI29.drag.inicial[1])>.02;desenharLuz29();};
+ const soltar=ev=>{const dr=LUI29.drag;LUI29.drag=null;try{cv.releasePointerCapture(ev.pointerId);}catch(e){}if(dr?.mexeu){if(pontoNoAmbiente(dr.pos))alterarLuz29(o=>{const a=o.luminarias.find(x=>x.id===dr.id);a.x=dr.pos[0];a.y=dr.pos[1];});else{nota('Movimento recusado: ponto fora do ambiente ou em obstáculo.',true);desenharLuz29();}}};cv.onpointerup=soltar;cv.onpointercancel=()=>{LUI29.drag=null;desenharLuz29();};cv.ondblclick=ev=>{const a=near(pos(ev));if(a)editorLuminaria29(a);};
+}
+function mostrarSonda29(p){const el=Q29('lxProbe29');if(!el)return;if(!resultadoAtual29()){el.innerHTML='<p class="lx-note">Calcule primeiro para inspecionar um ponto.</p>';return;}const scene=LUI29.cena,r=LUI29.resultado.resultados.find(r=>r.id===LUI29.area);if(!r?.pontos.length)return;let closest=r.pontos.reduce((best,q)=>Math.hypot(q.x-p[0],q.y-p[1])<Math.hypot(best.x-p[0],best.y-p[1])?q:best),prepared=LUZ29.preparar(scene);const rows=prepared.lights.map((l,i)=>({l,i,...LUZ29.contribuicao(l,prepared.lookup.get(l.fotoId),[closest.x,closest.y,closest.z],scene,scene.config,true)})).sort((a,b)=>b.lux-a.lux),total=rows.reduce((s,x)=>s+x.lux,0);
+ el.innerHTML=`<div class="lx-inset"><h3>Sonda — ${fmt(total,1)} lux</h3><p class="lx-note">Ponto da malha: x ${fmt(closest.x,3)}, y ${fmt(closest.y,3)}, z ${fmt(closest.z,2)} m. I já inclui regulagem de fluxo; E inclui FM.</p><div class="lx-list"><table class="tab"><thead><tr><th>Fonte</th><th>d (m)</th><th>I (cd)</th><th>E (lux)</th><th>Visibilidade</th></tr></thead><tbody>${rows.slice(0,12).map(a=>`<tr><td>${xmlEsc(a.l.nome)}</td><td class="n">${fmt(a.distancia||0,2)}</td><td class="n">${fmt(a.candela||0,1)}</td><td class="n">${fmt(a.lux,2)}</td><td>${a.sombra?'Bloqueada':a.candela?'Direta':'Sem contribuição'}</td></tr>`).join('')}</tbody></table></div></div>`;
+}
+
+</script>
+<script>
+/* Fluxos com prévia explícita. O catálogo fotométrico é independente do catálogo
+ * de malhas: um GLB ou uma luminária desenhada não contém, por si só, candelas. */
+function editorLuminaria29(raw,nova=false){const a=copia(raw),projectId=P.id;const d=dialogo(nova?'Adicionar luminária fotométrica':'Editar luminária',`<div class="lx-banner">A fonte de cálculo é um ponto na cota informada. Inclinação 0° aponta para baixo; 90° aponta horizontalmente. C0 acompanha +X quando a orientação é 0°. O dimensionamento elétrico não faz parte deste módulo.</div><div class="lx-form"><label class="campo"><span>Nome</span><input id="lfName29" value="${xmlEsc(a.nome)}"></label><label class="campo"><span>Fotometria</span><select id="lfPhoto29">${opcoesFotos29(a.fotoId)}</select></label><label class="campo"><span>Grupo de comando</span><input id="lfGroup29" value="${xmlEsc(a.grupo)}" maxlength="60"></label>${campoLX29('lfX29','X (m)',fmt(a.x,3).replace(',','.'),'step=".05"')}${campoLX29('lfY29','Y (m)',fmt(a.y,3).replace(',','.'),'step=".05"')}${campoLX29('lfZ29','Cota da fonte (m)',a.z,'min=".05" step=".05"')}${campoLX29('lfYaw29','Orientação C0 (°)',a.azimute,'step="15"')}${campoLX29('lfTilt29','Inclinação (°)',a.inclinacao,'min="0" max="180" step="5"')}${campoLX29('lfLevel29','Fluxo ativo (%)',a.dimmer*100,'min="0" max="100" step="5"')}${campoLX29('lfWatt29','Potência nominal (W)',a.watts,'min="0" step=".1"')}${campoLX29('lfK29','Temperatura de cor (K)',a.kelvin,'min="1000" max="20000" step="100"')}</div><label class="lx-check"><input id="lfActive29" type="checkbox" ${a.ativo?'checked':''}>Fonte ligada no estudo</label><label class="lx-check"><input id="lfLock29" type="checkbox" ${a.travado?'checked':''}>Travar posição no editor de iluminação</label><label class="campo"><span>Observações</span><textarea id="lfObs29" rows="2">${xmlEsc(a.observacao||'')}</textarea></label><p class="lx-note">Potência em branco permanece desconhecida: totais serão parciais. A temperatura de cor não altera lux. Sem controle espectral ou cálculo de IRC/UGR.</p><div class="linha-btn"><button class="btn primario" id="lfApply29">${nova?'Adicionar fonte':'Salvar alterações'}</button><button class="btn" id="lfClose29">Cancelar</button></div><p id="lfError29" role="alert"></p>`);
+ Q29('lfPhoto29').onchange=()=>{const s=bibliotecaLuz29().find(s=>s.id===Q29('lfPhoto29').value);Q29('lfWatt29').value=s.watts??'';Q29('lfK29').value=s.kelvin??4000;};Q29('lfClose29').onclick=()=>d.close();
+ Q29('lfApply29').onclick=()=>{try{if(P.id!==projectId)throw Error('Projeto trocado enquanto a ficha estava aberta.');const b={...a,nome:Q29('lfName29').value,fotoId:Q29('lfPhoto29').value,grupo:Q29('lfGroup29').value,x:Number(Q29('lfX29').value),y:Number(Q29('lfY29').value),z:Number(Q29('lfZ29').value),azimute:Number(Q29('lfYaw29').value),inclinacao:Number(Q29('lfTilt29').value),dimmer:Number(Q29('lfLevel29').value)/100,watts:Q29('lfWatt29').value===''?null:Number(Q29('lfWatt29').value),kelvin:Q29('lfK29').value===''?null:Number(Q29('lfK29').value),ativo:Q29('lfActive29').checked,travado:Q29('lfLock29').checked,observacao:Q29('lfObs29').value};if(!pontoNoAmbiente([b.x,b.y])||b.z>P.amb.alt)throw Error('Posicione a fonte dentro do ambiente, fora dos obstáculos e abaixo do teto.');alterarLuz29(l=>{if(nova)l.luminarias.push(b);else{const i=l.luminarias.findIndex(x=>x.id===b.id);if(i<0)throw Error('Fonte não encontrada.');l.luminarias[i]=b;}});LUI29.selecionada=b.id;d.close();nota('Fonte guardada. Recalcule o estudo para atualizar o mapa.');}catch(e){Q29('lfError29').textContent=e.message;}};
+}
+function gradeLuz29(fotoId,nx,ny,z,margem){const b=box25(contornoAmb()),out=[];if(b.x1-b.x0<=2*margem||b.y1-b.y0<=2*margem)throw Error('A margem é maior que o espaço disponível.');for(let j=0;j<ny;j++)for(let i=0;i<nx;i++){const x=b.x0+margem+(i+.5)*(b.x1-b.x0-2*margem)/nx,y=b.y0+margem+(j+.5)*(b.y1-b.y0-2*margem)/ny;if(!pontoNoAmbiente([x,y]))continue;const l=luminariaNova29(fotoId,x,y);l.z=z;out.push(l);}return out;}
+function proporGrade29(){const scene=cenaLuz29(),s=scene.specs.find(s=>s.id===LUI29.foto)||scene.specs[0],c=scene.config,N=LUZ29.quantidade(c.meta,scene.area,s.fluxo,c.fu,c.fm),b=scene.box,nx=Math.min(16,Math.max(1,Math.round(Math.sqrt(N*(b[2]-b[0])/(b[3]-b[1]))))),ny=Math.min(16,Math.max(1,Math.ceil(N/nx))),projectId=P.id,arch=assinaturaArquitetura28(P);let proposal=[];
+ const d=dialogo('Distribuir luminárias • prévia',`<p>Estimativa pelo método dos lúmens: <b>${N} fontes</b> de ${xmlEsc(s.nome)}. A malha é uma proposta de posicionamento, não um otimizador luminotécnico.</p><div class="lx-form">${campoLX29('lgNX29','Colunas',nx,'min="1" max="16" step="1"')}${campoLX29('lgNY29','Linhas',ny,'min="1" max="16" step="1"')}${campoLX29('lgZ29','Cota de montagem (m)',Math.max(.1,P.amb.alt-.06),'min=".05" step=".05"')}${campoLX29('lgMargin29','Margem do envelope (m)',.15,'min="0" step=".05"')}</div><p id="lgInfo29" role="status"></p><div class="lx-banner">A proposta remove posições fora do contorno ou sobre pilares. Na planta em L/U, a quantidade resultante pode ser menor que linhas × colunas. As fontes atuais são mantidas; confirmar <b>acrescenta</b> os pontos, sem substituir arquitetura ou móveis.</div><div class="linha-btn"><button class="btn" id="lgPreview29">Atualizar prévia</button><button class="btn primario" id="lgApply29">Adicionar os pontos</button><button class="btn" id="lgCancel29">Cancelar</button></div>`);
+ const prepare=()=>{const x=Number(Q29('lgNX29').value),y=Number(Q29('lgNY29').value),z=Number(Q29('lgZ29').value),m=Number(Q29('lgMargin29').value);if(!Number.isInteger(x)||!Number.isInteger(y)||x<1||y<1||x>16||y>16)throw Error('Use de 1 a 16 linhas e colunas inteiras.');if(!Number.isFinite(m)||m<0||m>10)throw Error('Margem inválida.');if(!Number.isFinite(z)||z<=0||z>P.amb.alt)throw Error('Cota acima do teto ou inválida.');proposal=gradeLuz29(s.id,x,y,z,m);if(proposal.length+estadoLuz29().luminarias.length>256)throw Error('Limite de 256 fontes por projeto.');Q29('lgInfo29').textContent=proposal.length+' pontos válidos na proposta. '+estadoLuz29().luminarias.length+' fontes já existentes.';LUI29.proposta=proposal;desenharLuz29();};
+ Q29('lgPreview29').onclick=acaoLuz29(prepare);for(const id of ['lgNX29','lgNY29','lgZ29','lgMargin29'])Q29(id).onchange=acaoLuz29(prepare);Q29('lgCancel29').onclick=()=>d.close();d.addEventListener('close',()=>{LUI29.proposta=null;desenharLuz29();},{once:true});Q29('lgApply29').onclick=acaoLuz29(()=>{if(projectId!==P.id||arch!==assinaturaArquitetura28(P))throw Error('Projeto alterado. Reabra a proposta.');prepare();if(!proposal.length)throw Error('Nenhum ponto válido.');alterarLuz29(o=>o.luminarias.push(...proposal));d.close();nota('Fontes adicionadas. Calcule a distribuição para avaliar média e uniformidade.');});prepare();
+}
+function polarLuz29(cv,s){if(!cv)return;const {w,h,dpr}=ajustaTela(cv),ctx=cv.getContext('2d'),cx=w/2,cy=h*.48,R=Math.min(w*.4,h*.38);ctx.setTransform(dpr,0,0,dpr,0,0);ctx.fillStyle='#F7F9F5';ctx.fillRect(0,0,w,h);let max=0;for(const c of [0,90,180,270])for(let g=0;g<=180;g+=2)max=Math.max(max,LUZ29.intensidade(s,c,g));ctx.strokeStyle='#D5DED4';ctx.lineWidth=.6;for(const t of [.25,.5,.75,1]){ctx.beginPath();ctx.arc(cx,cy,R*t,0,Math.PI*2);ctx.stroke();}ctx.beginPath();ctx.moveTo(cx-R,cy);ctx.lineTo(cx+R,cy);ctx.moveTo(cx,cy-R);ctx.lineTo(cx,cy+R);ctx.stroke();for(const [C,col]of [[0,'#0E6A57'],[90,'#C89A2D']]){ctx.strokeStyle=col;ctx.lineWidth=1.7;ctx.beginPath();for(let t=-180;t<=180;t+=2){const g=Math.abs(t),a=t*Math.PI/180,I=LUZ29.intensidade(s,t<0?C+180:C,g),r=I/Math.max(max,1)*R,x=cx+Math.sin(a)*r,y=cy+Math.cos(a)*r;t===-180?ctx.moveTo(x,y):ctx.lineTo(x,y);}ctx.stroke();}ctx.textAlign='center';ctx.font='10px ui-monospace';ctx.fillStyle='#4A5D50';ctx.fillText('C0–180 / C90–270 · pico '+fmt(max,0)+' cd',cx,h-5);}
+function renderFotos29(){const library=bibliotecaLuz29();Q29('luzCorpo29').innerHTML=`<div class="folha"><div class="lx-toolbar"><button class="btn primario" id="lfImport29">Importar IES / LDT</button><button class="btn" id="lfSample29">Arquivos de demonstração</button><button class="btn" id="lfExportLib29">Exportar fotometrias JSON</button><button class="btn" id="lfImportLib29">Importar biblioteca JSON</button></div><div class="lx-banner"><b>${library.length} fotometrias locais.</b> As dez referências Ambienta são funções matemáticas idealizadas, não ensaios de fabricantes. IES/LDT importados usam as candelas do arquivo. Nome de fabricante no arquivo não comprova autenticidade, desempenho ou licença.</div></div><div class="lx-catalog">${library.map((s,i)=>`<article class="lx-card"><span class="label">${s.tipo==='analitica'?'ANALÍTICA • GENÉRICA':s.formato+' • IMPORTADA'}</span><h3>${xmlEsc(s.nome)}</h3><canvas data-polar29="${i}" aria-label="Curva polar fotométrica"></canvas><p class="num">${fmt(s.fluxo,0)} lm ${s.tipo==='tabela'?'integrados':''} · ${s.watts==null?'W não informado':fmt(s.watts,1)+' W'}${s.tipo==='analitica'?' · '+s.abertura+'°':''}</p><p>${xmlEsc(s.fabricante||'Fabricante não informado')}</p><div class="linha-btn"><button class="btn primario" data-use29="${s.id}">Usar no estudo</button><button class="btn" data-info29="${s.id}">Ficha / curva</button>${s.tipo==='tabela'?`<button class="btn" data-del-photo29="${s.id}">Excluir</button>`:''}</div></article>`).join('')}</div>`;
+ Q29('lfImport29').onclick=importarFotoUI29;Q29('lfSample29').onclick=amostrasFotoUI29;Q29('lfExportLib29').onclick=()=>baixar(nomeArquivo('fotometrias.json'),JSON.stringify({tipo:'ambienta-fotometrias',versao:1,fotometrias:estadoLuz29().fotometrias},null,2),'application/json');Q29('lfImportLib29').onclick=importarBibliotecaFotos29;
+ Q29('luzCorpo29').querySelectorAll('[data-use29]').forEach(b=>b.onclick=()=>{LUI29.foto=b.dataset.use29;LUI29.aba='estudo';renderLuz29();});Q29('luzCorpo29').querySelectorAll('[data-info29]').forEach(b=>b.onclick=()=>fichaFoto29(b.dataset.info29));Q29('luzCorpo29').querySelectorAll('[data-del-photo29]').forEach(b=>b.onclick=acaoLuz29(()=>{if(estadoLuz29().luminarias.some(l=>l.fotoId===b.dataset.delPhoto29))throw Error('Fotometria em uso: troque/remova suas luminárias primeiro.');if(!confirm('Excluir esta fotometria do projeto?'))return;alterarLuz29(o=>o.fotometrias=o.fotometrias.filter(f=>f.id!==b.dataset.delPhoto29));}));requestAnimationFrame(()=>Q29('luzCorpo29')?.querySelectorAll('[data-polar29]').forEach(cv=>polarLuz29(cv,library[+cv.dataset.polar29])));
+}
+function fichaFoto29(id){const s=bibliotecaLuz29().find(s=>s.id===id),f=estadoLuz29().fotometrias.find(f=>f.id===id);if(!s)return;const d=dialogo('Fotometria — '+s.nome,`<canvas id="fotoPolarGrande29" style="width:100%;height:300px"></canvas><table class="tab"><tbody>${[['Origem',s.tipo==='analitica'?'Modelo analítico, sem ensaio':s.formato],['Fabricante',s.fabricante||'Não informado'],['Fluxo emitido',fmt(s.fluxo,2)+' lm'+(s.tipo==='tabela'?' (integração numérica da tabela)':'')],['Potência',s.watts==null?'Não informada':fmt(s.watts,2)+' W'],['Simetria',s.simetria||'Rotacional analítica'],['Fotometria',s.tipo==='analitica'?'I(γ) = Φ(m+1)/(2π) × cosᵐγ; hemisfério inferior.':s.absoluta?'Absoluta':'Relativa, convertida em cd'],['Relatório de ensaio',s.ensaio||'Não informado'],['Dimensões do emissor / modelo',s.dim.map(x=>fmt(x,3)).join(' × ')+' m'],['Fonte registrada',f?.fonte||s.fonte||''],['Licença registrada',f?.licenca||'Modelo matemático demonstrativo Ambienta']].map(([a,b])=>`<tr><th>${xmlEsc(a)}</th><td>${xmlEsc(b)}</td></tr>`).join('')}</tbody></table><div class="lx-banner">${(s.avisos||[]).map(xmlEsc).join('<br>')}</div>${f?'<button class="btn" id="fotoRaw29">Baixar arquivo fotométrico original</button>':''}`);if(f)Q29('fotoRaw29').onclick=()=>baixar(f.arquivo||'fotometria.'+f.formato.toLowerCase(),f.texto,'text/plain;charset=utf-8');requestAnimationFrame(()=>polarLuz29(Q29('fotoPolarGrande29'),s));}
+function importarFotoUI29(){let candidate=null,worker=null,url=null,seq=0;const projectId=P.id;const d=dialogo('Importar fotometria • prévia',`<p>Selecione IES LM-63 tipo C com TILT=NONE ou LDT EULUMDAT com um conjunto de lâmpadas. Até 1,5 MB. Nenhum arquivo é enviado a um servidor.</p><input id="fotoFile29" type="file" accept=".ies,.ldt"><div id="fotoRead29" class="lx-banner" role="status">Aguardando arquivo. Tipos A/B, correções TILT e conjuntos múltiplos são recusados explicitamente.</div><canvas id="fotoPreview29" style="width:100%;height:210px"></canvas><div class="lx-form"><label class="campo"><span>Nome da ficha</span><input id="fotoName29"></label><label class="campo"><span>Autor / fornecedor</span><input id="fotoAuthor29"></label><label class="campo"><span>Fonte / URL do produto</span><input id="fotoSource29"></label></div><label class="campo"><span>Licença ou autorização de uso</span><input id="fotoLicense29"></label><label class="lx-check"><input type="checkbox" id="fotoRights29">Declaro que tenho direito de usar a fotometria e de incluí-la nos projetos/backups compartilhados.</label><button class="btn primario" id="fotoApply29" disabled>Incorporar fotometria ao projeto</button><p id="fotoError29" role="alert"></p>`);
+ const finish=()=>{worker?.terminate();if(url)URL.revokeObjectURL(url);worker=null;url=null;};d.addEventListener('close',()=>{seq++;finish();},{once:true});
+ Q29('fotoFile29').onchange=async()=>{const token=++seq;finish();candidate=null;Q29('fotoApply29').disabled=true;Q29('fotoError29').textContent='';const file=Q29('fotoFile29').files[0];if(!file)return;try{if(!/\.(ies|ldt)$/i.test(file.name)||file.size>1500000)throw Error('Selecione IES/LDT com até 1,5 MB.');const text=await file.text();if(token!==seq||!d.open)return;const formato=file.name.split('.').pop().toUpperCase();Q29('fotoRead29').textContent='Lendo tabela e integrando fluxo em Worker…';url=URL.createObjectURL(new Blob([fonteWorkerLuz29()],{type:'text/javascript'}));worker=new Worker(url);worker.onmessage=e=>{if(token!==seq||!d.open)return;finish();if(e.data.tipo==='erro'){Q29('fotoError29').textContent=e.data.erro;Q29('fotoRead29').textContent='Arquivo recusado. Projeto preservado.';return;}const s=e.data.result;CACHE_FOTO29.set(text,s);while(CACHE_FOTO29.size>32)CACHE_FOTO29.delete(CACHE_FOTO29.keys().next().value);candidate={id:uid('foto'),nome:s.nome,arquivo:file.name,formato,texto:text,importado:new Date().toISOString()};Q29('fotoName29').value=s.nome;Q29('fotoAuthor29').value=s.fabricante;Q29('fotoRead29').textContent=`${s.C.length} planos C × ${s.gamma.length} ângulos gama · ${fmt(s.fluxo,0)} lm integrados · ${s.watts==null?'potência não informada':fmt(s.watts,1)+' W'}. `+s.avisos.join(' ');Q29('fotoApply29').disabled=false;polarLuz29(Q29('fotoPreview29'),s);};worker.onerror=e=>{e.preventDefault();finish();if(d.open)Q29('fotoError29').textContent=e.message;};worker.postMessage({tipo:'parse',texto:text,formato,nome:file.name});}catch(e){finish();Q29('fotoError29').textContent=e.message;}};
+ Q29('fotoApply29').onclick=()=>{try{if(!candidate)throw Error('Leia um arquivo antes.');if(projectId!==P.id)throw Error('Projeto alterado; reabra a importação.');if(!Q29('fotoRights29').checked||!Q29('fotoLicense29').value.trim())throw Error('Registre a licença e confirme o direito de uso.');const f={...candidate,nome:Q29('fotoName29').value,fonte:Q29('fotoSource29').value,autor:Q29('fotoAuthor29').value,licenca:Q29('fotoLicense29').value,autorizado:true};alterarLuz29(o=>o.fotometrias.push(f));LUI29.foto=f.id;d.close();nota('Fotometria incorporada. Selecione-a para distribuir as fontes.');}catch(e){Q29('fotoError29').textContent=e.message;}};
+}
+function importarBibliotecaFotos29(){const inp=document.createElement('input');inp.type='file';inp.accept='.json';inp.onchange=acaoLuz29(async()=>{const file=inp.files[0];if(!file)return;if(file.size>10000000)throw Error('Biblioteca maior que 10 MB.');const o=seguroJSON(await file.text());if(o.tipo!=='ambienta-fotometrias'||o.versao!==1)throw Error('Arquivo não é uma biblioteca fotométrica Ambienta.');const data=normalizaLuz29({...luzPadrao29(),fotometrias:o.fotometrias});if(!confirm('Importar '+data.fotometrias.length+' fotometrias como cópias? Confirme que dispõe dos direitos de uso indicados.'))return;data.fotometrias.forEach(f=>f.id=uid('foto'));alterarLuz29(q=>q.fotometrias.push(...data.fotometrias));});inp.click();}
+function renderLuminarias29(){const l=estadoLuz29(),specs=new Map(bibliotecaLuz29().map(s=>[s.id,s]));Q29('luzCorpo29').innerHTML=`<div class="folha"><div class="lx-toolbar"><button class="btn primario" id="laNew29">Nova luminária</button><button class="btn" id="laPositions29">Copiar posições de luminárias do mobiliário…</button><button class="btn" id="laClear29">Remover todas as fontes…</button></div><p class="lx-note">${l.luminarias.length} fontes de cálculo. Malhas de mobiliário e luzes do Render Studio não entram automaticamente no estudo em lux. Fontes de cálculo não são movidas pelo solver do mobiliário.</p><div class="lx-list"><table class="tab"><thead><tr><th>Fonte / fotometria</th><th>X; Y; Z (m)</th><th>Grupo</th><th>Nível</th><th>Potência</th><th>Ações</th></tr></thead><tbody>${l.luminarias.map((a,i)=>`<tr><td><b>L${i+1} · ${xmlEsc(a.nome)}</b><small>${xmlEsc(specs.get(a.fotoId)?.nome||'Ausente')}</small></td><td class="n">${fmt(a.x)}; ${fmt(a.y)}; ${fmt(a.z)}</td><td>${xmlEsc(a.grupo)}</td><td>${a.ativo?fmt(a.dimmer*100,0)+'%':'Desligada'}${a.travado?' · fixa':''}</td><td class="n">${a.watts==null?'Não informada':fmt(a.watts,1)+' W'}</td><td><button class="btn" data-le29="${a.id}">Editar</button> <button class="btn" data-ld29="${a.id}">Duplicar</button> <button class="btn perigo" data-lr29="${a.id}">Excluir</button></td></tr>`).join('')||'<tr><td colspan="6">Ainda não há fontes. Use “Nova luminária” ou distribua na planta.</td></tr>'}</tbody></table></div><div class="lx-banner">A potência é nominal. O percentual de fluxo controla candelas e lux, não aplica uma lei de consumo elétrico. Fontes desligadas continuam contando na potência instalada.</div></div>`;
+ Q29('laNew29').onclick=()=>editorLuminaria29(luminariaNova29(LUI29.foto),true);Q29('laPositions29').onclick=copiarFontesMoveis29;Q29('laClear29').onclick=()=>{if(l.luminarias.length&&confirm('Remover todas as '+l.luminarias.length+' fontes do estudo? Os móveis e as luzes do Render Studio não serão excluídos.'))alterarLuz29(o=>o.luminarias=[]);};
+ Q29('luzCorpo29').querySelectorAll('[data-le29]').forEach(b=>b.onclick=()=>editorLuminaria29(l.luminarias.find(a=>a.id===b.dataset.le29)));Q29('luzCorpo29').querySelectorAll('[data-ld29]').forEach(b=>b.onclick=()=>{const a=copia(l.luminarias.find(a=>a.id===b.dataset.ld29));a.id=uid('lum');a.nome+=' — cópia';a.x+=.3;editorLuminaria29(a,true);});Q29('luzCorpo29').querySelectorAll('[data-lr29]').forEach(b=>b.onclick=()=>{if(confirm('Excluir somente esta fonte fotométrica?'))alterarLuz29(o=>o.luminarias=o.luminarias.filter(a=>a.id!==b.dataset.lr29));});
+}
+function copiarFontesMoveis29(){const moveis=P.moveis.filter(m=>catDe(m)?.cat==='ilumin'&&!estadoLuz29().luminarias.some(l=>l.movelId===m.id));if(!moveis.length){nota('Nenhuma luminária do mobiliário sem fonte correspondente.');return;}const d=dialogo('Usar posições do mobiliário',`<p>Foram encontradas ${moveis.length} luminárias visuais. Elas não possuem fotometria automaticamente. Escolha a curva que deseja adotar como <b>hipótese para todas estas posições</b>.</p><select id="fromMeshFoto29">${opcoesFotos29()}</select><p class="lx-note">As fontes serão cópias independentes. Movimentos posteriores do mobiliário não atualizam sua posição automaticamente. Nenhuma curva real é inferida da malha 3D.</p><button class="btn primario" id="fromMeshApply29">Adicionar fontes com a curva escolhida</button>`);Q29('fromMeshApply29').onclick=acaoLuz29(()=>{const fid=Q29('fromMeshFoto29').value,arr=moveis.map(m=>{const c=catDe(m),a=luminariaNova29(fid,m.x,m.y);a.z=Math.min(P.amb.alt-.015,alturaBase(m)+c.h*.8);a.nome=c.nome;a.movelId=m.id;a.observacao='Posição copiada do mobiliário. Fotometria escolhida como hipótese pelo usuário.';return a;});alterarLuz29(o=>o.luminarias.push(...arr));d.close();});}
+function renderAreasCenas29(){const l=estadoLuz29();Q29('luzCorpo29').innerHTML=`<div class="folha"><h3>Áreas de tarefa</h3><p>Retângulos de avaliação recortados pelo contorno real do ambiente. Cada área tem sua própria cota, meta média e uniformidade. O recuo das paredes é o do estudo.</p><button class="btn primario" id="areaNew29">Nova área</button><div class="lx-list"><table class="tab"><thead><tr><th>Área</th><th>Origem / dimensões (m)</th><th>Plano</th><th>Meta</th><th>Ações</th></tr></thead><tbody>${l.areas.map(a=>`<tr><td>${xmlEsc(a.nome)}</td><td>${fmt(a.x)}; ${fmt(a.y)} · ${fmt(a.larg)} × ${fmt(a.comp)}</td><td>${fmt(a.z)} m</td><td>${fmt(a.meta,0)} lx / U₀ ${fmt(a.umin)}</td><td><button class="btn" data-ae29="${a.id}">Editar</button> <button class="btn perigo" data-ar29="${a.id}">Excluir</button></td></tr>`).join('')}</tbody></table></div><h3>Cenas por grupo de comando</h3><p>A regulagem é multiplicada pelo nível individual da fonte. Cena vazia usa todos os grupos em 100%. “Desligada” na luminária continua prevalecendo.</p><button class="btn primario" id="sceneNew29">Nova cena</button><div class="lx-list"><table class="tab"><thead><tr><th>Cena</th><th>Grupos e níveis</th><th>Ações</th></tr></thead><tbody>${l.cenas.map(a=>`<tr><td>${xmlEsc(a.nome)}${l.cenaId===a.id?' · ativa':''}</td><td>${Object.entries(a.niveis).map(([k,v])=>xmlEsc(k)+': '+fmt(v*100,0)+'%').join(' · ')}</td><td><button class="btn" data-ce29="${a.id}">Editar</button> <button class="btn" data-ca29="${a.id}">Ativar</button> <button class="btn perigo" data-cr29="${a.id}">Excluir</button></td></tr>`).join('')}</tbody></table></div><button class="btn" id="sceneReset29">Usar todos os grupos em 100%</button><div class="lx-banner">As cenas são do cálculo fotométrico. Elas não sobrescrevem as luzes artísticas do Render Studio. A malha usa fontes diretas sem inter-reflexões; use software luminotécnico validado para a conclusão profissional.</div></div>`;
+ Q29('areaNew29').onclick=()=>editorArea29();Q29('sceneNew29').onclick=()=>editorCena29();Q29('sceneReset29').onclick=()=>alterarLuz29(o=>o.cenaId='');Q29('luzCorpo29').querySelectorAll('[data-ae29]').forEach(b=>b.onclick=()=>editorArea29(l.areas.find(a=>a.id===b.dataset.ae29)));Q29('luzCorpo29').querySelectorAll('[data-ar29]').forEach(b=>b.onclick=()=>{if(confirm('Excluir esta área de cálculo?'))alterarLuz29(o=>o.areas=o.areas.filter(a=>a.id!==b.dataset.ar29));});Q29('luzCorpo29').querySelectorAll('[data-ce29]').forEach(b=>b.onclick=()=>editorCena29(l.cenas.find(a=>a.id===b.dataset.ce29)));Q29('luzCorpo29').querySelectorAll('[data-ca29]').forEach(b=>b.onclick=()=>alterarLuz29(o=>o.cenaId=b.dataset.ca29));Q29('luzCorpo29').querySelectorAll('[data-cr29]').forEach(b=>b.onclick=()=>{if(confirm('Excluir esta cena?'))alterarLuz29(o=>o.cenas=o.cenas.filter(a=>a.id!==b.dataset.cr29));});
+}
+function editorArea29(raw){const projetoId=P.id;const a=copia(raw||{id:uid('area'),nome:'Área de tarefa',x:.5,y:.5,larg:1.2,comp:.6,z:.75,meta:500,umin:.6,ativo:true}),d=dialogo('Área de tarefa',`<label class="campo"><span>Nome</span><input id="afName29" value="${xmlEsc(a.nome)}"></label><div class="lx-form">${[['x','X (m)'],['y','Y (m)'],['larg','Largura (m)'],['comp','Comprimento (m)'],['z','Cota (m)'],['meta','Meta média (lux)'],['umin','U₀ mínima']].map(([k,n])=>campoLX29('af-'+k,n,a[k],'step="any"')).join('')}</div><label class="lx-check"><input type="checkbox" id="afActive29" ${a.ativo?'checked':''}>Incluir esta área nos cálculos</label><p class="lx-note">As metas iniciais são hipóteses de demonstração, não uma prescrição normativa.</p><button class="btn primario" id="afSave29">Guardar área</button><p id="afError29" role="alert"></p>`);Q29('afSave29').onclick=()=>{try{if(P.id!==projetoId)throw Error('O projeto foi trocado. Reabra o editor.');a.nome=Q29('afName29').value;for(const k of ['x','y','larg','comp','z','meta','umin'])a[k]=Number(Q29('af-'+k).value);a.ativo=Q29('afActive29').checked;if(a.z>=P.amb.alt)throw Error('Plano acima do teto.');alterarLuz29(o=>{if(raw)o.areas[o.areas.findIndex(x=>x.id===a.id)]=a;else o.areas.push(a);});d.close();}catch(e){Q29('afError29').textContent=e.message;}};}
+function editorCena29(raw){const projetoId=P.id;const a=copia(raw||{id:uid('cena'),nome:'Nova cena',niveis:{}}),groups=[...new Set(estadoLuz29().luminarias.map(l=>l.grupo))];if(!groups.length){nota('Cadastre luminárias e grupos antes de criar cenas.');return;}const d=dialogo('Cena de iluminação',`<label class="campo"><span>Nome</span><input id="cfName29" value="${xmlEsc(a.nome)}"></label><div class="lx-form">${groups.map((g,i)=>campoLX29('cf-'+i,xmlEsc(g)+' (%)',(a.niveis[g]??1)*100,'min="0" max="100" step="5"')).join('')}</div><button class="btn primario" id="cfSave29">Guardar e ativar cena</button><p id="cfError29" role="alert"></p>`);Q29('cfSave29').onclick=()=>{try{if(P.id!==projetoId)throw Error('O projeto foi trocado. Reabra o editor.');a.nome=Q29('cfName29').value;a.niveis=Object.fromEntries(groups.map((g,i)=>[g,Number(Q29('cf-'+i).value)/100]));alterarLuz29(o=>{if(raw)o.cenas[o.cenas.findIndex(x=>x.id===a.id)]=a;else o.cenas.push(a);o.cenaId=a.id;});d.close();}catch(e){Q29('cfError29').textContent=e.message;}};}
+
+</script>
+<script>
+/* Integração: iluminação possui estado próprio, resultados transitórios e geometria
+   visual esquemática. Luzes artísticas do Render Studio NÃO são valores fotométricos. */
+const instalarAntesLuz29=instalaEscadas26;
+instalaEscadas26=function(){instalarAntesLuz29();instalarLuz29();const brand=document.querySelector("#topo .marca span");if(brand)brand.textContent="v2.9 · interiores e luz";document.title="Ambienta 2.9 — interiores e iluminação";window.AMBIENTA29_PRONTO=true;};
+const vistaAntesLuz29=trocaVista;
+trocaVista=function(v){vistaAntesLuz29(v);if(v==='luz29'){document.body.classList.add('sem-inspetor');renderLuz29();}};
+const ativarAntesLuz29=ativarProjeto;
+ativarProjeto=function(q,limpar=true){cancelarLuz29();LUI29.resultado=null;LUI29.assinatura=null;LUI29.cena=null;LUI29.selecionada=null;LUI29.proposta=null;LUI29.drag=null;ativarAntesLuz29(q,limpar);ULTIMA_CENA27=null;};
+const pintarAntesLuz29=pintar;
+pintar=function(){pintarAntesLuz29();if(vistaAtual==='luz29'&&Q29('luzCorpo29'))atualizarLuz29();};
+const histAntesLuz29=aplicaHist;
+aplicaHist=function(s){histAntesLuz29(s);ULTIMA_CENA27=null;LUI29.proposta=null;LUI29.drag=null;};
+
+function facesLuminarias29(){const out=[],specs=new Map(bibliotecaLuz29().map(s=>[s.id,s]));for(const l of P.iluminacao29?.luminarias||[]){const sp=specs.get(l.fotoId);if(!sp)continue;const dm=sp.dim||[.2,.2,.06],w=clamp(Math.abs(dm[0])||.2,.04,2),p=clamp(Math.abs(dm[1])||.2,.04,2),h=clamp(Math.abs(dm[2])||.04,.02,.2),b=LUZ29.base(l),trans=p=>[l.x+b.x[0]*p[0]+b.y[0]*p[1]-b.d[0]*p[2],l.y+b.x[1]*p[0]+b.y[1]*p[1]-b.d[1]*p[2],l.z+b.x[2]*p[0]+b.y[2]*p[1]-b.d[2]*p[2]];
+ const fs=faceDeCaixa(caixa(0,0,0,w,p,h,l.ativo?'#E9E5D6':'#939A96'),null,0);for(const f of fs){const g=faceQuad(f.pts.map(trans),f.tipo==='base'&&l.ativo?'#FFF4CD':f.cor,'luminaria29');g.luminariaId=l.id;out.push(g);}}
+ return out;}
+// Caches de malha incluem o estado luminotécnico, inclusive ao desfazer/ativar.
+const facesBaseAntesLuz29=facesBase27;
+facesBase27=function(){return facesBaseAntesLuz29().concat(facesLuminarias29());};
+const geraCenaAntesLuz29=geraCena;
+geraCena=function(){return geraCenaAntesLuz29().concat(facesLuminarias29());};
+const malhasAntesLuz29=malhasCena27;let CHAVE_MALHAS_LUZ29='';
+malhasCena27=function(){const k=JSON.stringify(P.iluminacao29||null);if(k!==CHAVE_MALHAS_LUZ29){ULTIMA_CENA27=null;CHAVE_MALHAS_LUZ29=k;}return malhasAntesLuz29();};
+const renderCenaAntesLuz29=gerarCenaRender28;
+gerarCenaRender28=function(){const c=renderCenaAntesLuz29();c.batches.push(...batchFaces28(facesLuminarias29(),'iluminacao29','movel',null,c.config));c.count=c.batches.reduce((s,b)=>s+b.pos.length/9,0);if(c.count>250000)throw Error('Cena excede 250 mil triângulos.');return c;};
+
+function adicionarIFCLuz29(api){const {E,pt,ax2,eixoZ,eixoX,sub,dono,produto,plPav,pset,material,contidos,n6}=api,specs=new Map(bibliotecaLuz29().map(f=>[f.id,f]));
+ for(const l of P.iluminacao29?.luminarias||[]){const f=specs.get(l.fotoId);if(!f)continue;const dm=f.dim||[.2,.2,.06],w=clamp(Math.abs(dm[0])||.2,.04,2),p=clamp(Math.abs(dm[1])||.2,.04,2),h=clamp(Math.abs(dm[2])||.04,.02,.2),basis=LUZ29.base(l),v=x=>E(`IFCDIRECTION((${x.map(n6).join(',')}))`),pl=E(`IFCLOCALPLACEMENT(${plPav},${ax2(pt(l.x,l.y,l.z),v(basis.d.map(x=>-x)),v(basis.x))})`),origin=E(`IFCCARTESIANPOINT((0.,0.))`),ax=E(`IFCAXIS2PLACEMENT2D(${origin},$)`),prof=E(`IFCRECTANGLEPROFILEDEF(.AREA.,$,${ax},${n6(w)},${n6(p)})`),solid=E(`IFCEXTRUDEDAREASOLID(${prof},${ax2(pt(0,0,0),eixoZ,eixoX)},${eixoZ},${n6(h)})`),rep=E(`IFCSHAPEREPRESENTATION(${sub},'Body','SweptSolid',(${solid}))`),def=E(`IFCPRODUCTDEFINITIONSHAPE($,$,(${rep}))`),el=E(`IFCLIGHTFIXTURE('${guidIfc('lum29:'+l.id)}',${dono},'${esc(l.nome)}','Corpo esquematico; estudo de luz direta',$,${pl},${def},$,.NOTDEFINED.)`);contidos.push(el);material(el,'Luminaria esquematica');const props=[['Fotometria',f.nome],['Tipo',f.tipo],['Arquivo',f.arquivo||'Analitica demonstrativa'],['Grupo',l.grupo],['Ativa',l.ativo?'Sim':'Nao'],['FluxoIntegradoLm',f.fluxo,'n'],['NivelFluxo',l.dimmer,'n'],['AzimuteC0',l.azimute,'n'],['Inclinacao',l.inclinacao,'n'],['Fonte',f.fonte||''],['Licenca',f.licenca||'Hipotese original Ambienta'],['Limites','Sem UGR, luz natural, interreflexoes ou dimensionamento eletrico. Resultados no estudo separado.']];const watts=Object.hasOwn(l,'watts')?l.watts:f.watts;if(watts!=null)props.push(['PotenciaNominalW',watts,'n']);pset(el,'Pset_Ambienta_Luminotecnica',props);}}
+// O exportador central fornece sua própria tabela de entidades e referências.
+const ifcEscAntesLuz29=adicionarIFCEsc26;
+adicionarIFCEsc26=function(api){ifcEscAntesLuz29(api);adicionarIFCLuz29(api);};
+
+const LIMITES_TEXTO_LUZ29='Estudo preliminar de iluminância artificial direta mantida em planos horizontais. Não calcula interreflexões, luz natural, UGR/ofuscamento, emergência, IRC real, circuitos, queda de tensão ou conformidade normativa. Móveis usam envoltórias opacas conservadoras; paredes permanecem opacas, inclusive em aberturas. Escadas usam placas e núcleo central; proteções e instalações superiores não modeladas não participam. A fonte pontual/fotometria de campo distante é aproximada junto a luminárias extensas. Metas e fatores são hipóteses do usuário.';
+function exigirResultado29(){if(!resultadoAtual29())throw Error('Calcule o estudo do projeto atual antes de exportar. Resultados anteriores não representam alterações posteriores.');return LUI29.resultado;}
+function dadosRelatorio29(){const r=exigirResultado29();return {tipo:'AmbientaEstudoLuminotecnico',versao:1,appVersion:VERSAO_APP,gerado:new Date().toISOString(),projeto:{id:P.id,nome:P.nome,responsavel:P.resp||''},estudo:copia(P.iluminacao29),entradaAnalitica:copia(LUI29.cena),resultado:copia(r),limites:LIMITES_TEXTO_LUZ29};}
+function csvLuz29(){const r=exigirResultado29(),cell=x=>'"'+String(x??'').replace(/^[\s]*[=+@-]/,m=>"'"+m).replace(/"/g,'""')+'"',N=x=>Number(x).toFixed(4).replace('.',','),lines=[['Área','X (m)','Y (m)','Z (m)','Iluminância direta mantida (lx)','Meta (lx)','FM','Passo X (m)','Passo Y (m)'].map(cell).join(';')];for(const a of r.resultados)for(let i=0;i<a.pontos.length;i++){const p=a.pontos[i];lines.push([a.nome,N(p.x),N(p.y),N(p.z),N(a.values[i]),N(a.meta),N(P.iluminacao29.config.fm),N(a.dx),N(a.dy)].map(cell).join(';'));}return '\uFEFF'+lines.join('\r\n');}
+function capturarMapaLuz29(){exigirResultado29();return capturaTela(1500,1000,cv=>desenharLuz29(cv,true));}
+function blocosEstudoLuz29(comImagem=true){const r=exigirResultado29(),l=estadoLuz29(),cfg=l.config,sp=new Map(bibliotecaLuz29().map(s=>[s.id,s])),scene=LUI29.cena,pw=LUZ29.potencias(scene),lf=LUZ29.lumens(scene),total=lf.media,rows=[['Área útil de referência',fmt(scene.area)+' m²'],['Plano geral / borda excluída',fmt(cfg.plano)+' / '+fmt(cfg.borda)+' m'],['Espaçamento máximo solicitado',fmt(cfg.passo)+' m'],['Fator de manutenção (FM)',fmt(cfg.fm)],['Fator de utilização por fluxo da luminária (FU)',fmt(cfg.fu)],['Meta geral / uniformidade U0',fmt(cfg.meta,0)+' lx / '+fmt(cfg.umin)],['Base da meta',cfg.metaFonte],['Cena',l.cenas.find(c=>c.id===l.cenaId)?.nome||'Todos os grupos a 100%'],['Sombras / exclusão da área mobiliada',`${cfg.sombras?'Ativas':'Desligadas'} / ${cfg.excluirOcupados?'Ativa':'Desligada'}`],['Método dos lúmens: média estimada',fmt(total,1)+' lx — não somar ao cálculo ponto a ponto']];
+ const B=[{t:'titulo',txt:'Estudo de iluminação'},{t:'sub',txt:P.nome+' • Ambienta '+VERSAO_APP},{t:'p',txt:LIMITES_TEXTO_LUZ29},{t:'h1',txt:'1. Premissas e métodos'},{t:'tabela',cab:['Parâmetro','Valor / hipótese'],larguras:[3400,5600],linhas:rows},{t:'p',txt:'Método dos lúmens: Emed = soma dos fluxos ativos × FU × FM / área. FU refere-se ao fluxo emitido pela luminária completa; não é multiplicado por outro rendimento. Quantidade sugerida = teto(meta × área / (fluxo unitário × FU × FM)). O valor sugerido é estimativo e não garante uniformidade.'},{t:'p',txt:'Cálculo direto: E(P) = FM × Σ[I(C, γ) × nível da fonte × nível do grupo × cos(θ) / d²]. O fator FU NÃO é aplicado neste cálculo. As curvas IES usam candela após os multiplicadores aplicáveis; LDT relativo é convertido de cd/klm pelo fluxo de referência. A meta é comparada à média dos pontos válidos; a uniformidade é Emin/Emed.'},{t:'h1',txt:'2. Resultados nas áreas de cálculo'},{t:'tabela',cab:['Área / z','N','Emin','Emed','Emax','U0','Cobertura'],larguras:[2150,650,1000,1050,1000,850,1150],linhas:r.resultados.map(a=>[`${a.nome} / ${fmt(a.z)} m`,a.n,fmt(a.minimo,1),fmt(a.media,1),fmt(a.maximo,1),fmt(a.uniformidade,3),fmt(a.cobertura*100,1)+'%'])},{t:'p',txt:'Iluminâncias em lux. Cobertura é a parcela dos pontos que alcança a meta daquela área; não é área certificada. Cada célula usa o centro como amostra. Borda, recortes e elementos excluídos não são contabilizados na estatística.'}];
+ for(const a of r.resultados)B.push({t:'p',txt:`${a.nome}: meta ${fmt(a.meta,0)} lx e U0 ≥ ${fmt(a.uminAlvo,2)}. Média ${a.atendeMedia?'alcança':'não alcança'} a meta; uniformidade ${a.atendeUniformidade?'alcança':'não alcança'} o critério. Área amostrada aproximada ${fmt(a.areaAmostrada)} m². Estes resultados não constituem aprovação normativa.`});
+ if(comImagem)B.push({t:'img',chave:'luz29',legenda:'Mapa de iluminância direta mantida — '+(r.resultados.find(a=>a.id===LUI29.area)?.nome||'Área geral')+'. A malha e as curvas são aproximações discretas.'});
+ B.push({t:'h1',txt:'3. Fontes e posições'},{t:'tabela',cab:['Fonte / grupo','Fotometria','x; y; z (m)','Fluxo; C0; incl.'],larguras:[2350,2650,1900,2050],linhas:l.luminarias.map(a=>[a.nome+' / '+a.grupo+(a.ativo?'':' (inativa)'),sp.get(a.fotoId)?.nome||a.fotoId,`${fmt(a.x)}; ${fmt(a.y)}; ${fmt(a.z)}`,`${fmt(a.dimmer*100,0)}%; ${fmt(a.azimute,0)}°; ${fmt(a.inclinacao,0)}°`])},{t:'p',txt:'O fluxo da tabela é o percentual individual. Os níveis dos grupos são aplicados adicionalmente conforme a cena. Azimute define o plano C0 em relação a +X, anti-horário. Inclinação zero aponta ao piso. Quantidades de luzes de apresentação do Render Studio não entram neste estudo.'},{t:'h1',txt:'4. Potência e uso estimado'},{t:'p',txt:`Potência nominal instalada conhecida: ${fmt(pw.instalada,1)} W; nominal ativa conhecida: ${fmt(pw.ligada,1)} W; densidade instalada conhecida ${fmt(pw.densidade,2)} W/m². ${pw.faltantes} fonte(s) sem potência. Para ${fmt(cfg.horas,1)} h/dia e ${fmt(cfg.dias,0)} dias/mês: ${fmt(pw.kWhMes,2)} kWh/mês conhecidos. A regulagem de fluxo não implica redução proporcional de potência: o consumo usa potência nominal e não uma curva elétrica de dimerização. Sem preço, circuitos ou orçamento das luminárias.`},{t:'h1',txt:'5. Avisos e rastreabilidade'},{t:'lista',itens:r.avisos.length?r.avisos:['Não houve aviso adicional do motor. As limitações e a conferência técnica permanecem aplicáveis.']} );
+ for(const f of bibliotecaLuz29().filter(f=>l.luminarias.some(a=>a.fotoId===f.id)))B.push({t:'p',txt:`${f.nome} — ${f.tipo==='analitica'?'distribuição analítica original, não ensaiada':`${f.tipo}; ${f.arquivo||'arquivo local'}`}. Fluxo integrado ${fmt(f.fluxo,1)} lm. Fonte: ${f.fonte||'Hipótese original Ambienta'}. Licença/declaração: ${f.licenca||'Demonstração analítica do Ambienta'}.`});
+ B.push({t:'p',txt:'Referências metodológicas: IES — definições de utilância e iluminância; documentação LM-63 da Lighting Analysts; descrição EULUMDAT da DIAL. Consulte o manual do sistema e as fontes incluídas no pacote. Não foram reproduzidas tabelas normativas licenciadas.'},{t:'p',txt:'Gerado em '+new Date().toLocaleString('pt-BR')+'. Responsável: '+(P.resp||'não informado')+'.'});return B;}
+async function gerarMemorialLuz29(){const sig=assinaturaLuz29(),blocos=blocosEstudoLuz29(true),img=capturarMapaLuz29(),doc=await montaDocx(blocos,{luz29:{bytes:bytesDePng(img.url),w:img.w,h:img.h}});if(sig!==assinaturaLuz29())throw Error('Projeto mudou durante a exportação; gere o relatório novamente.');baixar(nomeArquivo('luminotecnica.docx'),doc);return doc;}
+function exportarEstudoUI29(){exigirResultado29();const d=dialogo('Exportar estudo luminotécnico',`<p>Os arquivos refletem o cálculo válido do projeto atual. Um resultado obsoleto não pode ser exportado como atual.</p><div class="linha-btn"><button class="btn primario" id="lxOutDoc29">Memorial DOCX</button><button class="btn" id="lxOutCSV29">Pontos em CSV</button><button class="btn" id="lxOutJSON29">Estudo completo em JSON</button><button class="btn" id="lxOutPNG29">Mapa em PNG</button></div><p class="lx-note">JSON inclui entradas analíticas, fotometrias e resultados para rastreabilidade. Não substitui o backup do projeto completo. PNG/DOCX usam a área selecionada no mapa. IES/LDT importados levam a fonte e a declaração de uso.</p>`);Q29('lxOutDoc29').onclick=acaoLuz29(async()=>{const b=Q29('lxOutDoc29');b.disabled=true;try{await gerarMemorialLuz29();nota('Memorial luminotécnico gerado.');}finally{b.disabled=false;}});Q29('lxOutCSV29').onclick=acaoLuz29(()=>baixar(nomeArquivo('iluminancia.csv'),csvLuz29(),'text/csv;charset=utf-8'));Q29('lxOutJSON29').onclick=acaoLuz29(()=>baixar(nomeArquivo('luminotecnica.json'),JSON.stringify(dadosRelatorio29(),null,2),'application/json'));Q29('lxOutPNG29').onclick=acaoLuz29(()=>{const im=capturarMapaLuz29();baixar(nomeArquivo('iluminancia.png'),new Blob([bytesDePng(im.url)],{type:'image/png'}));});}
+const memorialAntesLuz29=blocosMemorial;
+blocosMemorial=function(){const B=memorialAntesLuz29(),l=P.iluminacao29;if(!l?.luminarias?.length)return B;let idx=B.findIndex(b=>b.t==='h1'&&/Encerramento/.test(b.txt));if(idx<0)idx=B.length;const n=B.slice(0,idx).filter(b=>b.t==='h1').length+1,blocos=[{t:'h1',txt:n+'. Iluminação — estudo preliminar'},{t:'p',txt:LIMITES_TEXTO_LUZ29},{t:'p',txt:`Fontes cadastradas: ${l.luminarias.length}; plano geral ${fmt(l.config.plano)} m; meta ${fmt(l.config.meta,0)} lx; FM ${fmt(l.config.fm)}; FU ${fmt(l.config.fu)}. O orçamento do ambiente não inclui automaticamente as fontes deste módulo.`}];if(resultadoAtual29()){blocos.push({t:'tabela',cab:['Área','Emed (lx)','Emin (lx)','U0','Meta (lx)'],linhas:LUI29.resultado.resultados.map(a=>[a.nome,fmt(a.media,1),fmt(a.minimo,1),fmt(a.uniformidade,3),fmt(a.meta,0)])},{t:'lista',itens:LUI29.resultado.avisos.length?LUI29.resultado.avisos:['Sem aviso adicional; conferir as premissas e limites.']});}else blocos.push({t:'p',txt:'NÃO CALCULADO PARA O ESTADO ATUAL. Nenhum resultado anterior foi reaproveitado. Abra Iluminação e execute o cálculo antes de emitir o memorial luminotécnico separado.'});if(B[idx]?.t==='h1')B[idx].txt=(n+1)+'. Encerramento';B.splice(idx,0,...blocos);return B;};
+
+</script>
+<script>
+/* Curvas de DEMONSTRAÇÃO originais. Não representam produtos/ensaios reais. */
+function amostraIES29(op={}){const gama=op.gamma||[0,30,60,90],C=op.C||[0],vals=op.cd||C.flatMap(()=>gama.map(()=>1000));return ['IESNA:LM-63-'+(op.edicao||'2002'),'[TEST] AMBIENTA-DEMONSTRACAO-NAO-ENSAIADO','[MANUFAC] Ambienta — curva sintética de teste','[LUMINAIRE] Fonte de ensaio numérico original','TILT='+(op.tilt||'NONE'),`${op.lamps||1} ${op.lm??-1} ${op.mult??1} ${gama.length} ${C.length} ${op.tipo||1} ${op.unit||2} 0.1 0.1 0.05`,`${op.bf??1} ${op.bl??1} ${op.watts??10}`,gama.join(' '),C.join(' '),vals.join(' ')].join('\n')+'\n';}
+function amostraLDT29(op={}){const sy=op.sy??4,mc=4,gamma=[0,30,60,90,120,150,180],n=[4,1,3,3,2][sy],lumens=op.flux??2400,rows=op.rows||Array.from({length:n},(_,k)=>[600,460,145,0,0,0,0].map((v,j)=>v*(op.assim&&j>0?1+k*.35:1)));const a=['Ambienta — referência sintética; não é ensaio','1',String(sy),String(mc),'90',String(gamma.length),'30','AMBIENTA-LDT-TESTE','Distribuição sintética de demonstração','AM-LDT-29','sintetica.ldt','07/09/2026','150','150','60','130','130','0','0','0','0','100','100',String(op.factor??1),'0','1',String(op.lamps??1),'LED sintético',String(lumens),'4000','80','24',...Array(10).fill('0'),0,90,180,270,...gamma,...rows.flat()];return a.join('\n')+'\n';}
+function fotometriaDemo29(formato='LDT'){return {id:'foto-demo-'+formato.toLowerCase(),formato,texto:formato==='LDT'?amostraLDT29({assim:true}):amostraIES29(),nome:formato==='LDT'?'LDT assimétrico sintético':'IES constante — bancada numérica',arquivo:'ambienta-demonstracao.'+formato.toLowerCase(),fonte:'Original sintético do Ambienta. Nenhum fabricante/ensaio real.',autor:'Ambienta',licenca:'CC0 — somente a curva sintética demonstrativa',autorizado:true,importado:'2026-09-07T00:00:00Z'};}
+function amostrasFotoUI29(){dialogo('Amostras IES e LDT',`<p>Curvas sintéticas originais para aprender a importar e verificar os cálculos. <b>Não são fotometrias medidas nem produtos de fabricantes.</b></p><div class="linha-btn"><button class="btn" id="lxDemoIES29">Baixar IES sintético</button><button class="btn" id="lxDemoLDT29">Baixar LDT sintético</button><button class="btn primario" id="lxDemoUse29">Incorporar LDT demonstrativo</button></div><p class="lx-note">O IES tem 1000 cd constantes no hemisfério inferior, útil para conferir E=I/d² sob a fonte. O LDT demonstra planos assimétricos e conversão cd/klm. Licença CC0 apenas para estes dados.</p>`);Q29('lxDemoIES29').onclick=()=>baixar('ambienta-teste-1000cd.ies',amostraIES29(),'text/plain');Q29('lxDemoLDT29').onclick=()=>baixar('ambienta-teste-assimetrico.ldt',amostraLDT29({assim:true}),'text/plain');Q29('lxDemoUse29').onclick=acaoLuz29(()=>{const f=fotometriaDemo29();f.id=uid('foto');alterarLuz29(o=>o.fotometrias.push(f));Q29('dialogoV22').close();LUI29.foto=f.id;renderLuz29();});}
+function exemploLuz29(tipo='escritorio'){
+ const q=projetoNovo();q.id=uid('proj');q.versao=SCHEMA_PROJETO;q.amb.larg=6;q.amb.comp=5;q.amb.alt=3;q.amb.uso=tipo==='jantar'?'jantar':tipo==='l-escada'?'estar':'escritorio';q.nome='Luz — escritório didático';q.moveis=[];q.escadas=[];q.alternativas=[];q.catalogoPersonalizado=[];q.aberturas=[{id:uid('ab'),tipo:'porta',parede:'S',pos:.8,larg:.9,alt:2.1,peitoril:0,subtipo:'Porta de abrir, folha simples',sentido:'dir',abre:'dentro'}];q.iluminacao29=luzPadrao29();q.iluminacao29.config.meta=300;q.gestao=gestao24({cliente:'Exemplo fictício',tags:['luminotécnica','v2.9'],notas:'Metas e fontes são hipóteses didáticas. Sem aprovação normativa.'});
+ const l=q.iluminacao29,add=(x,y,fid='lx29-painel36',grupo='Geral',z=2.94)=>{const f=LUZ29.BUILTINS.find(s=>s.id===fid);l.luminarias.push({id:uid('lum'),nome:(f?.nome||'LDT de demonstração')+' '+(l.luminarias.length+1),fotoId:fid,x,y,z,azimute:0,inclinacao:0,dimmer:1,grupo,ativo:true,travado:false,watts:f?.watts??24,kelvin:4000});},mov=(id,x,y,rot)=>{const c=porId(id);q.moveis.push({id:uid('m'),catId:id,x,y,rot,cor:c.cor,obs:'Exemplo didático',travado:false});};
+ if(tipo==='escritorio'){for(const x of [1,3,5])for(const y of [1.3,3.7])add(x,y);mov('escrivaninha',3,2.6,0);mov('cadTrabalho',3,3.4,180);l.areas.push({id:uid('area'),nome:'Mesa de trabalho',x:2.4,y:2.3,larg:1.2,comp:.6,z:.76,meta:500,umin:.6,ativo:true});}
+ else if(tipo==='l-escada'){q.nome='Luz — sala em L com escada';q.amb.larg=8;q.amb.comp=7;q.amb.contorno=[[0,0],[8,0],[8,4],[5,4],[5,7],[0,7]];q.aberturas[0].parede='W1';const s=escadaPadrao26('u');s.x=.3;s.y=2.2;s.rot=0;const g=geometriaEsc26(s);s.vao={...s.vao,ativo:true,x:0,y:0,larg:g.larg,comp:g.comp};q.escadas=[s];for(const p of [[1,1],[3.2,1],[5.6,1],[7,3],[4.3,3.8],[4.1,6],[1.2,6.2]])add(...p,'lx29-downlight15');mov('sofa2',6.5,3.4,180);mov('mesaCentro',6.5,2.2,180);l.config.meta=150;}
+ else if(tipo==='jantar'){q.nome='Luz — jantar e cena noturna';q.amb.larg=5;q.amb.comp=4;mov('mesaJantar6',2.5,2,0);for(const p of [[1,1],[4,1],[1,3],[4,3]])add(...p,'lx29-plafon18','Ambiente');add(2.5,2,'lx29-pendente24','Mesa',2);l.config.meta=150;l.areas=[{id:uid('area'),nome:'Tampo da mesa',x:1.6,y:1.55,larg:1.8,comp:.9,z:.77,meta:300,umin:.4,ativo:true}];l.cenas=[{id:uid('cena'),nome:'Jantar — ambiente 30%',niveis:{Ambiente:.3,Mesa:1}}];l.cenaId=l.cenas[0].id;}
+ else if(tipo==='ldt'){q.nome='Luz — fotometria LDT assimétrica';l.fotometrias=[fotometriaDemo29()];for(const p of [[1.5,1.5],[4.5,1.5],[1.5,3.5],[4.5,3.5]])add(...p,l.fotometrias[0].id);l.luminarias[2].azimute=90;l.luminarias[3].azimute=90;l.config.meta=200;}
+ return normalizaProjeto(q);
+}
+function exemplosUI29(){const d=dialogo('Projetos didáticos de iluminação',`<p>Cria um projeto separado. O projeto atual será salvo antes da troca; sua arquitetura não será substituída dentro da mesma ficha.</p><div class="grade g2">${[['escritorio','Escritório: plano geral e mesa'],['l-escada','Sala em L com escada e sombras'],['jantar','Jantar: grupos e cena noturna'],['ldt','LDT: planos fotométricos assimétricos']].map(([id,n])=>`<button class="btn" data-exl29="${id}">${n}</button>`).join('')}</div><p class="lx-note">Curvas e metas didáticas, não catálogos ensaiados nem projetos para execução.</p>`);d.querySelectorAll('[data-exl29]').forEach(b=>b.onclick=acaoLuz29(async()=>{const candidate=exemploLuz29(b.dataset.exl29);if(!await salvarAntesDeTrocar())return;ativarProjeto(candidate);await salvar(false);d.close();LUI29.aba='estudo';trocaVista('luz29');calcularLuz29();}));}
+
+MANUAL.push({grupo:'Iluminação — v2.9',itens:[
+ {id:'luz-metodo29',t:'Iluminância: dois métodos, resultados distintos',corpo:()=>`<h2>Estudo luminotécnico</h2><p>O Render Studio cria imagens. Este módulo calcula <b>iluminância artificial direta mantida</b>, em lux, em um plano horizontal. Uma imagem clara ou bonita não comprova iluminância suficiente.</p><h3>Método dos lúmens</h3><p><code>N = teto(E alvo × A / (Φ × FU × FM))</code>. Φ é o fluxo emitido pela luminária completa; FU é a fração estimada desse fluxo aproveitada no plano. FM representa a manutenção do sistema. FU é informado pelo usuário; não é derivado automaticamente das cores do ambiente. Não se aplica novamente o rendimento óptico da luminária. O número calculado é uma estimativa inicial, não prova de uniformidade.</p><h3>Método ponto a ponto</h3><p><code>E = FM × Σ I(C,γ) × nível × cos(θ) / d²</code>. A intensidade I vem da curva fotométrica; o nível inclui a regulagem individual e a cena. d é a distância, θ é o ângulo com a normal do plano. A distância está em metros e a intensidade em candela. A soma resulta em lux. <b>FU não multiplica este cálculo.</b></p><p>Em uma fonte ideal de 1000 cd, exatamente 2 m acima do ponto, com FM=1, a contribuição é 250 lx. Com FM=0,8, são 200 lx. Uma segunda fonte igual soma sua contribuição; sombras podem eliminá-la.</p><h3>Estatísticas</h3><p>Emed é a média dos centros válidos da malha; U₀=Emin/Emed. A cobertura é a fração de pontos que alcança a meta. Média adequada não garante mínimo adequado. Um conjunto sem luz apresenta U₀=0, não 1. Metas são hipóteses editáveis e precisam de fonte declarada: o sistema não incorpora tabelas normativas licenciadas.</p><h3>Limites</h3><p>${LIMITES_TEXTO_LUZ29}</p><div class="lab"><h4>Referência numérica</h4><p>Use Fotometrias → Amostras didáticas → IES sintético para conferir uma fonte constante de 1000 cd. Não é produto de fabricante.</p></div>`},
+ {id:'luz-operacao29',t:'Planejar, calcular e interpretar o mapa',corpo:()=>`<h2>Fluxo de trabalho</h2><ol><li>Abra Iluminação e configure plano, meta, uniformidade, manutenção e malha.</li><li>Selecione uma referência analítica ou importe IES/LDT autorizado em Fotometrias.</li><li>Use Propor distribuição ou Inserir na planta. A grade é apenas uma proposta, recortada pelo ambiente, e não substitui o mobiliário.</li><li>Edite cota, orientação, inclinação, grupo e fluxo. Cota significa posição absoluta do centro emissor acima do piso.</li><li>Execute Calcular iluminância. O Worker permite continuar usando a interface e cancelar.</li><li>Clique no mapa para inspecionar a contribuição de cada fonte no ponto amostrado mais próximo. Ative isolux e números conforme a escala.</li><li>Exporte mapa, todos os pontos, entradas/resultados em JSON ou memorial DOCX.</li></ol><p>Arraste uma luminária para mover; duplo clique abre o editor. A trava impede o arraste. Editar qualquer entrada relevante invalida o resultado, e resultados de Workers antigos são descartados. Um projeto reaberto exige novo cálculo.</p><p>O recuo é aplicado a todas as bordas do contorno. A área geral respeita reentrâncias; áreas de tarefa são retângulos recortados pelo domínio. A malha não é adaptativa: diminua o passo para testar convergência junto a fachos estreitos e sombras. Limites: 40 mil células por área e 50 mil pontos no conjunto.</p><p>Obstáculos e móveis são opacos, com envoltórias conservadoras. Mesas não têm pés/vazios resolvidos no cálculo: sombras sob o tampo podem ser superestimadas. Escadas usam seus degraus, patamares e núcleo. Paredes internas do contorno são opacas inclusive nos vãos, hipótese conservadora. Luminárias visualmente cadastradas na biblioteca só entram no estudo após Copiar posições dos móveis e atribuir uma fotometria.</p>`},
+ {id:'luz-formatos29',t:'IES, LDT e biblioteca fotométrica',corpo:()=>`<h2>Fotometrias</h2><p>As dez fontes embutidas são distribuições cos<sup>m</sup> analíticas, com fluxo, potência e ângulo didáticos. Não são curvas ensaiadas nem produtos de fabricantes. Uma importação pode conter um ensaio real, mas seu nome não autentica fabricante, medição ou licença.</p><h3>IES LM-63</h3><p>Suporte a edições tradicionais até 2002, tipo C, TILT=NONE, intensidades completas e simetrias compatíveis. Os fatores de candela e ballast aplicáveis são incorporados; o campo de quantidade de lâmpadas não multiplica outra vez a tabela. Valores absolutos usam lm/lâmpada=-1. Hemisfério não medido é considerado zero com aviso. Edições novas, tipos A/B e TILT incluído/externo exigem conversão prévia e são recusados.</p><h3>EULUMDAT / LDT</h3><p>Um conjunto de lâmpadas, inclinação de ensaio zero, simetrias 0 a 4. Intensidades cd/klm são convertidas pelo fluxo total de referência e fator de conversão; não se multiplica novamente pela quantidade de lâmpadas. O fluxo numérico integrado é comparado ao declarado. Diferenças relevantes geram aviso e não são corrigidas silenciosamente. Arquivos com vários conjuntos devem ser separados previamente.</p><p>Prévia polar mostra C0–C180 e C90–C270. O fluxo é integrado numericamente com passo angular de 1°; distribuições estreitas podem exigir fotometria mais densa e conferência independente. Limites: 32 fotometrias, 100 mil intensidades por tabela, 1,5 MB por arquivo e 8 MB de texto por projeto.</p><p>Preencha origem, autoria e licença/autorização. Os dados são processados localmente e incorporados ao projeto/backup. Não há download automático de arquivos de fabricantes nem biblioteca conectada a contas externas.</p>`},
+ {id:'luz-cenas29',t:'Áreas, grupos, consumo e documentação',corpo:()=>`<h2>Áreas e cenas</h2><p>Cadastre até oito áreas de tarefa com altura, meta e uniformidade próprias. O plano geral permanece independente. Grupos de luminárias permitem salvar até doze cenas; cada grupo tem nível de fluxo entre 0 e 100%. A regulagem individual e do grupo são multiplicadas.</p><p>O consumo estimado usa potência nominal ativa conhecida × horas/dia × dias/mês. Não há curva elétrica de dimerização: metade do fluxo não significa metade da potência. Potências ausentes deixam o total parcial. Não há dimensionamento elétrico, orçamento automático dessas luminárias ou simulação energética anual.</p><p>Os corpos esquemáticos aparecem na vista 3D, GLB de cena e IFC com propriedades do estudo. As luzes artísticas do Render Studio são independentes; a imagem não reproduz necessariamente a fotometria calculada.</p><p>CSV fornece todos os pontos de todas as áreas. O memorial luminotécnico registra premissas, resultados, mapa da área selecionada, fontes e avisos. O memorial geral inclui um resumo apenas quando o resultado ainda corresponde ao projeto. Alterações não herdam aprovação de um resultado antigo.</p><h3>Fontes metodológicas</h3><p><a href="https://ies.org/definitions/room-utilization-factor-utilance/" target="_blank" rel="noopener">IES: utilância</a> · <a href="https://ies.org/definitions/illuminance/" target="_blank" rel="noopener">IES: iluminância</a> · <a href="https://docs.agi32.com/PhotometricToolbox/Content/Open_Tool/iesna_lm-63_format.htm" target="_blank" rel="noopener">Lighting Analysts: LM-63</a> · <a href="https://evo.support-en.dial.de/support/solutions/articles/9000074164-description-of-the-eulumdat-format" target="_blank" rel="noopener">DIAL: EULUMDAT</a></p>`}
+]});
+
+function laboratorioLuz29(f){const p=P,sol=copia(SOL),r=LUI29.resultado,sig=LUI29.assinatura,scene=LUI29.cena;try{P=exemploLuz29();return f();}finally{P=p;Object.assign(SOL,sol);LUI29.resultado=r;LUI29.assinatura=sig;LUI29.cena=scene;ULTIMA_CENA27=null;}}
+function deveFalharLuz29(f){let err=false;try{f();}catch(e){err=true;}afirma(err,'Entrada deveria ser recusada.');}
+function cenaTesteLuz29(){const s=LUZ29.lerIES(amostraIES29());s.id='spec';return {config:{plano:0,passo:.5,borda:0,meta:100,umin:.4,fu:.6,fm:1,sombras:false,excluirOcupados:false,horas:8,dias:22},specs:[s],luminarias:[{id:'l1',nome:'L1',fotoId:'spec',x:2,y:2,z:2,azimute:0,inclinacao:0,dimmer:1,ativo:true,grupo:'Geral'}],contorno:[[0,0],[4,0],[4,4],[0,4]],box:[0,0,4,4],area:16,altura:3,areas:[],niveis:{},paredes:[],prismas:[],obstaculos:[]};}
+function adicionarTestesLuz29(){const T=(nome,f)=>TESTES.push({nome:'v2.9 — '+nome,f});
+ T('dez curvas analíticas identificadas como hipóteses',()=>{afirma(LUZ29.BUILTINS.length===10);for(const s of LUZ29.BUILTINS){afirma(s.tipo==='analitica');perto(LUZ29.integrar(s),s.fluxo,1e-8);afirma(s.avisos.length>0);}});
+ T('método dos lúmens com arredondamento para cima',()=>perto(LUZ29.quantidade(300,30,3600,.6,.8),6,0));
+ T('FU zero e FM inválido são recusados',()=>{deveFalharLuz29(()=>LUZ29.quantidade(300,30,3000,0,.8));deveFalharLuz29(()=>normalizaLuz29({config:{fm:2}}));});
+ T('IES constante a 2 metros: 250 lux',()=>{const s=cenaTesteLuz29(),l={...s.luminarias[0],nivel:1};perto(LUZ29.contribuicao(l,s.specs[0],[2,2,0],s,s.config),250,1e-10);});
+ T('coseno e inverso do quadrado fora do eixo',()=>{const s=cenaTesteLuz29(),l={...s.luminarias[0],nivel:1};perto(LUZ29.contribuicao(l,s.specs[0],[4,2,0],s,s.config),1000*Math.SQRT1_2/8,1e-9);});
+ T('FM aplicado uma vez; FU não altera lux pontual',()=>{const s=cenaTesteLuz29(),l={...s.luminarias[0],nivel:1};s.config.fm=.8;s.config.fu=.01;perto(LUZ29.contribuicao(l,s.specs[0],[2,2,0],s,s.config),200,1e-9);});
+ T('regulagem de fluxo linear e níveis de grupo',()=>{const s=cenaTesteLuz29();s.luminarias[0].dimmer=.5;s.niveis.Geral=.4;const l=LUZ29.preparar(s).lights[0];perto(l.nivel,.2,1e-12);perto(LUZ29.contribuicao(l,s.specs[0],[2,2,0],s,s.config),50,1e-9);});
+ T('duas fontes somam iluminâncias',()=>{const s=cenaTesteLuz29(),r=LUZ29.estudo(s);s.luminarias.push({...s.luminarias[0],id:'l2'});const a=LUZ29.estudo(s);perto(a.resultados[0].media,2*r.resultados[0].media,1e-9);});
+ T('desligamento resulta em lux zero e uniformidade zero',()=>{const s=cenaTesteLuz29();s.luminarias[0].ativo=false;const r=LUZ29.estudo(s).resultados[0];perto(r.media,0,0);perto(r.uniformidade,0,0);afirma(!r.atendeMedia&&!r.atendeUniformidade);});
+ T('fonte abaixo do plano não ilumina face superior',()=>{const s=cenaTesteLuz29();s.config.plano=2.5;perto(LUZ29.estudo(s).resultados[0].media,0,0);});
+ T('fotometria absoluta não multiplica quantidade de lâmpadas',()=>{const a=LUZ29.lerIES(amostraIES29({lamps:4}));perto(LUZ29.intensidade(a,0,0),1000,0);});
+ T('multiplicador de candela IES',()=>perto(LUZ29.intensidade(LUZ29.lerIES(amostraIES29({mult:.5})),0,0),500,0));
+ T('ballast legado multiplicado; campo futuro de 2002 ignorado',()=>{perto(LUZ29.intensidade(LUZ29.lerIES(amostraIES29({edicao:'1991',bf:.9,bl:.8})),0,0),720,1e-8);perto(LUZ29.intensidade(LUZ29.lerIES(amostraIES29({bf:.9,bl:0})),0,0),900,1e-8);});
+ T('fluxo integrado do hemisfério constante',()=>perto(LUZ29.lerIES(amostraIES29()).fluxo,2*Math.PI*1000,1e-6));
+ T('dimensões IES em pés convertidas a metros',()=>perto(LUZ29.lerIES(amostraIES29({unit:1})).dim[0],.03048,1e-9));
+ T('IES TILT INCLUDE recusado',()=>deveFalharLuz29(()=>LUZ29.lerIES(amostraIES29({tilt:'INCLUDE'}))));
+ T('IES tipo B recusado',()=>deveFalharLuz29(()=>LUZ29.lerIES(amostraIES29({tipo:2}))));
+ T('edição IES 2019 recusada explicitamente',()=>deveFalharLuz29(()=>LUZ29.lerIES(amostraIES29({edicao:'2019'}))));
+ T('IES truncado e candelas negativas recusados',()=>{deveFalharLuz29(()=>LUZ29.lerIES(amostraIES29().trim().split(' ').slice(0,-1).join(' ')));deveFalharLuz29(()=>LUZ29.lerIES(amostraIES29({cd:[-1,5,5,5]})));});
+ T('interpolação vertical IES',()=>{const s=LUZ29.lerIES(amostraIES29({gamma:[0,90],cd:[1000,0]}));perto(LUZ29.intensidade(s,0,45),500,1e-9);});
+ T('simetria de quadrantes IES',()=>{const s=LUZ29.lerIES(amostraIES29({gamma:[0,90],C:[0,90],cd:[1000,0,2000,0]}));perto(LUZ29.intensidade(s,45,0),1500,1e-9);for(const c of [135,225,315])perto(LUZ29.intensidade(s,c,0),1500,1e-9);});
+ T('IES completo fecha intervalo angular',()=>{const s=LUZ29.lerIES(amostraIES29({gamma:[0,90],C:[0,180,360],cd:[1000,0,2000,0,1000,0]}));perto(LUZ29.intensidade(s,270,0),1500,1e-9);});
+ T('LDT cd/klm usa fluxo do conjunto uma única vez',()=>{const s=LUZ29.lerLDT(amostraLDT29({flux:2000,lamps:2,factor:.5}));perto(LUZ29.intensidade(s,0,0),600,1e-8);});
+ T('cinco simetrias LDT importadas',()=>{for(let sy=0;sy<5;sy++){const s=LUZ29.lerLDT(amostraLDT29({sy}));afirma(s.fluxo>0);perto(LUZ29.intensidade(s,30,0),1440,1e-8);}});
+ T('LDT C90 começa em C270 e reflete C180',()=>{const s=LUZ29.lerLDT(amostraLDT29({sy:3,flux:1000,rows:[[100,0,0,0,0,0,0],[200,0,0,0,0,0,0],[300,0,0,0,0,0,0]]}));perto(LUZ29.intensidade(s,270,0),100,0);perto(LUZ29.intensidade(s,90,0),300,0);perto(LUZ29.intensidade(s,180,0),200,0);});
+ T('LDT com vários conjuntos é recusado',()=>{const a=amostraLDT29().split('\n');a[25]='2';deveFalharLuz29(()=>LUZ29.lerLDT(a.join('\n')));});
+ T('LDT com inclinação de ensaio é recusado',()=>{const a=amostraLDT29().split('\n');a[24]='15';deveFalharLuz29(()=>LUZ29.lerLDT(a.join('\n')));});
+ T('LDT truncado não é aceito',()=>deveFalharLuz29(()=>LUZ29.lerLDT(amostraLDT29().split('\n').slice(0,-4).join('\n'))));
+ T('curva analítica tem meia intensidade na metade do facho',()=>{const s=LUZ29.BUILTINS.find(s=>s.id==='lx29-spot10');perto(LUZ29.intensidade(s,0,s.abertura/2)/LUZ29.intensidade(s,0,0),.5,1e-9);});
+ T('malha respeita área em L e não preenche reentrância',()=>{const s=cenaTesteLuz29();s.contorno=[[0,0],[4,0],[4,2],[2,2],[2,4],[0,4]];const r=LUZ29.estudo(s).resultados[0];afirma(r.pontos.every(p=>!(p.x>2&&p.y>2)));perto(r.n,48,0);});
+ T('recuo de borda é retirado da amostragem',()=>{const s=cenaTesteLuz29();s.config.borda=.5;const r=LUZ29.estudo(s).resultados[0];perto(r.n,36,0);});
+ T('área de tarefa em altura distinta',()=>{const s=cenaTesteLuz29();s.areas=[{id:'mesa',nome:'mesa',x:1,y:1,larg:2,comp:2,z:1,meta:300,umin:.2,ativo:true}];const r=LUZ29.estudo(s).resultados;afirma(r.length===2&&r[1].pontos.every(p=>p.z===1));afirma(r[1].media>r[0].media);});
+ T('limite da malha evita bloqueio descontrolado',()=>{const s=cenaTesteLuz29();s.config.passo=.001;deveFalharLuz29(()=>LUZ29.estudo(s));});
+ T('fonte fora do polígono é recusada',()=>{const s=cenaTesteLuz29();s.luminarias[0].x=9;deveFalharLuz29(()=>LUZ29.estudo(s));});
+ T('prisma opaco bloqueia raio entre fonte e plano',()=>{const s=cenaTesteLuz29();s.config.sombras=true;s.prismas=[{id:'ob',pol:[[1,1],[3,1],[3,3],[1,3]],box:[1,1,3,3],z0:.5,z1:1}];const l={...s.luminarias[0],nivel:1};perto(LUZ29.contribuicao(l,s.specs[0],[2,2,0],s,s.config),0,0);});
+ T('prisma fora da trajetória não bloqueia',()=>{const s=cenaTesteLuz29();afirma(!LUZ29.prismaHit([2,2,2],[2,2,0],{pol:[[0,0],[1,0],[1,1],[0,1]],box:[0,0,1,1],z0:0,z1:3}));});
+ T('parede em reentrância bloqueia luz que sairia do ambiente',()=>{const s=cenaTesteLuz29();s.paredes=[{a:[2,0],b:[2,4]}];afirma(LUZ29.bloqueado([1,2,2],[3,2,0],s));});
+ T('contato rasante com vértice de parede é opaco',()=>{const s=cenaTesteLuz29();s.altura=3;s.paredes=[{a:[8,4],b:[5,4]},{a:[5,4],b:[5,7]}];afirma(LUZ29.bloqueado([5.6,1,2.94],[4.625,5.875,.75],s));});
+ T('cena dimerizada mantém consumo nominal conservador',()=>{const s=cenaTesteLuz29();s.luminarias[0].dimmer=.1;const p=LUZ29.potencias(s);perto(p.instalada,10,0);perto(p.ligada,10,0);perto(p.kWhMes,1.76,1e-9);});
+ T('potência explicitamente em branco não recupera padrão',()=>{const s=cenaTesteLuz29();s.luminarias[0].watts=null;perto(LUZ29.potencias(s).faltantes,1,0);perto(LUZ29.potencias(s).instalada,0,0);});
+ T('potência desconhecida é parcial',()=>{const s=cenaTesteLuz29();s.specs[0].watts=null;perto(LUZ29.potencias(s).faltantes,1,0);});
+ T('luz preservada no JSON e migração antiga ganha estudo vazio',()=>laboratorioLuz29(()=>{const a=desserializarProjeto(JSON.stringify(serializarProjeto(true)));perto(a.iluminacao29.luminarias.length,6,0);const old=copia(a);delete old.iluminacao29;old.versao=8;perto(normalizaProjeto(old).iluminacao29.luminarias.length,0,0);}));
+ T('licença/declaração exigida ao importar fotometria',()=>{const q=luzPadrao29(),f=fotometriaDemo29();f.autorizado=false;q.fotometrias=[f];deveFalharLuz29(()=>normalizaLuz29(q));});
+ T('referência fotométrica inexistente recusada',()=>{const q=luzPadrao29();q.luminarias=[{id:'x',fotoId:'inexistente'}];deveFalharLuz29(()=>normalizaLuz29(q));});
+ T('identificadores e grupos reservados recusados',()=>{const q=luzPadrao29();q.luminarias=[{id:'x',fotoId:LUZ29.BUILTINS[0].id,grupo:'__proto__'}];deveFalharLuz29(()=>normalizaLuz29(q));});
+ T('fontes não se alteram ao montar cena analítica',()=>laboratorioLuz29(()=>{const a=JSON.stringify(P);cenaLuz29();afirma(JSON.stringify(P)===a);}));
+ T('escada deslocada usa placas em coordenadas do ambiente',()=>laboratorioLuz29(()=>{P=exemploLuz29('l-escada');const s=P.escadas[0],sc=cenaLuz29(),g=geometriaEsc26(s),p=sc.prismas.find(p=>p.id===s.id);perto(p.pol[0][0],g.worldParts[0].pol[0][0],1e-9);perto(p.pol[0][1],g.worldParts[0].pol[0][1],1e-9);}));
+ T('proposta de grade não muda móveis nem arquitetura',()=>laboratorioLuz29(()=>{const prev=assinaturaTrabalho28(serializarProjeto(false));gradeLuz29(LUZ29.BUILTINS[0].id,3,2,2.8,.3);afirma(prev===assinaturaTrabalho28(serializarProjeto(false)));}));
+ T('todos os quatro exemplos normalizam e calculam',()=>{for(const t of ['escritorio','l-escada','jantar','ldt']){const q=exemploLuz29(t),s=cenaLuz29(q),r=LUZ29.estudo(s);afirma(r.total>0&&r.resultados.every(a=>a.values.every(Number.isFinite)));}});
+ T('IES/LDT ficam incorporados no snapshot',()=>{const q=exemploLuz29('ldt'),r=normalizaProjeto(JSON.parse(JSON.stringify(q)));afirma(r.iluminacao29.fotometrias[0].texto===q.iluminacao29.fotometrias[0].texto);});
+ T('resultado invalida com altura, intensidade ou móvel alterados',()=>laboratorioLuz29(()=>{const sig=assinaturaLuz29();P.iluminacao29.luminarias[0].z-=.1;afirma(sig!==assinaturaLuz29());P.iluminacao29.luminarias[0].z+=.1;P.moveis[0].x+=.2;afirma(sig!==assinaturaLuz29());}));
+ T('aplicar poses preserva planta, escada e estudo completo',()=>{const q=exemploLuz29('l-escada'),r=q.moveis.map(m=>({...m,x:m.x-.1})),before=assinaturaArquitetura28(q),after=combinarPoses28(q,{moveis:r});afirma(assinaturaArquitetura28(after)===before);afirma(after.moveis[0].x===r[0].x);});
+ T('alternativa anterior sem escada não pode aplicar arranjo',()=>{const q=exemploLuz29('l-escada'),o=copia(q);o.escadas=[];afirma(!compatibilidadeAlternativa28(q,{projeto:o}).ok);});
+ T('alternativa com contorno diferente não pode aplicar arranjo',()=>{const q=exemploLuz29('l-escada'),o=copia(q);o.amb.contorno[0][0]=.1;afirma(!compatibilidadeAlternativa28(q,{projeto:o}).ok);});
+ T('alternativa com iluminação diferente não aplica arranjo',()=>{const q=exemploLuz29(),o=copia(q);o.iluminacao29.luminarias[0].z-=.2;afirma(!compatibilidadeAlternativa28(q,{projeto:o}).ok);});
+ T('peça travada não pode ser movida pelo retorno',()=>{const q=exemploLuz29();q.moveis[0].travado=true;const r=copia(q.moveis);r[0].x+=1;deveFalharLuz29(()=>combinarPoses28(q,{moveis:r}));});
+ T('geometria esquemática de luminárias é finita',()=>laboratorioLuz29(()=>{const f=facesLuminarias29();afirma(f.length===P.iluminacao29.luminarias.length*6);afirma(f.every(f=>f.pts.flat().every(Number.isFinite)));}));
+ T('IFC contém luminárias do estudo e propriedades',()=>laboratorioLuz29(()=>{const t=geraIFC();afirma(t.includes('Pset_Ambienta_Luminotecnica'));afirma((t.match(/=IFCLIGHTFIXTURE\(/g)||[]).length>=6);afirma(!/NaN|undefined/.test(t));}));
+ T('memorial não reutiliza iluminação não calculada',()=>laboratorioLuz29(()=>{LUI29.resultado=null;afirma(blocosMemorial().some(b=>b.txt?.includes('NÃO CALCULADO PARA O ESTADO ATUAL')));}));
+ T('resultados exportados têm valores finitos e metadados',()=>laboratorioLuz29(()=>{const s=cenaLuz29();LUI29.cena=s;LUI29.resultado=LUZ29.estudo(s);LUI29.assinatura=assinaturaLuz29();const r=dadosRelatorio29();afirma(r.tipo==='AmbientaEstudoLuminotecnico');afirma(!/undefined|NaN/.test(JSON.stringify(blocosEstudoLuz29(false))));afirma(csvLuz29().split('\r\n').length===r.resultado.total+1);}));
+ T('exportação obsoleta é recusada',()=>laboratorioLuz29(()=>{LUI29.resultado=LUZ29.estudo(cenaLuz29());LUI29.assinatura=assinaturaLuz29();P.iluminacao29.config.fm=.5;deveFalharLuz29(exigirResultado29);}));
+ T('Worker fotométrico é um programa independente',()=>{new Function(fonteWorkerLuz29());});
+}
+adicionarTestesLuz29();
+
+</script>
+<script>
+abrirAmbienta25();
+
 </script>
 </body>
 </html>

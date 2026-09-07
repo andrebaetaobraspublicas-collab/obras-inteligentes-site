@@ -151,6 +151,47 @@ input[type=checkbox],input[type=radio]{accent-color:var(--sol);width:15px;height
 .vista{position:absolute;inset:0;display:none}
 .vista.on{display:block}
 canvas{display:block;width:100%;height:100%;touch-action:none}
+/* --- ferramenta de medição --- */
+.tela.medindo canvas{cursor:crosshair}
+.medida{
+  position:absolute;left:12px;bottom:56px;background:color-mix(in srgb,var(--painel) 94%,transparent);
+  border:1px solid var(--borda);border-left:3px solid var(--sol);border-radius:var(--r-m);
+  padding:9px 12px;font-size:11.5px;backdrop-filter:blur(6px);display:none;min-width:210px;
+}
+.tela.medindo .medida{display:block}
+.medida .t{font-size:10.5px;color:var(--texto-2);text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px}
+.medida .lin{display:flex;justify-content:space-between;gap:14px;line-height:1.7}
+.medida .lin b{font-variant-numeric:tabular-nums}
+.medida .dica2{color:var(--texto-2);font-size:10.5px;margin-top:6px;line-height:1.4}
+.fita{height:7px;border-radius:3px;margin:5px 0 2px;background:var(--borda);overflow:hidden;display:flex}
+.fita i{display:block;height:100%}
+.fita .sol{background:var(--sol)}
+.fita .som{background:#31425F}
+
+/* --- controles de corte e gravação na barra --- */
+.grupo-barra{display:flex;align-items:center;gap:6px;padding-left:9px;border-left:1px solid var(--borda)}
+#rg-corte{width:88px;vertical-align:-4px}
+.btn.gravando{background:var(--erro);border-color:var(--erro);color:#fff;font-weight:660}
+.btn.gravando::before{content:"";width:7px;height:7px;border-radius:50%;background:#fff;animation:pisca 1s steps(2,end) infinite}
+@keyframes pisca{50%{opacity:.15}}
+.selo-rec{
+  position:absolute;right:12px;top:12px;background:rgba(210,86,74,.92);color:#fff;
+  border-radius:var(--r-m);padding:6px 11px;font-size:11.5px;font-weight:640;display:none;
+  align-items:center;gap:7px;z-index:4;
+}
+.selo-rec.on{display:flex}
+.selo-rec i{width:8px;height:8px;border-radius:50%;background:#fff;animation:pisca 1s steps(2,end) infinite}
+
+/* --- tabela de atalhos --- */
+.tab-atalhos{width:100%;border-collapse:collapse;font-size:12.5px}
+.tab-atalhos td{padding:5px 8px;border-bottom:1px solid var(--borda)}
+.tab-atalhos td:first-child{width:96px}
+.tab-atalhos tr:last-child td{border-bottom:0}
+.tab-atalhos h4{margin:12px 0 2px;font-size:12px;color:var(--sol)}
+kbd{
+  display:inline-block;min-width:19px;text-align:center;background:var(--campo);border:1px solid var(--borda);
+  border-bottom-width:2px;border-radius:4px;padding:1px 6px;font-size:11.5px;font-family:var(--fonte);font-weight:600;
+}
 .legenda-esc{
   position:absolute;right:12px;bottom:12px;background:color-mix(in srgb,var(--painel) 92%,transparent);
   border:1px solid var(--borda);border-radius:var(--r-m);padding:8px 10px;font-size:10.5px;backdrop-filter:blur(6px);
@@ -512,7 +553,19 @@ table.dados tbody tr:hover{background:var(--painel-2)}
       <label class="check" style="margin:0"><input type="checkbox" id="ck-mancha" checked> Mancha de sol</label>
       <label class="check" style="margin:0"><input type="checkbox" id="ck-fundo"> Imagem de fundo</label>
       <select id="in-pavVista" style="width:auto;padding:4px 8px"></select>
-      <button class="btn mini" id="bt-ajustar">Enquadrar</button>
+      <button class="btn mini" id="bt-ajustar" title="Enquadrar o modelo (E)">Enquadrar</button>
+      <div class="grupo-barra">
+        <button class="btn mini" id="bt-medir" title="Medir distância e sombra na planta (M)">Medir</button>
+        <label class="check" style="margin:0" title="Plano de corte horizontal no 3D (C)">
+          <input type="checkbox" id="ck-corte"> Corte</label>
+        <input type="range" id="rg-corte" min="0" max="1000" step="1" value="500"
+               title="Altura do plano de corte" disabled>
+        <span class="pilula"><b id="txt-corte">—</b></span>
+      </div>
+      <div class="grupo-barra">
+        <button class="btn mini" id="bt-video" title="Gravar vídeo do dia (V)">● Vídeo</button>
+        <button class="btn mini" id="bt-atalhos" title="Atalhos de teclado (?)">⌨</button>
+      </div>
     </div>
 
     <div class="tela" id="tela">
@@ -534,6 +587,17 @@ table.dados tbody tr:hover{background:var(--painel-2)}
         <div class="barra"></div>
         <div class="mm"><span>0</span><span id="leg-max">1000</span></div>
       </div>
+      <div class="medida" id="medida">
+        <div class="t">Medição</div>
+        <div class="lin"><span>Distância</span><b id="md-dist">—</b></div>
+        <div class="lin"><span>Azimute</span><b id="md-az">—</b></div>
+        <div class="lin"><span>Cota Z</span><b id="md-z">0,00 m</b></div>
+        <div class="fita"><i class="sol" id="md-fita-sol" style="width:0%"></i><i class="som" id="md-fita-som" style="width:100%"></i></div>
+        <div class="lin"><span>Ao sol</span><b id="md-sol">—</b></div>
+        <div class="lin"><span>Na sombra</span><b id="md-som">—</b></div>
+        <div class="dica2" id="md-dica">Clique para fixar o primeiro ponto.</div>
+      </div>
+      <div class="selo-rec" id="selo-rec"><i></i><span id="rec-txt">Gravando…</span></div>
     </div>
 
     <div class="transporte">
@@ -2025,6 +2089,50 @@ function transmissaoEntorno(pt, zAb, azSol, elSol, modelo, cfg, pavAb){
 SIP.transmissaoEntorno = transmissaoEntorno;
 
 /**
+ * Amostra a insolação ao longo de um segmento no terreno (ou em qualquer cota z).
+ * Reaproveita transmissaoEntorno, de modo que a leitura da fita de medição usa
+ * exatamente a mesma geometria de obstrução que a simulação das aberturas.
+ * @param {{x,y}} a extremidade inicial @param {{x,y}} b extremidade final
+ * @param {number} z cota do segmento em metros
+ * @param {{azimute,elevacao}} sol posição solar do instante
+ * @param {object} modelo @param {object} cfg
+ * @param {number} n número de amostras (padrão proporcional ao comprimento)
+ * @returns {{comprimento,azimute,fracSol,fracSombra,amostras:Array<{t,f}>,semSol:boolean}}
+ */
+function perfilSombra(a, b, z, sol, modelo, cfg, n){
+  var L = SIP.geo.dist(a, b);
+  var out = { comprimento:L, azimute:0, fracSol:0, fracSombra:1, amostras:[], semSol:true };
+  var dx = b.x - a.x, dy = b.y - a.y;
+  out.azimute = SIP.util.norm360(SIP.util.deg(Math.atan2(dx, dy)) + SIP.util.nz(cfg.norte, 0));
+  if(L < 1e-6) return out;
+
+  var N = n || SIP.util.clamp(Math.round(L*4), 24, 220);
+  if(!sol || sol.elevacao <= 0){
+    for(var q=0;q<=N;q++) out.amostras.push({ t:q/N, f:0 });
+    return out;
+  }
+  out.semSol = false;
+
+  // volumes do edifício em cache, como faz a simulação anual
+  if(!modelo._volumes) modelo._volumes = SIP.volumesEdificacao(modelo);
+
+  var soma = 0;
+  for(var i=0;i<=N;i++){
+    var t = i/N;
+    var p = { x: a.x + dx*t, y: a.y + dy*t };
+    // pav = -1 faz todos os volumes da edificação contarem como obstrução,
+    // que é o correto para um ponto no terreno ou num plano de corte livre.
+    var f = SIP.transmissaoEntorno(p, z, sol.azimute, sol.elevacao, modelo, cfg, -1);
+    out.amostras.push({ t:t, f:f });
+    soma += f;
+  }
+  out.fracSol = soma/(N+1);
+  out.fracSombra = 1 - out.fracSol;
+  return out;
+}
+SIP.perfilSombra = perfilSombra;
+
+/**
  * Avalia uma abertura em um instante.
  * @returns objeto com componentes de irradiância, sombreamento,
  * penetração da mancha de sol e iluminâncias.
@@ -2515,6 +2623,60 @@ function desenhaPlanta(cv, est){
     g.setLineDash([]);
   }
 
+  // fita de medição
+  var md = est.medicao;
+  if(md && md.ativo && md.a){
+    var fim = md.b || md.previa;
+    if(fim){
+      var pa = P(md.a), pb = P(fim);
+      var perf = md.perfil;
+
+      // trecho ao sol em âmbar, trecho na sombra em azul frio
+      if(perf && perf.amostras.length > 1){
+        g.lineWidth = 3.4; g.lineCap = 'butt';
+        for(var s=0;s<perf.amostras.length-1;s++){
+          var s0 = perf.amostras[s], s1 = perf.amostras[s+1];
+          var q0 = { x: pa.x + (pb.x-pa.x)*s0.t, y: pa.y + (pb.y-pa.y)*s0.t };
+          var q1 = { x: pa.x + (pb.x-pa.x)*s1.t, y: pa.y + (pb.y-pa.y)*s1.t };
+          var fm = (s0.f + s1.f)/2;
+          g.strokeStyle = fm > 0.5 ? 'rgba(242,164,19,.95)' : 'rgba(90,120,170,.85)';
+          g.beginPath(); g.moveTo(q0.x,q0.y); g.lineTo(q1.x,q1.y); g.stroke();
+        }
+      } else {
+        g.strokeStyle = estilo('--sol'); g.lineWidth = 2;
+        g.beginPath(); g.moveTo(pa.x,pa.y); g.lineTo(pb.x,pb.y); g.stroke();
+      }
+
+      // extremidades e cotas de chamada
+      var ang = Math.atan2(pb.y-pa.y, pb.x-pa.x);
+      var nx = -Math.sin(ang), ny = Math.cos(ang);
+      g.strokeStyle = estilo('--sol'); g.lineWidth = 1.4;
+      [pa, pb].forEach(function(pp){
+        g.beginPath();
+        g.moveTo(pp.x - nx*7, pp.y - ny*7); g.lineTo(pp.x + nx*7, pp.y + ny*7); g.stroke();
+        g.fillStyle = estilo('--sol');
+        g.beginPath(); g.arc(pp.x, pp.y, 3.2, 0, 6.2832); g.fill();
+      });
+
+      // etiqueta com a distância
+      var dTxt = SIP.util.fmt(SIP.geo.dist(md.a, fim), 2) + ' m';
+      var mx2 = (pa.x+pb.x)/2 + nx*15, my2 = (pa.y+pb.y)/2 + ny*15;
+      g.font = '600 12px system-ui'; g.textAlign = 'center'; g.textBaseline = 'middle';
+      var lw2 = g.measureText(dTxt).width + 12;
+      g.fillStyle = 'rgba(12,20,38,.82)';
+      g.beginPath();
+      if(g.roundRect) g.roundRect(mx2-lw2/2, my2-10, lw2, 20, 5);
+      else g.rect(mx2-lw2/2, my2-10, lw2, 20);
+      g.fill();
+      g.fillStyle = '#FFD98A'; g.fillText(dTxt, mx2, my2);
+      g.textBaseline = 'alphabetic';
+    } else {
+      var pa2 = P(md.a);
+      g.fillStyle = estilo('--sol');
+      g.beginPath(); g.arc(pa2.x, pa2.y, 3.2, 0, 6.2832); g.fill();
+    }
+  }
+
   desenhaRosa(g, W-78, 76, 40, SIP.util.nz(cfg.norte,0), st, texto2);
   desenhaEscala(g, 18, H-26, v.esc, texto2, borda);
 }
@@ -2585,6 +2747,10 @@ function desenha3D(cv, est){
     if(stroke){ g.strokeStyle = stroke; g.lineWidth = lw||1; g.stroke(); }
   }
 
+  // plano de corte horizontal: zc limita a altura desenhada da edificação
+  var corte = est.corte && est.corte.ativo;
+  var zc = corte ? SIP.util.clamp(est.corte.z, 0, alturaTotal) : Infinity;
+
   var cont = m.contorno.length>2 ? m.contorno : SIP.contornoDeParedes(m);
   // plano do solo
   var gsz = raio*1.6;
@@ -2613,7 +2779,9 @@ function desenha3D(cv, est){
     g.restore();
   }
 
-  // obstruções em volume
+  // obstruções em volume — mantidas inteiras sob corte, porém esmaecidas:
+  // elas sombreiam de verdade, então decepá-las falsearia a leitura.
+  if(corte) g.globalAlpha = 0.30;
   m.obstrucoes.forEach(function(o){
     if(!o.poly || o.poly.length<3) return;
     var cor = o.tipo==='vegetacao' ? 'rgba(62,156,122,.28)' : 'rgba(120,140,175,.26)';
@@ -2622,12 +2790,15 @@ function desenha3D(cv, est){
     for(var i=0;i<o.poly.length;i++){ var j=(i+1)%o.poly.length; poli([base[i],base[j],topo[j],topo[i]], cor, 'rgba(120,140,175,.4)',1); }
     poli(topo, cor, 'rgba(120,140,175,.55)', 1);
   });
+  g.globalAlpha = 1;
 
   // pavimentos
   m.pavimentos.forEach(function(p, ip){
     if(cont.length < 3) return;
+    if(corte && p.z >= zc) return;                       // pavimento inteiro acima do corte
+    var zTopoF = corte ? Math.min(p.z + p.pd, zc) : p.z + p.pd;
     var base = cont.map(function(q){ return {x:q.x,y:q.y,z:p.z}; });
-    var topo = cont.map(function(q){ return {x:q.x,y:q.y,z:p.z+p.pd}; });
+    var topo = cont.map(function(q){ return {x:q.x,y:q.y,z:zTopoF}; });
     var faces = [];
     for(var i=0;i<cont.length;i++){
       var j=(i+1)%cont.length;
@@ -2641,19 +2812,44 @@ function desenha3D(cv, est){
       var cosI = st ? SIP.cosIncVertical(st.sol.azimute, st.sol.elevacao, az) : 0;
       var irrF = st && temSol ? (st.irr.dni*cosI + st.irr.dhi*0.5) : 0;
       var t = SIP.util.clamp(irrF/est.escalaMax, 0, 1);
-      var prof = proj({x:mid.x, y:mid.y, z:p.z+p.pd/2}).prof;
+      var prof = proj({x:mid.x, y:mid.y, z:(p.z+zTopoF)/2}).prof;
       faces.push({ pts:[base[i], base[j], topo[j], topo[i]], cor: cosI>0 ? corIrr(t) : 'rgba(70,90,125,.85)', prof:prof, alpha: cosI>0?0.92:0.8 });
     }
     faces.sort(function(a,c){ return a.prof - c.prof; });
     faces.forEach(function(f){ g.globalAlpha = f.alpha; poli(f.pts, f.cor, 'rgba(20,32,55,.55)', 1); g.globalAlpha=1; });
-    if(ip === m.pavimentos.length-1) poli(topo, 'rgba(190,205,230,.35)', 'rgba(20,32,55,.6)', 1);
+    // cobertura: só quando o corte não a decepa
+    if(ip === m.pavimentos.length-1 && !corte) poli(topo, 'rgba(190,205,230,.35)', 'rgba(20,32,55,.6)', 1);
   });
+
+  // superfície seccionada: hachura no plano do corte, no padrão de corte de projeto
+  if(corte && cont.length > 2){
+    var secao = cont.map(function(q){ return {x:q.x, y:q.y, z:zc}; });
+    poli(secao, 'rgba(242,164,19,.20)', estilo('--sol'), 1.8);
+    g.save();
+    g.beginPath();
+    secao.forEach(function(p,i){ var s = proj(p); i?g.lineTo(s.x,s.y):g.moveTo(s.x,s.y); });
+    g.closePath(); g.clip();
+    g.strokeStyle = 'rgba(242,164,19,.42)'; g.lineWidth = 1;
+    var bb = SIP.geo.bboxDe(cont), passoH = Math.max(0.4, Math.max(bb.larg, bb.alt)/26);
+    g.beginPath();
+    for(var hx = bb.x0 - bb.alt; hx <= bb.x1 + bb.alt; hx += passoH){
+      var h1 = proj({x:hx, y:bb.y0, z:zc});
+      var h2 = proj({x:hx + (bb.y1-bb.y0), y:bb.y1, z:zc});
+      g.moveTo(h1.x, h1.y); g.lineTo(h2.x, h2.y);
+    }
+    g.stroke();
+    g.restore();
+  }
 
   // aberturas em 3D
   m.aberturas.forEach(function(ab, i){
     var p = m.pavimentos[ab.pav]; if(!p) return;
     var r = st ? st.aberturas[i] : null;
     var z0 = p.z + ab.peitoril, z1 = z0 + ab.alt;
+    if(corte){
+      if(z0 >= zc) return;            // abertura inteira acima do corte
+      if(z1 > zc) z1 = zc;            // decepada pelo plano
+    }
     var az = SIP.util.rad(ab.azimute - SIP.util.nz(cfg.norte,0));
     var off = 0.06;
     var A = { x:ab.a.x + Math.sin(az)*off, y:ab.a.y + Math.cos(az)*off };
@@ -2662,7 +2858,7 @@ function desenha3D(cv, est){
     var cor = (r && r.cosInc>0) ? corIrr(t) : 'rgba(150,180,215,.5)';
     poli([{x:A.x,y:A.y,z:z0},{x:B.x,y:B.y,z:z0},{x:B.x,y:B.y,z:z1},{x:A.x,y:A.y,z:z1}],
          cor, est.abSel===i ? estilo('--sol') : 'rgba(15,25,45,.75)', est.abSel===i?2.2:1);
-    if(SIP.util.nz(ab.beiral,0) > 0.02){
+    if(SIP.util.nz(ab.beiral,0) > 0.02 && !(corte && z1 + SIP.util.nz(ab.hBeiral,0) > zc)){
       var d = ab.beiral, zb = z1 + SIP.util.nz(ab.hBeiral,0);
       poli([{x:A.x,y:A.y,z:zb},{x:B.x,y:B.y,z:zb},
             {x:B.x+Math.sin(az)*d, y:B.y+Math.cos(az)*d, z:zb},
@@ -2684,6 +2880,10 @@ function desenha3D(cv, est){
   }
   g.fillStyle = texto2; g.font='11px system-ui'; g.textAlign='left';
   g.fillText('Arraste para girar · roda do mouse aproxima', 14, H-14);
+  if(corte){
+    g.fillStyle = estilo('--sol'); g.font = '600 11.5px system-ui';
+    g.fillText('Corte em ' + SIP.util.fmt(zc,2) + ' m acima do térreo · entorno esmaecido', 14, H-30);
+  }
 }
 SIP.desenha3D = desenha3D;
 
@@ -3692,7 +3892,10 @@ var est = {
   vistaPlanta: { cx:6, cy:4.5, esc:34 },
   cam: { az: 32, el: 26, zoom: 1 },
   mostrarRaios: true, mostrarSombra: true, mostrarMancha: true, mostrarFundo: false,
-  vista: 'planta', animando: false, modoAnim: 'dia', vel: 12, ultimoT: 0
+  vista: 'planta', animando: false, modoAnim: 'dia', vel: 12, ultimoT: 0,
+  medicao: { ativo:false, a:null, b:null, previa:null, perfil:null, z:0 },
+  corte: { ativo:false, z:1.5 },
+  gravando: false
 };
 
 function aviso(msg, tipo){
@@ -3797,12 +4000,27 @@ function atualizarInstante(){
   $('k-ghi').textContent = SIP.util.fmtI(ir.ghi);
   $('k-nsol').textContent = est.instante.aoSol + '/' + est.modelo.aberturas.length;
   $('relogio').textContent = est.dataTxt + ' · ' + SIP.horaTxt(est.hora);
+  // a fita de medição depende da posição do sol, então acompanha o instante
+  if(est.medicao.ativo && est.medicao.a && est._recalcMedicao) est._recalcMedicao();
   // durante a animação a lista e o painel de detalhe não são reconstruídos:
   // remontá-los a cada quadro custaria caro e tiraria o foco dos campos.
   if(!est.animando){ atualizarValoresLista(); detalheAbertura(); }
 }
 
 /* ---------- desenho ---------- */
+/** Troca a vista do palco. Usada pelos botões e pelos atalhos 1..5. */
+function irParaVista(v){
+  if(!v) return;
+  est.vista = v;
+  $$('#seg-vista button').forEach(function(x){ x.setAttribute('aria-selected', String(x.dataset.v === v)); });
+  $$('.vista').forEach(function(d){ d.classList.toggle('on', d.dataset.v === v); });
+  // controles que só fazem sentido em vistas específicas
+  $('bt-medir').disabled = (v !== 'planta');
+  $('ck-corte').disabled = (v !== 'tres');
+  $('rg-corte').disabled = (v !== 'tres') || !est.corte.ativo;
+  redesenhar();
+}
+
 function redesenhar(){
   var v = est.vista;
   if(v === 'planta') SIP.desenhaPlanta($('cv-planta'), est);
@@ -4166,7 +4384,10 @@ function carregarJSON(d, silencioso){
 }
 
 function baixar(nome, conteudo, tipo){
-  var blob = (conteudo instanceof Uint8Array) ? new Blob([conteudo], {type:tipo}) : new Blob([conteudo], {type:tipo+';charset=utf-8'});
+  var blob;
+  if(typeof Blob !== 'undefined' && conteudo instanceof Blob) blob = conteudo;
+  else if(conteudo instanceof Uint8Array) blob = new Blob([conteudo], {type:tipo});
+  else blob = new Blob([conteudo], {type:tipo+';charset=utf-8'});
   var a = document.createElement('a');
   a.href = URL.createObjectURL(blob); a.download = nome;
   document.body.appendChild(a); a.click();
@@ -4306,13 +4527,7 @@ function ligarEventos(){
   }
 
   $$('#seg-vista button').forEach(function(b){
-    b.addEventListener('click', function(){
-      $$('#seg-vista button').forEach(function(x){ x.setAttribute('aria-selected','false'); });
-      this.setAttribute('aria-selected','true');
-      est.vista = this.dataset.v;
-      $$('.vista').forEach(function(v){ v.classList.toggle('on', v.dataset.v === est.vista); });
-      redesenhar();
-    });
+    b.addEventListener('click', function(){ irParaVista(this.dataset.v); });
   });
   ['ck-raios','ck-sombra','ck-mancha','ck-fundo'].forEach(function(id){
     $(id).addEventListener('change', function(){
@@ -4324,6 +4539,106 @@ function ligarEventos(){
     });
   });
   $('in-pavVista').addEventListener('change', function(){ est.pavVista = +this.value; redesenhar(); });
+
+  /* ---------- plano de corte (vista 3D) ---------- */
+  function alturaTotalModelo(){
+    var p = est.modelo.pavimentos[est.modelo.pavimentos.length-1];
+    return Math.max(0.5, p.z + p.pd);
+  }
+  function atualizarCorte(){
+    var hT = alturaTotalModelo();
+    est.corte.z = SIP.util.clamp(+$('rg-corte').value / 1000 * hT, 0, hT);
+    $('txt-corte').textContent = est.corte.ativo ? SIP.util.fmt(est.corte.z, 2) + ' m' : '—';
+    $('rg-corte').disabled = !est.corte.ativo || est.vista !== 'tres';
+    redesenhar();
+  }
+  function alternarCorte(lig){
+    est.corte.ativo = (lig === undefined) ? !est.corte.ativo : !!lig;
+    $('ck-corte').checked = est.corte.ativo;
+    if(est.corte.ativo && est.vista !== 'tres') irParaVista('tres');
+    atualizarCorte();
+  }
+  est._alternarCorte = alternarCorte;
+  est._atualizarCorte = atualizarCorte;
+  $('ck-corte').addEventListener('change', function(){ alternarCorte(this.checked); });
+  $('rg-corte').addEventListener('input', atualizarCorte);
+
+  /* ---------- gravação de vídeo do percurso diário ---------- */
+  var gravador = null, pararGrav = null;
+
+  function canvasDaVista(){
+    return { planta:$('cv-planta'), tres:$('cv-tres'), carta:$('cv-carta'),
+             matriz:$('cv-matriz'), graf:$('cv-graf') }[est.vista] || $('cv-planta');
+  }
+  function mimeSuportado(){
+    if(typeof MediaRecorder === 'undefined') return null;
+    var cands = ['video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm'];
+    for(var i=0;i<cands.length;i++) if(MediaRecorder.isTypeSupported(cands[i])) return cands[i];
+    return null;
+  }
+  function gravarDia(){
+    if(est.gravando){ if(pararGrav) pararGrav(); return; }
+    var mime = mimeSuportado();
+    if(!mime){ aviso('Este navegador não grava vídeo por MediaRecorder. Use o Chrome, o Edge ou o Firefox.', 'erro'); return; }
+
+    var cv = canvasDaVista();
+    if(!cv.captureStream){ aviso('Canvas sem captureStream neste navegador.', 'erro'); return; }
+
+    // percurso: do nascer ao pôr do sol da data corrente, com folga de 30 min
+    var ef = SIP.efemerides(est.ano, est.mes, est.dia, est.cfg.lat, est.cfg.lon, est.cfg.fuso);
+    var h0 = isFinite(ef.nascer) ? Math.max(0, ef.nascer - 0.5) : 5;
+    var h1 = isFinite(ef.por) ? Math.min(24, ef.por + 0.5) : 19;
+    if(!(h1 > h0)){ h0 = 0; h1 = 24; }
+
+    var SEG = 12, FPS = 30, total = SEG*FPS;             // 12 s a 30 quadros
+    var horaOrig = est.hora, animOrig = est.animando;
+    est.animando = false;                                 // o laço não pode competir
+
+    var fluxo = cv.captureStream(FPS);
+    var pedacos = [];
+    gravador = new MediaRecorder(fluxo, { mimeType:mime, videoBitsPerSecond: 6000000 });
+    gravador.ondataavailable = function(ev){ if(ev.data && ev.data.size) pedacos.push(ev.data); };
+    gravador.onstop = function(){
+      est.gravando = false;
+      $('selo-rec').classList.remove('on');
+      $('bt-video').classList.remove('gravando');
+      $('bt-video').textContent = '● Vídeo';
+      est.hora = horaOrig; est.animando = animOrig;
+      $('rg-hora').value = Math.round(est.hora*60);
+      atualizarInstante(); redesenhar();
+      try{ fluxo.getTracks().forEach(function(t){ t.stop(); }); }catch(e){}
+      if(!pedacos.length){ aviso('Nada foi capturado.', 'erro'); return; }
+      baixar(nomeArq('webm'), new Blob(pedacos, {type:mime}), mime);
+      aviso('Vídeo do dia salvo em WebM.', 'ok');
+      status('Pronto');
+    };
+
+    est.gravando = true;
+    $('selo-rec').classList.add('on');
+    $('bt-video').classList.add('gravando');
+    $('bt-video').textContent = 'Parar';
+    gravador.start();
+
+    var i = 0, cancelado = false;
+    pararGrav = function(){ cancelado = true; };
+    function quadro(){
+      if(cancelado || i > total){
+        try{ gravador.stop(); }catch(e){}
+        return;
+      }
+      est.hora = h0 + (h1-h0)*(i/total);
+      $('rg-hora').value = Math.round(est.hora*60);
+      atualizarInstante();
+      redesenhar();
+      $('rec-txt').textContent = 'Gravando ' + Math.round(i/total*100) + '%  ·  ' + SIP.horaTxt(est.hora);
+      i++;
+      requestAnimationFrame(quadro);
+    }
+    status('Gravando vídeo…');
+    requestAnimationFrame(quadro);
+  }
+  est._gravarDia = gravarDia;
+  $('bt-video').addEventListener('click', gravarDia);
   $('bt-ajustar').addEventListener('click', enquadrar);
   $('bt-simular').addEventListener('click', simular);
   $('bt-tema').addEventListener('click', function(){
@@ -4405,12 +4720,28 @@ function ligarEventos(){
 
   // interação com a planta
   var cv = $('cv-planta'), arrastando = false, ult = null;
+
+  /** Converte coordenada de tela em coordenada de projeto (metros). */
+  function pontoPlanta(e){
+    var r = cv.getBoundingClientRect(), v = est.vistaPlanta;
+    return { x: v.cx + (e.clientX - r.left - r.width/2)/v.esc,
+             y: v.cy - (e.clientY - r.top - r.height/2)/v.esc };
+  }
+
   cv.addEventListener('pointerdown', function(e){ arrastando = true; ult = {x:e.clientX,y:e.clientY}; cv.setPointerCapture(e.pointerId); });
   cv.addEventListener('pointerup', function(e){
-    if(ult && Math.abs(e.clientX-ult.x) < 3 && Math.abs(e.clientY-ult.y) < 3) clicarPlanta(e);
+    if(ult && Math.abs(e.clientX-ult.x) < 3 && Math.abs(e.clientY-ult.y) < 3){
+      if(est.medicao.ativo) clicarMedicao(e); else clicarPlanta(e);
+    }
     arrastando = false;
   });
   cv.addEventListener('pointermove', function(e){
+    if(est.medicao.ativo && est.medicao.a && !est.medicao.b && !arrastando){
+      est.medicao.previa = pontoPlanta(e);
+      calcularMedicao();
+      redesenhar();
+      return;
+    }
     if(!arrastando || !ult) return;
     var v = est.vistaPlanta;
     v.cx -= (e.clientX-ult.x)/v.esc; v.cy += (e.clientY-ult.y)/v.esc;
@@ -4436,6 +4767,58 @@ function ligarEventos(){
     if(melhor >= 0){ est.abSel = melhor; est.cfg.abSel = melhor; listarAberturas(); detalheAbertura(); redesenhar(); }
   }
 
+  /* ---------- ferramenta de medição ---------- */
+  function clicarMedicao(e){
+    var p = pontoPlanta(e), md = est.medicao;
+    if(!md.a || md.b){ md.a = p; md.b = null; md.previa = null; md.perfil = null; }
+    else { md.b = p; md.previa = null; }
+    calcularMedicao();
+    redesenhar();
+  }
+  function calcularMedicao(){
+    var md = est.medicao, fim = md.b || md.previa;
+    if(!md.a || !fim){
+      md.perfil = null;
+      $('md-dist').textContent = '—'; $('md-az').textContent = '—';
+      $('md-sol').textContent = '—'; $('md-som').textContent = '—';
+      $('md-fita-sol').style.width = '0%'; $('md-fita-som').style.width = '100%';
+      $('md-dica').textContent = md.a ? 'Clique para fixar o segundo ponto.' : 'Clique para fixar o primeiro ponto.';
+      return;
+    }
+    var st = est.instante;
+    md.perfil = SIP.perfilSombra(md.a, fim, md.z, st ? st.sol : null, est.modelo, est.cfg);
+    var pf = md.perfil;
+    $('md-dist').textContent = SIP.util.fmt(pf.comprimento, 2) + ' m';
+    $('md-az').textContent = SIP.util.fmt(pf.azimute, 1) + '° ' + SIP.cardeal(pf.azimute);
+    $('md-z').textContent = SIP.util.fmt(md.z, 2) + ' m';
+    if(pf.semSol){
+      $('md-sol').textContent = 'sol abaixo do horizonte';
+      $('md-som').textContent = '100 %';
+      $('md-fita-sol').style.width = '0%'; $('md-fita-som').style.width = '100%';
+    } else {
+      $('md-sol').textContent = SIP.util.fmt(pf.fracSol*100, 1) + ' %  ·  ' + SIP.util.fmt(pf.comprimento*pf.fracSol, 2) + ' m';
+      $('md-som').textContent = SIP.util.fmt(pf.fracSombra*100, 1) + ' %  ·  ' + SIP.util.fmt(pf.comprimento*pf.fracSombra, 2) + ' m';
+      $('md-fita-sol').style.width = (pf.fracSol*100).toFixed(1) + '%';
+      $('md-fita-som').style.width = (pf.fracSombra*100).toFixed(1) + '%';
+    }
+    $('md-dica').textContent = md.b
+      ? 'Clique novamente para iniciar outra medida · Esc encerra.'
+      : 'Clique para fixar o segundo ponto.';
+  }
+  function alternarMedicao(lig){
+    var md = est.medicao;
+    md.ativo = (lig === undefined) ? !md.ativo : !!lig;
+    if(!md.ativo){ md.a = md.b = md.previa = null; md.perfil = null; }
+    $('tela').classList.toggle('medindo', md.ativo);
+    $('bt-medir').classList.toggle('primario', md.ativo);
+    if(md.ativo && est.vista !== 'planta') irParaVista('planta');
+    calcularMedicao();
+    redesenhar();
+  }
+  est._alternarMedicao = alternarMedicao;
+  est._recalcMedicao = calcularMedicao;
+  $('bt-medir').addEventListener('click', function(){ alternarMedicao(); });
+
   // interação 3D
   var cv3 = $('cv-tres'), gir = false, u3 = null;
   cv3.addEventListener('pointerdown', function(e){ gir = true; u3 = {x:e.clientX,y:e.clientY}; cv3.setPointerCapture(e.pointerId); });
@@ -4454,12 +4837,109 @@ function ligarEventos(){
   }, {passive:false});
 
   window.addEventListener('resize', function(){ redesenhar(); });
+
+  /* ---------- atalhos de teclado ---------- */
+  function passoDia(s){
+    var nd = SIP.bissexto(est.ano) ? 366 : 365;
+    var dn = SIP.diaDoAno(est.ano, est.mes, est.dia) + s;
+    while(dn < 1) dn += nd;
+    while(dn > nd) dn -= nd;
+    var d2 = SIP.deDiaDoAno(est.ano, dn);
+    est.mes = d2.mes; est.dia = d2.dia;
+    $('in-data').value = est.ano+'-'+String(est.mes).padStart(2,'0')+'-'+String(est.dia).padStart(2,'0');
+    atualizarInstante(); redesenhar();
+  }
+  function alternarCk(id, campo){
+    var el = $(id); el.checked = !el.checked;
+    est[campo] = el.checked; redesenhar();
+  }
+
+  var VISTAS = ['planta','tres','carta','matriz','graf'];
+  var ATALHOS = [
+    { g:'Vistas' },
+    { k:['1','…','5'], d:'Planta, 3D, carta solar, matriz anual, gráficos' },
+    { k:['E'], d:'Enquadrar o modelo na tela' },
+    { k:['T'], d:'Alternar tema claro e escuro' },
+    { g:'Tempo' },
+    { k:['←','→'], d:'Recuar e avançar uma hora (passo da configuração)' },
+    { k:['↑','↓'], d:'Avançar e recuar um dia' },
+    { k:['Shift','+','↑','↓'], d:'Avançar e recuar sete dias' },
+    { k:['Espaço'], d:'Animar o dia · com Shift, animar o ano' },
+    { g:'Ferramentas' },
+    { k:['M'], d:'Ferramenta de medição na planta' },
+    { k:['C'], d:'Plano de corte na vista 3D' },
+    { k:['[',']'], d:'Baixar e subir o plano de corte em 10 cm' },
+    { k:['V'], d:'Gravar o vídeo do dia · pressione de novo para parar' },
+    { k:['Esc'], d:'Encerrar medição, corte ou gravação' },
+    { g:'Camadas' },
+    { k:['R'], d:'Raios solares' },
+    { k:['S'], d:'Sombras projetadas' },
+    { k:['N'], d:'Mancha de sol no piso' },
+    { k:['?'], d:'Esta lista' }
+  ];
+  function mostrarAtalhos(){
+    var html = '<table class="tab-atalhos"><tbody>';
+    ATALHOS.forEach(function(a){
+      if(a.g){ html += '<tr><td colspan="2"><h4>'+a.g+'</h4></td></tr>'; return; }
+      var teclas = a.k.map(function(t){ return (t==='…'||t==='+') ? '<span style="color:var(--texto-2)">'+t+'</span>' : '<kbd>'+t+'</kbd>'; }).join(' ');
+      html += '<tr><td>'+teclas+'</td><td>'+a.d+'</td></tr>';
+    });
+    html += '</tbody></table>';
+    modal('Atalhos de teclado', html, [{ rot:'Fechar', prim:true, fn:fecharModal }]);
+  }
+  est._mostrarAtalhos = mostrarAtalhos;
+  $('bt-atalhos').addEventListener('click', mostrarAtalhos);
+
   document.addEventListener('keydown', function(e){
-    if(e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') return;
-    if(e.key === 'ArrowRight'){ passoHora(1); e.preventDefault(); }
-    if(e.key === 'ArrowLeft'){ passoHora(-1); e.preventDefault(); }
-    if(e.key === ' '){ $('bt-play').click(); e.preventDefault(); }
+    var t = e.target.tagName;
+    if(t === 'INPUT' || t === 'SELECT' || t === 'TEXTAREA' || e.target.isContentEditable) return;
+    if(e.ctrlKey || e.metaKey || e.altKey) return;
+
+    var k = e.key;
+
+    // Esc encerra o que estiver ativo, na ordem de prioridade
+    if(k === 'Escape'){
+      if(est.gravando){ gravarDia(); e.preventDefault(); return; }
+      if($('mod').classList.contains('on')){ fecharModal(); e.preventDefault(); return; }
+      if(est.medicao.ativo){ alternarMedicao(false); e.preventDefault(); return; }
+      if(est.corte.ativo){ alternarCorte(false); e.preventDefault(); return; }
+      return;
+    }
+    if(k === '?' || (k === '/' && e.shiftKey)){ mostrarAtalhos(); e.preventDefault(); return; }
+
+    // vistas 1..5
+    if(k >= '1' && k <= '5'){ irParaVista(VISTAS[+k - 1]); e.preventDefault(); return; }
+
+    switch(k){
+      case 'ArrowRight': passoHora(1); e.preventDefault(); break;
+      case 'ArrowLeft':  passoHora(-1); e.preventDefault(); break;
+      case 'ArrowUp':    passoDia(e.shiftKey ? 7 : 1); e.preventDefault(); break;
+      case 'ArrowDown':  passoDia(e.shiftKey ? -7 : -1); e.preventDefault(); break;
+      case ' ':          $(e.shiftKey ? 'bt-playano' : 'bt-play').click(); e.preventDefault(); break;
+      case '[':          if(est.corte.ativo){ ajustarCorteMetros(-0.10); e.preventDefault(); } break;
+      case ']':          if(est.corte.ativo){ ajustarCorteMetros(0.10); e.preventDefault(); } break;
+      default: break;
+    }
+    switch(k.toLowerCase()){
+      case 'e': enquadrar(); e.preventDefault(); break;
+      case 't': $('bt-tema').click(); e.preventDefault(); break;
+      case 'm': alternarMedicao(); e.preventDefault(); break;
+      case 'c': alternarCorte(); e.preventDefault(); break;
+      case 'v': gravarDia(); e.preventDefault(); break;
+      case 'r': alternarCk('ck-raios','mostrarRaios'); e.preventDefault(); break;
+      case 's': alternarCk('ck-sombra','mostrarSombra'); e.preventDefault(); break;
+      case 'n': alternarCk('ck-mancha','mostrarMancha'); e.preventDefault(); break;
+      default: break;
+    }
   });
+
+  /** Move o plano de corte em metros, mantendo o slider sincronizado. */
+  function ajustarCorteMetros(d){
+    var hT = alturaTotalModelo();
+    var z = SIP.util.clamp(est.corte.z + d, 0, hT);
+    $('rg-corte').value = Math.round(z/hT*1000);
+    atualizarCorte();
+  }
 }
 
 function trocarTela(qual){
@@ -4484,6 +4964,7 @@ function iniciar(){
   }
   listarObstrucoes();
   $('sub-projeto').textContent = est.modelo.nome || 'Novo estudo';
+  irParaVista(est.vista);                 // sincroniza medição, corte e vídeo com a vista ativa
   enquadrar();
   requestAnimationFrame(laco);
   status('Pronto');
