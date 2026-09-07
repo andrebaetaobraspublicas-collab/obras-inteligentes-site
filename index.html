@@ -526,6 +526,7 @@ body.modal-open{overflow:hidden}
       <button class="filter-btn" type="button" data-filter="Instalacoes Eletricas">Instala&ccedil;&otilde;es El&eacute;tricas</button>
       <button class="filter-btn" type="button" data-filter="Instalacoes Hidrosanitarias e de Incendio">Instala&ccedil;&otilde;es Hidrosanit&aacute;rias e de Inc&ecirc;ndio</button>
       <button class="filter-btn" type="button" data-filter="Ar condicionado e ventilacao">Ar condicionado e ventila&ccedil;&atilde;o</button>
+      <button class="filter-btn" type="button" data-filter="Arquitetura e Design de Interiores">Arquitetura e Design de Interiores</button>
       <button class="filter-btn" type="button" data-filter="Pavimentacao, Saneamento e Infraestrutura">Pavimenta&ccedil;&atilde;o, Saneamento e Infraestrutura</button>
       <button class="filter-btn" type="button" data-filter="Engenharia Mecanica">Engenharia Mec&acirc;nica</button>
       <button class="filter-btn" type="button" data-filter="Equipamentos, Apoios e Montagens">Equipamentos, Apoios e Montagens</button>
@@ -535,7 +536,7 @@ body.modal-open{overflow:hidden}
       <button class="filter-btn" type="button" data-filter="Orcamento">Or&ccedil;amento</button>
       <button class="filter-btn" type="button" data-filter="Artigos">Artigos</button>
     </div>
-    <div class="app-filter-status" id="appFilterStatus">75 aplicativos encontrados</div>
+    <div class="app-filter-status" id="appFilterStatus">77 aplicativos encontrados</div>
   </div>
 
   <div class="apps">
@@ -1364,6 +1365,28 @@ body.modal-open{overflow:hidden}
       <div class="meta">Abrir sistema &middot; energia cr&iacute;tica</div>
     </a>
 
+    <a class="app" href="/ambienta/" aria-label="Abrir Ambienta - Plantas e interiores">
+      <span class="arrow">&rarr;</span>
+      <div class="app-num">76 / INTERIORES</div>
+      <svg class="app-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M7 39V9h34v30"/><path d="M7 39h34"/><path d="M15 39V23h12v16"/><path d="M27 27h10v12"/><path d="M13 15h8"/><path d="M27 15h8"/><path d="M13 19h8"/><path d="M27 19h8"/>
+      </svg>
+      <h3>Ambienta</h3>
+      <p>Projeto de interiores com apoio a ambientes, aberturas, mobili&aacute;rio, arranjos em planta, vista tridimensional, exporta&ccedil;&atilde;o IFC, SketchUp e memorial descritivo.</p>
+      <div class="meta">Abrir sistema &middot; interiores</div>
+    </a>
+
+    <a class="app" href="/solarincidence-pro/" aria-label="Abrir SolarIncidence Pro - Insolacao, sombreamento e iluminacao natural">
+      <span class="arrow">&rarr;</span>
+      <div class="app-num">77 / INSOLA&Ccedil;&Atilde;O</div>
+      <svg class="app-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="33" cy="15" r="5"/><path d="M33 4v3"/><path d="M33 23v3"/><path d="M22 15h3"/><path d="M41 15h3"/><path d="m25 7 2 2"/><path d="m39 21 2 2"/><path d="M7 41h34"/><path d="M10 41V24l12-8 12 8v17"/><path d="M18 41V30h8v11"/><path d="M10 24h24"/><path d="M33 27 21 41"/>
+      </svg>
+      <h3>SolarIncidence Pro</h3>
+      <p>Estudo de insola&ccedil;&atilde;o, sombreamento e ilumina&ccedil;&atilde;o natural em edifica&ccedil;&otilde;es, com importa&ccedil;&atilde;o DXF, IFC, PDF e imagem e exporta&ccedil;&atilde;o t&eacute;cnica.</p>
+      <div class="meta">Abrir sistema &middot; insola&ccedil;&atilde;o</div>
+    </a>
+
   </div>
 </section>
 
@@ -1456,6 +1479,8 @@ body.modal-open{overflow:hidden}
         <a href="/spdapro/">SPDAPro - SPDA e Aterramento</a>
         <a href="/lumipro/">LumiPro - Dimensionamento Luminot&eacute;cnico</a>
         <a href="/upspro/">UPSPro - Energia Cr&iacute;tica</a>
+        <a href="/ambienta/">Ambienta - Plantas e Interiores</a>
+        <a href="/solarincidence-pro/">SolarIncidence Pro - Insola&ccedil;&atilde;o e Sombreamento</a>
         <a href="/hidrosan-pro/">HidroSan Pro - Instala&ccedil;&otilde;es Hidrossanit&aacute;rias</a>
         <a href="/incendiocalc/">Inc&ecirc;ndioCalc - Hidrantes e Sprinklers</a>
         <a href="/brucknercalc/">Br&uuml;cknerCalc - Curva de Massas</a>
@@ -1650,7 +1675,9 @@ body.modal-open{overflow:hidden}
     ["/motorcalc/", ["Equipamentos, Apoios e Montagens", "motorcalc motor motores eletricos seleção selecao dimensionamento potencia rendimento partida regime operacao equipamentos apoios montagens"]],
     ["/sancionapro/", ["Gestao de Obras e de Contratos", "sancionapro sancoes sanções processo sancionatorio sancionatorio penalidade multa advertencia impedimento inidoneidade lei 14133 contratos licitantes contratados dosimetria recursos gestao obras contratos"]],
     ["/incendiocalc/", ["Instalacoes Hidrosanitarias e de Incendio", "incendiocalc incendio incêndio combate incendio hidrantes sprinklers chuveiros automaticos reserva tecnica incendio vazao pressao bomba instalacoes hidrosanitarias incendio"]],
-    ["/upspro/", ["Instalacoes Eletricas", "upspro ups nobreak no-break energia critica banco baterias autonomia potencia cargas alimentacao ininterrupta instalacoes eletricas"]]
+    ["/upspro/", ["Instalacoes Eletricas", "upspro ups nobreak no-break energia critica banco baterias autonomia potencia cargas alimentacao ininterrupta instalacoes eletricas"]],
+    ["/ambienta/", ["Arquitetura e Design de Interiores", "ambienta plantas interiores arquitetura design interiores ambiente aberturas mobiliario arranjo planta vista tridimensional ifc sketchup memorial descritivo"]],
+    ["/solarincidence-pro/", ["Arquitetura e Design de Interiores", "solarincidence solar incidence insolacao sombreamento iluminacao natural arquitetura interiores edificacoes dxf ifc pdf imagem carta solar luz natural"]]
   ]);
 
   const appCards = Array.from(document.querySelectorAll(".apps .app"));
