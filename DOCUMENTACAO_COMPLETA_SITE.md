@@ -212,7 +212,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/sancionapro/` | 240912 bytes | 237881 caracteres |
 | `/incendiocalc/` | 327091 bytes | 317433 caracteres |
 | `/upspro/` | 1464093 bytes | 1445745 caracteres |
-| `/ambienta/` | 1146296 bytes | 1136473 caracteres |
+| `/ambienta/` | 1263353 bytes | 1252139 caracteres |
 | `/solarincidence-pro/` | 282551 bytes | 280392 caracteres |
 | `/abc-fiscal/` | 351255 bytes | 349022 caracteres |
 
@@ -1811,9 +1811,9 @@ Arquivo: `ambienta/index.html`
 
 Ultima atualizacao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\Ambienta_v2.9.html`
+- Fonte: `C:\Users\ACER\Documents\Downloads\Ambienta_v3.0.html`
 - Data: 07/09/2026
-- Alteracao: substituicao integral de `ambienta/index.html` pela nova versao enviada. A versao anterior foi preservada em `C:\Obras Inteligentes\backups\ambienta-index-before-v2-9-20260907-1728.html`.
+- Alteracao: substituicao integral de `ambienta/index.html` pela nova versao enviada. A versao anterior foi preservada em `C:\Obras Inteligentes\backups\ambienta-index-before-v3-0-20260907-1743.html`.
 
 Observacoes:
 
