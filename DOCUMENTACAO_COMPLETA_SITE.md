@@ -209,7 +209,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/motorcalc/` | 148249 bytes | 147037 caracteres |
 | `/sancionapro/` | 240912 bytes | 237881 caracteres |
 | `/incendiocalc/` | 327091 bytes | 317433 caracteres |
-| `/upspro/` | 1180691 bytes | 1165941 caracteres |
+| `/upspro/` | 1464093 bytes | 1445745 caracteres |
 | `/abc-fiscal/` | 351255 bytes | 349022 caracteres |
 
 ## Estrutura local principal
@@ -1787,11 +1787,11 @@ Observacoes:
 Rota: `/upspro/`  
 Arquivo: `upspro/index.html`
 
-Ultima inclusao:
+Ultima atualizacao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\UPSPro_v1.7.html`
+- Fonte: `C:\Users\ACER\Documents\Downloads\UPSPro_v1.9.html`
 - Data: 06/09/2026
-- Alteracao: inclusao de novo card na home, no filtro `Instalacoes Eletricas`, e publicacao do aplicativo UPSPro - Energia Critica como HTML standalone.
+- Alteracao: substituicao integral de `upspro/index.html` pela nova versao enviada. A versao anterior foi preservada em `C:\Obras Inteligentes\backups\upspro-index-before-v1-9-20260906-2138.html`.
 
 Observacoes:
 
