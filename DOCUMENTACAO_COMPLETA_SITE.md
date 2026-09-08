@@ -19,7 +19,7 @@ O site `www.obrasinteligentes.ia.br` e uma pagina estatica hospedada na Hostinge
 C:\Obras Inteligentes\index.html
 ```
 
-A tela inicial possui atualmente 77 cards de aplicativos. Cada card aponta para uma rota estatica dentro do dominio. A regra geral e:
+A tela inicial possui atualmente 78 cards de aplicativos. Cada card aponta para uma rota estatica dentro do dominio. A regra geral e:
 
 ```text
 https://www.obrasinteligentes.ia.br/nome-da-rota/
@@ -130,6 +130,7 @@ Inventario originalmente verificado em 21/07/2026 e atualizado em 05/09/2026 par
 | 75 / UPS | UPSPro | `/upspro/` | `C:\Obras Inteligentes\upspro\index.html` | existe | 200 |
 | 76 / INTERIORES | Ambienta | `/ambienta/` | `C:\Obras Inteligentes\ambienta\index.html` | existe | 200 |
 | 77 / INSOLACAO | SolarIncidence Pro | `/solarincidence-pro/` | `C:\Obras Inteligentes\solarincidence-pro\index.html` | existe | 200 |
+| 78 / ELETROPOSTO | EletroPosto Calc | `/eletroposto-calc/` | `C:\Obras Inteligentes\eletroposto-calc\index.html` | existe | 200 |
 
 ## Tamanhos verificados
 
@@ -214,6 +215,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/upspro/` | 1464093 bytes | 1445745 caracteres |
 | `/ambienta/` | 1263353 bytes | 1252139 caracteres |
 | `/solarincidence-pro/` | 282551 bytes | 280392 caracteres |
+| `/eletroposto-calc/` | 169362 bytes | 167654 caracteres |
 | `/abc-fiscal/` | 351255 bytes | 349022 caracteres |
 
 ## Estrutura local principal
@@ -1840,6 +1842,24 @@ Observacoes:
 - O card foi classificado no filtro `Arquitetura e Design de Interiores`.
 - Validar apos futuras alteracoes se estudo de insolacao, sombreamento, iluminacao natural, importacao DXF/IFC/PDF/imagem e exportacoes tecnicas continuam carregando corretamente.
 
+### EletroPosto Calc
+
+Rota: `/eletroposto-calc/`  
+Arquivo: `eletroposto-calc/index.html`
+
+Ultima inclusao:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\eletroposto-calc (1).html`
+- Data: 08/09/2026
+- Alteracao: inclusao de novo card na home, no filtro `Instalacoes Eletricas`, e publicacao do aplicativo EletroPosto Calc como HTML standalone.
+
+Observacoes:
+
+- Aplicativo standalone empacotado em HTML unico, com manual incorporado.
+- Tela inicial do site aponta para `/eletroposto-calc/`.
+- O card foi classificado no filtro `Instalacoes Eletricas`.
+- Validar apos futuras alteracoes se dimensionamento de infraestrutura de recarga, demanda, alimentadores, protecoes, aterramento, gerenciamento de carga, ABNT NBR 17019 e NBR 5410 continuam carregando corretamente.
+
 ## Artigos publicados na home
 
 Em 20/07/2026, os tres cards iniciais do bloco `Conteudo` da home foram substituidos por artigos reais enviados em PDF. Em 21/07/2026, foi incluido um quarto artigo. A estrategia adotada foi renderizar cada pagina do PDF como PNG dentro de uma pagina HTML propria, preservando a diagramacao original, tabelas, figuras e paginacao. Cada pagina tambem oferece link para abrir/baixar o PDF original.
@@ -2063,7 +2083,8 @@ $headers=@{ 'User-Agent'='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
   '/incendiocalc/',
   '/upspro/',
   '/ambienta/',
-  '/solarincidence-pro/'
+  '/solarincidence-pro/',
+  '/eletroposto-calc/'
 ) | ForEach-Object {
   $url = "https://www.obrasinteligentes.ia.br$_?v=check"
   $r = Invoke-WebRequest -UseBasicParsing -Headers $headers -Uri $url -TimeoutSec 30

@@ -1,0 +1,2862 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>EletroPosto Calc — Dimensionamento de Infraestrutura de Recarga de Veículos Elétricos</title>
+<meta name="description" content="Calculadora offline de demanda, alimentadores, proteções e gerenciamento de carga para eletropostos e wallboxes. ABNT NBR 17019 e NBR 5410.">
+<style>
+/* ==========================================================================
+   EletroPosto Calc — folha de estilo única
+   Paleta: instrumentação elétrica (petróleo/cobre sobre concreto)
+   ========================================================================== */
+:root{
+  --canvas:#E9EDEF; --surface:#FFFFFF; --surface2:#F3F6F7; --surface3:#E4EAED;
+  --line:#CFD9DE; --line2:#B6C4CB;
+  --ink:#12212B; --ink2:#5B6E7A; --ink3:#8496A1;
+  --accent:#0E6F79; --accent2:#0B565E; --accent-soft:#DCEEF0;
+  --copper:#A65A2A; --copper-soft:#F6E7DC;
+  --ok:#1F6F4E; --ok-soft:#DCEFE5;
+  --warn:#96660F; --warn-soft:#FAEED5;
+  --danger:#A32F26; --danger-soft:#F8E1DE;
+  --shadow:0 1px 2px rgba(18,33,43,.08),0 8px 24px -16px rgba(18,33,43,.35);
+  --r:10px; --r-sm:6px;
+  --mono:ui-monospace,"SF Mono","Cascadia Mono","Roboto Mono",Consolas,"Liberation Mono",monospace;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+html[data-tema="escuro"]{
+  --canvas:#0C1418; --surface:#152029; --surface2:#1B2A33; --surface3:#22333D;
+  --line:#2A3D48; --line2:#3A4F5C;
+  --ink:#E6EFF3; --ink2:#9BB0BB; --ink3:#748B97;
+  --accent:#31A7B2; --accent2:#4FC2CB; --accent-soft:#123840;
+  --copper:#D08A57; --copper-soft:#3A2718;
+  --ok:#4FB183; --ok-soft:#123326;
+  --warn:#DBA23F; --warn-soft:#332708;
+  --danger:#E3695C; --danger-soft:#3A1714;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 28px -18px rgba(0,0,0,.9);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--canvas);color:var(--ink);font-family:var(--sans);
+  font-size:15px;line-height:1.5;-webkit-text-size-adjust:100%;
+}
+h1,h2,h3,h4{margin:0;font-weight:640;letter-spacing:-.01em;line-height:1.25}
+h2{font-size:1.28rem}h3{font-size:1.02rem}h4{font-size:.92rem}
+p{margin:.5em 0}
+a{color:var(--accent);text-underline-offset:2px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
+
+/* ---------- topo ---------- */
+header.topo{
+  position:sticky;top:0;z-index:40;background:var(--surface);
+  border-bottom:1px solid var(--line);
+}
+.topo-linha{display:flex;align-items:center;gap:14px;padding:9px 22px;flex-wrap:wrap}
+.marca{display:flex;align-items:center;gap:10px;min-width:0}
+.marca svg{flex:none}
+.marca .t1{font-weight:680;font-size:1.02rem;letter-spacing:-.015em}
+.marca .t2{font-size:.72rem;color:var(--ink2);margin-top:-2px}
+.topo-acoes{margin-left:auto;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+input#projNome{
+  font:inherit;font-size:.86rem;background:var(--surface2);border:1px solid var(--line);
+  color:var(--ink);border-radius:var(--r-sm);padding:6px 9px;width:190px;
+}
+.btn{
+  font:inherit;font-size:.84rem;font-weight:560;cursor:pointer;
+  background:var(--surface2);color:var(--ink);border:1px solid var(--line2);
+  border-radius:var(--r-sm);padding:6px 11px;display:inline-flex;align-items:center;gap:6px;
+}
+.btn:hover{background:var(--surface3)}
+.btn.pri{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.pri:hover{background:var(--accent2)}
+.btn.mini{padding:3px 8px;font-size:.76rem}
+.btn.perigo{color:var(--danger);border-color:var(--danger)}
+
+/* ---------- barra de carga (herói) ---------- */
+.barra-status{padding:0 22px 10px}
+.gauge{
+  background:var(--surface2);border:1px solid var(--line);border-radius:var(--r);
+  padding:11px 13px 13px;display:grid;grid-template-columns:1fr auto;gap:10px 18px;align-items:center;
+}
+.gauge-trilho{
+  position:relative;height:30px;border-radius:5px;overflow:hidden;
+  background:repeating-linear-gradient(135deg,var(--surface3) 0 7px,transparent 7px 14px),var(--surface);
+  border:1px solid var(--line);
+}
+.gauge-seg{position:absolute;top:0;bottom:0;transition:width .35s cubic-bezier(.2,.7,.3,1)}
+.seg-base{left:0;background:var(--ink2)}
+.seg-ve{background:var(--accent)}
+.seg-excedente{background:var(--danger)}
+.gauge-limite{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--danger)}
+.gauge-limite::after{
+  content:"limite";position:absolute;top:-14px;left:3px;font-size:.62rem;color:var(--danger);
+  white-space:nowrap;font-weight:640;
+}
+.gauge-legenda{display:flex;gap:14px;flex-wrap:wrap;font-size:.74rem;color:var(--ink2);margin-top:7px}
+.chave{display:inline-flex;align-items:center;gap:5px}
+.chave i{width:10px;height:10px;border-radius:2px;display:inline-block}
+.veredito{
+  border-radius:var(--r-sm);padding:8px 12px;min-width:210px;
+  border:1px solid var(--line);background:var(--surface);
+}
+.veredito .vt{font-weight:680;font-size:.9rem;display:flex;align-items:center;gap:7px}
+.veredito .vd{font-size:.76rem;color:var(--ink2);margin-top:2px}
+.veredito[data-nivel="ok"]{background:var(--ok-soft);border-color:var(--ok)}
+.veredito[data-nivel="ok"] .vt{color:var(--ok)}
+.veredito[data-nivel="atencao"]{background:var(--warn-soft);border-color:var(--warn)}
+.veredito[data-nivel="atencao"] .vt{color:var(--warn)}
+.veredito[data-nivel="critico"]{background:var(--danger-soft);border-color:var(--danger)}
+.veredito[data-nivel="critico"] .vt{color:var(--danger)}
+
+/* ---------- navegação ---------- */
+nav.abas{display:flex;gap:2px;padding:0 16px;overflow-x:auto;scrollbar-width:thin;border-top:1px solid var(--line)}
+nav.abas button{
+  font:inherit;font-size:.85rem;font-weight:560;white-space:nowrap;cursor:pointer;
+  background:none;border:0;border-bottom:2px solid transparent;color:var(--ink2);
+  padding:9px 12px;display:flex;align-items:center;gap:7px;
+}
+nav.abas button:hover{color:var(--ink)}
+nav.abas button[aria-selected="true"]{color:var(--accent);border-bottom-color:var(--accent)}
+nav.abas .passo{
+  font-family:var(--mono);font-size:.68rem;background:var(--surface3);color:var(--ink2);
+  border-radius:3px;padding:1px 4px;
+}
+nav.abas button[aria-selected="true"] .passo{background:var(--accent);color:#fff}
+
+/* ---------- layout ---------- */
+main{max-width:1720px;margin:0 auto;padding:14px 22px 8px}
+.painel{
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
+  padding:14px 18px;margin-bottom:13px;box-shadow:var(--shadow);
+}
+.painel > h2{display:flex;align-items:center;gap:9px;margin-bottom:2px}
+.painel > .sub{color:var(--ink2);font-size:.85rem;margin:2px 0 11px}
+.grade{display:grid;gap:11px 16px;grid-template-columns:repeat(auto-fit,minmax(205px,1fr))}
+.grade.g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.campo{display:flex;flex-direction:column;gap:4px;min-width:0}
+.campo > label{font-size:.79rem;font-weight:600;color:var(--ink2)}
+.campo .dica{font-size:.71rem;color:var(--ink3);line-height:1.35}
+input[type=text],input[type=number],select,textarea{
+  font:inherit;font-size:.9rem;background:var(--surface2);color:var(--ink);
+  border:1px solid var(--line2);border-radius:var(--r-sm);padding:7px 9px;width:100%;
+}
+input[type=number]{font-family:var(--mono);font-variant-numeric:tabular-nums}
+input:disabled,select:disabled{opacity:.5;cursor:not-allowed}
+.sufixo{position:relative}
+.sufixo input{padding-right:44px}
+.sufixo span{
+  position:absolute;right:9px;top:50%;transform:translateY(-50%);
+  font-size:.75rem;color:var(--ink3);font-family:var(--mono);pointer-events:none;
+}
+.linha-radio{display:flex;gap:6px;flex-wrap:wrap}
+.linha-radio label{
+  font-size:.8rem;border:1px solid var(--line2);border-radius:var(--r-sm);
+  padding:6px 10px;cursor:pointer;background:var(--surface2);
+}
+.linha-radio input{position:absolute;opacity:0;width:0;height:0}
+.linha-radio label:has(input:checked){background:var(--accent-soft);border-color:var(--accent);color:var(--accent);font-weight:620}
+.check{display:flex;align-items:flex-start;gap:8px;font-size:.84rem;cursor:pointer}
+.check input{margin-top:3px;accent-color:var(--accent);flex:none}
+
+/* ---------- tabelas ---------- */
+.tab-rolagem{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;font-size:.85rem}
+th,td{padding:7px 9px;text-align:left;border-bottom:1px solid var(--line)}
+th{font-size:.73rem;color:var(--ink2);font-weight:640;background:var(--surface2);white-space:nowrap}
+td.n,th.n{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums}
+tbody tr:hover{background:var(--surface2)}
+table input,table select{padding:5px 7px;font-size:.83rem}
+.total-linha td{font-weight:680;background:var(--surface2);border-top:2px solid var(--line2)}
+
+/* ---------- resultados ---------- */
+.cartoes{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(158px,1fr))}
+.cartao{
+  background:var(--surface2);border:1px solid var(--line);border-radius:var(--r-sm);padding:11px 12px;
+}
+.cartao .rot{font-size:.72rem;color:var(--ink2);font-weight:600}
+.cartao .val{font-family:var(--mono);font-size:1.42rem;font-weight:640;letter-spacing:-.02em;line-height:1.15;margin-top:3px}
+.cartao .uni{font-size:.78rem;color:var(--ink2);font-weight:500}
+.cartao .obs{font-size:.71rem;color:var(--ink3);margin-top:3px}
+.cartao[data-t="ok"]{border-left:3px solid var(--ok)}
+.cartao[data-t="warn"]{border-left:3px solid var(--warn)}
+.cartao[data-t="bad"]{border-left:3px solid var(--danger)}
+.cartao[data-t="ac"]{border-left:3px solid var(--accent)}
+
+.aviso{
+  display:flex;gap:9px;align-items:flex-start;border-radius:var(--r-sm);
+  padding:9px 12px;font-size:.83rem;margin:8px 0;border:1px solid;line-height:1.45;
+}
+.aviso b{font-weight:660}
+.aviso.info{background:var(--accent-soft);border-color:var(--accent);color:var(--ink)}
+.aviso.ok{background:var(--ok-soft);border-color:var(--ok)}
+.aviso.warn{background:var(--warn-soft);border-color:var(--warn)}
+.aviso.erro{background:var(--danger-soft);border-color:var(--danger)}
+.aviso .ic{font-family:var(--mono);font-weight:700;flex:none}
+
+.blocos{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(330px,1fr))}
+.bloco{border:1px solid var(--line);border-radius:var(--r-sm);overflow:hidden}
+.bloco > header{
+  background:var(--surface2);padding:8px 12px;font-size:.84rem;font-weight:660;
+  border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:8px;
+}
+.bloco > div{padding:4px 0}
+.bloco dl{margin:0;display:grid;grid-template-columns:1fr auto;gap:0}
+.bloco dt{padding:5px 12px;font-size:.81rem;color:var(--ink2);border-bottom:1px solid var(--line)}
+.bloco dd{
+  padding:5px 12px;margin:0;font-size:.86rem;font-family:var(--mono);text-align:right;
+  border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums;
+}
+.bloco dl > :nth-last-child(-n+2){border-bottom:0}
+.marcador{
+  font-size:.68rem;font-family:var(--sans);font-weight:640;border-radius:3px;padding:1px 6px;
+  background:var(--surface3);color:var(--ink2);
+}
+.marcador.ac{background:var(--accent-soft);color:var(--accent)}
+.marcador.cu{background:var(--copper-soft);color:var(--copper)}
+.marcador.ok{background:var(--ok-soft);color:var(--ok)}
+.marcador.warn{background:var(--warn-soft);color:var(--warn)}
+.marcador.bad{background:var(--danger-soft);color:var(--danger)}
+
+canvas{max-width:100%;display:block}
+.legenda-fig{font-size:.74rem;color:var(--ink3);margin-top:6px}
+svg.unifilar{width:100%;height:auto;background:var(--surface2);border:1px solid var(--line);border-radius:var(--r-sm)}
+.oculto{display:none !important}
+.vazio{color:var(--ink3);font-size:.86rem;padding:18px;text-align:center;border:1px dashed var(--line2);border-radius:var(--r-sm)}
+
+/* ---------- manual ---------- */
+.manual{display:grid;grid-template-columns:216px 1fr;gap:20px;align-items:start}
+.manual-nav{position:sticky;top:150px;max-height:70vh;overflow:auto}
+.manual-nav input{margin-bottom:8px}
+.manual-nav a{
+  display:block;padding:6px 9px;font-size:.82rem;color:var(--ink2);text-decoration:none;
+  border-left:2px solid transparent;border-radius:0 var(--r-sm) var(--r-sm) 0;
+}
+.manual-nav a:hover{background:var(--surface2);color:var(--ink)}
+.manual-nav a.ativo{border-left-color:var(--accent);color:var(--accent);background:var(--accent-soft);font-weight:600}
+.manual-conteudo section{scroll-margin-top:170px;padding-bottom:22px;margin-bottom:22px;border-bottom:1px solid var(--line)}
+.manual-conteudo section:last-child{border-bottom:0}
+.manual-conteudo h3{margin-bottom:8px}
+.manual-conteudo p,.manual-conteudo li{font-size:.9rem;color:var(--ink)}
+.manual-conteudo ul,.manual-conteudo ol{padding-left:20px;margin:.5em 0}
+.manual-conteudo li{margin:.28em 0}
+.lab{background:var(--surface2);border:1px solid var(--line2);border-radius:var(--r-sm);padding:12px 14px;margin:12px 0}
+.lab h4{margin-bottom:9px;color:var(--accent);display:flex;align-items:center;gap:7px}
+.lab-saida{
+  margin-top:10px;font-family:var(--mono);font-size:.84rem;background:var(--surface);
+  border:1px solid var(--line);border-radius:var(--r-sm);padding:9px 11px;white-space:pre-wrap;
+}
+.progresso{font-size:.74rem;color:var(--ink3);margin-top:10px}
+details.faq{border:1px solid var(--line);border-radius:var(--r-sm);margin:6px 0;background:var(--surface2)}
+details.faq summary{padding:8px 12px;cursor:pointer;font-weight:600;font-size:.86rem}
+details.faq > div{padding:0 12px 10px;font-size:.86rem;color:var(--ink2)}
+
+footer.rodape{
+  max-width:1720px;margin:0 auto;padding:6px 22px 30px;color:var(--ink3);font-size:.76rem;line-height:1.55;
+}
+.toast{
+  position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(14px);
+  background:var(--ink);color:var(--canvas);padding:9px 16px;border-radius:20px;font-size:.84rem;
+  opacity:0;pointer-events:none;transition:.24s;z-index:90;box-shadow:var(--shadow);
+}
+.toast.ver{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media (max-width:1100px){
+  main{padding:12px 14px 6px}
+}
+@media (max-width:860px){
+  .manual{grid-template-columns:1fr}
+  .manual-nav{position:static;max-height:none}
+  .gauge{grid-template-columns:1fr}
+  main{padding:10px}
+  .painel{padding:12px 13px}
+  input#projNome{width:130px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none !important;animation:none !important}}
+
+/* ==========================================================================
+   Abertura animada e avisos legais
+   ========================================================================== */
+.abertura{
+  position:fixed;inset:0;z-index:300;overflow:hidden;display:grid;place-items:center;
+  background:radial-gradient(120% 95% at 50% 34%,#123840 0%,#0a1c22 48%,#040d11 100%);
+  transition:opacity .55s ease,visibility .55s;
+}
+.abertura.saiu{opacity:0;visibility:hidden}
+.abertura .pular{
+  position:absolute;bottom:20px;right:24px;font-size:.72rem;color:#5f8b93;letter-spacing:.02em;
+}
+.medidor{position:absolute;left:50%;bottom:52px;transform:translateX(-50%);width:min(320px,60vw)}
+.medidor .trilho{height:3px;background:rgba(94,166,176,.22);border-radius:2px;overflow:hidden}
+.medidor .barra{height:100%;width:0;background:linear-gradient(90deg,#2b8f9a,#57d6e2);animation:carregar 4s linear forwards}
+.medidor .txt{font-size:.7rem;color:#5f8b93;margin-top:7px;text-align:center;font-family:var(--mono)}
+@keyframes carregar{to{width:100%}}
+
+.palco{perspective:1500px;perspective-origin:50% 40%;width:min(620px,88vw);height:min(430px,58vh);position:relative}
+.cena{position:absolute;inset:0;transform-style:preserve-3d;animation:cenaGira 4.6s cubic-bezier(.34,.03,.2,1) forwards}
+@keyframes cenaGira{
+  0%{transform:rotateX(16deg) rotateY(-38deg) scale(.82)}
+  58%{transform:rotateX(11deg) rotateY(4deg) scale(1)}
+  100%{transform:rotateX(9deg) rotateY(16deg) scale(1.03)}
+}
+.piso{
+  position:absolute;left:50%;top:70%;width:900px;height:900px;margin:-450px 0 0 -450px;
+  transform:rotateX(90deg);transform-origin:50% 50%;
+  background:
+    repeating-linear-gradient(0deg,rgba(70,196,209,.20) 0 1px,transparent 1px 50px),
+    repeating-linear-gradient(90deg,rgba(70,196,209,.20) 0 1px,transparent 1px 50px);
+  -webkit-mask-image:radial-gradient(closest-side,#000 22%,rgba(0,0,0,.35) 52%,transparent 76%);
+  mask-image:radial-gradient(closest-side,#000 22%,rgba(0,0,0,.35) 52%,transparent 76%);
+  opacity:0;animation:surgir .9s ease-out .05s forwards;
+}
+.halo{
+  position:absolute;left:50%;top:70%;width:340px;height:340px;margin:-170px 0 0 -170px;
+  transform:rotateX(90deg);border-radius:50%;
+  background:radial-gradient(closest-side,rgba(63,197,210,.30),transparent 70%);
+  opacity:0;animation:surgir 1.1s ease-out .5s forwards;
+}
+@keyframes surgir{to{opacity:1}}
+
+.poste{
+  position:absolute;left:50%;top:50%;width:130px;height:262px;margin:-176px 0 0 -65px;
+  transform-style:preserve-3d;animation:posteSobe 1.15s cubic-bezier(.16,.85,.25,1) .2s both;
+}
+@keyframes posteSobe{
+  0%{opacity:0;transform:translateY(70px) rotateX(-12deg)}
+  100%{opacity:1;transform:translateY(0) rotateX(0)}
+}
+.face{position:absolute;border-radius:9px;backface-visibility:hidden}
+.f-fre,.f-tra{width:130px;height:262px}
+.f-fre{transform:translateZ(37px);background:linear-gradient(165deg,#24505b 0%,#173840 46%,#102a31 100%);box-shadow:inset 0 0 40px rgba(0,0,0,.45)}
+.f-tra{transform:translateZ(-37px) rotateY(180deg);background:linear-gradient(165deg,#102128,#0a171c)}
+.f-lat{width:74px;height:262px;left:28px;background:linear-gradient(180deg,#16343c,#0c2026)}
+.f-esq{transform:rotateY(-90deg) translateZ(65px)}
+.f-dir{transform:rotateY(90deg) translateZ(65px)}
+.f-top{width:130px;height:74px;top:94px;background:linear-gradient(120deg,#2f6b78,#1a444e);transform:rotateX(90deg) translateZ(131px)}
+.f-bas{width:130px;height:74px;top:94px;background:#081418;transform:rotateX(-90deg) translateZ(131px)}
+
+.tela{
+  position:absolute;left:19px;top:26px;width:92px;height:70px;border-radius:6px;
+  background:linear-gradient(160deg,#0b2f36,#062026);border:1px solid rgba(87,214,226,.45);
+  transform:translateZ(38px);overflow:hidden;box-shadow:0 0 22px rgba(63,197,210,.35);
+  animation:acender .7s ease-out 1s both;
+}
+@keyframes acender{0%{opacity:0;filter:brightness(.2)}100%{opacity:1;filter:brightness(1)}}
+.tela .pct{
+  position:absolute;left:9px;top:9px;font-family:var(--mono);font-size:15px;color:#7ee6f0;letter-spacing:-.02em;
+}
+.tela .bar{position:absolute;left:9px;right:9px;bottom:24px;height:7px;background:rgba(126,230,240,.18);border-radius:3px;overflow:hidden}
+.tela .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#2f9aa6,#7ee6f0);animation:encher 2.4s ease-out 1.2s forwards}
+@keyframes encher{to{width:100%}}
+.tela .un{position:absolute;left:9px;bottom:7px;font-family:var(--mono);font-size:9px;color:#4d8d97}
+.raio{
+  position:absolute;left:50%;top:118px;width:34px;height:52px;margin-left:-17px;transform:translateZ(39px);
+  animation:pulsaRaio 1.7s ease-in-out 1.6s infinite;
+}
+@keyframes pulsaRaio{0%,100%{opacity:.75}50%{opacity:1}}
+.cabo{position:absolute;left:0;top:0;width:100%;height:100%;transform:translateZ(30px);overflow:visible;pointer-events:none}
+.cabo .traco{
+  fill:none;stroke:#16323a;stroke-width:9;stroke-linecap:round;
+  stroke-dasharray:400;stroke-dashoffset:400;animation:desenha 1.1s ease-out 1.35s forwards;
+}
+.cabo .luz{
+  fill:none;stroke:#5fdcea;stroke-width:3;stroke-linecap:round;stroke-dasharray:22 380;
+  stroke-dashoffset:400;opacity:0;animation:fluxo 1.5s linear 2.4s infinite,surgir .3s linear 2.4s forwards;
+}
+@keyframes desenha{to{stroke-dashoffset:0}}
+@keyframes fluxo{from{stroke-dashoffset:400}to{stroke-dashoffset:0}}
+.plugue{
+  position:absolute;width:30px;height:22px;border-radius:5px;background:linear-gradient(160deg,#2b606b,#16343c);
+  border:1px solid rgba(95,220,234,.4);transform:translateZ(31px);opacity:0;animation:surgir .4s ease-out 2.4s forwards;
+}
+.faisca{
+  position:absolute;width:5px;height:5px;border-radius:50%;background:#7ee6f0;
+  box-shadow:0 0 10px #5fdcea;opacity:0;transform:translateZ(45px);
+}
+@keyframes sobe{0%{opacity:0;transform:translateZ(45px) translateY(0) scale(.6)}
+  22%{opacity:.95}100%{opacity:0;transform:translateZ(45px) translateY(-140px) scale(1.1)}}
+
+.marca-abertura{
+  position:absolute;left:0;right:0;bottom:96px;text-align:center;color:#dff3f6;opacity:0;
+  animation:entraTitulo .8s ease-out 2.1s forwards;
+}
+.marca-abertura .n1{font-size:clamp(1.5rem,4.6vw,2.15rem);font-weight:680;letter-spacing:-.025em}
+.marca-abertura .n2{font-size:.8rem;color:#77a9b1;margin-top:5px}
+@keyframes entraTitulo{0%{opacity:0;transform:translateY(14px)}100%{opacity:1;transform:none}}
+
+.legal{position:fixed;inset:0;z-index:290;background:rgba(6,16,20,.86);display:grid;place-items:center;padding:20px;backdrop-filter:blur(3px)}
+.legal.oculto{display:none !important}
+.legal-caixa{
+  background:var(--surface);border:1px solid var(--line);border-radius:12px;max-width:760px;width:100%;
+  max-height:88vh;display:flex;flex-direction:column;box-shadow:0 24px 60px -20px rgba(0,0,0,.6);
+}
+.legal-caixa > header{padding:16px 22px 10px;border-bottom:1px solid var(--line)}
+.legal-caixa > header h2{font-size:1.1rem}
+.legal-caixa > header p{margin:3px 0 0;font-size:.8rem;color:var(--ink2)}
+.legal-corpo{padding:14px 22px;overflow:auto;font-size:.86rem;line-height:1.55}
+.legal-corpo h4{margin:14px 0 4px;font-size:.86rem;color:var(--accent)}
+.legal-corpo h4:first-child{margin-top:0}
+.legal-corpo p{margin:0 0 6px;color:var(--ink2)}
+.legal-caixa > footer{padding:12px 22px 16px;border-top:1px solid var(--line);display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.legal-caixa > footer .btn{margin-left:auto}
+@media (max-width:560px){.legal-caixa > footer .btn{margin-left:0;width:100%;justify-content:center}}
+@media (prefers-reduced-motion:reduce){
+  .cena,.poste,.piso,.halo,.tela,.tela .bar i,.cabo .traco,.cabo .luz,.plugue,.marca-abertura,.medidor .barra{animation:none !important;opacity:1 !important}
+  .cena{transform:rotateX(10deg) rotateY(6deg)}
+  .cabo .traco{stroke-dashoffset:0}
+  .tela .bar i{width:100%}
+}
+
+@media print{
+  header.topo,nav.abas,.topo-acoes,.barra-status,footer.rodape,.abertura,.legal{display:none}
+  body{background:#fff}
+  .painel{box-shadow:none;break-inside:avoid;border-color:#999}
+  main{max-width:none;padding:0}
+}
+</style>
+</head>
+<body>
+<!-- ================= ABERTURA ================= -->
+<div class="abertura" id="abertura" role="presentation">
+  <div class="palco">
+    <div class="cena">
+      <div class="piso"></div>
+      <div class="halo"></div>
+
+      <div class="poste">
+        <div class="face f-tra"></div>
+        <div class="face f-lat f-esq"></div>
+        <div class="face f-lat f-dir"></div>
+        <div class="face f-top"></div>
+        <div class="face f-bas"></div>
+        <div class="face f-fre"></div>
+        <div class="tela">
+          <div class="pct" id="aberturaPct">0%</div>
+          <div class="bar"><i></i></div>
+          <div class="un">11,0 kW · 16 A</div>
+        </div>
+        <svg class="raio" viewBox="0 0 34 52" aria-hidden="true">
+          <path d="M20 2 6 30h9l-3 20 16-30h-9z" fill="#7ee6f0" opacity=".9"/>
+        </svg>
+      </div>
+
+      <svg class="cabo" viewBox="0 0 620 430" preserveAspectRatio="none" aria-hidden="true">
+        <path class="traco" d="M375 235 C 435 262, 452 318, 415 352 C 388 377, 350 372, 336 352"/>
+        <path class="luz"   d="M375 235 C 435 262, 452 318, 415 352 C 388 377, 350 372, 336 352"/>
+      </svg>
+      <div class="plugue" style="left:52%;top:78%"></div>
+
+      <span class="faisca" style="left:44%;top:60%;animation:sobe 2.2s ease-out 2.6s infinite"></span>
+      <span class="faisca" style="left:56%;top:64%;animation:sobe 2.6s ease-out 3s infinite"></span>
+      <span class="faisca" style="left:50%;top:57%;animation:sobe 2.4s ease-out 3.4s infinite"></span>
+    </div>
+  </div>
+
+  <div class="marca-abertura">
+    <div class="n1">EletroPosto Calc</div>
+    <div class="n2">Dimensionamento de infraestrutura de recarga de veículos elétricos</div>
+  </div>
+  <div class="medidor"><div class="trilho"><div class="barra"></div></div><div class="txt" id="aberturaTxt">iniciando</div></div>
+  <div class="pular">clique para pular</div>
+</div>
+
+<!-- ================= AVISOS LEGAIS ================= -->
+<div class="legal oculto" id="legal" role="dialog" aria-modal="true" aria-labelledby="legalTitulo">
+  <div class="legal-caixa">
+    <header>
+      <h2 id="legalTitulo">Avisos legais e limitações de uso</h2>
+      <p>Leia antes de utilizar os resultados em projeto.</p>
+    </header>
+    <div class="legal-corpo">
+      <h4>Natureza da ferramenta</h4>
+      <p>O EletroPosto Calc é uma ferramenta de apoio ao dimensionamento. Os resultados são consequência direta dos dados informados e das premissas adotadas pelo usuário, e constituem estimativa preliminar de projeto — não peça técnica final.</p>
+
+      <h4>Responsabilidade técnica</h4>
+      <p>O uso não substitui o projeto elétrico assinado por profissional legalmente habilitado, com a respectiva anotação de responsabilidade técnica. Cabe ao profissional conferir premissas, memórias de cálculo e resultados, e responder pelo que assina.</p>
+
+      <h4>Normas técnicas</h4>
+      <p>As referências normativas (ABNT NBR 17019, NBR 5410, NBR IEC 61851-1, NBR IEC 62196, NBR 5419 e correlatas) são citadas para orientar a leitura. As tabelas de capacidade de condução de corrente e de fatores de correção aqui embutidas são reproduções simplificadas, sujeitas a arredondamento e a defasagem em relação à edição vigente. Confira sempre os valores no texto original da norma, que é o documento que prevalece.</p>
+
+      <h4>Concessionária de energia</h4>
+      <p>Aumento de carga, alteração do padrão de entrada e conexão de estações de recarga dependem de análise e anuência da distribuidora local, conforme os procedimentos de acesso aplicáveis. A ferramenta não emite parecer de acesso nem antecipa a decisão da distribuidora.</p>
+
+      <h4>Preços e quantitativos</h4>
+      <p>Os preços unitários da lista de materiais são indicativos, editáveis e não possuem vínculo com qualquer base oficial de custos. Os quantitativos cobrem apenas a infraestrutura elétrica de recarga e não incluem obra civil, sinalização, medição individualizada, adequação de SPDA ou serviços correlatos.</p>
+
+      <h4>Dados e privacidade</h4>
+      <p>O sistema funciona integralmente no seu navegador, sem envio de dados a servidores. Os projetos ficam armazenados apenas na máquina em que a ferramenta é aberta.</p>
+
+      <h4>Garantias</h4>
+      <p>A ferramenta é fornecida no estado em que se encontra, sem garantia de adequação a finalidade específica. O autor não responde por perdas ou danos decorrentes do uso ou da impossibilidade de uso dos resultados.</p>
+    </div>
+    <footer>
+      <label class="check"><input type="checkbox" id="legalAceite"> Li os avisos e assumo a responsabilidade pela conferência técnica dos resultados.</label>
+      <button class="btn pri" id="btnEntrar" disabled>Entrar no sistema</button>
+    </footer>
+  </div>
+</div>
+
+<header class="topo">
+  <div class="topo-linha">
+    <div class="marca">
+      <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true">
+        <rect x="1" y="1" width="30" height="30" rx="7" fill="var(--accent)"/>
+        <path d="M17.6 5.5 9.2 17.4h5.3L13.4 26.5l8.6-12.2h-5.4z" fill="#fff"/>
+      </svg>
+      <div>
+        <div class="t1">EletroPosto Calc</div>
+        <div class="t2">Infraestrutura de recarga de veículos elétricos · NBR 17019 · NBR 5410</div>
+      </div>
+    </div>
+    <div class="topo-acoes">
+      <input type="text" id="projNome" placeholder="Nome do projeto" aria-label="Nome do projeto">
+      <button class="btn" id="btnExemplos" title="Carregar um cenário pronto">Exemplos</button>
+      <button class="btn" id="btnSalvar" title="Salvar arquivo .json do projeto">Salvar</button>
+      <button class="btn" id="btnAbrir" title="Abrir projeto .json">Abrir</button>
+      <input type="file" id="arqAbrir" accept=".json,application/json" class="oculto">
+      <button class="btn pri" id="btnRelatorio">Relatório</button>
+      <button class="btn" id="btnTema" title="Alternar tema" aria-label="Alternar tema claro e escuro">◐</button>
+    </div>
+  </div>
+
+  <div class="barra-status">
+    <div class="gauge">
+      <div>
+        <div class="gauge-trilho" id="gaugeTrilho" role="img" aria-label="Ocupação da capacidade elétrica disponível">
+          <div class="gauge-seg seg-base" id="segBase" style="width:0"></div>
+          <div class="gauge-seg seg-ve" id="segVe" style="width:0;left:0"></div>
+          <div class="gauge-seg seg-excedente" id="segExc" style="width:0;left:0"></div>
+          <div class="gauge-limite" id="gaugeLimite" style="left:100%"></div>
+        </div>
+        <div class="gauge-legenda">
+          <span class="chave"><i style="background:var(--ink2)"></i>Carga atual <b class="num" id="lgBase">—</b></span>
+          <span class="chave"><i style="background:var(--accent)"></i>Recarga de VE <b class="num" id="lgVe">—</b></span>
+          <span class="chave"><i style="background:var(--danger)"></i>Excedente <b class="num" id="lgExc">—</b></span>
+          <span class="chave">Capacidade <b class="num" id="lgCap">—</b></span>
+        </div>
+      </div>
+      <div class="veredito" id="veredito" data-nivel="ok">
+        <div class="vt"><span id="vIcone">✓</span><span id="vTitulo">Preencha os dados</span></div>
+        <div class="vd" id="vDetalhe">O cálculo é atualizado a cada alteração.</div>
+      </div>
+    </div>
+  </div>
+
+  <nav class="abas" role="tablist" aria-label="Etapas do dimensionamento">
+    <button role="tab" data-aba="edificacao" aria-selected="true"><span class="passo">1</span>Edificação</button>
+    <button role="tab" data-aba="carregadores" aria-selected="false"><span class="passo">2</span>Carregadores</button>
+    <button role="tab" data-aba="uso" aria-selected="false"><span class="passo">3</span>Uso e gestão de carga</button>
+    <button role="tab" data-aba="circuitos" aria-selected="false"><span class="passo">4</span>Cabos e proteções</button>
+    <button role="tab" data-aba="resultados" aria-selected="false"><span class="passo">5</span>Resultados</button>
+    <button role="tab" data-aba="diagrama" aria-selected="false"><span class="passo">6</span>Diagrama</button>
+    <button role="tab" data-aba="materiais" aria-selected="false"><span class="passo">7</span>Materiais</button>
+    <button role="tab" data-aba="manual" aria-selected="false">Manual</button>
+  </nav>
+</header>
+
+<main>
+
+<!-- ================= ABA 1 — EDIFICAÇÃO ================= -->
+<div class="aba" id="aba-edificacao">
+  <div class="painel">
+    <h2>Alimentação existente</h2>
+    <p class="sub">Descreva o que já existe hoje. A capacidade disponível para recarga é o que sobra da entrada depois da carga própria da edificação.</p>
+    <div class="grade">
+      <div class="campo">
+        <label for="tipoEdif">Tipo de instalação</label>
+        <select id="tipoEdif">
+          <option value="residencial">Residência unifamiliar</option>
+          <option value="condominio" selected>Condomínio residencial</option>
+          <option value="comercial">Escritório / comércio</option>
+          <option value="publico">Estacionamento público rotativo</option>
+          <option value="frota">Frota / logística</option>
+        </select>
+        <span class="dica">Define o perfil padrão de simultaneidade e a curva de carga diária.</span>
+      </div>
+      <div class="campo">
+        <label for="sistema">Sistema de tensão</label>
+        <select id="sistema">
+          <option value="mono127">Monofásico 127 V (F+N)</option>
+          <option value="mono220">Monofásico 220 V (F+N)</option>
+          <option value="bi220">Bifásico 220 V (2F+N)</option>
+          <option value="tri220">Trifásico 220 V (rede 127/220)</option>
+          <option value="tri380" selected>Trifásico 380 V (rede 220/380)</option>
+          <option value="tri440">Trifásico 440 V (rede 254/440)</option>
+        </select>
+      </div>
+      <div class="campo">
+        <label>Como informar a capacidade da entrada</label>
+        <div class="linha-radio">
+          <label><input type="radio" name="modoCap" value="disj" checked> Disjuntor geral (A)</label>
+          <label><input type="radio" name="modoCap" value="kw"> Demanda contratada (kW)</label>
+        </div>
+      </div>
+      <div class="campo" id="campoDisj">
+        <label for="disjGeral">Corrente nominal do disjuntor geral</label>
+        <div class="sufixo"><input type="number" id="disjGeral" value="150" min="10" step="1"><span>A</span></div>
+        <span class="dica">Proteção geral do padrão de entrada / QGBT.</span>
+      </div>
+      <div class="campo" id="campoKw">
+        <label for="capKw">Demanda contratada / capacidade da entrada</label>
+        <div class="sufixo"><input type="number" id="capKw" value="98" min="1" step="0.1"><span>kW</span></div>
+      </div>
+      <div class="campo">
+        <label for="fpEdif">Fator de potência da instalação</label>
+        <input type="number" id="fpEdif" value="0.92" min="0.6" max="1" step="0.01">
+        <span class="dica">Usado para converter ampères do disjuntor geral em kW.</span>
+      </div>
+      <div class="campo">
+        <label for="demandaAtual">Demanda máxima já utilizada</label>
+        <div class="sufixo"><input type="number" id="demandaAtual" value="62" min="0" step="0.1"><span>kW</span></div>
+        <span class="dica">Maior valor registrado em conta de energia ou medição. Sem histórico, use a demanda calculada do projeto elétrico.</span>
+      </div>
+      <div class="campo">
+        <label for="reserva">Reserva técnica sobre a capacidade</label>
+        <div class="sufixo"><input type="number" id="reserva" value="10" min="0" max="50" step="1"><span>%</span></div>
+        <span class="dica">Margem que não deve ser ocupada, para crescimento e erro de medição.</span>
+      </div>
+      <div class="campo">
+        <label for="ampliavel">Ampliação da entrada</label>
+        <select id="ampliavel">
+          <option value="sim" selected>Possível, mediante obra e solicitação à distribuidora</option>
+          <option value="nao">Inviável no momento</option>
+        </select>
+        <span class="dica">Se inviável, o dimensionamento força a solução por gerenciamento de carga.</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="painel">
+    <h2>Vagas e infraestrutura civil</h2>
+    <p class="sub">Distâncias definem a queda de tensão, que costuma ser o critério que manda na seção do cabo em garagens longas.</p>
+    <div class="grade">
+      <div class="campo">
+        <label for="vagasTotais">Vagas totais do estacionamento</label>
+        <input type="number" id="vagasTotais" value="80" min="1" step="1">
+        <span class="dica">Referência para a taxa de eletrificação futura.</span>
+      </div>
+      <div class="campo">
+        <label for="compAlim">Comprimento do alimentador (QGBT → quadro de recarga)</label>
+        <div class="sufixo"><input type="number" id="compAlim" value="45" min="1" step="1"><span>m</span></div>
+      </div>
+      <div class="campo">
+        <label for="compRamal">Comprimento médio do ramal (quadro → ponto de recarga)</label>
+        <div class="sufixo"><input type="number" id="compRamal" value="25" min="1" step="1"><span>m</span></div>
+        <span class="dica">Use o ramal mais desfavorável, não a média, se houver vagas muito distantes.</span>
+      </div>
+      <div class="campo">
+        <label for="compMax">Ramal mais desfavorável</label>
+        <div class="sufixo"><input type="number" id="compMax" value="60" min="1" step="1"><span>m</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= ABA 2 — CARREGADORES ================= -->
+<div class="aba oculto" id="aba-carregadores">
+  <div class="painel">
+    <h2>Pontos de recarga</h2>
+    <p class="sub">Agrupe os pontos por potência e tipo. Cada linha vira um circuito-tipo dimensionado na etapa 4.</p>
+    <div class="tab-rolagem">
+      <table id="tabGrupos">
+        <thead>
+          <tr>
+            <th style="width:26%">Descrição</th>
+            <th class="n" style="width:9%">Pontos</th>
+            <th style="width:20%">Modelo típico</th>
+            <th class="n" style="width:11%">Potência (kW)</th>
+            <th style="width:13%">Ligação</th>
+            <th class="n" style="width:8%">FP</th>
+            <th class="n" style="width:9%">Rend.</th>
+            <th style="width:4%"></th>
+          </tr>
+        </thead>
+        <tbody id="corpoGrupos"></tbody>
+      </table>
+    </div>
+    <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn" id="btnAddGrupo">Adicionar grupo</button>
+      <button class="btn mini" data-preset="condo">Preencher: condomínio 11 kW</button>
+      <button class="btn mini" data-preset="misto">Preencher: misto AC + DC</button>
+    </div>
+    <div id="avisosGrupos"></div>
+  </div>
+
+  <div class="painel">
+    <h2>Referência rápida de equipamentos</h2>
+    <p class="sub">Potências usuais no mercado brasileiro. Modo 3 (AC) para vaga privativa, modo 4 (DC) para reposição rápida.</p>
+    <div class="tab-rolagem">
+      <table>
+        <thead><tr><th>Equipamento</th><th>Modo</th><th class="n">Potência</th><th class="n">Corrente</th><th>Conector</th><th>Aplicação típica</th></tr></thead>
+        <tbody>
+          <tr><td>Wallbox monofásica</td><td>3</td><td class="n">3,7 kW</td><td class="n">16 A</td><td>Tipo 2</td><td>Residência, recarga noturna longa</td></tr>
+          <tr><td>Wallbox monofásica</td><td>3</td><td class="n">7,4 kW</td><td class="n">32 A</td><td>Tipo 2</td><td>Residência unifamiliar 220 V</td></tr>
+          <tr><td>Wallbox trifásica</td><td>3</td><td class="n">11 kW</td><td class="n">16 A</td><td>Tipo 2</td><td>Condomínio, padrão mais usado</td></tr>
+          <tr><td>Wallbox trifásica</td><td>3</td><td class="n">22 kW</td><td class="n">32 A</td><td>Tipo 2</td><td>Comércio, frota leve</td></tr>
+          <tr><td>Carregador DC compacto</td><td>4</td><td class="n">30–60 kW</td><td class="n">45–90 A</td><td>CCS2</td><td>Shopping, hotel, oportunidade</td></tr>
+          <tr><td>Carregador DC rápido</td><td>4</td><td class="n">90–150 kW</td><td class="n">140–230 A</td><td>CCS2</td><td>Rodovia, eletroposto público</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="aviso info"><span class="ic">i</span><div>A recarga em tomada comum (modo 1) não é admitida para uso permanente. A NBR 17019 exige circuito exclusivo, proteção diferencial dedicada e equipamento de recarga (EVSE) por ponto.</div></div>
+  </div>
+</div>
+
+<!-- ================= ABA 3 — USO E GESTÃO ================= -->
+<div class="aba oculto" id="aba-uso">
+  <div class="painel">
+    <h2>Simultaneidade</h2>
+    <p class="sub">Nem todo mundo carrega ao mesmo tempo. O fator de simultaneidade é o que separa um projeto exequível de uma entrada superdimensionada.</p>
+    <div class="grade">
+      <div class="campo">
+        <label>Critério</label>
+        <div class="linha-radio">
+          <label><input type="radio" name="modoFs" value="auto" checked> Curva por tipo de uso</label>
+          <label><input type="radio" name="modoFs" value="manual"> Informar manualmente</label>
+        </div>
+        <span class="dica">A curva decresce com o número de pontos: quanto mais vagas, menor a chance de todas carregarem juntas.</span>
+      </div>
+      <div class="campo">
+        <label for="fsManual">Fator de simultaneidade</label>
+        <div class="sufixo"><input type="number" id="fsManual" value="30" min="1" max="100" step="1"><span>%</span></div>
+      </div>
+      <div class="campo">
+        <label for="janela">Janela de recarga disponível</label>
+        <div class="sufixo"><input type="number" id="janela" value="9" min="1" max="24" step="0.5"><span>h</span></div>
+        <span class="dica">Tempo em que o veículo fica plugado. Em condomínio, tipicamente das 19h às 6h.</span>
+      </div>
+      <div class="campo">
+        <label for="kmDia">Rodagem média por veículo</label>
+        <div class="sufixo"><input type="number" id="kmDia" value="45" min="1" step="1"><span>km/dia</span></div>
+      </div>
+      <div class="campo">
+        <label for="consumo">Consumo médio da frota</label>
+        <div class="sufixo"><input type="number" id="consumo" value="16" min="8" max="35" step="0.5"><span>kWh/100km</span></div>
+      </div>
+      <div class="campo">
+        <label for="tarifa">Tarifa de energia</label>
+        <div class="sufixo"><input type="number" id="tarifa" value="0.95" min="0" step="0.01"><span>R$/kWh</span></div>
+      </div>
+    </div>
+    <div id="saidaFs"></div>
+  </div>
+
+  <div class="painel">
+    <h2>Gerenciamento de carga</h2>
+    <p class="sub">Quando a soma dos carregadores excede a capacidade livre, há três caminhos: ampliar a entrada, limitar a potência ou escalonar horários.</p>
+    <div class="grade">
+      <div class="campo">
+        <label for="estrategia">Estratégia adotada</label>
+        <select id="estrategia">
+          <option value="nenhuma">Sem gestão — todos os pontos na potência nominal</option>
+          <option value="estatico">Divisão estática — potência fixa por ponto</option>
+          <option value="dinamico" selected>Balanceamento dinâmico — medidor no ramal geral</option>
+        </select>
+        <span class="dica">O balanceamento dinâmico lê a carga real da edificação e devolve a folga aos carregadores em tempo real.</span>
+      </div>
+      <div class="campo">
+        <label for="setpoint">Limite (setpoint) do conjunto de recarga</label>
+        <div class="sufixo"><input type="number" id="setpoint" value="0" min="0" step="0.1"><span>kW</span></div>
+        <span class="dica">Deixe 0 para o sistema adotar automaticamente toda a folga disponível.</span>
+      </div>
+      <div class="campo">
+        <label for="correnteMin">Corrente mínima de modulação (AC)</label>
+        <div class="sufixo"><input type="number" id="correnteMin" value="6" min="6" max="16" step="1"><span>A</span></div>
+        <span class="dica">Piso do protocolo de comunicação do EVSE. Abaixo disso a recarga é interrompida, não reduzida.</span>
+      </div>
+      <div class="campo">
+        <label for="veicSimult">Veículos que carregam por dia</label>
+        <input type="number" id="veicSimult" value="0" min="0" step="1">
+        <span class="dica">Deixe 0 para adotar o total de pontos instalados.</span>
+      </div>
+    </div>
+    <div id="saidaGestao"></div>
+  </div>
+
+  <div class="painel">
+    <h2>Curva de carga em 24 horas</h2>
+    <p class="sub">Simulação do perfil da edificação somado à recarga dentro da janela informada.</p>
+    <canvas id="grafCurva" width="900" height="300"></canvas>
+    <div class="legenda-fig">A linha vermelha é a capacidade da entrada; a tracejada, a capacidade menos a reserva técnica. Perfil base normalizado por tipo de instalação — substitua por medição real quando houver.</div>
+  </div>
+</div>
+<!-- ================= ABA 4 — CIRCUITOS ================= -->
+<div class="aba oculto" id="aba-circuitos">
+  <div class="painel">
+    <h2>Critérios de instalação</h2>
+    <p class="sub">Os mesmos critérios valem para o alimentador e para os ramais. Ajuste conforme o projeto de infraestrutura.</p>
+    <div class="grade">
+      <div class="campo">
+        <label for="materialCond">Material do condutor</label>
+        <select id="materialCond">
+          <option value="cobre" selected>Cobre</option>
+          <option value="aluminio">Alumínio (apenas alimentador)</option>
+        </select>
+      </div>
+      <div class="campo">
+        <label for="isolacao">Isolação</label>
+        <select id="isolacao">
+          <option value="pvc">PVC — 70 °C</option>
+          <option value="epr" selected>EPR / XLPE — 90 °C</option>
+        </select>
+      </div>
+      <div class="campo">
+        <label for="metodoAlim">Método de instalação — alimentador</label>
+        <select id="metodoAlim">
+          <option value="B1">B1 — condutores em eletroduto aparente ou embutido em alvenaria</option>
+          <option value="B2">B2 — cabo multipolar em eletroduto</option>
+          <option value="C" selected>C — cabos sobre eletrocalha perfurada ou parede</option>
+          <option value="D">D — eletroduto enterrado no solo</option>
+        </select>
+      </div>
+      <div class="campo">
+        <label for="metodoRamal">Método de instalação — ramais</label>
+        <select id="metodoRamal">
+          <option value="B1" selected>B1 — eletroduto embutido</option>
+          <option value="B2">B2 — cabo multipolar em eletroduto</option>
+          <option value="C">C — eletrocalha perfurada</option>
+          <option value="D">D — enterrado</option>
+        </select>
+      </div>
+      <div class="campo">
+        <label for="tempAmb">Temperatura ambiente de referência</label>
+        <div class="sufixo"><input type="number" id="tempAmb" value="30" min="10" max="60" step="5"><span>°C</span></div>
+        <span class="dica">Garagens fechadas e subsolos costumam operar acima de 30 °C. Verifique antes de aceitar o padrão.</span>
+      </div>
+      <div class="campo">
+        <label for="circAgrup">Circuitos agrupados no mesmo conduto</label>
+        <input type="number" id="circAgrup" value="4" min="1" max="20" step="1">
+        <span class="dica">Ramais de recarga em prumada compartilhada sofrem forte redução de capacidade por agrupamento.</span>
+      </div>
+      <div class="campo">
+        <label for="quedaAlim">Queda de tensão máxima — alimentador</label>
+        <div class="sufixo"><input type="number" id="quedaAlim" value="2" min="0.5" max="5" step="0.1"><span>%</span></div>
+      </div>
+      <div class="campo">
+        <label for="quedaTotal">Queda de tensão máxima — total até o ponto</label>
+        <div class="sufixo"><input type="number" id="quedaTotal" value="4" min="1" max="7" step="0.1"><span>%</span></div>
+        <span class="dica">Limite da NBR 5410 para instalação alimentada por rede de distribuição pública.</span>
+      </div>
+      <div class="campo">
+        <label for="fatorContinuo">Fator de carga contínua</label>
+        <input type="number" id="fatorContinuo" value="1.25" min="1" max="1.5" step="0.05">
+        <span class="dica">Margem exigida do condutor, não da proteção: a recarga opera horas seguidas na corrente nominal. Adote 1,25, salvo indicação do fabricante do EVSE.</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="painel">
+    <h2>Alimentador do quadro de recarga</h2>
+    <p class="sub">Dimensionado para a demanda efetiva do conjunto, considerando a estratégia de gestão adotada.</p>
+    <div id="saidaAlimentador"></div>
+  </div>
+
+  <div class="painel">
+    <h2>Ramais dos pontos de recarga</h2>
+    <p class="sub">Um circuito exclusivo por ponto, com proteção diferencial individual. Verificação feita no ramal mais desfavorável.</p>
+    <div id="saidaRamais"></div>
+  </div>
+
+  <div class="painel">
+    <h2>Proteções e aterramento</h2>
+    <div id="saidaProtecoes"></div>
+  </div>
+</div>
+
+<!-- ================= ABA 5 — RESULTADOS ================= -->
+<div class="aba oculto" id="aba-resultados">
+  <div class="painel">
+    <h2>Balanço de potência</h2>
+    <div class="cartoes" id="cartoesResultado"></div>
+    <div id="avisosResultado"></div>
+  </div>
+
+  <div class="painel">
+    <h2>Energia e operação</h2>
+    <p class="sub">Verifica se a janela de recarga entrega a energia que a frota consome por dia.</p>
+    <div class="cartoes" id="cartoesEnergia"></div>
+    <div id="avisosEnergia"></div>
+  </div>
+
+  <div class="painel">
+    <h2>Comparação de cenários</h2>
+    <p class="sub">Impacto de cada estratégia sobre a demanda e sobre o tempo de recarga.</p>
+    <div class="tab-rolagem"><table id="tabCenarios">
+      <thead><tr><th>Cenário</th><th class="n">Demanda de recarga</th><th class="n">Demanda total</th><th class="n">Folga</th><th class="n">Potência por ponto</th><th>Situação</th></tr></thead>
+      <tbody id="corpoCenarios"></tbody>
+    </table></div>
+  </div>
+
+  <div class="painel">
+    <h2>Expansão futura</h2>
+    <p class="sub">Quantos pontos ainda cabem na entrada atual, mantendo a reserva técnica.</p>
+    <div id="saidaExpansao"></div>
+  </div>
+</div>
+
+<!-- ================= ABA 6 — DIAGRAMA ================= -->
+<div class="aba oculto" id="aba-diagrama">
+  <div class="painel">
+    <h2>Diagrama unifilar simplificado</h2>
+    <p class="sub">Representação esquemática do arranjo dimensionado. Não substitui o diagrama de projeto executivo.</p>
+    <div id="saidaUnifilar"></div>
+    <div style="margin-top:10px"><button class="btn" id="btnBaixarSvg">Baixar diagrama (SVG)</button></div>
+  </div>
+  <div class="painel">
+    <h2>Distribuição da demanda</h2>
+    <canvas id="grafBarras" width="900" height="260"></canvas>
+    <div class="legenda-fig">Composição da demanda total por parcela.</div>
+  </div>
+</div>
+
+<!-- ================= ABA 7 — MATERIAIS ================= -->
+<div class="aba oculto" id="aba-materiais">
+  <div class="painel">
+    <h2>Lista de materiais e serviços</h2>
+    <p class="sub">Quantitativos calculados a partir do dimensionamento. Os preços unitários são indicativos e editáveis — substitua pelos valores da sua base de referência.</p>
+    <div class="tab-rolagem"><table id="tabBom">
+      <thead><tr><th style="width:38%">Item</th><th>Unid.</th><th class="n">Quant.</th><th class="n" style="width:15%">Preço unitário (R$)</th><th class="n">Total (R$)</th></tr></thead>
+      <tbody id="corpoBom"></tbody>
+      <tfoot id="rodapeBom"></tfoot>
+    </table></div>
+    <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn" id="btnCsv">Exportar CSV</button>
+      <button class="btn" id="btnResetPrecos">Restaurar preços indicativos</button>
+    </div>
+    <div class="aviso warn"><span class="ic">!</span><div>Os quantitativos consideram apenas a infraestrutura elétrica de recarga. Obra civil, sinalização de vaga, sistema de medição individualizada e adequação do SPDA devem ser levantados à parte.</div></div>
+  </div>
+</div>
+<!-- ================= ABA 8 — MANUAL ================= -->
+<div class="aba oculto" id="aba-manual">
+  <div class="painel">
+    <div class="manual">
+      <aside class="manual-nav">
+        <input type="text" id="buscaManual" placeholder="Buscar no manual" aria-label="Buscar no manual">
+        <div id="indiceManual"></div>
+        <div class="progresso" id="progressoManual"></div>
+      </aside>
+      <div class="manual-conteudo" id="conteudoManual">
+
+        <section id="m-inicio">
+          <h3>Como usar em cinco minutos</h3>
+          <p>O roteiro segue as abas na ordem. Cada alteração recalcula tudo; a barra no topo mostra, a qualquer momento, se a entrada de energia aguenta o que você acabou de configurar.</p>
+          <ol>
+            <li>Na aba <b>Edificação</b>, informe o disjuntor geral e a demanda que a edificação já usa. Esses dois números definem a folga.</li>
+            <li>Na aba <b>Carregadores</b>, monte os grupos de pontos por potência e tipo de ligação.</li>
+            <li>Na aba <b>Uso e gestão de carga</b>, escolha o critério de simultaneidade e a estratégia de gerenciamento.</li>
+            <li>Na aba <b>Cabos e proteções</b>, ajuste método de instalação, temperatura e agrupamento — são eles que mudam a seção.</li>
+            <li>Confira <b>Resultados</b> e gere o <b>Relatório</b> pelo botão no topo.</li>
+          </ol>
+          <p>O projeto fica salvo no navegador automaticamente. Use <b>Salvar</b> para gerar um arquivo <span class="num">.json</span> e levar o estudo para outro computador.</p>
+        </section>
+
+        <section id="m-normas">
+          <h3>Normas aplicáveis</h3>
+          <ul>
+            <li><b>ABNT NBR 17019:2022</b> — Instalações elétricas de baixa tensão: requisitos para a alimentação de veículos elétricos. É a norma específica: exige circuito exclusivo por ponto, proteção diferencial dedicada, seccionamento e restringe o esquema TN-C.</li>
+            <li><b>ABNT NBR 5410:2004</b> — Instalações elétricas de baixa tensão. Base para capacidade de condução de corrente, fatores de correção, queda de tensão, condutor de proteção e coordenação das proteções.</li>
+            <li><b>ABNT NBR IEC 61851-1</b> — Sistema de recarga condutiva: define os modos 1 a 4 e o protocolo de comunicação piloto que permite modular a corrente entre 6 A e o máximo do ponto.</li>
+            <li><b>ABNT NBR IEC 62196</b> — Plugues, tomadas e acopladores. No Brasil predominam o Tipo 2 em corrente alternada e o CCS2 em corrente contínua.</li>
+            <li><b>IEC 62955</b> — Dispositivo de detecção de corrente diferencial contínua (RDC-DD) incorporado ao EVSE, que permite usar DR tipo A em vez de tipo B.</li>
+            <li><b>ABNT NBR 5419</b> — Proteção contra descargas atmosféricas, para a definição dos dispositivos de proteção contra surtos.</li>
+            <li><b>PRODIST Módulo 3</b> — Procedimentos de acesso à rede da distribuidora, aplicável quando o aumento de carga exige ampliação do ramal.</li>
+          </ul>
+          <p>Confira sempre a edição vigente das normas e as tabelas originais. Este software é ferramenta de apoio: a responsabilidade técnica pelo projeto é de quem o assina.</p>
+        </section>
+
+        <section id="m-modos">
+          <h3>Modos de recarga</h3>
+          <p>A escolha do modo define quase tudo o que vem depois — proteção, cabo, custo e tempo de recarga.</p>
+          <ul>
+            <li><b>Modo 1</b> — tomada comum, sem proteção dedicada nem comunicação. Não é admitido para uso permanente.</li>
+            <li><b>Modo 2</b> — cabo com dispositivo de proteção e controle embutido (ICCB), aquele que acompanha o veículo. Serve como recurso eventual, não como infraestrutura de condomínio.</li>
+            <li><b>Modo 3</b> — estação de recarga em corrente alternada fixa (wallbox), com circuito exclusivo e comunicação piloto. É o padrão para vaga privativa e o que este software dimensiona por padrão.</li>
+            <li><b>Modo 4</b> — recarga em corrente contínua, com o retificador na estação. Alta potência, exige análise específica de curto-circuito e, frequentemente, transformador dedicado.</li>
+          </ul>
+        </section>
+
+        <section id="m-demanda">
+          <h3>Cálculo da demanda</h3>
+          <p>A demanda de recarga de um grupo de pontos é:</p>
+          <p class="num">D = n · P<sub>ponto</sub> · FS ⁄ η</p>
+          <p>onde <span class="num">n</span> é o número de pontos, <span class="num">P</span> a potência nominal do carregador, <span class="num">FS</span> o fator de simultaneidade e <span class="num">η</span> o rendimento do equipamento (relevante em corrente contínua, onde a potência de entrada supera a entregue à bateria).</p>
+          <p>A capacidade disponível para recarga é:</p>
+          <p class="num">C<sub>disp</sub> = C<sub>entrada</sub> · (1 − reserva) − D<sub>atual</sub></p>
+          <p>Quando a entrada é informada pelo disjuntor geral, a capacidade em quilowatts vem de <span class="num">C = √3 · V · I · FP</span> em sistemas trifásicos e <span class="num">C = V · I · FP</span> em monofásicos.</p>
+          <div class="lab">
+            <h4>Laboratório · demanda</h4>
+            <div class="grade">
+              <div class="campo"><label>Pontos</label><input type="number" id="labN" value="20" min="1"></div>
+              <div class="campo"><label>Potência por ponto (kW)</label><input type="number" id="labP" value="11" step="0.1"></div>
+              <div class="campo"><label>Simultaneidade (%)</label><input type="number" id="labFs" value="25" min="1" max="100"></div>
+            </div>
+            <div class="lab-saida" id="labSaidaDemanda"></div>
+          </div>
+        </section>
+
+        <section id="m-simultaneidade">
+          <h3>Fator de simultaneidade</h3>
+          <p>Dimensionar um condomínio de 50 vagas para 50 carregadores de 11 kW ligados juntos daria 550 kW — número que nenhuma entrada residencial suporta e que nunca acontece na prática. O fator de simultaneidade corrige isso.</p>
+          <p>O software usa uma curva decrescente com o número de pontos:</p>
+          <p class="num">FS(n) = FS<sub>mín</sub> + (1 − FS<sub>mín</sub>) · n<sup>−k</sup></p>
+          <p>Para um único ponto o fator vale 1. À medida que o número cresce, converge para o piso característico do tipo de uso: por volta de 0,15 em condomínio com recarga noturna, 0,35 em escritório, 0,50 em estacionamento rotativo e 0,80 em recarga rápida pública.</p>
+          <p>Três cuidados que mudam o resultado:</p>
+          <ul>
+            <li>Tarifa branca ou horária concentra a partida dos carregadores no mesmo minuto e eleva o fator real. Se o condomínio adota tarifa horária, considere escalonar a partida.</li>
+            <li>Frota cativa com rotina fixa (entrega, locadora) tem simultaneidade alta, próxima de 1.</li>
+            <li>Com balanceamento dinâmico instalado, a simultaneidade deixa de ser premissa de projeto: o limite passa a ser o setpoint do controlador.</li>
+          </ul>
+        </section>
+
+        <section id="m-gestao">
+          <h3>Gerenciamento de carga</h3>
+          <p><b>Divisão estática</b> reparte uma potência fixa entre os pontos ativos. É barata e não precisa de medidor no ramal geral, mas ignora o que a edificação está consumindo e desperdiça folga na madrugada.</p>
+          <p><b>Balanceamento dinâmico</b> mede a corrente no ramal de entrada e devolve aos carregadores toda a folga instantânea, respeitando um setpoint. Custa mais, exige transformadores de corrente no QGBT e comunicação entre as estações, e quase sempre é o que evita a obra de ampliação da entrada.</p>
+          <p>O limite físico do balanceamento é a corrente mínima de modulação: o protocolo do modo 3 não desce abaixo de 6 A por ponto. Se a potência disponível dividida pelos pontos ativos cair abaixo disso, o sistema não reduz — ele desliga carregadores e passa a operar por fila. Nesse ponto o software emite alerta.</p>
+          <div class="lab">
+            <h4>Laboratório · piso de modulação</h4>
+            <div class="grade">
+              <div class="campo"><label>Potência disponível (kW)</label><input type="number" id="labPd" value="40" step="1"></div>
+              <div class="campo"><label>Pontos ativos</label><input type="number" id="labNa" value="12" min="1"></div>
+              <div class="campo"><label>Sistema</label><select id="labSis"><option value="mono127">Mono 127 V</option><option value="mono220">Mono 220 V</option><option value="tri220">Tri 220 V</option><option value="tri380" selected>Tri 380 V</option></select></div>
+            </div>
+            <div class="lab-saida" id="labSaidaGestao"></div>
+          </div>
+        </section>
+
+        <section id="m-cabos">
+          <h3>Dimensionamento dos condutores</h3>
+          <p>A proteção é escolhida primeiro: <span class="num">I<sub>n</sub> ≥ I<sub>B</sub></span>, sendo <span class="num">I<sub>B</sub></span> a corrente nominal do ponto de recarga. O disjuntor não é inflado pelo fator de uso contínuo — o EVSE limita a própria corrente e não vai puxar mais do que sua corrente nominal; a margem de continuidade é exigida do condutor.</p>
+          <p>A seção adotada é a maior entre quatro critérios:</p>
+          <ol>
+            <li><b>Coordenação com a proteção</b>. A capacidade corrigida do condutor precisa cobrir a corrente nominal do disjuntor: <span class="num">I<sub>z</sub> · FCT · FCA ≥ I<sub>n</sub></span>.</li>
+            <li><b>Uso contínuo</b>. A recarga é uma carga de regime permanente: o condutor é verificado também contra <span class="num">1,25 · I<sub>B</sub></span>. É o que impede adotar um cabo cuja tabela dá apenas 1 A de sobra.</li>
+            <li><b>Queda de tensão</b>. Em garagens longas este critério costuma dominar. O software soma a queda do alimentador com a do ramal e compara com o limite total.</li>
+            <li><b>Seção mínima de circuito de recarga</b>. Piso de projeto vinculado à proteção, correspondente à seção que conduz <span class="num">1,25 · I<sub>n</sub></span> em cobre, método B1, a 30 °C.</li>
+          </ol>
+          <div class="tab-rolagem"><table><thead><tr><th class="n">Proteção</th><th class="n">Seção mínima</th><th>Ponto típico</th></tr></thead><tbody>
+            <tr><td class="n">16 A</td><td class="n">2,5 mm²</td><td>3,7 kW monofásico</td></tr>
+            <tr><td class="n">20 A</td><td class="n">4 mm²</td><td>11 kW trifásico (16 A)</td></tr>
+            <tr><td class="n">32 A</td><td class="n">6 mm²</td><td>22 kW trifásico (32 A)</td></tr>
+            <tr><td class="n">40 A</td><td class="n">6 mm²</td><td>7,4 kW monofásico (32 A)</td></tr>
+            <tr><td class="n">50 A</td><td class="n">10 mm²</td><td>alimentador de conjunto pequeno</td></tr>
+            <tr><td class="n">63 A</td><td class="n">16 mm²</td><td>alimentador de quadro de recarga</td></tr>
+          </tbody></table></div>
+          <p>Por isso um ponto de 11 kW nunca sai com 2,5 mm² nesta ferramenta, ainda que a tabela isolada de capacidade de condução admitisse: os 26 A tabelados de um 2,5 mm² em EPR ficam a 5 A da corrente de uso contínuo de um circuito que fica oito horas ligado, todas as noites, por anos.</p>
+          <p>A queda é calculada por <span class="num">ΔV = k · I · L · (ρ⁄S · cosφ + x · senφ)</span>, com <span class="num">k = 2</span> em circuitos monofásicos e bifásicos e <span class="num">k = √3</span> em trifásicos, resistividade corrigida para a temperatura da isolação e reatância de 0,1 Ω/km.</p>
+          <p>O agrupamento é o fator mais subestimado em projeto de recarga: seis ramais na mesma prumada reduzem a capacidade de cada cabo em cerca de 43%.</p>
+          <div class="lab">
+            <h4>Laboratório · queda de tensão</h4>
+            <div class="grade">
+              <div class="campo"><label>Corrente (A)</label><input type="number" id="labI" value="32" step="1"></div>
+              <div class="campo"><label>Comprimento (m)</label><input type="number" id="labL" value="60" step="1"></div>
+              <div class="campo"><label>Seção (mm²)</label><select id="labS"></select></div>
+              <div class="campo"><label>Sistema</label><select id="labSis2"><option value="mono220">Mono 220 V</option><option value="tri380" selected>Tri 380 V</option></select></div>
+            </div>
+            <div class="lab-saida" id="labSaidaQueda"></div>
+          </div>
+        </section>
+
+        <section id="m-protecoes">
+          <h3>Proteções</h3>
+          <ul>
+            <li><b>Disjuntor</b> — curva C, coordenado por <span class="num">I<sub>B</sub> ≤ I<sub>n</sub> ≤ I<sub>z</sub></span>. A corrente de projeto já inclui o fator de carga contínua.</li>
+            <li><b>Diferencial residual</b> — obrigatório e exclusivo por ponto de recarga, com corrente diferencial de 30 mA. Usa-se tipo A quando o EVSE possui detecção interna de corrente contínua residual de 6 mA conforme IEC 62955; caso contrário, tipo B. Compartilhar um DR entre dois pontos causa desarme cruzado e não atende à norma.</li>
+            <li><b>Proteção contra surtos</b> — DPS classe II no quadro de recarga; classe I+II quando a alimentação vem de linha aérea ou a edificação possui SPDA.</li>
+            <li><b>Seccionamento</b> — dispositivo de manobra que permita isolar o quadro de recarga sem desligar o restante da edificação.</li>
+            <li><b>Aterramento</b> — esquema TN-S ou TT. Em TN-C a norma restringe a aplicação: a função de neutro e proteção no mesmo condutor é incompatível com a proteção diferencial do ponto de recarga.</li>
+          </ul>
+        </section>
+
+        <section id="m-erros">
+          <h3>Erros frequentes em projeto de recarga</h3>
+          <details class="faq"><summary>Dimensionar pelo somatório das potências nominais</summary><div>Leva a orçar uma ampliação de entrada que o condomínio não aprova. Aplique simultaneidade e apresente o cenário com balanceamento dinâmico ao lado, para comparação.</div></details>
+          <details class="faq"><summary>Ignorar o agrupamento na prumada</summary><div>Vários ramais no mesmo shaft podem exigir seção duas vezes maior. Verifique o fator de correção antes de fechar a infraestrutura civil.</div></details>
+          <details class="faq"><summary>Usar um único DR para várias vagas</summary><div>Além de contrariar a NBR 17019, provoca desarme de todos os pontos por falta em um único veículo. É a principal reclamação de condomínio depois da instalação.</div></details>
+          <details class="faq"><summary>Não prever a infraestrutura civil da expansão</summary><div>Eletrocalha e prumada custam pouco na obra e muito depois. Dimensione o conduto para a taxa de eletrificação futura, mesmo instalando poucos pontos agora.</div></details>
+          <details class="faq"><summary>Esquecer a medição individualizada</summary><div>Sem medir o consumo por vaga não há como ratear a conta. Defina desde o início se a medição será pelo EVSE ou por medidor externo.</div></details>
+        </section>
+
+        <section id="m-glossario">
+          <h3>Glossário</h3>
+          <ul>
+            <li><b>EVSE</b> — equipamento de alimentação do veículo elétrico; a estação ou wallbox.</li>
+            <li><b>Setpoint</b> — potência máxima que o conjunto de recarga pode consumir, imposta pelo controlador de carga.</li>
+            <li><b>Piloto de controle</b> — sinal que informa ao veículo a corrente máxima disponível no ponto.</li>
+            <li><b>RDC-DD</b> — dispositivo que detecta corrente contínua residual de 6 mA dentro do EVSE.</li>
+            <li><b>Fator de simultaneidade</b> — razão entre a potência efetivamente demandada e a soma das potências instaladas.</li>
+            <li><b>Capacidade de condução (I<sub>z</sub>)</b> — corrente que o condutor conduz continuamente sem ultrapassar a temperatura da isolação, já corrigida pelos fatores de instalação.</li>
+          </ul>
+        </section>
+
+        <section id="m-testes">
+          <h3>Verificação do motor de cálculo</h3>
+          <p>Executa a suíte de testes embarcada sobre as funções de cálculo. Use após qualquer customização do arquivo.</p>
+          <button class="btn pri" id="btnTestes">Executar testes</button>
+          <div class="lab-saida" id="saidaTestes" style="margin-top:10px">Aguardando execução.</div>
+        </section>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<footer class="rodape">
+  <b>EletroPosto Calc</b> — ferramenta de apoio ao dimensionamento de infraestrutura de recarga. Os resultados dependem integralmente dos dados de entrada e não dispensam a verificação do projetista responsável, a consulta às tabelas originais das normas e a anuência da distribuidora de energia quando houver aumento de carga. Tabelas de capacidade de condução reproduzidas de forma simplificada a partir da ABNT NBR 5410; confirme os valores na edição vigente. Preços indicativos, sem vínculo com qualquer base oficial. <a href="#" id="linkLegal">Reabrir os avisos legais completos</a>.
+</footer>
+<div class="toast" id="toast"></div>
+<script id="nucleo">
+/* ==========================================================================
+   NÚCLEO DE CÁLCULO — funções puras, sem acesso ao DOM.
+   Exposto em globalThis.EPC para permitir execução da suíte de testes
+   fora do navegador (Node), conforme o protocolo de verificação do arquivo.
+   ========================================================================== */
+(function (raiz) {
+"use strict";
+
+/* ---------- sistemas de tensão ---------- */
+var SISTEMAS = {
+  mono127: { rot: "Monofásico 127 V", vf: 127, vl: 127, fases: 1 },
+  mono220: { rot: "Monofásico 220 V", vf: 220, vl: 220, fases: 1 },
+  bi220:   { rot: "Bifásico 220 V",   vf: 127, vl: 220, fases: 2 },
+  tri220:  { rot: "Trifásico 220 V",  vf: 127, vl: 220, fases: 3 },
+  tri380:  { rot: "Trifásico 380 V",  vf: 220, vl: 380, fases: 3 },
+  tri440:  { rot: "Trifásico 440 V",  vf: 254, vl: 440, fases: 3 }
+};
+
+/* ---------- perfis de simultaneidade e curva de carga ---------- */
+var PERFIS = {
+  residencial: { rot: "Residência unifamiliar",       fsMin: 0.30, k: 0.35, curva: "res", inicioVE: 19 },
+  condominio:  { rot: "Condomínio residencial",       fsMin: 0.15, k: 0.45, curva: "res", inicioVE: 19 },
+  comercial:   { rot: "Escritório / comércio",        fsMin: 0.35, k: 0.35, curva: "com", inicioVE: 8 },
+  publico:     { rot: "Estacionamento público",       fsMin: 0.50, k: 0.30, curva: "com", inicioVE: 9 },
+  frota:       { rot: "Frota / logística",            fsMin: 0.60, k: 0.25, curva: "com", inicioVE: 21 }
+};
+
+var CURVAS = {
+  res: [0.45,0.40,0.38,0.37,0.38,0.45,0.60,0.70,0.65,0.60,0.62,0.68,0.72,0.70,0.68,0.70,0.75,0.85,0.95,1.00,0.95,0.85,0.70,0.55],
+  com: [0.30,0.28,0.28,0.28,0.30,0.35,0.50,0.70,0.90,1.00,1.00,0.98,0.90,0.95,1.00,0.98,0.92,0.80,0.60,0.45,0.38,0.35,0.33,0.31]
+};
+
+/* ---------- seções e capacidades de condução (ABNT NBR 5410, reprodução simplificada) ---------- */
+var SECOES = [1.5,2.5,4,6,10,16,25,35,50,70,95,120,150,185,240,300];
+
+var AMP = {
+  pvc: {
+    B1: { 2:[17.5,24,32,41,57,76,101,125,151,192,232,269,309,353,415,477], 3:[15.5,21,28,36,50,68,89,110,134,171,207,239,275,314,370,426] },
+    B2: { 2:[16.5,23,30,38,52,69,90,111,133,168,201,232,265,300,351,401],  3:[15,20,27,34,46,62,80,99,118,149,179,206,236,268,313,358] },
+    C:  { 2:[19.5,27,36,46,63,85,112,138,168,213,258,299,344,392,461,530], 3:[17.5,24,32,41,57,76,96,119,144,184,223,259,299,341,403,464] },
+    D:  { 2:[22,29,38,47,63,81,104,125,148,183,216,246,278,312,361,408],   3:[18,24,31,39,52,67,86,103,122,151,179,203,230,258,297,336] }
+  },
+  epr: {
+    B1: { 2:[22,30,40,51,69,91,119,146,175,221,265,305,334,384,459,532],   3:[19.5,26,35,44,60,80,105,128,154,194,233,268,300,340,398,455] },
+    B2: { 2:[21,28,37,48,65,86,112,137,164,207,249,286,317,364,430,497],   3:[18.5,25,33,42,57,76,99,121,145,183,220,253,290,329,386,442] },
+    C:  { 2:[24,33,45,58,80,107,138,171,209,269,328,382,441,506,599,693],  3:[22,30,40,52,71,96,119,147,179,229,278,322,371,424,500,576] },
+    D:  { 2:[26,34,44,56,73,95,121,146,173,213,252,287,324,363,419,474],   3:[22,29,37,46,61,79,101,122,144,178,211,240,271,304,351,396] }
+  }
+};
+
+/* fator de correção de temperatura (ar e solo) */
+var FCT_AR   = { 10:{pvc:1.22,epr:1.15}, 15:{pvc:1.17,epr:1.12}, 20:{pvc:1.12,epr:1.08}, 25:{pvc:1.06,epr:1.04},
+                 30:{pvc:1.00,epr:1.00}, 35:{pvc:0.94,epr:0.96}, 40:{pvc:0.87,epr:0.91}, 45:{pvc:0.79,epr:0.87},
+                 50:{pvc:0.71,epr:0.82}, 55:{pvc:0.61,epr:0.76}, 60:{pvc:0.50,epr:0.71} };
+var FCT_SOLO = { 10:{pvc:1.10,epr:1.07}, 15:{pvc:1.05,epr:1.04}, 20:{pvc:1.00,epr:1.00}, 25:{pvc:0.95,epr:0.96},
+                 30:{pvc:0.89,epr:0.93}, 35:{pvc:0.84,epr:0.89}, 40:{pvc:0.77,epr:0.85}, 45:{pvc:0.71,epr:0.80},
+                 50:{pvc:0.63,epr:0.76}, 55:{pvc:0.55,epr:0.71}, 60:{pvc:0.45,epr:0.65} };
+
+/* fator de correção por agrupamento de circuitos */
+var FCA = { 1:1.00, 2:0.80, 3:0.70, 4:0.65, 5:0.60, 6:0.57, 7:0.54, 8:0.52, 9:0.50, 10:0.50,
+            11:0.48, 12:0.45, 13:0.44, 14:0.43, 15:0.42, 16:0.41, 17:0.40, 18:0.39, 19:0.39, 20:0.38 };
+
+/* diâmetro externo aproximado de condutor unipolar 450/750 V (mm) */
+var DIAM = [3.1,3.6,4.1,4.7,6.0,7.1,8.9,10.0,11.7,13.5,15.6,17.2,19.0,21.2,24.0,26.8];
+/* eletrodutos: diâmetro nominal x diâmetro interno útil (mm) */
+var ELETRODUTOS = [[20,15.8],[25,20.9],[32,26.1],[40,33.4],[50,42.5],[60,52.4],[75,66.6],[85,74.9],[110,97.5]];
+
+var SERIE_DISJ = [6,10,16,20,25,32,40,50,63,80,100,125,160,200,250,320,400,500,630,800];
+
+/* Seção mínima de circuito de recarga (uso contínuo), por corrente nominal da proteção.
+   Corresponde à seção capaz de conduzir 1,25 · In em cobre, método B1, 30 °C — piso
+   de projeto que impede a adoção de condutores no limite exato da tabela em circuitos
+   que operam horas seguidas na corrente nominal. */
+var SECAO_MIN_RECARGA = [[16,2.5],[20,4],[25,4],[32,6],[40,6],[50,10],[63,16],[80,25],[100,35],[125,50],[160,70],[200,95],[250,120],[320,185],[400,240]];
+function secaoMinimaRecarga(inominal) {
+  for (var i = 0; i < SECAO_MIN_RECARGA.length; i++) if (inominal <= SECAO_MIN_RECARGA[i][0]) return SECAO_MIN_RECARGA[i][1];
+  return 0;
+}
+var SERIE_DR   = [25,40,63,80,100,125,160,250];
+
+var RHO20 = { cobre: 0.0178, aluminio: 0.0282 };
+var ALFA  = 0.00393;
+var REATANCIA = 0.0001; /* Ω/m, cabos em eletroduto */
+
+/* ---------- utilitários ---------- */
+function num(v, padrao) { var x = parseFloat(v); return isFinite(x) ? x : (padrao || 0); }
+function limitar(v, a, b) { return Math.max(a, Math.min(b, v)); }
+function proximoDaSerie(serie, v) {
+  for (var i = 0; i < serie.length; i++) if (serie[i] >= v - 1e-9) return serie[i];
+  return null;
+}
+function interpolaFCT(tabela, temp, iso) {
+  var chaves = Object.keys(tabela).map(Number).sort(function (a, b) { return a - b; });
+  if (temp <= chaves[0]) return tabela[chaves[0]][iso];
+  if (temp >= chaves[chaves.length - 1]) return tabela[chaves[chaves.length - 1]][iso];
+  for (var i = 0; i < chaves.length - 1; i++) {
+    if (temp >= chaves[i] && temp <= chaves[i + 1]) {
+      var t = (temp - chaves[i]) / (chaves[i + 1] - chaves[i]);
+      return tabela[chaves[i]][iso] + t * (tabela[chaves[i + 1]][iso] - tabela[chaves[i]][iso]);
+    }
+  }
+  return 1;
+}
+function fatorAgrupamento(n) {
+  n = Math.round(limitar(n || 1, 1, 20));
+  return FCA[n] !== undefined ? FCA[n] : 0.38;
+}
+
+/* ---------- elétrica básica ---------- */
+function tensaoDe(sistema, ligacao) {
+  var s = SISTEMAS[sistema] || SISTEMAS.tri380;
+  if (ligacao === "tri") return s.fases === 3 ? s.vl : s.vl;
+  if (ligacao === "bi") return s.vl;
+  return s.vf;
+}
+function ligacaoValida(sistema, ligacao) {
+  var s = SISTEMAS[sistema] || SISTEMAS.tri380;
+  if (ligacao === "tri") return s.fases === 3;
+  if (ligacao === "bi") return s.fases >= 2;
+  return true;
+}
+function correnteProjeto(pkW, sistema, ligacao, fp) {
+  fp = fp || 1;
+  var v = tensaoDe(sistema, ligacao);
+  if (ligacao === "tri") return (pkW * 1000) / (Math.sqrt(3) * v * fp);
+  return (pkW * 1000) / (v * fp);
+}
+function potenciaDe(corrente, sistema, ligacao, fp) {
+  fp = fp || 1;
+  var v = tensaoDe(sistema, ligacao);
+  if (ligacao === "tri") return (Math.sqrt(3) * v * corrente * fp) / 1000;
+  return (v * corrente * fp) / 1000;
+}
+function condutoresCarregados(ligacao) { return ligacao === "tri" ? 3 : 2; }
+
+/* queda de tensão percentual */
+function quedaTensao(corrente, comprimento, secao, sistema, ligacao, material, isolacao, fp) {
+  fp = fp === undefined ? 1 : fp;
+  var tOp = isolacao === "pvc" ? 70 : 90;
+  var rho = (RHO20[material] || RHO20.cobre) * (1 + ALFA * (tOp - 20));
+  var senfi = Math.sqrt(Math.max(0, 1 - fp * fp));
+  var k = ligacao === "tri" ? Math.sqrt(3) : 2;
+  var v = tensaoDe(sistema, ligacao);
+  var dv = k * corrente * comprimento * ((rho / secao) * fp + REATANCIA * senfi);
+  return (dv / v) * 100;
+}
+
+/* seção mínima do condutor de proteção (NBR 5410) */
+function secaoPE(s) {
+  if (s <= 16) return s;
+  if (s <= 35) return 16;
+  return proximoDaSerie(SECOES, s / 2);
+}
+
+/* eletroduto para um conjunto de condutores, ocupação máxima conforme NBR 5410 */
+function eletrodutoPara(secoesLista) {
+  var area = 0, n = secoesLista.length;
+  for (var i = 0; i < n; i++) {
+    var idx = SECOES.indexOf(secoesLista[i]);
+    var d = idx >= 0 ? DIAM[idx] : 3.1;
+    area += Math.PI * d * d / 4;
+  }
+  var ocupacao = n === 1 ? 0.53 : (n === 2 ? 0.31 : 0.40);
+  for (var j = 0; j < ELETRODUTOS.length; j++) {
+    var interno = ELETRODUTOS[j][1];
+    var util = Math.PI * interno * interno / 4 * ocupacao;
+    if (util >= area) return { dn: ELETRODUTOS[j][0], ocupacaoPct: (area / (Math.PI * interno * interno / 4)) * 100 };
+  }
+  return { dn: null, ocupacaoPct: 100 };
+}
+
+/* ---------- dimensionamento de um circuito ---------- */
+function dimensionarCircuito(o) {
+  var alertas = [];
+  var sistema = o.sistema, ligacao = o.ligacao || "tri";
+  var material = o.material === "aluminio" ? "aluminio" : "cobre";
+  var isolacao = o.isolacao === "pvc" ? "pvc" : "epr";
+  var metodo = AMP[isolacao][o.metodo] ? o.metodo : "B1";
+  var fp = num(o.fp, 1) || 1;
+  var rend = limitar(num(o.rend, 1) || 1, 0.5, 1);
+  var pEntrada = num(o.pkW, 0) / rend;
+  var fcont = limitar(num(o.fatorContinuo, 1.25), 1, 1.6);
+
+  if (!ligacaoValida(sistema, ligacao)) {
+    alertas.push({ nivel: "erro", texto: "A ligação escolhida não existe no sistema de tensão informado." });
+  }
+
+  var ib = correnteProjeto(pEntrada, sistema, ligacao, fp);
+  var icont = ib * fcont;                 /* corrente de dimensionamento do condutor (uso contínuo) */
+  var nc = condutoresCarregados(ligacao);
+  var fct = interpolaFCT(metodo === "D" ? FCT_SOLO : FCT_AR, num(o.tempAmb, 30), isolacao);
+  var fca = fatorAgrupamento(o.nAgrup);
+  var corr = fct * fca;
+
+  /* Proteção: In ≥ IB. O EVSE limita a própria corrente, então a proteção acompanha a
+     corrente nominal do ponto — a margem de uso contínuo é exigida do condutor, não do disjuntor. */
+  var disj = proximoDaSerie(SERIE_DISJ, ib);
+  if (disj === null) {
+    alertas.push({ nivel: "erro", texto: "Corrente de projeto acima da série de disjuntores prevista. Reveja a divisão de circuitos." });
+    disj = SERIE_DISJ[SERIE_DISJ.length - 1];
+  }
+
+  var tabela = AMP[isolacao][metodo][nc];
+  var fatorAl = material === "aluminio" ? 0.78 : 1;
+  var minMaterial = material === "aluminio" ? 16 : 2.5;
+  var minRecarga = o.recarga === false ? 0 : secaoMinimaRecarga(disj);
+  var minSecao = Math.max(minMaterial, minRecarga);
+  var quedaMax = num(o.quedaMax, 4);
+  var comprimento = num(o.comprimento, 1);
+
+  function izDe(i) { return tabela[i] * fatorAl * corr; }
+  function quedaDe(i) { return quedaTensao(ib, comprimento, SECOES[i], sistema, ligacao, material, isolacao, fp); }
+
+  /* menor seção que atende simultaneamente: Iz ≥ In, Iz ≥ 1,25·IB e queda ≤ limite */
+  var idxTec = -1, criterio = "capacidade de condução", i;
+  for (i = 0; i < SECOES.length; i++) {
+    if (izDe(i) + 1e-9 < disj) { criterio = "capacidade de condução"; continue; }
+    if (izDe(i) + 1e-9 < icont) { criterio = "uso contínuo (" + fcont.toFixed(2).replace(".", ",") + " × I<sub>B</sub>)"; continue; }
+    if (quedaDe(i) > quedaMax + 1e-9) { criterio = "queda de tensão"; continue; }
+    idxTec = i; break;
+  }
+
+  if (idxTec < 0) {
+    idxTec = SECOES.length - 1;
+    criterio = "limite da tabela";
+    alertas.push({ nivel: "erro", texto: "Nenhuma seção da tabela atende ao circuito. Divida a carga em circuitos paralelos, reduza o comprimento ou reveja o método de instalação." });
+  }
+
+  var idx = idxTec;
+  while (idx < SECOES.length - 1 && SECOES[idx] < minSecao) idx++;
+  if (SECOES[idx] > SECOES[idxTec]) {
+    criterio = minRecarga > minMaterial ? "seção mínima de circuito de recarga" : "seção mínima do material";
+  }
+
+  var escolha = { secao: SECOES[idx], izTab: tabela[idx] * fatorAl, izCorr: izDe(idx), queda: quedaDe(idx) };
+
+  if (criterio === "queda de tensão") {
+    alertas.push({ nivel: "info", texto: "Seção definida pela queda de tensão, não pela corrente. Reduzir o percurso é mais econômico que aumentar o cabo." });
+  }
+  if (criterio === "seção mínima de circuito de recarga") {
+    alertas.push({ nivel: "info", texto: "A tabela de capacidade de condução admitiria " + SECOES[idxTec] + " mm², mas o circuito opera horas seguidas na corrente nominal. Adotada a seção mínima de " + escolha.secao + " mm² para a proteção de " + disj + " A." });
+  }
+  if (fca < 0.6) {
+    alertas.push({ nivel: "atencao", texto: "Agrupamento de " + Math.round(num(o.nAgrup, 1)) + " circuitos reduz a capacidade em " + Math.round((1 - fca) * 100) + "%. Avalie dividir a prumada ou usar eletrocalha ventilada." });
+  }
+  if (escolha.izCorr < icont) {
+    alertas.push({ nivel: "atencao", texto: "A capacidade corrigida do condutor (" + escolha.izCorr.toFixed(1) + " A) é inferior à corrente de uso contínuo (" + icont.toFixed(1) + " A). Reveja método de instalação, agrupamento ou temperatura." });
+  }
+
+  var spe = secaoPE(escolha.secao);
+  var nCabos = ligacao === "tri" ? 5 : (ligacao === "bi" ? 4 : 3);
+  var lista = [];
+  for (i = 0; i < nCabos - 1; i++) lista.push(escolha.secao);
+  lista.push(spe);
+  var duto = eletrodutoPara(lista);
+  var dutoPrumada = eletrodutoPara(lista.concat.apply(lista, Array.apply(null, Array(Math.max(0, Math.round(num(o.nAgrup, 1)) - 1))).map(function () { return lista; })));
+
+  return {
+    potencia: num(o.pkW, 0), potenciaEntrada: pEntrada, ligacao: ligacao, fp: fp,
+    tensao: tensaoDe(sistema, ligacao), ib: ib, iproj: icont, icont: icont, fcont: fcont,
+    secaoTecnica: SECOES[idxTec], secaoMinima: minSecao,
+    fct: fct, fca: fca, disjuntor: disj, curva: "C",
+    dr: proximoDaSerie(SERIE_DR, disj) || disj, drSens: 30,
+    secao: escolha.secao, secaoNeutro: escolha.secao,
+    secaoPE: spe, iz: escolha.izTab, izCorrigida: escolha.izCorr, queda: escolha.queda,
+    criterio: criterio, condutores: nCabos, eletroduto: duto.dn, ocupacao: duto.ocupacaoPct,
+    eletrodutoPrumada: dutoPrumada.dn, material: material, isolacao: isolacao, metodo: metodo,
+    comprimento: num(o.comprimento, 0), alertas: alertas
+  };
+}
+
+/* ---------- simultaneidade ---------- */
+function fatorSimultaneidade(tipo, n) {
+  var p = PERFIS[tipo] || PERFIS.condominio;
+  n = Math.max(1, Math.round(n || 1));
+  return limitar(p.fsMin + (1 - p.fsMin) * Math.pow(n, -p.k), p.fsMin, 1);
+}
+
+/* ---------- capacidade da entrada ---------- */
+function capacidadeEntrada(e) {
+  if (e.modoCap === "kw") return num(e.capKw, 0);
+  var s = SISTEMAS[e.sistema] || SISTEMAS.tri380;
+  var i = num(e.disjGeral, 0), fp = limitar(num(e.fpEdif, 0.92), 0.6, 1);
+  if (s.fases === 3) return (Math.sqrt(3) * s.vl * i * fp) / 1000;
+  if (s.fases === 2) return (s.vl * i * fp) / 1000;
+  return (s.vf * i * fp) / 1000;
+}
+
+/* ---------- motor principal ---------- */
+function calcular(e) {
+  var r = { alertas: [], grupos: [] };
+  var s = SISTEMAS[e.sistema] || SISTEMAS.tri380;
+  r.sistema = s;
+
+  r.capacidade = capacidadeEntrada(e);
+  r.reserva = limitar(num(e.reserva, 10), 0, 50);
+  r.capacidadeUtil = r.capacidade * (1 - r.reserva / 100);
+  r.demandaAtual = num(e.demandaAtual, 0);
+  r.disponivelVE = Math.max(0, r.capacidadeUtil - r.demandaAtual);
+
+  if (r.demandaAtual >= r.capacidadeUtil) {
+    r.alertas.push({ nivel: "erro", texto: "A carga atual da edificação já ocupa toda a capacidade útil da entrada. Não há folga para recarga sem ampliação ou redução de carga existente." });
+  }
+
+  /* grupos de pontos */
+  var pontos = 0, instalada = 0, entradaNominal = 0, temDC = false, temTri = false;
+  var grupos = (e.grupos || []).filter(function (g) { return num(g.n, 0) > 0 && num(g.p, 0) > 0; });
+  grupos.forEach(function (g) { pontos += Math.round(num(g.n, 0)); });
+  r.pontos = pontos;
+
+  var fsAuto = fatorSimultaneidade(e.tipoEdif, pontos);
+  r.fsAuto = fsAuto;
+  r.fs = e.modoFs === "manual" ? limitar(num(e.fsManual, 30) / 100, 0.01, 1) : fsAuto;
+
+  grupos.forEach(function (g) {
+    var n = Math.round(num(g.n, 0));
+    var p = num(g.p, 0);
+    var rend = limitar(num(g.rend, 1) || 1, 0.5, 1);
+    var lig = g.ligacao || "tri";
+    var pe = (n * p) / rend;
+    instalada += n * p;
+    entradaNominal += pe;
+    if (lig === "dc") temDC = true;
+    if (lig === "tri" || lig === "dc") temTri = true;
+    r.grupos.push({
+      nome: g.nome || "Grupo", n: n, p: p, ligacao: lig, fp: num(g.fp, 1) || 1, rend: rend,
+      potenciaInstalada: n * p, potenciaEntrada: pe, demanda: pe * r.fs,
+      correnteUnitaria: correnteProjeto(p / rend, e.sistema, lig === "dc" ? (s.fases === 3 ? "tri" : "mono") : lig, num(g.fp, 1) || 1)
+    });
+    if (!ligacaoValida(e.sistema, lig === "dc" ? (s.fases === 3 ? "tri" : "mono") : lig)) {
+      r.alertas.push({ nivel: "erro", texto: "O grupo “" + (g.nome || "sem nome") + "” exige ligação incompatível com o sistema " + s.rot + "." });
+    }
+  });
+
+  r.potenciaInstalada = instalada;
+  r.potenciaEntradaNominal = entradaNominal;
+  r.temDC = temDC;
+  r.demandaSemGestao = entradaNominal * r.fs;
+
+  /* estratégia de gestão */
+  var estrategia = e.estrategia || "nenhuma";
+  var setpointInformado = num(e.setpoint, 0);
+  var setpoint = setpointInformado > 0 ? setpointInformado : r.disponivelVE;
+  r.setpointAutomatico = setpointInformado <= 0;
+  r.setpoint = Math.min(setpoint, entradaNominal);
+  r.estrategia = estrategia;
+
+  if (estrategia === "nenhuma") {
+    r.demandaVE = r.demandaSemGestao;
+    r.limiteVE = entradaNominal;
+  } else {
+    r.demandaVE = Math.min(r.demandaSemGestao, r.setpoint);
+    r.limiteVE = r.setpoint;
+  }
+
+  r.demandaTotal = r.demandaAtual + r.demandaVE;
+  r.folga = r.capacidadeUtil - r.demandaTotal;
+  r.ocupacao = r.capacidade > 0 ? (r.demandaTotal / r.capacidade) * 100 : 0;
+  r.correnteTotal = r.capacidade > 0
+    ? (s.fases === 3 ? (r.demandaTotal * 1000) / (Math.sqrt(3) * s.vl * limitar(num(e.fpEdif, 0.92), 0.6, 1))
+                     : (r.demandaTotal * 1000) / (s.vl * limitar(num(e.fpEdif, 0.92), 0.6, 1)))
+    : 0;
+
+  /* modulação: potência por ponto */
+  var imin = limitar(num(e.correnteMin, 6), 6, 32);
+  var ligBase = grupos.length ? (grupos[0].ligacao === "dc" ? (s.fases === 3 ? "tri" : "mono") : grupos[0].ligacao) : "tri";
+  r.potenciaMinimaPonto = potenciaDe(imin, e.sistema, ligBase, 1);
+  r.pontosAtivos = Math.max(1, Math.ceil(pontos * r.fs));
+  var potPorPontoNominal = pontos > 0 ? instalada / pontos : 0;
+
+  if (estrategia === "nenhuma") {
+    r.potenciaPorPontoAtivo = potPorPontoNominal;
+    r.potenciaPorPontoPior = potPorPontoNominal;
+  } else if (estrategia === "estatico") {
+    r.potenciaPorPontoAtivo = pontos > 0 ? Math.min(potPorPontoNominal, r.limiteVE / pontos) : 0;
+    r.potenciaPorPontoPior = r.potenciaPorPontoAtivo;
+  } else {
+    r.potenciaPorPontoAtivo = Math.min(potPorPontoNominal, r.limiteVE / r.pontosAtivos);
+    r.potenciaPorPontoPior = pontos > 0 ? Math.min(potPorPontoNominal, r.limiteVE / pontos) : 0;
+  }
+  r.moduladoAbaixoDoMinimo = estrategia !== "nenhuma" && pontos > 0 && r.potenciaPorPontoPior < r.potenciaMinimaPonto;
+  r.pontosSimultaneosMax = r.potenciaMinimaPonto > 0 ? Math.floor(r.limiteVE / r.potenciaMinimaPonto) : pontos;
+
+  /* energia */
+  var nVeic = Math.round(num(e.veicSimult, 0)) > 0 ? Math.round(num(e.veicSimult, 0)) : pontos;
+  var janela = limitar(num(e.janela, 9), 0.5, 24);
+  r.veiculos = nVeic;
+  r.janela = janela;
+  r.energiaDia = (nVeic * num(e.kmDia, 0) * num(e.consumo, 16)) / 100;
+  r.energiaMes = r.energiaDia * 30;
+  r.custoMes = r.energiaMes * num(e.tarifa, 0);
+  r.energiaDisponivel = Math.min(r.limiteVE, entradaNominal) * janela * 0.92;
+  r.suficienteEnergia = r.energiaDisponivel >= r.energiaDia;
+  r.horasPorVeiculo = r.potenciaPorPontoAtivo > 0
+    ? ((num(e.kmDia, 0) * num(e.consumo, 16)) / 100) / r.potenciaPorPontoAtivo : 0;
+
+  /* veredito */
+  if (pontos === 0) {
+    r.nivel = "atencao"; r.titulo = "Nenhum ponto configurado";
+    r.detalhe = "Adicione ao menos um grupo de carregadores na etapa 2.";
+  } else if (r.folga >= 0 && (estrategia === "nenhuma" || r.demandaSemGestao <= r.disponivelVE)) {
+    r.nivel = "ok"; r.titulo = "Viável sem ampliação";
+    r.detalhe = "Sobram " + r.folga.toFixed(1) + " kW de folga sobre a capacidade útil.";
+  } else if (r.folga >= 0) {
+    r.nivel = "atencao"; r.titulo = "Viável com gerenciamento de carga";
+    r.detalhe = "A potência instalada excede a folga; o controlador limita o conjunto a " + r.limiteVE.toFixed(1) + " kW.";
+  } else {
+    r.nivel = "critico"; r.titulo = "Capacidade insuficiente";
+    r.detalhe = "Faltam " + Math.abs(r.folga).toFixed(1) + " kW. Amplie a entrada ou reduza a potência dos pontos.";
+  }
+  if (pontos > 0 && r.nivel === "atencao" && estrategia === "nenhuma") {
+    r.nivel = "critico"; r.titulo = "Excede a capacidade sem gestão";
+  }
+  if (r.moduladoAbaixoDoMinimo) {
+    r.alertas.push({ nivel: "atencao", texto: "Com todos os pontos plugados, a potência por ponto (" + r.potenciaPorPontoPior.toFixed(1) + " kW) cai abaixo do mínimo de modulação (" + r.potenciaMinimaPonto.toFixed(1) + " kW). O controlador passará a operar por fila, atendendo no máximo " + r.pontosSimultaneosMax + " pontos por vez." });
+  }
+  if (!r.suficienteEnergia && pontos > 0) {
+    r.alertas.push({ nivel: "atencao", texto: "A janela de " + janela + " h entrega " + r.energiaDisponivel.toFixed(0) + " kWh, abaixo dos " + r.energiaDia.toFixed(0) + " kWh que a frota consome por dia. Amplie a janela, o setpoint ou reduza a rodagem considerada." });
+  }
+  if (r.folga < 0 && e.ampliavel === "nao") {
+    r.alertas.push({ nivel: "erro", texto: "A ampliação da entrada foi declarada inviável. As saídas possíveis são reduzir a potência dos carregadores, reduzir o número de pontos ou adotar recarga escalonada por fila." });
+  }
+  if (temDC && (SISTEMAS[e.sistema] || {}).fases !== 3) {
+    r.alertas.push({ nivel: "erro", texto: "Carregadores em corrente contínua exigem alimentação trifásica." });
+  }
+  if (temTri && s.fases === 3 && pontos > 0) {
+    r.alertas.push({ nivel: "info", texto: "Distribua os pontos monofásicos entre as três fases. Desequilíbrio acima de 20 A entre fases compromete o balanceamento e sobrecarrega o neutro." });
+  }
+
+  return r;
+}
+
+/* ---------- cenários comparativos ---------- */
+function cenarios(e) {
+  return ["nenhuma", "estatico", "dinamico"].map(function (est) {
+    var c = calcular(Object.assign({}, e, { estrategia: est }));
+    return {
+      estrategia: est,
+      rotulo: est === "nenhuma" ? "Sem gestão" : (est === "estatico" ? "Divisão estática" : "Balanceamento dinâmico"),
+      demandaVE: c.demandaVE, demandaTotal: c.demandaTotal, folga: c.folga,
+      potenciaPorPonto: c.potenciaPorPontoAtivo, nivel: c.nivel, titulo: c.titulo
+    };
+  });
+}
+
+/* ---------- expansão possível ---------- */
+function expansao(e, res) {
+  if (!res.pontos) return { maximo: 0, adicionais: 0, potenciaTipica: 0 };
+  var pTipica = res.potenciaEntradaNominal / res.pontos;
+  var max = 0;
+  for (var n = 1; n <= 2000; n++) {
+    var fs = e.modoFs === "manual" ? limitar(num(e.fsManual, 30) / 100, 0.01, 1) : fatorSimultaneidade(e.tipoEdif, n);
+    if (n * pTipica * fs <= res.disponivelVE) max = n; else break;
+  }
+  return { maximo: max, adicionais: Math.max(0, max - res.pontos), potenciaTipica: pTipica };
+}
+
+/* ---------- curva de carga 24 h ---------- */
+function curva24h(e, res) {
+  var p = PERFIS[e.tipoEdif] || PERFIS.condominio;
+  var base = CURVAS[p.curva];
+  var janela = Math.round(limitar(num(e.janela, 9), 1, 24));
+  var inicio = p.inicioVE;
+  var horas = [];
+  for (var h = 0; h < 24; h++) {
+    var dentro = false;
+    for (var j = 0; j < janela; j++) if ((inicio + j) % 24 === h) dentro = true;
+    horas.push({
+      hora: h,
+      base: base[h] * res.demandaAtual,
+      ve: dentro ? res.demandaVE : 0
+    });
+  }
+  return horas;
+}
+
+/* ---------- lista de materiais ---------- */
+function materiais(e, res, alim, ramais) {
+  var itens = [];
+  var compAlim = num(e.compAlim, 0), compRamal = num(e.compRamal, 0);
+  if (alim) {
+    itens.push({ id: "cabo_alim", desc: "Cabo " + alim.material + " " + (alim.isolacao === "pvc" ? "PVC 70 °C" : "EPR/XLPE 90 °C") + " " + alim.secao + " mm² — alimentador", un: "m", q: compAlim * (alim.condutores - 1) * 1.1, pu: 0 });
+    itens.push({ id: "cabo_alim_pe", desc: "Cabo de proteção " + alim.secaoPE + " mm² — alimentador", un: "m", q: compAlim * 1.1, pu: 0 });
+    if (alim.eletroduto) itens.push({ id: "duto_alim", desc: "Eletroduto DN " + alim.eletroduto + " mm — alimentador", un: "m", q: compAlim, pu: 0 });
+    itens.push({ id: "disj_alim", desc: "Disjuntor " + (alim.ligacao === "tri" ? "tripolar" : "bipolar") + " " + alim.disjuntor + " A curva C", un: "un", q: 1, pu: 0 });
+  }
+  itens.push({ id: "quadro", desc: "Quadro de distribuição para " + res.pontos + " pontos de recarga, com barramento e proteção geral", un: "un", q: 1, pu: 0 });
+  itens.push({ id: "dps", desc: "Dispositivo de proteção contra surtos classe II — conjunto", un: "cj", q: 1, pu: 0 });
+  (ramais || []).forEach(function (rm, i) {
+    var n = rm.n;
+    itens.push({ id: "cabo_r" + i, desc: "Cabo " + rm.circ.material + " " + rm.circ.secao + " mm² — ramais " + rm.nome, un: "m", q: n * compRamal * (rm.circ.condutores - 1) * 1.1, pu: 0 });
+    itens.push({ id: "pe_r" + i, desc: "Cabo de proteção " + rm.circ.secaoPE + " mm² — ramais " + rm.nome, un: "m", q: n * compRamal * 1.1, pu: 0 });
+    if (rm.circ.eletroduto) itens.push({ id: "duto_r" + i, desc: "Eletroduto DN " + rm.circ.eletroduto + " mm — ramais " + rm.nome, un: "m", q: n * compRamal, pu: 0 });
+    itens.push({ id: "disj_r" + i, desc: "Disjuntor " + (rm.circ.ligacao === "tri" ? "tripolar" : "bipolar") + " " + rm.circ.disjuntor + " A curva C", un: "un", q: n, pu: 0 });
+    itens.push({ id: "dr_r" + i, desc: "Diferencial residual " + (rm.circ.ligacao === "tri" ? "tetrapolar" : "bipolar") + " " + rm.circ.dr + " A / 30 mA, tipo A ou B", un: "un", q: n, pu: 0 });
+    itens.push({ id: "evse_r" + i, desc: "Estação de recarga " + rm.nome + " — " + rm.p + " kW", un: "un", q: n, pu: 0 });
+  });
+  if (e.estrategia === "dinamico") {
+    itens.push({ id: "dlb", desc: "Controlador de balanceamento dinâmico com transformadores de corrente no ramal geral", un: "cj", q: 1, pu: 0 });
+  } else if (e.estrategia === "estatico") {
+    itens.push({ id: "dlb_e", desc: "Módulo de divisão estática de potência entre estações", un: "cj", q: 1, pu: 0 });
+  }
+  itens.push({ id: "aterr", desc: "Adequação de aterramento e equipotencialização do quadro de recarga", un: "vb", q: 1, pu: 0 });
+  itens.push({ id: "ensaios", desc: "Ensaios de continuidade, isolação e verificação funcional dos DR", un: "vb", q: 1, pu: 0 });
+  return itens;
+}
+
+raiz.EPC = {
+  SISTEMAS: SISTEMAS, PERFIS: PERFIS, CURVAS: CURVAS, SECOES: SECOES, AMP: AMP,
+  FCA: FCA, DIAM: DIAM, ELETRODUTOS: ELETRODUTOS, SERIE_DISJ: SERIE_DISJ, SERIE_DR: SERIE_DR,
+  num: num, limitar: limitar, proximoDaSerie: proximoDaSerie, interpolaFCT: interpolaFCT,
+  fatorAgrupamento: fatorAgrupamento, tensaoDe: tensaoDe, ligacaoValida: ligacaoValida,
+  correnteProjeto: correnteProjeto, potenciaDe: potenciaDe, quedaTensao: quedaTensao,
+  secaoPE: secaoPE, eletrodutoPara: eletrodutoPara, dimensionarCircuito: dimensionarCircuito,
+  fatorSimultaneidade: fatorSimultaneidade, capacidadeEntrada: capacidadeEntrada,
+  calcular: calcular, cenarios: cenarios, expansao: expansao, curva24h: curva24h, materiais: materiais
+};
+})(typeof globalThis !== "undefined" ? globalThis : this);
+</script>
+<script id="interface">
+(function () {
+"use strict";
+var E = window.EPC;
+var $ = function (s, r) { return (r || document).querySelector(s); };
+var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+var CHAVE = "epc.projeto.v2", CHAVE_TEMA = "epc.tema", CHAVE_MANUAL = "epc.manual";
+
+/* ---------------- formatação ---------------- */
+function fmt(v, d) {
+  if (!isFinite(v)) return "—";
+  return v.toLocaleString("pt-BR", { minimumFractionDigits: d === undefined ? 1 : d, maximumFractionDigits: d === undefined ? 1 : d });
+}
+function moeda(v) { return "R$ " + fmt(v, 2); }
+function toast(msg) {
+  var t = $("#toast"); t.textContent = msg; t.classList.add("ver");
+  clearTimeout(toast._t); toast._t = setTimeout(function () { t.classList.remove("ver"); }, 2200);
+}
+
+/* ---------------- estado ---------------- */
+var padrao = {
+  nome: "Estudo de infraestrutura de recarga",
+  tipoEdif: "condominio", sistema: "tri380", modoCap: "disj", disjGeral: 150, capKw: 98,
+  fpEdif: 0.92, demandaAtual: 62, reserva: 10, ampliavel: "sim",
+  vagasTotais: 80, compAlim: 45, compRamal: 25, compMax: 60,
+  grupos: [{ nome: "Wallbox trifásica — vagas privativas", n: 20, p: 11, ligacao: "tri", fp: 0.99, rend: 1 }],
+  modoFs: "auto", fsManual: 30, janela: 9, kmDia: 45, consumo: 16, tarifa: 0.95,
+  estrategia: "dinamico", setpoint: 0, correnteMin: 6, veicSimult: 0,
+  materialCond: "cobre", isolacao: "epr", metodoAlim: "C", metodoRamal: "B1",
+  tempAmb: 30, circAgrup: 4, quedaAlim: 2, quedaTotal: 4, fatorContinuo: 1.25,
+  precos: {}
+};
+var estado = JSON.parse(JSON.stringify(padrao));
+var ultimo = null;
+
+var CAMPOS = ["tipoEdif","sistema","disjGeral","capKw","fpEdif","demandaAtual","reserva","ampliavel",
+  "vagasTotais","compAlim","compRamal","compMax","fsManual","janela","kmDia","consumo","tarifa",
+  "estrategia","setpoint","correnteMin","veicSimult","materialCond","isolacao","metodoAlim",
+  "metodoRamal","tempAmb","circAgrup","quedaAlim","quedaTotal","fatorContinuo"];
+
+function lerFormulario() {
+  CAMPOS.forEach(function (c) {
+    var el = document.getElementById(c);
+    if (!el) return;
+    estado[c] = el.type === "number" ? E.num(el.value, padrao[c]) : el.value;
+  });
+  var mc = $("input[name=modoCap]:checked"); if (mc) estado.modoCap = mc.value;
+  var mf = $("input[name=modoFs]:checked"); if (mf) estado.modoFs = mf.value;
+  estado.nome = $("#projNome").value;
+}
+function escreverFormulario() {
+  CAMPOS.forEach(function (c) {
+    var el = document.getElementById(c);
+    if (el && estado[c] !== undefined) el.value = estado[c];
+  });
+  $$("input[name=modoCap]").forEach(function (i) { i.checked = i.value === estado.modoCap; });
+  $$("input[name=modoFs]").forEach(function (i) { i.checked = i.value === estado.modoFs; });
+  $("#projNome").value = estado.nome || "";
+  renderGrupos();
+  aplicarVisibilidade();
+}
+function aplicarVisibilidade() {
+  $("#campoDisj").style.display = estado.modoCap === "disj" ? "" : "none";
+  $("#campoKw").style.display = estado.modoCap === "kw" ? "" : "none";
+  $("#fsManual").disabled = estado.modoFs !== "manual";
+  $("#setpoint").disabled = estado.estrategia === "nenhuma";
+  $("#correnteMin").disabled = estado.estrategia === "nenhuma";
+}
+
+/* ---------------- grupos de carregadores ---------------- */
+var MODELOS = [
+  { rot: "Wallbox 3,7 kW mono (16 A)", p: 3.7, lig: "mono", fp: 0.99, rend: 1 },
+  { rot: "Wallbox 7,4 kW mono (32 A)", p: 7.4, lig: "mono", fp: 0.99, rend: 1 },
+  { rot: "Wallbox 11 kW tri (16 A)",   p: 11,  lig: "tri",  fp: 0.99, rend: 1 },
+  { rot: "Wallbox 22 kW tri (32 A)",   p: 22,  lig: "tri",  fp: 0.99, rend: 1 },
+  { rot: "DC 30 kW",  p: 30,  lig: "dc", fp: 0.97, rend: 0.94 },
+  { rot: "DC 60 kW",  p: 60,  lig: "dc", fp: 0.97, rend: 0.94 },
+  { rot: "DC 90 kW",  p: 90,  lig: "dc", fp: 0.98, rend: 0.95 },
+  { rot: "DC 150 kW", p: 150, lig: "dc", fp: 0.98, rend: 0.95 },
+  { rot: "Personalizado", p: null, lig: null, fp: null, rend: null }
+];
+var LIGACOES = [["mono","Monofásica (F+N)"],["bi","Bifásica (F+F)"],["tri","Trifásica (3F+N)"],["dc","Corrente contínua"]];
+
+function renderGrupos() {
+  var tb = $("#corpoGrupos"); tb.innerHTML = "";
+  estado.grupos.forEach(function (g, i) {
+    var tr = document.createElement("tr");
+    var opcoesModelo = MODELOS.map(function (m, k) {
+      var sel = (m.p === g.p && m.lig === g.ligacao) ? " selected" : "";
+      return '<option value="' + k + '"' + sel + ">" + m.rot + "</option>";
+    }).join("");
+    var opcoesLig = LIGACOES.map(function (l) {
+      return '<option value="' + l[0] + '"' + (l[0] === g.ligacao ? " selected" : "") + ">" + l[1] + "</option>";
+    }).join("");
+    tr.innerHTML =
+      '<td><input type="text" data-g="' + i + '" data-k="nome" value="' + String(g.nome || "").replace(/"/g, "&quot;") + '"></td>' +
+      '<td><input type="number" min="1" step="1" data-g="' + i + '" data-k="n" value="' + g.n + '"></td>' +
+      '<td><select data-g="' + i + '" data-k="modelo">' + opcoesModelo + "</select></td>" +
+      '<td><input type="number" min="0.5" step="0.1" data-g="' + i + '" data-k="p" value="' + g.p + '"></td>' +
+      '<td><select data-g="' + i + '" data-k="ligacao">' + opcoesLig + "</select></td>" +
+      '<td><input type="number" min="0.7" max="1" step="0.01" data-g="' + i + '" data-k="fp" value="' + g.fp + '"></td>' +
+      '<td><input type="number" min="0.7" max="1" step="0.01" data-g="' + i + '" data-k="rend" value="' + g.rend + '"></td>' +
+      '<td><button class="btn mini perigo" data-rem="' + i + '" title="Remover grupo" aria-label="Remover grupo">✕</button></td>';
+    tb.appendChild(tr);
+  });
+  if (!estado.grupos.length) {
+    tb.innerHTML = '<tr><td colspan="8"><div class="vazio">Nenhum grupo. Adicione o primeiro conjunto de pontos de recarga.</div></td></tr>';
+  }
+}
+$("#corpoGrupos").addEventListener("input", function (ev) {
+  var el = ev.target, i = el.getAttribute("data-g"), k = el.getAttribute("data-k");
+  if (i === null) return;
+  i = +i;
+  if (k === "modelo") {
+    var m = MODELOS[+el.value];
+    if (m && m.p !== null) { estado.grupos[i].p = m.p; estado.grupos[i].ligacao = m.lig; estado.grupos[i].fp = m.fp; estado.grupos[i].rend = m.rend; renderGrupos(); }
+  } else if (k === "nome" || k === "ligacao") {
+    estado.grupos[i][k] = el.value;
+  } else {
+    estado.grupos[i][k] = E.num(el.value, 0);
+  }
+  recalcular();
+});
+$("#corpoGrupos").addEventListener("click", function (ev) {
+  var b = ev.target.closest("[data-rem]");
+  if (!b) return;
+  estado.grupos.splice(+b.getAttribute("data-rem"), 1);
+  renderGrupos(); recalcular();
+});
+$("#btnAddGrupo").addEventListener("click", function () {
+  estado.grupos.push({ nome: "Novo grupo", n: 4, p: 11, ligacao: "tri", fp: 0.99, rend: 1 });
+  renderGrupos(); recalcular();
+});
+$$("[data-preset]").forEach(function (b) {
+  b.addEventListener("click", function () {
+    if (b.getAttribute("data-preset") === "condo") {
+      estado.grupos = [{ nome: "Wallbox trifásica — vagas privativas", n: 20, p: 11, ligacao: "tri", fp: 0.99, rend: 1 }];
+    } else {
+      estado.grupos = [
+        { nome: "Wallbox AC — visitantes", n: 6, p: 7.4, ligacao: "mono", fp: 0.99, rend: 1 },
+        { nome: "Wallbox AC — moradores", n: 12, p: 11, ligacao: "tri", fp: 0.99, rend: 1 },
+        { nome: "Recarga rápida DC", n: 1, p: 60, ligacao: "dc", fp: 0.97, rend: 0.94 }
+      ];
+    }
+    renderGrupos(); recalcular(); toast("Grupos preenchidos");
+  });
+});
+
+/* ---------------- abas ---------------- */
+$$("nav.abas button").forEach(function (b) {
+  b.addEventListener("click", function () {
+    $$("nav.abas button").forEach(function (x) { x.setAttribute("aria-selected", "false"); });
+    b.setAttribute("aria-selected", "true");
+    $$(".aba").forEach(function (a) { a.classList.add("oculto"); });
+    $("#aba-" + b.getAttribute("data-aba")).classList.remove("oculto");
+    try { if (document.scrollingElement) document.scrollingElement.scrollTop = 0; } catch (e) {}
+    if (b.getAttribute("data-aba") === "uso") desenharCurva();
+    if (b.getAttribute("data-aba") === "diagrama") desenharBarras();
+  });
+});
+
+/* ---------------- cálculo e renderização ---------------- */
+function circuitoAlimentador(res) {
+  var s = E.SISTEMAS[estado.sistema];
+  var lig = s.fases === 3 ? "tri" : (s.fases === 2 ? "bi" : "mono");
+  return E.dimensionarCircuito({
+    pkW: Math.max(res.demandaVE, 0.1), sistema: estado.sistema, ligacao: lig, fp: 0.98, rend: 1,
+    fatorContinuo: estado.fatorContinuo, metodo: estado.metodoAlim, isolacao: estado.isolacao,
+    material: estado.materialCond, tempAmb: estado.tempAmb, nAgrup: 1,
+    comprimento: estado.compAlim, quedaMax: estado.quedaAlim
+  });
+}
+function circuitosRamais(res, alim) {
+  var s = E.SISTEMAS[estado.sistema];
+  var quedaRestante = Math.max(0.5, estado.quedaTotal - (alim ? alim.queda : 0));
+  return res.grupos.map(function (g) {
+    var lig = g.ligacao === "dc" ? (s.fases === 3 ? "tri" : "mono") : g.ligacao;
+    var circ = E.dimensionarCircuito({
+      pkW: g.p, sistema: estado.sistema, ligacao: lig, fp: g.fp, rend: g.rend,
+      fatorContinuo: estado.fatorContinuo, metodo: estado.metodoRamal, isolacao: estado.isolacao,
+      material: "cobre", tempAmb: estado.tempAmb, nAgrup: estado.circAgrup,
+      comprimento: estado.compMax, quedaMax: quedaRestante
+    });
+    return { nome: g.nome, n: g.n, p: g.p, ligacao: g.ligacao, circ: circ, quedaRestante: quedaRestante };
+  });
+}
+
+function recalcular() {
+  lerFormulario();
+  aplicarVisibilidade();
+  var res = E.calcular(estado);
+  var alim = res.pontos ? circuitoAlimentador(res) : null;
+  var ramais = res.pontos ? circuitosRamais(res, alim) : [];
+  ultimo = { res: res, alim: alim, ramais: ramais };
+  renderGauge(res);
+  renderFs(res);
+  renderGestao(res);
+  renderCircuitos(res, alim, ramais);
+  renderResultados(res);
+  renderUnifilar(res, alim, ramais);
+  renderBom(res, alim, ramais);
+  if (!$("#aba-uso").classList.contains("oculto")) desenharCurva();
+  if (!$("#aba-diagrama").classList.contains("oculto")) desenharBarras();
+  salvarLocal();
+}
+
+function renderGauge(r) {
+  var escala = Math.max(r.capacidade, r.demandaTotal, 1);
+  var pctBase = (r.demandaAtual / escala) * 100;
+  var pctVe = (Math.min(r.demandaVE, Math.max(0, r.capacidadeUtil - r.demandaAtual)) / escala) * 100;
+  var exced = Math.max(0, r.demandaTotal - r.capacidadeUtil);
+  var pctExc = (exced / escala) * 100;
+  $("#segBase").style.width = pctBase + "%";
+  var segVe = $("#segVe"); segVe.style.left = pctBase + "%"; segVe.style.width = pctVe + "%";
+  var segExc = $("#segExc"); segExc.style.left = (pctBase + pctVe) + "%"; segExc.style.width = pctExc + "%";
+  $("#gaugeLimite").style.left = ((r.capacidadeUtil / escala) * 100) + "%";
+  $("#lgBase").textContent = fmt(r.demandaAtual) + " kW";
+  $("#lgVe").textContent = fmt(r.demandaVE) + " kW";
+  $("#lgExc").textContent = fmt(exced) + " kW";
+  $("#lgCap").textContent = fmt(r.capacidade) + " kW (útil " + fmt(r.capacidadeUtil) + ")";
+  var v = $("#veredito");
+  v.setAttribute("data-nivel", r.nivel);
+  $("#vIcone").textContent = r.nivel === "ok" ? "✓" : (r.nivel === "atencao" ? "!" : "✕");
+  $("#vTitulo").textContent = r.titulo;
+  $("#vDetalhe").textContent = r.detalhe;
+}
+
+function avisosHtml(lista) {
+  if (!lista || !lista.length) return "";
+  var mapa = { erro: "erro", atencao: "warn", info: "info", ok: "ok" };
+  var ic = { erro: "✕", atencao: "!", info: "i", ok: "✓" };
+  return lista.map(function (a) {
+    return '<div class="aviso ' + (mapa[a.nivel] || "info") + '"><span class="ic">' + (ic[a.nivel] || "i") + "</span><div>" + a.texto + "</div></div>";
+  }).join("");
+}
+
+function renderFs(r) {
+  var p = E.PERFIS[estado.tipoEdif];
+  var linhas = [1, 2, 5, 10, 20, 50, 100].map(function (n) {
+    return "<tr><td class='n'>" + n + "</td><td class='n'>" + fmt(E.fatorSimultaneidade(estado.tipoEdif, n) * 100, 0) + " %</td></tr>";
+  }).join("");
+  $("#saidaFs").innerHTML =
+    '<div class="cartoes" style="margin-top:12px">' +
+      cartao("Fator adotado", fmt(r.fs * 100, 0), "%", r.pontos + " pontos · " + p.rot, "ac") +
+      cartao("Potência instalada", fmt(r.potenciaInstalada), "kW", "soma nominal dos pontos") +
+      cartao("Demanda sem gestão", fmt(r.demandaSemGestao), "kW", "instalada × simultaneidade") +
+      cartao("Pontos simultâneos", String(r.pontosAtivos), "pontos", "estimativa no pico") +
+    "</div>" +
+    '<div class="blocos" style="margin-top:14px"><div class="bloco"><header>Curva do perfil ' + p.rot + "</header>" +
+    '<div class="tab-rolagem"><table><thead><tr><th class="n">Pontos</th><th class="n">Simultaneidade</th></tr></thead><tbody>' + linhas + "</tbody></table></div></div>" +
+    '<div class="bloco"><header>Composição por grupo</header><div class="tab-rolagem"><table><thead><tr><th>Grupo</th><th class="n">Pontos</th><th class="n">Instalada</th><th class="n">Demanda</th></tr></thead><tbody>' +
+    r.grupos.map(function (g) {
+      return "<tr><td>" + g.nome + "</td><td class='n'>" + g.n + "</td><td class='n'>" + fmt(g.potenciaInstalada) + " kW</td><td class='n'>" + fmt(g.demanda) + " kW</td></tr>";
+    }).join("") + "</tbody></table></div></div></div>";
+}
+
+function cartao(rot, val, uni, obs, tipo) {
+  return '<div class="cartao"' + (tipo ? ' data-t="' + tipo + '"' : "") + '><div class="rot">' + rot +
+    '</div><div class="val">' + val + ' <span class="uni">' + (uni || "") + '</span></div>' +
+    (obs ? '<div class="obs">' + obs + "</div>" : "") + "</div>";
+}
+
+function renderGestao(r) {
+  var html = '<div class="cartoes" style="margin-top:12px">' +
+    cartao("Limite do conjunto", fmt(r.limiteVE), "kW", r.setpointAutomatico && r.estrategia !== "nenhuma" ? "adotado automaticamente" : "setpoint informado", "ac") +
+    cartao("Potência por ponto ativo", fmt(r.potenciaPorPontoAtivo), "kW", r.pontosAtivos + " pontos no pico") +
+    cartao("Pior caso (todos plugados)", fmt(r.potenciaPorPontoPior), "kW", "mínimo de modulação " + fmt(r.potenciaMinimaPonto) + " kW", r.moduladoAbaixoDoMinimo ? "warn" : "ok") +
+    cartao("Atendimento simultâneo", String(Math.min(r.pontos, r.pontosSimultaneosMax)), "pontos", "acima disso, opera por fila") +
+    "</div>";
+  var av = [];
+  if (r.estrategia === "nenhuma" && r.demandaSemGestao > r.disponivelVE) {
+    av.push({ nivel: "atencao", texto: "Sem gerenciamento, o conjunto pede " + fmt(r.demandaSemGestao) + " kW contra " + fmt(r.disponivelVE) + " kW de folga. Compare as estratégias na aba Resultados antes de orçar a ampliação da entrada." });
+  }
+  if (r.estrategia === "estatico") {
+    av.push({ nivel: "info", texto: "Na divisão estática cada ponto fica permanentemente limitado a " + fmt(r.potenciaPorPontoAtivo) + " kW, mesmo quando é o único carregando. A recarga fica mais lenta que o necessário na maior parte das noites." });
+  }
+  if (r.estrategia === "dinamico") {
+    av.push({ nivel: "info", texto: "O balanceamento dinâmico exige medição de corrente no ramal geral e comunicação entre as estações. Especifique estações do mesmo fabricante ou com protocolo aberto (OCPP) para garantir a interoperabilidade." });
+  }
+  $("#saidaGestao").innerHTML = html + avisosHtml(av);
+}
+
+function tabelaCircuito(c, titulo, marcador) {
+  return '<div class="bloco"><header><span>' + titulo + "</span>" + (marcador || "") + "</header><dl>" +
+    "<dt>Potência considerada</dt><dd>" + fmt(c.potencia) + " kW</dd>" +
+    (c.potenciaEntrada !== c.potencia ? "<dt>Potência de entrada (com rendimento)</dt><dd>" + fmt(c.potenciaEntrada) + " kW</dd>" : "") +
+    "<dt>Tensão / ligação</dt><dd>" + c.tensao + " V · " + (c.ligacao === "tri" ? "3F+N+PE" : c.ligacao === "bi" ? "2F+N+PE" : "F+N+PE") + "</dd>" +
+    "<dt>Corrente de operação</dt><dd>" + fmt(c.ib) + " A</dd>" +
+    "<dt>Corrente de uso contínuo (×" + fmt(c.fcont, 2) + ")</dt><dd>" + fmt(c.icont) + " A</dd>" +
+    "<dt>Correção temperatura / agrupamento</dt><dd>" + fmt(c.fct, 2) + " · " + fmt(c.fca, 2) + "</dd>" +
+    "<dt>Seção pela tabela / mínima de projeto</dt><dd>" + fmt(c.secaoTecnica, c.secaoTecnica < 10 ? 1 : 0) + " · " + fmt(c.secaoMinima, c.secaoMinima < 10 ? 1 : 0) + " mm²</dd>" +
+    "<dt>Seção dos condutores</dt><dd><b>" + fmt(c.secao, c.secao < 10 ? 1 : 0) + " mm²</b></dd>" +
+    "<dt>Condutor de proteção</dt><dd>" + fmt(c.secaoPE, c.secaoPE < 10 ? 1 : 0) + " mm²</dd>" +
+    "<dt>Capacidade corrigida (Iz)</dt><dd>" + fmt(c.izCorrigida) + " A</dd>" +
+    "<dt>Disjuntor</dt><dd><b>" + c.disjuntor + " A</b> curva C</dd>" +
+    "<dt>Queda de tensão em " + fmt(c.comprimento, 0) + " m</dt><dd>" + fmt(c.queda, 2) + " %</dd>" +
+    "<dt>Critério determinante</dt><dd>" + c.criterio + "</dd>" +
+    "<dt>Eletroduto</dt><dd>DN " + (c.eletroduto || "—") + " mm</dd>" +
+    "</dl></div>";
+}
+
+function renderCircuitos(r, alim, ramais) {
+  if (!alim) {
+    $("#saidaAlimentador").innerHTML = '<div class="vazio">Configure os pontos de recarga na etapa 2.</div>';
+    $("#saidaRamais").innerHTML = ""; $("#saidaProtecoes").innerHTML = "";
+    return;
+  }
+  $("#saidaAlimentador").innerHTML =
+    '<div class="blocos">' + tabelaCircuito(alim, "Alimentador QGBT → quadro de recarga", '<span class="marcador cu">' + (alim.material === "cobre" ? "cobre" : "alumínio") + "</span>") +
+    '<div class="bloco"><header>Verificações</header><div style="padding:10px 12px">' +
+    avisosHtml(alim.alertas.concat([
+      { nivel: "info", texto: "O alimentador foi dimensionado para " + fmt(r.demandaVE) + " kW, a demanda efetiva do conjunto com a estratégia adotada. Se houver expansão prevista, dimensione a infraestrutura civil para o cenário final." }
+    ].concat(r.estrategia === "nenhuma" ? [] : [
+      { nivel: "atencao", texto: "O setpoint do controlador (" + fmt(r.limiteVE) + " kW ≈ " + fmt(E.correnteProjeto(r.limiteVE, estado.sistema, alim.ligacao, 0.98), 0) + " A) deve ser parametrizado abaixo da proteção do alimentador (" + alim.disjuntor + " A). Registre esse valor no memorial e na configuração do equipamento: é o parâmetro que impede o desarme do disjuntor geral." }
+    ]))) +
+    "</div></div></div>";
+
+  $("#saidaRamais").innerHTML = '<div class="blocos">' + ramais.map(function (rm) {
+    return tabelaCircuito(rm.circ, rm.nome + " — " + rm.n + " circuito(s)", '<span class="marcador ac">' + fmt(rm.p) + " kW</span>");
+  }).join("") + "</div>" +
+  avisosHtml([].concat.apply([], ramais.map(function (rm) { return rm.circ.alertas; })).concat([
+    { nivel: "info", texto: "Queda de tensão disponível para os ramais: " + fmt(ramais[0] ? ramais[0].quedaRestante : 0, 2) + " % (limite total de " + fmt(estado.quedaTotal, 1) + " % menos a parcela do alimentador)." },
+    { nivel: "info", texto: "Eletroduto sugerido para a prumada com " + Math.round(estado.circAgrup) + " ramais agrupados: DN " + (ramais[0] ? ramais[0].circ.eletrodutoPrumada : "—") + " mm." }
+  ]));
+
+  var tipoDr = r.temDC ? "tipo B" : "tipo A (ou B, se o EVSE não possuir detecção interna de corrente contínua residual de 6 mA)";
+  $("#saidaProtecoes").innerHTML =
+    '<div class="blocos"><div class="bloco"><header>Dispositivos por ponto de recarga</header><dl>' +
+    "<dt>Disjuntor do ramal</dt><dd>" + (ramais[0] ? ramais[0].circ.disjuntor : "—") + " A curva C</dd>" +
+    "<dt>Diferencial residual</dt><dd>" + (ramais[0] ? ramais[0].circ.dr : "—") + " A · 30 mA</dd>" +
+    "<dt>Tipo do DR</dt><dd style='text-align:right;max-width:340px'>" + tipoDr + "</dd>" +
+    "<dt>Compartilhamento</dt><dd>vedado — um DR por ponto</dd>" +
+    "</dl></div>" +
+    '<div class="bloco"><header>Quadro de recarga</header><dl>' +
+    "<dt>Proteção geral</dt><dd>" + alim.disjuntor + " A curva C</dd>" +
+    "<dt>DPS</dt><dd>classe II (I+II se houver SPDA ou linha aérea)</dd>" +
+    "<dt>Seccionamento</dt><dd>independente da edificação</dd>" +
+    "<dt>Esquema de aterramento</dt><dd>TN-S ou TT</dd>" +
+    "<dt>Barramento</dt><dd>≥ " + alim.disjuntor + " A</dd>" +
+    "</dl></div></div>" +
+    avisosHtml([
+      { nivel: "atencao", texto: "A NBR 17019 restringe o uso do esquema TN-C na alimentação de pontos de recarga: o condutor PEN é incompatível com a proteção diferencial exigida. Verifique o esquema existente antes de projetar." },
+      { nivel: "info", texto: "Prever sinalização de vaga, proteção mecânica do EVSE contra impacto veicular e identificação dos circuitos no quadro." }
+    ]);
+}
+
+function renderResultados(r) {
+  $("#cartoesResultado").innerHTML =
+    cartao("Capacidade da entrada", fmt(r.capacidade), "kW", "útil " + fmt(r.capacidadeUtil) + " kW após reserva de " + fmt(r.reserva, 0) + "%") +
+    cartao("Carga atual", fmt(r.demandaAtual), "kW", "informada pelo usuário") +
+    cartao("Folga para recarga", fmt(r.disponivelVE), "kW", "antes da gestão de carga", "ac") +
+    cartao("Demanda de recarga", fmt(r.demandaVE), "kW", r.estrategia === "nenhuma" ? "sem gestão" : "limitada pelo controlador", "ac") +
+    cartao("Demanda total", fmt(r.demandaTotal), "kW", fmt(r.correnteTotal, 0) + " A no ramal geral") +
+    cartao("Folga final", fmt(r.folga), "kW", fmt(r.ocupacao, 0) + "% da entrada ocupada", r.folga < 0 ? "bad" : (r.folga < r.capacidade * 0.05 ? "warn" : "ok"));
+  $("#avisosResultado").innerHTML = avisosHtml(r.alertas);
+
+  $("#cartoesEnergia").innerHTML =
+    cartao("Energia diária da frota", fmt(r.energiaDia, 0), "kWh", r.veiculos + " veículos · " + fmt(estado.kmDia, 0) + " km/dia") +
+    cartao("Energia entregável na janela", fmt(r.energiaDisponivel, 0), "kWh", fmt(r.janela, 1) + " h de recarga", r.suficienteEnergia ? "ok" : "bad") +
+    cartao("Tempo médio por veículo", fmt(r.horasPorVeiculo, 1), "h", "à potência por ponto ativo") +
+    cartao("Consumo mensal", fmt(r.energiaMes, 0), "kWh", moeda(r.custoMes) + " por mês");
+  $("#avisosEnergia").innerHTML = avisosHtml(r.suficienteEnergia ? [] : [{ nivel: "atencao", texto: "A energia entregável não cobre o consumo diário estimado. Rever janela, setpoint ou número de veículos atendidos." }]);
+
+  var cen = E.cenarios(estado);
+  $("#corpoCenarios").innerHTML = cen.map(function (c) {
+    var m = c.nivel === "ok" ? "ok" : (c.nivel === "atencao" ? "warn" : "bad");
+    return "<tr" + (c.estrategia === estado.estrategia ? ' style="font-weight:640"' : "") + "><td>" + c.rotulo +
+      (c.estrategia === estado.estrategia ? ' <span class="marcador ac">adotado</span>' : "") + "</td>" +
+      "<td class='n'>" + fmt(c.demandaVE) + " kW</td><td class='n'>" + fmt(c.demandaTotal) + " kW</td>" +
+      "<td class='n'>" + fmt(c.folga) + " kW</td><td class='n'>" + fmt(c.potenciaPorPonto) + " kW</td>" +
+      '<td><span class="marcador ' + m + '">' + c.titulo + "</span></td></tr>";
+  }).join("");
+
+  var ex = E.expansao(estado, r);
+  $("#saidaExpansao").innerHTML = '<div class="cartoes">' +
+    cartao("Pontos sem gestão de carga", String(ex.maximo), "pontos", "de " + fmt(ex.potenciaTipica) + " kW, na folga atual de " + fmt(r.disponivelVE) + " kW", "ac") +
+    cartao("Além dos já previstos", String(ex.adicionais), "pontos", r.pontos + " pontos configurados no projeto") +
+    cartao("Taxa de eletrificação sem gestão", fmt(estado.vagasTotais ? (ex.maximo / estado.vagasTotais) * 100 : 0, 0), "%", "sobre " + fmt(estado.vagasTotais, 0) + " vagas totais") +
+    "</div>" + avisosHtml([{ nivel: "info", texto: "Este quadro responde a uma pergunta específica: quantos pontos a entrada atual suporta se cada um puder puxar a potência nominal. Com gestão de carga o limite deixa de ser a entrada e passa a ser o tempo de recarga aceitável — o controlador reparte a folga entre os pontos plugados, e a verificação que importa é a de energia na janela, na seção acima." }]);
+}
+
+/* ---------------- gráficos ---------------- */
+function corVar(nome) { return getComputedStyle(document.documentElement).getPropertyValue(nome).trim() || "#888"; }
+function preparaCanvas(cv) {
+  var dpr = window.devicePixelRatio || 1;
+  var larg = cv.parentElement.clientWidth || 900;
+  cv.width = larg * dpr; cv.height = (cv.getAttribute("height") || 280) * dpr;
+  cv.style.width = "100%"; cv.style.height = (cv.getAttribute("height") || 280) + "px";
+  var ctx = cv.getContext("2d"); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  return { ctx: ctx, w: larg, h: +(cv.getAttribute("height") || 280) };
+}
+function desenharCurva() {
+  if (!ultimo) return;
+  var cv = $("#grafCurva"), p = preparaCanvas(cv), ctx = p.ctx, w = p.w, h = p.h;
+  var dados = E.curva24h(estado, ultimo.res);
+  var r = ultimo.res;
+  var maxV = Math.max(r.capacidade, Math.max.apply(null, dados.map(function (d) { return d.base + d.ve; }))) * 1.12;
+  var ml = 52, mb = 26, mt = 12, mr = 10;
+  var pw = w - ml - mr, ph = h - mb - mt;
+  var x = function (i) { return ml + (i / 23) * pw; };
+  var y = function (v) { return mt + ph - (v / maxV) * ph; };
+  ctx.clearRect(0, 0, w, h);
+  ctx.strokeStyle = corVar("--line"); ctx.fillStyle = corVar("--ink3");
+  ctx.font = "11px system-ui"; ctx.lineWidth = 1;
+  for (var g = 0; g <= 4; g++) {
+    var v = (maxV / 4) * g;
+    ctx.beginPath(); ctx.moveTo(ml, y(v)); ctx.lineTo(w - mr, y(v)); ctx.stroke();
+    ctx.fillText(fmt(v, 0) + " kW", 4, y(v) + 3);
+  }
+  for (var hh = 0; hh < 24; hh += 3) { ctx.fillText(String(hh) + "h", x(hh) - 6, h - 8); }
+  /* área base + VE */
+  function area(campo, cor, acumular) {
+    ctx.beginPath(); ctx.moveTo(x(0), y(0));
+    dados.forEach(function (d, i) { ctx.lineTo(x(i), y(acumular ? d.base + d[campo] : d[campo])); });
+    ctx.lineTo(x(23), y(0)); ctx.closePath(); ctx.fillStyle = cor; ctx.fill();
+  }
+  area("ve", corVar("--accent"), true);
+  area("base", corVar("--ink2"), false);
+  ctx.strokeStyle = corVar("--danger"); ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(ml, y(r.capacidade)); ctx.lineTo(w - mr, y(r.capacidade)); ctx.stroke();
+  ctx.setLineDash([5, 4]); ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(ml, y(r.capacidadeUtil)); ctx.lineTo(w - mr, y(r.capacidadeUtil)); ctx.stroke();
+  ctx.setLineDash([]);
+}
+function desenharBarras() {
+  if (!ultimo) return;
+  var cv = $("#grafBarras"), p = preparaCanvas(cv), ctx = p.ctx, w = p.w, h = p.h, r = ultimo.res;
+  var itens = [
+    { rot: "Capacidade", v: r.capacidade, c: corVar("--line2") },
+    { rot: "Capacidade útil", v: r.capacidadeUtil, c: corVar("--ink3") },
+    { rot: "Carga atual", v: r.demandaAtual, c: corVar("--ink2") },
+    { rot: "Recarga de VE", v: r.demandaVE, c: corVar("--accent") },
+    { rot: "Demanda total", v: r.demandaTotal, c: r.folga < 0 ? corVar("--danger") : corVar("--ok") }
+  ];
+  var maxV = Math.max.apply(null, itens.map(function (i) { return i.v; })) * 1.15 || 1;
+  ctx.clearRect(0, 0, w, h);
+  var ml = 130, mt = 10, bh = (h - mt - 20) / itens.length;
+  ctx.font = "12px system-ui";
+  itens.forEach(function (it, i) {
+    var yy = mt + i * bh;
+    var lw = (it.v / maxV) * (w - ml - 70);
+    ctx.fillStyle = corVar("--ink2"); ctx.textAlign = "right";
+    ctx.fillText(it.rot, ml - 10, yy + bh / 2 + 4);
+    ctx.fillStyle = it.c;
+    ctx.fillRect(ml, yy + 6, Math.max(2, lw), bh - 14);
+    ctx.fillStyle = corVar("--ink"); ctx.textAlign = "left";
+    ctx.fillText(fmt(it.v) + " kW", ml + Math.max(2, lw) + 8, yy + bh / 2 + 4);
+  });
+  ctx.textAlign = "left";
+}
+
+/* ---------------- diagrama unifilar ---------------- */
+function renderUnifilar(r, alim, ramais) {
+  if (!alim) { $("#saidaUnifilar").innerHTML = '<div class="vazio">Configure os pontos de recarga na etapa 2.</div>'; return; }
+  var nRamos = Math.min(ramais.length, 4);
+  var larg = 900, altBase = 300 + nRamos * 74;
+  var s = [];
+  var t = function (x, y, txt, cls, anchor) {
+    s.push('<text x="' + x + '" y="' + y + '" class="' + (cls || "") + '" text-anchor="' + (anchor || "start") + '">' + txt + "</text>");
+  };
+  var linha = function (x1, y1, x2, y2, w) { s.push('<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" stroke="currentColor" stroke-width="' + (w || 1.6) + '"/>'); };
+  var caixa = function (x, y, w, hh, rx) { s.push('<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + hh + '" rx="' + (rx || 4) + '" fill="none" stroke="currentColor" stroke-width="1.4"/>'); };
+  var disj = function (x, y, rot) {
+    s.push('<circle cx="' + x + '" cy="' + y + '" r="4" fill="none" stroke="currentColor" stroke-width="1.4"/>');
+    s.push('<line x1="' + (x - 3) + '" y1="' + (y + 4) + '" x2="' + (x + 6) + '" y2="' + (y - 6) + '" stroke="currentColor" stroke-width="1.4"/>');
+    t(x + 11, y + 4, rot, "peq");
+  };
+  var eixoX = 120;
+  t(20, 26, "Diagrama unifilar simplificado — " + (estado.nome || "projeto"), "tit");
+  t(20, 44, E.SISTEMAS[estado.sistema].rot + " · entrada " + fmt(r.capacidade) + " kW", "peq");
+
+  linha(eixoX, 60, eixoX, 108);
+  t(eixoX + 14, 74, "Entrada da concessionária / medição", "peq");
+  disj(eixoX, 112, "Disjuntor geral " + (estado.modoCap === "disj" ? estado.disjGeral + " A" : fmt(r.capacidade) + " kW"));
+  linha(eixoX, 118, eixoX, 152);
+  caixa(40, 152, 300, 40); t(52, 177, "QGBT — quadro geral da edificação", "sub");
+  t(360, 177, "carga atual " + fmt(r.demandaAtual) + " kW", "peq");
+
+  linha(eixoX, 192, eixoX, 232);
+  t(eixoX + 14, 214, "Alimentador " + alim.secao + " mm² · " + fmt(alim.comprimento, 0) + " m · Δv " + fmt(alim.queda, 2) + "%", "peq");
+  disj(eixoX, 236, "Proteção " + alim.disjuntor + " A");
+  linha(eixoX, 242, eixoX, 276);
+  caixa(40, 276, 380, 44);
+  t(52, 296, "Quadro de recarga (QDVE)", "sub");
+  t(52, 312, "DPS classe II · seccionamento · " + (estado.estrategia === "dinamico" ? "controlador de balanceamento dinâmico" : estado.estrategia === "estatico" ? "divisor estático de potência" : "sem gestão de carga"), "peq");
+  if (estado.estrategia === "dinamico") {
+    s.push('<line x1="' + (eixoX + 8) + '" y1="200" x2="500" y2="200" stroke="currentColor" stroke-width="1" stroke-dasharray="4 3"/>');
+    s.push('<line x1="500" y1="200" x2="500" y2="276" stroke="currentColor" stroke-width="1" stroke-dasharray="4 3"/>');
+    t(506, 200, "TC de medição no ramal geral", "peq");
+  }
+
+  var barraY = 336;
+  linha(60, barraY, 820, barraY, 2.4);
+  linha(eixoX, 320, eixoX, barraY);
+  ramais.slice(0, 4).forEach(function (rm, i) {
+    var xx = 150 + i * 200;
+    var yy = barraY;
+    linha(xx, yy, xx, yy + 26);
+    disj(xx, yy + 32, rm.circ.disjuntor + " A");
+    linha(xx, yy + 38, xx, yy + 62);
+    s.push('<rect x="' + (xx - 9) + '" y="' + (yy + 62) + '" width="18" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.4"/>');
+    t(xx + 14, yy + 72, "DR 30 mA", "peq");
+    linha(xx, yy + 76, xx, yy + 104);
+    caixa(xx - 62, yy + 104, 124, 46);
+    t(xx, yy + 122, rm.n + " × " + fmt(rm.p) + " kW", "sub2", "middle");
+    t(xx, yy + 138, rm.circ.secao + " mm² · " + fmt(rm.circ.queda, 1) + "%", "peq2", "middle");
+  });
+  if (ramais.length > 4) t(60, barraY + 176, "… e mais " + (ramais.length - 4) + " grupo(s) não representado(s)", "peq");
+
+  var svg = '<svg class="unifilar" viewBox="0 0 ' + larg + " " + altBase + '" xmlns="http://www.w3.org/2000/svg" style="color:var(--ink)">' +
+    '<style>text{font-family:system-ui,sans-serif;fill:currentColor}.tit{font-size:15px;font-weight:700}' +
+    '.sub{font-size:13px;font-weight:600}.sub2{font-size:12px;font-weight:600}' +
+    '.peq{font-size:11px;opacity:.72}.peq2{font-size:10.5px;opacity:.72}</style>' + s.join("") + "</svg>";
+  $("#saidaUnifilar").innerHTML = svg;
+}
+$("#btnBaixarSvg").addEventListener("click", function () {
+  var svg = $("#saidaUnifilar svg");
+  if (!svg) return toast("Nada para exportar");
+  baixar(new Blob([svg.outerHTML], { type: "image/svg+xml" }), (estado.nome || "diagrama") + ".svg");
+});
+
+/* ---------------- materiais ---------------- */
+var PRECO_CABO = { 1.5: 2.4, 2.5: 3.5, 4: 5.2, 6: 7.5, 10: 12, 16: 19, 25: 29, 35: 40, 50: 56, 70: 78, 95: 105, 120: 132, 150: 165, 185: 205, 240: 265, 300: 330 };
+var PRECO_DUTO = { 20: 9, 25: 12, 32: 17, 40: 24, 50: 33, 60: 45, 75: 62, 85: 75, 110: 105 };
+function precoIndicativo(item, alim, ramais) {
+  var m;
+  if ((m = /(\d+(?:[.,]\d+)?) mm²/.exec(item.desc)) && /Cabo/.test(item.desc)) return PRECO_CABO[parseFloat(m[1].replace(",", "."))] || 10;
+  if ((m = /DN (\d+)/.exec(item.desc))) return PRECO_DUTO[+m[1]] || 20;
+  if (/^Disjuntor/.test(item.desc)) { m = /(\d+) A/.exec(item.desc); var a = m ? +m[1] : 32; return (/tripolar/.test(item.desc) ? 180 : 95) + a * 2.2; }
+  if (/^Diferencial/.test(item.desc)) { m = /(\d+) A/.exec(item.desc); var b = m ? +m[1] : 40; return (/tetrapolar/.test(item.desc) ? 520 : 320) + b * 2.5; }
+  if (/^Estação de recarga/.test(item.desc)) { m = /— ([\d.,]+) kW/.exec(item.desc); var p = m ? parseFloat(m[1].replace(",", ".")) : 11; return p > 25 ? 2600 * p : 1500 + 340 * p; }
+  if (/^Quadro/.test(item.desc)) return 1200 + 180 * (ramais || []).reduce(function (s, r) { return s + r.n; }, 0);
+  if (/surtos/.test(item.desc)) return 900;
+  if (/balanceamento dinâmico/.test(item.desc)) return 6500;
+  if (/divisão estática/.test(item.desc)) return 2500;
+  if (/aterramento/.test(item.desc)) return 1800;
+  if (/Ensaios/.test(item.desc)) return 1200;
+  return 0;
+}
+function renderBom(r, alim, ramais) {
+  var itens = E.materiais(estado, r, alim, ramais);
+  var total = 0;
+  $("#corpoBom").innerHTML = itens.map(function (it) {
+    var pu = estado.precos[it.id] !== undefined ? estado.precos[it.id] : precoIndicativo(it, alim, ramais);
+    var tot = pu * it.q; total += tot;
+    return "<tr><td>" + it.desc + "</td><td>" + it.un + "</td><td class='n'>" + fmt(it.q, it.un === "un" || it.un === "cj" || it.un === "vb" ? 0 : 1) +
+      "</td><td class='n'><input type='number' step='0.01' min='0' data-preco='" + it.id + "' value='" + pu.toFixed(2) + "'></td>" +
+      "<td class='n'>" + fmt(tot, 2) + "</td></tr>";
+  }).join("") || '<tr><td colspan="5"><div class="vazio">Sem itens.</div></td></tr>';
+  $("#rodapeBom").innerHTML = "<tr class='total-linha'><td colspan='4'>Total estimado da infraestrutura de recarga</td><td class='n'>" + fmt(total, 2) + "</td></tr>" +
+    (r.pontos ? "<tr class='total-linha'><td colspan='4'>Custo por ponto de recarga</td><td class='n'>" + fmt(total / r.pontos, 2) + "</td></tr>" : "");
+  ultimo.bom = itens.map(function (it) {
+    var pu = estado.precos[it.id] !== undefined ? estado.precos[it.id] : precoIndicativo(it, alim, ramais);
+    return { desc: it.desc, un: it.un, q: it.q, pu: pu, total: pu * it.q };
+  });
+  ultimo.bomTotal = total;
+}
+$("#corpoBom").addEventListener("input", function (ev) {
+  var id = ev.target.getAttribute("data-preco");
+  if (!id) return;
+  estado.precos[id] = E.num(ev.target.value, 0);
+  renderBom(ultimo.res, ultimo.alim, ultimo.ramais);
+  salvarLocal();
+});
+$("#btnResetPrecos").addEventListener("click", function () {
+  estado.precos = {}; renderBom(ultimo.res, ultimo.alim, ultimo.ramais); toast("Preços indicativos restaurados");
+});
+$("#btnCsv").addEventListener("click", function () {
+  var linhas = [["Item", "Unidade", "Quantidade", "Preço unitário", "Total"]];
+  ultimo.bom.forEach(function (i) { linhas.push([i.desc, i.un, i.q.toFixed(2), i.pu.toFixed(2), i.total.toFixed(2)]); });
+  linhas.push(["TOTAL", "", "", "", ultimo.bomTotal.toFixed(2)]);
+  var csv = "\ufeff" + linhas.map(function (l) { return l.map(function (c) { return '"' + String(c).replace(/"/g, '""') + '"'; }).join(";"); }).join("\r\n");
+  baixar(new Blob([csv], { type: "text/csv;charset=utf-8" }), (estado.nome || "materiais") + ".csv");
+});
+
+/* ---------------- persistência ---------------- */
+function baixar(blob, nome) {
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = nome;
+  document.body.appendChild(a); a.click();
+  setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+}
+function salvarLocal() { try { localStorage.setItem(CHAVE, JSON.stringify(estado)); } catch (e) {} }
+function carregarLocal() {
+  try {
+    var s = localStorage.getItem(CHAVE);
+    if (s) { var o = JSON.parse(s); Object.keys(padrao).forEach(function (k) { if (o[k] !== undefined) estado[k] = o[k]; }); }
+  } catch (e) {}
+}
+$("#btnSalvar").addEventListener("click", function () {
+  lerFormulario();
+  baixar(new Blob([JSON.stringify(estado, null, 2)], { type: "application/json" }), (estado.nome || "eletroposto") + ".json");
+  toast("Projeto salvo");
+});
+$("#btnAbrir").addEventListener("click", function () { $("#arqAbrir").click(); });
+$("#arqAbrir").addEventListener("change", function (ev) {
+  var f = ev.target.files[0]; if (!f) return;
+  var fr = new FileReader();
+  fr.onload = function () {
+    try {
+      var o = JSON.parse(fr.result);
+      Object.keys(padrao).forEach(function (k) { if (o[k] !== undefined) estado[k] = o[k]; });
+      escreverFormulario(); recalcular(); toast("Projeto carregado");
+    } catch (e) { toast("Arquivo inválido"); }
+  };
+  fr.readAsText(f); ev.target.value = "";
+});
+
+/* ---------------- exemplos ---------------- */
+var EXEMPLOS = [
+  { rot: "Residência unifamiliar — 1 wallbox 7,4 kW", d: { nome: "Residência — wallbox 7,4 kW", tipoEdif: "residencial", sistema: "mono220", modoCap: "disj", disjGeral: 63, fpEdif: 0.95, demandaAtual: 6, reserva: 10, vagasTotais: 2, compAlim: 12, compRamal: 8, compMax: 12, grupos: [{ nome: "Wallbox garagem", n: 1, p: 7.4, ligacao: "mono", fp: 0.99, rend: 1 }], estrategia: "nenhuma", janela: 10, kmDia: 40, circAgrup: 1, metodoAlim: "B1" } },
+  { rot: "Condomínio 80 vagas — 20 pontos de 11 kW", d: { nome: "Condomínio residencial — 20 pontos", tipoEdif: "condominio", sistema: "tri380", modoCap: "disj", disjGeral: 150, demandaAtual: 62, vagasTotais: 80, compAlim: 45, compRamal: 25, compMax: 60, grupos: [{ nome: "Wallbox trifásica — vagas privativas", n: 20, p: 11, ligacao: "tri", fp: 0.99, rend: 1 }], estrategia: "dinamico", janela: 9, kmDia: 45, circAgrup: 4 } },
+  { rot: "Estacionamento comercial — AC + DC 60 kW", d: { nome: "Estacionamento comercial", tipoEdif: "comercial", sistema: "tri380", modoCap: "kw", capKw: 300, demandaAtual: 180, vagasTotais: 150, compAlim: 70, compRamal: 30, compMax: 85, grupos: [{ nome: "Wallbox AC visitantes", n: 8, p: 22, ligacao: "tri", fp: 0.99, rend: 1 }, { nome: "Recarga rápida DC", n: 2, p: 60, ligacao: "dc", fp: 0.97, rend: 0.94 }], estrategia: "dinamico", janela: 12, kmDia: 60, circAgrup: 6 } },
+  { rot: "Frota de entregas — 12 pontos de 22 kW", d: { nome: "Frota urbana — 12 pontos", tipoEdif: "frota", sistema: "tri380", modoCap: "disj", disjGeral: 250, demandaAtual: 90, vagasTotais: 14, compAlim: 35, compRamal: 20, compMax: 40, grupos: [{ nome: "Wallbox trifásica frota", n: 12, p: 22, ligacao: "tri", fp: 0.99, rend: 1 }], estrategia: "estatico", janela: 8, kmDia: 120, circAgrup: 6 } }
+];
+$("#btnExemplos").addEventListener("click", function () {
+  var lista = EXEMPLOS.map(function (e, i) { return (i + 1) + ") " + e.rot; }).join("\n");
+  var esc = prompt("Escolha um cenário de exemplo:\n\n" + lista + "\n\nDigite o número:");
+  var i = parseInt(esc, 10) - 1;
+  if (isNaN(i) || !EXEMPLOS[i]) return;
+  estado = JSON.parse(JSON.stringify(padrao));
+  Object.keys(EXEMPLOS[i].d).forEach(function (k) { estado[k] = JSON.parse(JSON.stringify(EXEMPLOS[i].d[k])); });
+  estado.precos = {};
+  escreverFormulario(); recalcular(); toast("Cenário carregado: " + EXEMPLOS[i].rot);
+});
+
+/* ---------------- tema ---------------- */
+function aplicarTema(t) {
+  document.documentElement.setAttribute("data-tema", t);
+  try { localStorage.setItem(CHAVE_TEMA, t); } catch (e) {}
+  if (ultimo) { desenharCurva(); desenharBarras(); }
+}
+$("#btnTema").addEventListener("click", function () {
+  aplicarTema(document.documentElement.getAttribute("data-tema") === "escuro" ? "claro" : "escuro");
+});
+
+/* ---------------- relatório ---------------- */
+$("#btnRelatorio").addEventListener("click", function () {
+  if (!ultimo || !ultimo.alim) return toast("Configure os pontos de recarga antes de gerar o relatório");
+  var r = ultimo.res, alim = ultimo.alim, ramais = ultimo.ramais;
+  var cen = E.cenarios(estado), ex = E.expansao(estado, r);
+  var linhaCirc = function (c, tit) {
+    return "<h3>" + tit + "</h3><table><tbody>" +
+      ["Potência considerada|" + fmt(c.potencia) + " kW",
+       "Tensão / ligação|" + c.tensao + " V · " + (c.ligacao === "tri" ? "3F+N+PE" : c.ligacao === "bi" ? "2F+N+PE" : "F+N+PE"),
+       "Corrente de operação|" + fmt(c.ib) + " A",
+       "Corrente de uso contínuo|" + fmt(c.icont) + " A (fator " + fmt(c.fcont, 2) + " sobre I<sub>B</sub>)",
+       "Seção pela tabela / mínima de projeto|" + c.secaoTecnica + " mm² / " + c.secaoMinima + " mm²",
+       "Fatores de correção|temperatura " + fmt(c.fct, 2) + " · agrupamento " + fmt(c.fca, 2),
+       "Seção adotada|" + c.secao + " mm² (" + c.material + ", " + (c.isolacao === "pvc" ? "PVC 70 °C" : "EPR 90 °C") + ", método " + c.metodo + ")",
+       "Condutor de proteção|" + c.secaoPE + " mm²",
+       "Capacidade corrigida|" + fmt(c.izCorrigida) + " A",
+       "Disjuntor|" + c.disjuntor + " A curva C",
+       "Queda de tensão|" + fmt(c.queda, 2) + " % em " + fmt(c.comprimento, 0) + " m",
+       "Critério determinante|" + c.criterio,
+       "Eletroduto|DN " + (c.eletroduto || "—") + " mm"
+      ].map(function (l) { var p = l.split("|"); return "<tr><th>" + p[0] + "</th><td>" + p[1] + "</td></tr>"; }).join("") + "</tbody></table>";
+  };
+  var html = "<!DOCTYPE html><html lang='pt-BR'><head><meta charset='utf-8'><title>" + (estado.nome || "Relatório") + "</title><style>" +
+    "body{font-family:Georgia,'Times New Roman',serif;max-width:19cm;margin:0 auto;padding:24px;color:#111;line-height:1.5}" +
+    "h1{font-size:20px;border-bottom:2px solid #111;padding-bottom:6px}h2{font-size:15px;margin-top:22px;border-bottom:1px solid #999}" +
+    "h3{font-size:13px;margin-top:14px}table{border-collapse:collapse;width:100%;font-size:11.5px;margin:6px 0}" +
+    "th,td{border:1px solid #bbb;padding:4px 6px;text-align:left}th{background:#eee;width:42%;font-weight:600}" +
+    "table.dados th{width:auto}.aviso{border-left:3px solid #a33;padding:5px 9px;background:#f7eeed;font-size:11.5px;margin:5px 0}" +
+    ".rod{font-size:10px;color:#555;margin-top:26px;border-top:1px solid #ccc;padding-top:8px}" +
+    "@media print{body{padding:0}h2{break-after:avoid}table{break-inside:avoid}}</style></head><body>" +
+    "<h1>" + (estado.nome || "Estudo de infraestrutura de recarga") + "</h1>" +
+    "<p><b>Objeto:</b> dimensionamento da infraestrutura elétrica para recarga de veículos elétricos — " + r.pontos + " pontos, " +
+    fmt(r.potenciaInstalada) + " kW instalados. <b>Data:</b> " + new Date().toLocaleDateString("pt-BR") + ".</p>" +
+    "<h2>1. Dados de entrada</h2><table><tbody>" +
+    ["Tipo de instalação|" + E.PERFIS[estado.tipoEdif].rot,
+     "Sistema de tensão|" + E.SISTEMAS[estado.sistema].rot,
+     "Capacidade da entrada|" + fmt(r.capacidade) + " kW" + (estado.modoCap === "disj" ? " (disjuntor geral " + estado.disjGeral + " A, FP " + fmt(estado.fpEdif, 2) + ")" : ""),
+     "Demanda já utilizada|" + fmt(r.demandaAtual) + " kW",
+     "Reserva técnica|" + fmt(r.reserva, 0) + " %",
+     "Vagas totais|" + fmt(estado.vagasTotais, 0),
+     "Comprimento do alimentador|" + fmt(estado.compAlim, 0) + " m",
+     "Ramal mais desfavorável|" + fmt(estado.compMax, 0) + " m",
+     "Temperatura ambiente|" + fmt(estado.tempAmb, 0) + " °C",
+     "Circuitos agrupados|" + fmt(estado.circAgrup, 0)
+    ].map(function (l) { var p = l.split("|"); return "<tr><th>" + p[0] + "</th><td>" + p[1] + "</td></tr>"; }).join("") + "</tbody></table>" +
+    "<h3>Pontos de recarga</h3><table class='dados'><thead><tr><th>Grupo</th><th>Pontos</th><th>Potência</th><th>Ligação</th><th>Instalada</th></tr></thead><tbody>" +
+    r.grupos.map(function (g) { return "<tr><td>" + g.nome + "</td><td>" + g.n + "</td><td>" + fmt(g.p) + " kW</td><td>" + g.ligacao + "</td><td>" + fmt(g.potenciaInstalada) + " kW</td></tr>"; }).join("") +
+    "</tbody></table>" +
+    "<h2>2. Demanda</h2><table><tbody>" +
+    ["Fator de simultaneidade|" + fmt(r.fs * 100, 0) + " % (" + (estado.modoFs === "manual" ? "informado" : "curva do perfil, " + r.pontos + " pontos") + ")",
+     "Demanda de recarga sem gestão|" + fmt(r.demandaSemGestao) + " kW",
+     "Estratégia adotada|" + (r.estrategia === "nenhuma" ? "sem gerenciamento" : r.estrategia === "estatico" ? "divisão estática" : "balanceamento dinâmico"),
+     "Limite do conjunto (setpoint)|" + fmt(r.limiteVE) + " kW",
+     "Demanda de recarga considerada|" + fmt(r.demandaVE) + " kW",
+     "Demanda total da instalação|" + fmt(r.demandaTotal) + " kW (" + fmt(r.correnteTotal, 0) + " A)",
+     "Capacidade útil|" + fmt(r.capacidadeUtil) + " kW",
+     "Folga final|" + fmt(r.folga) + " kW",
+     "Conclusão|" + r.titulo + " — " + r.detalhe
+    ].map(function (l) { var p = l.split("|"); return "<tr><th>" + p[0] + "</th><td>" + p[1] + "</td></tr>"; }).join("") + "</tbody></table>" +
+    "<h3>Comparação de estratégias</h3><table class='dados'><thead><tr><th>Cenário</th><th>Demanda de recarga</th><th>Demanda total</th><th>Folga</th><th>Potência por ponto</th></tr></thead><tbody>" +
+    cen.map(function (c) { return "<tr><td>" + c.rotulo + (c.estrategia === estado.estrategia ? " (adotado)" : "") + "</td><td>" + fmt(c.demandaVE) + " kW</td><td>" + fmt(c.demandaTotal) + " kW</td><td>" + fmt(c.folga) + " kW</td><td>" + fmt(c.potenciaPorPonto) + " kW</td></tr>"; }).join("") +
+    "</tbody></table>" +
+    "<h2>3. Dimensionamento dos circuitos</h2>" + linhaCirc(alim, "3.1 Alimentador do quadro de recarga") +
+    ramais.map(function (rm, i) { return linhaCirc(rm.circ, "3." + (i + 2) + " Ramal — " + rm.nome + " (" + rm.n + " circuitos)"); }).join("") +
+    "<h2>4. Proteções</h2><ul><li>Disjuntor geral do quadro de recarga: " + alim.disjuntor + " A curva C.</li>" +
+    "<li>Um circuito exclusivo e um dispositivo diferencial residual de 30 mA por ponto de recarga, " + (r.temDC ? "tipo B" : "tipo A quando o EVSE possuir detecção interna de corrente contínua residual de 6 mA; caso contrário, tipo B") + ".</li>" +
+    "<li>Dispositivo de proteção contra surtos classe II no quadro de recarga.</li>" +
+    "<li>Dispositivo de seccionamento independente do restante da edificação.</li>" +
+    "<li>Esquema de aterramento TN-S ou TT; o esquema TN-C tem uso restrito pela NBR 17019.</li></ul>" +
+    "<h2>5. Energia e operação</h2><table><tbody>" +
+    ["Veículos considerados|" + r.veiculos,
+     "Energia diária estimada|" + fmt(r.energiaDia, 0) + " kWh (" + fmt(estado.kmDia, 0) + " km/dia, " + fmt(estado.consumo, 1) + " kWh/100 km)",
+     "Janela de recarga|" + fmt(r.janela, 1) + " h",
+     "Energia entregável na janela|" + fmt(r.energiaDisponivel, 0) + " kWh",
+     "Tempo médio por veículo|" + fmt(r.horasPorVeiculo, 1) + " h",
+     "Consumo mensal|" + fmt(r.energiaMes, 0) + " kWh · " + moeda(r.custoMes),
+     "Expansão possível|" + ex.maximo + " pontos na entrada atual"
+    ].map(function (l) { var p = l.split("|"); return "<tr><th>" + p[0] + "</th><td>" + p[1] + "</td></tr>"; }).join("") + "</tbody></table>" +
+    (r.alertas.length ? "<h2>6. Observações e restrições</h2>" + r.alertas.map(function (a) { return "<div class='aviso'>" + a.texto + "</div>"; }).join("") : "") +
+    "<h2>" + (r.alertas.length ? 7 : 6) + ". Lista de materiais</h2><table class='dados'><thead><tr><th>Item</th><th>Un.</th><th>Quant.</th><th>Unitário</th><th>Total</th></tr></thead><tbody>" +
+    ultimo.bom.map(function (i) { return "<tr><td>" + i.desc + "</td><td>" + i.un + "</td><td>" + fmt(i.q, 1) + "</td><td>" + fmt(i.pu, 2) + "</td><td>" + fmt(i.total, 2) + "</td></tr>"; }).join("") +
+    "<tr><th colspan='4'>Total estimado</th><td>" + fmt(ultimo.bomTotal, 2) + "</td></tr></tbody></table>" +
+    "<h2>" + (r.alertas.length ? 8 : 7) + ". Diagrama unifilar</h2>" + ($("#saidaUnifilar svg") ? $("#saidaUnifilar svg").outerHTML.replace("var(--ink)", "#111") : "") +
+    "<div class='rod'>Documento gerado pelo EletroPosto Calc. Referências: ABNT NBR 17019, ABNT NBR 5410, ABNT NBR IEC 61851-1, ABNT NBR IEC 62196, ABNT NBR 5419. " +
+    "As tabelas de capacidade de condução são reproduções simplificadas e devem ser conferidas na edição vigente da norma. Preços unitários indicativos, sem vínculo com base oficial. " +
+    "O dimensionamento aqui apresentado é subsídio ao projeto e não substitui a verificação e a responsabilidade técnica do profissional habilitado, nem a anuência da distribuidora quando houver aumento de carga.</div>" +
+    "</body></html>";
+  var w = window.open("", "_blank");
+  if (!w) { baixar(new Blob([html], { type: "text/html" }), (estado.nome || "relatorio") + ".html"); return toast("Relatório baixado (bloqueio de pop-up)"); }
+  w.document.write(html); w.document.close();
+  setTimeout(function () { try { w.print(); } catch (e) {} }, 500);
+});
+
+/* ---------------- inicialização ---------------- */
+$$("input, select").forEach(function (el) {
+  if (el.closest("#corpoGrupos") || el.closest("#corpoBom") || el.closest(".lab") ||
+      el.closest("#legal") || el.closest("#abertura") || el.id === "buscaManual") return;
+  el.addEventListener("input", recalcular);
+  el.addEventListener("change", recalcular);
+});
+window.addEventListener("resize", function () {
+  clearTimeout(window._rs);
+  window._rs = setTimeout(function () { if (ultimo) { desenharCurva(); desenharBarras(); } }, 180);
+});
+
+try { aplicarTema(localStorage.getItem(CHAVE_TEMA) || (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "escuro" : "claro")); } catch (e) { aplicarTema("claro"); }
+carregarLocal();
+escreverFormulario();
+recalcular();
+/* ---------------- abertura e avisos legais ---------------- */
+var abertura = $("#abertura"), legal = $("#legal"), tmrAbertura = null, tmrPct = null;
+var reduzirMovimento = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+function abrirLegal() {
+  clearTimeout(tmrAbertura); clearInterval(tmrPct);
+  if (abertura && !abertura.classList.contains("saiu")) {
+    abertura.classList.add("saiu");
+    setTimeout(function () { abertura.style.display = "none"; }, 600);
+  }
+  legal.classList.remove("oculto");
+  document.body.style.overflow = "hidden";
+  var aceite = $("#legalAceite");
+  setTimeout(function () { try { aceite.focus(); } catch (e) {} }, 60);
+}
+function fecharLegal() {
+  legal.classList.add("oculto");
+  document.body.style.overflow = "";
+}
+if (abertura) {
+  var duracao = reduzirMovimento ? 400 : 4000, t0 = Date.now();
+  var etapas = ["iniciando", "lendo tabelas normativas", "preparando o motor de cálculo", "pronto"];
+  tmrPct = setInterval(function () {
+    var f = Math.min(1, (Date.now() - t0) / duracao);
+    $("#aberturaPct").textContent = Math.round(f * 100) + "%";
+    $("#aberturaTxt").textContent = etapas[Math.min(etapas.length - 1, Math.floor(f * etapas.length))];
+    if (f >= 1) clearInterval(tmrPct);
+  }, 80);
+  document.body.style.overflow = "hidden";
+  tmrAbertura = setTimeout(abrirLegal, duracao);
+  abertura.addEventListener("click", abrirLegal);
+  document.addEventListener("keydown", function (ev) {
+    if (legal.classList.contains("oculto") && abertura.style.display !== "none" &&
+        (ev.key === "Escape" || ev.key === "Enter" || ev.key === " ")) abrirLegal();
+  });
+}
+$("#legalAceite").addEventListener("change", function () { $("#btnEntrar").disabled = !this.checked; });
+$("#btnEntrar").addEventListener("click", function () {
+  if ($("#legalAceite").checked) { fecharLegal(); toast("Bom projeto. Os avisos legais ficam no rodapé."); }
+});
+$("#linkLegal").addEventListener("click", function (ev) {
+  ev.preventDefault();
+  $("#legalAceite").checked = true; $("#btnEntrar").disabled = false;
+  legal.classList.remove("oculto"); document.body.style.overflow = "hidden";
+});
+
+window.EPC_UI = {
+  estado: function () { return estado; }, ultimo: function () { return ultimo; }, recalcular: recalcular,
+  pularAbertura: abrirLegal, fecharLegal: fecharLegal
+};
+})();
+</script>
+<script id="testes">
+/* ==========================================================================
+   SUÍTE DE VERIFICAÇÃO — executável no navegador e em Node.
+   ========================================================================== */
+(function (raiz) {
+"use strict";
+var E = raiz.EPC;
+
+function suite() {
+  var res = [], ok = 0, falhas = 0;
+  function t(nome, fn) {
+    try { fn(); res.push({ nome: nome, ok: true }); ok++; }
+    catch (e) { res.push({ nome: nome, ok: false, msg: e.message }); falhas++; }
+  }
+  function perto(a, b, tol, rot) {
+    if (Math.abs(a - b) > (tol === undefined ? 0.01 : tol)) {
+      throw new Error((rot || "valor") + ": obtido " + a + ", esperado " + b);
+    }
+  }
+  function igual(a, b, rot) { if (a !== b) throw new Error((rot || "valor") + ": obtido " + a + ", esperado " + b); }
+  function verdade(c, rot) { if (!c) throw new Error(rot || "condição falsa"); }
+
+  t("Capacidade da entrada — trifásico 380 V, 150 A, FP 0,92", function () {
+    var c = E.capacidadeEntrada({ modoCap: "disj", sistema: "tri380", disjGeral: 150, fpEdif: 0.92 });
+    perto(c, Math.sqrt(3) * 380 * 150 * 0.92 / 1000, 0.01, "capacidade");
+    perto(c, 90.83, 0.05, "capacidade");
+  });
+
+  t("Capacidade da entrada — monofásico 220 V, 63 A", function () {
+    perto(E.capacidadeEntrada({ modoCap: "disj", sistema: "mono220", disjGeral: 63, fpEdif: 0.95 }), 13.17, 0.05);
+  });
+
+  t("Corrente — wallbox 11 kW trifásica em 380 V", function () {
+    perto(E.correnteProjeto(11, "tri380", "tri", 1), 16.712, 0.01);
+  });
+
+  t("Corrente — wallbox 7,4 kW monofásica em 220 V", function () {
+    perto(E.correnteProjeto(7.4, "mono220", "mono", 1), 33.636, 0.01);
+  });
+
+  t("Potência a partir da corrente é a operação inversa", function () {
+    var i = E.correnteProjeto(22, "tri380", "tri", 0.99);
+    perto(E.potenciaDe(i, "tri380", "tri", 0.99), 22, 0.001);
+  });
+
+  t("Simultaneidade vale 1 para um único ponto", function () {
+    perto(E.fatorSimultaneidade("condominio", 1), 1, 0.0001);
+    perto(E.fatorSimultaneidade("comercial", 1), 1, 0.0001);
+  });
+
+  t("Simultaneidade decresce com o número de pontos e respeita o piso", function () {
+    var a = E.fatorSimultaneidade("condominio", 10);
+    var b = E.fatorSimultaneidade("condominio", 50);
+    verdade(a > b, "curva deveria decrescer");
+    verdade(b >= E.PERFIS.condominio.fsMin - 1e-9, "abaixo do piso");
+    verdade(E.fatorSimultaneidade("publico", 20) > E.fatorSimultaneidade("condominio", 20), "público deveria ter simultaneidade maior");
+  });
+
+  t("Queda de tensão — 32 A, 60 m, 6 mm², trifásico 380 V", function () {
+    var q = E.quedaTensao(32, 60, 6, "tri380", "tri", "cobre", "epr", 1);
+    var rho = 0.0178 * (1 + 0.00393 * 70);
+    perto(q, (Math.sqrt(3) * 32 * 60 * (rho / 6)) / 380 * 100, 0.001, "queda");
+    perto(q, 3.31, 0.05, "queda");
+  });
+
+  t("Queda de tensão cresce com o comprimento e cai com a seção", function () {
+    var q1 = E.quedaTensao(32, 30, 6, "tri380", "tri", "cobre", "epr", 1);
+    var q2 = E.quedaTensao(32, 60, 6, "tri380", "tri", "cobre", "epr", 1);
+    var q3 = E.quedaTensao(32, 60, 10, "tri380", "tri", "cobre", "epr", 1);
+    perto(q2 / q1, 2, 0.001, "proporcionalidade com o comprimento");
+    verdade(q3 < q2, "seção maior deveria reduzir a queda");
+  });
+
+  t("Condutor de proteção conforme NBR 5410", function () {
+    igual(E.secaoPE(6), 6, "PE de 6 mm²");
+    igual(E.secaoPE(16), 16, "PE de 16 mm²");
+    igual(E.secaoPE(25), 16, "PE de 25 mm²");
+    igual(E.secaoPE(50), 25, "PE de 50 mm²");
+    igual(E.secaoPE(120), 70, "PE de 120 mm²");
+  });
+
+  t("Série de disjuntores retorna o valor imediatamente superior", function () {
+    igual(E.proximoDaSerie(E.SERIE_DISJ, 20.9), 25);
+    igual(E.proximoDaSerie(E.SERIE_DISJ, 25), 25);
+    igual(E.proximoDaSerie(E.SERIE_DISJ, 63.1), 80);
+  });
+
+  t("Fatores de correção de temperatura e agrupamento", function () {
+    perto(E.interpolaFCT({ 30: { epr: 1 }, 40: { epr: 0.91 } }, 30, "epr"), 1, 0.001);
+    perto(E.interpolaFCT({ 30: { epr: 1 }, 40: { epr: 0.91 } }, 35, "epr"), 0.955, 0.001);
+    perto(E.fatorAgrupamento(1), 1, 0.001);
+    perto(E.fatorAgrupamento(4), 0.65, 0.001);
+    verdade(E.fatorAgrupamento(8) < E.fatorAgrupamento(4), "agrupamento maior deveria reduzir mais");
+  });
+
+  t("Eletroduto acomoda os condutores com ocupação máxima de 40 %", function () {
+    var d = E.eletrodutoPara([6, 6, 6, 6, 6]);
+    verdade(d.dn !== null, "sem eletroduto compatível");
+    verdade(d.ocupacaoPct <= 40.001, "ocupação acima do limite: " + d.ocupacaoPct);
+    var maior = E.eletrodutoPara([50, 50, 50, 50, 25]);
+    verdade(maior.dn > d.dn, "seção maior deveria exigir eletroduto maior");
+  });
+
+  t("Wallbox 11 kW trifásica: 20 A e 4 mm² (nunca 2,5 mm²)", function () {
+    var c = E.dimensionarCircuito({
+      pkW: 11, sistema: "tri380", ligacao: "tri", fp: 1, rend: 1, fatorContinuo: 1.25,
+      metodo: "B1", isolacao: "epr", material: "cobre", tempAmb: 30, nAgrup: 4,
+      comprimento: 60, quedaMax: 4
+    });
+    perto(c.ib, 16.71, 0.02, "corrente do ponto");
+    igual(c.disjuntor, 20, "disjuntor");
+    igual(c.secao, 4, "seção");
+    igual(c.secaoPE, 4, "PE");
+    verdade(c.secao > 2.5, "2,5 mm² não é admissível em ponto de recarga de 11 kW");
+    verdade(c.queda <= 4, "queda acima do limite");
+    verdade(c.izCorrigida >= c.disjuntor, "coordenação In ≤ Iz violada");
+  });
+
+  t("Wallbox 11 kW isolada, sem agrupamento, também parte de 4 mm²", function () {
+    var c = E.dimensionarCircuito({
+      pkW: 11, sistema: "tri380", ligacao: "tri", fp: 1, rend: 1, fatorContinuo: 1.25,
+      metodo: "B1", isolacao: "epr", material: "cobre", tempAmb: 30, nAgrup: 1,
+      comprimento: 15, quedaMax: 4
+    });
+    igual(c.secao, 4, "seção");
+    igual(c.secaoTecnica, 2.5, "seção que a tabela isolada admitiria");
+    igual(c.criterio, "seção mínima de circuito de recarga", "critério");
+  });
+
+  t("Seção mínima de circuito de recarga acompanha a proteção", function () {
+    var casos = [[16, 2.5], [20, 4], [25, 4], [32, 6], [40, 6], [50, 10], [63, 16], [80, 25], [100, 35]];
+    casos.forEach(function (par) {
+      var c = E.dimensionarCircuito({
+        pkW: E.potenciaDe(par[0] * 0.98, "tri380", "tri", 1), sistema: "tri380", ligacao: "tri",
+        fp: 1, rend: 1, fatorContinuo: 1.25, metodo: "C", isolacao: "epr", material: "cobre",
+        tempAmb: 30, nAgrup: 1, comprimento: 10, quedaMax: 4
+      });
+      igual(c.disjuntor, par[0], "proteção do caso " + par[0] + " A");
+      verdade(c.secao >= par[1], "seção abaixo do mínimo no caso " + par[0] + " A: " + c.secao);
+    });
+  });
+
+  t("Condutor conduz a corrente de uso contínuo (1,25 × IB)", function () {
+    [3.7, 7.4, 11, 22].forEach(function (pot) {
+      [1, 4, 6].forEach(function (ag) {
+        var c = E.dimensionarCircuito({
+          pkW: pot, sistema: "tri380", ligacao: pot < 8 ? "mono" : "tri", fp: 0.99, rend: 1,
+          fatorContinuo: 1.25, metodo: "B1", isolacao: "epr", material: "cobre",
+          tempAmb: 35, nAgrup: ag, comprimento: 30, quedaMax: 4
+        });
+        verdade(c.izCorrigida >= c.icont - 1e-6, "Iz < 1,25·IB em " + pot + " kW / " + ag + " circuitos");
+        verdade(c.izCorrigida >= c.disjuntor - 1e-6, "Iz < In em " + pot + " kW / " + ag + " circuitos");
+      });
+    });
+  });
+
+  t("A proteção não é inflada pelo fator de uso contínuo", function () {
+    var c = E.dimensionarCircuito({
+      pkW: 7.4, sistema: "mono220", ligacao: "mono", fp: 0.99, rend: 1, fatorContinuo: 1.25,
+      metodo: "B1", isolacao: "epr", material: "cobre", tempAmb: 30, nAgrup: 1,
+      comprimento: 20, quedaMax: 4
+    });
+    perto(c.ib, 33.98, 0.05, "corrente do ponto");
+    igual(c.disjuntor, 40, "disjuntor");
+    igual(c.secao, 6, "seção");
+    verdade(c.disjuntor < c.ib * 1.25 * 1.3, "proteção desproporcional à corrente do ponto");
+  });
+
+  t("Coordenação Ib ≤ In ≤ Iz vale em uma varredura de casos", function () {
+    [3.7, 7.4, 11, 22, 60].forEach(function (p) {
+      [1, 4, 8].forEach(function (ag) {
+        [20, 60, 120].forEach(function (L) {
+          var c = E.dimensionarCircuito({
+            pkW: p, sistema: "tri380", ligacao: "tri", fp: 0.99, rend: 1, fatorContinuo: 1.25,
+            metodo: "B1", isolacao: "epr", material: "cobre", tempAmb: 35, nAgrup: ag,
+            comprimento: L, quedaMax: 4
+          });
+          verdade(c.disjuntor >= c.ib, "In < Ib em " + p + " kW / " + ag + " circuitos / " + L + " m");
+          verdade(c.izCorrigida >= c.disjuntor - 1e-6, "Iz < In em " + p + " kW / " + ag + " circuitos / " + L + " m");
+          verdade(c.secao >= c.secaoMinima, "seção abaixo do mínimo de projeto");
+        });
+      });
+    });
+  });
+
+  t("Percurso maior exige seção maior ou igual", function () {
+    var base = { pkW: 22, sistema: "tri380", ligacao: "tri", fp: 1, rend: 1, fatorContinuo: 1.25, metodo: "B1", isolacao: "epr", material: "cobre", tempAmb: 30, nAgrup: 2, quedaMax: 4 };
+    var curto = E.dimensionarCircuito(Object.assign({}, base, { comprimento: 20 }));
+    var longo = E.dimensionarCircuito(Object.assign({}, base, { comprimento: 150 }));
+    verdade(longo.secao >= curto.secao, "cabo longo com seção menor");
+    verdade(longo.queda <= 4.001, "queda do trecho longo acima do limite");
+  });
+
+  t("Carregador em corrente contínua considera o rendimento", function () {
+    var c = E.dimensionarCircuito({
+      pkW: 60, sistema: "tri380", ligacao: "tri", fp: 0.97, rend: 0.94, fatorContinuo: 1.25,
+      metodo: "C", isolacao: "epr", material: "cobre", tempAmb: 30, nAgrup: 1, comprimento: 40, quedaMax: 3
+    });
+    perto(c.potenciaEntrada, 60 / 0.94, 0.01, "potência de entrada");
+    verdade(c.ib > E.correnteProjeto(60, "tri380", "tri", 0.97), "corrente deveria subir com a perda do retificador");
+  });
+
+  var cenarioBase = {
+    tipoEdif: "condominio", sistema: "tri380", modoCap: "disj", disjGeral: 150, fpEdif: 0.92,
+    demandaAtual: 62, reserva: 10, ampliavel: "sim", vagasTotais: 80,
+    grupos: [{ nome: "Wallbox", n: 20, p: 11, ligacao: "tri", fp: 0.99, rend: 1 }],
+    modoFs: "auto", janela: 9, kmDia: 45, consumo: 16, tarifa: 0.95,
+    estrategia: "nenhuma", setpoint: 0, correnteMin: 6, veicSimult: 0
+  };
+
+  t("Balanço de potência do condomínio de referência", function () {
+    var r = E.calcular(cenarioBase);
+    perto(r.capacidade, 90.83, 0.05, "capacidade");
+    perto(r.capacidadeUtil, 81.75, 0.05, "capacidade útil");
+    perto(r.disponivelVE, 19.75, 0.05, "folga para recarga");
+    igual(r.pontos, 20, "pontos");
+    perto(r.potenciaInstalada, 220, 0.01, "potência instalada");
+    verdade(r.demandaSemGestao > r.disponivelVE, "cenário deveria estourar sem gestão");
+    igual(r.nivel, "critico", "veredito sem gestão");
+  });
+
+  t("Balanceamento dinâmico limita a demanda ao setpoint automático", function () {
+    var r = E.calcular(Object.assign({}, cenarioBase, { estrategia: "dinamico" }));
+    perto(r.demandaVE, r.disponivelVE, 0.01, "demanda limitada");
+    verdade(r.folga >= -1e-6, "folga negativa mesmo com gestão");
+    igual(r.nivel, "atencao", "veredito com gestão");
+  });
+
+  t("Setpoint informado prevalece sobre o automático", function () {
+    var r = E.calcular(Object.assign({}, cenarioBase, { estrategia: "dinamico", setpoint: 12 }));
+    perto(r.limiteVE, 12, 0.001, "setpoint");
+    perto(r.demandaVE, 12, 0.001, "demanda");
+  });
+
+  t("Demanda nunca supera a soma das potências instaladas", function () {
+    var r = E.calcular(Object.assign({}, cenarioBase, { estrategia: "dinamico", setpoint: 9999 }));
+    verdade(r.demandaVE <= r.potenciaEntradaNominal + 1e-9, "demanda acima da instalada");
+  });
+
+  t("Alerta quando a modulação cai abaixo de 6 A por ponto", function () {
+    var r = E.calcular(Object.assign({}, cenarioBase, {
+      estrategia: "dinamico",
+      grupos: [{ nome: "Wallbox", n: 40, p: 11, ligacao: "tri", fp: 0.99, rend: 1 }]
+    }));
+    verdade(r.moduladoAbaixoDoMinimo, "deveria alertar sobre o piso de modulação");
+    verdade(r.pontosSimultaneosMax < 40, "atendimento simultâneo deveria ser limitado");
+    perto(r.potenciaMinimaPonto, Math.sqrt(3) * 380 * 6 / 1000, 0.01, "potência mínima por ponto");
+  });
+
+  t("Instalação sem folga é sinalizada como crítica", function () {
+    var r = E.calcular(Object.assign({}, cenarioBase, { demandaAtual: 85, estrategia: "dinamico" }));
+    verdade(r.disponivelVE === 0, "folga deveria ser nula");
+    verdade(r.alertas.some(function (a) { return a.nivel === "erro"; }), "deveria haver alerta de erro");
+  });
+
+  t("Corrente contínua em rede monofásica é recusada", function () {
+    var r = E.calcular(Object.assign({}, cenarioBase, {
+      sistema: "mono220", grupos: [{ nome: "DC", n: 1, p: 60, ligacao: "dc", fp: 0.97, rend: 0.94 }]
+    }));
+    verdade(r.alertas.some(function (a) { return a.nivel === "erro"; }), "deveria recusar DC em rede monofásica");
+  });
+
+  t("Energia diária e mensal da frota", function () {
+    var r = E.calcular(Object.assign({}, cenarioBase, { estrategia: "dinamico" }));
+    perto(r.energiaDia, 20 * 45 * 16 / 100, 0.01, "energia diária");
+    perto(r.energiaMes, r.energiaDia * 30, 0.01, "energia mensal");
+    perto(r.custoMes, r.energiaMes * 0.95, 0.01, "custo mensal");
+  });
+
+  t("Comparação de cenários devolve as três estratégias em ordem de demanda", function () {
+    var c = E.cenarios(cenarioBase);
+    igual(c.length, 3, "quantidade de cenários");
+    verdade(c[0].demandaVE >= c[2].demandaVE, "sem gestão deveria demandar mais que o dinâmico");
+  });
+
+  t("Expansão possível é coerente com a folga disponível", function () {
+    var e = Object.assign({}, cenarioBase, { estrategia: "dinamico" });
+    var r = E.calcular(e);
+    var x = E.expansao(e, r);
+    verdade(x.maximo >= 1, "deveria caber ao menos um ponto");
+    var fs = E.fatorSimultaneidade("condominio", x.maximo);
+    verdade(x.maximo * x.potenciaTipica * fs <= r.disponivelVE + 1e-6, "expansão excede a folga");
+  });
+
+  t("Curva de 24 horas soma a recarga dentro da janela", function () {
+    var e = Object.assign({}, cenarioBase, { estrategia: "dinamico", janela: 9 });
+    var r = E.calcular(e);
+    var c = E.curva24h(e, r);
+    igual(c.length, 24, "horas");
+    var comVe = c.filter(function (h) { return h.ve > 0; }).length;
+    igual(comVe, 9, "horas com recarga");
+    verdade(c[20].base > c[3].base, "perfil residencial deveria ter pico à noite");
+  });
+
+  t("Lista de materiais cobre cabos, proteções e estações", function () {
+    var e = Object.assign({}, cenarioBase, { estrategia: "dinamico", compAlim: 45, compRamal: 25 });
+    var r = E.calcular(e);
+    var alim = E.dimensionarCircuito({ pkW: r.demandaVE, sistema: "tri380", ligacao: "tri", fp: 0.98, rend: 1, fatorContinuo: 1.25, metodo: "C", isolacao: "epr", material: "cobre", tempAmb: 30, nAgrup: 1, comprimento: 45, quedaMax: 2 });
+    var ramais = [{ nome: "Wallbox", n: 20, p: 11, circ: E.dimensionarCircuito({ pkW: 11, sistema: "tri380", ligacao: "tri", fp: 0.99, rend: 1, fatorContinuo: 1.25, metodo: "B1", isolacao: "epr", material: "cobre", tempAmb: 30, nAgrup: 4, comprimento: 60, quedaMax: 2 }) }];
+    var m = E.materiais(e, r, alim, ramais);
+    verdade(m.length > 8, "lista muito curta");
+    verdade(m.some(function (i) { return /Diferencial residual/.test(i.desc) && i.q === 20; }), "deveria haver um DR por ponto");
+    verdade(m.some(function (i) { return /balanceamento dinâmico/.test(i.desc); }), "controlador não listado");
+    verdade(m.every(function (i) { return i.q >= 0 && isFinite(i.q); }), "quantitativo inválido");
+  });
+
+  t("Entradas vazias não quebram o cálculo", function () {
+    var r = E.calcular({ grupos: [] });
+    verdade(isFinite(r.demandaTotal), "demanda não numérica");
+    igual(r.pontos, 0, "pontos");
+    igual(r.nivel, "atencao", "veredito");
+  });
+
+  return { total: res.length, ok: ok, falhas: falhas, itens: res };
+}
+
+E.testes = suite;
+})(typeof globalThis !== "undefined" ? globalThis : this);
+</script>
+
+<script id="manual">
+(function () {
+"use strict";
+var E = window.EPC;
+var $ = function (s, r) { return (r || document).querySelector(s); };
+var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+var CHAVE_MANUAL = "epc.manual";
+
+/* índice lateral */
+var secoes = $$("#conteudoManual section");
+var indice = $("#indiceManual");
+indice.innerHTML = secoes.map(function (s) {
+  return '<a href="#' + s.id + '" data-alvo="' + s.id + '">' + $("h3", s).textContent + "</a>";
+}).join("");
+var vistos = {};
+try { vistos = JSON.parse(localStorage.getItem(CHAVE_MANUAL) || "{}"); } catch (e) {}
+function atualizarProgresso() {
+  var n = Object.keys(vistos).filter(function (k) { return vistos[k]; }).length;
+  $("#progressoManual").textContent = n + " de " + secoes.length + " seções lidas";
+  $$("#indiceManual a").forEach(function (a) {
+    if (vistos[a.getAttribute("data-alvo")]) a.style.opacity = ".65";
+  });
+}
+atualizarProgresso();
+indice.addEventListener("click", function (ev) {
+  var a = ev.target.closest("a"); if (!a) return;
+  ev.preventDefault();
+  var alvo = document.getElementById(a.getAttribute("data-alvo"));
+  if (alvo) alvo.scrollIntoView({ behavior: "smooth", block: "start" });
+  $$("#indiceManual a").forEach(function (x) { x.classList.remove("ativo"); });
+  a.classList.add("ativo");
+  vistos[a.getAttribute("data-alvo")] = true;
+  try { localStorage.setItem(CHAVE_MANUAL, JSON.stringify(vistos)); } catch (e) {}
+  atualizarProgresso();
+});
+if ("IntersectionObserver" in window) {
+  var io = new IntersectionObserver(function (ent) {
+    ent.forEach(function (e2) {
+      if (e2.isIntersecting) {
+        $$("#indiceManual a").forEach(function (x) { x.classList.toggle("ativo", x.getAttribute("data-alvo") === e2.target.id); });
+        vistos[e2.target.id] = true;
+        try { localStorage.setItem(CHAVE_MANUAL, JSON.stringify(vistos)); } catch (e3) {}
+      }
+    });
+  }, { rootMargin: "-160px 0px -70% 0px" });
+  secoes.forEach(function (s) { io.observe(s); });
+}
+
+/* busca */
+$("#buscaManual").addEventListener("input", function () {
+  var q = this.value.trim().toLowerCase();
+  secoes.forEach(function (s) {
+    var achou = !q || s.textContent.toLowerCase().indexOf(q) >= 0;
+    s.style.display = achou ? "" : "none";
+    var a = $('#indiceManual a[data-alvo="' + s.id + '"]');
+    if (a) a.style.display = achou ? "" : "none";
+  });
+});
+
+/* laboratórios */
+function labDemanda() {
+  var n = E.num($("#labN").value, 1), p = E.num($("#labP").value, 0), fs = E.num($("#labFs").value, 100) / 100;
+  var inst = n * p, dem = inst * fs;
+  $("#labSaidaDemanda").textContent =
+    "Potência instalada .... " + inst.toFixed(1) + " kW\n" +
+    "Simultaneidade ........ " + (fs * 100).toFixed(0) + " %\n" +
+    "Demanda ............... " + dem.toFixed(1) + " kW\n" +
+    "Curva do perfil ....... " + (E.fatorSimultaneidade("condominio", n) * 100).toFixed(0) + " % (condomínio, " + n + " pontos)";
+}
+function labGestao() {
+  var pd = E.num($("#labPd").value, 0), na = Math.max(1, E.num($("#labNa").value, 1)), sis = $("#labSis").value;
+  var lig = sis.indexOf("tri") === 0 ? "tri" : "mono";
+  var pmin = E.potenciaDe(6, sis, lig, 1);
+  var pp = pd / na;
+  $("#labSaidaGestao").textContent =
+    "Potência por ponto .... " + pp.toFixed(2) + " kW\n" +
+    "Mínimo a 6 A .......... " + pmin.toFixed(2) + " kW\n" +
+    "Situação .............. " + (pp >= pmin ? "modulação possível para os " + na + " pontos"
+      : "abaixo do piso — atende no máximo " + Math.floor(pd / pmin) + " pontos por vez, em fila");
+}
+function labQueda() {
+  var i = E.num($("#labI").value, 0), l = E.num($("#labL").value, 0), s = parseFloat($("#labS").value), sis = $("#labSis2").value;
+  var lig = sis.indexOf("tri") === 0 ? "tri" : "mono";
+  var q = E.quedaTensao(i, l, s, sis, lig, "cobre", "epr", 1);
+  var v = E.tensaoDe(sis, lig);
+  $("#labSaidaQueda").textContent =
+    "Queda ................. " + q.toFixed(2) + " %  (" + (q * v / 100).toFixed(1) + " V de " + v + " V)\n" +
+    "Limite usual (4 %) .... " + (q <= 4 ? "atende" : "não atende — aumente a seção ou reduza o percurso") + "\n" +
+    "Seção mínima p/ 4 % ... " + (function () {
+      for (var k = 0; k < E.SECOES.length; k++) {
+        if (E.quedaTensao(i, l, E.SECOES[k], sis, lig, "cobre", "epr", 1) <= 4) return E.SECOES[k] + " mm²";
+      }
+      return "acima de 300 mm² — dividir em circuitos paralelos";
+    })();
+}
+$("#labS").innerHTML = E.SECOES.map(function (s) { return '<option value="' + s + '"' + (s === 6 ? " selected" : "") + ">" + s + " mm²</option>"; }).join("");
+[["#labN", labDemanda], ["#labP", labDemanda], ["#labFs", labDemanda],
+ ["#labPd", labGestao], ["#labNa", labGestao], ["#labSis", labGestao],
+ ["#labI", labQueda], ["#labL", labQueda], ["#labS", labQueda], ["#labSis2", labQueda]].forEach(function (par) {
+  var el = $(par[0]); if (el) { el.addEventListener("input", par[1]); el.addEventListener("change", par[1]); }
+});
+labDemanda(); labGestao(); labQueda();
+
+/* testes */
+$("#btnTestes").addEventListener("click", function () {
+  var r = E.testes();
+  var linhas = r.itens.map(function (i) { return (i.ok ? "  OK   " : "  FALHA") + "  " + i.nome + (i.ok ? "" : "\n         → " + i.msg); });
+  $("#saidaTestes").textContent =
+    (r.falhas === 0 ? "✓ " : "✕ ") + r.ok + " de " + r.total + " verificações aprovadas" +
+    (r.falhas ? " — " + r.falhas + " falha(s)" : "") + "\n\n" + linhas.join("\n");
+});
+})();
+</script>
+</body>
+</html>
