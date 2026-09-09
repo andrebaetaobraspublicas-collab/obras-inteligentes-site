@@ -662,14 +662,15 @@ footer.rodape{
       <table id="tabGrupos">
         <thead>
           <tr>
-            <th style="width:26%">Descrição</th>
-            <th class="n" style="width:9%">Pontos</th>
-            <th style="width:20%">Modelo típico</th>
-            <th class="n" style="width:11%">Potência (kW)</th>
-            <th style="width:13%">Ligação</th>
-            <th class="n" style="width:8%">FP</th>
-            <th class="n" style="width:9%">Rend.</th>
-            <th style="width:4%"></th>
+            <th style="width:20%">Descrição</th>
+            <th class="n" style="width:7%">Pontos</th>
+            <th style="width:17%">Modelo típico</th>
+            <th class="n" style="width:9%">Potência (kW)</th>
+            <th style="width:12%">Ligação</th>
+            <th style="width:19%">Resposta ao controlador</th>
+            <th class="n" style="width:6%">FP</th>
+            <th class="n" style="width:7%">Rend.</th>
+            <th style="width:3%"></th>
           </tr>
         </thead>
         <tbody id="corpoGrupos"></tbody>
@@ -844,6 +845,12 @@ footer.rodape{
         <span class="dica">Margem exigida do condutor, não da proteção: a recarga opera horas seguidas na corrente nominal. Adote 1,25, salvo indicação do fabricante do EVSE.</span>
       </div>
     </div>
+  </div>
+
+  <div class="painel">
+    <h2>Admissibilidade dos pontos</h2>
+    <p class="sub">Antes de dimensionar cabo, verifica-se o óbvio: cada equipamento cabe na entrada? Ponto que não responde ao controlador opera na potência nominal ou não opera.</p>
+    <div id="saidaAdmissibilidade"></div>
   </div>
 
   <div class="painel">
@@ -1023,6 +1030,24 @@ footer.rodape{
             </div>
             <div class="lab-saida" id="labSaidaGestao"></div>
           </div>
+        </section>
+
+        <section id="m-admissibilidade">
+          <h3>Admissibilidade do equipamento: a verificação que vem antes do cabo</h3>
+          <p>Gerenciamento de carga não é passe livre. Ele reparte potência entre equipamentos que <b>aceitam ser reduzidos</b>. Um carregador que só opera na potência nominal — o caso típico do DC rápido — não entra nessa conta: ou a entrada comporta a potência dele, ou o equipamento está errado para o local.</p>
+          <p>Por isso a ferramenta classifica cada grupo pela resposta ao controlador:</p>
+          <ul>
+            <li><b>Modulável até 6 A</b> — estação em corrente alternada, modo 3. O piloto de controle permite descer até 6 A por ponto. É o comportamento padrão das wallboxes.</li>
+            <li><b>Modulável até 30 %</b> — estação em corrente contínua com limitação de potência por protocolo de recarga inteligente, quando o fabricante declara essa faixa. Use somente com a declaração em mãos.</li>
+            <li><b>Não modulável</b> — o equipamento opera na potência nominal ou não opera. Padrão para recarga rápida em corrente contínua.</li>
+          </ul>
+          <p>Dessa classificação saem três consequências, e nenhuma delas depende do setpoint que o usuário digitar:</p>
+          <ol>
+            <li>A parcela não modulável é <b>piso</b> da demanda do conjunto. O controlador não a reduz, então ela entra inteira no balanço.</li>
+            <li>O alimentador é dimensionado pelo maior valor entre a demanda efetiva, essa parcela fixa e o piso operacional do maior ponto. Reduzir o disjuntor de entrada <b>não</b> reduz o cabo de um equipamento que continua capaz de puxar a potência nominal.</li>
+            <li>Se um único ponto não modulável já supera a folga da entrada, o resultado é reprovação direta: nenhuma estratégia de gestão viabiliza aquele equipamento naquele padrão de entrada.</li>
+          </ol>
+          <p>Um exemplo que aparece muito em consulta: carregador de 150 kW em corrente contínua puxa cerca de 245 A na entrada em 380 V. Não existe padrão de 120 A, nem de 60 A, que comporte isso — e o cabo desse ramal continua sendo de 185 mm², porque ele tem de suportar o que o equipamento é capaz de exigir, não o que o controlador gostaria que ele exigisse. A saída é ampliar a entrada, prever transformador dedicado ou especificar equipamento compatível.</p>
         </section>
 
         <section id="m-cabos">
@@ -1414,7 +1439,9 @@ function calcular(e) {
   }
 
   /* grupos de pontos */
+  var imin = limitar(num(e.correnteMin, 6), 6, 32);
   var pontos = 0, instalada = 0, entradaNominal = 0, temDC = false, temTri = false;
+  var nominalModulavel = 0, nominalFixa = 0, maiorPontoFixo = 0, maiorPonto = 0, pisoOperacional = 0;
   var grupos = (e.grupos || []).filter(function (g) { return num(g.n, 0) > 0 && num(g.p, 0) > 0; });
   grupos.forEach(function (g) { pontos += Math.round(num(g.n, 0)); });
   r.pontos = pontos;
@@ -1428,17 +1455,30 @@ function calcular(e) {
     var p = num(g.p, 0);
     var rend = limitar(num(g.rend, 1) || 1, 0.5, 1);
     var lig = g.ligacao || "tri";
-    var pe = (n * p) / rend;
+    var ligEletrica = lig === "dc" ? (s.fases === 3 ? "tri" : "mono") : lig;
+    var gestao = g.gestao || (lig === "dc" ? "fixo" : "ac6");
+    var pUnit = p / rend;                    /* potência de entrada de UM ponto, na potência nominal */
+    var pe = n * pUnit;
+    var potMin = gestao === "ac6" ? potenciaDe(imin, e.sistema, ligEletrica, 1)
+               : gestao === "dc30" ? 0.30 * pUnit : pUnit;
+
     instalada += n * p;
     entradaNominal += pe;
     if (lig === "dc") temDC = true;
     if (lig === "tri" || lig === "dc") temTri = true;
+    if (gestao === "fixo") { nominalFixa += pe; maiorPontoFixo = Math.max(maiorPontoFixo, pUnit); }
+    else nominalModulavel += pe;
+    maiorPonto = Math.max(maiorPonto, pUnit);
+    pisoOperacional = Math.max(pisoOperacional, potMin);
+
     r.grupos.push({
-      nome: g.nome || "Grupo", n: n, p: p, ligacao: lig, fp: num(g.fp, 1) || 1, rend: rend,
-      potenciaInstalada: n * p, potenciaEntrada: pe, demanda: pe * r.fs,
-      correnteUnitaria: correnteProjeto(p / rend, e.sistema, lig === "dc" ? (s.fases === 3 ? "tri" : "mono") : lig, num(g.fp, 1) || 1)
+      nome: g.nome || "Grupo", n: n, p: p, ligacao: lig, ligacaoEletrica: ligEletrica,
+      fp: num(g.fp, 1) || 1, rend: rend, gestao: gestao,
+      potenciaInstalada: n * p, potenciaEntrada: pe, potenciaUnitaria: pUnit,
+      potenciaMinima: potMin, demanda: pe * r.fs,
+      correnteUnitaria: correnteProjeto(pUnit, e.sistema, ligEletrica, num(g.fp, 1) || 1)
     });
-    if (!ligacaoValida(e.sistema, lig === "dc" ? (s.fases === 3 ? "tri" : "mono") : lig)) {
+    if (!ligacaoValida(e.sistema, ligEletrica)) {
       r.alertas.push({ nivel: "erro", texto: "O grupo “" + (g.nome || "sem nome") + "” exige ligação incompatível com o sistema " + s.rot + "." });
     }
   });
@@ -1446,7 +1486,15 @@ function calcular(e) {
   r.potenciaInstalada = instalada;
   r.potenciaEntradaNominal = entradaNominal;
   r.temDC = temDC;
-  r.demandaSemGestao = entradaNominal * r.fs;
+  r.maiorPonto = maiorPonto;
+  r.maiorPontoFixo = maiorPontoFixo;
+  r.pisoOperacional = pisoOperacional;
+
+  /* Um ponto não modulável opera na potência nominal ou não opera. A demanda das parcelas
+     fixas nunca desce abaixo do maior equipamento fixo do conjunto. */
+  r.demandaFixa = Math.max(maiorPontoFixo, nominalFixa * r.fs);
+  r.demandaModulavel = nominalModulavel * r.fs;
+  r.demandaSemGestao = Math.max(r.demandaFixa + r.demandaModulavel, maiorPonto);
 
   /* estratégia de gestão */
   var estrategia = e.estrategia || "nenhuma";
@@ -1460,9 +1508,14 @@ function calcular(e) {
     r.demandaVE = r.demandaSemGestao;
     r.limiteVE = entradaNominal;
   } else {
-    r.demandaVE = Math.min(r.demandaSemGestao, r.setpoint);
-    r.limiteVE = r.setpoint;
+    /* o controlador só reparte a parcela modulável: a parcela fixa é piso do conjunto */
+    r.limiteVE = Math.max(r.setpoint, r.demandaFixa, r.pisoOperacional);
+    r.demandaVE = Math.min(r.demandaSemGestao, r.limiteVE);
+    r.setpointLimitado = r.limiteVE > r.setpoint + 1e-9;
   }
+  /* O alimentador atende a demanda efetiva, mas nunca menos que o maior ponto capaz de
+     operar sozinho na potência que o controlador não pode reduzir. */
+  r.potenciaAlimentador = Math.max(r.demandaVE, r.demandaFixa, r.pisoOperacional);
 
   r.demandaTotal = r.demandaAtual + r.demandaVE;
   r.folga = r.capacidadeUtil - r.demandaTotal;
@@ -1473,7 +1526,6 @@ function calcular(e) {
     : 0;
 
   /* modulação: potência por ponto */
-  var imin = limitar(num(e.correnteMin, 6), 6, 32);
   var ligBase = grupos.length ? (grupos[0].ligacao === "dc" ? (s.fases === 3 ? "tri" : "mono") : grupos[0].ligacao) : "tri";
   r.potenciaMinimaPonto = potenciaDe(imin, e.sistema, ligBase, 1);
   r.pontosAtivos = Math.max(1, Math.ceil(pontos * r.fs));
@@ -1505,8 +1557,39 @@ function calcular(e) {
   r.horasPorVeiculo = r.potenciaPorPontoAtivo > 0
     ? ((num(e.kmDia, 0) * num(e.consumo, 16)) / 100) / r.potenciaPorPontoAtivo : 0;
 
+  /* admissibilidade individual de cada ponto ------------------------------- */
+  var correnteDisponivel = s.fases === 3
+    ? (r.disponivelVE * 1000) / (Math.sqrt(3) * s.vl * 0.98)
+    : (r.disponivelVE * 1000) / (s.vl * 0.98);
+  r.correnteDisponivel = correnteDisponivel;
+  r.grupos.forEach(function (g) {
+    g.admissivel = g.potenciaUnitaria <= r.disponivelVE + 1e-9;
+    g.correnteNecessaria = g.correnteUnitaria;
+    g.situacao = g.admissivel ? "admissível"
+      : (g.gestao === "fixo" ? "incompatível com a entrada" : "nunca atinge a potência nominal");
+    if (!g.admissivel && g.gestao === "fixo") {
+      r.alertas.push({ nivel: "erro", texto: "O ponto “" + g.nome + "” (" + g.p.toFixed(1).replace(".", ",") +
+        " kW, " + g.correnteUnitaria.toFixed(0) + " A na entrada) não é modulável: opera na potência nominal ou não opera. " +
+        "A folga da entrada é de " + r.disponivelVE.toFixed(1) + " kW (" + correnteDisponivel.toFixed(0) + " A). " +
+        "Nenhuma estratégia de gestão de carga viabiliza este equipamento — é preciso ampliar a entrada, " +
+        "prever alimentação dedicada com transformador próprio, ou especificar equipamento de menor potência." });
+    } else if (!g.admissivel) {
+      r.alertas.push({ nivel: "atencao", texto: "O ponto “" + g.nome + "” exige " + g.potenciaUnitaria.toFixed(1) +
+        " kW para operar na potência nominal, acima da folga de " + r.disponivelVE.toFixed(1) + " kW. " +
+        "O controlador o manterá permanentemente limitado: a potência contratada do equipamento nunca será entregue." });
+    }
+  });
+  if (r.setpointLimitado) {
+    r.alertas.push({ nivel: "atencao", texto: "O setpoint informado foi elevado para " + r.limiteVE.toFixed(1) +
+      " kW: abaixo disso o conjunto não consegue operar, porque há parcela de carga que o controlador não pode reduzir." });
+  }
+
   /* veredito */
-  if (pontos === 0) {
+  var inadmissivelFixo = r.grupos.some(function (g) { return !g.admissivel && g.gestao === "fixo"; });
+  if (inadmissivelFixo) {
+    r.nivel = "critico"; r.titulo = "Equipamento incompatível com a entrada";
+    r.detalhe = "Há ponto não modulável cuja potência nominal supera a folga disponível.";
+  } else if (pontos === 0) {
     r.nivel = "atencao"; r.titulo = "Nenhum ponto configurado";
     r.detalhe = "Adicione ao menos um grupo de carregadores na etapa 2.";
   } else if (r.folga >= 0 && (estrategia === "nenhuma" || r.demandaSemGestao <= r.disponivelVE)) {
@@ -1519,7 +1602,7 @@ function calcular(e) {
     r.nivel = "critico"; r.titulo = "Capacidade insuficiente";
     r.detalhe = "Faltam " + Math.abs(r.folga).toFixed(1) + " kW. Amplie a entrada ou reduza a potência dos pontos.";
   }
-  if (pontos > 0 && r.nivel === "atencao" && estrategia === "nenhuma") {
+  if (!inadmissivelFixo && pontos > 0 && r.nivel === "atencao" && estrategia === "nenhuma") {
     r.nivel = "critico"; r.titulo = "Excede a capacidade sem gestão";
   }
   if (r.moduladoAbaixoDoMinimo) {
@@ -1653,7 +1736,7 @@ var padrao = {
   tipoEdif: "condominio", sistema: "tri380", modoCap: "disj", disjGeral: 150, capKw: 98,
   fpEdif: 0.92, demandaAtual: 62, reserva: 10, ampliavel: "sim",
   vagasTotais: 80, compAlim: 45, compRamal: 25, compMax: 60,
-  grupos: [{ nome: "Wallbox trifásica — vagas privativas", n: 20, p: 11, ligacao: "tri", fp: 0.99, rend: 1 }],
+  grupos: [{ nome: "Wallbox trifásica — vagas privativas", n: 20, p: 11, ligacao: "tri", fp: 0.99, rend: 1, gestao: "ac6" }],
   modoFs: "auto", fsManual: 30, janela: 9, kmDia: 45, consumo: 16, tarifa: 0.95,
   estrategia: "dinamico", setpoint: 0, correnteMin: 6, veicSimult: 0,
   materialCond: "cobre", isolacao: "epr", metodoAlim: "C", metodoRamal: "B1",
@@ -1699,17 +1782,22 @@ function aplicarVisibilidade() {
 
 /* ---------------- grupos de carregadores ---------------- */
 var MODELOS = [
-  { rot: "Wallbox 3,7 kW mono (16 A)", p: 3.7, lig: "mono", fp: 0.99, rend: 1 },
-  { rot: "Wallbox 7,4 kW mono (32 A)", p: 7.4, lig: "mono", fp: 0.99, rend: 1 },
-  { rot: "Wallbox 11 kW tri (16 A)",   p: 11,  lig: "tri",  fp: 0.99, rend: 1 },
-  { rot: "Wallbox 22 kW tri (32 A)",   p: 22,  lig: "tri",  fp: 0.99, rend: 1 },
-  { rot: "DC 30 kW",  p: 30,  lig: "dc", fp: 0.97, rend: 0.94 },
-  { rot: "DC 60 kW",  p: 60,  lig: "dc", fp: 0.97, rend: 0.94 },
-  { rot: "DC 90 kW",  p: 90,  lig: "dc", fp: 0.98, rend: 0.95 },
-  { rot: "DC 150 kW", p: 150, lig: "dc", fp: 0.98, rend: 0.95 },
-  { rot: "Personalizado", p: null, lig: null, fp: null, rend: null }
+  { rot: "Wallbox 3,7 kW mono (16 A)", p: 3.7, lig: "mono", fp: 0.99, rend: 1, ges: "ac6" },
+  { rot: "Wallbox 7,4 kW mono (32 A)", p: 7.4, lig: "mono", fp: 0.99, rend: 1, ges: "ac6" },
+  { rot: "Wallbox 11 kW tri (16 A)",   p: 11,  lig: "tri",  fp: 0.99, rend: 1, ges: "ac6" },
+  { rot: "Wallbox 22 kW tri (32 A)",   p: 22,  lig: "tri",  fp: 0.99, rend: 1, ges: "ac6" },
+  { rot: "DC 30 kW",  p: 30,  lig: "dc", fp: 0.97, rend: 0.94, ges: "fixo" },
+  { rot: "DC 60 kW",  p: 60,  lig: "dc", fp: 0.97, rend: 0.94, ges: "fixo" },
+  { rot: "DC 90 kW",  p: 90,  lig: "dc", fp: 0.98, rend: 0.95, ges: "fixo" },
+  { rot: "DC 150 kW", p: 150, lig: "dc", fp: 0.98, rend: 0.95, ges: "fixo" },
+  { rot: "Personalizado", p: null, lig: null, fp: null, rend: null, ges: null }
 ];
 var LIGACOES = [["mono","Monofásica (F+N)"],["bi","Bifásica (F+F)"],["tri","Trifásica (3F+N)"],["dc","Corrente contínua"]];
+var GESTOES = [
+  ["ac6",  "Modulável até 6 A"],
+  ["dc30", "Modulável até 30 %"],
+  ["fixo", "Não modulável"]
+];
 
 function renderGrupos() {
   var tb = $("#corpoGrupos"); tb.innerHTML = "";
@@ -1722,19 +1810,24 @@ function renderGrupos() {
     var opcoesLig = LIGACOES.map(function (l) {
       return '<option value="' + l[0] + '"' + (l[0] === g.ligacao ? " selected" : "") + ">" + l[1] + "</option>";
     }).join("");
+    var ges = g.gestao || (g.ligacao === "dc" ? "fixo" : "ac6");
+    var opcoesGes = GESTOES.map(function (l) {
+      return '<option value="' + l[0] + '"' + (l[0] === ges ? " selected" : "") + ">" + l[1] + "</option>";
+    }).join("");
     tr.innerHTML =
       '<td><input type="text" data-g="' + i + '" data-k="nome" value="' + String(g.nome || "").replace(/"/g, "&quot;") + '"></td>' +
       '<td><input type="number" min="1" step="1" data-g="' + i + '" data-k="n" value="' + g.n + '"></td>' +
       '<td><select data-g="' + i + '" data-k="modelo">' + opcoesModelo + "</select></td>" +
       '<td><input type="number" min="0.5" step="0.1" data-g="' + i + '" data-k="p" value="' + g.p + '"></td>' +
       '<td><select data-g="' + i + '" data-k="ligacao">' + opcoesLig + "</select></td>" +
+      '<td><select data-g="' + i + '" data-k="gestao">' + opcoesGes + "</select></td>" +
       '<td><input type="number" min="0.7" max="1" step="0.01" data-g="' + i + '" data-k="fp" value="' + g.fp + '"></td>' +
       '<td><input type="number" min="0.7" max="1" step="0.01" data-g="' + i + '" data-k="rend" value="' + g.rend + '"></td>' +
       '<td><button class="btn mini perigo" data-rem="' + i + '" title="Remover grupo" aria-label="Remover grupo">✕</button></td>';
     tb.appendChild(tr);
   });
   if (!estado.grupos.length) {
-    tb.innerHTML = '<tr><td colspan="8"><div class="vazio">Nenhum grupo. Adicione o primeiro conjunto de pontos de recarga.</div></td></tr>';
+    tb.innerHTML = '<tr><td colspan="9"><div class="vazio">Nenhum grupo. Adicione o primeiro conjunto de pontos de recarga.</div></td></tr>';
   }
 }
 $("#corpoGrupos").addEventListener("input", function (ev) {
@@ -1743,8 +1836,11 @@ $("#corpoGrupos").addEventListener("input", function (ev) {
   i = +i;
   if (k === "modelo") {
     var m = MODELOS[+el.value];
-    if (m && m.p !== null) { estado.grupos[i].p = m.p; estado.grupos[i].ligacao = m.lig; estado.grupos[i].fp = m.fp; estado.grupos[i].rend = m.rend; renderGrupos(); }
-  } else if (k === "nome" || k === "ligacao") {
+    if (m && m.p !== null) { estado.grupos[i].p = m.p; estado.grupos[i].ligacao = m.lig; estado.grupos[i].fp = m.fp; estado.grupos[i].rend = m.rend; estado.grupos[i].gestao = m.ges; renderGrupos(); }
+  } else if (k === "nome" || k === "ligacao" || k === "gestao") {
+    estado.grupos[i][k] = el.value;
+    if (k === "ligacao") { estado.grupos[i].gestao = el.value === "dc" ? "fixo" : "ac6"; renderGrupos(); }
+  } else if (false) {
     estado.grupos[i][k] = el.value;
   } else {
     estado.grupos[i][k] = E.num(el.value, 0);
@@ -1758,18 +1854,18 @@ $("#corpoGrupos").addEventListener("click", function (ev) {
   renderGrupos(); recalcular();
 });
 $("#btnAddGrupo").addEventListener("click", function () {
-  estado.grupos.push({ nome: "Novo grupo", n: 4, p: 11, ligacao: "tri", fp: 0.99, rend: 1 });
+  estado.grupos.push({ nome: "Novo grupo", n: 4, p: 11, ligacao: "tri", fp: 0.99, rend: 1, gestao: "ac6" });
   renderGrupos(); recalcular();
 });
 $$("[data-preset]").forEach(function (b) {
   b.addEventListener("click", function () {
     if (b.getAttribute("data-preset") === "condo") {
-      estado.grupos = [{ nome: "Wallbox trifásica — vagas privativas", n: 20, p: 11, ligacao: "tri", fp: 0.99, rend: 1 }];
+      estado.grupos = [{ nome: "Wallbox trifásica — vagas privativas", n: 20, p: 11, ligacao: "tri", fp: 0.99, rend: 1, gestao: "ac6" }];
     } else {
       estado.grupos = [
-        { nome: "Wallbox AC — visitantes", n: 6, p: 7.4, ligacao: "mono", fp: 0.99, rend: 1 },
-        { nome: "Wallbox AC — moradores", n: 12, p: 11, ligacao: "tri", fp: 0.99, rend: 1 },
-        { nome: "Recarga rápida DC", n: 1, p: 60, ligacao: "dc", fp: 0.97, rend: 0.94 }
+        { nome: "Wallbox AC — visitantes", n: 6, p: 7.4, ligacao: "mono", fp: 0.99, rend: 1, gestao: "ac6" },
+        { nome: "Wallbox AC — moradores", n: 12, p: 11, ligacao: "tri", fp: 0.99, rend: 1, gestao: "ac6" },
+        { nome: "Recarga rápida DC", n: 1, p: 60, ligacao: "dc", fp: 0.97, rend: 0.94, gestao: "fixo" }
       ];
     }
     renderGrupos(); recalcular(); toast("Grupos preenchidos");
@@ -1794,7 +1890,7 @@ function circuitoAlimentador(res) {
   var s = E.SISTEMAS[estado.sistema];
   var lig = s.fases === 3 ? "tri" : (s.fases === 2 ? "bi" : "mono");
   return E.dimensionarCircuito({
-    pkW: Math.max(res.demandaVE, 0.1), sistema: estado.sistema, ligacao: lig, fp: 0.98, rend: 1,
+    pkW: Math.max(res.potenciaAlimentador, 0.1), sistema: estado.sistema, ligacao: lig, fp: 0.98, rend: 1,
     fatorContinuo: estado.fatorContinuo, metodo: estado.metodoAlim, isolacao: estado.isolacao,
     material: estado.materialCond, tempAmb: estado.tempAmb, nAgrup: 1,
     comprimento: estado.compAlim, quedaMax: estado.quedaAlim
@@ -1804,7 +1900,7 @@ function circuitosRamais(res, alim) {
   var s = E.SISTEMAS[estado.sistema];
   var quedaRestante = Math.max(0.5, estado.quedaTotal - (alim ? alim.queda : 0));
   return res.grupos.map(function (g) {
-    var lig = g.ligacao === "dc" ? (s.fases === 3 ? "tri" : "mono") : g.ligacao;
+    var lig = g.ligacaoEletrica || (g.ligacao === "dc" ? (s.fases === 3 ? "tri" : "mono") : g.ligacao);
     var circ = E.dimensionarCircuito({
       pkW: g.p, sistema: estado.sistema, ligacao: lig, fp: g.fp, rend: g.rend,
       fatorContinuo: estado.fatorContinuo, metodo: estado.metodoRamal, isolacao: estado.isolacao,
@@ -1929,7 +2025,36 @@ function tabelaCircuito(c, titulo, marcador) {
     "</dl></div>";
 }
 
+function renderAdmissibilidade(r) {
+  var alvo = $("#saidaAdmissibilidade");
+  if (!r.pontos) { alvo.innerHTML = '<div class="vazio">Configure os pontos de recarga na etapa 2.</div>'; return; }
+  var rotGes = { ac6: "modulável até 6 A", dc30: "modulável até 30 %", fixo: "não modulável" };
+  var linhas = r.grupos.map(function (g) {
+    var m = g.admissivel ? "ok" : (g.gestao === "fixo" ? "bad" : "warn");
+    return "<tr><td>" + g.nome + "</td>" +
+      "<td class='n'>" + fmt(g.p) + " kW</td>" +
+      "<td class='n'>" + fmt(g.potenciaUnitaria) + " kW</td>" +
+      "<td class='n'>" + fmt(g.correnteUnitaria, 0) + " A</td>" +
+      "<td>" + rotGes[g.gestao] + "</td>" +
+      "<td class='n'>" + fmt(g.potenciaMinima) + " kW</td>" +
+      '<td><span class="marcador ' + m + '">' + g.situacao + "</span></td></tr>";
+  }).join("");
+  alvo.innerHTML =
+    '<div class="cartoes" style="margin-bottom:12px">' +
+      cartao("Folga da entrada", fmt(r.disponivelVE), "kW", fmt(r.correnteDisponivel, 0) + " A disponíveis", "ac") +
+      cartao("Maior ponto do conjunto", fmt(r.maiorPonto), "kW", "potência de entrada de um único ponto") +
+      cartao("Parcela não modulável", fmt(r.demandaFixa), "kW", r.maiorPontoFixo > 0 ? "piso imposto ao alimentador" : "nenhum ponto fixo", r.demandaFixa > r.disponivelVE ? "bad" : "ok") +
+      cartao("Alimentador dimensionado para", fmt(r.potenciaAlimentador), "kW", "maior entre demanda, parcela fixa e piso operacional") +
+    "</div>" +
+    '<div class="tab-rolagem"><table><thead><tr><th>Grupo</th><th class="n">Nominal</th><th class="n">Entrada</th><th class="n">Corrente</th><th>Resposta ao controlador</th><th class="n">Potência mínima</th><th>Situação</th></tr></thead><tbody>' +
+    linhas + "</tbody></table></div>" +
+    avisosHtml(r.grupos.filter(function (g) { return !g.admissivel; }).length ? [] : [
+      { nivel: "ok", texto: "Todos os pontos cabem individualmente na folga da entrada: qualquer um deles consegue operar na potência nominal quando é o único em recarga." }
+    ]);
+}
+
 function renderCircuitos(r, alim, ramais) {
+  renderAdmissibilidade(r);
   if (!alim) {
     $("#saidaAlimentador").innerHTML = '<div class="vazio">Configure os pontos de recarga na etapa 2.</div>';
     $("#saidaRamais").innerHTML = ""; $("#saidaProtecoes").innerHTML = "";
@@ -1939,7 +2064,7 @@ function renderCircuitos(r, alim, ramais) {
     '<div class="blocos">' + tabelaCircuito(alim, "Alimentador QGBT → quadro de recarga", '<span class="marcador cu">' + (alim.material === "cobre" ? "cobre" : "alumínio") + "</span>") +
     '<div class="bloco"><header>Verificações</header><div style="padding:10px 12px">' +
     avisosHtml(alim.alertas.concat([
-      { nivel: "info", texto: "O alimentador foi dimensionado para " + fmt(r.demandaVE) + " kW, a demanda efetiva do conjunto com a estratégia adotada. Se houver expansão prevista, dimensione a infraestrutura civil para o cenário final." }
+      { nivel: "info", texto: "O alimentador foi dimensionado para " + fmt(r.potenciaAlimentador) + " kW — o maior valor entre a demanda efetiva (" + fmt(r.demandaVE) + " kW), a parcela que o controlador não pode reduzir (" + fmt(r.demandaFixa) + " kW) e o piso operacional do maior ponto (" + fmt(r.pisoOperacional) + " kW). Se houver expansão prevista, dimensione a infraestrutura civil para o cenário final." }
     ].concat(r.estrategia === "nenhuma" ? [] : [
       { nivel: "atencao", texto: "O setpoint do controlador (" + fmt(r.limiteVE) + " kW ≈ " + fmt(E.correnteProjeto(r.limiteVE, estado.sistema, alim.ligacao, 0.98), 0) + " A) deve ser parametrizado abaixo da proteção do alimentador (" + alim.disjuntor + " A). Registre esse valor no memorial e na configuração do equipamento: é o parâmetro que impede o desarme do disjuntor geral." }
     ]))) +
@@ -2238,10 +2363,10 @@ $("#arqAbrir").addEventListener("change", function (ev) {
 
 /* ---------------- exemplos ---------------- */
 var EXEMPLOS = [
-  { rot: "Residência unifamiliar — 1 wallbox 7,4 kW", d: { nome: "Residência — wallbox 7,4 kW", tipoEdif: "residencial", sistema: "mono220", modoCap: "disj", disjGeral: 63, fpEdif: 0.95, demandaAtual: 6, reserva: 10, vagasTotais: 2, compAlim: 12, compRamal: 8, compMax: 12, grupos: [{ nome: "Wallbox garagem", n: 1, p: 7.4, ligacao: "mono", fp: 0.99, rend: 1 }], estrategia: "nenhuma", janela: 10, kmDia: 40, circAgrup: 1, metodoAlim: "B1" } },
-  { rot: "Condomínio 80 vagas — 20 pontos de 11 kW", d: { nome: "Condomínio residencial — 20 pontos", tipoEdif: "condominio", sistema: "tri380", modoCap: "disj", disjGeral: 150, demandaAtual: 62, vagasTotais: 80, compAlim: 45, compRamal: 25, compMax: 60, grupos: [{ nome: "Wallbox trifásica — vagas privativas", n: 20, p: 11, ligacao: "tri", fp: 0.99, rend: 1 }], estrategia: "dinamico", janela: 9, kmDia: 45, circAgrup: 4 } },
-  { rot: "Estacionamento comercial — AC + DC 60 kW", d: { nome: "Estacionamento comercial", tipoEdif: "comercial", sistema: "tri380", modoCap: "kw", capKw: 300, demandaAtual: 180, vagasTotais: 150, compAlim: 70, compRamal: 30, compMax: 85, grupos: [{ nome: "Wallbox AC visitantes", n: 8, p: 22, ligacao: "tri", fp: 0.99, rend: 1 }, { nome: "Recarga rápida DC", n: 2, p: 60, ligacao: "dc", fp: 0.97, rend: 0.94 }], estrategia: "dinamico", janela: 12, kmDia: 60, circAgrup: 6 } },
-  { rot: "Frota de entregas — 12 pontos de 22 kW", d: { nome: "Frota urbana — 12 pontos", tipoEdif: "frota", sistema: "tri380", modoCap: "disj", disjGeral: 250, demandaAtual: 90, vagasTotais: 14, compAlim: 35, compRamal: 20, compMax: 40, grupos: [{ nome: "Wallbox trifásica frota", n: 12, p: 22, ligacao: "tri", fp: 0.99, rend: 1 }], estrategia: "estatico", janela: 8, kmDia: 120, circAgrup: 6 } }
+  { rot: "Residência unifamiliar — 1 wallbox 7,4 kW", d: { nome: "Residência — wallbox 7,4 kW", tipoEdif: "residencial", sistema: "mono220", modoCap: "disj", disjGeral: 63, fpEdif: 0.95, demandaAtual: 6, reserva: 10, vagasTotais: 2, compAlim: 12, compRamal: 8, compMax: 12, grupos: [{ nome: "Wallbox garagem", n: 1, p: 7.4, ligacao: "mono", fp: 0.99, rend: 1, gestao: "ac6" }], estrategia: "nenhuma", janela: 10, kmDia: 40, circAgrup: 1, metodoAlim: "B1" } },
+  { rot: "Condomínio 80 vagas — 20 pontos de 11 kW", d: { nome: "Condomínio residencial — 20 pontos", tipoEdif: "condominio", sistema: "tri380", modoCap: "disj", disjGeral: 150, demandaAtual: 62, vagasTotais: 80, compAlim: 45, compRamal: 25, compMax: 60, grupos: [{ nome: "Wallbox trifásica — vagas privativas", n: 20, p: 11, ligacao: "tri", fp: 0.99, rend: 1, gestao: "ac6" }], estrategia: "dinamico", janela: 9, kmDia: 45, circAgrup: 4 } },
+  { rot: "Estacionamento comercial — AC + DC 60 kW", d: { nome: "Estacionamento comercial", tipoEdif: "comercial", sistema: "tri380", modoCap: "kw", capKw: 300, demandaAtual: 180, vagasTotais: 150, compAlim: 70, compRamal: 30, compMax: 85, grupos: [{ nome: "Wallbox AC visitantes", n: 8, p: 22, ligacao: "tri", fp: 0.99, rend: 1, gestao: "ac6" }, { nome: "Recarga rápida DC", n: 2, p: 60, ligacao: "dc", fp: 0.97, rend: 0.94, gestao: "fixo" }], estrategia: "dinamico", janela: 12, kmDia: 60, circAgrup: 6 } },
+  { rot: "Frota de entregas — 12 pontos de 22 kW", d: { nome: "Frota urbana — 12 pontos", tipoEdif: "frota", sistema: "tri380", modoCap: "disj", disjGeral: 250, demandaAtual: 90, vagasTotais: 14, compAlim: 35, compRamal: 20, compMax: 40, grupos: [{ nome: "Wallbox trifásica frota", n: 12, p: 22, ligacao: "tri", fp: 0.99, rend: 1, gestao: "ac6" }], estrategia: "estatico", janela: 8, kmDia: 120, circAgrup: 6 } }
 ];
 $("#btnExemplos").addEventListener("click", function () {
   var lista = EXEMPLOS.map(function (e, i) { return (i + 1) + ") " + e.rot; }).join("\n");
@@ -2318,6 +2443,8 @@ $("#btnRelatorio").addEventListener("click", function () {
      "Estratégia adotada|" + (r.estrategia === "nenhuma" ? "sem gerenciamento" : r.estrategia === "estatico" ? "divisão estática" : "balanceamento dinâmico"),
      "Limite do conjunto (setpoint)|" + fmt(r.limiteVE) + " kW",
      "Demanda de recarga considerada|" + fmt(r.demandaVE) + " kW",
+     "Parcela não modulável|" + fmt(r.demandaFixa) + " kW",
+     "Potência de dimensionamento do alimentador|" + fmt(r.potenciaAlimentador) + " kW",
      "Demanda total da instalação|" + fmt(r.demandaTotal) + " kW (" + fmt(r.correnteTotal, 0) + " A)",
      "Capacidade útil|" + fmt(r.capacidadeUtil) + " kW",
      "Folga final|" + fmt(r.folga) + " kW",
@@ -2326,6 +2453,12 @@ $("#btnRelatorio").addEventListener("click", function () {
     "<h3>Comparação de estratégias</h3><table class='dados'><thead><tr><th>Cenário</th><th>Demanda de recarga</th><th>Demanda total</th><th>Folga</th><th>Potência por ponto</th></tr></thead><tbody>" +
     cen.map(function (c) { return "<tr><td>" + c.rotulo + (c.estrategia === estado.estrategia ? " (adotado)" : "") + "</td><td>" + fmt(c.demandaVE) + " kW</td><td>" + fmt(c.demandaTotal) + " kW</td><td>" + fmt(c.folga) + " kW</td><td>" + fmt(c.potenciaPorPonto) + " kW</td></tr>"; }).join("") +
     "</tbody></table>" +
+    "<h3>Admissibilidade dos pontos</h3><table class='dados'><thead><tr><th>Grupo</th><th>Entrada</th><th>Corrente</th><th>Resposta ao controlador</th><th>Situação</th></tr></thead><tbody>" +
+    r.grupos.map(function (g) {
+      var rg = { ac6: "modulável até 6 A", dc30: "modulável até 30 %", fixo: "não modulável" }[g.gestao];
+      return "<tr><td>" + g.nome + "</td><td>" + fmt(g.potenciaUnitaria) + " kW</td><td>" + fmt(g.correnteUnitaria, 0) + " A</td><td>" + rg + "</td><td>" + g.situacao + "</td></tr>";
+    }).join("") +
+    "<tr><th colspan='4'>Folga da entrada</th><td>" + fmt(r.disponivelVE) + " kW (" + fmt(r.correnteDisponivel, 0) + " A)</td></tr></tbody></table>" +
     "<h2>3. Dimensionamento dos circuitos</h2>" + linhaCirc(alim, "3.1 Alimentador do quadro de recarga") +
     ramais.map(function (rm, i) { return linhaCirc(rm.circ, "3." + (i + 2) + " Ramal — " + rm.nome + " (" + rm.n + " circuitos)"); }).join("") +
     "<h2>4. Proteções</h2><ul><li>Disjuntor geral do quadro de recarga: " + alim.disjuntor + " A curva C.</li>" +
@@ -2672,6 +2805,56 @@ function suite() {
     verdade(r.moduladoAbaixoDoMinimo, "deveria alertar sobre o piso de modulação");
     verdade(r.pontosSimultaneosMax < 40, "atendimento simultâneo deveria ser limitado");
     perto(r.potenciaMinimaPonto, Math.sqrt(3) * 380 * 6 / 1000, 0.01, "potência mínima por ponto");
+  });
+
+  t("Ponto não modulável define o piso do alimentador, qualquer que seja a entrada", function () {
+    var dc = [{ nome: "DC 150 kW", n: 1, p: 150, ligacao: "dc", fp: 0.98, rend: 0.95, gestao: "fixo" }];
+    var base = Object.assign({}, cenarioBase, { grupos: dc, estrategia: "dinamico", demandaAtual: 6 });
+    var grande = E.calcular(Object.assign({}, base, { disjGeral: 120 }));
+    var pequena = E.calcular(Object.assign({}, base, { disjGeral: 60 }));
+    perto(grande.potenciaAlimentador, 150 / 0.95, 0.01, "piso do alimentador com 120 A");
+    perto(pequena.potenciaAlimentador, grande.potenciaAlimentador, 0.001, "reduzir a entrada não pode reduzir o alimentador");
+    verdade(grande.demandaFixa >= 150 / 0.95 - 1e-6, "parcela fixa deveria ser a potência de entrada do equipamento");
+  });
+
+  t("Entrada insuficiente para equipamento não modulável reprova o cenário", function () {
+    var dc = [{ nome: "DC 150 kW", n: 1, p: 150, ligacao: "dc", fp: 0.98, rend: 0.95, gestao: "fixo" }];
+    [60, 120, 200].forEach(function (a) {
+      var r = E.calcular(Object.assign({}, cenarioBase, { grupos: dc, estrategia: "dinamico", demandaAtual: 6, disjGeral: a }));
+      igual(r.nivel, "critico", "veredito com entrada de " + a + " A");
+      verdade(r.alertas.some(function (x) { return x.nivel === "erro" && /não é modulável/.test(x.texto); }), "alerta específico ausente em " + a + " A");
+    });
+    var ok = E.calcular(Object.assign({}, cenarioBase, { grupos: dc, estrategia: "dinamico", demandaAtual: 6, disjGeral: 400 }));
+    igual(ok.nivel, "ok", "entrada de 400 A deveria comportar o equipamento");
+  });
+
+  t("Ramal do DC de 150 kW é dimensionado pela potência do equipamento", function () {
+    var c = E.dimensionarCircuito({
+      pkW: 150, sistema: "tri380", ligacao: "tri", fp: 0.98, rend: 0.95, fatorContinuo: 1.25,
+      metodo: "C", isolacao: "epr", material: "cobre", tempAmb: 30, nAgrup: 1, comprimento: 10, quedaMax: 2
+    });
+    perto(c.ib, 244.7, 1, "corrente de entrada do equipamento");
+    verdade(c.disjuntor >= 250, "proteção subdimensionada: " + c.disjuntor);
+    verdade(c.secao >= 95, "seção subdimensionada para 150 kW: " + c.secao);
+    verdade(c.izCorrigida >= c.ib * 1.25 - 1e-6, "condutor não suporta o uso contínuo do equipamento");
+  });
+
+  t("Ponto modulável acima da folga é advertido, não reprovado", function () {
+    var r = E.calcular(Object.assign({}, cenarioBase, {
+      demandaAtual: 6, disjGeral: 60, estrategia: "dinamico",
+      grupos: [{ nome: "Wallbox 22", n: 1, p: 22, ligacao: "tri", fp: 0.99, rend: 1, gestao: "ac6" }]
+    }));
+    verdade(!r.alertas.some(function (x) { return x.nivel === "erro"; }), "não deveria reprovar um ponto modulável");
+    verdade(r.grupos[0].admissivel, "22 kW cabe na folga desta entrada");
+  });
+
+  t("Setpoint abaixo da parcela fixa é elevado, nunca aceito", function () {
+    var r = E.calcular(Object.assign({}, cenarioBase, {
+      demandaAtual: 6, disjGeral: 400, estrategia: "dinamico", setpoint: 10,
+      grupos: [{ nome: "DC 60", n: 1, p: 60, ligacao: "dc", fp: 0.97, rend: 0.94, gestao: "fixo" }]
+    }));
+    verdade(r.limiteVE >= 60 / 0.94 - 1e-6, "limite abaixo da parcela não modulável: " + r.limiteVE);
+    verdade(r.setpointLimitado, "deveria sinalizar a elevação do setpoint");
   });
 
   t("Instalação sem folga é sinalizada como crítica", function () {

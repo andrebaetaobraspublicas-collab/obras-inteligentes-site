@@ -211,11 +211,11 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/cronograma-curva-s/` | 451356 bytes | 448871 caracteres |
 | `/motorcalc/` | 148249 bytes | 147037 caracteres |
 | `/sancionapro/` | 240912 bytes | 237881 caracteres |
-| `/incendiocalc/` | 327091 bytes | 317433 caracteres |
+| `/incendiocalc/` | 489904 bytes | 478403 caracteres |
 | `/upspro/` | 1464093 bytes | 1445745 caracteres |
 | `/ambienta/` | 1263353 bytes | 1252139 caracteres |
 | `/solarincidence-pro/` | 282551 bytes | 280392 caracteres |
-| `/eletroposto-calc/` | 169362 bytes | 167654 caracteres |
+| `/eletroposto-calc/` | 183380 bytes | 181470 caracteres |
 | `/abc-fiscal/` | 351255 bytes | 349022 caracteres |
 
 ## Estrutura local principal
@@ -1774,11 +1774,11 @@ Observacoes:
 Rota: `/incendiocalc/`  
 Arquivo: `incendiocalc/index.html`
 
-Ultima inclusao:
+Ultima atualizacao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\IncendioCalc-abertura.html`
-- Data: 05/09/2026
-- Alteracao: inclusao de novo card na home, no filtro renomeado `Instalacoes Hidrosanitarias e de Incendio`, e publicacao do aplicativo IncendioCalc - Dimensionamento de hidrantes e chuveiros automaticos como HTML standalone.
+- Fonte: `C:\Users\ACER\Documents\Downloads\IncendioCalc_v1.4.html`
+- Data: 08/09/2026
+- Alteracao: substituicao integral de `incendiocalc/index.html` pela nova versao enviada. A versao anterior foi preservada em `C:\Obras Inteligentes\backups\incendiocalc-index-before-v1-4-20260908-2110.html`.
 
 Observacoes:
 
@@ -1847,11 +1847,11 @@ Observacoes:
 Rota: `/eletroposto-calc/`  
 Arquivo: `eletroposto-calc/index.html`
 
-Ultima inclusao:
+Ultima atualizacao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\eletroposto-calc (1).html`
+- Fonte: `C:\Users\ACER\Documents\Downloads\eletroposto-calc (2).html`
 - Data: 08/09/2026
-- Alteracao: inclusao de novo card na home, no filtro `Instalacoes Eletricas`, e publicacao do aplicativo EletroPosto Calc como HTML standalone.
+- Alteracao: substituicao integral de `eletroposto-calc/index.html` pela nova versao enviada. A versao anterior foi preservada em `C:\Obras Inteligentes\backups\eletroposto-calc-index-before-v2-20260908-2110.html`.
 
 Observacoes:
 
