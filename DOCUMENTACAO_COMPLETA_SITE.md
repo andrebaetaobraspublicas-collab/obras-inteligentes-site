@@ -216,6 +216,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/ambienta/` | 1263353 bytes | 1252139 caracteres |
 | `/solarincidence-pro/` | 282551 bytes | 280392 caracteres |
 | `/eletroposto-calc/` | 183380 bytes | 181470 caracteres |
+| `/entenda-ia/` | 175035 bytes | 172793 caracteres |
 | `/abc-fiscal/` | 351255 bytes | 349022 caracteres |
 
 ## Estrutura local principal
@@ -1860,6 +1861,25 @@ Observacoes:
 - O card foi classificado no filtro `Instalacoes Eletricas`.
 - Validar apos futuras alteracoes se dimensionamento de infraestrutura de recarga, demanda, alimentadores, protecoes, aterramento, gerenciamento de carga, ABNT NBR 17019 e NBR 5410 continuam carregando corretamente.
 
+## Aplicativos didaticos fora da grade
+
+### NeuralLab
+
+Rota: `/entenda-ia/`  
+Arquivo: `entenda-ia/index.html`
+
+Ultima inclusao:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\NeuralLab_v1.1.html`
+- Data: 09/09/2026
+- Alteracao: inclusao do aplicativo didatico NeuralLab em rota propria, acessado pelo botao `Entenda a IA` na tela inicial, ao lado de `Ler o conteudo`.
+
+Observacoes:
+
+- Este modulo nao deve ser contado nem exibido entre os cards principais de aplicativos.
+- A tela principal do NeuralLab recebeu botao fixo `Site principal`, apontando para `/`.
+- Validar apos futuras alteracoes se o botao `Entenda a IA`, a rota `/entenda-ia/`, o laboratorio didatico e o retorno para a home continuam carregando corretamente.
+
 ## Artigos publicados na home
 
 Em 20/07/2026, os tres cards iniciais do bloco `Conteudo` da home foram substituidos por artigos reais enviados em PDF. Em 21/07/2026, foi incluido um quarto artigo. A estrategia adotada foi renderizar cada pagina do PDF como PNG dentro de uma pagina HTML propria, preservando a diagramacao original, tabelas, figuras e paginacao. Cada pagina tambem oferece link para abrir/baixar o PDF original.
@@ -2084,7 +2104,8 @@ $headers=@{ 'User-Agent'='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
   '/upspro/',
   '/ambienta/',
   '/solarincidence-pro/',
-  '/eletroposto-calc/'
+  '/eletroposto-calc/',
+  '/entenda-ia/'
 ) | ForEach-Object {
   $url = "https://www.obrasinteligentes.ia.br$_?v=check"
   $r = Invoke-WebRequest -UseBasicParsing -Headers $headers -Uri $url -TimeoutSec 30
