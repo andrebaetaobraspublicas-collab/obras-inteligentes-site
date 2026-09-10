@@ -704,6 +704,7 @@ Arquivo: `pgrcc/index.html`
 Ultima inclusao:
 
 - Em 21/08/2026, atualizado com `index (34).html`, identificado como nova versao da Calculadora de Residuos de Construcao Civil e Gerador de PGRCC.
+- Em 09/09/2026, o card foi remanejado do filtro `Gestao de Obras e de Contratos` para `Sustentabilidade`, mantendo a rota `/pgrcc/`.
 - Backup anterior: `C:\Obras Inteligentes\backups\pgrcc-index-before-update-20260821-1935.html`.
 - Fonte: `C:\Users\ACER\Documents\Downloads\Calculadora de Resíduos e PGRCC.html`
 - Data: 21/07/2026
