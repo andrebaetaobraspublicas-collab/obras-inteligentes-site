@@ -19,7 +19,7 @@ O site `www.obrasinteligentes.ia.br` e uma pagina estatica hospedada na Hostinge
 C:\Obras Inteligentes\index.html
 ```
 
-A tela inicial possui atualmente 78 cards de aplicativos. Cada card aponta para uma rota estatica dentro do dominio. A regra geral e:
+A tela inicial possui atualmente 79 cards de aplicativos. Cada card aponta para uma rota estatica dentro do dominio. A regra geral e:
 
 ```text
 https://www.obrasinteligentes.ia.br/nome-da-rota/
@@ -131,6 +131,7 @@ Inventario originalmente verificado em 21/07/2026 e atualizado em 05/09/2026 par
 | 76 / INTERIORES | Ambienta | `/ambienta/` | `C:\Obras Inteligentes\ambienta\index.html` | existe | 200 |
 | 77 / INSOLACAO | SolarIncidence Pro | `/solarincidence-pro/` | `C:\Obras Inteligentes\solarincidence-pro\index.html` | existe | 200 |
 | 78 / ELETROPOSTO | EletroPosto Calc | `/eletroposto-calc/` | `C:\Obras Inteligentes\eletroposto-calc\index.html` | existe | 200 |
+| 79 / CARBONO | CarbonCalc Pro | `/carboncalcpro/` | `C:\Obras Inteligentes\carboncalcpro\index.html` | existe | 200 |
 
 ## Tamanhos verificados
 
@@ -216,6 +217,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/ambienta/` | 1263353 bytes | 1252139 caracteres |
 | `/solarincidence-pro/` | 282551 bytes | 280392 caracteres |
 | `/eletroposto-calc/` | 183380 bytes | 181470 caracteres |
+| `/carboncalcpro/` | 186068 bytes | 184143 caracteres |
 | `/entenda-ia/` | 175035 bytes | 172793 caracteres |
 | `/abc-fiscal/` | 351255 bytes | 349022 caracteres |
 
@@ -1861,6 +1863,24 @@ Observacoes:
 - O card foi classificado no filtro `Instalacoes Eletricas`.
 - Validar apos futuras alteracoes se dimensionamento de infraestrutura de recarga, demanda, alimentadores, protecoes, aterramento, gerenciamento de carga, ABNT NBR 17019 e NBR 5410 continuam carregando corretamente.
 
+### CarbonCalc Pro
+
+Rota: `/carboncalcpro/`  
+Arquivo: `carboncalcpro/index.html`
+
+Ultima inclusao:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\CarbonCalcPro (2).html`
+- Data: 09/09/2026
+- Alteracao: inclusao de novo card na home, criacao do filtro `Sustentabilidade`, e publicacao do aplicativo CarbonCalc Pro como HTML standalone.
+
+Observacoes:
+
+- Aplicativo standalone empacotado em HTML unico, com manual incorporado.
+- Tela inicial do site aponta para `/carboncalcpro/`.
+- O card foi classificado no filtro `Sustentabilidade`.
+- Validar apos futuras alteracoes se calculo de pegada de carbono, emissoes, materiais, transportes, energia, relatorios e analise de sustentabilidade continuam carregando corretamente.
+
 ## Aplicativos didaticos fora da grade
 
 ### NeuralLab
@@ -2105,6 +2125,7 @@ $headers=@{ 'User-Agent'='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
   '/ambienta/',
   '/solarincidence-pro/',
   '/eletroposto-calc/',
+  '/carboncalcpro/',
   '/entenda-ia/'
 ) | ForEach-Object {
   $url = "https://www.obrasinteligentes.ia.br$_?v=check"

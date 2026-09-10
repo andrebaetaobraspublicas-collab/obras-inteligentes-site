@@ -1,0 +1,3637 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-tema="claro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CarbonCalc Pro — Pegada de carbono de obras</title>
+<meta name="description" content="Calculadora offline de carbono incorporado de obras de edificação e infraestrutura, com fronteira A1-A5 conforme EN 15978.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%230F6E5C'/><path d='M9 21h14M9 21l3.5-9h7L23 21' stroke='white' stroke-width='2.2' fill='none' stroke-linejoin='round'/></svg>">
+<style>
+/* ============================================================
+   CarbonCalc Pro — Sistema visual
+   Paleta derivada dos materiais da obra: concreto, verdete
+   (cobre oxidado), óxido de ferro e argila de forno.
+   ============================================================ */
+
+:root {
+  --bg: #EDEEEA;
+  --surface: #FFFFFF;
+  --surface-2: #F5F6F2;
+  --surface-3: #E6E8E2;
+  --ink: #16211F;
+  --ink-2: #55605C;
+  --ink-3: #828C88;
+  --line: #D3D8D2;
+  --line-2: #BFC6BE;
+  --verdete: #0F6E5C;
+  --verdete-soft: #DCEBE6;
+  --ferrugem: #B4531F;
+  --forno: #9A7318;
+  --shadow: 0 1px 2px rgba(22, 33, 31, .06), 0 8px 24px -12px rgba(22, 33, 31, .18);
+
+  --fa: #1B7A4B; --fb: #57A03A; --fc: #B99A1F; --fd: #D9772B; --fe: #B93A2A;
+
+  --serif: Georgia, 'Iowan Old Style', 'Palatino Linotype', 'Book Antiqua', serif;
+  --sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --mono: ui-monospace, 'SF Mono', 'Cascadia Mono', 'Roboto Mono', Consolas, monospace;
+
+  --r-sm: 3px; --r-md: 6px; --r-lg: 10px;
+  --rail: 232px;
+}
+
+html[data-tema="escuro"] {
+  --bg: #11171A;
+  --surface: #192124;
+  --surface-2: #1F292C;
+  --surface-3: #263134;
+  --ink: #E4EAE6;
+  --ink-2: #9BA9A4;
+  --ink-3: #74827D;
+  --line: #2B383B;
+  --line-2: #3A4A4D;
+  --verdete: #3FBFA3;
+  --verdete-soft: #16332E;
+  --ferrugem: #E07B48;
+  --forno: #D9A93F;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 8px 24px -12px rgba(0, 0, 0, .6);
+  --fa: #35A468; --fb: #6FBF4A; --fc: #D6B733; --fd: #E68A3C; --fe: #D6493A;
+}
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.55;
+  -webkit-text-size-adjust: 100%;
+  font-variant-numeric: tabular-nums;
+}
+
+h1, h2, h3, h4 { font-family: var(--serif); font-weight: 600; line-height: 1.22; margin: 0; letter-spacing: -.01em; }
+h1 { font-size: 1.5rem; }
+h2 { font-size: 1.3rem; }
+h3 { font-size: 1.06rem; }
+h4 { font-size: .95rem; font-family: var(--sans); font-weight: 650; }
+p { margin: 0 0 .8em; max-width: 74ch; }
+
+a { color: var(--verdete); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+
+:focus-visible { outline: 2px solid var(--verdete); outline-offset: 2px; border-radius: 2px; }
+
+/* ---------- Cabeçalho ---------- */
+.topo {
+  position: sticky; top: 0; z-index: 40;
+  display: flex; align-items: center; gap: 14px;
+  padding: 10px 18px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+}
+
+.marca { display: flex; align-items: baseline; gap: 9px; min-width: 0; }
+.marca strong { font-family: var(--serif); font-size: 1.14rem; font-weight: 600; letter-spacing: -.015em; }
+.marca span { font-size: .74rem; color: var(--ink-3); white-space: nowrap; }
+
+.topo-acoes { margin-left: auto; display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+
+/* ---------- Botões ---------- */
+button, .btn {
+  font: inherit; font-size: .84rem;
+  border: 1px solid var(--line-2);
+  background: var(--surface);
+  color: var(--ink);
+  padding: 6px 11px;
+  border-radius: var(--r-md);
+  cursor: pointer;
+}
+button:hover, .btn:hover { background: var(--surface-3); }
+button:active { transform: translateY(1px); }
+button.primario { background: var(--verdete); border-color: var(--verdete); color: #fff; font-weight: 600; }
+button.primario:hover { filter: brightness(1.08); }
+button.sutil { border-color: transparent; background: transparent; color: var(--ink-2); }
+button.sutil:hover { background: var(--surface-3); color: var(--ink); }
+button.perigo { color: var(--ferrugem); border-color: var(--ferrugem); background: transparent; }
+button[disabled] { opacity: .45; cursor: not-allowed; }
+
+/* ---------- Estrutura ---------- */
+.shell { display: flex; align-items: flex-start; min-height: calc(100vh - 53px); }
+
+.rail {
+  position: sticky; top: 53px;
+  width: var(--rail); flex: 0 0 var(--rail);
+  padding: 16px 10px 26px;
+  border-right: 1px solid var(--line);
+  background: var(--surface);
+  max-height: calc(100vh - 53px); overflow-y: auto;
+}
+.rail-grupo { font-size: .68rem; letter-spacing: .06em; color: var(--ink-3); margin: 14px 10px 5px; font-weight: 650; }
+.rail-grupo:first-child { margin-top: 0; }
+
+.rail button {
+  display: flex; align-items: center; gap: 9px; width: 100%;
+  text-align: left; border: 0; background: transparent;
+  padding: 7px 10px; border-radius: var(--r-md); color: var(--ink-2);
+  font-size: .88rem; border-left: 2px solid transparent;
+}
+.rail button:hover { background: var(--surface-3); color: var(--ink); }
+.rail button[aria-current="true"] {
+  background: var(--verdete-soft); color: var(--ink);
+  font-weight: 620; border-left-color: var(--verdete);
+}
+.rail .idx { font-family: var(--mono); font-size: .7rem; color: var(--ink-3); min-width: 1.6em; }
+.rail button[aria-current="true"] .idx { color: var(--verdete); }
+
+.painel-area { flex: 1 1 auto; min-width: 0; padding: 22px 28px 70px; max-width: 1180px; }
+.painel { display: none; }
+.painel.ativo { display: block; }
+
+.cabeca { margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+.cabeca p { color: var(--ink-2); font-size: .92rem; margin: 6px 0 0; }
+
+/* ---------- Cartões e grades ---------- */
+.cartao {
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--r-lg); padding: 16px 18px; margin-bottom: 16px;
+}
+.cartao > h3 { margin-bottom: 4px; }
+.cartao > h3 + .nota { margin-top: 0; margin-bottom: 12px; }
+
+.nota { font-size: .82rem; color: var(--ink-2); margin: 8px 0 0; }
+.nota.aviso { color: var(--forno); }
+
+.grade { display: grid; gap: 13px; grid-template-columns: repeat(auto-fit, minmax(215px, 1fr)); }
+.grade.dupla { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+
+/* ---------- Campos ---------- */
+.campo { display: flex; flex-direction: column; gap: 4px; }
+.campo label { font-size: .78rem; color: var(--ink-2); font-weight: 600; }
+.campo .dica { font-size: .72rem; color: var(--ink-3); font-weight: 400; }
+
+input, select, textarea {
+  font: inherit; font-size: .9rem;
+  padding: 7px 9px;
+  border: 1px solid var(--line-2); border-radius: var(--r-md);
+  background: var(--surface-2); color: var(--ink);
+  width: 100%; min-width: 0;
+  font-variant-numeric: tabular-nums;
+}
+input:focus, select:focus, textarea:focus { border-color: var(--verdete); background: var(--surface); }
+input[type="checkbox"], input[type="radio"] { width: auto; accent-color: var(--verdete); }
+
+.linha-check { display: flex; align-items: flex-start; gap: 9px; padding: 7px 0; }
+.linha-check label { font-size: .88rem; font-weight: 500; cursor: pointer; }
+
+/* ---------- Leitura principal (o painel de resultado permanente) ---------- */
+.leitura {
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--r-lg); overflow: hidden; margin-bottom: 18px;
+}
+.leitura-corpo { display: flex; flex-wrap: wrap; gap: 26px; padding: 18px 20px 16px; align-items: flex-end; }
+.leitura-bloco { display: flex; flex-direction: column; gap: 1px; }
+.leitura-bloco .rot { font-size: .74rem; color: var(--ink-3); font-weight: 600; }
+.leitura-bloco .val { font-family: var(--serif); font-size: 2.1rem; line-height: 1.05; letter-spacing: -.02em; }
+.leitura-bloco .val small { font-size: .9rem; font-family: var(--sans); color: var(--ink-2); font-weight: 500; }
+.leitura-bloco.sec .val { font-size: 1.25rem; }
+
+/* Faixa de classificação — inspirada nas etiquetas de eficiência */
+.faixa { display: flex; border-top: 1px solid var(--line); }
+.faixa-item {
+  flex: 1; padding: 7px 8px 8px; text-align: center;
+  border-right: 1px solid var(--line);
+  background: var(--surface-2); color: var(--ink-3);
+  font-size: .68rem; line-height: 1.25;
+}
+.faixa-item:last-child { border-right: 0; }
+.faixa-item b { display: block; font-family: var(--serif); font-size: 1.05rem; color: var(--ink-3); }
+.faixa-item[data-on="1"] { color: #fff; }
+.faixa-item[data-on="1"] b { color: #fff; }
+.faixa-item[data-f="A"][data-on="1"] { background: var(--fa); }
+.faixa-item[data-f="B"][data-on="1"] { background: var(--fb); }
+.faixa-item[data-f="C"][data-on="1"] { background: var(--fc); }
+.faixa-item[data-f="D"][data-on="1"] { background: var(--fd); }
+.faixa-item[data-f="E"][data-on="1"] { background: var(--fe); }
+
+/* ---------- Tabelas ---------- */
+.tabela-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--surface); }
+table { width: 100%; border-collapse: collapse; font-size: .85rem; }
+thead th {
+  text-align: left; font-weight: 650; font-size: .74rem; color: var(--ink-2);
+  padding: 9px 11px; border-bottom: 1px solid var(--line-2); background: var(--surface-2);
+  white-space: nowrap; position: sticky; top: 0;
+}
+tbody td { padding: 7px 11px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+tbody tr:last-child td { border-bottom: 0; }
+tbody tr:hover { background: var(--surface-2); }
+td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; }
+tfoot td { padding: 9px 11px; font-weight: 650; border-top: 1px solid var(--line-2); background: var(--surface-2); }
+table input, table select { padding: 4px 6px; font-size: .82rem; background: var(--surface); }
+table input.qtd { max-width: 108px; text-align: right; }
+table input.dist { max-width: 82px; text-align: right; }
+
+.tag { display: inline-block; font-size: .68rem; font-weight: 700; padding: 1px 6px; border-radius: 20px; }
+.tag.A { background: var(--ferrugem); color: #fff; }
+.tag.B { background: var(--forno); color: #fff; }
+.tag.C { background: var(--surface-3); color: var(--ink-2); }
+.tag.fam { background: var(--surface-3); color: var(--ink-2); font-weight: 600; }
+
+.ponto { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 7px; vertical-align: -1px; }
+
+/* ---------- Gráficos ---------- */
+.graf { width: 100%; height: auto; display: block; overflow: visible; }
+.graf text { font-family: var(--sans); fill: var(--ink-2); }
+.legenda { display: flex; flex-wrap: wrap; gap: 4px 16px; margin-top: 10px; font-size: .78rem; color: var(--ink-2); }
+.legenda span { display: flex; align-items: center; }
+
+/* ---------- Medidas de mitigação ---------- */
+.medida {
+  display: grid; grid-template-columns: auto 1fr auto; gap: 11px;
+  padding: 12px 0; border-bottom: 1px solid var(--line); align-items: start;
+}
+.medida:last-child { border-bottom: 0; }
+.medida h4 { margin-bottom: 2px; }
+.medida p { font-size: .82rem; color: var(--ink-2); margin: 0 0 4px; }
+.medida .meta { font-size: .72rem; color: var(--ink-3); }
+.medida .efeito { font-family: var(--serif); font-size: 1rem; color: var(--verdete); white-space: nowrap; text-align: right; }
+.medida .efeito small { display: block; font-family: var(--sans); font-size: .68rem; color: var(--ink-3); }
+
+/* ---------- Manual ---------- */
+.manual { display: flex; gap: 22px; align-items: flex-start; }
+.manual-nav { flex: 0 0 250px; position: sticky; top: 70px; max-height: calc(100vh - 92px); overflow-y: auto; }
+.manual-nav ol { list-style: none; margin: 8px 0 0; padding: 0; counter-reset: mn; }
+.manual-nav li { counter-increment: mn; }
+.manual-nav button {
+  width: 100%; text-align: left; border: 0; background: transparent;
+  padding: 6px 9px 6px 30px; border-radius: var(--r-sm); color: var(--ink-2);
+  font-size: .84rem; position: relative;
+}
+.manual-nav button::before {
+  content: counter(mn); position: absolute; left: 9px; top: 6px;
+  font-family: var(--mono); font-size: .68rem; color: var(--ink-3);
+}
+.manual-nav button:hover { background: var(--surface-3); color: var(--ink); }
+.manual-nav button[aria-current="true"] { background: var(--verdete-soft); color: var(--ink); font-weight: 620; }
+.manual-nav button.lido::after { content: '✓'; color: var(--verdete); margin-left: 6px; font-size: .78rem; }
+
+.manual-corpo { flex: 1 1 auto; min-width: 0; }
+.manual-sec { display: none; }
+.manual-sec.ativo { display: block; }
+.manual-sec h3 { margin-bottom: 10px; }
+.manual-sec h4 { margin: 18px 0 6px; }
+.manual-sec ul, .manual-sec ol { padding-left: 20px; margin: 0 0 12px; }
+.manual-sec li { margin-bottom: 5px; font-size: .92rem; max-width: 72ch; }
+.manual-sec p { font-size: .93rem; }
+.formula {
+  font-family: var(--mono); font-size: .82rem; background: var(--surface-2);
+  border-left: 2px solid var(--verdete); padding: 10px 13px; border-radius: 0 var(--r-md) var(--r-md) 0;
+  margin: 10px 0 14px; overflow-x: auto; white-space: pre;
+}
+.lab {
+  background: var(--surface-2); border: 1px solid var(--line);
+  border-radius: var(--r-lg); padding: 14px 16px; margin: 16px 0;
+}
+.lab h4 { margin: 0 0 3px; color: var(--verdete); }
+.lab-saida {
+  margin-top: 12px; padding: 11px 13px; background: var(--surface);
+  border: 1px solid var(--line); border-radius: var(--r-md); font-size: .86rem;
+}
+.lab-saida .destaque { font-family: var(--serif); font-size: 1.35rem; }
+.busca-vazia { color: var(--ink-3); font-size: .85rem; padding: 8px 9px; }
+mark { background: #F6E08A; color: #16211F; border-radius: 2px; padding: 0 2px; }
+html[data-tema="escuro"] mark { background: #6B5A17; color: #F2ECD8; }
+
+.progresso { height: 4px; background: var(--surface-3); border-radius: 4px; overflow: hidden; margin-top: 10px; }
+.progresso i { display: block; height: 100%; background: var(--verdete); width: 0; }
+
+/* ---------- Utilidades ---------- */
+.linha-btns { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+.vazio { text-align: center; color: var(--ink-3); padding: 34px 18px; font-size: .9rem; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.aviso-box {
+  border: 1px solid var(--line-2); border-left: 3px solid var(--forno);
+  background: var(--surface-2); padding: 11px 14px; border-radius: 0 var(--r-md) var(--r-md) 0;
+  font-size: .84rem; color: var(--ink-2); margin: 12px 0;
+}
+.toast {
+  position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+  background: var(--ink); color: var(--bg); padding: 9px 18px; border-radius: 20px;
+  font-size: .85rem; z-index: 200; box-shadow: var(--shadow); opacity: 0; pointer-events: none;
+}
+.toast.on { opacity: 1; }
+
+/* ---------- Responsivo ---------- */
+@media (max-width: 900px) {
+  .shell { flex-direction: column; }
+  .rail {
+    position: static; width: 100%; flex: none; max-height: none;
+    border-right: 0; border-bottom: 1px solid var(--line);
+    display: flex; gap: 4px; overflow-x: auto; padding: 8px 10px;
+  }
+  .rail-grupo { display: none; }
+  .rail button { width: auto; white-space: nowrap; border-left: 0; border-bottom: 2px solid transparent; border-radius: var(--r-sm); }
+  .rail button[aria-current="true"] { border-left: 0; border-bottom-color: var(--verdete); }
+  .rail .idx { display: none; }
+  .painel-area { padding: 16px 14px 60px; }
+  .manual { flex-direction: column; }
+  .manual-nav { position: static; flex: none; width: 100%; max-height: 240px; }
+  .leitura-bloco .val { font-size: 1.7rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
+
+@media print {
+  .topo, .rail, .linha-btns, .manual-nav, button { display: none !important; }
+  .painel-area { padding: 0; max-width: none; }
+  .painel { display: block !important; page-break-before: always; }
+  .painel:first-of-type { page-break-before: avoid; }
+  .cartao, .tabela-wrap { break-inside: avoid; border-color: #bbb; }
+  body { background: #fff; font-size: 11px; }
+  #painel-manual { display: none !important; }
+}
+
+/* ============================================================
+   Tela de abertura
+   Um único momento coreografado: as parcelas do ciclo de vida
+   sobem, a faixa de classificação preenche, o texto entra.
+   ============================================================ */
+.abertura {
+  position: fixed; inset: 0; z-index: 300;
+  background: var(--bg);
+  display: flex; align-items: flex-start; justify-content: center;
+  overflow-y: auto; padding: 5vh 18px 40px;
+}
+.abertura[hidden] { display: none; }
+
+.abertura-caixa { width: 100%; max-width: 620px; }
+
+.abertura-arte { width: 100%; max-width: 340px; height: auto; display: block; margin: 0 auto 22px; }
+.abertura-arte .cb {
+  fill: var(--verdete);
+  transform-box: fill-box; transform-origin: bottom;
+  transform: scaleY(.04); opacity: .25;
+  animation: sobe .62s cubic-bezier(.22,.9,.3,1) forwards;
+  animation-delay: calc(var(--i) * .1s);
+}
+.abertura-arte .cb[style*="--i:3"] { fill: var(--forno); }
+.abertura-arte .cb[style*="--i:4"] { fill: var(--ink-3); }
+.abertura-arte .rotulos text {
+  font-family: var(--sans); font-size: 8px; fill: var(--ink-3);
+  opacity: 0; animation: entra .5s ease forwards .62s;
+}
+.abertura-arte .tb {
+  opacity: 0; transform-box: fill-box; transform-origin: left;
+  transform: scaleX(0);
+  animation: preenche .34s ease forwards;
+  animation-delay: calc(.72s + var(--i) * .11s);
+}
+
+@keyframes sobe { to { transform: scaleY(1); opacity: 1; } }
+@keyframes entra { to { opacity: 1; } }
+@keyframes preenche { to { opacity: 1; transform: scaleX(1); } }
+@keyframes surge { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+.abertura-titulo {
+  font-size: 2rem; text-align: center; margin: 0 0 6px;
+  opacity: 0; animation: surge .5s ease forwards 1.18s;
+}
+.abertura-sub {
+  text-align: center; color: var(--ink-2); font-size: .93rem;
+  margin: 0 auto 22px; max-width: 46ch;
+  opacity: 0; animation: surge .5s ease forwards 1.3s;
+}
+
+.abertura-avisos {
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--r-lg); padding: 16px 20px;
+  max-height: 44vh; overflow-y: auto;
+  opacity: 0; animation: surge .5s ease forwards 1.42s;
+}
+.abertura-avisos h2 {
+  font-size: 1.02rem; margin: 0 0 10px;
+  padding-bottom: 8px; border-bottom: 1px solid var(--line);
+}
+.abertura-avisos h3 {
+  font-family: var(--sans); font-size: .82rem; font-weight: 700;
+  color: var(--verdete); margin: 14px 0 3px;
+}
+.abertura-avisos h3:first-of-type { margin-top: 0; }
+.abertura-avisos p { font-size: .84rem; color: var(--ink-2); margin: 0; max-width: none; }
+
+.abertura-acoes {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; flex-wrap: wrap; margin-top: 16px;
+  opacity: 0; animation: surge .5s ease forwards 1.54s;
+}
+.abertura-acoes button { font-size: .92rem; padding: 9px 20px; }
+
+@media (max-width: 560px) {
+  .abertura { padding: 3vh 12px 30px; }
+  .abertura-titulo { font-size: 1.6rem; }
+  .abertura-avisos { max-height: 40vh; padding: 13px 15px; }
+  .abertura-acoes { justify-content: center; }
+}
+
+/* Reabertura pelo botão de avisos: sem repetir a animação de entrada */
+.abertura.direta .abertura-arte .cb,
+.abertura.direta .abertura-arte .tb,
+.abertura.direta .abertura-arte .rotulos text,
+.abertura.direta .abertura-titulo,
+.abertura.direta .abertura-sub,
+.abertura.direta .abertura-avisos,
+.abertura.direta .abertura-acoes { animation: none; opacity: 1; transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .abertura-arte .cb { transform: scaleY(1); opacity: 1; }
+  .abertura-arte .tb { transform: scaleX(1); opacity: 1; }
+  .abertura-arte .rotulos text,
+  .abertura-titulo, .abertura-sub, .abertura-avisos, .abertura-acoes { opacity: 1; }
+}
+
+@media print { .abertura { display: none !important; } }
+
+/* ---------- Elementos dos módulos B e de compensação ---------- */
+.destaque-linha {
+  display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-end;
+  padding: 4px 0 2px;
+}
+.destaque-linha > div { display: flex; flex-direction: column; }
+.destaque-linha .rot { font-size: .74rem; color: var(--ink-3); font-weight: 600; }
+.destaque-linha .val { font-family: var(--serif); font-size: 1.5rem; line-height: 1.15; }
+.destaque-linha .val small { font-size: .82rem; font-family: var(--sans); color: var(--ink-2); }
+.credito { color: var(--verdete); }
+
+</style>
+</head>
+<body>
+<div class="abertura" id="abertura" role="dialog" aria-modal="true" aria-labelledby="abertura-titulo">
+  <div class="abertura-caixa">
+
+    <svg class="abertura-arte" viewBox="0 0 300 116" aria-hidden="true">
+      <g class="ciclo">
+        <rect class="cb" style="--i:0" x="8"   y="14" width="40" height="62" rx="2"/>
+        <rect class="cb" style="--i:1" x="66"  y="50" width="40" height="26" rx="2"/>
+        <rect class="cb" style="--i:2" x="124" y="44" width="40" height="32" rx="2"/>
+        <rect class="cb" style="--i:3" x="182" y="26" width="40" height="50" rx="2"/>
+        <rect class="cb" style="--i:4" x="240" y="60" width="40" height="16" rx="2"/>
+      </g>
+      <g class="rotulos">
+        <text x="28"  y="88" text-anchor="middle">A1–A3</text>
+        <text x="86"  y="88" text-anchor="middle">A4</text>
+        <text x="144" y="88" text-anchor="middle">A5</text>
+        <text x="202" y="88" text-anchor="middle">B</text>
+        <text x="260" y="88" text-anchor="middle">C</text>
+      </g>
+      <g class="tira">
+        <rect class="tb" style="--i:0" x="8"   y="100" width="56" height="10" fill="var(--fa)"/>
+        <rect class="tb" style="--i:1" x="66"  y="100" width="56" height="10" fill="var(--fb)"/>
+        <rect class="tb" style="--i:2" x="124" y="100" width="56" height="10" fill="var(--fc)"/>
+        <rect class="tb" style="--i:3" x="182" y="100" width="56" height="10" fill="var(--fd)"/>
+        <rect class="tb" style="--i:4" x="240" y="100" width="56" height="10" fill="var(--fe)"/>
+      </g>
+    </svg>
+
+    <h1 id="abertura-titulo" class="abertura-titulo">CarbonCalc Pro</h1>
+    <p class="abertura-sub">Estimativa da pegada de carbono de obras de edificação e infraestrutura, do berço ao fim da vida útil.</p>
+
+    <div class="abertura-avisos" id="abertura-avisos" tabindex="0" aria-label="Avisos legais">
+      <h2>Antes de começar, leia</h2>
+
+      <h3>O que esta ferramenta é</h3>
+      <p>Uma calculadora paramétrica de estimativa. Ela aproxima a ordem de grandeza das emissões de uma obra a partir de coeficientes de consumo e de fatores de emissão médios.</p>
+
+      <h3>O que ela não é</h3>
+      <p>Não é uma Avaliação de Ciclo de Vida conduzida conforme as normas ISO 14040 e ISO 14044, nem um inventário verificado por terceira parte. Não constitui certificação, laudo, parecer técnico ou declaração ambiental de produto, e não substitui a análise de um profissional habilitado.</p>
+
+      <h3>Sobre os fatores de emissão</h3>
+      <p>São médias setoriais brasileiras e dados internacionais adaptados ao contexto nacional. Fabricantes individuais podem divergir da média em proporção significativa. Para uso contratual ou de certificação, substitua os valores por declarações ambientais de produto verificadas.</p>
+
+      <h3>Responsabilidade</h3>
+      <p>O resultado é fornecido no estado em que se encontra, sem garantia de exatidão, adequação a finalidade específica ou aderência a qualquer norma ou exigência regulatória. A responsabilidade técnica pela conferência dos dados de entrada, pela interpretação dos resultados e por qualquer decisão deles derivada é integralmente de quem utiliza a ferramenta. O autor não responde por perdas ou danos decorrentes do uso.</p>
+
+      <h3>Uso em processos administrativos</h3>
+      <p>Se o resultado for anexado a processo, estudo ou peça técnica, declare sempre o método empregado, a fronteira do estudo adotada, a origem dos quantitativos e a procedência dos fatores de emissão. A ferramenta não dispensa o cumprimento de exigências legais próprias, como o licenciamento ambiental e o plano de gerenciamento de resíduos.</p>
+
+      <h3>Seus dados</h3>
+      <p>Todo o processamento ocorre no seu navegador. Nenhuma informação é transmitida a servidores. O projeto em edição é gravado apenas neste dispositivo e some se você limpar os dados do navegador — use o botão de baixar projeto para guardar uma cópia.</p>
+
+      <h3>Normas e marcas citadas</h3>
+      <p>As normas técnicas, entidades setoriais e marcas mencionadas pertencem aos respectivos titulares e são citadas apenas como referência metodológica. Esta ferramenta não é vinculada, patrocinada nem endossada por nenhuma delas.</p>
+    </div>
+
+    <div class="abertura-acoes">
+      <button id="btn-aceitar" class="primario">Li os avisos e quero começar</button>
+      <span class="nota" id="abertura-versao"></span>
+    </div>
+  </div>
+</div>
+
+<header class="topo">
+  <div class="marca">
+    <strong>CarbonCalc Pro</strong>
+    <span>Pegada de carbono de obras &middot; EN 15978</span>
+  </div>
+  <div class="topo-acoes">
+    <button id="btn-exemplo" class="sutil" title="Carregar um caso de demonstração">Exemplo</button>
+    <button id="btn-salvar" class="sutil">Baixar projeto</button>
+    <button id="btn-abrir" class="sutil">Abrir projeto</button>
+    <input type="file" id="arq-projeto" accept=".json" hidden>
+    <button id="btn-csv" class="sutil">Exportar CSV</button>
+    <button id="btn-imprimir" class="sutil">Imprimir relatório</button>
+    <button id="btn-avisos" class="sutil">Avisos</button>
+    <button id="btn-tema" class="sutil" aria-label="Alternar tema claro e escuro">Tema</button>
+  </div>
+</header>
+
+<div class="shell">
+  <nav class="rail" aria-label="Seções do sistema">
+    <div class="rail-grupo">Entrada de dados</div>
+    <button data-alvo="obra" aria-current="true"><span class="idx">1</span>Dados da obra</button>
+    <button data-alvo="quant"><span class="idx">2</span>Quantitativos</button>
+    <button data-alvo="transporte"><span class="idx">3</span>Transporte</button>
+    <button data-alvo="canteiro"><span class="idx">4</span>Canteiro e resíduos</button>
+    <button data-alvo="operacao"><span class="idx">5</span>Operação e manutenção</button>
+    <div class="rail-grupo">Análise</div>
+    <button data-alvo="cenarios"><span class="idx">6</span>Cenários de redução</button>
+    <button data-alvo="compensacao"><span class="idx">7</span>Compensação</button>
+    <button data-alvo="resultados"><span class="idx">8</span>Resultados</button>
+    <div class="rail-grupo">Referência</div>
+    <button data-alvo="fatores"><span class="idx">9</span>Fatores de emissão</button>
+    <button data-alvo="manual"><span class="idx">10</span>Manual</button>
+  </nav>
+
+  <main class="painel-area">
+
+    <!-- ============ 1. OBRA ============ -->
+    <section class="painel ativo" id="painel-obra">
+      <div class="cabeca">
+        <h1>Dados da obra</h1>
+        <p>Escolha a tipologia e o porte. O sistema estima os quantitativos de materiais a partir de coeficientes de consumo, que você pode ajustar na etapa seguinte.</p>
+      </div>
+
+      <div class="cartao">
+        <h3>Identificação</h3>
+        <div class="grade">
+          <div class="campo">
+            <label for="f-nome">Nome da obra</label>
+            <input id="f-nome" type="text" placeholder="Ex.: Escola municipal do Cordeiro">
+          </div>
+          <div class="campo">
+            <label for="f-orgao">Órgão ou contratante</label>
+            <input id="f-orgao" type="text" placeholder="Ex.: Secretaria de Educação">
+          </div>
+          <div class="campo">
+            <label for="f-uf">Unidade da federação</label>
+            <select id="f-uf"></select>
+          </div>
+          <div class="campo">
+            <label for="f-ano">Ano de referência</label>
+            <input id="f-ano" type="number" min="2000" max="2100" step="1">
+          </div>
+        </div>
+      </div>
+
+      <div class="cartao">
+        <h3>Características construtivas</h3>
+        <p class="nota">Cada combinação altera os coeficientes de consumo aplicados na estimativa paramétrica.</p>
+        <div class="grade">
+          <div class="campo">
+            <label for="f-tipologia">Tipologia</label>
+            <select id="f-tipologia"></select>
+          </div>
+          <div class="campo">
+            <label for="f-quantidade">Porte da obra <span class="dica" id="lbl-unidade">área construída (m²)</span></label>
+            <input id="f-quantidade" type="number" min="0" step="any">
+          </div>
+          <div class="campo" id="wrap-sistema">
+            <label for="f-sistema">Sistema estrutural</label>
+            <select id="f-sistema"></select>
+          </div>
+          <div class="campo" id="wrap-pavimentos">
+            <label for="f-pavimentos">Número de pavimentos</label>
+            <input id="f-pavimentos" type="number" min="1" max="60" step="1">
+          </div>
+          <div class="campo" id="wrap-padrao">
+            <label for="f-padrao">Padrão de acabamento</label>
+            <select id="f-padrao"></select>
+          </div>
+        </div>
+        <div class="linha-btns">
+          <button id="btn-gerar" class="primario">Gerar quantitativos</button>
+          <span class="nota" id="aviso-gerar"></span>
+        </div>
+      </div>
+
+      <div class="cartao">
+        <h3>Fronteira do estudo</h3>
+        <p class="nota">O cálculo cobre o carbono incorporado até a entrega da obra. A operação do edifício (módulo B) não é objeto desta ferramenta.</p>
+        <div class="linha-check">
+          <input type="checkbox" id="f-fimvida">
+          <label for="f-fimvida">Incluir estimativa do módulo C — demolição, transporte e disposição ao fim da vida útil</label>
+        </div>
+        <div class="campo" id="wrap-demolicao" style="max-width:280px;margin-top:8px">
+          <label for="f-taxa-demolicao">Fração da massa destinada a resíduo na demolição</label>
+          <input id="f-taxa-demolicao" type="number" min="0" max="1" step="0.05">
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 2. QUANTITATIVOS ============ -->
+    <section class="painel" id="painel-quant">
+      <div class="cabeca">
+        <h1>Quantitativos de materiais</h1>
+        <p>Estas são as quantidades líquidas de projeto. As perdas físicas de obra são somadas automaticamente e alimentam o cálculo de resíduos.</p>
+      </div>
+      <div id="aviso-sincronia-quant"></div>
+      <div class="cartao">
+        <div class="grade">
+          <div class="campo">
+            <label for="f-add-material">Acrescentar material</label>
+            <select id="f-add-material"></select>
+          </div>
+          <div class="campo">
+            <label for="f-add-qtd">Quantidade</label>
+            <input id="f-add-qtd" type="number" min="0" step="any" placeholder="0">
+          </div>
+          <div class="campo" style="justify-content:flex-end">
+            <button id="btn-add-material">Acrescentar à planilha</button>
+          </div>
+        </div>
+      </div>
+      <div class="tabela-wrap">
+        <table id="tab-quant">
+          <thead>
+            <tr>
+              <th>Material</th><th>Un.</th>
+              <th class="n">Quantidade líquida</th>
+              <th class="n">Perda</th>
+              <th class="n">Quantidade bruta</th>
+              <th class="n">FE (kgCO₂e/un)</th>
+              <th class="n">A1–A3 (kgCO₂e)</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+          <tfoot></tfoot>
+        </table>
+      </div>
+      <div class="linha-btns">
+        <button id="btn-regerar">Recalcular a partir dos parâmetros</button>
+        <button id="btn-limpar-quant" class="perigo">Esvaziar planilha</button>
+      </div>
+    </section>
+
+    <!-- ============ 3. TRANSPORTE ============ -->
+    <section class="painel" id="painel-transporte">
+      <div class="cabeca">
+        <h1>Transporte até a obra</h1>
+        <p>Etapa A4. A emissão depende da massa transportada, da distância de fornecimento e do modal. Deixe a distância em branco para usar a referência da família de materiais.</p>
+      </div>
+      <div class="cartao">
+        <div class="grade">
+          <div class="campo">
+            <label for="f-modal">Modal predominante</label>
+            <select id="f-modal"></select>
+          </div>
+          <div class="campo">
+            <label for="f-ajuste-dist">Ajuste geral das distâncias de referência
+              <span class="dica">1,0 mantém a referência; 0,5 corta pela metade</span></label>
+            <input id="f-ajuste-dist" type="number" min="0" max="5" step="0.05">
+          </div>
+        </div>
+      </div>
+      <div class="tabela-wrap">
+        <table id="tab-transp">
+          <thead>
+            <tr>
+              <th>Material</th>
+              <th class="n">Massa (t)</th>
+              <th class="n">Distância (km)</th>
+              <th class="n">A4 (kgCO₂e)</th>
+              <th class="n">Participação</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+          <tfoot></tfoot>
+        </table>
+      </div>
+      <div class="aviso-box">Materiais pesados de baixo valor unitário — agregados, blocos e concreto — costumam dominar a etapa A4. É neles que a escolha do fornecedor tem maior efeito.</div>
+    </section>
+
+    <!-- ============ 4. CANTEIRO ============ -->
+    <section class="painel" id="painel-canteiro">
+      <div class="cabeca">
+        <h1>Canteiro e resíduos</h1>
+        <p>Etapa A5. Reúne o combustível dos equipamentos, a energia elétrica consumida e a destinação do resíduo de construção.</p>
+      </div>
+
+      <div class="cartao">
+        <h3>Energia e combustíveis</h3>
+        <div class="linha-check">
+          <input type="checkbox" id="f-canteiro-auto">
+          <label for="f-canteiro-auto">Estimar diesel e energia elétrica pelos coeficientes da tipologia</label>
+        </div>
+        <div class="grade" style="margin-top:10px">
+          <div class="campo">
+            <label for="f-diesel">Óleo diesel (L)</label>
+            <input id="f-diesel" type="number" min="0" step="any">
+          </div>
+          <div class="campo">
+            <label for="f-eletrica">Energia elétrica (kWh)</label>
+            <input id="f-eletrica" type="number" min="0" step="any">
+          </div>
+          <div class="campo">
+            <label for="f-gasolina">Gasolina (L)</label>
+            <input id="f-gasolina" type="number" min="0" step="any">
+          </div>
+          <div class="campo">
+            <label for="f-glp">GLP (kg)</label>
+            <input id="f-glp" type="number" min="0" step="any">
+          </div>
+        </div>
+        <div id="saida-energia" style="margin-top:14px"></div>
+      </div>
+
+      <div class="cartao">
+        <h3>Resíduos de construção</h3>
+        <p class="nota">A massa de resíduo é calculada a partir das perdas físicas dos materiais. Some aqui o resíduo de demolição ou limpeza do terreno, se houver.</p>
+        <div class="grade">
+          <div class="campo">
+            <label for="f-destinacao">Destinação</label>
+            <select id="f-destinacao"></select>
+          </div>
+          <div class="campo">
+            <label for="f-dist-rcc">Distância até a destinação (km)</label>
+            <input id="f-dist-rcc" type="number" min="0" step="any">
+          </div>
+          <div class="campo">
+            <label for="f-rcc-extra">Resíduo adicional (t)</label>
+            <input id="f-rcc-extra" type="number" min="0" step="any">
+          </div>
+        </div>
+        <div id="saida-residuos" style="margin-top:14px"></div>
+      </div>
+    </section>
+
+
+    <!-- ============ 5. OPERAÇÃO (MÓDULO B) ============ -->
+    <section class="painel" id="painel-operacao">
+      <div class="cabeca">
+        <h1>Operação e manutenção</h1>
+        <p>Módulo B. Reúne o que a obra emitirá enquanto estiver em uso: energia, água, reposição de componentes e a reabsorção de CO₂ pelo concreto.</p>
+      </div>
+
+      <div class="cartao">
+        <div class="linha-check">
+          <input type="checkbox" id="f-op-incluir">
+          <label for="f-op-incluir">Calcular o módulo B e apresentar o carbono de ciclo de vida completo</label>
+        </div>
+        <p class="nota">O carbono incorporado continua sendo o valor classificado pela etiqueta. O módulo B entra como indicador separado, porque misturar as duas fronteiras inviabiliza qualquer comparação.</p>
+      </div>
+
+      <div id="bloco-operacao">
+        <div class="cartao">
+          <h3>Período de estudo</h3>
+          <div class="grade">
+            <div class="campo">
+              <label for="f-rsp">Vida útil de projeto adotada (anos)
+                <span class="dica">50 anos é a referência da EN 15978</span></label>
+              <input id="f-rsp" type="number" min="1" max="150" step="1">
+            </div>
+            <div class="campo">
+              <label for="f-descarb">Descarbonização da matriz elétrica ao fim do período (%)
+                <span class="dica">Queda linear do fator de emissão; 0 mantém a matriz atual</span></label>
+              <input id="f-descarb" type="number" min="0" max="100" step="1">
+            </div>
+          </div>
+        </div>
+
+        <div class="cartao">
+          <h3>Consumo operacional</h3>
+          <div class="linha-check">
+            <input type="checkbox" id="f-op-auto">
+            <label for="f-op-auto">Estimar energia e água pelos coeficientes da tipologia</label>
+          </div>
+          <div class="grade" style="margin-top:10px">
+            <div class="campo">
+              <label for="f-op-eletrica">Energia elétrica (kWh por ano)</label>
+              <input id="f-op-eletrica" type="number" min="0" step="any">
+            </div>
+            <div class="campo">
+              <label for="f-op-agua">Água e esgoto (m³ por ano)</label>
+              <input id="f-op-agua" type="number" min="0" step="any">
+            </div>
+            <div class="campo">
+              <label for="f-op-combustivel">Combustível para geração ou frota (L por ano)</label>
+              <input id="f-op-combustivel" type="number" min="0" step="any">
+            </div>
+          </div>
+        </div>
+
+        <div class="cartao">
+          <h3>Manutenção e reposição</h3>
+          <div class="linha-check">
+            <input type="checkbox" id="f-reposicao">
+            <label for="f-reposicao">Repor componentes cuja vida útil é menor que o período de estudo</label>
+          </div>
+          <div class="linha-check">
+            <input type="checkbox" id="f-carbonatacao">
+            <label for="f-carbonatacao">Creditar a reabsorção de CO₂ por carbonatação das superfícies cimentícias</label>
+          </div>
+          <div class="campo" id="wrap-carbonatacao" style="max-width:300px;margin-top:8px">
+            <label for="f-taxa-carb">Fração reabsorvida das emissões cimentícias
+              <span class="dica">Entre 0 e 0,25; a literatura situa a faixa usual entre 0,05 e 0,15</span></label>
+            <input id="f-taxa-carb" type="number" min="0" max="0.25" step="0.01">
+          </div>
+        </div>
+
+        <div class="cartao">
+          <h3>Resultado do módulo B</h3>
+          <div id="saida-modulo-b"></div>
+        </div>
+
+        <div class="cartao">
+          <h3>Reposição de componentes ao longo do período</h3>
+          <div id="saida-reposicoes"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 6. CENÁRIOS ============ -->
+    <section class="painel" id="painel-cenarios">
+      <div class="cabeca">
+        <h1>Cenários de redução</h1>
+        <p>Selecione medidas para comparar o cenário de referência com um cenário de baixo carbono. O efeito de cada medida é recalculado sobre a composição real da sua obra.</p>
+      </div>
+      <div class="leitura" id="leitura-cenario"></div>
+      <div class="cartao">
+        <h3>Medidas disponíveis</h3>
+        <div id="lista-medidas"></div>
+        <div class="linha-btns">
+          <button id="btn-marcar-todas">Selecionar todas</button>
+          <button id="btn-desmarcar">Limpar seleção</button>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ============ 7. COMPENSAÇÃO ============ -->
+    <section class="painel" id="painel-compensacao">
+      <div class="cabeca">
+        <h1>Compensação por reflorestamento</h1>
+        <p>Dimensiona a área de restauração necessária para neutralizar a pegada remanescente, depois de esgotado o que se pode evitar e reduzir.</p>
+      </div>
+
+      <div class="aviso-box">Compensar não é reduzir. A hierarquia é evitar, reduzir e só então compensar o que restou. Uma tonelada evitada no projeto vale mais que uma tonelada compensada, porque não depende de a floresta sobreviver às próximas décadas.</div>
+
+      <div class="cartao">
+        <div class="linha-check">
+          <input type="checkbox" id="f-comp-incluir">
+          <label for="f-comp-incluir">Dimensionar a compensação</label>
+        </div>
+      </div>
+
+      <div id="bloco-compensacao">
+        <div class="cartao">
+          <h3>Parâmetros</h3>
+          <div class="grade">
+            <div class="campo">
+              <label for="f-comp-sistema">Sistema de restauração</label>
+              <select id="f-comp-sistema"></select>
+            </div>
+            <div class="campo">
+              <label for="f-comp-base">Pegada a compensar</label>
+              <select id="f-comp-base">
+                <option value="incorporado">Carbono incorporado (A1–A5 + C)</option>
+                <option value="ciclo">Ciclo de vida completo (com módulo B)</option>
+              </select>
+            </div>
+            <div class="campo">
+              <label for="f-comp-fracao">Fração a compensar (%)</label>
+              <input id="f-comp-fracao" type="number" min="0" max="100" step="1">
+            </div>
+            <div class="campo">
+              <label for="f-comp-horizonte">Horizonte de sequestro (anos)</label>
+              <input id="f-comp-horizonte" type="number" min="1" max="100" step="1">
+            </div>
+            <div class="campo">
+              <label for="f-comp-custo">Custo de implantação e manutenção (R$ por hectare)
+                <span class="dica">Ajuste conforme os preços do seu edital</span></label>
+              <input id="f-comp-custo" type="number" min="0" step="any">
+            </div>
+          </div>
+          <p class="nota" id="nota-sistema"></p>
+        </div>
+
+        <div class="cartao">
+          <h3>Dimensionamento</h3>
+          <div id="saida-compensacao"></div>
+        </div>
+
+        <div class="cartao">
+          <h3>Comparação entre sistemas</h3>
+          <p class="nota">Área e número de mudas para a mesma pegada, no horizonte escolhido.</p>
+          <div class="tabela-wrap">
+            <table id="tab-reflorestamento">
+              <thead>
+                <tr><th>Sistema</th><th class="n">Sequestro (tCO₂e/ha·ano)</th>
+                    <th class="n">Área necessária (ha)</th><th class="n">Mudas</th>
+                    <th class="n">Custo estimado</th><th>Permanência</th></tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 8. RESULTADOS ============ -->
+    <section class="painel" id="painel-resultados">
+      <div class="cabeca">
+        <h1>Resultados</h1>
+        <p id="res-legenda">Pegada de carbono incorporado da obra, por etapa do ciclo de vida.</p>
+      </div>
+      <div id="aviso-sincronia-res"></div>
+      <div class="leitura" id="leitura-principal"></div>
+
+      <div class="grade dupla">
+        <div class="cartao">
+          <h3>Distribuição por etapa</h3>
+          <div id="graf-etapas"></div>
+        </div>
+        <div class="cartao">
+          <h3>Distribuição por família de material</h3>
+          <div id="graf-familias"></div>
+        </div>
+      </div>
+
+      <div class="cartao">
+        <h3>Curva ABC de carbono</h3>
+        <p class="nota">Materiais ordenados pela contribuição. A classe A concentra 80% das emissões e define onde a especificação técnica tem maior alcance.</p>
+        <div id="graf-abc"></div>
+      </div>
+
+      <div class="cartao">
+        <h3>Materiais críticos</h3>
+        <div class="tabela-wrap">
+          <table id="tab-abc">
+            <thead>
+              <tr>
+                <th>Classe</th><th>Material</th><th>Família</th>
+                <th class="n">A1–A3</th><th class="n">A4</th>
+                <th class="n">Total (kgCO₂e)</th><th class="n">Participação</th><th class="n">Acumulado</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="cartao">
+        <h3>Ordem de grandeza</h3>
+        <p class="nota">Equivalências para comunicação do resultado a públicos não técnicos.</p>
+        <div id="lista-equiv" class="grade"></div>
+      </div>
+    </section>
+
+    <!-- ============ 7. FATORES ============ -->
+    <section class="painel" id="painel-fatores">
+      <div class="cabeca">
+        <h1>Fatores de emissão</h1>
+        <p>Base de referência do sistema. Se você dispõe de uma declaração ambiental de produto do fornecedor, substitua o valor — o cálculo passa a usar o dado específico.</p>
+      </div>
+      <div class="cartao">
+        <div class="grade">
+          <div class="campo">
+            <label for="f-busca-fator">Localizar material</label>
+            <input id="f-busca-fator" type="search" placeholder="cimento, aço, bloco...">
+          </div>
+          <div class="campo">
+            <label for="f-filtro-fam">Família</label>
+            <select id="f-filtro-fam"></select>
+          </div>
+          <div class="campo" style="justify-content:flex-end">
+            <button id="btn-restaurar-fatores">Restaurar valores de referência</button>
+          </div>
+        </div>
+      </div>
+      <div class="tabela-wrap">
+        <table id="tab-fatores">
+          <thead>
+            <tr>
+              <th>Material</th><th>Família</th><th>Un.</th>
+              <th class="n">Referência</th><th class="n">Adotado</th>
+              <th class="n">Massa un. (kg)</th><th class="n">Perda</th><th>Origem do dado</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="aviso-box">Os fatores reúnem médias setoriais brasileiras e dados internacionais adaptados. Para verificação contratual ou certificação, prefira sempre declarações ambientais de produto verificadas por terceira parte.</div>
+    </section>
+
+    <!-- ============ 8. MANUAL ============ -->
+    <section class="painel" id="painel-manual">
+      <div class="cabeca">
+        <h1>Manual</h1>
+        <p>Fundamentos do cálculo, roteiro de uso e laboratórios que usam o mesmo motor da ferramenta.</p>
+      </div>
+      <div class="manual">
+        <aside class="manual-nav">
+          <div class="campo">
+            <label for="f-busca-manual" class="sr">Buscar no manual</label>
+            <input id="f-busca-manual" type="search" placeholder="Buscar no manual">
+          </div>
+          <div class="progresso"><i id="barra-progresso"></i></div>
+          <p class="nota" id="txt-progresso" style="margin-top:6px"></p>
+          <ol id="manual-indice"></ol>
+          <div class="linha-btns">
+            <button id="btn-zerar-progresso" class="sutil">Zerar leitura</button>
+          </div>
+        </aside>
+        <div class="manual-corpo" id="manual-corpo"></div>
+      </div>
+    </section>
+
+  </main>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ============================================================
+   CarbonCalc Pro — Base de dados técnica
+   Fatores de emissão de gases de efeito estufa (kgCO2e/unidade)
+   Escopo A1-A3 (berço ao portão), conforme EN 15804 / ISO 21930
+   ============================================================ */
+
+const APP_INFO = {
+  nome: 'CarbonCalc Pro',
+  versao: '1.0.0',
+  norma: 'EN 15978 / ISO 14040 / ISO 21930',
+  chaveLS: 'carboncalc_pro_v1'
+};
+
+/* ---------- Fatores de emissão de materiais (A1-A3) ----------
+   fe   = kgCO2e por unidade
+   mu   = massa unitária em kg (para cálculo de transporte A4)
+   perda= perda física média de obra (fração)
+------------------------------------------------------------- */
+const MATERIAIS = [
+  // Aglomerantes
+  { id: 'cimento_cp2', nome: 'Cimento Portland CP II-E-32', fam: 'aglomerante', un: 'kg', fe: 0.660, mu: 1, perda: 0.10, fonte: 'SNIC/CBCS — média nacional' },
+  { id: 'cimento_cp3', nome: 'Cimento Portland CP III (escória)', fam: 'aglomerante', un: 'kg', fe: 0.420, mu: 1, perda: 0.10, fonte: 'SNIC — alto teor de escória' },
+  { id: 'cimento_cp4', nome: 'Cimento Portland CP IV (pozolânico)', fam: 'aglomerante', un: 'kg', fe: 0.490, mu: 1, perda: 0.10, fonte: 'SNIC' },
+  { id: 'cimento_cp5', nome: 'Cimento Portland CP V-ARI', fam: 'aglomerante', un: 'kg', fe: 0.830, mu: 1, perda: 0.10, fonte: 'SNIC' },
+  { id: 'cal', nome: 'Cal hidratada CH-I', fam: 'aglomerante', un: 'kg', fe: 0.740, mu: 1, perda: 0.12, fonte: 'ABPC/Ecoinvent BR' },
+
+  // Concreto
+  { id: 'concreto_c20', nome: 'Concreto usinado C20', fam: 'concreto', un: 'm³', fe: 225, mu: 2400, perda: 0.05, fonte: 'ABESC/SIDAC' },
+  { id: 'concreto_c25', nome: 'Concreto usinado C25', fam: 'concreto', un: 'm³', fe: 250, mu: 2400, perda: 0.05, fonte: 'ABESC/SIDAC' },
+  { id: 'concreto_c30', nome: 'Concreto usinado C30', fam: 'concreto', un: 'm³', fe: 280, mu: 2400, perda: 0.05, fonte: 'ABESC/SIDAC' },
+  { id: 'concreto_c35', nome: 'Concreto usinado C35', fam: 'concreto', un: 'm³', fe: 310, mu: 2400, perda: 0.05, fonte: 'ABESC/SIDAC' },
+  { id: 'concreto_c40', nome: 'Concreto usinado C40', fam: 'concreto', un: 'm³', fe: 340, mu: 2450, perda: 0.05, fonte: 'ABESC/SIDAC' },
+  { id: 'concreto_esc', nome: 'Concreto C30 com 35% de escória', fam: 'concreto', un: 'm³', fe: 195, mu: 2400, perda: 0.05, fonte: 'EPD setorial — cimento composto' },
+  { id: 'concreto_pav', nome: 'Concreto para pavimento rígido C35', fam: 'concreto', un: 'm³', fe: 315, mu: 2450, perda: 0.04, fonte: 'ABCP' },
+
+  // Aço e metais
+  { id: 'aco_ca50_cv', nome: 'Aço CA-50 — rota carvão vegetal', fam: 'aco', un: 'kg', fe: 1.050, mu: 1, perda: 0.10, fonte: 'Aço Brasil — siderurgia a carvão vegetal' },
+  { id: 'aco_ca50_ck', nome: 'Aço CA-50 — rota coque mineral', fam: 'aco', un: 'kg', fe: 2.100, mu: 1, perda: 0.10, fonte: 'Aço Brasil — alto-forno a coque' },
+  { id: 'aco_prot', nome: 'Aço de protensão CP-190', fam: 'aco', un: 'kg', fe: 2.400, mu: 1, perda: 0.05, fonte: 'EPD internacional adaptada' },
+  { id: 'aco_estrutural', nome: 'Perfil estrutural laminado', fam: 'aco', un: 'kg', fe: 2.350, mu: 1, perda: 0.05, fonte: 'Aço Brasil / worldsteel' },
+  { id: 'aco_galv', nome: 'Chapa/telha de aço galvanizado', fam: 'aco', un: 'kg', fe: 2.600, mu: 1, perda: 0.07, fonte: 'worldsteel + galvanização' },
+  { id: 'aluminio_prim', nome: 'Alumínio primário', fam: 'metais', un: 'kg', fe: 8.600, mu: 1, perda: 0.05, fonte: 'ABAL/IAI' },
+  { id: 'aluminio_rec', nome: 'Alumínio com conteúdo reciclado (60%)', fam: 'metais', un: 'kg', fe: 2.900, mu: 1, perda: 0.05, fonte: 'ABAL' },
+  { id: 'cobre', nome: 'Cobre — fios, cabos e tubos', fam: 'metais', un: 'kg', fe: 2.950, mu: 1, perda: 0.05, fonte: 'ICA/Ecoinvent' },
+
+  // Cerâmica e blocos
+  { id: 'bloco_ceramico', nome: 'Bloco cerâmico de vedação 9×19×39', fam: 'ceramica', un: 'un', fe: 0.580, mu: 3.0, perda: 0.08, fonte: 'ANICER — forno a biomassa' },
+  { id: 'bloco_ceramico_est', nome: 'Bloco cerâmico estrutural 14×19×39', fam: 'ceramica', un: 'un', fe: 0.880, mu: 4.6, perda: 0.06, fonte: 'ANICER' },
+  { id: 'bloco_concreto', nome: 'Bloco de concreto 14×19×39', fam: 'concreto', un: 'un', fe: 1.400, mu: 11.0, perda: 0.06, fonte: 'BlocoBrasil' },
+  { id: 'tijolo_macico', nome: 'Tijolo maciço cerâmico', fam: 'ceramica', un: 'un', fe: 0.320, mu: 1.7, perda: 0.08, fonte: 'ANICER' },
+  { id: 'ceramica_rev', nome: 'Revestimento cerâmico esmaltado', fam: 'ceramica', un: 'm²', fe: 13.50, mu: 18, perda: 0.10, fonte: 'ANFACER' },
+  { id: 'porcelanato', nome: 'Porcelanato', fam: 'ceramica', un: 'm²', fe: 20.00, mu: 22, perda: 0.10, fonte: 'ANFACER' },
+  { id: 'telha_ceramica', nome: 'Telha cerâmica', fam: 'ceramica', un: 'un', fe: 0.500, mu: 2.5, perda: 0.08, fonte: 'ANICER' },
+
+  // Argamassas e agregados
+  { id: 'argamassa_ind', nome: 'Argamassa industrializada', fam: 'argamassa', un: 'kg', fe: 0.180, mu: 1, perda: 0.15, fonte: 'ANFACER/CBCS' },
+  { id: 'areia', nome: 'Areia natural lavada', fam: 'agregado', un: 'm³', fe: 11.0, mu: 1500, perda: 0.10, fonte: 'ANEPAC — extração e beneficiamento' },
+  { id: 'brita', nome: 'Brita graduada 0/1/2', fam: 'agregado', un: 'm³', fe: 15.0, mu: 1450, perda: 0.08, fonte: 'ANEPAC' },
+  { id: 'agregado_rcc', nome: 'Agregado reciclado de RCC', fam: 'agregado', un: 'm³', fe: 5.5, mu: 1350, perda: 0.08, fonte: 'ABRECON' },
+
+  // Madeira
+  { id: 'madeira_serrada', nome: 'Madeira serrada de reflorestamento', fam: 'madeira', un: 'm³', fe: 65.0, mu: 600, perda: 0.20, fonte: 'IBÁ — sem contabilizar estoque biogênico' },
+  { id: 'compensado', nome: 'Compensado plastificado para forma', fam: 'madeira', un: 'm²', fe: 6.50, mu: 11, perda: 0.25, fonte: 'IBÁ — painéis compensados' },
+  { id: 'mdf', nome: 'MDF', fam: 'madeira', un: 'kg', fe: 0.850, mu: 1, perda: 0.10, fonte: 'IBÁ — painéis reconstituídos' },
+
+  // Vedações leves e isolantes
+  { id: 'drywall', nome: 'Placa de gesso acartonado 12,5 mm', fam: 'acabamento', un: 'm²', fe: 3.20, mu: 10, perda: 0.15, fonte: 'ABRAGESSO' },
+  { id: 'gesso', nome: 'Gesso em pó para revestimento', fam: 'acabamento', un: 'kg', fe: 0.220, mu: 1, perda: 0.20, fonte: 'ABRAGESSO' },
+  { id: 'la_mineral', nome: 'Lã mineral (isolamento)', fam: 'isolante', un: 'kg', fe: 1.350, mu: 1, perda: 0.10, fonte: 'Ecoinvent adaptado' },
+  { id: 'eps', nome: 'EPS — poliestireno expandido', fam: 'isolante', un: 'kg', fe: 3.300, mu: 1, perda: 0.10, fonte: 'ABRAPEX' },
+
+  // Coberturas e impermeabilização
+  { id: 'telha_fibro', nome: 'Telha de fibrocimento CRFS', fam: 'cobertura', un: 'm²', fe: 8.50, mu: 16, perda: 0.08, fonte: 'IBRACON/EPD setorial' },
+  { id: 'manta_asf', nome: 'Manta asfáltica 4 mm', fam: 'cobertura', un: 'm²', fe: 5.20, mu: 5, perda: 0.10, fonte: 'IBI — sistemas de impermeabilização' },
+  { id: 'impermeabilizante', nome: 'Impermeabilizante acrílico/cimentício', fam: 'cobertura', un: 'kg', fe: 2.200, mu: 1, perda: 0.10, fonte: 'IBI — sistemas de impermeabilização' },
+
+  // Acabamentos
+  { id: 'tinta_acrilica', nome: 'Tinta acrílica', fam: 'acabamento', un: 'L', fe: 3.10, mu: 1.4, perda: 0.08, fonte: 'ABRAFATI' },
+  { id: 'vidro_comum', nome: 'Vidro float 6 mm', fam: 'vidro', un: 'm²', fe: 12.00, mu: 15, perda: 0.05, fonte: 'ABIVIDRO' },
+  { id: 'esq_aluminio', nome: 'Esquadria de alumínio (montada)', fam: 'metais', un: 'm²', fe: 95.00, mu: 14, perda: 0.03, fonte: 'AFEAL — perfil + vidro + ferragens' },
+  { id: 'esq_madeira', nome: 'Esquadria de madeira (montada)', fam: 'madeira', un: 'm²', fe: 28.00, mu: 22, perda: 0.03, fonte: 'IBÁ — esquadrias de madeira' },
+
+  // Instalações
+  { id: 'pvc', nome: 'Tubos e conexões de PVC', fam: 'instalacoes', un: 'kg', fe: 2.550, mu: 1, perda: 0.08, fonte: 'Instituto do PVC' },
+  { id: 'ppr', nome: 'Tubos de PPR/PEX', fam: 'instalacoes', un: 'kg', fe: 2.100, mu: 1, perda: 0.06, fonte: 'Ecoinvent adaptado' },
+  { id: 'tubo_pead', nome: 'Tubo de PEAD', fam: 'instalacoes', un: 'kg', fe: 2.150, mu: 1, perda: 0.05, fonte: 'ABPE' },
+  { id: 'cabo_cobre', nome: 'Cabo elétrico de cobre isolado', fam: 'instalacoes', un: 'kg', fe: 3.100, mu: 1, perda: 0.05, fonte: 'ABC/ICA' },
+  { id: 'tubo_concreto', nome: 'Tubo de concreto DN 600 (drenagem)', fam: 'concreto', un: 'm', fe: 48.00, mu: 340, perda: 0.03, fonte: 'ABTC' },
+
+  // Pavimentação
+  { id: 'cbuq', nome: 'CBUQ usinado a quente', fam: 'pavimentacao', un: 't', fe: 62.0, mu: 1000, perda: 0.04, fonte: 'ABEDA/DNIT — inclui agregado e usinagem' },
+  { id: 'cbuq_morno', nome: 'Mistura asfáltica morna (WMA)', fam: 'pavimentacao', un: 't', fe: 50.0, mu: 1000, perda: 0.04, fonte: 'ABEDA — redução térmica de usinagem' },
+  { id: 'asfalto_cap', nome: 'Cimento asfáltico CAP 50/70', fam: 'pavimentacao', un: 'kg', fe: 0.420, mu: 1, perda: 0.03, fonte: 'Eurobitume adaptado' },
+  { id: 'emulsao', nome: 'Emulsão asfáltica RR-2C', fam: 'pavimentacao', un: 'kg', fe: 0.380, mu: 1, perda: 0.05, fonte: 'ABEDA' },
+  { id: 'bgs', nome: 'Brita graduada simples (base)', fam: 'pavimentacao', un: 'm³', fe: 18.0, mu: 2100, perda: 0.05, fonte: 'DNIT/ANEPAC' },
+  { id: 'sub_base_solo', nome: 'Solo estabilizado para sub-base', fam: 'pavimentacao', un: 'm³', fe: 9.0, mu: 1900, perda: 0.05, fonte: 'DNIT' },
+  { id: 'solo_cimento', nome: 'Solo-cimento 4%', fam: 'pavimentacao', un: 'm³', fe: 95.0, mu: 2000, perda: 0.05, fonte: 'ABCP' },
+  { id: 'geotextil', nome: 'Geotêxtil não tecido', fam: 'pavimentacao', un: 'm²', fe: 0.550, mu: 0.3, perda: 0.05, fonte: 'Ecoinvent adaptado' },
+  { id: 'defensa', nome: 'Defensa metálica semimaleável', fam: 'aco', un: 'kg', fe: 2.600, mu: 1, perda: 0.02, fonte: 'worldsteel + galvanização' }
+];
+
+const FAMILIAS = {
+  aglomerante: { nome: 'Aglomerantes', cor: '#8C6D3F' },
+  concreto: { nome: 'Concreto e pré-moldados', cor: '#6B7B84' },
+  aco: { nome: 'Aço', cor: '#B4531F' },
+  metais: { nome: 'Metais não ferrosos', cor: '#C68A1E' },
+  ceramica: { nome: 'Cerâmica e blocos', cor: '#A8492F' },
+  argamassa: { nome: 'Argamassas', cor: '#9A9384' },
+  agregado: { nome: 'Agregados', cor: '#7A8471' },
+  madeira: { nome: 'Madeira', cor: '#5C7A4A' },
+  acabamento: { nome: 'Acabamentos', cor: '#4A7C7E' },
+  vidro: { nome: 'Vidros', cor: '#5B8CA8' },
+  isolante: { nome: 'Isolantes', cor: '#8E7CA6' },
+  cobertura: { nome: 'Coberturas e impermeabilização', cor: '#3F6E5C' },
+  instalacoes: { nome: 'Instalações', cor: '#0F6E5C' },
+  pavimentacao: { nome: 'Pavimentação', cor: '#4A4A48' }
+};
+
+/* ---------- Transporte (A4) — kgCO2e por tonelada-quilômetro ---------- */
+const MODAIS = [
+  { id: 'rod_pesado', nome: 'Rodoviário — carreta / caminhão pesado', fe: 0.092 },
+  { id: 'rod_medio', nome: 'Rodoviário — caminhão médio (toco/truck)', fe: 0.145 },
+  { id: 'ferroviario', nome: 'Ferroviário', fe: 0.024 },
+  { id: 'hidroviario', nome: 'Hidroviário / cabotagem', fe: 0.018 }
+];
+
+/* ---------- Energia e combustíveis (A5) ---------- */
+const ENERGIA = {
+  diesel: { nome: 'Óleo diesel B (equipamentos)', un: 'L', fe: 2.710 },
+  gasolina: { nome: 'Gasolina C', un: 'L', fe: 2.260 },
+  eletrica: { nome: 'Energia elétrica — SIN', un: 'kWh', fe: 0.0450 },
+  glp: { nome: 'GLP', un: 'kg', fe: 2.930 }
+};
+
+/* ---------- Destinação de resíduos (A5/C) — kgCO2e por tonelada ---------- */
+const DESTINACAO = [
+  { id: 'aterro', nome: 'Aterro de resíduos classe A', fe: 12.0 },
+  { id: 'reciclagem', nome: 'Usina de reciclagem de RCC', fe: 8.0 },
+  { id: 'reuso', nome: 'Reuso na própria obra', fe: 3.0 }
+];
+
+/* ---------- Tipologias e coeficientes de consumo paramétrico ----------
+   coef: quantidade do material por unidade de referência da obra
+------------------------------------------------------------------------ */
+const TIPOLOGIAS = {
+  res_uni: {
+    nome: 'Residencial unifamiliar', grupo: 'Edificações', un: 'm²', unLabel: 'área construída (m²)',
+    bench: { a: 175, b: 215, c: 275, d: 350 },
+    estrutural: true,
+    coef: {
+      concreto_c25: 0.22, aco_ca50_cv: 22, bloco_ceramico: 42, argamassa_ind: 110,
+      cimento_cp2: 28, areia: 0.12, brita: 0.07, ceramica_rev: 2.2, tinta_acrilica: 0.9,
+      telha_ceramica: 16, madeira_serrada: 0.012, pvc: 1.8, cabo_cobre: 0.55,
+      esq_aluminio: 0.10, vidro_comum: 0.08, gesso: 6, compensado: 0.35
+    }
+  },
+  res_multi: {
+    nome: 'Residencial multifamiliar', grupo: 'Edificações', un: 'm²', unLabel: 'área construída (m²)',
+    bench: { a: 225, b: 275, c: 350, d: 440 },
+    estrutural: true,
+    coef: {
+      concreto_c30: 0.32, aco_ca50_cv: 42, bloco_ceramico: 38, argamassa_ind: 120,
+      cimento_cp2: 22, areia: 0.10, brita: 0.06, ceramica_rev: 2.0, porcelanato: 0.4,
+      tinta_acrilica: 1.1, gesso: 9, pvc: 2.4, cabo_cobre: 0.9, esq_aluminio: 0.12,
+      vidro_comum: 0.12, impermeabilizante: 0.6, compensado: 0.55, manta_asf: 0.10
+    }
+  },
+  comercial: {
+    nome: 'Comercial / edifício de escritórios', grupo: 'Edificações', un: 'm²', unLabel: 'área construída (m²)',
+    bench: { a: 260, b: 320, c: 405, d: 510 },
+    estrutural: true,
+    coef: {
+      concreto_c30: 0.34, aco_ca50_cv: 48, bloco_concreto: 20, drywall: 1.2,
+      argamassa_ind: 70, cimento_cp2: 16, porcelanato: 1.3, gesso: 5,
+      esq_aluminio: 0.30, vidro_comum: 0.32, aluminio_prim: 2.5, pvc: 2.0,
+      cabo_cobre: 1.6, aco_galv: 3.5, la_mineral: 0.8, tinta_acrilica: 1.0, compensado: 0.60
+    }
+  },
+  escola: {
+    nome: 'Escola / creche', grupo: 'Edificações', un: 'm²', unLabel: 'área construída (m²)',
+    bench: { a: 195, b: 238, c: 300, d: 380 },
+    estrutural: true,
+    coef: {
+      concreto_c25: 0.26, aco_ca50_cv: 30, bloco_ceramico: 40, argamassa_ind: 105,
+      cimento_cp2: 22, ceramica_rev: 1.8, tinta_acrilica: 1.4, telha_fibro: 0.55,
+      aco_estrutural: 6, esq_aluminio: 0.14, vidro_comum: 0.12, pvc: 1.8,
+      cabo_cobre: 0.7, areia: 0.10, brita: 0.06, compensado: 0.40
+    }
+  },
+  saude: {
+    nome: 'Unidade de saúde / hospital', grupo: 'Edificações', un: 'm²', unLabel: 'área construída (m²)',
+    bench: { a: 265, b: 325, c: 410, d: 520 },
+    estrutural: true,
+    coef: {
+      concreto_c30: 0.30, aco_ca50_cv: 38, bloco_ceramico: 35, argamassa_ind: 110,
+      cimento_cp2: 24, porcelanato: 1.8, drywall: 0.8, aco_galv: 14, cobre: 2.2,
+      pvc: 3.5, ppr: 1.2, esq_aluminio: 0.16, vidro_comum: 0.14, la_mineral: 1.2,
+      tinta_acrilica: 1.5, aluminio_prim: 1.5, compensado: 0.50
+    }
+  },
+  galpao: {
+    nome: 'Galpão industrial / logístico', grupo: 'Edificações', un: 'm²', unLabel: 'área construída (m²)',
+    bench: { a: 170, b: 212, c: 270, d: 345 },
+    estrutural: false,
+    coef: {
+      aco_estrutural: 45, concreto_c30: 0.16, aco_ca50_cv: 12, aco_galv: 12,
+      bloco_concreto: 8, cimento_cp2: 8, brita: 0.10, areia: 0.05,
+      tinta_acrilica: 0.4, pvc: 0.5, cabo_cobre: 0.5
+    }
+  },
+  reforma: {
+    nome: 'Reforma / retrofit de edificação', grupo: 'Edificações', un: 'm²', unLabel: 'área intervinda (m²)',
+    bench: { a: 42, b: 54, c: 72, d: 98 },
+    estrutural: false,
+    coef: {
+      cimento_cp2: 10, argamassa_ind: 45, ceramica_rev: 1.2, tinta_acrilica: 1.3,
+      gesso: 8, pvc: 0.9, cabo_cobre: 0.6, drywall: 0.5, aco_ca50_cv: 3, concreto_c25: 0.03
+    }
+  },
+  rod_flex: {
+    nome: 'Rodovia — pavimento flexível', grupo: 'Infraestrutura', un: 'km', unLabel: 'extensão (km)',
+    bench: { a: 180000, b: 235000, c: 300000, d: 390000 },
+    estrutural: false,
+    coef: {
+      cbuq: 1200, bgs: 1500, sub_base_solo: 2000, emulsao: 12000,
+      tubo_concreto: 120, concreto_c25: 60, aco_ca50_cv: 4500, defensa: 8000
+    }
+  },
+  rod_rig: {
+    nome: 'Rodovia — pavimento rígido', grupo: 'Infraestrutura', un: 'km', unLabel: 'extensão (km)',
+    bench: { a: 520000, b: 680000, c: 860000, d: 1080000 },
+    estrutural: false,
+    coef: {
+      concreto_pav: 1760, aco_ca50_cv: 12000, bgs: 1200, sub_base_solo: 2000,
+      tubo_concreto: 120, concreto_c25: 60, defensa: 8000, geotextil: 10000
+    }
+  },
+  pav_urbano: {
+    nome: 'Pavimentação urbana / recapeamento', grupo: 'Infraestrutura', un: 'm²', unLabel: 'área pavimentada (m²)',
+    bench: { a: 13, b: 17.5, c: 23.5, d: 31 },
+    estrutural: false,
+    coef: { cbuq: 0.12, emulsao: 1.2, bgs: 0.15, sub_base_solo: 0.15 }
+  },
+  ponte: {
+    nome: 'Ponte / viaduto (OAE)', grupo: 'Infraestrutura', un: 'm²', unLabel: 'área de tabuleiro (m²)',
+    bench: { a: 390, b: 500, c: 640, d: 800 },
+    estrutural: false,
+    coef: {
+      concreto_c40: 0.85, aco_ca50_cv: 130, aco_prot: 25,
+      madeira_serrada: 0.04, compensado: 1.2
+    }
+  },
+  saneamento: {
+    nome: 'Rede de água ou esgoto', grupo: 'Infraestrutura', un: 'km', unLabel: 'extensão de rede (km)',
+    bench: { a: 42000, b: 55000, c: 72000, d: 92000 },
+    estrutural: false,
+    coef: {
+      pvc: 8000, concreto_c25: 45, areia: 600, brita: 120,
+      cimento_cp2: 3500, tubo_concreto: 30
+    }
+  },
+  barragem: {
+    nome: 'Barragem de concreto compactado a rolo', grupo: 'Infraestrutura', un: 'm³', unLabel: 'volume de maciço (m³)',
+    bench: { a: 75, b: 93, c: 120, d: 150 },
+    estrutural: false,
+    coef: {
+      cimento_cp2: 85, areia: 0.35, brita: 0.55, aco_ca50_cv: 8,
+      concreto_c25: 0.03, geotextil: 0.05
+    }
+  },
+  eta_ete: {
+    nome: 'Estação de tratamento (ETA ou ETE)', grupo: 'Infraestrutura', un: 'L/s', unLabel: 'vazão de projeto (L/s)',
+    bench: { a: 5400, b: 6600, c: 8500, d: 11000 },
+    estrutural: false,
+    coef: {
+      concreto_c30: 14, aco_ca50_cv: 1400, bloco_concreto: 60, tubo_pead: 90,
+      aco_estrutural: 120, impermeabilizante: 30, cimento_cp2: 260,
+      argamassa_ind: 800, cabo_cobre: 45, pvc: 60
+    }
+  }
+};
+
+/* ---------- Sistemas estruturais — multiplicadores por família ---------- */
+const SISTEMAS = {
+  conc_moldado: {
+    nome: 'Concreto armado moldado in loco',
+    mult: {}, add: {}
+  },
+  conc_premoldado: {
+    nome: 'Concreto pré-moldado / pré-fabricado',
+    mult: { concreto: 0.88, aco: 0.92, madeira: 0.25 }, add: {}
+  },
+  alv_estrutural: {
+    nome: 'Alvenaria estrutural',
+    mult: { concreto: 0.55, aco: 0.45, madeira: 0.30, ceramica: 1.25 }, add: {}
+  },
+  metalico: {
+    nome: 'Estrutura metálica',
+    mult: { concreto: 0.45, aco: 0.35, madeira: 0.15 }, add: { aco_estrutural: 42 }
+  },
+  steel_frame: {
+    nome: 'Light steel frame',
+    mult: { concreto: 0.40, aco: 0.30, ceramica: 0.35, argamassa: 0.35, madeira: 0.10 },
+    add: { aco_galv: 22, drywall: 3.2, la_mineral: 2.4 }
+  },
+  wood_frame: {
+    nome: 'Wood frame / CLT',
+    mult: { concreto: 0.35, aco: 0.25, ceramica: 0.30, argamassa: 0.30 },
+    add: { madeira_serrada: 0.09, drywall: 3.0, la_mineral: 2.4 }
+  }
+};
+
+/* ---------- Padrão de acabamento ---------- */
+const PADROES = {
+  baixo: { nome: 'Padrão popular', mult: { acabamento: 0.75, ceramica: 0.80, vidro: 0.70, metais: 0.65 } },
+  normal: { nome: 'Padrão normal', mult: {} },
+  alto: { nome: 'Padrão alto', mult: { acabamento: 1.35, ceramica: 1.40, vidro: 1.55, metais: 1.60 } }
+};
+
+/* ---------- Medidas de mitigação ---------- */
+const MEDIDAS = [
+  {
+    id: 'cimento_escoria', nome: 'Substituir CP II por CP III (alto forno)',
+    desc: 'Cimento com escória granulada de alto-forno reduz o clínquer, principal fonte de CO₂ do cimento.',
+    tipo: 'substituicao', de: ['cimento_cp2', 'cimento_cp5'], para: 'cimento_cp3',
+    custo: 'Neutro', barreira: 'Baixa', ref: 'NBR 16697'
+  },
+  {
+    id: 'concreto_escoria', nome: 'Concreto com adição de escória (35%)',
+    desc: 'Traços com adições reativas mantêm o desempenho estrutural e cortam cerca de 30% das emissões do concreto.',
+    tipo: 'substituicao', de: ['concreto_c30', 'concreto_c25'], para: 'concreto_esc',
+    custo: 'Neutro', barreira: 'Média', ref: 'NBR 12655'
+  },
+  {
+    id: 'aco_carvao', nome: 'Especificar aço de rota carvão vegetal',
+    desc: 'Siderurgia brasileira a carvão vegetal renovável emite cerca de metade da rota a coque mineral.',
+    tipo: 'substituicao', de: ['aco_ca50_ck'], para: 'aco_ca50_cv',
+    custo: 'Baixo', barreira: 'Baixa', ref: 'Certificação de origem do redutor'
+  },
+  {
+    id: 'aluminio_rec', nome: 'Alumínio com conteúdo reciclado',
+    desc: 'Alumínio secundário consome cerca de 5% da energia do primário.',
+    tipo: 'substituicao', de: ['aluminio_prim'], para: 'aluminio_rec',
+    custo: 'Neutro', barreira: 'Baixa', ref: 'EPD do fornecedor'
+  },
+  {
+    id: 'agregado_reciclado', nome: 'Agregado reciclado de RCC (30% dos agregados)',
+    desc: 'Substituição parcial de brita e areia natural por agregado reciclado classe A.',
+    tipo: 'substituicao', de: ['brita', 'areia'], para: 'agregado_rcc', pct: 0.30,
+    custo: 'Redução', barreira: 'Média', ref: 'NBR 15116 / Res. CONAMA 307'
+  },
+  {
+    id: 'wma', nome: 'Mistura asfáltica morna (WMA)',
+    desc: 'Reduz a temperatura de usinagem em 30 a 40 °C, cortando o consumo de combustível da usina.',
+    tipo: 'substituicao', de: ['cbuq'], para: 'cbuq_morno',
+    custo: 'Neutro', barreira: 'Média', ref: 'DNIT 179/2018-ME'
+  },
+  {
+    id: 'fornec_local', nome: 'Priorizar fornecedores em raio reduzido',
+    desc: 'Redução de 50% nas distâncias médias de transporte dos materiais pesados.',
+    tipo: 'reducao_etapa', etapa: 'A4', pct: 0.50,
+    custo: 'Redução', barreira: 'Média', ref: 'Art. 25, §1º da Lei 14.133/2021'
+  },
+  {
+    id: 'energia_renovavel', nome: 'Energia renovável certificada no canteiro',
+    desc: 'Contratação de energia no mercado livre com certificados I-REC zera a emissão elétrica do canteiro.',
+    tipo: 'reducao_energia', alvo: 'eletrica', pct: 1.0,
+    custo: 'Baixo', barreira: 'Baixa', ref: 'I-REC Standard'
+  },
+  {
+    id: 'perdas', nome: 'Programa de redução de perdas de materiais',
+    desc: 'Gestão de suprimentos e pré-fabricação reduzem em 40% as perdas físicas incorporadas.',
+    tipo: 'reducao_perdas', pct: 0.40,
+    custo: 'Redução', barreira: 'Média', ref: 'PBQP-H / SiAC'
+  },
+  {
+    id: 'residuos', nome: 'Triagem e reciclagem integral do RCC',
+    desc: 'Desvio total do resíduo de aterro para usina de reciclagem ou reuso na obra.',
+    tipo: 'reducao_etapa', etapa: 'A5r', pct: 0.55,
+    custo: 'Neutro', barreira: 'Baixa', ref: 'NBR 15112 / PGRCC'
+  },
+  {
+    id: 'eficiencia_diesel', nome: 'Renovação e telemetria da frota de equipamentos',
+    desc: 'Equipamentos Proconve MAR-1 com gestão de ociosidade reduzem 20% do diesel do canteiro.',
+    tipo: 'reducao_energia', alvo: 'diesel', pct: 0.20,
+    custo: 'Alto', barreira: 'Alta', ref: 'Res. CONAMA 433'
+  }
+];
+
+/* ---------- Equivalências de comunicação ---------- */
+const EQUIVALENCIAS = [
+  { id: 'arvores', nome: 'árvores nativas plantadas', desc: 'sequestro médio de 180 kgCO₂ em 20 anos', divisor: 180, sufixo: 'árvores' },
+  { id: 'carro', nome: 'quilômetros rodados de automóvel', desc: 'veículo leve a gasolina, 0,17 kgCO₂e/km', divisor: 0.17, sufixo: 'km' },
+  { id: 'voo', nome: 'voos São Paulo–Lisboa (ida)', desc: '1,1 tCO₂e por passageiro', divisor: 1100, sufixo: 'voos' },
+  { id: 'casa', nome: 'residências abastecidas por um ano', desc: 'consumo médio de 160 kWh/mês', divisor: 86.4, sufixo: 'residências' }
+];
+
+
+/* ---------- Vida útil dos componentes (anos) — base do módulo B4/B5 ----------
+   Materiais ausentes desta lista acompanham a vida útil da obra e não são repostos.
+--------------------------------------------------------------------------- */
+const VIDA_UTIL = {
+  tinta_acrilica: 8,
+  impermeabilizante: 15, manta_asf: 15,
+  ceramica_rev: 30, porcelanato: 40, gesso: 30, drywall: 30,
+  esq_aluminio: 30, esq_madeira: 20, vidro_comum: 30,
+  pvc: 30, ppr: 30, tubo_pead: 40, cabo_cobre: 30,
+  telha_ceramica: 30, telha_fibro: 25, aco_galv: 30,
+  la_mineral: 30, eps: 30, mdf: 20,
+  cbuq: 12, cbuq_morno: 12, emulsao: 12, geotextil: 25, defensa: 25
+};
+
+/* ---------- Consumo operacional por unidade de referência, por ano ----------
+   eletrica em kWh; agua em m³ de água e esgoto.
+--------------------------------------------------------------------------- */
+const OPERACAO = {
+  res_uni: { eletrica: 25, agua: 1.1 },
+  res_multi: { eletrica: 32, agua: 1.3 },
+  comercial: { eletrica: 105, agua: 0.50 },
+  escola: { eletrica: 40, agua: 0.70 },
+  saude: { eletrica: 190, agua: 2.00 },
+  galpao: { eletrica: 45, agua: 0.15 },
+  reforma: { eletrica: 32, agua: 1.00 },
+  rod_flex: { eletrica: 8000, agua: 0 },
+  rod_rig: { eletrica: 8000, agua: 0 },
+  pav_urbano: { eletrica: 2.5, agua: 0 },
+  ponte: { eletrica: 30, agua: 0 },
+  saneamento: { eletrica: 9000, agua: 0 },
+  barragem: { eletrica: 0.8, agua: 0 },
+  eta_ete: { eletrica: 14200, agua: 0 }
+};
+
+/* Água tratada e esgoto coletado — energia de captação, tratamento e recalque */
+const FE_AGUA = 0.550;
+
+/* ---------- Sistemas de compensação por reflorestamento ----------
+   taxa: tCO2e sequestrado por hectare por ano, média do horizonte de projeto
+   densidade: mudas por hectare
+--------------------------------------------------------------------------- */
+const REFLORESTAMENTO = [
+  {
+    id: 'ma', nome: 'Restauração ecológica — Mata Atlântica', taxa: 9.5, densidade: 1667,
+    permanencia: 'Alta', custoHa: 25000,
+    obs: 'Plantio de mudas nativas com espécies pioneiras e secundárias. Exige manutenção nos três primeiros anos.'
+  },
+  {
+    id: 'cerrado', nome: 'Restauração — Cerrado', taxa: 4.2, densidade: 1111,
+    permanencia: 'Alta', custoHa: 18000,
+    obs: 'Sequestro mais lento e boa parte do carbono fica no solo e nas raízes, o que dificulta a verificação.'
+  },
+  {
+    id: 'amazonia', nome: 'Restauração — Amazônia', taxa: 12.0, densidade: 1667,
+    permanencia: 'Alta', custoHa: 22000,
+    obs: 'Maior taxa de sequestro do país, porém com risco de perda por desmatamento e fogo.'
+  },
+  {
+    id: 'saf', nome: 'Sistema agroflorestal', taxa: 7.0, densidade: 1000,
+    permanencia: 'Média', custoHa: 30000,
+    obs: 'Combina espécies florestais e agrícolas. Gera renda ao produtor, o que favorece a permanência.'
+  },
+  {
+    id: 'mangue', nome: 'Restauração de manguezal', taxa: 6.5, densidade: 2500,
+    permanencia: 'Alta', custoHa: 35000,
+    obs: 'Alto estoque de carbono no sedimento. Requer licenciamento específico em área de preservação permanente.'
+  },
+  {
+    id: 'comercial', nome: 'Plantio comercial de eucalipto', taxa: 22.0, densidade: 1667,
+    permanencia: 'Baixa', custoHa: 12000,
+    obs: 'Incremento rápido, mas o carbono retorna à atmosfera na colheita. Só compensa de fato se o produto for de vida longa.'
+  }
+];
+
+/* ============================================================
+   CarbonCalc Pro — Motor de cálculo
+   Fronteira: A1-A3 (produto), A4 (transporte), A5 (construção)
+   Módulo C opcional (fim de vida simplificado)
+   ============================================================ */
+
+/* Coeficientes de canteiro por tipologia, por unidade de referência */
+const CANTEIRO = {
+  res_uni: { diesel: 1.8, eletrica: 11 },
+  res_multi: { diesel: 2.4, eletrica: 16 },
+  comercial: { diesel: 2.6, eletrica: 18 },
+  escola: { diesel: 2.0, eletrica: 12 },
+  saude: { diesel: 2.6, eletrica: 19 },
+  galpao: { diesel: 1.6, eletrica: 8 },
+  reforma: { diesel: 0.5, eletrica: 5 },
+  rod_flex: { diesel: 12000, eletrica: 900 },
+  rod_rig: { diesel: 10500, eletrica: 1400 },
+  pav_urbano: { diesel: 1.1, eletrica: 4 },
+  ponte: { diesel: 9.0, eletrica: 25 },
+  saneamento: { diesel: 3500, eletrica: 400 },
+  barragem: { diesel: 1.6, eletrica: 2.0 },
+  eta_ete: { diesel: 90, eletrica: 400 }
+};
+
+/* Distâncias médias de fornecimento por família (km) */
+const DIST_PADRAO = {
+  agregado: 40, concreto: 25, argamassa: 150, ceramica: 120, aglomerante: 180,
+  aco: 350, metais: 400, madeira: 300, acabamento: 250, vidro: 350,
+  isolante: 400, cobertura: 200, instalacoes: 300, pavimentacao: 60
+};
+
+const Engine = {
+
+  mapa: (function () {
+    const m = {};
+    MATERIAIS.forEach(x => { m[x.id] = x; });
+    return m;
+  })(),
+
+  material(id) { return this.mapa[id] || null; },
+
+  num(v, def) {
+    const n = typeof v === 'string' ? parseFloat(v.replace(',', '.')) : v;
+    return (isFinite(n) && !isNaN(n)) ? n : (def === undefined ? 0 : def);
+  },
+
+  /* ---------- Estado inicial ---------- */
+  estadoPadrao() {
+    return {
+      obra: {
+        nome: '', orgao: '', tipologia: 'res_multi', quantidade: 5000,
+        pavimentos: 8, sistema: 'conc_moldado', padrao: 'normal',
+        uf: 'PE', municipio: '', ano: new Date().getFullYear()
+      },
+      quantitativos: {},
+      gerado: null,
+      travados: {},
+      transporte: { modal: 'rod_pesado', ajuste: 1.0, distancias: {} },
+      canteiro: { diesel: null, eletrica: null, gasolina: 0, glp: 0, auto: true },
+      residuos: { destinacao: 'aterro', distancia: 30, extra: 0 },
+      fimVida: { incluir: false, taxaDemolicao: 0.85 },
+      operacao: {
+        incluir: false, rsp: 50, auto: true,
+        eletrica: null, agua: null, combustivel: 0,
+        descarbonizacao: 0, reposicao: true,
+        carbonatacao: false, taxaCarbonatacao: 0.08
+      },
+      compensacao: {
+        incluir: false, sistema: 'ma', base: 'incorporado',
+        fracao: 1, horizonte: 20, custoHa: null
+      },
+      cenario: { medidas: [] },
+      fatoresCustom: {}
+    };
+  },
+
+  /* ---------- Fator de emissão efetivo (permite override do usuário) ---------- */
+  fe(id, est) {
+    if (est && est.fatoresCustom && est.fatoresCustom[id] != null) {
+      return this.num(est.fatoresCustom[id], (this.mapa[id] || {}).fe || 0);
+    }
+    const m = this.mapa[id];
+    return m ? m.fe : 0;
+  },
+
+  /* ---------- Geração paramétrica de quantitativos ---------- */
+  gerarQuantitativos(obra) {
+    const tip = TIPOLOGIAS[obra.tipologia];
+    if (!tip) return {};
+    const q = this.num(obra.quantidade, 0);
+    const sis = (tip.estrutural && SISTEMAS[obra.sistema]) ? SISTEMAS[obra.sistema] : { mult: {}, add: {} };
+    const pad = PADROES[obra.padrao] || { mult: {} };
+
+    // Majoração estrutural por número de pavimentos
+    let fPav = 1;
+    if (tip.estrutural) {
+      const p = Math.max(1, this.num(obra.pavimentos, 1));
+      fPav = Math.min(1.45, 1 + 0.018 * (p - 1));
+    }
+
+    const out = {};
+    const somar = (id, valor) => {
+      if (!this.mapa[id]) return;
+      out[id] = (out[id] || 0) + valor;
+    };
+
+    Object.keys(tip.coef).forEach(id => {
+      const mat = this.mapa[id];
+      if (!mat) return;
+      let coef = tip.coef[id];
+      const mSis = sis.mult[mat.fam];
+      if (mSis != null) coef *= mSis;
+      const mPad = pad.mult[mat.fam];
+      if (mPad != null) coef *= mPad;
+      if (mat.fam === 'concreto' || mat.fam === 'aco') coef *= fPav;
+      somar(id, coef * q);
+    });
+
+    Object.keys(sis.add || {}).forEach(id => {
+      let coef = sis.add[id];
+      const mat = this.mapa[id];
+      if (mat && (mat.fam === 'concreto' || mat.fam === 'aco')) coef *= fPav;
+      somar(id, coef * q);
+    });
+
+    return out;
+  },
+
+  /* ---------- Aplicação das medidas de mitigação ao estado ---------- */
+  aplicarMedidas(est) {
+    const ativos = new Set(est.cenario.medidas || []);
+    const quant = Object.assign({}, est.quantitativos);
+    const perdaMult = { valor: 1 };
+    const etapaMult = { A4: 1, A5r: 1 };
+    const energiaMult = { diesel: 1, eletrica: 1, gasolina: 1, glp: 1 };
+
+    MEDIDAS.forEach(med => {
+      if (!ativos.has(med.id)) return;
+
+      if (med.tipo === 'substituicao') {
+        const pct = med.pct == null ? 1 : med.pct;
+        const destino = this.mapa[med.para];
+        if (!destino) return;
+        med.de.forEach(origemId => {
+          const origem = this.mapa[origemId];
+          if (!origem || !quant[origemId]) return;
+          if (origem.un !== destino.un) return; // segurança dimensional
+          const mover = quant[origemId] * pct;
+          quant[origemId] -= mover;
+          quant[med.para] = (quant[med.para] || 0) + mover;
+          if (quant[origemId] < 1e-9) delete quant[origemId];
+        });
+      } else if (med.tipo === 'reducao_perdas') {
+        perdaMult.valor *= (1 - med.pct);
+      } else if (med.tipo === 'reducao_etapa') {
+        if (etapaMult[med.etapa] != null) etapaMult[med.etapa] *= (1 - med.pct);
+      } else if (med.tipo === 'reducao_energia') {
+        if (energiaMult[med.alvo] != null) energiaMult[med.alvo] *= (1 - med.pct);
+      }
+    });
+
+    return { quant, perdaMult: perdaMult.valor, etapaMult, energiaMult };
+  },
+
+  /* ---------- Cálculo principal ---------- */
+  calcular(est, opts) {
+    opts = opts || {};
+    const usarMedidas = opts.comMedidas !== false;
+    const tip = TIPOLOGIAS[est.obra.tipologia] || TIPOLOGIAS.res_multi;
+    const refQtd = Math.max(this.num(est.obra.quantidade, 0), 0);
+
+    const mod = usarMedidas
+      ? this.aplicarMedidas(est)
+      : { quant: Object.assign({}, est.quantitativos), perdaMult: 1, etapaMult: { A4: 1, A5r: 1 }, energiaMult: { diesel: 1, eletrica: 1, gasolina: 1, glp: 1 } };
+
+    const modal = MODAIS.find(m => m.id === est.transporte.modal) || MODAIS[0];
+    const ajusteDist = this.num(est.transporte.ajuste, 1);
+
+    const itens = [];
+    let a13 = 0, a4 = 0, massaTotal = 0, massaPerdas = 0;
+
+    Object.keys(mod.quant).forEach(id => {
+      const mat = this.mapa[id];
+      if (!mat) return;
+      const qLiq = Math.max(this.num(mod.quant[id], 0), 0);
+      if (qLiq <= 0) return;
+
+      const perda = Math.max(0, mat.perda * mod.perdaMult);
+      const qBruta = qLiq * (1 + perda);
+      const fator = this.fe(id, est);
+
+      const e13 = qBruta * fator;
+      const massaKg = qBruta * mat.mu;
+      const massaT = massaKg / 1000;
+
+      const dCustom = est.transporte.distancias[id];
+      const dist = (dCustom != null && dCustom !== '')
+        ? this.num(dCustom, 0)
+        : (DIST_PADRAO[mat.fam] || 250) * ajusteDist;
+
+      const e4 = massaT * dist * modal.fe;
+
+      a13 += e13;
+      a4 += e4;
+      massaTotal += massaKg;
+      massaPerdas += qLiq * perda * mat.mu;
+
+      itens.push({
+        id, nome: mat.nome, fam: mat.fam, un: mat.un,
+        qLiq, qBruta, perda, fator, dist,
+        massaT, a13: e13, a4: e4, total: e13 + e4
+      });
+    });
+
+    a4 *= mod.etapaMult.A4;
+    itens.forEach(i => { i.a4 *= mod.etapaMult.A4; i.total = i.a13 + i.a4; });
+
+    /* --- A5: energia de canteiro --- */
+    const cant = CANTEIRO[est.obra.tipologia] || { diesel: 0, eletrica: 0 };
+    const auto = est.canteiro.auto !== false;
+    const consumo = {
+      diesel: (auto || est.canteiro.diesel == null) ? cant.diesel * refQtd : this.num(est.canteiro.diesel, 0),
+      eletrica: (auto || est.canteiro.eletrica == null) ? cant.eletrica * refQtd : this.num(est.canteiro.eletrica, 0),
+      gasolina: this.num(est.canteiro.gasolina, 0),
+      glp: this.num(est.canteiro.glp, 0)
+    };
+
+    const energia = {};
+    let a5e = 0;
+    Object.keys(consumo).forEach(k => {
+      const v = consumo[k] * (mod.energiaMult[k] != null ? mod.energiaMult[k] : 1);
+      const e = v * ENERGIA[k].fe;
+      energia[k] = { consumo: v, emissao: e, un: ENERGIA[k].un, nome: ENERGIA[k].nome };
+      a5e += e;
+    });
+
+    /* --- A5: resíduos de construção --- */
+    const dest = DESTINACAO.find(d => d.id === est.residuos.destinacao) || DESTINACAO[0];
+    const massaRccT = massaPerdas / 1000 + this.num(est.residuos.extra, 0);
+    const distRcc = this.num(est.residuos.distancia, 30);
+    const a5rTransp = massaRccT * distRcc * MODAIS[1].fe;
+    const a5rDest = massaRccT * dest.fe;
+    const a5r = (a5rTransp + a5rDest) * mod.etapaMult.A5r;
+
+    /* --- Módulo C: fim de vida simplificado --- */
+    let c = 0;
+    if (est.fimVida.incluir) {
+      const taxa = this.num(est.fimVida.taxaDemolicao, 0.85);
+      const massaDemT = (massaTotal / 1000) * taxa;
+      c = massaDemT * (DESTINACAO[0].fe + 30 * MODAIS[1].fe) + massaDemT * 1.6;
+    }
+
+    /* Carbono incorporado — é este o valor classificado pela etiqueta.
+       O módulo B entra em indicador separado para não misturar fronteiras. */
+    const total = a13 + a4 + a5e + a5r + c;
+    const intensidade = refQtd > 0 ? total / refQtd : 0;
+
+    /* --- Curva ABC de carbono --- */
+    const ordenados = itens.slice().sort((x, y) => y.total - x.total);
+    let acum = 0;
+    const somaItens = ordenados.reduce((s, i) => s + i.total, 0) || 1;
+    ordenados.forEach(i => {
+      acum += i.total;
+      i.pct = i.total / somaItens;
+      i.pctAcum = acum / somaItens;
+      i.classe = i.pctAcum <= 0.80 ? 'A' : (i.pctAcum <= 0.95 ? 'B' : 'C');
+    });
+
+    /* --- Agregação por família --- */
+    const porFamilia = {};
+    itens.forEach(i => {
+      if (!porFamilia[i.fam]) porFamilia[i.fam] = { fam: i.fam, nome: FAMILIAS[i.fam].nome, cor: FAMILIAS[i.fam].cor, valor: 0 };
+      porFamilia[i.fam].valor += i.total;
+    });
+    const familias = Object.values(porFamilia).sort((x, y) => y.valor - x.valor);
+
+    /* --- Classificação frente ao benchmark --- */
+    const b = tip.bench;
+    let faixa = 'E', faixaTexto = 'Muito acima da referência';
+    if (intensidade <= b.a) { faixa = 'A'; faixaTexto = 'Excelente desempenho'; }
+    else if (intensidade <= b.b) { faixa = 'B'; faixaTexto = 'Acima da prática usual'; }
+    else if (intensidade <= b.c) { faixa = 'C'; faixaTexto = 'Prática usual de mercado'; }
+    else if (intensidade <= b.d) { faixa = 'D'; faixaTexto = 'Abaixo da prática usual'; }
+
+    const modB = this.moduloB(est, itens, refQtd);
+    const cicloVida = total + modB.total;
+    const compensacao = this.compensar(est, total, cicloVida);
+
+    return {
+      tipologia: tip, refQtd, unidade: tip.un,
+      moduloB: modB, operacional: modB.total, cicloVida,
+      intensidadeCicloVida: refQtd > 0 ? cicloVida / refQtd : 0,
+      compensacao, residual: compensacao.residual,
+      etapas: {
+        a13: { nome: 'A1–A3 · Produção de materiais', valor: a13 },
+        a4: { nome: 'A4 · Transporte até a obra', valor: a4 },
+        a5e: { nome: 'A5 · Energia e combustíveis do canteiro', valor: a5e },
+        a5r: { nome: 'A5 · Resíduos de construção', valor: a5r },
+        c: { nome: 'C · Fim de vida (estimado)', valor: c }
+      },
+      total, intensidade, faixa, faixaTexto, bench: b,
+      itens: ordenados, familias, energia,
+      massaTotalT: massaTotal / 1000, massaRccT,
+      medidasAtivas: (est.cenario.medidas || []).slice()
+    };
+  },
+
+  /* ---------- Módulo B: uso da edificação ou da infraestrutura ----------
+     B1  carbonatação do concreto (crédito, opcional)
+     B2–B5 manutenção e reposição de componentes
+     B6  energia operacional
+     B7  água e esgoto
+  --------------------------------------------------------------------- */
+  moduloB(est, itens, refQtd) {
+    const cfg = est.operacao || {};
+    const rsp = Math.max(1, this.num(cfg.rsp, 50));
+    const vazio = {
+      ativo: false, rsp,
+      b1: 0, b2b5: 0, b6: 0, b7: 0, total: 0,
+      reposicoes: [], kwhAno: 0, m3Ano: 0, feMatriz: ENERGIA.eletrica.fe
+    };
+    if (!cfg.incluir) return vazio;
+
+    /* B2–B5 — cada componente de vida útil menor que o período de estudo
+       é produzido e transportado outra vez a cada ciclo. */
+    let b2b5 = 0;
+    const reposicoes = [];
+    if (cfg.reposicao !== false) {
+      itens.forEach(i => {
+        const vida = VIDA_UTIL[i.id];
+        if (!vida || vida >= rsp) return;
+        const ciclos = Math.ceil(rsp / vida) - 1;
+        if (ciclos <= 0) return;
+        const emissao = ciclos * (i.a13 + i.a4);
+        b2b5 += emissao;
+        reposicoes.push({ id: i.id, nome: i.nome, vida, ciclos, emissao });
+      });
+      reposicoes.sort((a, b) => b.emissao - a.emissao);
+    }
+
+    /* B6 — energia operacional. A matriz elétrica pode ser projetada em
+       trajetória linear de descarbonização ao longo do período. */
+    const op = OPERACAO[est.obra.tipologia] || { eletrica: 0, agua: 0 };
+    const auto = cfg.auto !== false;
+    const kwhAno = (auto || cfg.eletrica == null) ? op.eletrica * refQtd : this.num(cfg.eletrica, 0);
+    const d = Math.min(Math.max(this.num(cfg.descarbonizacao, 0), 0), 1);
+    const feMatriz = ENERGIA.eletrica.fe * (1 - d / 2);
+    const b6 = kwhAno * rsp * feMatriz + this.num(cfg.combustivel, 0) * rsp * ENERGIA.diesel.fe;
+
+    /* B7 — água tratada e esgoto coletado */
+    const m3Ano = (auto || cfg.agua == null) ? op.agua * refQtd : this.num(cfg.agua, 0);
+    const b7 = m3Ano * rsp * FE_AGUA;
+
+    /* B1 — reabsorção de CO2 por carbonatação das superfícies cimentícias */
+    let b1 = 0;
+    if (cfg.carbonatacao) {
+      const base = itens.reduce((sum, i) =>
+        (i.fam === 'concreto' || i.fam === 'aglomerante') ? sum + i.a13 : sum, 0);
+      b1 = -base * Math.min(Math.max(this.num(cfg.taxaCarbonatacao, 0.08), 0), 0.25);
+    }
+
+    return {
+      ativo: true, rsp, b1, b2b5, b6, b7,
+      total: b1 + b2b5 + b6 + b7,
+      reposicoes, kwhAno, m3Ano, feMatriz
+    };
+  },
+
+  /* ---------- Compensação por reflorestamento ---------- */
+  compensar(est, incorporado, cicloVida) {
+    const cfg = est.compensacao || {};
+    const sis = REFLORESTAMENTO.find(r => r.id === cfg.sistema) || REFLORESTAMENTO[0];
+    const base = cfg.base === 'ciclo' ? cicloVida : incorporado;
+    const vazio = {
+      ativo: false, sistema: sis, base, alvo: 0, area: 0, mudas: 0,
+      custo: 0, horizonte: 20, residual: base
+    };
+    if (!cfg.incluir || base <= 0) return vazio;
+
+    const fracao = Math.min(Math.max(this.num(cfg.fracao, 1), 0), 1);
+    const horizonte = Math.max(1, this.num(cfg.horizonte, 20));
+    const alvo = base * fracao;
+    const seqPorHa = sis.taxa * horizonte * 1000; // kgCO2e por hectare no horizonte
+    const area = seqPorHa > 0 ? alvo / seqPorHa : 0;
+    const custoHa = cfg.custoHa != null ? this.num(cfg.custoHa, sis.custoHa) : sis.custoHa;
+
+    return {
+      ativo: true, sistema: sis, base, alvo, horizonte, fracao,
+      area, mudas: area * sis.densidade, custoHa, custo: area * custoHa,
+      residual: base - alvo
+    };
+  },
+
+  /* ---------- Comparação cenário base × mitigado ---------- */
+  comparar(est) {
+    const base = this.calcular(est, { comMedidas: false });
+    const mit = this.calcular(est, { comMedidas: true });
+    const delta = base.total - mit.total;
+    return {
+      base, mitigado: mit, delta,
+      pct: base.total > 0 ? delta / base.total : 0
+    };
+  },
+
+  /* ---------- Equivalências ---------- */
+  equivalencias(totalKg) {
+    return EQUIVALENCIAS.map(e => ({
+      nome: e.nome, desc: e.desc, sufixo: e.sufixo,
+      valor: e.divisor > 0 ? totalKg / e.divisor : 0
+    }));
+  }
+};
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { Engine, CANTEIRO, DIST_PADRAO };
+}
+
+/* ============================================================
+   CarbonCalc Pro — Interface
+   ============================================================ */
+
+const UFS = ['AC','AL','AM','AP','BA','CE','DF','ES','GO','MA','MG','MS','MT','PA','PB','PE','PI','PR','RJ','RN','RO','RR','RS','SC','SE','SP','TO'];
+
+const UI = {
+  est: null,
+  ultimo: null,
+
+  /* ---------- Formatação ---------- */
+  n(v, dec) {
+    if (!isFinite(v)) v = 0;
+    return v.toLocaleString('pt-BR', { minimumFractionDigits: dec == null ? 2 : dec, maximumFractionDigits: dec == null ? 2 : dec });
+  },
+  pct(v, dec) { return this.n(v * 100, dec == null ? 1 : dec) + '%'; },
+  co2(kg) {
+    if (Math.abs(kg) >= 1e6) return this.n(kg / 1000, 0) + ' t';
+    if (Math.abs(kg) >= 1000) return this.n(kg / 1000, 1) + ' t';
+    return this.n(kg, 1) + ' kg';
+  },
+  esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  },
+
+  /* ---------- Geração paramétrica e controle de sincronia ---------- */
+  gerar() {
+    this.est.quantitativos = Engine.gerarQuantitativos(this.est.obra);
+    this.est.gerado = this.instantaneoParams();
+  },
+
+  instantaneoParams() {
+    const o = this.est.obra;
+    return {
+      tipologia: o.tipologia, quantidade: Engine.num(o.quantidade, 0),
+      sistema: o.sistema, padrao: o.padrao, pavimentos: Engine.num(o.pavimentos, 1)
+    };
+  },
+
+  /* Devolve o que mudou desde a última geração, ou null se a planilha
+     ainda corresponde aos parâmetros da tela. */
+  desatualizado() {
+    const g = this.est.gerado;
+    if (!g || !Object.keys(this.est.quantitativos).length) return null;
+    const a = this.instantaneoParams();
+    const tip = TIPOLOGIAS[g.tipologia] || {};
+    const dif = [];
+    if (g.tipologia !== a.tipologia) dif.push('a tipologia');
+    if (Math.abs(g.quantidade - a.quantidade) > 1e-9) dif.push('o porte da obra');
+    if (tip.estrutural && g.sistema !== a.sistema) dif.push('o sistema estrutural');
+    if (tip.estrutural && g.pavimentos !== a.pavimentos) dif.push('o número de pavimentos');
+    if (tip.grupo === 'Edificações' && g.padrao !== a.padrao) dif.push('o padrão de acabamento');
+    return dif.length ? { dif, g } : null;
+  },
+
+  renderSincronia() {
+    const d = this.desatualizado();
+    const html = d ? `<div class="aviso-box" style="border-left-color:var(--ferrugem)">
+        <strong>Os quantitativos não correspondem aos parâmetros da tela.</strong>
+        A planilha em uso foi gerada antes de você alterar ${this.esc(d.dif.join(', '))}.
+        Enquanto isso não for resolvido, a intensidade de carbono e a etiqueta ficam sem sentido, porque
+        dividem a emissão de uma obra pelo porte de outra.
+        <div class="linha-btns"><button data-resync="1">Recalcular a planilha agora</button>
+        <button data-resync="0" class="sutil">Manter, os valores foram ajustados à mão</button></div>
+      </div>` : '';
+    ['aviso-sincronia-quant', 'aviso-sincronia-res'].forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.innerHTML = html;
+      el.querySelectorAll('button[data-resync]').forEach(b => b.addEventListener('click', ev => {
+        if (ev.target.dataset.resync === '1') { this.gerar(); this.toast('Planilha recalculada'); }
+        else { this.est.gerado = this.instantaneoParams(); this.toast('Aviso dispensado'); }
+        this.atualizar();
+      }));
+    });
+  },
+
+  /* ---------- Persistência ---------- */
+  salvarLS() {
+    try { localStorage.setItem(APP_INFO.chaveLS, JSON.stringify(this.est)); } catch (e) { /* modo privado */ }
+  },
+  carregarLS() {
+    try {
+      const s = localStorage.getItem(APP_INFO.chaveLS);
+      if (!s) return null;
+      const o = JSON.parse(s);
+      const base = Engine.estadoPadrao();
+      return {
+        obra: Object.assign(base.obra, o.obra || {}),
+        quantitativos: o.quantitativos || {},
+        gerado: o.gerado || null,
+        travados: o.travados || {},
+        transporte: Object.assign(base.transporte, o.transporte || {}),
+        canteiro: Object.assign(base.canteiro, o.canteiro || {}),
+        residuos: Object.assign(base.residuos, o.residuos || {}),
+        fimVida: Object.assign(base.fimVida, o.fimVida || {}),
+        operacao: Object.assign(base.operacao, o.operacao || {}),
+        compensacao: Object.assign(base.compensacao, o.compensacao || {}),
+        cenario: Object.assign(base.cenario, o.cenario || {}),
+        fatoresCustom: o.fatoresCustom || {}
+      };
+    } catch (e) { return null; }
+  },
+
+  toast(msg) {
+    const t = document.getElementById('toast');
+    if (!t) return;
+    t.textContent = msg; t.classList.add('on');
+    clearTimeout(this._tt);
+    this._tt = setTimeout(() => t.classList.remove('on'), 2400);
+  },
+
+  /* ============ Inicialização ============ */
+  iniciar() {
+    this.est = this.carregarLS() || Engine.estadoPadrao();
+    if (!Object.keys(this.est.quantitativos).length) this.gerar();
+    this.montarSelects();
+    this.ligarEventos();
+    Manual.iniciar();
+    this.preencherFormulario();
+    this.atualizar();
+    if (this.avisosAceitos()) {
+      const a = document.getElementById('abertura');
+      if (a) a.hidden = true;
+      this.isolarFundo(false);
+    } else {
+      this.mostrarAvisos();
+    }
+  },
+
+  montarSelects: function () {
+    const set = (id, html) => { const el = document.getElementById(id); if (el) el.innerHTML = html; };
+
+    set('f-uf', UFS.map(u => `<option value="${u}">${u}</option>`).join(''));
+
+    const grupos = {};
+    Object.keys(TIPOLOGIAS).forEach(k => {
+      const t = TIPOLOGIAS[k];
+      (grupos[t.grupo] = grupos[t.grupo] || []).push(`<option value="${k}">${this.esc(t.nome)}</option>`);
+    });
+    set('f-tipologia', Object.keys(grupos).map(g => `<optgroup label="${g}">${grupos[g].join('')}</optgroup>`).join(''));
+
+    set('f-sistema', Object.keys(SISTEMAS).map(k => `<option value="${k}">${this.esc(SISTEMAS[k].nome)}</option>`).join(''));
+    set('f-padrao', Object.keys(PADROES).map(k => `<option value="${k}">${this.esc(PADROES[k].nome)}</option>`).join(''));
+    set('f-modal', MODAIS.map(m => `<option value="${m.id}">${this.esc(m.nome)}</option>`).join(''));
+    set('f-destinacao', DESTINACAO.map(d => `<option value="${d.id}">${this.esc(d.nome)}</option>`).join(''));
+
+    const porFam = {};
+    MATERIAIS.forEach(m => { (porFam[m.fam] = porFam[m.fam] || []).push(m); });
+    set('f-add-material', Object.keys(porFam).map(f =>
+      `<optgroup label="${this.esc(FAMILIAS[f].nome)}">` +
+      porFam[f].map(m => `<option value="${m.id}">${this.esc(m.nome)} (${m.un})</option>`).join('') +
+      `</optgroup>`).join(''));
+
+    set('f-comp-sistema', REFLORESTAMENTO.map(r =>
+      `<option value="${r.id}">${this.esc(r.nome)}</option>`).join(''));
+
+    set('f-filtro-fam', '<option value="">Todas as famílias</option>' +
+      Object.keys(FAMILIAS).map(f => `<option value="${f}">${this.esc(FAMILIAS[f].nome)}</option>`).join(''));
+  },
+
+  preencherFormulario() {
+    const o = this.est.obra;
+    const v = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
+    const c = (id, val) => { const el = document.getElementById(id); if (el) el.checked = !!val; };
+
+    v('f-nome', o.nome); v('f-orgao', o.orgao); v('f-uf', o.uf); v('f-ano', o.ano);
+    v('f-tipologia', o.tipologia); v('f-quantidade', o.quantidade);
+    v('f-sistema', o.sistema); v('f-pavimentos', o.pavimentos); v('f-padrao', o.padrao);
+    c('f-fimvida', this.est.fimVida.incluir);
+    v('f-taxa-demolicao', this.est.fimVida.taxaDemolicao);
+    v('f-modal', this.est.transporte.modal);
+    v('f-ajuste-dist', this.est.transporte.ajuste);
+    c('f-canteiro-auto', this.est.canteiro.auto !== false);
+    v('f-gasolina', this.est.canteiro.gasolina);
+    v('f-glp', this.est.canteiro.glp);
+    v('f-destinacao', this.est.residuos.destinacao);
+    v('f-dist-rcc', this.est.residuos.distancia);
+    v('f-rcc-extra', this.est.residuos.extra);
+
+    const op = this.est.operacao, cp = this.est.compensacao;
+    c('f-op-incluir', op.incluir); v('f-rsp', op.rsp);
+    v('f-descarb', Math.round(Engine.num(op.descarbonizacao, 0) * 100));
+    c('f-op-auto', op.auto !== false);
+    v('f-op-combustivel', op.combustivel);
+    c('f-reposicao', op.reposicao !== false);
+    c('f-carbonatacao', op.carbonatacao);
+    v('f-taxa-carb', op.taxaCarbonatacao);
+
+    c('f-comp-incluir', cp.incluir); v('f-comp-sistema', cp.sistema);
+    v('f-comp-base', cp.base);
+    v('f-comp-fracao', Math.round(Engine.num(cp.fracao, 1) * 100));
+    v('f-comp-horizonte', cp.horizonte);
+    const sis = REFLORESTAMENTO.find(r => r.id === cp.sistema) || REFLORESTAMENTO[0];
+    v('f-comp-custo', cp.custoHa != null ? cp.custoHa : sis.custoHa);
+
+    this.sincronizarTipologia();
+  },
+
+  sincronizarTipologia() {
+    const tip = TIPOLOGIAS[this.est.obra.tipologia];
+    if (!tip) return;
+    const lbl = document.getElementById('lbl-unidade');
+    if (lbl) lbl.textContent = tip.unLabel;
+    ['wrap-sistema', 'wrap-pavimentos'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.display = tip.estrutural ? '' : 'none';
+    });
+    const wp = document.getElementById('wrap-padrao');
+    if (wp) wp.style.display = tip.grupo === 'Edificações' ? '' : 'none';
+    const wd = document.getElementById('wrap-demolicao');
+    if (wd) wd.style.display = this.est.fimVida.incluir ? '' : 'none';
+
+    const cant = CANTEIRO[this.est.obra.tipologia] || { diesel: 0, eletrica: 0 };
+    const auto = this.est.canteiro.auto !== false;
+    const q = Engine.num(this.est.obra.quantidade, 0);
+    const di = document.getElementById('f-diesel');
+    const el = document.getElementById('f-eletrica');
+    if (di) { di.disabled = auto; if (auto) di.value = Math.round(cant.diesel * q); else if (this.est.canteiro.diesel != null) di.value = this.est.canteiro.diesel; }
+    if (el) { el.disabled = auto; if (auto) el.value = Math.round(cant.eletrica * q); else if (this.est.canteiro.eletrica != null) el.value = this.est.canteiro.eletrica; }
+
+    const op = this.est.operacao;
+    const bo = document.getElementById('bloco-operacao');
+    if (bo) bo.style.display = op.incluir ? '' : 'none';
+    const wc = document.getElementById('wrap-carbonatacao');
+    if (wc) wc.style.display = op.carbonatacao ? '' : 'none';
+    const bc = document.getElementById('bloco-compensacao');
+    if (bc) bc.style.display = this.est.compensacao.incluir ? '' : 'none';
+
+    const oper = OPERACAO[this.est.obra.tipologia] || { eletrica: 0, agua: 0 };
+    const opAuto = op.auto !== false;
+    const oe = document.getElementById('f-op-eletrica');
+    const oa = document.getElementById('f-op-agua');
+    if (oe) { oe.disabled = opAuto; if (opAuto) oe.value = Math.round(oper.eletrica * q); else if (op.eletrica != null) oe.value = op.eletrica; }
+    if (oa) { oa.disabled = opAuto; if (opAuto) oa.value = Math.round(oper.agua * q); else if (op.agua != null) oa.value = op.agua; }
+  },
+
+  /* ============ Eventos ============ */
+  ligarEventos() {
+    const on = (id, ev, fn) => { const el = document.getElementById(id); if (el) el.addEventListener(ev, fn); };
+
+    document.querySelectorAll('.rail button[data-alvo]').forEach(b => {
+      b.addEventListener('click', () => this.irPara(b.dataset.alvo));
+    });
+
+    // Identificação
+    on('f-nome', 'input', e => { this.est.obra.nome = e.target.value; this.salvarLS(); });
+    on('f-orgao', 'input', e => { this.est.obra.orgao = e.target.value; this.salvarLS(); });
+    on('f-uf', 'change', e => { this.est.obra.uf = e.target.value; this.salvarLS(); });
+    on('f-ano', 'change', e => { this.est.obra.ano = Engine.num(e.target.value, 2026); this.salvarLS(); });
+
+    // Parâmetros construtivos
+    on('f-tipologia', 'change', e => {
+      this.est.obra.tipologia = e.target.value;
+      this.gerar();
+      this.sincronizarTipologia(); this.atualizar();
+      this.toast('Quantitativos regerados para a nova tipologia');
+    });
+    ['f-quantidade', 'f-pavimentos'].forEach(id => on(id, 'input', () => {
+      this.est.obra.quantidade = Engine.num(document.getElementById('f-quantidade').value, 0);
+      this.est.obra.pavimentos = Engine.num(document.getElementById('f-pavimentos').value, 1);
+      this.sincronizarTipologia(); this.atualizar();
+    }));
+    on('f-sistema', 'change', e => { this.est.obra.sistema = e.target.value; this.atualizar(); });
+    on('f-padrao', 'change', e => { this.est.obra.padrao = e.target.value; this.atualizar(); });
+
+    on('btn-gerar', 'click', () => {
+      this.gerar();
+      this.atualizar();
+      this.irPara('quant');
+      this.toast('Quantitativos gerados');
+    });
+    on('btn-regerar', 'click', () => {
+      this.gerar();
+      this.atualizar(); this.toast('Planilha recalculada pelos parâmetros');
+    });
+    on('btn-limpar-quant', 'click', () => {
+      if (!confirm('Esvaziar toda a planilha de quantitativos?')) return;
+      this.est.quantitativos = {}; this.atualizar();
+    });
+
+    on('f-fimvida', 'change', e => {
+      this.est.fimVida.incluir = e.target.checked;
+      this.sincronizarTipologia(); this.atualizar();
+    });
+    on('f-taxa-demolicao', 'input', e => { this.est.fimVida.taxaDemolicao = Engine.num(e.target.value, 0.85); this.atualizar(); });
+
+    // Acréscimo de material
+    on('btn-add-material', 'click', () => {
+      const id = document.getElementById('f-add-material').value;
+      const q = Engine.num(document.getElementById('f-add-qtd').value, 0);
+      if (!id || q <= 0) { this.toast('Informe uma quantidade maior que zero'); return; }
+      this.est.quantitativos[id] = (this.est.quantitativos[id] || 0) + q;
+      document.getElementById('f-add-qtd').value = '';
+      this.atualizar();
+      this.toast(Engine.material(id).nome + ' acrescentado');
+    });
+
+    // Transporte
+    on('f-modal', 'change', e => { this.est.transporte.modal = e.target.value; this.atualizar(); });
+    on('f-ajuste-dist', 'input', e => { this.est.transporte.ajuste = Engine.num(e.target.value, 1); this.atualizar(); });
+
+    // Canteiro
+    on('f-canteiro-auto', 'change', e => {
+      this.est.canteiro.auto = e.target.checked;
+      this.sincronizarTipologia(); this.atualizar();
+    });
+    ['diesel', 'eletrica', 'gasolina', 'glp'].forEach(k => on('f-' + k, 'input', e => {
+      this.est.canteiro[k] = Engine.num(e.target.value, 0); this.atualizar();
+    }));
+    on('f-destinacao', 'change', e => { this.est.residuos.destinacao = e.target.value; this.atualizar(); });
+    on('f-dist-rcc', 'input', e => { this.est.residuos.distancia = Engine.num(e.target.value, 0); this.atualizar(); });
+    on('f-rcc-extra', 'input', e => { this.est.residuos.extra = Engine.num(e.target.value, 0); this.atualizar(); });
+
+    // Operação (módulo B)
+    on('f-op-incluir', 'change', e => {
+      this.est.operacao.incluir = e.target.checked;
+      this.sincronizarTipologia(); this.atualizar();
+    });
+    on('f-rsp', 'input', e => { this.est.operacao.rsp = Engine.num(e.target.value, 50); this.atualizar(); });
+    on('f-descarb', 'input', e => { this.est.operacao.descarbonizacao = Engine.num(e.target.value, 0) / 100; this.atualizar(); });
+    on('f-op-auto', 'change', e => {
+      this.est.operacao.auto = e.target.checked;
+      this.sincronizarTipologia(); this.atualizar();
+    });
+    ['eletrica', 'agua', 'combustivel'].forEach(k => on('f-op-' + k, 'input', e => {
+      this.est.operacao[k] = Engine.num(e.target.value, 0); this.atualizar();
+    }));
+    on('f-reposicao', 'change', e => { this.est.operacao.reposicao = e.target.checked; this.atualizar(); });
+    on('f-carbonatacao', 'change', e => {
+      this.est.operacao.carbonatacao = e.target.checked;
+      this.sincronizarTipologia(); this.atualizar();
+    });
+    on('f-taxa-carb', 'input', e => { this.est.operacao.taxaCarbonatacao = Engine.num(e.target.value, 0.08); this.atualizar(); });
+
+    // Compensação
+    on('f-comp-incluir', 'change', e => {
+      this.est.compensacao.incluir = e.target.checked;
+      this.sincronizarTipologia(); this.atualizar();
+    });
+    on('f-comp-sistema', 'change', e => {
+      this.est.compensacao.sistema = e.target.value;
+      this.est.compensacao.custoHa = null;
+      const sis = REFLORESTAMENTO.find(r => r.id === e.target.value) || REFLORESTAMENTO[0];
+      const c = document.getElementById('f-comp-custo');
+      if (c) c.value = sis.custoHa;
+      this.atualizar();
+    });
+    on('f-comp-base', 'change', e => { this.est.compensacao.base = e.target.value; this.atualizar(); });
+    on('f-comp-fracao', 'input', e => { this.est.compensacao.fracao = Engine.num(e.target.value, 100) / 100; this.atualizar(); });
+    on('f-comp-horizonte', 'input', e => { this.est.compensacao.horizonte = Engine.num(e.target.value, 20); this.atualizar(); });
+    on('f-comp-custo', 'input', e => { this.est.compensacao.custoHa = Engine.num(e.target.value, 0); this.atualizar(); });
+
+    // Avisos legais
+    on('btn-aceitar', 'click', () => this.aceitarAvisos());
+    on('btn-avisos', 'click', () => this.mostrarAvisos(true));
+
+    // Cenários
+    on('btn-marcar-todas', 'click', () => { this.est.cenario.medidas = MEDIDAS.map(m => m.id); this.atualizar(); });
+    on('btn-desmarcar', 'click', () => { this.est.cenario.medidas = []; this.atualizar(); });
+
+    // Fatores
+    on('f-busca-fator', 'input', () => this.renderFatores());
+    on('f-filtro-fam', 'change', () => this.renderFatores());
+    on('btn-restaurar-fatores', 'click', () => {
+      this.est.fatoresCustom = {}; this.atualizar(); this.toast('Fatores de referência restaurados');
+    });
+
+    // Topo
+    on('btn-tema', 'click', () => this.alternarTema());
+    on('btn-exemplo', 'click', () => this.carregarExemplo());
+    on('btn-salvar', 'click', () => this.baixarProjeto());
+    on('btn-abrir', 'click', () => document.getElementById('arq-projeto').click());
+    on('arq-projeto', 'change', e => this.abrirProjeto(e));
+    on('btn-csv', 'click', () => this.exportarCSV());
+    on('btn-imprimir', 'click', () => window.print());
+  },
+
+  /* ---------- Tela de abertura e avisos legais ---------- */
+  chaveAvisos() { return APP_INFO.chaveLS + '_avisos'; },
+
+  avisosAceitos() {
+    try { return localStorage.getItem(this.chaveAvisos()) === APP_INFO.versao; }
+    catch (e) { return false; }
+  },
+
+  mostrarAvisos(direta) {
+    const a = document.getElementById('abertura');
+    if (!a) return;
+    // Na reabertura, a animação já foi vista: mostra o conteúdo pronto.
+    a.classList.toggle('direta', !!direta);
+    a.hidden = false;
+    this.isolarFundo(true);
+    const v = document.getElementById('abertura-versao');
+    if (v) v.textContent = 'Versão ' + APP_INFO.versao + ' · ' + APP_INFO.norma;
+    const cx = document.getElementById('abertura-avisos');
+    if (cx) { cx.scrollTop = 0; if (direta && cx.focus) cx.focus(); }
+  },
+
+  isolarFundo(ativo) {
+    ['.topo', '.shell'].forEach(sel => {
+      const el = document.querySelector(sel);
+      if (el) { if (ativo) el.setAttribute('aria-hidden', 'true'); else el.removeAttribute('aria-hidden'); }
+    });
+  },
+
+  aceitarAvisos() {
+    try { localStorage.setItem(this.chaveAvisos(), APP_INFO.versao); } catch (e) { }
+    const a = document.getElementById('abertura');
+    if (a) a.hidden = true;
+    this.isolarFundo(false);
+    const primeiro = document.querySelector('.rail button[data-alvo]');
+    if (primeiro && primeiro.focus) primeiro.focus();
+  },
+
+  irPara(alvo) {
+    document.querySelectorAll('.painel').forEach(p => p.classList.remove('ativo'));
+    const p = document.getElementById('painel-' + alvo);
+    if (p) p.classList.add('ativo');
+    document.querySelectorAll('.rail button[data-alvo]').forEach(b => {
+      b.setAttribute('aria-current', b.dataset.alvo === alvo ? 'true' : 'false');
+    });
+    try { window.scrollTo(0, 0); } catch (e) { /* ambiente sem rolagem */ }
+  },
+
+  alternarTema() {
+    const h = document.documentElement;
+    const novo = h.getAttribute('data-tema') === 'escuro' ? 'claro' : 'escuro';
+    h.setAttribute('data-tema', novo);
+    try { localStorage.setItem(APP_INFO.chaveLS + '_tema', novo); } catch (e) { }
+    this.atualizar();
+  },
+
+  /* ============ Atualização geral ============ */
+  atualizar() {
+    const r = Engine.comparar(this.est);
+    this.ultimo = r;
+    this.renderQuant(r.mitigado);
+    this.renderTransporte(r.mitigado);
+    this.renderCanteiro(r.mitigado);
+    this.renderOperacao(r.mitigado);
+    this.renderCompensacao(r.mitigado);
+    this.renderCenarios(r);
+    this.renderResultados(r.mitigado);
+    this.renderFatores();
+    this.renderSincronia();
+    this.salvarLS();
+  },
+
+  /* ---------- Painel de leitura ---------- */
+  htmlLeitura(res, titulo) {
+    const un = res.unidade === 'km' ? 'kgCO₂e/km' : 'kgCO₂e/m²';
+    const faixas = ['A', 'B', 'C', 'D', 'E'];
+    const b = res.bench;
+    const dec = b.d < 100 ? 1 : 0;
+    const f = v => this.n(v, dec);
+    const rotulos = {
+      A: 'até ' + f(b.a), B: f(b.a) + '–' + f(b.b),
+      C: f(b.b) + '–' + f(b.c), D: f(b.c) + '–' + f(b.d),
+      E: 'acima de ' + f(b.d)
+    };
+    return `
+      <div class="leitura-corpo">
+        <div class="leitura-bloco">
+          <span class="rot">${this.esc(titulo || 'Pegada total da obra')}</span>
+          <span class="val">${this.n(res.total / 1000, 1)} <small>tCO₂e</small></span>
+        </div>
+        <div class="leitura-bloco sec">
+          <span class="rot">Intensidade de carbono</span>
+          <span class="val">${this.n(res.intensidade, res.unidade === 'km' ? 0 : 1)} <small>${un}</small></span>
+        </div>
+        <div class="leitura-bloco sec">
+          <span class="rot">Massa de materiais</span>
+          <span class="val">${this.n(res.massaTotalT, 0)} <small>t</small></span>
+        </div>
+        <div class="leitura-bloco sec">
+          <span class="rot">Classificação</span>
+          <span class="val">${res.faixa} <small>${this.esc(res.faixaTexto)}</small></span>
+        </div>
+      </div>
+      <div class="faixa" role="img" aria-label="Classificação ${res.faixa} de intensidade de carbono">
+        ${faixas.map(f => `<div class="faixa-item" data-f="${f}" data-on="${f === res.faixa ? 1 : 0}">
+            <b>${f}</b>${rotulos[f]}</div>`).join('')}
+      </div>`;
+  },
+
+  /* ---------- 2. Quantitativos ---------- */
+  renderQuant(res) {
+    const tb = document.querySelector('#tab-quant tbody');
+    const tf = document.querySelector('#tab-quant tfoot');
+    if (!tb) return;
+    const itens = res.itens.slice().sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
+    if (!itens.length) {
+      tb.innerHTML = '<tr><td colspan="8" class="vazio">Nenhum material lançado. Gere os quantitativos na etapa 1 ou acrescente materiais acima.</td></tr>';
+      tf.innerHTML = ''; return;
+    }
+    tb.innerHTML = itens.map(i => `
+      <tr>
+        <td>${this.esc(i.nome)}</td>
+        <td>${i.un}</td>
+        <td class="n"><input class="qtd" type="number" min="0" step="any" data-qtd="${i.id}" value="${i.qLiq.toFixed(3)}"></td>
+        <td class="n">${this.pct(i.perda, 0)}</td>
+        <td class="n">${this.n(i.qBruta, 2)}</td>
+        <td class="n">${this.n(i.fator, 3)}</td>
+        <td class="n">${this.n(i.a13, 0)}</td>
+        <td class="n"><button class="sutil" data-del="${i.id}" title="Remover material" aria-label="Remover ${this.esc(i.nome)}">✕</button></td>
+      </tr>`).join('');
+    tf.innerHTML = `<tr><td colspan="6">Total A1–A3</td><td class="n">${this.n(res.etapas.a13.valor, 0)}</td><td></td></tr>`;
+
+    tb.querySelectorAll('input[data-qtd]').forEach(inp => {
+      inp.addEventListener('change', e => {
+        const id = e.target.dataset.qtd;
+        const v = Engine.num(e.target.value, 0);
+        if (v <= 0) delete this.est.quantitativos[id]; else this.est.quantitativos[id] = v;
+        this.atualizar();
+      });
+    });
+    tb.querySelectorAll('button[data-del]').forEach(b => {
+      b.addEventListener('click', e => {
+        delete this.est.quantitativos[e.target.dataset.del];
+        this.atualizar();
+      });
+    });
+  },
+
+  /* ---------- 3. Transporte ---------- */
+  renderTransporte(res) {
+    const tb = document.querySelector('#tab-transp tbody');
+    const tf = document.querySelector('#tab-transp tfoot');
+    if (!tb) return;
+    const itens = res.itens.slice().sort((a, b) => b.a4 - a.a4);
+    const tot = res.etapas.a4.valor || 1;
+    if (!itens.length) { tb.innerHTML = '<tr><td colspan="5" class="vazio">Sem materiais lançados.</td></tr>'; tf.innerHTML = ''; return; }
+    tb.innerHTML = itens.map(i => `
+      <tr>
+        <td>${this.esc(i.nome)}</td>
+        <td class="n">${this.n(i.massaT, 2)}</td>
+        <td class="n"><input class="dist" type="number" min="0" step="any" data-dist="${i.id}"
+          value="${this.est.transporte.distancias[i.id] != null ? this.est.transporte.distancias[i.id] : ''}"
+          placeholder="${this.n(i.dist, 0)}"></td>
+        <td class="n">${this.n(i.a4, 0)}</td>
+        <td class="n">${this.pct(i.a4 / tot)}</td>
+      </tr>`).join('');
+    tf.innerHTML = `<tr><td>Total A4</td><td class="n">${this.n(res.massaTotalT, 1)}</td><td></td><td class="n">${this.n(res.etapas.a4.valor, 0)}</td><td class="n">100,0%</td></tr>`;
+
+    tb.querySelectorAll('input[data-dist]').forEach(inp => {
+      inp.addEventListener('change', e => {
+        const id = e.target.dataset.dist;
+        if (e.target.value === '') delete this.est.transporte.distancias[id];
+        else this.est.transporte.distancias[id] = Engine.num(e.target.value, 0);
+        this.atualizar();
+      });
+    });
+  },
+
+  /* ---------- 4. Canteiro ---------- */
+  renderCanteiro(res) {
+    const se = document.getElementById('saida-energia');
+    if (se) {
+      const linhas = Object.keys(res.energia).map(k => {
+        const e = res.energia[k];
+        return `<tr><td>${this.esc(e.nome)}</td><td class="n">${this.n(e.consumo, 0)} ${e.un}</td>
+                <td class="n">${this.n(ENERGIA[k].fe, 4)}</td><td class="n">${this.n(e.emissao, 0)}</td></tr>`;
+      }).join('');
+      se.innerHTML = `<div class="tabela-wrap"><table>
+        <thead><tr><th>Fonte</th><th class="n">Consumo</th><th class="n">FE (kgCO₂e/un)</th><th class="n">kgCO₂e</th></tr></thead>
+        <tbody>${linhas}</tbody>
+        <tfoot><tr><td colspan="3">Subtotal de energia (A5)</td><td class="n">${this.n(res.etapas.a5e.valor, 0)}</td></tr></tfoot>
+      </table></div>`;
+    }
+    const sr = document.getElementById('saida-residuos');
+    if (sr) {
+      sr.innerHTML = `<div class="tabela-wrap"><table>
+        <tbody>
+          <tr><td>Resíduo gerado pelas perdas de material</td><td class="n">${this.n(res.massaRccT - Engine.num(this.est.residuos.extra, 0), 2)} t</td></tr>
+          <tr><td>Resíduo adicional informado</td><td class="n">${this.n(Engine.num(this.est.residuos.extra, 0), 2)} t</td></tr>
+          <tr><td>Massa total de RCC</td><td class="n">${this.n(res.massaRccT, 2)} t</td></tr>
+        </tbody>
+        <tfoot><tr><td>Emissão de transporte e destinação (A5)</td><td class="n">${this.n(res.etapas.a5r.valor, 0)} kgCO₂e</td></tr></tfoot>
+      </table></div>`;
+    }
+  },
+
+  /* ---------- 5. Operação (módulo B) ---------- */
+  renderOperacao(res) {
+    const b = res.moduloB;
+    const alvo = document.getElementById('saida-modulo-b');
+    if (alvo) {
+      if (!b.ativo) {
+        alvo.innerHTML = '<p class="vazio">Marque a opção acima para calcular a fase de uso.</p>';
+      } else {
+        const linhas = [
+          ['B1 · Carbonatação do concreto', b.b1, 'crédito por reabsorção de CO₂ ao longo do período'],
+          ['B2–B5 · Manutenção e reposição', b.b2b5, 'nova produção e transporte dos componentes repostos'],
+          ['B6 · Energia operacional', b.b6, `${this.n(b.kwhAno, 0)} kWh por ano a ${this.n(b.feMatriz, 4)} kgCO₂e/kWh`],
+          ['B7 · Água e esgoto', b.b7, `${this.n(b.m3Ano, 0)} m³ por ano a ${this.n(FE_AGUA, 3)} kgCO₂e/m³`]
+        ].filter(l => Math.abs(l[1]) > 0.01);
+
+        alvo.innerHTML = `
+          <div class="destaque-linha">
+            <div><span class="rot">Carbono incorporado (A1–A5${this.est.fimVida.incluir ? ' + C' : ''})</span>
+              <span class="val">${this.n(res.total / 1000, 1)} <small>tCO₂e</small></span></div>
+            <div><span class="rot">Carbono operacional (B) em ${b.rsp} anos</span>
+              <span class="val">${this.n(res.operacional / 1000, 1)} <small>tCO₂e</small></span></div>
+            <div><span class="rot">Ciclo de vida completo</span>
+              <span class="val">${this.n(res.cicloVida / 1000, 1)} <small>tCO₂e · ${this.n(res.intensidadeCicloVida, 1)} kgCO₂e/${res.unidade}</small></span></div>
+          </div>
+          <div class="tabela-wrap" style="margin-top:14px"><table>
+            <thead><tr><th>Etapa</th><th class="n">kgCO₂e</th><th class="n">Participação no ciclo</th><th>Base do cálculo</th></tr></thead>
+            <tbody>${linhas.map(l => `<tr>
+              <td>${this.esc(l[0])}</td>
+              <td class="n ${l[1] < 0 ? 'credito' : ''}">${this.n(l[1], 0)}</td>
+              <td class="n">${res.cicloVida !== 0 ? this.pct(l[1] / res.cicloVida) : '—'}</td>
+              <td style="font-size:.78rem;color:var(--ink-2)">${this.esc(l[2])}</td></tr>`).join('')}</tbody>
+            <tfoot><tr><td>Total do módulo B</td><td class="n">${this.n(b.total, 0)}</td>
+              <td class="n">${res.cicloVida !== 0 ? this.pct(b.total / res.cicloVida) : '—'}</td><td></td></tr></tfoot>
+          </table></div>
+          <div style="margin-top:16px">${Graficos.barras([
+            { nome: 'Carbono incorporado', valor: Math.max(res.total, 0), cor: '#0F6E5C' },
+            { nome: 'Carbono operacional', valor: Math.max(res.operacional, 0), cor: '#C68A1E' }
+          ])}</div>`;
+      }
+    }
+
+    const rep = document.getElementById('saida-reposicoes');
+    if (!rep) return;
+    if (!b.ativo || !b.reposicoes.length) {
+      rep.innerHTML = `<p class="vazio">${b.ativo
+        ? 'Nenhum componente lançado tem vida útil menor que o período de estudo.'
+        : 'Disponível quando o módulo B estiver ativo.'}</p>`;
+      return;
+    }
+    const tot = b.reposicoes.reduce((x, r) => x + r.emissao, 0);
+    rep.innerHTML = `<div class="tabela-wrap"><table>
+      <thead><tr><th>Componente</th><th class="n">Vida útil (anos)</th>
+        <th class="n">Reposições em ${b.rsp} anos</th><th class="n">kgCO₂e</th><th class="n">Participação</th></tr></thead>
+      <tbody>${b.reposicoes.map(r => `<tr>
+        <td>${this.esc(r.nome)}</td><td class="n">${r.vida}</td><td class="n">${r.ciclos}</td>
+        <td class="n">${this.n(r.emissao, 0)}</td><td class="n">${this.pct(r.emissao / tot)}</td></tr>`).join('')}</tbody>
+      <tfoot><tr><td colspan="3">Total reposto</td><td class="n">${this.n(tot, 0)}</td><td class="n">100,0%</td></tr></tfoot>
+    </table></div>`;
+  },
+
+  /* ---------- 7. Compensação ---------- */
+  renderCompensacao(res) {
+    const c = res.compensacao;
+    const nota = document.getElementById('nota-sistema');
+    if (nota) nota.textContent = c.sistema.obs;
+
+    const alvo = document.getElementById('saida-compensacao');
+    if (alvo) {
+      if (!c.ativo) {
+        alvo.innerHTML = '<p class="vazio">Marque a opção acima para dimensionar a área de restauração.</p>';
+      } else {
+        const campos = res.compensacao.base === res.cicloVida && this.est.compensacao.base === 'ciclo'
+          ? 'ciclo de vida completo' : 'carbono incorporado';
+        alvo.innerHTML = `
+          <div class="destaque-linha">
+            <div><span class="rot">Pegada a compensar</span>
+              <span class="val">${this.n(c.alvo / 1000, 1)} <small>tCO₂e · ${this.pct(c.fracao, 0)} do ${campos}</small></span></div>
+            <div><span class="rot">Área de restauração</span>
+              <span class="val credito">${this.n(c.area, 2)} <small>hectares</small></span></div>
+            <div><span class="rot">Mudas a plantar</span>
+              <span class="val">${this.n(c.mudas, 0)} <small>unidades</small></span></div>
+            <div><span class="rot">Custo estimado</span>
+              <span class="val">${this.n(c.custo, 0)} <small>reais</small></span></div>
+            <div><span class="rot">Pegada residual</span>
+              <span class="val">${this.n(c.residual / 1000, 1)} <small>tCO₂e</small></span></div>
+          </div>
+          <p class="nota" style="margin-top:12px">Cálculo: ${this.n(c.alvo / 1000, 1)} tCO₂e ÷
+            (${this.n(c.sistema.taxa, 1)} tCO₂e/ha·ano × ${c.horizonte} anos) =
+            ${this.n(c.area, 2)} ha, a ${this.n(c.sistema.densidade, 0)} mudas por hectare.
+            Permanência do estoque: ${this.esc(c.sistema.permanencia.toLowerCase())}.</p>`;
+      }
+    }
+
+    const tb = document.querySelector('#tab-reflorestamento tbody');
+    if (!tb) return;
+    if (!c.ativo) { tb.innerHTML = '<tr><td colspan="6" class="vazio">Disponível quando a compensação estiver ativa.</td></tr>'; return; }
+    tb.innerHTML = REFLORESTAMENTO.map(r => {
+      const seq = r.taxa * c.horizonte * 1000;
+      const area = seq > 0 ? c.alvo / seq : 0;
+      const atual = r.id === c.sistema.id;
+      return `<tr${atual ? ' style="background:var(--verdete-soft)"' : ''}>
+        <td>${this.esc(r.nome)}${atual ? ' <span class="tag fam">adotado</span>' : ''}</td>
+        <td class="n">${this.n(r.taxa, 1)}</td>
+        <td class="n">${this.n(area, 2)}</td>
+        <td class="n">${this.n(area * r.densidade, 0)}</td>
+        <td class="n">${this.n(area * (atual && this.est.compensacao.custoHa != null ? c.custoHa : r.custoHa), 0)}</td>
+        <td>${this.esc(r.permanencia)}</td></tr>`;
+    }).join('');
+  },
+
+  /* ---------- 6. Cenários ---------- */
+  renderCenarios(cmp) {
+    const lc = document.getElementById('leitura-cenario');
+    if (lc) {
+      const temMedida = cmp.mitigado.medidasAtivas.length > 0;
+      lc.innerHTML = this.htmlLeitura(cmp.mitigado, temMedida ? 'Pegada com as medidas selecionadas' : 'Pegada da obra') +
+        `<div class="leitura-corpo" style="border-top:1px solid var(--line);padding-top:14px">
+          <div class="leitura-bloco sec"><span class="rot">Cenário de referência</span>
+            <span class="val">${this.n(cmp.base.total / 1000, 1)} <small>tCO₂e</small></span></div>
+          <div class="leitura-bloco sec"><span class="rot">Redução obtida</span>
+            <span class="val" style="color:var(--verdete)">${this.n(cmp.delta / 1000, 1)} <small>tCO₂e · ${this.pct(cmp.pct)}</small></span></div>
+          <div class="leitura-bloco sec"><span class="rot">Medidas ativas</span>
+            <span class="val">${cmp.mitigado.medidasAtivas.length} <small>de ${MEDIDAS.length}</small></span></div>
+        </div>`;
+    }
+
+    const lista = document.getElementById('lista-medidas');
+    if (!lista) return;
+    const ativos = new Set(this.est.cenario.medidas || []);
+
+    lista.innerHTML = MEDIDAS.map(m => {
+      // Efeito isolado da medida sobre a obra atual
+      const tmp = JSON.parse(JSON.stringify(this.est));
+      tmp.cenario.medidas = [m.id];
+      const so = Engine.calcular(tmp, { comMedidas: true });
+      const ganho = cmp.base.total - so.total;
+      const gp = cmp.base.total > 0 ? ganho / cmp.base.total : 0;
+      return `
+        <div class="medida">
+          <input type="checkbox" id="med-${m.id}" data-med="${m.id}" ${ativos.has(m.id) ? 'checked' : ''}>
+          <div>
+            <h4><label for="med-${m.id}" style="cursor:pointer">${this.esc(m.nome)}</label></h4>
+            <p>${this.esc(m.desc)}</p>
+            <span class="meta">Custo: ${this.esc(m.custo)} &middot; Barreira de implantação: ${this.esc(m.barreira)} &middot; Referência: ${this.esc(m.ref)}</span>
+          </div>
+          <div class="efeito">${ganho > 0.5 ? '−' + this.n(ganho / 1000, 1) + ' t' : '—'}
+            <small>${ganho > 0.5 ? this.pct(gp) + ' do total' : 'sem efeito nesta obra'}</small></div>
+        </div>`;
+    }).join('');
+
+    lista.querySelectorAll('input[data-med]').forEach(cb => {
+      cb.addEventListener('change', e => {
+        const id = e.target.dataset.med;
+        const s = new Set(this.est.cenario.medidas || []);
+        if (e.target.checked) s.add(id); else s.delete(id);
+        this.est.cenario.medidas = Array.from(s);
+        this.atualizar();
+      });
+    });
+  },
+
+  /* ---------- 6. Resultados ---------- */
+  renderResultados(res) {
+    const lp = document.getElementById('leitura-principal');
+    if (lp) {
+      let extra = '';
+      const b = res.moduloB, c = res.compensacao;
+      if (b.ativo || c.ativo) {
+        const blocos = [];
+        if (b.ativo) {
+          blocos.push(`<div class="leitura-bloco sec"><span class="rot">Carbono operacional (B), ${b.rsp} anos</span>
+            <span class="val">${this.n(res.operacional / 1000, 1)} <small>tCO₂e</small></span></div>`);
+          blocos.push(`<div class="leitura-bloco sec"><span class="rot">Ciclo de vida completo</span>
+            <span class="val">${this.n(res.cicloVida / 1000, 1)} <small>tCO₂e · ${this.n(res.intensidadeCicloVida, 1)} kgCO₂e/${res.unidade}</small></span></div>`);
+        }
+        if (c.ativo) {
+          blocos.push(`<div class="leitura-bloco sec"><span class="rot">Compensação por restauração</span>
+            <span class="val credito">${this.n(c.area, 2)} <small>ha · ${this.n(c.mudas, 0)} mudas</small></span></div>`);
+          blocos.push(`<div class="leitura-bloco sec"><span class="rot">Pegada residual</span>
+            <span class="val">${this.n(c.residual / 1000, 1)} <small>tCO₂e</small></span></div>`);
+        }
+        extra = `<div class="leitura-corpo" style="border-top:1px solid var(--line)">${blocos.join('')}</div>`;
+      }
+      lp.innerHTML = this.htmlLeitura(res, 'Carbono incorporado (A1–A5' + (this.est.fimVida.incluir ? ' + C' : '') + ')') + extra;
+    }
+
+    const leg = document.getElementById('res-legenda');
+    if (leg) {
+      leg.textContent = `${res.tipologia.nome} · ${this.n(res.refQtd, 0)} ${res.unidade} · fronteira A1–A5` +
+        (this.est.fimVida.incluir ? ' + módulo C' : '') +
+        (res.moduloB.ativo ? ` + módulo B em ${res.moduloB.rsp} anos` : '') +
+        (res.medidasAtivas.length ? ` · ${res.medidasAtivas.length} medida(s) de redução aplicada(s)` : '') +
+        ' · a etiqueta classifica apenas o carbono incorporado';
+    }
+
+    const et = Object.keys(res.etapas).map(k => ({
+      nome: res.etapas[k].nome, valor: res.etapas[k].valor,
+      cor: { a13: '#0F6E5C', a4: '#B4531F', a5e: '#C68A1E', a5r: '#6B7B84', c: '#8E7CA6' }[k]
+    })).filter(e => e.valor > 0);
+    this.setHTML('graf-etapas', Graficos.rosca(et));
+    this.setHTML('graf-familias', Graficos.barras(res.familias.map(f => ({ nome: f.nome, valor: f.valor, cor: f.cor }))));
+    this.setHTML('graf-abc', Graficos.pareto(res.itens.slice(0, 14)));
+
+    const tb = document.querySelector('#tab-abc tbody');
+    if (tb) {
+      tb.innerHTML = res.itens.length ? res.itens.map(i => `
+        <tr>
+          <td><span class="tag ${i.classe}">${i.classe}</span></td>
+          <td>${this.esc(i.nome)}</td>
+          <td><span class="ponto" style="background:${FAMILIAS[i.fam].cor}"></span>${this.esc(FAMILIAS[i.fam].nome)}</td>
+          <td class="n">${this.n(i.a13, 0)}</td>
+          <td class="n">${this.n(i.a4, 0)}</td>
+          <td class="n">${this.n(i.total, 0)}</td>
+          <td class="n">${this.pct(i.pct)}</td>
+          <td class="n">${this.pct(i.pctAcum)}</td>
+        </tr>`).join('') : '<tr><td colspan="8" class="vazio">Sem materiais lançados.</td></tr>';
+    }
+
+    const eq = document.getElementById('lista-equiv');
+    if (eq) {
+      eq.innerHTML = Engine.equivalencias(res.total).map(e => `
+        <div class="cartao" style="margin:0">
+          <span class="rot" style="font-size:.74rem;color:var(--ink-3);font-weight:600">${this.esc(e.nome)}</span>
+          <div style="font-family:var(--serif);font-size:1.55rem;line-height:1.2">${this.n(e.valor, 0)}</div>
+          <p class="nota" style="margin:2px 0 0">${this.esc(e.desc)}</p>
+        </div>`).join('');
+    }
+  },
+
+  setHTML(id, html) { const el = document.getElementById(id); if (el) el.innerHTML = html; },
+
+  /* ---------- 7. Fatores ---------- */
+  renderFatores() {
+    const tb = document.querySelector('#tab-fatores tbody');
+    if (!tb) return;
+    const bEl = document.getElementById('f-busca-fator');
+    const fEl = document.getElementById('f-filtro-fam');
+    const busca = (bEl ? bEl.value : '').trim().toLowerCase();
+    const fam = fEl ? fEl.value : '';
+
+    const lista = MATERIAIS.filter(m =>
+      (!fam || m.fam === fam) &&
+      (!busca || m.nome.toLowerCase().includes(busca) || FAMILIAS[m.fam].nome.toLowerCase().includes(busca)));
+
+    if (!lista.length) { tb.innerHTML = '<tr><td colspan="8" class="vazio">Nenhum material corresponde ao filtro.</td></tr>'; return; }
+
+    tb.innerHTML = lista.map(m => {
+      const custom = this.est.fatoresCustom[m.id];
+      const alterado = custom != null;
+      return `<tr>
+        <td>${this.esc(m.nome)}</td>
+        <td><span class="ponto" style="background:${FAMILIAS[m.fam].cor}"></span>${this.esc(FAMILIAS[m.fam].nome)}</td>
+        <td>${m.un}</td>
+        <td class="n">${this.n(m.fe, 3)}</td>
+        <td class="n"><input class="qtd" type="number" min="0" step="any" data-fe="${m.id}"
+            value="${alterado ? custom : m.fe}" ${alterado ? 'style="border-color:var(--verdete)"' : ''}></td>
+        <td class="n">${this.n(m.mu, 2)}</td>
+        <td class="n">${this.pct(m.perda, 0)}</td>
+        <td style="font-size:.78rem;color:var(--ink-2)">${this.esc(m.fonte)}</td>
+      </tr>`;
+    }).join('');
+
+    tb.querySelectorAll('input[data-fe]').forEach(inp => {
+      inp.addEventListener('change', e => {
+        const id = e.target.dataset.fe;
+        const v = Engine.num(e.target.value, null);
+        const padrao = Engine.material(id).fe;
+        if (v == null || Math.abs(v - padrao) < 1e-9) delete this.est.fatoresCustom[id];
+        else this.est.fatoresCustom[id] = v;
+        this.atualizar();
+      });
+    });
+  },
+
+  /* ============ Exportações ============ */
+  baixarProjeto() {
+    const dados = { app: APP_INFO.nome, versao: APP_INFO.versao, gerado: new Date().toISOString(), estado: this.est };
+    this.baixar(JSON.stringify(dados, null, 2), (this.est.obra.nome || 'obra').replace(/[^\w\-]+/g, '_') + '_carbono.json', 'application/json');
+  },
+
+  abrirProjeto(ev) {
+    const f = ev.target.files && ev.target.files[0];
+    if (!f) return;
+    const fr = new FileReader();
+    fr.onload = () => {
+      try {
+        const o = JSON.parse(fr.result);
+        const e = o.estado || o;
+        const base = Engine.estadoPadrao();
+        this.est = {
+          obra: Object.assign(base.obra, e.obra || {}),
+          quantitativos: e.quantitativos || {},
+          gerado: e.gerado || null,
+          travados: e.travados || {},
+          transporte: Object.assign(base.transporte, e.transporte || {}),
+          canteiro: Object.assign(base.canteiro, e.canteiro || {}),
+          residuos: Object.assign(base.residuos, e.residuos || {}),
+          fimVida: Object.assign(base.fimVida, e.fimVida || {}),
+          operacao: Object.assign(base.operacao, e.operacao || {}),
+          compensacao: Object.assign(base.compensacao, e.compensacao || {}),
+          cenario: Object.assign(base.cenario, e.cenario || {}),
+          fatoresCustom: e.fatoresCustom || {}
+        };
+        this.preencherFormulario(); this.atualizar();
+        this.toast('Projeto carregado');
+      } catch (err) {
+        this.toast('Arquivo inválido. Selecione um projeto salvo pelo CarbonCalc.');
+      }
+      ev.target.value = '';
+    };
+    fr.readAsText(f);
+  },
+
+  exportarCSV() {
+    const r = this.ultimo ? this.ultimo.mitigado : Engine.calcular(this.est);
+    const q = s => '"' + String(s == null ? '' : s).replace(/"/g, '""') + '"';
+    const L = [];
+    L.push(['CarbonCalc Pro — inventario de carbono incorporado'].map(q).join(';'));
+    L.push([]);
+    L.push(['Obra', this.est.obra.nome, 'Orgao', this.est.obra.orgao, 'UF', this.est.obra.uf].map(q).join(';'));
+    L.push(['Tipologia', r.tipologia.nome, 'Porte', r.refQtd, r.unidade].map(q).join(';'));
+    L.push([]);
+    L.push(['Classe', 'Material', 'Familia', 'Unidade', 'Qtd liquida', 'Perda', 'Qtd bruta', 'FE (kgCO2e/un)', 'Massa (t)', 'Dist (km)', 'A1-A3 (kgCO2e)', 'A4 (kgCO2e)', 'Total (kgCO2e)', 'Participacao'].map(q).join(';'));
+    r.itens.forEach(i => {
+      L.push([i.classe, i.nome, FAMILIAS[i.fam].nome, i.un,
+        i.qLiq.toFixed(3), (i.perda * 100).toFixed(1), i.qBruta.toFixed(3), i.fator.toFixed(4),
+        i.massaT.toFixed(3), i.dist.toFixed(0), i.a13.toFixed(1), i.a4.toFixed(1), i.total.toFixed(1),
+        (i.pct * 100).toFixed(2)].map(q).join(';'));
+    });
+    L.push([]);
+    Object.keys(r.etapas).forEach(k => L.push([r.etapas[k].nome, r.etapas[k].valor.toFixed(1), 'kgCO2e'].map(q).join(';')));
+    L.push(['TOTAL INCORPORADO (A1-A5+C)', r.total.toFixed(1), 'kgCO2e'].map(q).join(';'));
+    if (r.moduloB.ativo) {
+      L.push([]);
+      L.push([`Modulo B - periodo de estudo de ${r.moduloB.rsp} anos`].map(q).join(';'));
+      L.push(['B1 Carbonatacao', r.moduloB.b1.toFixed(1), 'kgCO2e'].map(q).join(';'));
+      L.push(['B2-B5 Manutencao e reposicao', r.moduloB.b2b5.toFixed(1), 'kgCO2e'].map(q).join(';'));
+      L.push(['B6 Energia operacional', r.moduloB.b6.toFixed(1), 'kgCO2e'].map(q).join(';'));
+      L.push(['B7 Agua e esgoto', r.moduloB.b7.toFixed(1), 'kgCO2e'].map(q).join(';'));
+      L.push(['TOTAL OPERACIONAL (B)', r.operacional.toFixed(1), 'kgCO2e'].map(q).join(';'));
+      L.push(['CICLO DE VIDA COMPLETO', r.cicloVida.toFixed(1), 'kgCO2e'].map(q).join(';'));
+      if (r.moduloB.reposicoes.length) {
+        L.push([]);
+        L.push(['Componente reposto', 'Vida util (anos)', 'Reposicoes', 'kgCO2e'].map(q).join(';'));
+        r.moduloB.reposicoes.forEach(x =>
+          L.push([x.nome, x.vida, x.ciclos, x.emissao.toFixed(1)].map(q).join(';')));
+      }
+    }
+    if (r.compensacao.ativo) {
+      const c = r.compensacao;
+      L.push([]);
+      L.push(['Compensacao por reflorestamento', c.sistema.nome].map(q).join(';'));
+      L.push(['Pegada a compensar', (c.alvo / 1000).toFixed(2), 'tCO2e'].map(q).join(';'));
+      L.push(['Horizonte de sequestro', c.horizonte, 'anos'].map(q).join(';'));
+      L.push(['Area de restauracao', c.area.toFixed(3), 'ha'].map(q).join(';'));
+      L.push(['Mudas', Math.round(c.mudas), 'un'].map(q).join(';'));
+      L.push(['Custo estimado', c.custo.toFixed(2), 'BRL'].map(q).join(';'));
+      L.push(['Pegada residual', (c.residual / 1000).toFixed(2), 'tCO2e'].map(q).join(';'));
+    }
+    L.push(['Intensidade', r.intensidade.toFixed(2), 'kgCO2e/' + r.unidade].map(q).join(';'));
+    L.push(['Classificacao', r.faixa, r.faixaTexto].map(q).join(';'));
+    this.baixar('\ufeff' + L.join('\r\n'), (this.est.obra.nome || 'obra').replace(/[^\w\-]+/g, '_') + '_carbono.csv', 'text/csv;charset=utf-8');
+  },
+
+  baixar(conteudo, nome, tipo) {
+    try {
+      const blob = new Blob([conteudo], { type: tipo });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = nome;
+      document.body.appendChild(a); a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 1500);
+      this.toast('Arquivo gerado: ' + nome);
+    } catch (e) { this.toast('Não foi possível gerar o arquivo neste navegador'); }
+  },
+
+  carregarExemplo() {
+    const e = Engine.estadoPadrao();
+    e.obra = {
+      nome: 'Escola de tempo integral — 12 salas', orgao: 'Secretaria Municipal de Educação',
+      tipologia: 'escola', quantidade: 2400, pavimentos: 2, sistema: 'conc_moldado',
+      padrao: 'normal', uf: 'PE', municipio: '', ano: new Date().getFullYear()
+    };
+    e.quantitativos = Engine.gerarQuantitativos(e.obra);
+    e.gerado = { tipologia: e.obra.tipologia, quantidade: e.obra.quantidade, sistema: e.obra.sistema, padrao: e.obra.padrao, pavimentos: e.obra.pavimentos };
+    e.residuos = { destinacao: 'aterro', distancia: 25, extra: 12 };
+    e.cenario.medidas = ['cimento_escoria', 'fornec_local'];
+    this.est = e;
+    this.preencherFormulario();
+    this.atualizar();
+    this.irPara('resultados');
+    this.toast('Caso de demonstração carregado');
+  }
+};
+
+/* ============================================================
+   Gráficos — SVG gerado sem dependências externas
+   ============================================================ */
+const Graficos = {
+  esc(s) { return UI.esc(s); },
+
+  rosca(dados) {
+    const tot = dados.reduce((s, d) => s + d.valor, 0);
+    if (tot <= 0) return '<p class="vazio">Sem dados para exibir.</p>';
+    const cx = 110, cy = 110, r = 88, w = 30;
+    let ang = -Math.PI / 2;
+    const arcos = dados.map(d => {
+      const frac = d.valor / tot;
+      const a2 = ang + frac * Math.PI * 2;
+      const grande = frac > 0.5 ? 1 : 0;
+      const p = (a, raio) => [cx + raio * Math.cos(a), cy + raio * Math.sin(a)];
+      const [x1, y1] = p(ang, r), [x2, y2] = p(a2, r);
+      const [x3, y3] = p(a2, r - w), [x4, y4] = p(ang, r - w);
+      ang = a2;
+      const quase = frac > 0.999;
+      const d1 = quase
+        ? `M ${cx - r} ${cy} A ${r} ${r} 0 1 1 ${cx + r} ${cy} A ${r} ${r} 0 1 1 ${cx - r} ${cy} Z
+           M ${cx - (r - w)} ${cy} A ${r - w} ${r - w} 0 1 0 ${cx + (r - w)} ${cy} A ${r - w} ${r - w} 0 1 0 ${cx - (r - w)} ${cy} Z`
+        : `M ${x1.toFixed(2)} ${y1.toFixed(2)} A ${r} ${r} 0 ${grande} 1 ${x2.toFixed(2)} ${y2.toFixed(2)}
+           L ${x3.toFixed(2)} ${y3.toFixed(2)} A ${r - w} ${r - w} 0 ${grande} 0 ${x4.toFixed(2)} ${y4.toFixed(2)} Z`;
+      return `<path d="${d1}" fill="${d.cor}" fill-rule="evenodd"><title>${this.esc(d.nome)}: ${UI.co2(d.valor)} (${UI.pct(frac)})</title></path>`;
+    }).join('');
+
+    return `<svg class="graf" viewBox="0 0 220 220" role="img" aria-label="Distribuição por etapa do ciclo de vida" style="max-width:240px;margin:0 auto">
+        ${arcos}
+        <text x="${cx}" y="${cy - 4}" text-anchor="middle" font-size="9">total</text>
+        <text x="${cx}" y="${cy + 13}" text-anchor="middle" font-size="15" font-weight="600" fill="currentColor">${UI.n(tot / 1000, 1)} t</text>
+      </svg>
+      <div class="legenda">${dados.map(d =>
+      `<span><i class="ponto" style="background:${d.cor}"></i>${this.esc(d.nome)} — ${UI.pct(d.valor / tot)}</span>`).join('')}</div>`;
+  },
+
+  barras(dados) {
+    if (!dados.length) return '<p class="vazio">Sem dados para exibir.</p>';
+    const max = Math.max.apply(null, dados.map(d => d.valor)) || 1;
+    const tot = dados.reduce((s, d) => s + d.valor, 0) || 1;
+    const lh = 26, larg = 460, rotulo = 168, barra = larg - rotulo - 74;
+    const h = dados.length * lh + 6;
+    const linhas = dados.map((d, k) => {
+      const y = k * lh + 4;
+      const w = Math.max(1, (d.valor / max) * barra);
+      return `<g>
+        <text x="0" y="${y + 13}" font-size="10.5">${this.esc(d.nome.length > 26 ? d.nome.slice(0, 25) + '…' : d.nome)}</text>
+        <rect x="${rotulo}" y="${y + 3}" width="${w.toFixed(1)}" height="14" rx="2" fill="${d.cor}"><title>${this.esc(d.nome)}: ${UI.co2(d.valor)}</title></rect>
+        <text x="${rotulo + w + 6}" y="${y + 14}" font-size="10">${UI.pct(d.valor / tot)}</text>
+      </g>`;
+    }).join('');
+    return `<svg class="graf" viewBox="0 0 ${larg} ${h}" role="img" aria-label="Emissões por família de material">${linhas}</svg>`;
+  },
+
+  pareto(itens) {
+    if (!itens.length) return '<p class="vazio">Sem dados para exibir.</p>';
+    const W = 620, H = 250, ml = 46, mr = 40, mt = 12, mb = 74;
+    const gw = W - ml - mr, gh = H - mt - mb;
+    const max = Math.max.apply(null, itens.map(i => i.total)) || 1;
+    const bw = gw / itens.length;
+
+    const barras = itens.map((i, k) => {
+      const alt = (i.total / max) * gh;
+      const x = ml + k * bw + bw * 0.16;
+      const w = bw * 0.68;
+      const cor = i.classe === 'A' ? '#B4531F' : (i.classe === 'B' ? '#C68A1E' : '#8E9A96');
+      const nome = i.nome.length > 20 ? i.nome.slice(0, 19) + '…' : i.nome;
+      return `<g>
+        <rect x="${x.toFixed(1)}" y="${(mt + gh - alt).toFixed(1)}" width="${w.toFixed(1)}" height="${alt.toFixed(1)}" fill="${cor}" rx="1.5">
+          <title>${this.esc(i.nome)}: ${UI.co2(i.total)} (${UI.pct(i.pct)})</title></rect>
+        <text transform="translate(${(x + w / 2).toFixed(1)},${mt + gh + 8}) rotate(52)" font-size="9">${this.esc(nome)}</text>
+      </g>`;
+    }).join('');
+
+    const pts = itens.map((i, k) => `${(ml + k * bw + bw / 2).toFixed(1)},${(mt + gh - i.pctAcum * gh).toFixed(1)}`).join(' ');
+    const y80 = mt + gh - 0.8 * gh;
+
+    const eixoY = [0, 0.25, 0.5, 0.75, 1].map(f => {
+      const y = mt + gh - f * gh;
+      return `<line x1="${ml}" y1="${y}" x2="${ml + gw}" y2="${y}" stroke="currentColor" stroke-opacity=".12"/>
+              <text x="${ml - 6}" y="${y + 3}" text-anchor="end" font-size="9">${UI.n(max * f / 1000, 1)}</text>
+              <text x="${ml + gw + 5}" y="${y + 3}" font-size="9">${(f * 100).toFixed(0)}%</text>`;
+    }).join('');
+
+    return `<svg class="graf" viewBox="0 0 ${W} ${H}" role="img" aria-label="Curva ABC de carbono por material">
+      ${eixoY}
+      <line x1="${ml}" y1="${y80}" x2="${ml + gw}" y2="${y80}" stroke="#0F6E5C" stroke-dasharray="4 3" stroke-width="1"/>
+      ${barras}
+      <polyline points="${pts}" fill="none" stroke="#0F6E5C" stroke-width="1.8"/>
+      ${itens.map((i, k) => `<circle cx="${(ml + k * bw + bw / 2).toFixed(1)}" cy="${(mt + gh - i.pctAcum * gh).toFixed(1)}" r="2.4" fill="#0F6E5C"/>`).join('')}
+      <text x="${ml - 6}" y="${mt - 2}" text-anchor="end" font-size="9">tCO₂e</text>
+    </svg>
+    <div class="legenda">
+      <span><i class="ponto" style="background:#B4531F"></i>Classe A — até 80% do total</span>
+      <span><i class="ponto" style="background:#C68A1E"></i>Classe B — até 95%</span>
+      <span><i class="ponto" style="background:#8E9A96"></i>Classe C</span>
+      <span><i class="ponto" style="background:#0F6E5C"></i>Percentual acumulado</span>
+    </div>`;
+  }
+};
+
+/* ============================================================
+   CarbonCalc Pro — Manual interativo
+   ============================================================ */
+
+const SECOES_MANUAL = [
+  {
+    id: 'inicio', titulo: 'O que a ferramenta calcula',
+    html: `
+      <p>O CarbonCalc Pro estima o <strong>carbono incorporado</strong> de uma obra: as emissões de gases de efeito estufa liberadas para produzir, transportar e aplicar os materiais que a compõem. O resultado é expresso em quilogramas de dióxido de carbono equivalente (kgCO₂e), unidade que reúne todos os gases pelo seu potencial de aquecimento global.</p>
+      <h4>O que está dentro da fronteira</h4>
+      <ul>
+        <li><strong>A1–A3</strong> — extração das matérias-primas, transporte até a indústria e fabricação do material.</li>
+        <li><strong>A4</strong> — transporte do material da fábrica ou jazida até o canteiro.</li>
+        <li><strong>A5</strong> — energia e combustíveis consumidos no canteiro, mais o destino do resíduo de construção.</li>
+        <li><strong>C</strong> (opcional) — demolição e disposição final ao término da vida útil.</li>
+      </ul>
+      <h4>O que está fora</h4>
+      <ul>
+        <li><strong>Módulo B</strong> — a operação da edificação: energia de climatização, iluminação, água e manutenção. Numa edificação convencional, a operação ao longo de cinquenta anos costuma superar o carbono incorporado; em edificações de alta eficiência a relação se inverte.</li>
+        <li>Emissões de uso do solo, supressão vegetal e mudança de cobertura do terreno.</li>
+      </ul>
+      <div class="aviso-box">Uma estimativa paramétrica não substitui uma Avaliação de Ciclo de Vida conduzida conforme a ISO 14040 e verificada por terceira parte. Ela serve para orientar decisões de projeto e especificação, quando ainda há liberdade para mudar de rumo.</div>`
+  },
+  {
+    id: 'unidades', titulo: 'Unidades e conceitos básicos',
+    html: `
+      <h4>Dióxido de carbono equivalente</h4>
+      <p>Cada gás tem um poder de aquecimento diferente. O metano aquece cerca de vinte e oito vezes mais que o CO₂ ao longo de cem anos; o óxido nitroso, cerca de duzentas e setenta vezes. O CO₂e converte todos para uma escala única, multiplicando a massa de cada gás pelo seu potencial de aquecimento global.</p>
+      <h4>Fator de emissão</h4>
+      <p>É a quantidade de CO₂e liberada por unidade de material produzido. O cimento Portland comum carrega cerca de 0,66 kgCO₂e por quilograma, quase todo ele vindo da calcinação do calcário e da queima de combustível no forno.</p>
+      <div class="formula">Emissão do material = quantidade × fator de emissão</div>
+      <h4>Intensidade de carbono</h4>
+      <p>É a emissão total dividida pela unidade de referência da obra: kgCO₂e por metro quadrado numa edificação, kgCO₂e por quilômetro numa rodovia. É o indicador que permite comparar obras de portes diferentes.</p>
+      <div class="formula">Intensidade = emissão total ÷ área construída</div>`
+  },
+  {
+    id: 'a13', titulo: 'Etapa A1–A3: produção dos materiais',
+    html: `
+      <p>Esta é quase sempre a maior parcela, entre 70% e 90% do carbono incorporado. Ela concentra a atenção em poucos materiais: cimento, concreto e aço respondem, na maioria das edificações brasileiras, por mais da metade do total.</p>
+      <h4>Por que o cimento pesa tanto</h4>
+      <p>Cerca de 60% da emissão do cimento vem da própria reação química de calcinação, que libera CO₂ do calcário independentemente do combustível usado no forno. Trocar o combustível reduz parte do problema; reduzir o teor de clínquer ataca a raiz. É por isso que cimentos com escória de alto-forno ou pozolana têm fatores sensivelmente menores.</p>
+      <h4>Por que o aço brasileiro é atípico</h4>
+      <p>Parte da siderurgia nacional usa carvão vegetal de florestas plantadas como redutor, em lugar do coque mineral. O carbono do carvão vegetal é biogênico e volta a ser capturado no ciclo de replantio, o que reduz o fator de emissão a cerca de metade da rota convencional. Ao especificar aço, vale pedir a declaração de origem do redutor.</p>
+      <h4>Perdas físicas</h4>
+      <p>O material que se perde no canteiro foi produzido e transportado, portanto já emitiu. A ferramenta soma a perda típica de cada material à quantidade de projeto e usa essa mesma massa como base do resíduo de construção.</p>
+      <div class="formula">Quantidade bruta = quantidade de projeto × (1 + perda)</div>
+      <div class="lab" data-lab="materiais">
+        <h4>Laboratório: comparar dois materiais</h4>
+        <p class="nota">Use o mesmo motor de cálculo da ferramenta para medir o efeito de uma troca de especificação.</p>
+        <div class="grade">
+          <div class="campo"><label for="lab-m1">Material especificado</label><select id="lab-m1"></select></div>
+          <div class="campo"><label for="lab-m2">Alternativa</label><select id="lab-m2"></select></div>
+          <div class="campo"><label for="lab-mq">Quantidade</label><input id="lab-mq" type="number" min="0" step="any" value="1000"></div>
+        </div>
+        <div class="lab-saida" id="lab-saida-materiais"></div>
+      </div>`
+  },
+  {
+    id: 'a4', titulo: 'Etapa A4: transporte até a obra',
+    html: `
+      <p>A emissão do transporte depende de três grandezas: a massa deslocada, a distância percorrida e a eficiência do modal. O produto das duas primeiras é a tonelada-quilômetro, unidade de trabalho de transporte.</p>
+      <div class="formula">Emissão A4 = massa (t) × distância (km) × fator do modal (kgCO₂e/t·km)</div>
+      <h4>A hierarquia dos modais</h4>
+      <ul>
+        <li>Caminhão médio: cerca de 0,145 kgCO₂e por tonelada-quilômetro.</li>
+        <li>Carreta: cerca de 0,092 — a carga maior dilui o consumo.</li>
+        <li>Ferrovia: cerca de 0,024, aproximadamente um sexto do rodoviário.</li>
+        <li>Hidrovia: cerca de 0,018, o mais eficiente por tonelada transportada.</li>
+      </ul>
+      <h4>Onde a distância importa de verdade</h4>
+      <p>Agregados, blocos e concreto têm fator de emissão baixo por quilo, mas massa enorme. Em obras de terraplenagem e pavimentação, o transporte pode superar a produção dos materiais. Já para o aço e os metais, a massa é pequena diante do fator de produção — trazer aço de mais longe muda pouco o resultado.</p>
+      <p>Quando a distância de um material fica em branco na planilha, a ferramenta aplica a distância de referência da família, ajustável globalmente pelo multiplicador da tela de transporte.</p>
+      <div class="lab" data-lab="transporte">
+        <h4>Laboratório: emissão de um frete</h4>
+        <div class="grade">
+          <div class="campo"><label for="lab-tm">Massa (t)</label><input id="lab-tm" type="number" min="0" step="any" value="30"></div>
+          <div class="campo"><label for="lab-td">Distância (km)</label><input id="lab-td" type="number" min="0" step="any" value="250"></div>
+          <div class="campo"><label for="lab-tmod">Modal</label><select id="lab-tmod"></select></div>
+        </div>
+        <div class="lab-saida" id="lab-saida-transporte"></div>
+      </div>`
+  },
+  {
+    id: 'a5', titulo: 'Etapa A5: canteiro e resíduos',
+    html: `
+      <p>A etapa A5 reúne o que se queima e o que se descarta durante a execução.</p>
+      <h4>Combustíveis e energia</h4>
+      <p>O diesel dos equipamentos costuma dominar. Cada litro queimado libera cerca de 2,71 kgCO₂e. Em obras de infraestrutura com grande movimentação de terra, essa parcela cresce muito.</p>
+      <p>A energia elétrica no Brasil tem fator baixo — em torno de 0,045 kgCO₂e por quilowatt-hora — porque a matriz é majoritariamente hidráulica. O mesmo consumo num país de matriz térmica emitiria dez vezes mais. Isso muda a conclusão de estudos internacionais quando aplicados ao contexto brasileiro.</p>
+      <h4>Resíduos</h4>
+      <p>A ferramenta calcula a massa de resíduo a partir das perdas físicas de cada material e soma o resíduo adicional que você informar, como o de demolição prévia. Sobre essa massa incidem o transporte até a destinação e o processamento no destino.</p>
+      <p>A diferença entre aterrar e reciclar não é grande em termos de emissão direta, mas a reciclagem evita a extração de agregado natural — benefício que aparece no cálculo quando você adota agregado reciclado nos quantitativos.</p>
+      <div class="aviso-box">O Plano de Gerenciamento de Resíduos da Construção Civil, exigido pela Resolução CONAMA 307, já obriga a quantificar e destinar o resíduo. O inventário de carbono aproveita esse mesmo levantamento.</div>`
+  },
+  {
+    id: 'moduloB', titulo: 'Módulo B: a fase de uso',
+    html: `
+      <p>Enquanto os módulos A tratam de construir, o módulo B trata de manter em funcionamento. Ele reúne quatro parcelas que se comportam de maneiras muito diferentes.</p>
+      <ul>
+        <li><strong>B1</strong> — reabsorção de CO₂ pela carbonatação das superfícies cimentícias. É um crédito, não uma emissão.</li>
+        <li><strong>B2–B5</strong> — manutenção e reposição dos componentes que não duram o período inteiro.</li>
+        <li><strong>B6</strong> — energia consumida na operação.</li>
+        <li><strong>B7</strong> — água tratada e esgoto coletado.</li>
+      </ul>
+      <h4>Por que o módulo B fica fora da etiqueta</h4>
+      <p>A faixa de classificação continua medindo apenas o carbono incorporado. Somar as duas fronteiras num indicador único destruiria a comparabilidade: uma escola e um hospital de mesma área têm carbono incorporado parecido e consumo operacional que difere em quase cinco vezes. O sistema apresenta os dois lado a lado e deixa a leitura com você.</p>
+      <h4>A matriz elétrica brasileira muda a conclusão</h4>
+      <p>Em estudos europeus e norte-americanos o módulo B costuma dominar o ciclo de vida de uma edificação. No Brasil, com fator de emissão da rede em torno de 0,045 kgCO₂e por quilowatt-hora, essa dominância só aparece em edificações muito intensivas em energia, como hospitais e edifícios corporativos climatizados. Numa escola ou numa habitação, o carbono incorporado costuma prevalecer mesmo em cinquenta anos.</p>
+      <p>Aplicar diretamente uma conclusão internacional ao caso brasileiro é um erro comum e caro: leva a investir em eficiência operacional onde o ganho é pequeno e a ignorar a especificação de materiais, onde ele é grande.</p>
+      <h4>Reposição de componentes</h4>
+      <p>Um componente cuja vida útil é menor que o período de estudo precisa ser produzido e transportado outra vez. O sistema calcula quantos ciclos cabem no período e repete a emissão de A1–A3 e A4 daquele item.</p>
+      <div class="formula">Reposições = teto(período de estudo ÷ vida útil) − 1</div>
+      <p>Em edificações, quem manda são a pintura, a impermeabilização e as esquadrias. Em rodovias, o efeito é de outra ordem: com vida útil de doze anos para o revestimento asfáltico, um período de cinquenta anos embute três recapeamentos. Somados, eles superam o pavimento original.</p>
+      <h4>Carbonatação do concreto</h4>
+      <p>O concreto reabsorve parte do CO₂ liberado na calcinação do calcário, à medida que o hidróxido de cálcio reage com o gás do ar. O fenômeno é real e mensurável, mas depende de área exposta, umidade, cobrimento e revestimento, o que a estimativa paramétrica não conhece. Por isso o crédito vem desligado e limitado a 25% das emissões cimentícias. Ative com parcimônia e declare a hipótese.</p>
+      <h4>Descarbonização da matriz</h4>
+      <p>Projetar cinquenta anos de operação com o fator de emissão de hoje ignora que a rede tende a mudar. O campo de descarbonização aplica uma trajetória linear até a fração informada, e o cálculo usa o fator médio do período.</p>
+      <div class="formula">Fator médio = fator atual × (1 − descarbonização ÷ 2)</div>
+      <div class="lab" data-lab="ciclo">
+        <h4>Laboratório: incorporado contra operacional</h4>
+        <p class="nota">Descubra em quantos anos a operação alcança o que foi gasto para construir.</p>
+        <div class="grade">
+          <div class="campo"><label for="lab-btip">Tipologia</label><select id="lab-btip"></select></div>
+          <div class="campo"><label for="lab-bq">Porte</label><input id="lab-bq" type="number" min="0" step="any" value="3000"></div>
+          <div class="campo"><label for="lab-brsp">Período de estudo (anos)</label><input id="lab-brsp" type="number" min="1" max="150" step="1" value="50"></div>
+        </div>
+        <div class="lab-saida" id="lab-saida-ciclo"></div>
+      </div>`
+  },
+  {
+    id: 'parametrico', titulo: 'Como funciona a estimativa paramétrica',
+    html: `
+      <p>Na fase de estudo preliminar não existem quantitativos. A ferramenta então estima o consumo de cada material a partir de coeficientes por metro quadrado ou por quilômetro, calibrados por tipologia e ajustados por três parâmetros.</p>
+      <h4>Sistema estrutural</h4>
+      <p>Multiplica o consumo por família. A alvenaria estrutural corta cerca de 45% do concreto e 55% do aço em relação ao concreto armado moldado no local, mas aumenta o consumo de blocos. A estrutura metálica reduz drasticamente o concreto e acrescenta perfil laminado.</p>
+      <h4>Número de pavimentos</h4>
+      <p>Edifícios mais altos consomem mais estrutura por metro quadrado, porque as cargas acumuladas crescem e a rigidez ao vento passa a governar o dimensionamento. A ferramenta aplica uma majoração progressiva sobre concreto e aço, limitada a 45%.</p>
+      <div class="formula">Fator estrutural = 1 + 0,018 × (pavimentos − 1), limitado a 1,45</div>
+      <h4>Padrão de acabamento</h4>
+      <p>Afeta revestimentos, vidros, esquadrias e metais — famílias de baixo peso mas alto fator de emissão. Entre o padrão popular e o alto, a diferença de acabamento pode representar mais de 15% do total.</p>
+      <p>Todos os quantitativos gerados são editáveis. Assim que você tiver a planilha orçamentária real, substitua os valores estimados: a precisão do resultado depende sobretudo da qualidade dos quantitativos.</p>
+      <div class="lab" data-lab="parametrico">
+        <h4>Laboratório: estimativa expressa</h4>
+        <p class="nota">Compare tipologias e sistemas construtivos sem alterar o projeto que você está editando.</p>
+        <div class="grade">
+          <div class="campo"><label for="lab-ptip">Tipologia</label><select id="lab-ptip"></select></div>
+          <div class="campo"><label for="lab-pq">Porte</label><input id="lab-pq" type="number" min="0" step="any" value="3000"></div>
+          <div class="campo"><label for="lab-psis">Sistema estrutural</label><select id="lab-psis"></select></div>
+          <div class="campo"><label for="lab-ppav">Pavimentos</label><input id="lab-ppav" type="number" min="1" max="60" step="1" value="4"></div>
+        </div>
+        <div class="lab-saida" id="lab-saida-parametrico"></div>
+      </div>`
+  },
+  {
+    id: 'abc', titulo: 'Curva ABC de carbono',
+    html: `
+      <p>A lógica é a mesma da curva ABC de custos, aplicada à emissão em vez do preço. Os materiais são ordenados pela contribuição e classificados por faixa acumulada.</p>
+      <ul>
+        <li><strong>Classe A</strong> — até 80% do acumulado. Poucos itens, quase toda a emissão.</li>
+        <li><strong>Classe B</strong> — de 80% a 95%.</li>
+        <li><strong>Classe C</strong> — o restante. Muitos itens, pouca emissão.</li>
+      </ul>
+      <p>O valor prático é claro: numa edificação típica, cinco ou seis materiais respondem por 80% da pegada. Especificar melhor esses poucos itens produz mais resultado do que otimizar dezenas de itens da cauda.</p>
+      <p>Vale notar que a curva ABC de carbono e a de custo raramente coincidem. Um item barato pode ser intensivo em carbono, e o contrário também ocorre. Ler as duas lado a lado revela onde há redução de emissão sem aumento de custo.</p>`
+  },
+  {
+    id: 'benchmark', titulo: 'Faixas de classificação',
+    html: `
+      <p>A intensidade calculada é comparada com faixas de referência da própria tipologia, no formato de uma etiqueta de desempenho de cinco níveis.</p>
+      <ul>
+        <li><strong>A</strong> — desempenho excelente, compatível com projetos que trataram o carbono como critério.</li>
+        <li><strong>B</strong> — acima da prática usual.</li>
+        <li><strong>C</strong> — prática usual de mercado.</li>
+        <li><strong>D</strong> — abaixo da prática usual.</li>
+        <li><strong>E</strong> — muito acima da referência; convém revisar quantitativos e especificações.</li>
+      </ul>
+      <p>As faixas são ancoradas no próprio modelo paramétrico: uma obra descrita apenas pelos parâmetros padrão da tipologia cai no centro da faixa C. Isso mantém a etiqueta honesta — se a referência fosse mais frouxa, todo projeto sairia elogiado sem ter feito nada.</p>
+      <p>Os intervalos foram construídos a partir de estudos de avaliação de ciclo de vida de obras brasileiras e devem ser lidos como ordem de grandeza. Uma obra classificada em E pode simplesmente ter quantitativos superestimados; antes de concluir, verifique a planilha.</p>
+      <div class="aviso-box">Comparação só faz sentido entre obras da mesma tipologia e com a mesma fronteira de estudo. Incluir ou excluir o módulo C muda o resultado o bastante para inverter uma classificação.</div>`
+  },
+  {
+    id: 'cenarios', titulo: 'Cenários de redução',
+    html: `
+      <p>Cada medida da tela de cenários atua sobre um mecanismo específico do cálculo, e não sobre um percentual arbitrário do total.</p>
+      <ul>
+        <li><strong>Substituição de material</strong> — transfere a quantidade de um insumo para outro de fator menor, respeitando a unidade. O ganho depende de quanto daquele material a obra realmente consome.</li>
+        <li><strong>Redução de etapa</strong> — aplica um corte percentual sobre A4 ou sobre o resíduo.</li>
+        <li><strong>Redução de energia</strong> — atua sobre um combustível específico do canteiro.</li>
+        <li><strong>Redução de perdas</strong> — diminui o coeficiente de perda de todos os materiais, o que reduz simultaneamente A1–A3, A4 e o resíduo.</li>
+      </ul>
+      <p>O valor mostrado ao lado de cada medida é o seu efeito isolado sobre esta obra. A soma dos efeitos isolados não corresponde exatamente ao efeito conjunto, porque medidas que atuam sobre o mesmo material competem entre si.</p>
+      <h4>Ordem de prioridade</h4>
+      <p>Comece pelas medidas de custo neutro ou negativo: substituição de cimento, redução de perdas e proximidade de fornecedores. Medidas de custo alto, como renovação de frota, entram depois, quando o esforço de projeto já se esgotou.</p>
+      <div class="lab" data-lab="cenario">
+        <h4>Laboratório: potencial de redução</h4>
+        <div class="grade">
+          <div class="campo"><label for="lab-ctip">Tipologia</label><select id="lab-ctip"></select></div>
+          <div class="campo"><label for="lab-cq">Porte</label><input id="lab-cq" type="number" min="0" step="any" value="3000"></div>
+        </div>
+        <div id="lab-cmedidas" style="margin-top:10px"></div>
+        <div class="lab-saida" id="lab-saida-cenario"></div>
+      </div>`
+  },
+  {
+    id: 'compensacao', titulo: 'Compensação por reflorestamento',
+    html: `
+      <p>A compensação entra por último, sobre o que sobrou depois de evitar e reduzir. A ordem não é retórica: uma tonelada que não foi emitida é definitiva, enquanto uma tonelada compensada depende de a floresta existir e permanecer de pé pelas décadas seguintes.</p>
+      <h4>Como o dimensionamento é feito</h4>
+      <div class="formula">Área (ha) = pegada a compensar (tCO₂e) ÷ (sequestro anual por hectare × horizonte)</div>
+      <p>O número de mudas decorre da densidade de plantio do sistema escolhido, e o custo, do valor por hectare que você informar. Ajuste esse valor aos preços praticados na sua região, porque ele varia muito entre biomas e entre a implantação simples e a com manutenção plurianual.</p>
+      <h4>Quatro fragilidades que precisam ser declaradas</h4>
+      <ul>
+        <li><strong>Descompasso temporal.</strong> A emissão acontece durante a obra; o sequestro se distribui por vinte anos ou mais. Nesse intervalo o carbono está na atmosfera.</li>
+        <li><strong>Permanência.</strong> Fogo, desmatamento e mudança de uso podem devolver o estoque. Plantios comerciais de ciclo curto devolvem por projeto, na colheita.</li>
+        <li><strong>Adicionalidade.</strong> Se a área seria restaurada de qualquer modo, por exigência legal de reserva ou de área de preservação permanente, não há compensação nova — há apenas o cumprimento de uma obrigação que já existia.</li>
+        <li><strong>Vazamento.</strong> Restaurar aqui e pressionar a supressão em outro lugar anula o ganho.</li>
+      </ul>
+      <div class="aviso-box">Compensar não autoriza emitir. A compensação não substitui licenciamento, condicionante ambiental nem obrigação de reposição florestal, e não deve ser apresentada como se equivalesse à redução na fonte.</div>
+      <h4>Escolhendo o sistema</h4>
+      <p>Restauração com espécies nativas tem sequestro mais lento que o plantio comercial, mas o estoque é permanente e traz ganhos de biodiversidade, água e solo. O sistema agroflorestal gera renda ao produtor, o que costuma ser o melhor seguro de permanência que existe. O eucalipto de ciclo curto sequestra rápido e devolve rápido: só compensa de fato se a madeira virar produto de vida longa.</p>
+      <div class="lab" data-lab="compensacao">
+        <h4>Laboratório: área de restauração</h4>
+        <div class="grade">
+          <div class="campo"><label for="lab-kq">Pegada a compensar (tCO₂e)</label><input id="lab-kq" type="number" min="0" step="any" value="600"></div>
+          <div class="campo"><label for="lab-ksis">Sistema</label><select id="lab-ksis"></select></div>
+          <div class="campo"><label for="lab-kh">Horizonte (anos)</label><input id="lab-kh" type="number" min="1" max="100" step="1" value="20"></div>
+        </div>
+        <div class="lab-saida" id="lab-saida-compensacao"></div>
+      </div>`
+  },
+  {
+    id: 'roteiro', titulo: 'Roteiro de uso',
+    html: `
+      <ol>
+        <li><strong>Descreva a obra.</strong> Escolha a tipologia, informe o porte e ajuste sistema estrutural, pavimentos e padrão. Gere os quantitativos.</li>
+        <li><strong>Refine a planilha.</strong> Substitua as quantidades estimadas pelas do orçamento sempre que dispuser delas. Acrescente materiais que a tipologia não previu.</li>
+        <li><strong>Ajuste o transporte.</strong> Informe distâncias reais ao menos para os materiais de maior massa: agregados, concreto e blocos.</li>
+        <li><strong>Informe o canteiro.</strong> Se houver medição de diesel e energia, desligue a estimativa automática e lance os valores medidos.</li>
+        <li><strong>Leia a curva ABC.</strong> Identifique os materiais de classe A. São eles que definem onde vale intervir.</li>
+        <li><strong>Monte o cenário.</strong> Selecione medidas viáveis e compare com a referência.</li>
+        <li><strong>Registre.</strong> Exporte o CSV para anexar ao processo e salve o arquivo do projeto para revisões futuras.</li>
+      </ol>
+      <h4>Substituindo fatores por dados do fornecedor</h4>
+      <p>Se um fornecedor apresentar declaração ambiental de produto verificada, lance o valor dela na tela de fatores. O campo alterado fica destacado e passa a valer em todo o cálculo. O botão de restauração devolve todos os valores de referência.</p>`
+  },
+  {
+    id: 'limites', titulo: 'Limitações e leitura responsável',
+    html: `
+      <p>Todo inventário de carbono é uma estimativa cercada de incerteza. Convém explicitá-la em vez de esconder atrás de casas decimais.</p>
+      <h4>Principais fontes de incerteza</h4>
+      <ul>
+        <li><strong>Fatores de emissão.</strong> Médias setoriais escondem variação grande entre plantas industriais. Um mesmo tipo de cimento pode variar 30% entre fabricantes.</li>
+        <li><strong>Quantitativos.</strong> Numa estimativa paramétrica, o erro do quantitativo costuma superar o erro do fator.</li>
+        <li><strong>Fronteira.</strong> Comparações entre estudos com fronteiras diferentes não são válidas.</li>
+        <li><strong>Carbono biogênico.</strong> A madeira armazena carbono durante a vida útil. A ferramenta não contabiliza esse estoque, adotando a postura mais conservadora.</li>
+      </ul>
+      <h4>Como apresentar o resultado</h4>
+      <p>Prefira ordens de grandeza a números exatos. Dizer que a obra emite cerca de 1.200 toneladas é honesto; dizer 1.237,4 toneladas sugere uma precisão que o método não tem. Declare sempre a fronteira adotada, a origem dos fatores e a base dos quantitativos.</p>
+      <div class="aviso-box">A ferramenta funciona inteiramente no seu navegador. Nenhum dado é enviado a servidores, e o projeto em edição fica gravado apenas neste dispositivo.</div>`
+  }
+];
+
+const Manual = {
+  atual: 'inicio',
+  lidas: new Set(),
+  chave: APP_INFO.chaveLS + '_manual',
+
+  iniciar() {
+    this.carregar();
+    this.montar();
+    this.montarLabs();
+    this.abrir(this.atual);
+
+    const b = document.getElementById('f-busca-manual');
+    if (b) b.addEventListener('input', () => this.buscar(b.value));
+    const z = document.getElementById('btn-zerar-progresso');
+    if (z) z.addEventListener('click', () => {
+      this.lidas.clear(); this.salvar(); this.montar(); this.abrir(this.atual);
+      UI.toast('Progresso de leitura zerado');
+    });
+  },
+
+  carregar() {
+    try {
+      const s = JSON.parse(localStorage.getItem(this.chave) || '{}');
+      this.lidas = new Set(s.lidas || []);
+      if (s.atual && SECOES_MANUAL.some(x => x.id === s.atual)) this.atual = s.atual;
+    } catch (e) { }
+  },
+  salvar() {
+    try { localStorage.setItem(this.chave, JSON.stringify({ lidas: Array.from(this.lidas), atual: this.atual })); } catch (e) { }
+  },
+
+  montar() {
+    const ind = document.getElementById('manual-indice');
+    if (ind) {
+      ind.innerHTML = SECOES_MANUAL.map(s =>
+        `<li><button data-sec="${s.id}" class="${this.lidas.has(s.id) ? 'lida' : ''}">${UI.esc(s.titulo)}</button></li>`).join('');
+      ind.querySelectorAll('button[data-sec]').forEach(b =>
+        b.addEventListener('click', () => this.abrir(b.dataset.sec)));
+    }
+
+    const corpo = document.getElementById('manual-corpo');
+    if (corpo && !corpo.dataset.pronto) {
+      corpo.innerHTML = SECOES_MANUAL.map(s => `
+        <article class="manual-sec" id="sec-${s.id}">
+          <h3>${UI.esc(s.titulo)}</h3>
+          ${s.html}
+          <div class="linha-btns" style="margin-top:22px;border-top:1px solid var(--line);padding-top:14px">
+            <button data-marcar="${s.id}"></button>
+            <button data-prox="${s.id}" class="sutil">Próxima seção</button>
+          </div>
+        </article>`).join('');
+      corpo.dataset.pronto = '1';
+      corpo.querySelectorAll('button[data-marcar]').forEach(b =>
+        b.addEventListener('click', () => this.alternarLida(b.dataset.marcar)));
+      corpo.querySelectorAll('button[data-prox]').forEach(b =>
+        b.addEventListener('click', () => {
+          const i = SECOES_MANUAL.findIndex(s => s.id === b.dataset.prox);
+          const n = SECOES_MANUAL[i + 1];
+          if (n) this.abrir(n.id); else UI.toast('Você chegou ao fim do manual');
+        }));
+    }
+    this.atualizarBotoes();
+    this.progresso();
+  },
+
+  atualizarBotoes() {
+    document.querySelectorAll('button[data-marcar]').forEach(b => {
+      const lida = this.lidas.has(b.dataset.marcar);
+      b.textContent = lida ? 'Marcada como lida' : 'Marcar como lida';
+      b.className = lida ? 'sutil' : 'primario';
+    });
+  },
+
+  alternarLida(id) {
+    if (this.lidas.has(id)) this.lidas.delete(id); else this.lidas.add(id);
+    this.salvar();
+    const btn = document.querySelector(`#manual-indice button[data-sec="${id}"]`);
+    if (btn) btn.classList.toggle('lida', this.lidas.has(id));
+    this.atualizarBotoes();
+    this.progresso();
+  },
+
+  progresso() {
+    const p = SECOES_MANUAL.length ? this.lidas.size / SECOES_MANUAL.length : 0;
+    const b = document.getElementById('barra-progresso');
+    if (b) b.style.width = (p * 100).toFixed(0) + '%';
+    const t = document.getElementById('txt-progresso');
+    if (t) t.textContent = `${this.lidas.size} de ${SECOES_MANUAL.length} seções lidas`;
+  },
+
+  abrir(id) {
+    this.atual = id; this.salvar();
+    document.querySelectorAll('.manual-sec').forEach(s => s.classList.remove('ativo'));
+    const el = document.getElementById('sec-' + id);
+    if (el) el.classList.add('ativo');
+    document.querySelectorAll('#manual-indice button[data-sec]').forEach(b =>
+      b.setAttribute('aria-current', b.dataset.sec === id ? 'true' : 'false'));
+    this.rodarLabs();
+    const q = document.getElementById('f-busca-manual');
+    if (q && q.value.trim()) this.realcar(q.value.trim());
+  },
+
+  buscar(termo) {
+    const t = termo.trim().toLowerCase();
+    const ind = document.getElementById('manual-indice');
+    if (!ind) return;
+    let achou = 0;
+    SECOES_MANUAL.forEach(s => {
+      const li = ind.querySelector(`button[data-sec="${s.id}"]`);
+      if (!li) return;
+      const texto = (s.titulo + ' ' + s.html.replace(/<[^>]+>/g, ' ')).toLowerCase();
+      const ok = !t || texto.includes(t);
+      li.parentElement.style.display = ok ? '' : 'none';
+      if (ok) achou++;
+    });
+    let vazio = ind.parentElement.querySelector('.busca-vazia');
+    if (!achou) {
+      if (!vazio) {
+        vazio = document.createElement('p');
+        vazio.className = 'busca-vazia';
+        vazio.textContent = 'Nenhuma seção contém esse termo.';
+        ind.parentElement.appendChild(vazio);
+      }
+    } else if (vazio) { vazio.remove(); }
+    this.limparRealce();
+    if (t) this.realcar(t);
+  },
+
+  limparRealce() {
+    document.querySelectorAll('.manual-sec mark').forEach(m => {
+      const pai = m.parentNode;
+      pai.replaceChild(document.createTextNode(m.textContent), m);
+      pai.normalize();
+    });
+  },
+
+  realcar(termo) {
+    this.limparRealce();
+    const sec = document.querySelector('.manual-sec.ativo');
+    if (!sec || termo.length < 3) return;
+    const alvo = termo.toLowerCase();
+    const walker = document.createTreeWalker(sec, NodeFilter.SHOW_TEXT, null);
+    const nos = [];
+    let n;
+    while ((n = walker.nextNode())) {
+      if (n.parentElement.closest('.lab') || n.parentElement.tagName === 'BUTTON') continue;
+      if (n.nodeValue.toLowerCase().includes(alvo)) nos.push(n);
+    }
+    nos.forEach(no => {
+      const partes = no.nodeValue.split(new RegExp('(' + alvo.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'ig'));
+      const frag = document.createDocumentFragment();
+      partes.forEach(p => {
+        if (p.toLowerCase() === alvo) {
+          const m = document.createElement('mark'); m.textContent = p; frag.appendChild(m);
+        } else if (p) frag.appendChild(document.createTextNode(p));
+      });
+      no.parentNode.replaceChild(frag, no);
+    });
+  },
+
+  /* ---------- Laboratórios ---------- */
+  montarLabs() {
+    const opcMat = MATERIAIS.map(m => `<option value="${m.id}">${UI.esc(m.nome)} (${m.un})</option>`).join('');
+    const set = (id, html, val) => {
+      const el = document.getElementById(id);
+      if (el) { el.innerHTML = html; if (val) el.value = val; }
+    };
+    set('lab-m1', opcMat, 'cimento_cp2');
+    set('lab-m2', opcMat, 'cimento_cp3');
+    set('lab-tmod', MODAIS.map(m => `<option value="${m.id}">${UI.esc(m.nome)}</option>`).join(''));
+
+    const opcTip = Object.keys(TIPOLOGIAS).map(k => `<option value="${k}">${UI.esc(TIPOLOGIAS[k].nome)}</option>`).join('');
+    set('lab-ptip', opcTip, 'res_multi');
+    set('lab-ctip', opcTip, 'res_multi');
+    set('lab-psis', Object.keys(SISTEMAS).map(k => `<option value="${k}">${UI.esc(SISTEMAS[k].nome)}</option>`).join(''));
+    set('lab-btip', opcTip, 'res_multi');
+    set('lab-ksis', REFLORESTAMENTO.map(r => `<option value="${r.id}">${UI.esc(r.nome)}</option>`).join(''), 'ma');
+
+    const cm = document.getElementById('lab-cmedidas');
+    if (cm) {
+      cm.innerHTML = MEDIDAS.map(m =>
+        `<div class="linha-check"><input type="checkbox" id="labmed-${m.id}" data-labmed="${m.id}">
+         <label for="labmed-${m.id}">${UI.esc(m.nome)}</label></div>`).join('');
+    }
+
+    ['lab-m1', 'lab-m2', 'lab-mq', 'lab-tm', 'lab-td', 'lab-tmod',
+      'lab-ptip', 'lab-pq', 'lab-psis', 'lab-ppav', 'lab-ctip', 'lab-cq',
+      'lab-btip', 'lab-bq', 'lab-brsp', 'lab-kq', 'lab-ksis', 'lab-kh'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('input', () => this.rodarLabs());
+        if (el) el.addEventListener('change', () => this.rodarLabs());
+      });
+    document.querySelectorAll('[data-labmed]').forEach(el =>
+      el.addEventListener('change', () => this.rodarLabs()));
+  },
+
+  rodarLabs() {
+    this.labMateriais();
+    this.labTransporte();
+    this.labParametrico();
+    this.labCenario();
+    this.labCiclo();
+    this.labCompensacao();
+  },
+
+  val(id, def) { const el = document.getElementById(id); return el ? el.value : def; },
+
+  labMateriais() {
+    const alvo = document.getElementById('lab-saida-materiais');
+    if (!alvo) return;
+    const m1 = Engine.material(this.val('lab-m1'));
+    const m2 = Engine.material(this.val('lab-m2'));
+    const q = Engine.num(this.val('lab-mq'), 0);
+    if (!m1 || !m2) return;
+    const e1 = q * m1.fe, e2 = q * m2.fe;
+    const dif = e1 - e2;
+    const compat = m1.un === m2.un;
+    alvo.innerHTML = `
+      <div><strong>${UI.esc(m1.nome)}</strong> — ${UI.n(q, 0)} ${m1.un} × ${UI.n(m1.fe, 3)} = <strong>${UI.co2(e1)}</strong>CO₂e</div>
+      <div style="margin-top:4px"><strong>${UI.esc(m2.nome)}</strong> — ${UI.n(q, 0)} ${m2.un} × ${UI.n(m2.fe, 3)} = <strong>${UI.co2(e2)}</strong>CO₂e</div>
+      <div style="margin-top:10px" class="destaque">${dif >= 0 ? '−' : '+'} ${UI.co2(Math.abs(dif))}CO₂e</div>
+      <p class="nota" style="margin-top:2px">${dif >= 0 ? 'Redução' : 'Aumento'} de ${UI.pct(e1 > 0 ? Math.abs(dif) / e1 : 0)} ao trocar a especificação.
+      ${compat ? '' : '<br><span style="color:var(--forno)">Atenção: as unidades são diferentes, a comparação direta não é válida.</span>'}</p>`;
+  },
+
+  labTransporte() {
+    const alvo = document.getElementById('lab-saida-transporte');
+    if (!alvo) return;
+    const m = Engine.num(this.val('lab-tm'), 0);
+    const d = Engine.num(this.val('lab-td'), 0);
+    const modal = MODAIS.find(x => x.id === this.val('lab-tmod')) || MODAIS[0];
+    const e = m * d * modal.fe;
+    const alt = MODAIS.map(x => `<div style="margin-top:3px">${UI.esc(x.nome)}: <strong>${UI.co2(m * d * x.fe)}</strong>CO₂e</div>`).join('');
+    alvo.innerHTML = `
+      <div class="destaque">${UI.co2(e)}CO₂e</div>
+      <p class="nota" style="margin:2px 0 10px">${UI.n(m, 1)} t × ${UI.n(d, 0)} km × ${UI.n(modal.fe, 3)} kgCO₂e/t·km = ${UI.n(m * d, 0)} t·km</p>
+      <div style="border-top:1px solid var(--line);padding-top:8px;font-size:.82rem">Mesmo frete nos demais modais:${alt}</div>`;
+  },
+
+  labParametrico() {
+    const alvo = document.getElementById('lab-saida-parametrico');
+    if (!alvo) return;
+    const est = Engine.estadoPadrao();
+    est.obra.tipologia = this.val('lab-ptip', 'res_multi');
+    est.obra.quantidade = Engine.num(this.val('lab-pq'), 0);
+    est.obra.sistema = this.val('lab-psis', 'conc_moldado');
+    est.obra.pavimentos = Engine.num(this.val('lab-ppav'), 1);
+    est.quantitativos = Engine.gerarQuantitativos(est.obra);
+    const r = Engine.calcular(est);
+    const top = r.itens.slice(0, 4).map(i =>
+      `<div style="margin-top:3px">${UI.esc(i.nome)} — ${UI.pct(i.pct)}</div>`).join('');
+    alvo.innerHTML = `
+      <div class="destaque">${UI.n(r.total / 1000, 1)} tCO₂e</div>
+      <p class="nota" style="margin:2px 0 10px">Intensidade de ${UI.n(r.intensidade, 1)} kgCO₂e/${r.unidade} — classificação <strong>${r.faixa}</strong>, ${UI.esc(r.faixaTexto.toLowerCase())}.</p>
+      <div style="border-top:1px solid var(--line);padding-top:8px;font-size:.82rem">Principais contribuintes:${top}</div>`;
+  },
+
+  labCiclo() {
+    const alvo = document.getElementById('lab-saida-ciclo');
+    if (!alvo) return;
+    const est = Engine.estadoPadrao();
+    est.obra.tipologia = this.val('lab-btip', 'res_multi');
+    est.obra.quantidade = Engine.num(this.val('lab-bq'), 0);
+    est.quantitativos = Engine.gerarQuantitativos(est.obra);
+    est.operacao.incluir = true;
+    est.operacao.rsp = Math.max(1, Engine.num(this.val('lab-brsp'), 50));
+    const r = Engine.calcular(est);
+    const porAno = r.operacional / est.operacao.rsp;
+    const cruz = porAno > 0 ? r.total / porAno : Infinity;
+    alvo.innerHTML = `
+      <div class="destaque-linha">
+        <div><span class="rot">Incorporado</span><span class="val">${UI.n(r.total / 1000, 1)} <small>tCO₂e</small></span></div>
+        <div><span class="rot">Operacional em ${est.operacao.rsp} anos</span><span class="val">${UI.n(r.operacional / 1000, 1)} <small>tCO₂e</small></span></div>
+        <div><span class="rot">Ciclo completo</span><span class="val">${UI.n(r.cicloVida / 1000, 1)} <small>tCO₂e</small></span></div>
+      </div>
+      <p class="nota" style="margin-top:10px">${isFinite(cruz) && cruz > 0
+        ? `A operação alcança o carbono da construção em cerca de <strong>${UI.n(cruz, 0)} anos</strong>. ` +
+          (cruz > est.operacao.rsp
+            ? 'Dentro do período adotado, construir pesa mais que operar.'
+            : 'Dentro do período adotado, operar pesa mais que construir.')
+        : 'Esta tipologia não tem consumo operacional registrado.'}</p>`;
+  },
+
+  labCompensacao() {
+    const alvo = document.getElementById('lab-saida-compensacao');
+    if (!alvo) return;
+    const t = Math.max(0, Engine.num(this.val('lab-kq'), 0));
+    const h = Math.max(1, Engine.num(this.val('lab-kh'), 20));
+    const sis = REFLORESTAMENTO.find(r => r.id === this.val('lab-ksis')) || REFLORESTAMENTO[0];
+    const area = t / (sis.taxa * h);
+    alvo.innerHTML = `
+      <div class="destaque-linha">
+        <div><span class="rot">Área de restauração</span><span class="val credito">${UI.n(area, 2)} <small>hectares</small></span></div>
+        <div><span class="rot">Mudas</span><span class="val">${UI.n(area * sis.densidade, 0)} <small>unidades</small></span></div>
+        <div><span class="rot">Custo de referência</span><span class="val">${UI.n(area * sis.custoHa, 0)} <small>reais</small></span></div>
+      </div>
+      <p class="nota" style="margin-top:10px">Permanência do estoque: ${UI.esc(sis.permanencia.toLowerCase())}. ${UI.esc(sis.obs)}</p>`;
+  },
+
+  labCenario() {
+    const alvo = document.getElementById('lab-saida-cenario');
+    if (!alvo) return;
+    const est = Engine.estadoPadrao();
+    est.obra.tipologia = this.val('lab-ctip', 'res_multi');
+    est.obra.quantidade = Engine.num(this.val('lab-cq'), 0);
+    est.quantitativos = Engine.gerarQuantitativos(est.obra);
+    est.cenario.medidas = Array.from(document.querySelectorAll('[data-labmed]:checked')).map(e => e.dataset.labmed);
+    const c = Engine.comparar(est);
+    alvo.innerHTML = `
+      <div class="destaque">${UI.n(c.mitigado.total / 1000, 1)} tCO₂e</div>
+      <p class="nota" style="margin:2px 0 10px">Referência: ${UI.n(c.base.total / 1000, 1)} tCO₂e &middot;
+        redução de <strong style="color:var(--verdete)">${UI.n(c.delta / 1000, 1)} t (${UI.pct(c.pct)})</strong> com ${est.cenario.medidas.length} medida(s).</p>
+      <div style="font-size:.82rem;border-top:1px solid var(--line);padding-top:8px">
+        Classificação: ${c.base.faixa} → <strong>${c.mitigado.faixa}</strong></div>`;
+  }
+};
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { Manual, SECOES_MANUAL };
+}
+
+
+/* ---------- Inicialização ---------- */
+(function () {
+  try {
+    var t = localStorage.getItem(APP_INFO.chaveLS + '_tema');
+    if (t) document.documentElement.setAttribute('data-tema', t);
+    else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)
+      document.documentElement.setAttribute('data-tema', 'escuro');
+  } catch (e) { }
+})();
+
+if (typeof document !== 'undefined') {
+  if (document.readyState === 'loading')
+    document.addEventListener('DOMContentLoaded', function () { UI.iniciar(); });
+  else UI.iniciar();
+}
+
+</script>
+</body>
+</html>

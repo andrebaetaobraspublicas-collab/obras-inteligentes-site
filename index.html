@@ -534,10 +534,11 @@ body.modal-open{overflow:hidden}
       <button class="filter-btn" type="button" data-filter="Gestao de Obras e de Contratos">Gest&atilde;o de Obras e de Contratos</button>
       <button class="filter-btn" type="button" data-filter="Manutencao Predial">Manuten&ccedil;&atilde;o Predial</button>
       <button class="filter-btn" type="button" data-filter="Riscos">Riscos</button>
+      <button class="filter-btn" type="button" data-filter="Sustentabilidade">Sustentabilidade</button>
       <button class="filter-btn" type="button" data-filter="Orcamento">Or&ccedil;amento</button>
       <button class="filter-btn" type="button" data-filter="Artigos">Artigos</button>
     </div>
-    <div class="app-filter-status" id="appFilterStatus">78 aplicativos encontrados</div>
+    <div class="app-filter-status" id="appFilterStatus">79 aplicativos encontrados</div>
   </div>
 
   <div class="apps">
@@ -1399,6 +1400,17 @@ body.modal-open{overflow:hidden}
       <div class="meta">Abrir sistema &middot; recarga el&eacute;trica</div>
     </a>
 
+    <a class="app" href="/carboncalcpro/" aria-label="Abrir CarbonCalc Pro - Pegada de carbono de obras">
+      <span class="arrow">&rarr;</span>
+      <div class="app-num">79 / CARBONO</div>
+      <svg class="app-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M24 42c-8-5-13-12-13-20 0-9 6-15 13-18 7 3 13 9 13 18 0 8-5 15-13 20z"/><path d="M24 42V18"/><path d="M24 30c-7 0-11-4-13-8"/><path d="M24 25c6 0 10-3 13-8"/><path d="M17 12c4 1 7 3 7 6"/><path d="M31 12c-4 1-7 3-7 6"/>
+      </svg>
+      <h3>CarbonCalc Pro</h3>
+      <p>C&aacute;lculo da pegada de carbono de obras, com apoio &agrave; estimativa de emiss&otilde;es, materiais, transportes, energia, relat&oacute;rios e an&aacute;lise de sustentabilidade.</p>
+      <div class="meta">Abrir sistema &middot; pegada de carbono</div>
+    </a>
+
   </div>
 </section>
 
@@ -1492,6 +1504,7 @@ body.modal-open{overflow:hidden}
         <a href="/lumipro/">LumiPro - Dimensionamento Luminot&eacute;cnico</a>
         <a href="/upspro/">UPSPro - Energia Cr&iacute;tica</a>
         <a href="/eletroposto-calc/">EletroPosto Calc - Recarga de Ve&iacute;culos El&eacute;tricos</a>
+        <a href="/carboncalcpro/">CarbonCalc Pro - Pegada de Carbono</a>
         <a href="/ambienta/">Ambienta - Plantas e Interiores</a>
         <a href="/solarincidence-pro/">SolarIncidence Pro - Insola&ccedil;&atilde;o e Sombreamento</a>
         <a href="/hidrosan-pro/">HidroSan Pro - Instala&ccedil;&otilde;es Hidrossanit&aacute;rias</a>
@@ -1691,7 +1704,8 @@ body.modal-open{overflow:hidden}
     ["/upspro/", ["Instalacoes Eletricas", "upspro ups nobreak no-break energia critica banco baterias autonomia potencia cargas alimentacao ininterrupta instalacoes eletricas"]],
     ["/ambienta/", ["Arquitetura e Design de Interiores", "ambienta plantas interiores arquitetura design interiores ambiente aberturas mobiliario arranjo planta vista tridimensional ifc sketchup memorial descritivo"]],
     ["/solarincidence-pro/", ["Arquitetura e Design de Interiores", "solarincidence solar incidence insolacao sombreamento iluminacao natural arquitetura interiores edificacoes dxf ifc pdf imagem carta solar luz natural"]],
-    ["/eletroposto-calc/", ["Instalacoes Eletricas", "eletroposto calc eletropostocalc recarga veiculos eletricos carregador wallbox demanda alimentadores protecoes aterramento gerenciamento carga nbr 17019 nbr 5410 instalacoes eletricas"]]
+    ["/eletroposto-calc/", ["Instalacoes Eletricas", "eletroposto calc eletropostocalc recarga veiculos eletricos carregador wallbox demanda alimentadores protecoes aterramento gerenciamento carga nbr 17019 nbr 5410 instalacoes eletricas"]],
+    ["/carboncalcpro/", ["Sustentabilidade", "carboncalc pro carbono pegada carbono obras emissao emissoes co2 co2e sustentabilidade materiais transporte energia relatorio ambiental construcao civil"]]
   ]);
 
   const appCards = Array.from(document.querySelectorAll(".apps .app"));
