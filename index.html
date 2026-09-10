@@ -535,10 +535,11 @@ body.modal-open{overflow:hidden}
       <button class="filter-btn" type="button" data-filter="Manutencao Predial">Manuten&ccedil;&atilde;o Predial</button>
       <button class="filter-btn" type="button" data-filter="Riscos">Riscos</button>
       <button class="filter-btn" type="button" data-filter="Sustentabilidade">Sustentabilidade</button>
+      <button class="filter-btn" type="button" data-filter="Concessoes">Concess&otilde;es</button>
       <button class="filter-btn" type="button" data-filter="Orcamento">Or&ccedil;amento</button>
       <button class="filter-btn" type="button" data-filter="Artigos">Artigos</button>
     </div>
-    <div class="app-filter-status" id="appFilterStatus">80 aplicativos encontrados</div>
+    <div class="app-filter-status" id="appFilterStatus">81 aplicativos encontrados</div>
   </div>
 
   <div class="apps">
@@ -1422,6 +1423,17 @@ body.modal-open{overflow:hidden}
       <div class="meta">Abrir sistema &middot; refrigera&ccedil;&atilde;o</div>
     </a>
 
+    <a class="app" href="/concessaorod/" aria-label="Abrir ConcessaoRod - Modelagem economico-financeira de concessoes rodoviarias">
+      <span class="arrow">&rarr;</span>
+      <div class="app-num">81 / CONCESS&Otilde;ES</div>
+      <svg class="app-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 38h36"/><path d="M12 38l7-28h10l7 28"/><path d="M20 10l-2 28"/><path d="M28 10l2 28"/><path d="M21 18h6"/><path d="M19 26h10"/><path d="M17 34h14"/><path d="M8 18h7"/><path d="M33 18h7"/><path d="M10 12h4"/><path d="M34 12h4"/>
+      </svg>
+      <h3>Concess&atilde;oRod</h3>
+      <p>Modelagem econ&ocirc;mico-financeira de concess&otilde;es rodovi&aacute;rias, com premissas, segmentos, pra&ccedil;as de ped&aacute;gio, investimentos, fluxo de caixa, indicadores, cen&aacute;rios e relat&oacute;rios.</p>
+      <div class="meta">Abrir sistema &middot; concess&otilde;es rodovi&aacute;rias</div>
+    </a>
+
   </div>
 </section>
 
@@ -1550,6 +1562,7 @@ body.modal-open{overflow:hidden}
         <a href="/criticaopex/">CriticaOpex - Opex Predial</a>
         <a href="/pmoc-manager/">PMOC Manager - Plano de Manuten&ccedil;&atilde;o e Controle</a>
         <a href="/friopro/">FrioPro - Refrigera&ccedil;&atilde;o</a>
+        <a href="/concessaorod/">Concess&atilde;oRod - Concess&otilde;es Rodovi&aacute;rias</a>
         <a href="/canteiro-sicro/">Canteiro de Obras - Sicro</a>
         <a href="/locar-ou-comprar-pro/">Locar ou Comprar Pro</a>
         <a href="/acesscheck/">AcessCheck - Vistoria de Acessibilidade</a>
@@ -1718,7 +1731,8 @@ body.modal-open{overflow:hidden}
     ["/solarincidence-pro/", ["Arquitetura e Design de Interiores", "solarincidence solar incidence insolacao sombreamento iluminacao natural arquitetura interiores edificacoes dxf ifc pdf imagem carta solar luz natural"]],
     ["/eletroposto-calc/", ["Instalacoes Eletricas", "eletroposto calc eletropostocalc recarga veiculos eletricos carregador wallbox demanda alimentadores protecoes aterramento gerenciamento carga nbr 17019 nbr 5410 instalacoes eletricas"]],
     ["/carboncalcpro/", ["Sustentabilidade", "carboncalc pro carbono pegada carbono obras emissao emissoes co2 co2e sustentabilidade materiais transporte energia relatorio ambiental construcao civil"]],
-    ["/friopro/", ["Ar condicionado, refrigeracao e ventilacao", "friopro frio refrigeracao refrigeracao comercial refrigeracao industrial camara fria ciclo frigorifico carga termica fluido refrigerante compressor evaporador condensador ar condicionado ventilacao hvac avac"]]
+    ["/friopro/", ["Ar condicionado, refrigeracao e ventilacao", "friopro frio refrigeracao refrigeracao comercial refrigeracao industrial camara fria ciclo frigorifico carga termica fluido refrigerante compressor evaporador condensador ar condicionado ventilacao hvac avac"]],
+    ["/concessaorod/", ["Concessoes", "concessaorod concessao concessoes rodoviarias rodovia modelagem economico financeira fluxo caixa tarifa pedagio outorga capex opex tir vpl wacc cenarios"]]
   ]);
 
   const appCards = Array.from(document.querySelectorAll(".apps .app"));

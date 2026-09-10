@@ -133,6 +133,7 @@ Inventario originalmente verificado em 21/07/2026 e atualizado em 09/09/2026 par
 | 78 / ELETROPOSTO | EletroPosto Calc | `/eletroposto-calc/` | `C:\Obras Inteligentes\eletroposto-calc\index.html` | existe | 200 |
 | 79 / CARBONO | CarbonCalc Pro | `/carboncalcpro/` | `C:\Obras Inteligentes\carboncalcpro\index.html` | existe | 200 |
 | 80 / REFRIGERACAO | FrioPro | `/friopro/` | `C:\Obras Inteligentes\friopro\index.html` | existe | 200 |
+| 81 / CONCESSOES | ConcessaoRod | `/concessaorod/` | `C:\Obras Inteligentes\concessaorod\index.html` | existe | 200 |
 
 ## Tamanhos verificados
 
@@ -220,6 +221,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/eletroposto-calc/` | 183380 bytes | 181470 caracteres |
 | `/carboncalcpro/` | 186068 bytes | 184143 caracteres |
 | `/friopro/` | 6911725 bytes | 6896711 caracteres |
+| `/concessaorod/` | 221640 bytes | 219837 caracteres |
 | `/entenda-ia/` | 175035 bytes | 172793 caracteres |
 | `/abc-fiscal/` | 351255 bytes | 349022 caracteres |
 
@@ -1902,6 +1904,24 @@ Observacoes:
 - O card foi classificado no filtro `Ar condicionado, refrigeracao e ventilacao`.
 - Validar apos futuras alteracoes se simulacao de refrigeracao, camaras frias, ciclos frigorificos, fluidos refrigerantes, desempenho, memoria de calculo e relatorios continuam carregando corretamente.
 
+### ConcessaoRod
+
+Rota: `/concessaorod/`  
+Arquivo: `concessaorod/index.html`
+
+Ultima inclusao:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\ConcessaoRod - modelagem economico-financeira de concessoes rodoviarias (1).html`
+- Data: 10/09/2026
+- Alteracao: inclusao de novo card na home, criacao do filtro `Concessoes`, e publicacao do aplicativo ConcessaoRod como HTML standalone.
+
+Observacoes:
+
+- Aplicativo standalone empacotado em HTML unico.
+- Tela inicial do site aponta para `/concessaorod/`.
+- O card foi classificado no filtro `Concessoes`.
+- Validar apos futuras alteracoes se premissas do projeto, segmentos homogeneos, pracas de pedagio, investimento, operacao, tarifa, outorga, fluxo de caixa, indicadores, sensibilidade, cenarios e relatorios continuam carregando corretamente.
+
 ## Aplicativos didaticos fora da grade
 
 ### NeuralLab
@@ -2148,6 +2168,7 @@ $headers=@{ 'User-Agent'='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
   '/eletroposto-calc/',
   '/carboncalcpro/',
   '/friopro/',
+  '/concessaorod/',
   '/entenda-ia/'
 ) | ForEach-Object {
   $url = "https://www.obrasinteligentes.ia.br$_?v=check"
