@@ -49,7 +49,7 @@ Excecoes/observacoes:
 
 ## Inventario verificado dos aplicativos
 
-Inventario originalmente verificado em 21/07/2026 e atualizado em 05/09/2026 para reorganizacao dos filtros `Equipamentos, Apoios e Montagens`, `Instalacoes Eletricas`, `Instalacoes Hidrosanitarias e de Incendio` e `Ar condicionado e ventilacao`. Todos os cards listados possuem arquivo local correspondente.
+Inventario originalmente verificado em 21/07/2026 e atualizado em 09/09/2026 para reorganizacao dos filtros `Equipamentos, Apoios e Montagens`, `Instalacoes Eletricas`, `Instalacoes Hidrosanitarias e de Incendio` e `Ar condicionado, refrigeracao e ventilacao`. Todos os cards listados possuem arquivo local correspondente.
 
 | Card | Aplicativo | Rota publicada | Arquivo local principal | Status local | Status site |
 |---|---|---|---|---|---|
@@ -132,6 +132,7 @@ Inventario originalmente verificado em 21/07/2026 e atualizado em 05/09/2026 par
 | 77 / INSOLACAO | SolarIncidence Pro | `/solarincidence-pro/` | `C:\Obras Inteligentes\solarincidence-pro\index.html` | existe | 200 |
 | 78 / ELETROPOSTO | EletroPosto Calc | `/eletroposto-calc/` | `C:\Obras Inteligentes\eletroposto-calc\index.html` | existe | 200 |
 | 79 / CARBONO | CarbonCalc Pro | `/carboncalcpro/` | `C:\Obras Inteligentes\carboncalcpro\index.html` | existe | 200 |
+| 80 / REFRIGERACAO | FrioPro | `/friopro/` | `C:\Obras Inteligentes\friopro\index.html` | existe | 200 |
 
 ## Tamanhos verificados
 
@@ -218,6 +219,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/solarincidence-pro/` | 282551 bytes | 280392 caracteres |
 | `/eletroposto-calc/` | 183380 bytes | 181470 caracteres |
 | `/carboncalcpro/` | 186068 bytes | 184143 caracteres |
+| `/friopro/` | 6911725 bytes | 6896711 caracteres |
 | `/entenda-ia/` | 175035 bytes | 172793 caracteres |
 | `/abc-fiscal/` | 351255 bytes | 349022 caracteres |
 
@@ -1882,6 +1884,24 @@ Observacoes:
 - O card foi classificado no filtro `Sustentabilidade`.
 - Validar apos futuras alteracoes se calculo de pegada de carbono, emissoes, materiais, transportes, energia, relatorios e analise de sustentabilidade continuam carregando corretamente.
 
+### FrioPro
+
+Rota: `/friopro/`  
+Arquivo: `friopro/index.html`
+
+Ultima inclusao:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\FrioPro_v1_6.html`
+- Data: 09/09/2026
+- Alteracao: inclusao de novo card na home e publicacao do aplicativo FrioPro como HTML standalone. O filtro `Ar condicionado e ventilacao` foi renomeado para `Ar condicionado, refrigeracao e ventilacao`.
+
+Observacoes:
+
+- Aplicativo standalone empacotado em HTML unico, com manual incorporado.
+- Tela inicial do site aponta para `/friopro/`.
+- O card foi classificado no filtro `Ar condicionado, refrigeracao e ventilacao`.
+- Validar apos futuras alteracoes se simulacao de refrigeracao, camaras frias, ciclos frigorificos, fluidos refrigerantes, desempenho, memoria de calculo e relatorios continuam carregando corretamente.
+
 ## Aplicativos didaticos fora da grade
 
 ### NeuralLab
@@ -2127,6 +2147,7 @@ $headers=@{ 'User-Agent'='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
   '/solarincidence-pro/',
   '/eletroposto-calc/',
   '/carboncalcpro/',
+  '/friopro/',
   '/entenda-ia/'
 ) | ForEach-Object {
   $url = "https://www.obrasinteligentes.ia.br$_?v=check"
