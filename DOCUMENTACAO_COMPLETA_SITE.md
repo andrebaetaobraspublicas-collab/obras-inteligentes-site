@@ -220,7 +220,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/solarincidence-pro/` | 282551 bytes | 280392 caracteres |
 | `/eletroposto-calc/` | 183380 bytes | 181470 caracteres |
 | `/carboncalcpro/` | 186068 bytes | 184143 caracteres |
-| `/friopro/` | 6911725 bytes | 6896711 caracteres |
+| `/friopro/` | 7125228 bytes | 7106816 caracteres |
 | `/concessaorod/` | 221640 bytes | 219837 caracteres |
 | `/entenda-ia/` | 175035 bytes | 172793 caracteres |
 | `/abc-fiscal/` | 351255 bytes | 349022 caracteres |
@@ -1891,11 +1891,13 @@ Observacoes:
 Rota: `/friopro/`  
 Arquivo: `friopro/index.html`
 
-Ultima inclusao:
+Ultima atualizacao:
 
 - Fonte: `C:\Users\ACER\Documents\Downloads\FrioPro_v1_6.html`
 - Data: 09/09/2026
 - Alteracao: inclusao de novo card na home e publicacao do aplicativo FrioPro como HTML standalone. O filtro `Ar condicionado e ventilacao` foi renomeado para `Ar condicionado, refrigeracao e ventilacao`.
+- Em 10/09/2026, atualizado com `FrioPro_v1_8.html`, identificado como versao 1.8 com modulo de tubulacao frigorifica.
+- Backup anterior: `C:\Obras Inteligentes\backups\friopro-index-before-v1-8-20260910-0743.html`.
 
 Observacoes:
 
