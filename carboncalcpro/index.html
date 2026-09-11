@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>CarbonCalc Pro — Pegada de carbono de obras</title>
-<meta name="description" content="Calculadora offline de carbono incorporado de obras de edificação e infraestrutura, com fronteira A1-A5 conforme EN 15978.">
+<title>CarbonCalc Pro v1.2 — Carbono e rastreabilidade de obras</title>
+<meta name="description" content="Calculadora offline e paramétrica de carbono de obras, com cenários separados, rastreabilidade de fatores e memória de cálculo. Não constitui ACV verificada.">
 <meta name="color-scheme" content="light dark">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%230F6E5C'/><path d='M9 21h14M9 21l3.5-9h7L23 21' stroke='white' stroke-width='2.2' fill='none' stroke-linejoin='round'/></svg>">
 <style>
@@ -465,6 +465,119 @@ html[data-tema="escuro"] mark { background: #6B5A17; color: #F2ECD8; }
 .destaque-linha .val small { font-size: .82rem; font-family: var(--sans); color: var(--ink-2); }
 .credito { color: var(--verdete); }
 
+
+/* v1.1/v1.2 — Rastreamento documental, revisão e memória de cálculo */
+:root { --rail: 235px; }
+.painel-area { max-width: 1520px; padding-left: 22px; padding-right: 22px; }
+.v12-contexto { background:var(--verdete-soft); border:1px solid var(--line); border-radius:8px; padding:12px 16px; margin:0 0 18px; display:flex; flex-wrap:wrap; align-items:center; gap:10px 16px; font-size:.84rem; }
+.v12-contexto .campo { margin-left:auto; min-width:235px; }
+.v12-contexto b { color:var(--verdete); }
+.v12-version { font-family:var(--mono); font-size:.69rem; color:var(--ink-2); background:var(--surface-2); padding:3px 6px; border:1px solid var(--line); border-radius:4px; }
+.v12-storage { font-size:.72rem; color:var(--ink-2); min-width:120px; }
+.v12-storage[data-state="erro"] { color:var(--ferrugem); font-weight:700; }
+.v12-tipo { font-size:.71rem; color:var(--ink-2); display:block; margin-top:3px; }
+.v12-badge { display:inline-block; font-size:.71rem; padding:2px 7px; border:1px solid var(--line); border-radius:4px; background:var(--surface-2); line-height:1.5; }
+.v12-badge.ok { background:var(--verdete-soft); color:var(--verdete); }
+.v12-badge.warn { color:var(--ferrugem); background:var(--surface-2); border-color:var(--ferrugem); }
+.v12-controls { display:flex; gap:9px; align-items:center; flex-wrap:wrap; margin:12px 0; }
+.v12-controls .campo { flex:1; min-width:180px; }
+.v12-controls button { align-self:flex-end; }
+.v12-kpis { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:10px; margin:14px 0; }
+.v12-kpi { background:var(--surface-2); padding:14px; border:1px solid var(--line); border-radius:8px; }
+.v12-kpi strong { display:block; font-family:var(--serif); font-size:1.6rem; color:var(--ink); }
+.v12-kpi span { display:block; font-size:.76rem; color:var(--ink-2); }
+.v12-alert { border:1px solid var(--ferrugem); padding:12px 15px; margin:0 0 14px; border-radius:7px; background:var(--surface); font-size:.85rem; }
+.v12-alert[hidden] { display:none; }
+.v12-alert strong { color:var(--ferrugem); }
+.v12-muted { color:var(--ink-2); font-size:.79rem; }
+input[aria-invalid="true"] { outline:2px solid var(--ferrugem); background:var(--surface); }
+.v12-dialog { width:min(980px,calc(100vw - 24px)); max-height:91vh; padding:0; border:1px solid var(--line); border-radius:12px; background:var(--surface); color:var(--ink); box-shadow:0 20px 90px #0007; }
+.v12-dialog::backdrop { background:rgba(10,20,19,.65); }
+.v12-modal-head { display:flex; align-items:flex-start; justify-content:space-between; gap:14px; padding:18px 22px; border-bottom:1px solid var(--line); background:var(--surface-2); }
+.v12-modal-body { padding:18px 22px; }
+.v12-modal-footer { display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap; padding:14px 22px; border-top:1px solid var(--line); background:var(--surface-2); }
+.v12-dialog fieldset { margin:0 0 20px; border:1px solid var(--line); padding:13px 15px 17px; border-radius:6px; }
+.v12-dialog legend { font-size:.86rem; font-weight:650; padding:0 6px; }
+.v12-dialog textarea { resize:vertical; min-height:64px; }
+.v12-dialog .grade { grid-template-columns:repeat(2,minmax(0,1fr)); }
+.v12-wide { grid-column:1/-1; }
+.v12-evidence { display:flex; gap:10px; flex-wrap:wrap; padding:10px 12px; background:var(--surface-2); border:1px solid var(--line); border-radius:5px; margin:10px 0; font-size:.82rem; align-items:center; }
+.v12-evidence span { flex:1; overflow-wrap:anywhere; }
+.v12-footnote { border-top:1px solid var(--line); margin-top:16px; padding-top:12px; font-size:.78rem; color:var(--ink-2); }
+.v12-source-table td { vertical-align:top; }
+.v12-source-table td:first-child { min-width:190px; }
+.v12-source-table td:nth-child(3) { min-width:230px; max-width:440px; overflow-wrap:anywhere; }
+.v12-source-table button { white-space:nowrap; }
+.v12-report h2 { margin-top:26px; margin-bottom:12px; }
+.v12-report h3 { margin-top:14px; margin-bottom:8px; }
+.v12-report p { max-width:none; }
+.v12-report .memo-title { padding-bottom:18px; margin-bottom:18px; border-bottom:3px solid var(--verdete); }
+.v12-report .memo-title h1 { font-size:1.75rem; margin-bottom:6px; }
+.v12-report .tabela-wrap { margin:10px 0 15px; }
+.v12-report details { border:1px solid var(--line); border-radius:7px; padding:11px 14px; margin:10px 0; }
+.v12-report summary { font-weight:650; cursor:pointer; font-size:.9rem; }
+.v12-report .formula { white-space:pre-wrap; overflow-wrap:anywhere; }
+.v12-report .memo-meta { display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:12px; }
+.v12-report .memo-meta dt { font-size:.72rem; font-weight:650; color:var(--ink-2); }
+.v12-report .memo-meta dd { margin:2px 0 0; font-size:.86rem; overflow-wrap:anywhere; }
+.v12-log { max-height:350px; overflow:auto; }
+.v12-log p { font-size:.8rem; padding:9px 0; margin:0; border-bottom:1px solid var(--line); }
+#v12-import-summary { max-height:240px; overflow:auto; }
+#v12-result-invalid:not(:empty) ~ .leitura .faixa { opacity:.45; }
+@media(max-width:680px) {
+  .v12-dialog .grade { grid-template-columns:minmax(0,1fr); }
+  .v12-dialog { max-height:94vh; }
+  .v12-modal-head,.v12-modal-body,.v12-modal-footer { padding:13px; }
+  .v12-contexto .campo { margin-left:0; width:100%; }
+  .painel-area { padding-left:12px; padding-right:12px; }
+  .grade.dupla { grid-template-columns:minmax(0,1fr); }
+  .topo { flex-wrap:wrap; padding:10px 12px; }
+  .topo-acoes { margin-left:0; }
+  .marca { flex-wrap:wrap; }
+  .v12-report .memo-title h1 { font-size:1.3rem; }
+}
+@media print {
+  html,html[data-tema="escuro"],html[data-tema="claro"] { --bg:#fff; --surface:#fff; --surface-2:#f5f5f5; --surface-3:#eee; --ink:#111; --ink-2:#333; --ink-3:#555; --line:#ccc; --verdete:#155d50; }
+  .topo,.rail,.abertura,.v12-contexto,.v12-alert,.v12-controls,.v12-dialog,.toast,.no-print { display:none !important; }
+  .shell { display:block; }
+  .painel-area { margin:0; padding:0; width:100%; }
+  .painel { display:none !important; page-break-before:auto !important; }
+  #painel-memoria { display:block !important; }
+  #painel-memoria > .cabeca { display:none; }
+  .v12-report { font-size:10px; }
+  .v12-report h2 { break-after:avoid; font-size:15px; margin-top:18px; }
+  .v12-report h3,.v12-report summary { break-after:avoid; }
+  .v12-report table { font-size:9px; }
+  .v12-report .tabela-wrap,.v12-report .cartao,.v12-report details { break-inside:auto; overflow:visible; }
+  .v12-report tr { break-inside:avoid; }
+  .v12-report thead { display:table-header-group; }
+  .v12-report th { position:static; white-space:normal; font-size:8px; }
+  .v12-report td,.v12-report th { padding:5px 6px; }
+  .v12-report details > * { display:block; }
+  .v12-report details > summary { display:none; }
+  .v12-report .v12-kpis { display:grid; grid-template-columns:repeat(4,1fr); }
+  .v12-report .v12-kpi strong { font-size:17px; }
+  .v12-report .memo-title h1 { font-size:23px; }
+  .v12-report .v12-source-table td { min-width:0 !important; }
+  .v12-report .v12-source-table button { display:none; }
+  .v12-log { overflow:visible; max-height:none; }
+  @page { size:A4 landscape; margin:14mm; }
+}
+@media(max-width:900px) {
+  .shell { width:100%; }
+  .painel-area { width:100%; max-width:100%; }
+  .v12-contexto > div { min-width:0; max-width:100%; }
+  .rail { max-width:100%; }
+}
+@media(max-width:480px) {
+  .leitura-corpo { gap:18px; padding:16px; }
+  .leitura-bloco { min-width:0; max-width:100%; }
+  .faixa-item { min-width:0; padding:7px 3px; font-size:.6rem; overflow-wrap:anywhere; }
+  .manual-nav { max-width:100%; }
+  .v12-report table { min-width:650px; }
+  .v12-contexto .campo { min-width:0; }
+}
+
 </style>
 </head>
 <body>
@@ -496,7 +609,7 @@ html[data-tema="escuro"] mark { background: #6B5A17; color: #F2ECD8; }
     </svg>
 
     <h1 id="abertura-titulo" class="abertura-titulo">CarbonCalc Pro</h1>
-    <p class="abertura-sub">Estimativa da pegada de carbono de obras de edificação e infraestrutura, do berço ao fim da vida útil.</p>
+    <p class="abertura-sub">Estimativa de carbono de obras, com fronteira declarada, cenários independentes e rastreabilidade dos dados.</p>
 
     <div class="abertura-avisos" id="abertura-avisos" tabindex="0" aria-label="Avisos legais">
       <h2>Antes de começar, leia</h2>
@@ -508,7 +621,7 @@ html[data-tema="escuro"] mark { background: #6B5A17; color: #F2ECD8; }
       <p>Não é uma Avaliação de Ciclo de Vida conduzida conforme as normas ISO 14040 e ISO 14044, nem um inventário verificado por terceira parte. Não constitui certificação, laudo, parecer técnico ou declaração ambiental de produto, e não substitui a análise de um profissional habilitado.</p>
 
       <h3>Sobre os fatores de emissão</h3>
-      <p>São médias setoriais brasileiras e dados internacionais adaptados ao contexto nacional. Fabricantes individuais podem divergir da média em proporção significativa. Para uso contratual ou de certificação, substitua os valores por declarações ambientais de produto verificadas.</p>
+      <p>Os fatores iniciais e as indicações de origem foram herdados da base do sistema e não foram verificados nesta versão. Não presuma que a instituição citada comprovou o valor. Cadastre fontes, ano, região, método, unidade e documentos antes de empregar o resultado em um estudo técnico.</p>
 
       <h3>Responsabilidade</h3>
       <p>O resultado é fornecido no estado em que se encontra, sem garantia de exatidão, adequação a finalidade específica ou aderência a qualquer norma ou exigência regulatória. A responsabilidade técnica pela conferência dos dados de entrada, pela interpretação dos resultados e por qualquer decisão deles derivada é integralmente de quem utiliza a ferramenta. O autor não responde por perdas ou danos decorrentes do uso.</p>
@@ -533,7 +646,7 @@ html[data-tema="escuro"] mark { background: #6B5A17; color: #F2ECD8; }
 <header class="topo">
   <div class="marca">
     <strong>CarbonCalc Pro</strong>
-    <span>Pegada de carbono de obras &middot; EN 15978</span>
+    <span>Pegada de carbono de obras &middot; v1.2</span>
   </div>
   <div class="topo-acoes">
     <button id="btn-exemplo" class="sutil" title="Carregar um caso de demonstração">Exemplo</button>
@@ -628,7 +741,7 @@ html[data-tema="escuro"] mark { background: #6B5A17; color: #F2ECD8; }
 
       <div class="cartao">
         <h3>Fronteira do estudo</h3>
-        <p class="nota">O cálculo cobre o carbono incorporado até a entrega da obra. A operação do edifício (módulo B) não é objeto desta ferramenta.</p>
+        <p class="nota">A etiqueta usa exclusivamente A1–A5, em comparação indicativa com as faixas internas do modelo. O módulo B e o fim de vida C são opcionais e apresentados separadamente, com declaração das parcelas não modeladas.</p>
         <div class="linha-check">
           <input type="checkbox" id="f-fimvida">
           <label for="f-fimvida">Incluir estimativa do módulo C — demolição, transporte e disposição ao fim da vida útil</label>
@@ -788,9 +901,9 @@ html[data-tema="escuro"] mark { background: #6B5A17; color: #F2ECD8; }
       <div class="cartao">
         <div class="linha-check">
           <input type="checkbox" id="f-op-incluir">
-          <label for="f-op-incluir">Calcular o módulo B e apresentar o carbono de ciclo de vida completo</label>
+          <label for="f-op-incluir">Calcular as parcelas modeladas do módulo B no período de estudo</label>
         </div>
-        <p class="nota">O carbono incorporado continua sendo o valor classificado pela etiqueta. O módulo B entra como indicador separado, porque misturar as duas fronteiras inviabiliza qualquer comparação.</p>
+        <p class="nota">A etiqueta compara apenas A1–A5 com as referências internas. A manutenção e reposição (B2–B5), os demais componentes de B e o fim de vida C são apresentados separadamente; B2–B5 não é denominado carbono operacional.</p>
       </div>
 
       <div id="bloco-operacao">
@@ -798,8 +911,8 @@ html[data-tema="escuro"] mark { background: #6B5A17; color: #F2ECD8; }
           <h3>Período de estudo</h3>
           <div class="grade">
             <div class="campo">
-              <label for="f-rsp">Vida útil de projeto adotada (anos)
-                <span class="dica">50 anos é a referência da EN 15978</span></label>
+              <label for="f-rsp">Período de estudo adotado (anos)
+                <span class="dica">Hipótese inicial do modelo; ajuste ao período de estudo justificado</span></label>
               <input id="f-rsp" type="number" min="1" max="150" step="1">
             </div>
             <div class="campo">
@@ -883,7 +996,7 @@ html[data-tema="escuro"] mark { background: #6B5A17; color: #F2ECD8; }
     <section class="painel" id="painel-compensacao">
       <div class="cabeca">
         <h1>Compensação por reflorestamento</h1>
-        <p>Dimensiona a área de restauração necessária para neutralizar a pegada remanescente, depois de esgotado o que se pode evitar e reduzir.</p>
+        <p>Estima uma área de restauração para uma meta futura de remoção. O dimensionamento não comprova neutralização nem altera as emissões brutas do inventário.</p>
       </div>
 
       <div class="aviso-box">Compensar não é reduzir. A hierarquia é evitar, reduzir e só então compensar o que restou. Uma tonelada evitada no projeto vale mais que uma tonelada compensada, porque não depende de a floresta sobreviver às próximas décadas.</div>
@@ -906,8 +1019,8 @@ html[data-tema="escuro"] mark { background: #6B5A17; color: #F2ECD8; }
             <div class="campo">
               <label for="f-comp-base">Pegada a compensar</label>
               <select id="f-comp-base">
-                <option value="incorporado">Carbono incorporado (A1–A5 + C)</option>
-                <option value="ciclo">Ciclo de vida completo (com módulo B)</option>
+                <option value="incorporado">Construção e fim de vida incluído (A1–A5 + C opcional)</option>
+                <option value="ciclo">Soma das parcelas incluídas (A + B e/ou C)</option>
               </select>
             </div>
             <div class="campo">
@@ -1070,7 +1183,8 @@ html[data-tema="escuro"] mark { background: #6B5A17; color: #F2ECD8; }
 
 const APP_INFO = {
   nome: 'CarbonCalc Pro',
-  versao: '1.0.0',
+  versao: '1.2.0',
+  schemaVersion: 2,
   norma: 'EN 15978 / ISO 14040 / ISO 21930',
   chaveLS: 'carboncalc_pro_v1'
 };
@@ -1421,15 +1535,15 @@ const MEDIDAS = [
   },
   {
     id: 'fornec_local', nome: 'Priorizar fornecedores em raio reduzido',
-    desc: 'Redução de 50% nas distâncias médias de transporte dos materiais pesados.',
+    desc: 'Hipótese de redução de 50% de todas as distâncias de fornecimento do cenário, inclusive as informadas por material.',
     tipo: 'reducao_etapa', etapa: 'A4', pct: 0.50,
     custo: 'Redução', barreira: 'Média', ref: 'Art. 25, §1º da Lei 14.133/2021'
   },
   {
-    id: 'energia_renovavel', nome: 'Energia renovável certificada no canteiro',
-    desc: 'Contratação de energia no mercado livre com certificados I-REC zera a emissão elétrica do canteiro.',
+    id: 'energia_renovavel', nome: 'Hipótese de emissão elétrica nula no canteiro',
+    desc: 'Hipótese simplificada de fator de emissão elétrica igual a zero no cenário. Não equivale a comprovação por certificado nem elimina o consumo de energia; exige justificativa metodológica.',
     tipo: 'reducao_energia', alvo: 'eletrica', pct: 1.0,
-    custo: 'Baixo', barreira: 'Baixa', ref: 'I-REC Standard'
+    custo: 'Baixo', barreira: 'Baixa', ref: 'Hipótese de cenário; confirmar método e fronteira'
   },
   {
     id: 'perdas', nome: 'Programa de redução de perdas de materiais',
@@ -1576,13 +1690,28 @@ const Engine = {
   material(id) { return this.mapa[id] || null; },
 
   num(v, def) {
-    const n = typeof v === 'string' ? parseFloat(v.replace(',', '.')) : v;
-    return (isFinite(n) && !isNaN(n)) ? n : (def === undefined ? 0 : def);
+    const fallback = def === undefined ? 0 : def;
+    if (v === null || v === undefined || typeof v === 'boolean') return fallback;
+    let n = v;
+    if (typeof v === 'string') {
+      let t = v.trim();
+      if (!t) return fallback;
+      if (/^[+-]?\d{1,3}(\.\d{3})+,\d+$/.test(t)) t = t.replace(/\./g, '').replace(',', '.');
+      else if (/^[+-]?\d+(,\d+)$/.test(t)) t = t.replace(',', '.');
+      n = Number(t);
+    }
+    return typeof n === 'number' && Number.isFinite(n) ? n : fallback;
   },
+
 
   /* ---------- Estado inicial ---------- */
   estadoPadrao() {
     return {
+      schemaVersion: APP_INFO.schemaVersion,
+      fontes: {}, fatoresTecnicos: {}, evidencias: {},
+      inventario: { modo: 'parametrico', referencia: '', responsavel: '', observacoes: '' },
+      historico: [],
+      visualizacao: { resultado: 'base', compensacao: 'mitigado' },
       obra: {
         nome: '', orgao: '', tipologia: 'res_multi', quantidade: 5000,
         pavimentos: 8, sistema: 'conc_moldado', padrao: 'normal',
@@ -1594,7 +1723,7 @@ const Engine = {
       transporte: { modal: 'rod_pesado', ajuste: 1.0, distancias: {} },
       canteiro: { diesel: null, eletrica: null, gasolina: 0, glp: 0, auto: true },
       residuos: { destinacao: 'aterro', distancia: 30, extra: 0 },
-      fimVida: { incluir: false, taxaDemolicao: 0.85 },
+      fimVida: { incluir: false, taxaDemolicao: 0.85, distancia: 30, modal: 'rod_medio', destinacao: 'aterro' },
       operacao: {
         incluir: false, rsp: 50, auto: true,
         eletrica: null, agua: null, combustivel: 0,
@@ -1611,19 +1740,14 @@ const Engine = {
   },
 
   /* ---------- Fator de emissão efetivo (permite override do usuário) ---------- */
-  fe(id, est) {
-    if (est && est.fatoresCustom && est.fatoresCustom[id] != null) {
-      return this.num(est.fatoresCustom[id], (this.mapa[id] || {}).fe || 0);
-    }
-    const m = this.mapa[id];
-    return m ? m.fe : 0;
-  },
+  fe(id, est) { return Factors.valor(est, 'material:' + id); },
+
 
   /* ---------- Geração paramétrica de quantitativos ---------- */
   gerarQuantitativos(obra) {
     const tip = TIPOLOGIAS[obra.tipologia];
     if (!tip) return {};
-    const q = this.num(obra.quantidade, 0);
+    const q = Math.max(0, this.num(obra.quantidade, 0));
     const sis = (tip.estrutural && SISTEMAS[obra.sistema]) ? SISTEMAS[obra.sistema] : { mult: {}, add: {} };
     const pad = PADROES[obra.padrao] || { mult: {} };
 
@@ -1713,7 +1837,7 @@ const Engine = {
     const ajusteDist = this.num(est.transporte.ajuste, 1);
 
     const itens = [];
-    let a13 = 0, a4 = 0, massaTotal = 0, massaPerdas = 0;
+    let a13 = 0, a4 = 0, massaTotal = 0, massaPerdas = 0, massaIncorporada = 0;
 
     Object.keys(mod.quant).forEach(id => {
       const mat = this.mapa[id];
@@ -1734,22 +1858,24 @@ const Engine = {
         ? this.num(dCustom, 0)
         : (DIST_PADRAO[mat.fam] || 250) * ajusteDist;
 
-      const e4 = massaT * dist * modal.fe;
+      const feModal = Factors.valor(est, 'modal:' + modal.id);
+      const e4 = massaT * dist * feModal;
 
       a13 += e13;
       a4 += e4;
       massaTotal += massaKg;
+      massaIncorporada += qLiq * mat.mu;
       massaPerdas += qLiq * perda * mat.mu;
 
       itens.push({
         id, nome: mat.nome, fam: mat.fam, un: mat.un,
-        qLiq, qBruta, perda, fator, dist,
+        qLiq, qBruta, perda, fator, dist, distBase: dist, feModal, massaLiquidaT: qLiq * mat.mu / 1000,
         massaT, a13: e13, a4: e4, total: e13 + e4
       });
     });
 
     a4 *= mod.etapaMult.A4;
-    itens.forEach(i => { i.a4 *= mod.etapaMult.A4; i.total = i.a13 + i.a4; });
+    itens.forEach(i => { i.dist *= mod.etapaMult.A4; i.a4 *= mod.etapaMult.A4; i.total = i.a13 + i.a4; });
 
     /* --- A5: energia de canteiro --- */
     const cant = CANTEIRO[est.obra.tipologia] || { diesel: 0, eletrica: 0 };
@@ -1764,9 +1890,12 @@ const Engine = {
     const energia = {};
     let a5e = 0;
     Object.keys(consumo).forEach(k => {
-      const v = consumo[k] * (mod.energiaMult[k] != null ? mod.energiaMult[k] : 1);
-      const e = v * ENERGIA[k].fe;
-      energia[k] = { consumo: v, emissao: e, un: ENERGIA[k].un, nome: ENERGIA[k].nome };
+      const mult = mod.energiaMult[k] != null ? mod.energiaMult[k] : 1;
+      const v = consumo[k] * (k === 'eletrica' ? 1 : mult);
+      const fatorBase = Factors.valor(est, 'energia:' + k);
+      const fatorEfetivo = fatorBase * (k === 'eletrica' ? mult : 1);
+      const e = v * fatorEfetivo;
+      energia[k] = { consumo: v, consumoBase: consumo[k], emissao: e, fatorBase, fatorEfetivo, un: ENERGIA[k].un, nome: ENERGIA[k].nome };
       a5e += e;
     });
 
@@ -1774,32 +1903,49 @@ const Engine = {
     const dest = DESTINACAO.find(d => d.id === est.residuos.destinacao) || DESTINACAO[0];
     const massaRccT = massaPerdas / 1000 + this.num(est.residuos.extra, 0);
     const distRcc = this.num(est.residuos.distancia, 30);
-    const a5rTransp = massaRccT * distRcc * MODAIS[1].fe;
-    const a5rDest = massaRccT * dest.fe;
+    const a5rTransp = massaRccT * distRcc * Factors.valor(est, 'modal:rod_medio');
+    const a5rDest = massaRccT * Factors.valor(est, 'destinacao:' + dest.id);
     const a5r = (a5rTransp + a5rDest) * mod.etapaMult.A5r;
 
-    /* --- Módulo C: fim de vida simplificado --- */
-    let c = 0;
-    if (est.fimVida.incluir) {
-      const taxa = this.num(est.fimVida.taxaDemolicao, 0.85);
-      const massaDemT = (massaTotal / 1000) * taxa;
-      c = massaDemT * (DESTINACAO[0].fe + 30 * MODAIS[1].fe) + massaDemT * 1.6;
-    }
-
-    /* Carbono incorporado — é este o valor classificado pela etiqueta.
-       O módulo B entra em indicador separado para não misturar fronteiras. */
-    const total = a13 + a4 + a5e + a5r + c;
+    /* C1–C4: hipótese simplificada, sobre material incorporado, sem repetir as perdas de A5. */
+    const fim = est.fimVida;
+    const taxa = Math.min(1, Math.max(0, this.num(fim.taxaDemolicao, .85)));
+    const massaDemT = fim.incluir ? massaIncorporada / 1000 * taxa : 0;
+    const cModal = MODAIS.find(m => m.id === fim.modal) || MODAIS[1];
+    const cDestino = DESTINACAO.find(d => d.id === fim.destinacao) || DESTINACAO[0];
+    const cDist = Math.max(0, this.num(fim.distancia, 30));
+    const cF1 = Factors.valor(est, 'demolicao:c1');
+    const cF2 = Factors.valor(est, 'modal:' + cModal.id);
+    const cFD = Factors.valor(est, 'destinacao:' + cDestino.id);
+    const fimVida = {
+      ativo: !!fim.incluir, massaAdquiridaT: massaTotal / 1000, massaPerdasT: massaPerdas / 1000,
+      massaIncorporadaT: massaIncorporada / 1000, taxa, massaDemT,
+      massaNaoModeladaT: fim.incluir ? massaIncorporada / 1000 - massaDemT : massaIncorporada / 1000,
+      distancia: cDist, modal: cModal.id, destinacao: cDestino.id, feC1: cF1, feTransporte: cF2, feDestino: cFD,
+      c1: massaDemT * cF1,
+      c2: massaDemT * cDist * cF2,
+      c3: cDestino.id !== 'aterro' ? massaDemT * cFD : 0,
+      c4: cDestino.id === 'aterro' ? massaDemT * cFD : 0
+    };
+    const c = fimVida.c1 + fimVida.c2 + fimVida.c3 + fimVida.c4;
+    fimVida.total = c;
+    const totalA = a13 + a4 + a5e + a5r;
+    const total = totalA + c;
     const intensidade = refQtd > 0 ? total / refQtd : 0;
+    const intensidadeA = refQtd > 0 ? totalA / refQtd : 0;
+    const classificavel = refQtd > 0 && itens.length > 0 && !Project.desatualizado(est);
+
 
     /* --- Curva ABC de carbono --- */
     const ordenados = itens.slice().sort((x, y) => y.total - x.total);
     let acum = 0;
     const somaItens = ordenados.reduce((s, i) => s + i.total, 0) || 1;
     ordenados.forEach(i => {
+      const anterior = acum / somaItens;
       acum += i.total;
       i.pct = i.total / somaItens;
       i.pctAcum = acum / somaItens;
-      i.classe = i.pctAcum <= 0.80 ? 'A' : (i.pctAcum <= 0.95 ? 'B' : 'C');
+      i.classe = anterior < 0.80 - 1e-12 ? 'A' : (anterior < 0.95 - 1e-12 ? 'B' : 'C');
     });
 
     /* --- Agregação por família --- */
@@ -1812,12 +1958,13 @@ const Engine = {
 
     /* --- Classificação frente ao benchmark --- */
     const b = tip.bench;
-    let faixa = 'E', faixaTexto = 'Muito acima da referência';
-    if (intensidade <= b.a) { faixa = 'A'; faixaTexto = 'Excelente desempenho'; }
-    else if (intensidade <= b.b) { faixa = 'B'; faixaTexto = 'Acima da prática usual'; }
-    else if (intensidade <= b.c) { faixa = 'C'; faixaTexto = 'Prática usual de mercado'; }
-    else if (intensidade <= b.d) { faixa = 'D'; faixaTexto = 'Abaixo da prática usual'; }
+    let faixa = 'E', faixaTexto = 'Faixa interna E';
+    if (intensidadeA <= b.a) { faixa = 'A'; faixaTexto = 'Faixa interna A'; }
+    else if (intensidadeA <= b.b) { faixa = 'B'; faixaTexto = 'Faixa interna B'; }
+    else if (intensidadeA <= b.c) { faixa = 'C'; faixaTexto = 'Faixa interna C'; }
+    else if (intensidadeA <= b.d) { faixa = 'D'; faixaTexto = 'Faixa interna D'; }
 
+    if (!classificavel) { faixa = '—'; faixaTexto = 'Sem classificação: confira inventário e porte'; }
     const modB = this.moduloB(est, itens, refQtd);
     const cicloVida = total + modB.total;
     const compensacao = this.compensar(est, total, cicloVida);
@@ -1834,10 +1981,12 @@ const Engine = {
         a5r: { nome: 'A5 · Resíduos de construção', valor: a5r },
         c: { nome: 'C · Fim de vida (estimado)', valor: c }
       },
-      total, intensidade, faixa, faixaTexto, bench: b,
+      total, totalA, intensidade, intensidadeA, classificavel, fimVida, faixa, faixaTexto, bench: b,
+      residuosDetalhe: { massaRccT, distRcc, destinacao: dest.id, feModal: Factors.valor(est, 'modal:rod_medio'), feDestino: Factors.valor(est, 'destinacao:' + dest.id), transporte: a5rTransp, tratamento: a5rDest, multiplicador: mod.etapaMult.A5r, total: a5r },
+      comMedidas: usarMedidas,
       itens: ordenados, familias, energia,
-      massaTotalT: massaTotal / 1000, massaRccT,
-      medidasAtivas: (est.cenario.medidas || []).slice()
+      massaTotalT: massaTotal / 1000, massaIncorporadaT: massaIncorporada / 1000, massaPerdasT: massaPerdas / 1000, massaRccT,
+      medidasAtivas: usarMedidas ? (est.cenario.medidas || []).slice() : []
     };
   },
 
@@ -1853,7 +2002,7 @@ const Engine = {
     const vazio = {
       ativo: false, rsp,
       b1: 0, b2b5: 0, b6: 0, b7: 0, total: 0,
-      reposicoes: [], kwhAno: 0, m3Ano: 0, feMatriz: ENERGIA.eletrica.fe
+      reposicoes: [], kwhAno: 0, m3Ano: 0, feMatriz: Factors.valor(est, 'energia:eletrica')
     };
     if (!cfg.incluir) return vazio;
 
@@ -1880,12 +2029,12 @@ const Engine = {
     const auto = cfg.auto !== false;
     const kwhAno = (auto || cfg.eletrica == null) ? op.eletrica * refQtd : this.num(cfg.eletrica, 0);
     const d = Math.min(Math.max(this.num(cfg.descarbonizacao, 0), 0), 1);
-    const feMatriz = ENERGIA.eletrica.fe * (1 - d / 2);
-    const b6 = kwhAno * rsp * feMatriz + this.num(cfg.combustivel, 0) * rsp * ENERGIA.diesel.fe;
+    const feMatriz = Factors.valor(est, 'energia:eletrica') * (1 - d / 2);
+    const b6 = kwhAno * rsp * feMatriz + this.num(cfg.combustivel, 0) * rsp * Factors.valor(est, 'energia:diesel');
 
     /* B7 — água tratada e esgoto coletado */
     const m3Ano = (auto || cfg.agua == null) ? op.agua * refQtd : this.num(cfg.agua, 0);
-    const b7 = m3Ano * rsp * FE_AGUA;
+    const b7 = m3Ano * rsp * Factors.valor(est, 'agua:rede');
 
     /* B1 — reabsorção de CO2 por carbonatação das superfícies cimentícias */
     let b1 = 0;
@@ -1898,7 +2047,7 @@ const Engine = {
     return {
       ativo: true, rsp, b1, b2b5, b6, b7,
       total: b1 + b2b5 + b6 + b7,
-      reposicoes, kwhAno, m3Ano, feMatriz
+      reposicoes, kwhAno, m3Ano, feMatriz, feAgua: Factors.valor(est, 'agua:rede'), combustivelAno: this.num(cfg.combustivel, 0)
     };
   },
 
@@ -1923,7 +2072,7 @@ const Engine = {
     return {
       ativo: true, sistema: sis, base, alvo, horizonte, fracao,
       area, mudas: area * sis.densidade, custoHa, custo: area * custoHa,
-      residual: base - alvo
+      residual: base, saldoProjetado: base - alvo
     };
   },
 
@@ -2402,7 +2551,7 @@ const UI = {
 
   /* ---------- Painel de leitura ---------- */
   htmlLeitura(res, titulo) {
-    const un = res.unidade === 'km' ? 'kgCO₂e/km' : 'kgCO₂e/m²';
+    const un = 'kgCO₂e/(' + res.unidade + ')';
     const faixas = ['A', 'B', 'C', 'D', 'E'];
     const b = res.bench;
     const dec = b.d < 100 ? 1 : 0;
@@ -2489,7 +2638,7 @@ const UI = {
         <td>${this.esc(i.nome)}</td>
         <td class="n">${this.n(i.massaT, 2)}</td>
         <td class="n"><input class="dist" type="number" min="0" step="any" data-dist="${i.id}"
-          value="${this.est.transporte.distancias[i.id] != null ? this.est.transporte.distancias[i.id] : ''}"
+          value="${this.esc(this.est.transporte.distancias[i.id] != null ? this.est.transporte.distancias[i.id] : '')}"
           placeholder="${this.n(i.dist, 0)}"></td>
         <td class="n">${this.n(i.a4, 0)}</td>
         <td class="n">${this.pct(i.a4 / tot)}</td>
@@ -2513,7 +2662,7 @@ const UI = {
       const linhas = Object.keys(res.energia).map(k => {
         const e = res.energia[k];
         return `<tr><td>${this.esc(e.nome)}</td><td class="n">${this.n(e.consumo, 0)} ${e.un}</td>
-                <td class="n">${this.n(ENERGIA[k].fe, 4)}</td><td class="n">${this.n(e.emissao, 0)}</td></tr>`;
+                <td class="n">${this.n(e.fatorEfetivo, 4)}</td><td class="n">${this.n(e.emissao, 0)}</td></tr>`;
       }).join('');
       se.innerHTML = `<div class="tabela-wrap"><table>
         <thead><tr><th>Fonte</th><th class="n">Consumo</th><th class="n">FE (kgCO₂e/un)</th><th class="n">kgCO₂e</th></tr></thead>
@@ -2546,16 +2695,16 @@ const UI = {
           ['B1 · Carbonatação do concreto', b.b1, 'crédito por reabsorção de CO₂ ao longo do período'],
           ['B2–B5 · Manutenção e reposição', b.b2b5, 'nova produção e transporte dos componentes repostos'],
           ['B6 · Energia operacional', b.b6, `${this.n(b.kwhAno, 0)} kWh por ano a ${this.n(b.feMatriz, 4)} kgCO₂e/kWh`],
-          ['B7 · Água e esgoto', b.b7, `${this.n(b.m3Ano, 0)} m³ por ano a ${this.n(FE_AGUA, 3)} kgCO₂e/m³`]
+          ['B7 · Água e esgoto', b.b7, `${this.n(b.m3Ano, 0)} m³ por ano a ${this.n(b.feAgua, 3)} kgCO₂e/m³`]
         ].filter(l => Math.abs(l[1]) > 0.01);
 
         alvo.innerHTML = `
           <div class="destaque-linha">
             <div><span class="rot">Carbono incorporado (A1–A5${this.est.fimVida.incluir ? ' + C' : ''})</span>
               <span class="val">${this.n(res.total / 1000, 1)} <small>tCO₂e</small></span></div>
-            <div><span class="rot">Carbono operacional (B) em ${b.rsp} anos</span>
+            <div><span class="rot">Módulo B modelado em ${b.rsp} anos</span>
               <span class="val">${this.n(res.operacional / 1000, 1)} <small>tCO₂e</small></span></div>
-            <div><span class="rot">Ciclo de vida completo</span>
+            <div><span class="rot">Soma das parcelas incluídas</span>
               <span class="val">${this.n(res.cicloVida / 1000, 1)} <small>tCO₂e · ${this.n(res.intensidadeCicloVida, 1)} kgCO₂e/${res.unidade}</small></span></div>
           </div>
           <div class="tabela-wrap" style="margin-top:14px"><table>
@@ -2617,7 +2766,7 @@ const UI = {
               <span class="val">${this.n(c.mudas, 0)} <small>unidades</small></span></div>
             <div><span class="rot">Custo estimado</span>
               <span class="val">${this.n(c.custo, 0)} <small>reais</small></span></div>
-            <div><span class="rot">Pegada residual</span>
+            <div><span class="rot">Emissões brutas (não compensadas)</span>
               <span class="val">${this.n(c.residual / 1000, 1)} <small>tCO₂e</small></span></div>
           </div>
           <p class="nota" style="margin-top:12px">Cálculo: ${this.n(c.alvo / 1000, 1)} tCO₂e ÷
@@ -2704,15 +2853,15 @@ const UI = {
       if (b.ativo || c.ativo) {
         const blocos = [];
         if (b.ativo) {
-          blocos.push(`<div class="leitura-bloco sec"><span class="rot">Carbono operacional (B), ${b.rsp} anos</span>
+          blocos.push(`<div class="leitura-bloco sec"><span class="rot">Módulo B modelado, ${b.rsp} anos</span>
             <span class="val">${this.n(res.operacional / 1000, 1)} <small>tCO₂e</small></span></div>`);
-          blocos.push(`<div class="leitura-bloco sec"><span class="rot">Ciclo de vida completo</span>
+          blocos.push(`<div class="leitura-bloco sec"><span class="rot">Soma das parcelas incluídas</span>
             <span class="val">${this.n(res.cicloVida / 1000, 1)} <small>tCO₂e · ${this.n(res.intensidadeCicloVida, 1)} kgCO₂e/${res.unidade}</small></span></div>`);
         }
         if (c.ativo) {
           blocos.push(`<div class="leitura-bloco sec"><span class="rot">Compensação por restauração</span>
             <span class="val credito">${this.n(c.area, 2)} <small>ha · ${this.n(c.mudas, 0)} mudas</small></span></div>`);
-          blocos.push(`<div class="leitura-bloco sec"><span class="rot">Pegada residual</span>
+          blocos.push(`<div class="leitura-bloco sec"><span class="rot">Emissões brutas (não compensadas)</span>
             <span class="val">${this.n(c.residual / 1000, 1)} <small>tCO₂e</small></span></div>`);
         }
         extra = `<div class="leitura-corpo" style="border-top:1px solid var(--line)">${blocos.join('')}</div>`;
@@ -2873,8 +3022,8 @@ const UI = {
       L.push(['B2-B5 Manutencao e reposicao', r.moduloB.b2b5.toFixed(1), 'kgCO2e'].map(q).join(';'));
       L.push(['B6 Energia operacional', r.moduloB.b6.toFixed(1), 'kgCO2e'].map(q).join(';'));
       L.push(['B7 Agua e esgoto', r.moduloB.b7.toFixed(1), 'kgCO2e'].map(q).join(';'));
-      L.push(['TOTAL OPERACIONAL (B)', r.operacional.toFixed(1), 'kgCO2e'].map(q).join(';'));
-      L.push(['CICLO DE VIDA COMPLETO', r.cicloVida.toFixed(1), 'kgCO2e'].map(q).join(';'));
+      L.push(['TOTAL DO MODULO B MODELADO', r.operacional.toFixed(1), 'kgCO2e'].map(q).join(';'));
+      L.push(['SOMA DAS PARCELAS INCLUIDAS', r.cicloVida.toFixed(1), 'kgCO2e'].map(q).join(';'));
       if (r.moduloB.reposicoes.length) {
         L.push([]);
         L.push(['Componente reposto', 'Vida util (anos)', 'Reposicoes', 'kgCO2e'].map(q).join(';'));
@@ -2891,7 +3040,7 @@ const UI = {
       L.push(['Area de restauracao', c.area.toFixed(3), 'ha'].map(q).join(';'));
       L.push(['Mudas', Math.round(c.mudas), 'un'].map(q).join(';'));
       L.push(['Custo estimado', c.custo.toFixed(2), 'BRL'].map(q).join(';'));
-      L.push(['Pegada residual', (c.residual / 1000).toFixed(2), 'tCO2e'].map(q).join(';'));
+      L.push(['Emissões brutas (não compensadas)', (c.residual / 1000).toFixed(2), 'tCO2e'].map(q).join(';'));
     }
     L.push(['Intensidade', r.intensidade.toFixed(2), 'kgCO2e/' + r.unidade].map(q).join(';'));
     L.push(['Classificacao', r.faixa, r.faixaTexto].map(q).join(';'));
@@ -3046,11 +3195,11 @@ const SECOES_MANUAL = [
         <li><strong>A1–A3</strong> — extração das matérias-primas, transporte até a indústria e fabricação do material.</li>
         <li><strong>A4</strong> — transporte do material da fábrica ou jazida até o canteiro.</li>
         <li><strong>A5</strong> — energia e combustíveis consumidos no canteiro, mais o destino do resíduo de construção.</li>
-        <li><strong>C</strong> (opcional) — demolição e disposição final ao término da vida útil.</li>
+        <li><strong>B</strong> (opcional) — reposições, energia, água e hipótese de carbonatação, com limitações próprias.</li><li><strong>C1–C4</strong> (opcional) — demolição, transporte, processamento e disposição final, sobre a massa líquida incorporada abrangida pelo cenário.</li>
       </ul>
       <h4>O que está fora</h4>
       <ul>
-        <li><strong>Módulo B</strong> — a operação da edificação: energia de climatização, iluminação, água e manutenção. Numa edificação convencional, a operação ao longo de cinquenta anos costuma superar o carbono incorporado; em edificações de alta eficiência a relação se inverte.</li>
+        <li>Parcelas não modeladas explicitamente, inclusive emissões de processos particulares de cada infraestrutura, instalação e descarte de componentes substituídos e efeitos além da fronteira do sistema.</li>
         <li>Emissões de uso do solo, supressão vegetal e mudança de cobertura do terreno.</li>
       </ul>
       <div class="aviso-box">Uma estimativa paramétrica não substitui uma Avaliação de Ciclo de Vida conduzida conforme a ISO 14040 e verificada por terceira parte. Ela serve para orientar decisões de projeto e especificação, quando ainda há liberdade para mudar de rumo.</div>`
@@ -3144,7 +3293,7 @@ const SECOES_MANUAL = [
       <h4>Reposição de componentes</h4>
       <p>Um componente cuja vida útil é menor que o período de estudo precisa ser produzido e transportado outra vez. O sistema calcula quantos ciclos cabem no período e repete a emissão de A1–A3 e A4 daquele item.</p>
       <div class="formula">Reposições = teto(período de estudo ÷ vida útil) − 1</div>
-      <p>Em edificações, quem manda são a pintura, a impermeabilização e as esquadrias. Em rodovias, o efeito é de outra ordem: com vida útil de doze anos para o revestimento asfáltico, um período de cinquenta anos embute três recapeamentos. Somados, eles superam o pavimento original.</p>
+      <p>Em edificações, quem manda são a pintura, a impermeabilização e as esquadrias. Em rodovias, o efeito é de outra ordem: com vida útil de doze anos para o revestimento asfáltico, um período de cinquenta anos resulta em quatro reposições neste modelo (anos 12, 24, 36 e 48). Somados, eles superam o pavimento original.</p>
       <h4>Carbonatação do concreto</h4>
       <p>O concreto reabsorve parte do CO₂ liberado na calcinação do calcário, à medida que o hidróxido de cálcio reage com o gás do ar. O fenômeno é real e mensurável, mas depende de área exposta, umidade, cobrimento e revestimento, o que a estimativa paramétrica não conhece. Por isso o crédito vem desligado e limitado a 25% das emissões cimentícias. Ative com parcimônia e declare a hipótese.</p>
       <h4>Descarbonização da matriz</h4>
@@ -3612,8 +3761,812 @@ const Manual = {
 };
 
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { Manual, SECOES_MANUAL };
+  Object.assign(module.exports, { Manual, SECOES_MANUAL });
 }
+
+
+/* ======================================================================
+   CarbonCalc Pro v1.1 + v1.2 — release integrada, schema 2.
+   Projeto é a entrada canônica; resultados de cenário são sempre derivados.
+   Metadados herdados NÃO constituem fontes verificadas. Sem dependências.
+   ====================================================================== */
+const Project = {
+  clone: o => JSON.parse(JSON.stringify(o)),
+  log(est, acao, detalhe = '') {
+    est.historico = est.historico || [];
+    est.historico.push({ data: new Date().toISOString(), acao, detalhe: String(detalhe).slice(0, 1000) });
+    est.historico = est.historico.slice(-80);
+  },
+  desatualizado(est) {
+    if (!est.gerado || !Object.keys(est.quantitativos || {}).length) return false;
+    const g = est.gerado, a = est.obra, t = TIPOLOGIAS[g.tipologia];
+    return g.tipologia !== a.tipologia || Math.abs(g.quantidade - a.quantidade) > 1e-9 ||
+      (t && t.estrutural && (g.sistema !== a.sistema || g.pavimentos !== a.pavimentos)) ||
+      (t && t.grupo === 'Edificações' && g.padrao !== a.padrao);
+  },
+  cleanURL(value) {
+    if (!value) return '';
+    try { const u = new URL(value); return ['https:', 'http:'].includes(u.protocol) ? u.href : ''; }
+    catch (_) { return ''; }
+  },
+  hashText(value) { // Identificador de conferência, não assinatura digital.
+    let h = 2166136261;
+    for (let i = 0; i < value.length; i++) h = Math.imul(h ^ value.charCodeAt(i), 16777619);
+    return (h >>> 0).toString(16).padStart(8, '0');
+  }
+};
+
+const Factors = {
+  catalogo: [], mapa: Object.create(null),
+  iniciar() {
+    const add = e => { this.catalogo.push(e); this.mapa[e.key] = e; };
+    MATERIAIS.forEach(m => add({ key:'material:' + m.id, id:m.id, nome:m.nome, grupo:'Materiais', fam:m.fam, un:'kgCO₂e/' + m.un, valor:m.fe, origem:m.fonte, fronteira:'A1–A3', fisico:m }));
+    Object.keys(ENERGIA).forEach(k => add({key:'energia:' + k, id:k, nome:ENERGIA[k].nome, grupo:'Energia', un:'kgCO₂e/' + ENERGIA[k].un, valor:ENERGIA[k].fe, origem:'Hipótese numérica herdada da v1.0; sem documento identificado', fronteira:'Energia: confirmar cobertura do fator'}));
+    MODAIS.forEach(m => add({key:'modal:' + m.id, id:m.id, nome:m.nome, grupo:'Transporte', un:'kgCO₂e/(t·km)', valor:m.fe, origem:'Hipótese numérica herdada da v1.0; sem documento identificado', fronteira:'Transporte: confirmar cobertura do fator'}));
+    DESTINACAO.forEach(d => add({key:'destinacao:' + d.id, id:d.id, nome:d.nome, grupo:'Resíduos', un:'kgCO₂e/t', valor:d.fe, origem:'Hipótese numérica herdada da v1.0; sem documento identificado', fronteira:'Tratamento/destinação: confirmar cobertura'}));
+    add({key:'agua:rede', id:'rede', nome:'Água tratada e esgoto coletado', grupo:'Operação', un:'kgCO₂e/m³', valor:FE_AGUA, origem:'Hipótese numérica herdada da v1.0; sem documento identificado', fronteira:'Água e esgoto: confirmar cobertura'});
+    add({key:'demolicao:c1', id:'c1', nome:'C1 — demolição/desconstrução', grupo:'Fim de vida', un:'kgCO₂e/t', valor:1.6, origem:'Constante 1,6 herdada do motor v1.0; origem não documentada', fronteira:'C1 — demolição simplificada'});
+  },
+  valor(est, key) {
+    const f = this.mapa[key]; if (!f) return 0;
+    const value = key.startsWith('material:') ? est?.fatoresCustom?.[f.id] : est?.fatoresTecnicos?.[key];
+    return value == null ? f.valor : Engine.num(value, f.valor);
+  },
+  custom(est, key) {
+    const f = this.mapa[key];
+    return key.startsWith('material:') ? est?.fatoresCustom?.[f.id] != null : est?.fatoresTecnicos?.[key] != null;
+  },
+  adotar(est, key, value) {
+    const f = this.mapa[key];
+    const obj = key.startsWith('material:') ? est.fatoresCustom : est.fatoresTecnicos;
+    const k = key.startsWith('material:') ? f.id : key;
+    if (value == null || Math.abs(value - f.valor) < 1e-12) delete obj[k]; else obj[k] = value;
+  },
+  meta(est, key) {
+    const f = this.mapa[key];
+    return Object.assign({ tipo:'hipotese', titulo:'', emissor:'', referencia:'', url:'', ano:null,
+      geografia:'', fronteira:f.fronteira, metodo:'', indicador:'', revisao:'', acesso:'',
+      fabricante:'', produto:'', planta:'', epdCodigo:'', epdOperador:'', epdVerificador:'',
+      epdEmissao:'', epdValidade:'', revisado:false, revisor:'', revisadoEm:'',
+      minimo:null, maximo:null, observacoes:'', documentoId:'' }, est.fontes?.[key] || {});
+  },
+  qualidade(est, key) {
+    const m = this.meta(est, key), faltam = [];
+    if (!m.titulo.trim()) faltam.push('título do documento');
+    if (!m.referencia.trim() && !m.url && !m.documentoId) faltam.push('referência localizável');
+    if (!m.emissor.trim()) faltam.push('emissor');
+    if (m.ano == null) faltam.push('ano-base');
+    if (!m.geografia.trim()) faltam.push('representatividade geográfica');
+    if (!m.metodo.trim()) faltam.push('método GWP');
+    if (!m.indicador.trim()) faltam.push('indicador ambiental');
+    if (!m.fronteira.trim()) faltam.push('fronteira');
+    if (m.tipo === 'epd') {
+      if (!m.epdCodigo) faltam.push('identificador EPD');
+      if (!m.epdOperador) faltam.push('operador EPD');
+      if (!m.epdVerificador) faltam.push('verificador EPD');
+      if (!m.epdValidade) faltam.push('validade EPD');
+    }
+    const expirada = m.tipo === 'epd' && m.epdValidade && m.epdValidade < new Date().toISOString().slice(0,10);
+    const completo = faltam.length === 0;
+    const revisado = completo && m.revisado && m.revisor.trim() && !expirada;
+    const algum = !!(m.titulo || m.ano || m.url || m.documentoId || m.referencia);
+    return { completo, revisado:!!revisado, expirada:!!expirada, faltam,
+      label:expirada ? 'EPD vencida — revisar' : revisado ? 'Revisado pelo usuário' : completo ? 'Campos essenciais completos' : algum ? 'Metadados parciais' : 'Sem lastro documental',
+      cor:revisado ? 'ok' : 'warn' };
+  },
+  usados(est, r) {
+    const keys = new Set();
+    r.itens.forEach(i => keys.add('material:' + i.id));
+    if (r.itens.length) keys.add('modal:' + est.transporte.modal);
+    Object.entries(r.energia).forEach(([k,v]) => { if (v.consumo || v.consumoBase) keys.add('energia:' + k); });
+    if (r.massaRccT > 0) { keys.add('modal:rod_medio'); keys.add('destinacao:' + est.residuos.destinacao); }
+    if (r.fimVida.ativo) { keys.add('demolicao:c1'); keys.add('modal:' + r.fimVida.modal); keys.add('destinacao:' + r.fimVida.destinacao); }
+    if (r.moduloB.ativo) {
+      if (r.moduloB.kwhAno) keys.add('energia:eletrica');
+      if (r.moduloB.m3Ano) keys.add('agua:rede');
+      if (r.moduloB.combustivelAno) keys.add('energia:diesel');
+    }
+    return [...keys].filter(k => this.mapa[k]);
+  },
+  resumo(est, r) {
+    const keys = this.usados(est,r);
+    const documentados = keys.filter(k => this.qualidade(est,k).completo).length;
+    const revisados = keys.filter(k => this.qualidade(est,k).revisado).length;
+    const a13 = r.itens.reduce((v,i) => v + Math.abs(i.a13),0);
+    const coberto = r.itens.reduce((v,i) => v + (this.qualidade(est,'material:' + i.id).completo ? Math.abs(i.a13) : 0),0);
+    return {keys, total:keys.length, documentados, revisados, cobertura:a13 > 0 ? coberto/a13 : 0};
+  }
+};
+Factors.iniciar();
+
+const Validation = {
+  invalidos:new Map(),
+  plain(o) { return o && typeof o === 'object' && !Array.isArray(o); },
+  validarArquivo(raw) {
+    const avisos = [], fail = m => { throw new Error(m); };
+    if (!this.plain(raw)) fail('O arquivo deve conter um objeto de projeto.');
+    if (raw.app && raw.app !== APP_INFO.nome) fail('O arquivo pertence a outro aplicativo.');
+    const e = Object.prototype.hasOwnProperty.call(raw, 'estado') ? raw.estado : raw;
+    if (!this.plain(e) || !this.plain(e.obra) || !this.plain(e.quantitativos)) fail('Faltam os objetos obra e quantitativos.');
+    const schema = raw.schemaVersion ?? e.schemaVersion ?? 1;
+    if (![1,2].includes(schema)) fail('Versão de estrutura não suportada: ' + schema + '.');
+    const guard = (v, depth=0) => {
+      if (depth > 14) fail('Estrutura de arquivo excessivamente profunda.');
+      if (v && typeof v === 'object') for (const key of Object.keys(v)) {
+        if (['__proto__','prototype','constructor'].includes(key)) fail('Propriedade não permitida no arquivo.');
+        guard(v[key],depth+1);
+      }
+    }; guard(e);
+    const out = Engine.estadoPadrao();
+    const txt = (v, label, max=1800) => {
+      if (v == null) return '';
+      if (typeof v !== 'string' || v.length > max) fail(label + ': texto inválido ou muito longo.');
+      return v;
+    };
+    const num = (v, label, min=0, max=1e15, nullable=false) => {
+      if (v == null && nullable) return null;
+      if (typeof v !== 'number' || !Number.isFinite(v) || v < min || v > max) fail(label + ': número fora da faixa permitida.');
+      return v;
+    };
+    const bool = (v, label) => { if (typeof v !== 'boolean') fail(label + ': esperado verdadeiro/falso.'); return v; };
+    const obj = (name) => { if (e[name] != null && !this.plain(e[name])) fail(name + ': estrutura inválida.'); return e[name] || {}; };
+    const choose = (v, allowed, label) => { if (!allowed.includes(v)) fail(label + ': opção desconhecida.'); return v; };
+    for (const k of ['nome','orgao','uf','municipio']) if (e.obra[k] != null) out.obra[k] = txt(e.obra[k], 'Obra/' + k, 500);
+    choose(out.obra.uf, UFS,'UF');
+    for (const [k,values] of [['tipologia',Object.keys(TIPOLOGIAS)],['sistema',Object.keys(SISTEMAS)],['padrao',Object.keys(PADROES)]]) if (e.obra[k] != null) out.obra[k] = choose(e.obra[k],values,k);
+    if (e.obra.quantidade != null) out.obra.quantidade=num(e.obra.quantidade,'Porte');
+    for (const [k,min,max] of [['pavimentos',1,60],['ano',2000,2100]]) if (e.obra[k] != null) {
+      out.obra[k]=num(e.obra[k],k,min,max); if (!Number.isInteger(out.obra[k])) fail(k+': informe um inteiro.');
+    }
+    const dict=(o,label,allowed,nullable=false,max=1e15)=>{
+      const d={}; if (Object.keys(o).length > 500) fail(label+': número excessivo de registros.');
+      for (const [k,v] of Object.entries(o)) {
+        if (!allowed.includes(k)) { avisos.push(label+': registro desconhecido descartado ('+k.slice(0,60)+').'); continue; }
+        if (v === '' && nullable) continue;
+        d[k]=num(v,label+'/'+k,0,max,nullable);
+      } return d;
+    };
+    out.quantitativos=dict(e.quantitativos,'Quantitativos',MATERIAIS.map(x=>x.id));
+    out.fatoresCustom=dict(obj('fatoresCustom'),'Fatores de material',MATERIAIS.map(x=>x.id));
+    out.fatoresTecnicos=dict(obj('fatoresTecnicos'),'Fatores técnicos',Factors.catalogo.filter(x=>x.grupo!=='Materiais').map(x=>x.key));
+    const tr=obj('transporte');
+    if (tr.modal!=null) out.transporte.modal=choose(tr.modal,MODAIS.map(x=>x.id),'Modal');
+    if (tr.ajuste!=null) out.transporte.ajuste=num(tr.ajuste,'Ajuste de distância',0,5);
+    if (tr.distancias!=null) {
+      if (!this.plain(tr.distancias)) fail('Distâncias: objeto inválido.');
+      out.transporte.distancias=dict(tr.distancias,'Distâncias',MATERIAIS.map(x=>x.id),true,1000000);
+    }
+    const config={
+      canteiro:{diesel:[0,1e15,true],eletrica:[0,1e15,true],gasolina:[0,1e15],glp:[0,1e15]},
+      residuos:{distancia:[0,1000000],extra:[0,1e15]},
+      fimVida:{taxaDemolicao:[0,1],distancia:[0,1000000]},
+      operacao:{rsp:[1,150],eletrica:[0,1e15,true],agua:[0,1e15,true],combustivel:[0,1e15],descarbonizacao:[0,1],taxaCarbonatacao:[0,.25]},
+      compensacao:{fracao:[0,1],horizonte:[1,100],custoHa:[0,1e12,true]}
+    };
+    for (const [section,fields] of Object.entries(config)) {
+      const x=obj(section);
+      for (const [k,range] of Object.entries(fields)) if (Object.prototype.hasOwnProperty.call(x,k)) out[section][k]=num(x[k],section+'/'+k,...range);
+      for (const k of Object.keys(out[section])) if (typeof out[section][k]==='boolean' && x[k]!=null) out[section][k]=bool(x[k],section+'/'+k);
+    }
+    for (const [s,k,values] of [
+      ['residuos','destinacao',DESTINACAO.map(x=>x.id)],['fimVida','destinacao',DESTINACAO.map(x=>x.id)],['fimVida','modal',MODAIS.map(x=>x.id)],
+      ['compensacao','sistema',REFLORESTAMENTO.map(x=>x.id)],['compensacao','base',['incorporado','ciclo']]]) {
+      const x=obj(s); if(x[k]!=null) out[s][k]=choose(x[k],values,s+'/'+k);
+    }
+    if(!Number.isInteger(out.operacao.rsp)||!Number.isInteger(out.compensacao.horizonte)) fail('Períodos de estudo devem ser anos inteiros.');
+    const cen=obj('cenario');
+    if(cen.medidas!=null) {
+      if(!Array.isArray(cen.medidas)||cen.medidas.length>MEDIDAS.length) fail('Lista de medidas inválida.');
+      out.cenario.medidas=[...new Set(cen.medidas.map(v=>choose(v,MEDIDAS.map(x=>x.id),'Medida')))];
+    }
+    if(e.gerado!=null) {
+      if(!this.plain(e.gerado)) fail('Instantâneo de geração inválido.');
+      const g=e.gerado;
+      out.gerado={tipologia:choose(g.tipologia,Object.keys(TIPOLOGIAS),'Geração/tipologia'),quantidade:num(g.quantidade,'Geração/porte'),
+        sistema:choose(g.sistema,Object.keys(SISTEMAS),'Geração/sistema'),padrao:choose(g.padrao,Object.keys(PADROES),'Geração/padrão'),pavimentos:num(g.pavimentos,'Geração/pavimentos',1,60)};
+    }
+    const inv=obj('inventario');
+    if(inv.modo!=null) out.inventario.modo=choose(inv.modo,['parametrico','manual','importado'],'Origem dos quantitativos');
+    for(const k of ['referencia','responsavel','observacoes']) if(inv[k]!=null) out.inventario[k]=txt(inv[k],'Inventário/'+k,4000);
+    if(schema===1 && !out.gerado) out.inventario.modo='importado';
+    const view=obj('visualizacao');
+    for(const k of ['resultado','compensacao']) if(view[k]!=null) out.visualizacao[k]=choose(view[k],['base','mitigado'],'Cenário de exibição');
+    const evid=obj('evidencias'); let bytes=0;
+    if(Object.keys(evid).length>30) fail('Máximo de 30 anexos por projeto.');
+    for(const [id,d] of Object.entries(evid)) {
+      if(!/^[a-zA-Z0-9_-]{1,90}$/.test(id)||!this.plain(d)) fail('Anexo inválido.');
+      const tipo=choose(d.tipo,['application/pdf','image/png','image/jpeg'],'Tipo de anexo');
+      const conteudo=txt(d.conteudo,'Conteúdo de anexo',4500000);
+      const prefix='data:'+tipo+';base64,';
+      if(!conteudo.startsWith(prefix)||!/^[-A-Za-z0-9+/=]+$/.test(conteudo.slice(prefix.length))) fail('Formato do anexo inválido.');
+      const head=atob(conteudo.slice(prefix.length,prefix.length+32));
+      const signatureOK=tipo==='application/pdf'?head.startsWith('%PDF-'):tipo==='image/png'?head.startsWith('\x89PNG\r\n\x1a\n'):head.charCodeAt(0)===255&&head.charCodeAt(1)===216&&head.charCodeAt(2)===255;
+      if(!signatureOK)fail('O anexo não corresponde ao tipo de arquivo declarado.');
+      const tamanho=num(d.tamanho,'Tamanho de anexo',1,3145728);
+      if(Math.abs(conteudo.slice(prefix.length).length*.75-tamanho)>3) fail('Tamanho do anexo não corresponde ao conteúdo.');
+      bytes+=tamanho; if(bytes>15*1024*1024) fail('Anexos excedem 15 MB por projeto.');
+      out.evidencias[id]={nome:txt(d.nome,'Nome de anexo',300),tipo,tamanho,conteudo,data:txt(d.data,'Data do anexo',40),sha256:txt(d.sha256,'Hash do anexo',100)};
+    }
+    for(const [key,value] of Object.entries(obj('fontes'))) {
+      if(!Factors.mapa[key]) { avisos.push('Metadados de fator desconhecido descartados.'); continue; }
+      if(!this.plain(value)) fail('Metadados inválidos para '+key);
+      const m=Factors.meta(out,key);
+      for(const k of Object.keys(m)) if(Object.prototype.hasOwnProperty.call(value,k)) {
+        if(['ano','minimo','maximo'].includes(k)) m[k]=num(value[k],'Metadados/'+k,k==='ano'?1900:0,k==='ano'?2100:1e15,true);
+        else if(k==='revisado') m[k]=bool(value[k],'Revisão');
+        else m[k]=txt(value[k],'Metadados/'+k,k==='observacoes'?5000:1800);
+      }
+      choose(m.tipo,['hipotese','setorial','adaptado','fornecedor','epd'],'Tipo de fonte');
+      if(m.url&&!Project.cleanURL(m.url)) fail('Fonte contém URL não permitida.');
+      if(m.ano!=null&&!Number.isInteger(m.ano)) fail('Ano-base deve ser inteiro.');
+      for(const k of ['acesso','epdEmissao','epdValidade']) if(m[k]&&!/^\d{4}-\d{2}-\d{2}$/.test(m[k])) fail('Data inválida em '+k);
+      if(m.documentoId&&!out.evidencias[m.documentoId]) { avisos.push('Anexo ausente: referência documental desassociada.'); m.documentoId=''; m.revisado=false; }
+      if(m.minimo!=null&&m.maximo!=null&&m.minimo>m.maximo) fail('Faixa de fator: mínimo maior que máximo.');
+      const adopted=Factors.valor(out,key);
+      if((m.minimo!=null&&adopted<m.minimo)||(m.maximo!=null&&adopted>m.maximo)) fail('Fator adotado fora da faixa declarada: '+key);
+      out.fontes[key]=m;
+    }
+    if(e.historico!=null) {
+      if(!Array.isArray(e.historico)) fail('Histórico inválido.');
+      out.historico=e.historico.slice(-80).map(h=>({data:txt(h.data,'Data histórico',40),acao:txt(h.acao,'Ação histórico',150),detalhe:txt(h.detalhe,'Detalhe histórico',1000)}));
+    }
+    if(schema===1) avisos.push('Projeto v1.0/v1.1 migrado para a estrutura v2; referências antigas permanecem não verificadas.');
+    return {estado:out,avisos,schemaOrigem:schema};
+  },
+  instalar() {
+    const optional = el => el.matches('[data-fe],[data-dist]') || ['f-add-qtd'].includes(el.id);
+    const capture=e=>{
+      const el=e.target;
+      if(!el.matches('input[type="number"]')||el.closest('dialog')||el.closest('.lab')) return;
+      const key=el.id || (el.dataset.qtd?'q:'+el.dataset.qtd:el.dataset.dist?'d:'+el.dataset.dist:el.name);
+      const selector=el.id ? '#'+el.id : el.dataset.qtd ? '[data-qtd=\"'+el.dataset.qtd+'\"]' : '[data-dist=\"'+el.dataset.dist+'\"]';
+      if(!el.checkValidity() || (el.value===''&&!optional(el))) {
+        const name=el.labels?.[0]?.textContent?.trim() || (el.dataset.qtd ? Engine.material(el.dataset.qtd)?.nome : 'Campo numérico');
+        this.invalidos.set(key,{name,element:el,selector,value:el.value}); el.setAttribute('aria-invalid','true');
+        e.stopImmediatePropagation(); this.mostrar(); return;
+      }
+      this.invalidos.delete(key); el.removeAttribute('aria-invalid'); this.mostrar();
+    };
+    document.addEventListener('input',capture,true); document.addEventListener('change',capture,true);
+  },
+  mostrar() {
+    const div=document.getElementById('v12-validation'); if(!div) return;
+    div.hidden=!this.invalidos.size;
+    div.innerHTML=this.invalidos.size ? '<strong>Entrada inválida.</strong> Corrija '+[...this.invalidos.values()].map(v=>UI.esc(v.name)).join('; ')+'. Os resultados visíveis correspondem à última entrada válida; a exportação de resultados está bloqueada.' : '';
+  },
+  reaplicar() {
+    document.querySelectorAll('input[type=number]:not([max])').forEach(el=>el.max='1000000000000000');
+    for(const item of this.invalidos.values()) {const el=document.querySelector(item.selector);if(el){el.value=item.value;el.setAttribute('aria-invalid','true');item.element=el;}}
+  },
+  limpar() { this.invalidos.clear(); document.querySelectorAll('[aria-invalid="true"]').forEach(e=>e.removeAttribute('aria-invalid')); this.mostrar(); },
+  permitirExportar() {
+    if(this.invalidos.size) { UI.toast('Corrija as entradas inválidas antes de exportar.'); return false; }
+    if(Project.desatualizado(UI.est)) { UI.toast('Resolva a divergência entre parâmetros e inventário antes de exportar resultados.'); return false; }
+    if (!(UI.est.obra.quantidade>0) || !UI.ultimo.base.itens.length) { UI.toast('Informe porte válido e pelo menos um material antes de exportar resultados.'); return false; }
+    return true;
+  }
+};
+
+const Storage = {
+  db:null, mode:'memória', failed:false, pending:false, sequence:0, timer:null,
+  async abrir() {
+    try {
+      this.db=await new Promise((resolve,reject)=>{
+        const req=indexedDB.open('carboncalc_pro_v12',1);
+        req.onupgradeneeded=()=>req.result.createObjectStore('projetos');
+        const timeout=setTimeout(()=>reject(new Error('Tempo de abertura do banco local excedido.')),3000);
+        req.onsuccess=()=>{clearTimeout(timeout);resolve(req.result);}; req.onerror=()=>{clearTimeout(timeout);reject(req.error);};
+        req.onblocked=()=>reject(new Error('Banco local bloqueado.'));
+      }); this.mode='IndexedDB';
+    } catch (_) { this.mode='localStorage'; }
+  },
+  async load() {
+    await this.abrir(); let raw=null;
+    if(this.db) raw=await new Promise(resolve=>{
+      const q=this.db.transaction('projetos').objectStore('projetos').get('atual');
+      q.onsuccess=()=>resolve(q.result||null); q.onerror=()=>resolve(null);
+    });
+    if(!raw) {
+      let original='';
+      try { original=localStorage.getItem(APP_INFO.chaveLS)||''; if(original) raw=JSON.parse(original); } catch(e) { this.failed=true; if(original)this.recoveryRaw=original; this.message='Não foi possível recuperar o arquivo local anterior. Os dados inválidos foram preservados para download.'; }
+    }
+    if(!raw) return null;
+    try { const parsed=Validation.validarArquivo(raw); this.loadWarnings=parsed.avisos; return parsed.estado; }
+    catch(e) { this.failed=true; this.recoveryRaw=raw; this.message='Dados locais rejeitados: '+e.message; return null; }
+  },
+  status(state,msg) {
+    const el=document.getElementById('v12-storage'); if(el) { el.dataset.state=state; el.textContent=msg; el.title='Persistência local; exporte JSON para backup independente.'; }
+  },
+  enqueue(est) {
+    if(this.recoveryRaw) { this.status('erro','Dados antigos preservados'); return; }
+    clearTimeout(this.timer); this.pending=true; const seq=++this.sequence;
+    this.status('pendente','Salvando neste navegador…');
+    this.timer=setTimeout(()=>this.write(Project.clone(est),seq),300);
+  },
+  async write(est,seq=this.sequence) {
+    try {
+      if(this.db) await new Promise((resolve,reject)=>{
+        const tx=this.db.transaction('projetos','readwrite'); tx.objectStore('projetos').put(est,'atual');
+        tx.oncomplete=resolve; tx.onerror=()=>reject(tx.error); tx.onabort=()=>reject(tx.error||new Error('Gravação cancelada.'));
+      });
+      else localStorage.setItem(APP_INFO.chaveLS,JSON.stringify(est));
+      if(seq===this.sequence) { this.pending=false; this.failed=false; this.status('salvo','Salvo · '+this.mode); }
+    } catch(e) {
+      this.failed=true; this.pending=false; this.status('erro','Falha ao salvar · baixe JSON');
+      UI.toast('Não foi possível gravar localmente. Use Baixar projeto para preservar os dados.');
+    }
+  },
+  flush() { clearTimeout(this.timer); if(this.recoveryRaw)return Promise.resolve(); if(UI.est) return this.write(Project.clone(UI.est),this.sequence); }
+};
+
+const Upgrade = {
+  installed:false,
+  mount() {
+    if(this.installed) return; this.installed=true;
+    const $=id=>document.getElementById(id);
+    const top=document.querySelector('.topo-acoes');
+    top.insertAdjacentHTML('beforeend','<button id="v12-manual-top" class="sutil">Manual</button><span id="v12-storage" class="v12-storage" role="status" aria-live="polite">Inicializando…</span>');
+    document.querySelector('.painel-area').insertAdjacentHTML('afterbegin',`<div class="v12-contexto no-print" id="v12-context">
+      <div><b id="v12-context-label">Edição do inventário-base</b><div id="v12-context-note">Medidas de redução nunca alteram diretamente os quantitativos-base.</div></div>
+      <div class="campo"><label for="v12-view">Cenário dos resultados e da memória</label><select id="v12-view"><option value="base">Referência — cenário-base</option><option value="mitigado">Cenário mitigado — medidas selecionadas</option></select></div>
+    </div><div id="v12-validation" class="v12-alert no-print" role="alert" hidden></div><div id="v12-recovery" class="v12-alert no-print" hidden></div>`);
+    const nav=document.querySelector('.rail');
+    const btn=document.createElement('button'); btn.dataset.alvo='rastreabilidade'; btn.innerHTML='<span class="idx">11</span>Rastreabilidade'; nav.appendChild(btn);
+    const btn2=document.createElement('button'); btn2.dataset.alvo='memoria'; btn2.innerHTML='<span class="idx">12</span>Memória de cálculo'; nav.appendChild(btn2);
+    document.querySelector('.painel-area').insertAdjacentHTML('beforeend',`<section class="painel" id="painel-rastreabilidade">
+      <div class="cabeca"><h1>Rastreabilidade técnica</h1><p>Fontes, cobertura documental e revisão declarada dos fatores efetivamente usados no cenário selecionado.</p></div>
+      <div id="v12-trace"></div>
+    </section><section class="painel" id="painel-memoria">
+      <div class="cabeca"><h1>Memória de cálculo</h1><p>Inventário, fórmulas, parcelas e procedência dos dados no cenário selecionado.</p></div>
+      <div class="v12-controls no-print"><button id="v12-print" class="primario">Imprimir / salvar como PDF</button><button id="v12-report-html">Baixar memória HTML</button><span class="nota">Para um backup editável com anexos, use “Baixar projeto”.</span></div>
+      <div id="v12-report" class="v12-report"></div>
+    </section>`);
+    $('wrap-demolicao').style.maxWidth='none';
+    $('f-taxa-demolicao').labels[0].textContent='Fração da massa incorporada abrangida pelo cenário de fim de vida (0 a 1)';
+    $('wrap-demolicao').insertAdjacentHTML('beforeend',`<div class="grade" style="margin-top:12px">
+      <div class="campo"><label for="v12-c-dist">C2 — distância de transporte (km)</label><input id="v12-c-dist" type="number" min="0" max="1000000" step="any"></div>
+      <div class="campo"><label for="v12-c-modal">C2 — modal</label><select id="v12-c-modal">${MODAIS.map(m=>`<option value="${m.id}">${UI.esc(m.nome)}</option>`).join('')}</select></div>
+      <div class="campo"><label for="v12-c-dest">C3/C4 — destinação</label><select id="v12-c-dest">${DESTINACAO.map(d=>`<option value="${d.id}">${UI.esc(d.nome)}</option>`).join('')}</select></div>
+    </div><p class="nota">C1 usa inicialmente 1,6 kgCO₂e/t, constante herdada sem fonte comprovada. Edite e documente o fator em Fatores de emissão. A fração não abrangida fica explicitamente fora do modelo, e não representa uma redução comprovada.</p><div id="v12-c-resumo"></div>`);
+    $('painel-obra').insertAdjacentHTML('beforeend',`<div class="cartao"><h3>Origem dos quantitativos e responsabilidade pela revisão</h3>
+      <p class="nota">O registro é descritivo. Não constitui assinatura digital nem validação independente.</p><div class="grade">
+      <div class="campo"><label for="v12-inv-modo">Origem do inventário</label><select id="v12-inv-modo"><option value="parametrico">Estimativa paramétrica</option><option value="manual">Quantitativos revisados manualmente</option><option value="importado">Projeto JSON importado / origem externa</option></select></div>
+      <div class="campo"><label for="v12-inv-ref">Documento / revisão dos quantitativos</label><input id="v12-inv-ref" maxlength="4000" placeholder="Ex.: planilha do projeto básico, revisão 03"></div>
+      <div class="campo"><label for="v12-inv-resp">Responsável pela conferência</label><input id="v12-inv-resp" maxlength="4000" placeholder="Nome informado pelo usuário"></div></div>
+      <div class="campo" style="margin-top:12px"><label for="v12-inv-obs">Premissas e exclusões do inventário</label><textarea id="v12-inv-obs" maxlength="4000" rows="3" placeholder="Registre elementos não levantados, materiais temporários, origem dos quantitativos e limitações."></textarea></div>
+      <p class="nota">UF e ano da obra são metadados. Eles não atualizam automaticamente os fatores. A versão 1.2 permite editar e documentar ano e representatividade geográfica de cada fator; a seleção adequada continua sob revisão do usuário.</p></div>`);
+    $('painel-quant').querySelector('.cabeca').insertAdjacentHTML('afterend','<div class="aviso-box"><strong>Inventário-base.</strong> Esta tabela permanece editável e não recebe os materiais substituídos pelo cenário. Para comparar alternativas, use Cenários e Resultados.</div>');
+    $('painel-compensacao').querySelector('.cabeca').insertAdjacentHTML('afterend','<div class="v12-controls"><div class="campo"><label for="v12-comp-view">Cenário usado na meta de remoção</label><select id="v12-comp-view"><option value="base">Referência — cenário-base</option><option value="mitigado">Cenário mitigado</option></select></div><span class="nota">O seletor de resultados não altera esta escolha. A meta não abate as emissões brutas.</span></div>');
+    $('f-quantidade').min='0.000000001';
+    document.querySelectorAll('input[type=number]:not([max])').forEach(el=>el.max='1000000000000000');
+    document.querySelector('#graf-etapas').parentElement.querySelector('h3').textContent='Construção e fim de vida incluído';
+    document.querySelector('#graf-familias').parentElement.querySelector('h3').textContent='Famílias de materiais — A1–A3 + A4';
+    $('painel-fatores').querySelector('.cabeca p').textContent='Valores adotados, documentação, ano-base, geografia, método GWP e EPD. As referências herdadas não foram verificadas.';
+    $('f-filtro-fam').parentElement.insertAdjacentHTML('beforebegin','<div class="campo"><label for="v12-f-tipo">Tipo de fator</label><select id="v12-f-tipo"><option value="">Todos os fatores</option><option value="Materiais">Materiais</option><option value="Energia">Energia</option><option value="Transporte">Transporte</option><option value="Resíduos">Resíduos</option><option value="Operação">Operação</option><option value="Fim de vida">Fim de vida</option></select></div>');
+    $('tab-fatores').querySelector('thead').innerHTML='<tr><th>Fator / unidade</th><th>Referência inicial</th><th>Adotado</th><th>Origem declarada no catálogo</th><th>Documentação</th><th></th></tr>';
+    $('btn-restaurar-fatores').textContent='Restaurar fatores e retirar revisões';
+    $('painel-fatores').querySelector('.aviso-box').innerHTML='<strong>Procedência não presumida.</strong> Os valores herdados mantêm os nomes de fonte do arquivo original, mas não possuem documento, ano ou método comprovados. O cadastro de uma EPD não garante compatibilidade: confirme produto, unidade declarada, indicador e fronteira antes de adotar o valor. Faixas mínimo/máximo são registros documentais, não análise probabilística.';
+    $('lista-equiv').parentElement.insertAdjacentHTML('beforeend','<p class="nota">Equivalências de comunicação herdadas, sem rastreabilidade documental nesta versão. Não use árvores equivalentes como prova de compensação.</p>');
+    $('v12-manual-top').onclick=()=>UI.irPara('manual');
+    $('v12-view').onchange=e=>{UI.est.visualizacao.resultado=e.target.value; UI.atualizar();};
+    $('v12-comp-view').onchange=e=>{UI.est.visualizacao.compensacao=e.target.value; UI.atualizar();};
+    $('v12-f-tipo').onchange=()=>UI.renderFatores();
+    for(const [id,key,kind] of [['v12-c-dist','distancia','number'],['v12-c-modal','modal','text'],['v12-c-dest','destinacao','text']]) {
+      $(id).addEventListener(kind==='number'?'input':'change',e=>{ UI.est.fimVida[key]=kind==='number'?Number(e.target.value):e.target.value; UI.atualizar(); });
+    }
+    for(const [id,key] of [['v12-inv-modo','modo'],['v12-inv-ref','referencia'],['v12-inv-resp','responsavel'],['v12-inv-obs','observacoes']]) $(id).addEventListener('change',e=>{UI.est.inventario[key]=e.target.value; Project.log(UI.est,'Origem do inventário atualizada',key); UI.atualizar();});
+    $('v12-print').onclick=()=>this.print();
+    $('v12-report-html').onclick=()=>Report.download();
+    document.addEventListener('click',e=>{
+      const b=e.target.closest('[data-factor]'); if(b) FactorDialog.open(b.dataset.factor);
+      const d=e.target.closest('[data-evidence]'); if(d) FactorDialog.download(d.dataset.evidence);
+    });
+    Validation.instalar(); this.captureActions(); FactorDialog.mount(); ImportDialog.mount();
+    window.addEventListener('beforeprint',()=>{ if(UI.est) Report.render(UI.resultadoAtual()); });
+    window.addEventListener('beforeunload',e=>{ if(Storage.pending||Storage.failed||Validation.invalidos.size) {Storage.flush(); e.preventDefault();e.returnValue='';} });
+    document.addEventListener('visibilitychange',()=>{if(document.hidden&&Storage.pending)Storage.flush();});
+  },
+  sync() {
+    const $=id=>document.getElementById(id), e=UI.est;
+    $('v12-view').value=e.visualizacao.resultado; $('v12-comp-view').value=e.visualizacao.compensacao;
+    $('v12-c-dist').value=e.fimVida.distancia; $('v12-c-modal').value=e.fimVida.modal; $('v12-c-dest').value=e.fimVida.destinacao;
+    $('v12-inv-modo').value=e.inventario.modo; $('v12-inv-ref').value=e.inventario.referencia; $('v12-inv-resp').value=e.inventario.responsavel; $('v12-inv-obs').value=e.inventario.observacoes;
+  },
+  captureActions() {
+    document.addEventListener('click',e=>{
+      const b=e.target.closest('button'); if(!b||!UI.est) return;
+      if(['btn-gerar','btn-regerar'].includes(b.id)||b.dataset.resync==='1') {
+        e.stopImmediatePropagation();
+        if(Validation.invalidos.size){UI.toast('Corrija os parâmetros inválidos antes de gerar.'); return;}
+        if(Object.keys(UI.est.quantitativos).length&&!confirm('Substituir os quantitativos-base atuais pela estimativa paramétrica? Edições manuais serão perdidas. Baixe o projeto antes de prosseguir.')) return;
+        UI.gerar(); UI.atualizar(); UI.irPara('quant'); UI.toast('Inventário-base regenerado.');
+      } else if(b.id==='btn-exemplo') {
+        e.stopImmediatePropagation();
+        if(!confirm('Carregar o exemplo e substituir o projeto em edição? Baixe antes uma cópia do projeto atual.'))return;
+        Validation.limpar(); UI.carregarExemplo(); Upgrade.sync();
+      } else if(b.id==='btn-restaurar-fatores') {
+        e.stopImmediatePropagation();
+        if(!confirm('Restaurar TODOS os fatores iniciais e retirar os metadados e revisões associados? Os anexos permanecem no projeto.'))return;
+        UI.est.fatoresCustom={}; UI.est.fatoresTecnicos={}; UI.est.fontes={}; Project.log(UI.est,'Fatores e metadados restaurados'); UI.atualizar();
+      } else if(b.id==='btn-imprimir') {e.stopImmediatePropagation();this.print();}
+      else if(b.dataset.del) {Project.log(UI.est,'Material removido',Engine.material(b.dataset.del)?.nome||b.dataset.del);UI.est.inventario.modo='manual';}
+      else if(b.id==='btn-add-material') { UI.est.inventario.modo='manual'; }
+    },true);
+    document.addEventListener('change',e=>{
+      if(!UI.est) return;
+      const el=e.target;
+      if(el.id==='f-tipologia') {
+        e.stopImmediatePropagation(); const tip=el.value;
+        if(Object.keys(UI.est.quantitativos).length&&!confirm('Alterar a tipologia substitui os quantitativos-base. A unidade de porte pode mudar; confira-a após a alteração. Continuar?')){el.value=UI.est.obra.tipologia;return;}
+        UI.est.obra.tipologia=tip; UI.gerar(); UI.sincronizarTipologia(); UI.atualizar();
+      } else if(el.dataset.qtd) { UI.est.inventario.modo='manual'; Project.log(UI.est,'Quantidade editada',el.dataset.qtd+': '+UI.est.quantitativos[el.dataset.qtd]+' → '+el.value); }
+      else if(el.id==='f-canteiro-auto'&&!el.checked) { const r=UI.ultimo.base; UI.est.canteiro.diesel=r.energia.diesel.consumo; UI.est.canteiro.eletrica=r.energia.eletrica.consumo; }
+      else if(el.id==='f-op-auto'&&!el.checked) { const op=OPERACAO[UI.est.obra.tipologia]; UI.est.operacao.eletrica=UI.est.operacao.eletrica??op.eletrica*UI.est.obra.quantidade; UI.est.operacao.agua=UI.est.operacao.agua??op.agua*UI.est.obra.quantidade; }
+    },true);
+  },
+  context() {
+    const p=document.querySelector('.painel.ativo')?.id||'', out=['painel-resultados','painel-memoria','painel-rastreabilidade'].includes(p);
+    const label=document.getElementById('v12-context-label'), note=document.getElementById('v12-context-note');
+    if(out){label.textContent=UI.est.visualizacao.resultado==='base'?'Exibição: cenário-base':'Exibição: cenário mitigado'; note.textContent='Resultados derivados. A edição dos quantitativos continua no inventário-base.';}
+    else if(p==='painel-cenarios'){label.textContent='Comparação: base × mitigado';note.textContent='As medidas são simulações; o cenário-base é preservado.';}
+    else if(p==='painel-compensacao'){label.textContent='Meta futura de remoção';note.textContent='Cenário específico selecionado nesta tela; não há abatimento das emissões brutas.';}
+    else {label.textContent='Edição do inventário-base';note.textContent='Quantitativos, transporte, canteiro e operação mostram o cenário-base. Os fatores adotados são compartilhados entre os dois cenários.';}
+  },
+  print() { if(!Validation.permitirExportar())return; Report.render(UI.resultadoAtual()); UI.irPara('memoria'); window.print(); }
+};
+
+const FactorDialog = {
+  key:'', staged:null, busy:false,
+  mount() {
+    const d=document.createElement('dialog'); d.id='v12-factor-dialog'; d.className='v12-dialog'; d.setAttribute('aria-labelledby','v12-factor-title'); document.body.appendChild(d);
+  },
+  field(k,label,value,type='text',extra='') {
+    return `<div class="campo"><label for="fm-${k}">${label}</label><input id="fm-${k}" name="${k}" type="${type}" value="${UI.esc(value??'')}" ${extra}></div>`;
+  },
+  open(key) {
+    if(!Factors.mapa[key])return;
+    this.key=key; this.staged=null; this.busy=false;
+    const f=Factors.mapa[key], m=Factors.meta(UI.est,key), d=document.getElementById('v12-factor-dialog');
+    const field=this.field.bind(this);
+    const types=[['hipotese','Hipótese / valor sem fonte comprovada'],['setorial','Média setorial'],['adaptado','Dado adaptado de outra região / estudo'],['fornecedor','Dado específico de fornecedor'],['epd','EPD / declaração ambiental de produto']];
+    d.innerHTML=`<form id="v12-factor-form"><div class="v12-modal-head"><div><h2 id="v12-factor-title">${UI.esc(f.nome)}</h2><p class="nota">${UI.esc(f.un)} · ${UI.esc(f.grupo)} · código ${UI.esc(f.key)}</p></div><button type="button" id="fm-close" aria-label="Fechar editor">✕</button></div>
+      <div class="v12-modal-body"><div id="fm-error" class="v12-alert" role="alert" hidden></div>
+      <div class="aviso-box">Referência inicial: <b>${UI.n(f.valor,4)} ${UI.esc(f.un)}</b>. Origem declarada no arquivo: ${UI.esc(f.origem)}. Essa indicação não comprova o valor nem a sua aplicabilidade.</div>
+      <fieldset><legend>1. Valor adotado e faixa documental</legend><div class="grade">
+      ${field('valor','Fator adotado — '+UI.esc(f.un),Factors.valor(UI.est,key),'number','min="0" max="1000000000000000" step="any" required')}
+      <div class="campo"><label for="fm-tipo">Tipo de dado</label><select id="fm-tipo" name="tipo">${types.map(([v,l])=>`<option value="${v}" ${m.tipo===v?'selected':''}>${l}</option>`).join('')}</select></div>
+      ${field('minimo','Mínimo documentado (opcional)',m.minimo,'number','min="0" step="any"')}${field('maximo','Máximo documentado (opcional)',m.maximo,'number','min="0" step="any"')}
+      </div><p class="nota">A unidade adotada é fixa. Converta a unidade declarada da fonte antes de inserir o fator e registre a conversão nas observações. A faixa não gera intervalo de confiança.</p></fieldset>
+      <fieldset><legend>2. Procedência e representatividade</legend><div class="grade">
+      ${field('titulo','Título do documento / estudo',m.titulo,'text','maxlength="1800"')}${field('emissor','Instituição / emissor',m.emissor,'text','maxlength="1800"')}
+      ${field('referencia','Identificador, página ou referência bibliográfica',m.referencia,'text','maxlength="1800"')}${field('url','URL da fonte (http/https)',m.url,'url','maxlength="1800"')}
+      ${field('ano','Ano-base do dado',m.ano,'number','min="1900" max="2100" step="1"')}${field('geografia','Representatividade geográfica / UF / região',m.geografia,'text','maxlength="1800"')}
+      ${field('fronteira','Fronteira coberta pelo fator',m.fronteira,'text','maxlength="1800"')}${field('metodo','Método GWP, horizonte e versão',m.metodo,'text','maxlength="1800" placeholder="Ex.: método declarado na EPD; não presumir"')}
+      ${field('indicador','Indicador ambiental declarado',m.indicador,'text','maxlength="1800" placeholder="Ex.: GWP-total; conferir se inclui todas as parcelas"')}${field('revisao','Revisão / versão do banco ou estudo',m.revisao,'text','maxlength="1800"')}
+      ${field('acesso','Data da consulta',m.acesso,'date')}
+      </div></fieldset>
+      <fieldset><legend>3. Produto, fabricante e EPD (quando aplicável)</legend><div class="grade">
+      ${field('fabricante','Fabricante / fornecedor',m.fabricante)}${field('produto','Produto e especificação',m.produto)}${field('planta','Planta industrial / local',m.planta)}${field('epdCodigo','Código da EPD',m.epdCodigo)}
+      ${field('epdOperador','Operador do programa EPD',m.epdOperador)}${field('epdVerificador','Verificador informado na EPD',m.epdVerificador)}
+      ${field('epdEmissao','Data de emissão da EPD',m.epdEmissao,'date')}${field('epdValidade','Validade da EPD',m.epdValidade,'date')}
+      </div><p class="nota">O aplicativo não consulta programas EPD e não autentica documentos. “Verificador” é uma informação transcrita pelo usuário.</p></fieldset>
+      <fieldset><legend>4. Evidência local</legend><div class="campo"><label for="fm-anexo">Anexar PDF, PNG ou JPEG (até 3 MB)</label><input id="fm-anexo" type="file" accept=".pdf,.png,.jpg,.jpeg"></div>
+      <div id="fm-evidence"></div><p class="nota">Os anexos ficam no navegador e no backup JSON. Não são enviados a servidores nem lidos automaticamente. Limites: 30 anexos e 15 MB por projeto.</p></fieldset>
+      <fieldset><legend>5. Revisão e justificativa</legend><div class="campo"><label for="fm-observacoes">Hipóteses, conversões de unidade, limitações e justificativa</label><textarea name="observacoes" id="fm-observacoes" maxlength="5000" rows="4">${UI.esc(m.observacoes)}</textarea></div>
+      <div class="grade" style="margin-top:12px">${field('revisor','Pessoa que conferiu o dado',m.revisor)}</div>
+      <div class="linha-check"><input type="checkbox" name="revisado" id="fm-revisado" ${m.revisado?'checked':''}><label for="fm-revisado">Declaro ter conferido valor, fonte, unidade, indicador, fronteira e aplicabilidade ao estudo.</label></div>
+      <p class="nota">O selo de revisão é uma declaração do usuário, não certificação. Exige os metadados essenciais e, para EPD, registro de identificação e validade.</p></fieldset>
+      </div><div class="v12-modal-footer"><button type="button" id="fm-cancel">Cancelar</button><button type="submit" id="fm-save" class="primario">Salvar fator e documentação</button></div></form>`;
+    this.documentoId=m.documentoId;
+    document.getElementById('fm-close').onclick=()=>d.close(); document.getElementById('fm-cancel').onclick=()=>d.close();
+    document.getElementById('fm-anexo').onchange=e=>this.attach(e.target.files?.[0]);
+    document.getElementById('v12-factor-form').onsubmit=e=>{e.preventDefault();this.save();};
+    this.renderEvidence(); d.showModal();
+  },
+  error(msg) {const div=document.getElementById('fm-error');div.hidden=!msg;div.textContent=msg;if(msg)div.scrollIntoView({block:'nearest'});},
+  renderEvidence() {
+    const data=this.staged?.data || UI.est.evidencias[this.documentoId];
+    const el=document.getElementById('fm-evidence');
+    if(!data){el.innerHTML='<p class="nota">Nenhum documento anexado.</p>';return;}
+    el.innerHTML=`<div class="v12-evidence"><span>${UI.esc(data.nome)} · ${UI.n(data.tamanho/1024,0)} KB${data.sha256?' · SHA-256 registrado':''}</span>${!this.staged?`<button type="button" data-evidence="${UI.esc(this.documentoId)}">Baixar anexo</button>`:''}<button type="button" id="fm-remove-file">Desassociar</button></div>`;
+    document.getElementById('fm-remove-file').onclick=()=>{this.staged=null;this.documentoId='';this.renderEvidence();};
+  },
+  async attach(file) {
+    if(!file)return;
+    this.error('');
+    if(file.size>3*1024*1024||file.size===0){this.error('O documento deve ter entre 1 byte e 3 MB.');return;}
+    this.busy=true;document.getElementById('fm-save').disabled=true;
+    try {
+      const buf=await file.arrayBuffer(), b=new Uint8Array(buf);
+      const isPdf=new TextDecoder().decode(b.slice(0,5))==='%PDF-';
+      const isPng=[137,80,78,71,13,10,26,10].every((v,i)=>b[i]===v);
+      const isJpg=b[0]===255&&b[1]===216&&b[2]===255;
+      const tipo=isPdf?'application/pdf':isPng?'image/png':isJpg?'image/jpeg':'';
+      if(!tipo)throw new Error('O conteúdo não corresponde a PDF, PNG ou JPEG.');
+      let sha256='';if(globalThis.crypto?.subtle)sha256=[...new Uint8Array(await crypto.subtle.digest('SHA-256',buf))].map(v=>v.toString(16).padStart(2,'0')).join('');
+      const conteudo=await new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=()=>reject(r.error);r.readAsDataURL(new Blob([buf],{type:tipo}));});
+      const id='ev_'+Date.now()+'_'+Math.random().toString(36).slice(2,9);
+      this.staged={id,data:{nome:file.name,tipo,tamanho:file.size,conteudo,data:new Date().toISOString(),sha256}};
+      this.documentoId=id;this.renderEvidence();
+    }catch(e){this.error(e.message||'Falha ao ler o anexo.');}
+    finally{this.busy=false;document.getElementById('fm-save').disabled=false;}
+  },
+  save() {
+    if(this.busy)return;
+    const form=document.getElementById('v12-factor-form');if(!form.reportValidity())return;
+    const data=new FormData(form), candidate=Project.clone(UI.est), meta=Factors.meta(candidate,this.key);
+    const value=Number(data.get('valor'));
+    for(const key of Object.keys(meta)) {
+      if(['documentoId','revisadoEm'].includes(key))continue;
+      if(key==='revisado')meta[key]=data.has(key);
+      else if(['ano','minimo','maximo'].includes(key))meta[key]=data.get(key)===''?null:Number(data.get(key));
+      else meta[key]=String(data.get(key)??'').trim();
+    }
+    meta.documentoId=this.documentoId;meta.revisadoEm=meta.revisado?new Date().toISOString():'';
+    candidate.fontes[this.key]=meta;Factors.adotar(candidate,this.key,value);
+    if(this.staged)candidate.evidencias[this.staged.id]=this.staged.data;
+    try {
+      const checked=Validation.validarArquivo(candidate).estado;
+      const q=Factors.qualidade(checked,this.key);
+      if(meta.revisado&&(!q.completo||q.expirada||!meta.revisor))throw new Error('Para registrar revisão, complete os campos essenciais e a identificação do revisor. '+(q.expirada?'A EPD está vencida.':q.faltam.join('; ')));
+      if(meta.epdEmissao&&meta.epdValidade&&meta.epdEmissao>meta.epdValidade)throw new Error('A validade da EPD deve ser posterior à emissão.');
+      Project.log(checked,'Fator/documentação atualizado',Factors.mapa[this.key].nome+': '+Factors.valor(UI.est,this.key)+' → '+value+' '+Factors.mapa[this.key].un);
+      UI.est=checked;UI.atualizar();document.getElementById('v12-factor-dialog').close();UI.toast('Fator e documentação registrados.');
+    }catch(e){this.error(e.message);}
+  },
+  download(id) {
+    const d=UI.est.evidencias[id];if(!d)return;
+    const str=atob(d.conteudo.split(',')[1]);const a=new Uint8Array(str.length);for(let i=0;i<a.length;i++)a[i]=str.charCodeAt(i);
+    UI.baixar(a,d.nome,d.tipo);
+  }
+};
+
+const ImportDialog = {
+  parsed:null,
+  mount(){const d=document.createElement('dialog');d.id='v12-import-dialog';d.className='v12-dialog';d.setAttribute('aria-labelledby','v12-import-title');document.body.appendChild(d);},
+  show(parsed,name){
+    this.parsed=parsed;const e=parsed.estado, d=document.getElementById('v12-import-dialog');
+    d.innerHTML=`<div class="v12-modal-head"><div><h2 id="v12-import-title">Conferir projeto antes de abrir</h2><p class="nota">${UI.esc(name)}</p></div></div><div class="v12-modal-body">
+      <p><b>${UI.esc(e.obra.nome||'Obra sem nome')}</b> · ${UI.esc(TIPOLOGIAS[e.obra.tipologia].nome)} · ${UI.n(e.obra.quantidade,2)} ${UI.esc(TIPOLOGIAS[e.obra.tipologia].un)}</p>
+      <p>${Object.keys(e.quantitativos).length} materiais · ${Object.keys(e.fontes).length} registros de fonte · ${Object.keys(e.evidencias).length} anexos. Estrutura ${parsed.schemaOrigem} → ${APP_INFO.schemaVersion}.</p>
+      <div id="v12-import-summary">${parsed.avisos.map(a=>`<div class="aviso-box">${UI.esc(a)}</div>`).join('')||'<p class="nota">Estrutura validada. A análise não verifica a veracidade dos dados ou documentos.</p>'}</div>
+      <div class="aviso-box"><strong>Abrir substitui o projeto atual.</strong> Use “Baixar projeto atual” antes da substituição para guardar uma cópia.</div></div>
+      <div class="v12-modal-footer"><button id="vi-cancel">Cancelar</button><button id="vi-backup">Baixar projeto atual</button><button id="vi-apply" class="primario">Abrir e substituir</button></div>`;
+    document.getElementById('vi-cancel').onclick=()=>d.close();document.getElementById('vi-backup').onclick=()=>UI.baixarProjeto();
+    document.getElementById('vi-apply').onclick=()=>{UI.est=Project.clone(this.parsed.estado);Storage.recoveryRaw=null;Storage.failed=false;document.getElementById('v12-recovery').hidden=true;Validation.limpar();Project.log(UI.est,'Projeto importado',name);UI.preencherFormulario();Upgrade.sync();UI.atualizar();UI.irPara('resultados');d.close();UI.toast('Projeto validado e carregado.');};d.showModal();
+  }
+};
+
+const Trace = {
+  tag(est,key) { const q=Factors.qualidade(est,key);return `<span class="v12-badge ${q.cor}" title="${UI.esc(q.faltam.join('; '))}">${UI.esc(q.label)}</span>`; },
+  table(est,keys,actions=true) {
+    return `<div class="tabela-wrap v12-source-table"><table><thead><tr><th>Fator / valor adotado</th><th>Situação</th><th>Fonte e representatividade</th>${actions?'<th>Ação</th>':''}</tr></thead><tbody>${keys.map(key=>{
+      const f=Factors.mapa[key],m=Factors.meta(est,key), url=Project.cleanURL(m.url),doc=est.evidencias[m.documentoId];
+      return `<tr><td><b>${UI.esc(f.nome)}</b><br>${UI.n(Factors.valor(est,key),5)} ${UI.esc(f.un)}${Factors.custom(est,key)?'<br><span class="v12-badge">Valor personalizado</span>':''}</td>
+      <td>${this.tag(est,key)}<div class="v12-muted">${m.revisado?'Revisor informado: '+UI.esc(m.revisor||'não identificado'):''}</div></td>
+      <td>${m.titulo?`<b>${UI.esc(m.titulo)}</b><br>`:''}${UI.esc(m.emissor||'Emissor não cadastrado')} · ano-base ${m.ano??'não informado'}<br>${UI.esc(m.referencia||'Referência não cadastrada')}
+      <br><span class="v12-muted">Região: ${UI.esc(m.geografia||'não informada')}<br>Fronteira: ${UI.esc(m.fronteira)}<br>Método / indicador: ${UI.esc(m.metodo||'não informado')} / ${UI.esc(m.indicador||'não informado')}
+      ${m.revisao?'<br>Versão da fonte: '+UI.esc(m.revisao):''}${m.minimo!=null||m.maximo!=null?'<br>Faixa documental: '+(m.minimo??'—')+' a '+(m.maximo??'—')+' '+UI.esc(f.un):''}
+      ${m.tipo==='epd'?`<br>EPD: ${UI.esc(m.epdCodigo||'não identificada')} · validade: ${UI.esc(m.epdValidade||'não informada')}<br>Operador: ${UI.esc(m.epdOperador)} · verificador declarado: ${UI.esc(m.epdVerificador)}`:''}
+      ${m.produto?'<br>Produto: '+UI.esc(m.produto):''}${m.fabricante?'<br>Fabricante: '+UI.esc(m.fabricante):''}${m.planta?'<br>Planta: '+UI.esc(m.planta):''}
+      ${url?`<br><a href="${UI.esc(url)}" target="_blank" rel="noopener noreferrer">Abrir fonte informada</a>`:''}
+      ${doc?`<br>Anexo: ${UI.esc(doc.nome)}${doc.sha256?'<br>SHA-256: '+UI.esc(doc.sha256):''}`:''}
+      ${m.observacoes?'<br>Observações: '+UI.esc(m.observacoes):''}
+      <br>Indicação herdada: ${UI.esc(f.origem)} (não comprova o fator).</span></td>
+      ${actions?`<td><button data-factor="${UI.esc(key)}">Editar / documentar</button>${doc?`<br><button style="margin-top:6px" data-evidence="${UI.esc(m.documentoId)}">Baixar anexo</button>`:''}</td>`:''}</tr>`;
+    }).join('')||`<tr><td colspan="${actions?4:3}">Nenhum fator utilizado.</td></tr>`}</tbody></table></div>`;
+  },
+  render(res) {
+    const el=document.getElementById('v12-trace');if(!el)return;
+    const t=Factors.resumo(UI.est,res);
+    el.innerHTML=`<div class="aviso-box"><strong>Completude documental, não precisão estatística.</strong> A aplicação confere preenchimento e validade declarada, mas não verifica autenticidade, representatividade ou correção das fontes. “Revisado pelo usuário” não significa verificação independente.</div>
+      <div class="v12-kpis"><div class="v12-kpi"><strong>${t.total}</strong><span>fatores utilizados neste cenário</span></div><div class="v12-kpi"><strong>${t.documentados}</strong><span>cadastros documentais completos</span></div><div class="v12-kpi"><strong>${t.revisados}</strong><span>revisões declaradas pelo usuário</span></div><div class="v12-kpi"><strong>${UI.pct(t.cobertura,1)}</strong><span>cobertura documental ponderada de A1–A3</span></div></div>
+      <p class="nota">Cobertura A1–A3 = emissões absolutas dos materiais com cadastro completo ÷ emissões absolutas de todos os materiais. Não cobre incerteza dos quantitativos nem a qualidade das outras etapas.</p>
+      ${this.table(UI.est,t.keys)}
+      <div class="cartao"><h3>Parâmetros ainda não validados documentalmente</h3><p class="nota">Coeficientes paramétricos por tipologia, perdas, massas unitárias, vidas úteis, taxas de carbonatação, faixas de classificação, medidas percentuais, equivalências e taxas/custos de restauração são hipóteses herdadas do arquivo original. O cadastro de fatores não verifica essas bases.</p></div>
+      <div class="cartao"><h3>Histórico local de alterações</h3><p class="nota">Registro auxiliar limitado aos 80 eventos mais recentes. Não possui assinatura ou proteção contra adulteração. Campos simples de formulário são guardados no projeto, mas nem todos geram um evento.</p><div class="v12-log">${UI.est.historico.slice().reverse().map(h=>`<p><b>${UI.esc(h.acao)}</b> · ${UI.esc(h.data)}<br>${UI.esc(h.detalhe)}</p>`).join('')||'<p>Nenhum evento registrado.</p>'}</div></div>`;
+  }
+};
+
+const Report = {
+  table(headers,rows) { return `<div class="tabela-wrap"><table><thead><tr>${headers.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>'<tr>'+r.map(c=>'<td>'+c+'</td>').join('')+'</tr>').join('')}</tbody></table></div>`; },
+  html(res) {
+    const e=UI.est,b=res.moduloB,c=res.fimVida,rd=res.residuosDetalhe,t=Factors.resumo(e,res),cmp=UI.ultimo;
+    const selected=e.visualizacao.resultado==='base'?'Cenário-base':'Cenário mitigado';
+    const invalid=Validation.invalidos.size>0||Project.desatualizado(e)||!res.classificavel;
+    const compact={...e,evidencias:Object.fromEntries(Object.entries(e.evidencias).map(([k,v])=>[k,{nome:v.nome,sha256:v.sha256,tamanho:v.tamanho}]))};
+    const signature=Project.hashText(JSON.stringify(compact));
+    const n=(v,dec=3)=>UI.n(v,dec), esc=UI.esc.bind(UI), factor=k=>Factors.valor(e,k);
+    const main=this.table(['Parcela','Resultado (kgCO₂e)','Hipótese / cálculo'],[
+      ['A1–A3 — produção',n(res.etapas.a13.valor),'Σ quantidade líquida × (1 + perda) × fator de emissão'],
+      ['A4 — transporte',n(res.etapas.a4.valor),'Σ massa adquirida (t) × distância efetiva (km) × fator do modal'],
+      ['A5 — energia',n(res.etapas.a5e.valor),'Σ consumo do cenário × fator efetivo'],
+      ['A5 — resíduos',n(res.etapas.a5r.valor),'Transporte + processamento/destinação; multiplicador de cenário explicitado abaixo'],
+      ['<b>A1–A5</b>','<b>'+n(res.totalA)+'</b>','Fronteira fixa da etiqueta indicativa'],
+      ['C1–C4 — fim de vida',n(c.total),c.ativo?'Sobre massa incorporada líquida × fração abrangida':'Não incluído — não representa emissão zero'],
+      ['B — parcelas modeladas',n(b.total),b.ativo?'B1 + B2–B5 + B6 + B7 no período adotado':'Não incluído — não representa emissão zero'],
+      ['<b>Soma das parcelas incluídas</b>','<b>'+n(res.cicloVida)+'</b>','A1–A5 + C incluído + B incluído; não constitui ciclo de vida completo verificado']
+    ]);
+    const comparison=this.table(['Indicador (kgCO₂e)','Base','Mitigado','Diferença base − mitigado'],[
+      ...Object.keys(res.etapas).map(k=>[esc(res.etapas[k].nome),n(cmp.base.etapas[k].valor),n(cmp.mitigado.etapas[k].valor),n(cmp.base.etapas[k].valor-cmp.mitigado.etapas[k].valor)]),
+      ['Módulo B',n(cmp.base.moduloB.total),n(cmp.mitigado.moduloB.total),n(cmp.base.moduloB.total-cmp.mitigado.moduloB.total)],
+      ['Soma das parcelas incluídas',n(cmp.base.cicloVida),n(cmp.mitigado.cicloVida),n(cmp.base.cicloVida-cmp.mitigado.cicloVida)]
+    ]);
+    const materials=this.table(['Material / unidade','Qtd. líquida','Perda','Qtd. bruta','Massa un. (kg)','FE adotado','A1–A3 (kgCO₂e)'],res.itens.map(i=>[esc(i.nome)+'<br>'+esc(i.un),n(i.qLiq),UI.pct(i.perda,2),n(i.qBruta),n(Engine.material(i.id).mu),n(i.fator,5),n(i.a13)]));
+    const transport=this.table(['Material','Massa adquirida (t)','Distância-base (km)','Distância do cenário (km)','FE kgCO₂e/(t·km)','A4 (kgCO₂e)'],res.itens.map(i=>[esc(i.nome),n(i.massaT),n(i.distBase),n(i.dist),n(i.feModal,5),n(i.a4)]));
+    const energy=this.table(['Fonte','Consumo','FE de referência adotado','FE efetivo do cenário','Emissão (kgCO₂e)'],Object.values(res.energia).map(x=>[esc(x.nome),n(x.consumo)+' '+esc(x.un),n(x.fatorBase,5),n(x.fatorEfetivo,5),n(x.emissao)]));
+    const ctable=this.table(['Componente','Memória aritmética','kgCO₂e'],[
+      ['C1 — demolição',`${n(c.massaDemT)} t × ${n(c.feC1)} kgCO₂e/t`,n(c.c1)],
+      ['C2 — transporte',`${n(c.massaDemT)} t × ${n(c.distancia)} km × ${n(c.feTransporte,5)} kgCO₂e/(t·km)`,n(c.c2)],
+      ['C3 — processamento',c.destinacao==='aterro'?'Sem processamento separado no modelo':`${n(c.massaDemT)} t × ${n(c.feDestino)} kgCO₂e/t`,n(c.c3)],
+      ['C4 — disposição',c.destinacao==='aterro'?`${n(c.massaDemT)} t × ${n(c.feDestino)} kgCO₂e/t`:'Sem disposição residual modelada para a destinação selecionada',n(c.c4)]
+    ]);
+    const btable=this.table(['Componente','kgCO₂e','Base de cálculo'],[
+      ['B1 — carbonatação',n(b.b1),e.operacao.carbonatacao?'Hipótese de '+UI.pct(e.operacao.taxaCarbonatacao)+' sobre A1–A3 de famílias concreto/aglomerante; não modela superfícies ou cinética.':'Hipótese desativada'],
+      ['B2–B5 — reposições',n(b.b2b5),'Σ (teto(período / vida útil) − 1) × (A1–A3 + A4) do item'],
+      ['B6 — energia',n(b.b6),`${n(b.kwhAno)} kWh/ano × ${b.rsp} anos × ${n(b.feMatriz,5)} kgCO₂e/kWh + ${n(b.combustivelAno||0)} L/ano × ${b.rsp} anos × ${n(factor('energia:diesel'),5)} kgCO₂e/L`],
+      ['B7 — água/esgoto',n(b.b7),`${n(b.m3Ano)} m³/ano × ${b.rsp} anos × ${n(factor('agua:rede'),5)} kgCO₂e/m³`]
+    ]);
+    const cp=cmp[e.visualizacao.compensacao].compensacao;
+    const cptext=cp.ativo?`<p>Meta calculada sobre <b>${e.visualizacao.compensacao==='base'?'cenário-base':'cenário mitigado'}</b>, base ${e.compensacao.base==='ciclo'?'soma das parcelas incluídas':'A1–A5 + C incluído'}. Meta: ${n(cp.alvo/1000)} tCO₂e; horizonte ${cp.horizonte} anos; sistema ${esc(cp.sistema.nome)}.</p><div class="formula">Área = ${n(cp.alvo/1000)} tCO₂e ÷ (${n(cp.sistema.taxa)} tCO₂e/ha·ano × ${cp.horizonte} anos) = ${n(cp.area)} ha\nMudas estimadas = área × ${cp.sistema.densidade} = ${n(cp.mudas,0)}\nCusto hipotético = ${n(cp.area)} ha × R$ ${n(cp.custoHa,2)}/ha = R$ ${n(cp.custo,2)}</div><p>As emissões brutas permanecem <b>${n(cp.base/1000)} tCO₂e</b>. O saldo futuro de ${n(cp.saldoProjetado/1000)} tCO₂e é mera projeção condicionada à realização e comprovação da remoção. Não há abatimento contábil neste inventário.</p>`:'<p>Meta de restauração não incluída.</p>';
+    const scenarios=e.cenario.medidas.map(id=>{const m=MEDIDAS.find(x=>x.id===id);return `<p><b>${esc(m.nome)}</b> — ${esc(m.desc)} Referência declarada no modelo: ${esc(m.ref)}; não verificada pelo aplicativo.</p>`;}).join('');
+    return `<div class="memo-title"><p class="v12-muted">CARBONCALC PRO · v${APP_INFO.versao} · estrutura ${APP_INFO.schemaVersion}</p><h1>Memória de cálculo e rastreabilidade</h1><p>${esc(selected)} · ${esc(e.obra.nome||'Obra sem identificação')}</p><p class="v12-muted">Emitida em ${esc(new Date().toLocaleString('pt-BR'))} · conferência de configuração ${signature} (não é assinatura digital)</p></div>
+      ${invalid?'<div class="aviso-box"><strong>RESULTADO NÃO VALIDADO.</strong> Há inventário vazio, porte inválido, entrada pendente ou divergência de parâmetros. Não utilizar como resultado conclusivo.</div>':''}
+      <dl class="memo-meta">${[['Contratante',e.obra.orgao||'Não informado'],['Tipologia',res.tipologia.nome],['Porte',n(res.refQtd,3)+' '+res.unidade],['UF / ano',e.obra.uf+' / '+e.obra.ano],['Origem dos quantitativos',e.inventario.modo],['Documento de referência',e.inventario.referencia||'Não informado'],['Revisão informada',e.inventario.responsavel||'Não informada'],['Fronteira incluída','A1–A5'+(b.ativo?' + parcelas B em '+b.rsp+' anos':'')+(c.ativo?' + C1–C4 simplificado':'')]].map(([k,v])=>`<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>
+      <p class="nota">Premissas do inventário: ${esc(e.inventario.observacoes||'Não registradas pelo usuário.')}</p>
+      <h2>1. Resultado e fronteira</h2>${main}
+      <p>Intensidade de A1–A5 = ${n(res.totalA)} ÷ ${n(res.refQtd)} = <b>${res.classificavel?n(res.intensidadeA):'não classificável'} kgCO₂e/(${esc(res.unidade)})</b>. Etiqueta interna: ${esc(res.faixa)}. Intensidade da soma incluída: ${n(res.intensidadeCicloVida)} kgCO₂e/(${esc(res.unidade)}).</p>
+      <p class="nota">Os limiares A/B/C/D (${[res.bench.a,res.bench.b,res.bench.c,res.bench.d].map(x=>n(x,1)).join(' / ')}) são referências exploratórias do modelo original, sem calibração externa comprovada. C e B não alteram a etiqueta A1–A5. Não se trata de certificação.</p>
+      <h2>2. Quantitativos e A1–A3</h2><div class="formula">Quantidade bruta = quantidade líquida × (1 + perda)\nMassa adquirida = quantidade bruta × massa unitária\nA1–A3 = quantidade bruta × fator do material</div>${materials}
+      <p>Massa adquirida: ${n(res.massaTotalT)} t. Perdas: ${n(res.massaPerdasT)} t. Massa incorporada líquida: ${n(res.massaIncorporadaT)} t. Balanço: adquirida = incorporada + perdas.</p>
+      <p class="nota">As perdas são percentuais acrescidos à quantidade líquida, não frações da compra. A alocação da produção dos materiais perdidos foi mantida em A1–A3 nesta ferramenta; confirme compatibilidade antes de comparar parcelas com outra metodologia. Massas unitárias e perdas são hipóteses do catálogo. Materiais temporários lançados são tratados como incorporados: esta simplificação deve ser revisada na avaliação do fim de vida.</p>
+      <h2>3. Transporte A4</h2><div class="formula">A4 = massa adquirida (t) × distância efetiva (km) × fator do modal</div>${transport}
+      <p class="nota">Na substituição de um material, o destino usa sua própria distância cadastrada ou a referência da família. A distância do fornecedor original não é prova da distância da alternativa. A medida de proximidade reduz em 50% todas as distâncias de fornecimento deste cenário. Modal por trecho, retorno vazio e ocupação não são modelados separadamente.</p>
+      <h2>4. Canteiro e resíduos A5</h2>${energy}
+      <div class="formula">Massa de RCC = perdas ${n(res.massaPerdasT)} t + resíduo extra ${n(e.residuos.extra)} t = ${n(rd.massaRccT)} t\nTransporte RCC = ${n(rd.massaRccT)} × ${n(rd.distRcc)} × ${n(rd.feModal,5)} = ${n(rd.transporte)} kgCO₂e\nTratamento/destino = ${n(rd.massaRccT)} × ${n(rd.feDestino)} = ${n(rd.tratamento)} kgCO₂e\nA5 resíduos = (${n(rd.transporte)} + ${n(rd.tratamento)}) × ${n(rd.multiplicador)} = ${n(rd.total)} kgCO₂e</div>
+      <p class="nota">A hipótese de emissão elétrica nula atua sobre o fator efetivo, sem eliminar o consumo físico. Percentuais de redução são hipóteses de cenário e exigem comprovação independente.</p>
+      <h2>5. Fim de vida C1–C4</h2>${c.ativo?`<div class="formula">Massa com fim de vida modelado = ${n(c.massaIncorporadaT)} t incorporadas × ${n(c.taxa)} = ${n(c.massaDemT)} t\nMassa incorporada não abrangida = ${n(c.massaNaoModeladaT)} t</div>${ctable}<p class="nota">A massa de perdas já destinada em A5 não reaparece em C. O modelo usa uma única destinação; não descreve misturas, rejeitos da reciclagem nem créditos do módulo D. Ausência de parcela é limitação de fronteira, não comprovação de emissão nula. C1 inicia com a constante herdada de 1,6 kgCO₂e/t, editável no cadastro de fatores.</p>`:'<p>Não incluído. A ausência de C deve ser declarada em toda comparação.</p>'}
+      <h2>6. Uso, manutenção e reposições — módulo B</h2>${b.ativo?`${btable}<p>Fator elétrico médio = ${n(factor('energia:eletrica'),5)} × (1 − ${n(e.operacao.descarbonizacao)}/2) = ${n(b.feMatriz,5)} kgCO₂e/kWh, em trajetória linear hipotética.</p>${this.table(['Componente','Vida útil (anos)','Reposições','kgCO₂e'],b.reposicoes.map(x=>[esc(x.nome),x.vida,x.ciclos,n(x.emissao)]))}<p class="nota">B2–B5 contém apenas nova produção e transporte: instalação, retirada e descarte das reposições não foram calculados. B2–B5 é carbono incorporado na fase de uso, não consumo operacional. B1 é uma aproximação percentual, sem modelagem física da carbonatação. O tratamento de emissões de processos próprios de ETE, barragem ou outras infraestruturas não está incluído.</p>`:'<p>Módulo B não incluído.</p>'}
+      <h2>7. Cenário-base × cenário mitigado</h2>${comparison}${scenarios||'<p>Nenhuma medida selecionada.</p>'}<p class="nota">Efeitos isolados não são somáveis. A substituição verifica unidade, mas não comprova equivalência funcional, desempenho estrutural, vida útil ou adequação normativa. O inventário-base permanece preservado.</p>
+      <h2>8. Meta ilustrativa de restauração</h2>${cptext}<p class="nota">Taxas, densidades e custos foram herdados sem fonte comprovada. O modelo linear não incorpora mortalidade, adicionalidade, vazamento, reversão, saturação ou certificação de créditos. Plantio planejado não é remoção já realizada.</p>
+      <h2>9. Fontes utilizadas e cobertura documental</h2><p>${t.documentados} de ${t.total} cadastros completos; ${t.revisados} revisados pelo usuário; cobertura ponderada de A1–A3: ${UI.pct(t.cobertura)}. Esses indicadores medem preenchimento, não a qualidade científica do resultado.</p>${Trace.table(e,t.keys,false)}
+      <h2>10. Limitações e reprodutibilidade</h2><p>Estimativa paramétrica, não ACV verificada, laudo ou certificação. Normas citadas no arquivo são referências declaradas, sem afirmação de conformidade. Os fatores iniciais foram preservados do código fornecido e não foram atualizados ou verificados externamente. Quantitativos paramétricos, massas, perdas, vidas úteis, referências de classificação e parâmetros de restauração permanecem hipóteses.</p>
+      <p>UF e ano identificam o estudo, mas não selecionam automaticamente séries de fatores. Registre ano-base, região, versão, fonte e justificativa em cada fator. A alteração de fatores técnicos se propaga a todas as etapas que usam esse mesmo fator. Para preservar a reprodução exata do estado e seus documentos, salve o projeto JSON com estrutura ${APP_INFO.schemaVersion}.</p>
+      <div class="v12-footnote">CarbonCalc Pro v${APP_INFO.versao} · processamento local · dados e revisão sob responsabilidade de quem conduz o estudo.</div>`;
+  },
+  render(res) { const el=document.getElementById('v12-report');if(el)el.innerHTML=this.html(res); },
+  download() {
+    if(!Validation.permitirExportar())return;
+    const content=this.html(UI.resultadoAtual());
+    const css=document.querySelector('style').textContent;
+    const html='<!doctype html><html lang="pt-BR" data-tema="claro"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Memória — CarbonCalc Pro</title><style>'+css+'\nbody{padding:28px;max-width:1450px;margin:auto} .v12-report {display:block!important} @media print{body{padding:0}}</style></head><body><main class="v12-report">'+content+'</main></body></html>';
+    UI.baixar(html,'CarbonCalc_memoria_'+UI.est.visualizacao.resultado+'.html','text/html;charset=utf-8');
+  }
+};
+
+/* Interface: edições permanecem canônicas; cenários e relatórios são derivados. */
+const v10UI={ preencher:UI.preencherFormulario, iniciar:UI.iniciar, irPara:UI.irPara, resultados:UI.renderResultados, operacao:UI.renderOperacao, compensacao:UI.renderCompensacao };
+UI.salvarLS=function(){if(this.est)Storage.enqueue(this.est);};
+UI.gerar=function(){ this.est.quantitativos=Engine.gerarQuantitativos(this.est.obra);this.est.gerado=this.instantaneoParams();this.est.inventario.modo='parametrico';Project.log(this.est,'Inventário-base gerado',TIPOLOGIAS[this.est.obra.tipologia].nome); };
+UI.resultadoAtual=function(){return this.ultimo[this.est.visualizacao.resultado];};
+UI.preencherFormulario=function(){v10UI.preencher.call(this);if(Upgrade.installed)Upgrade.sync();};
+UI.irPara=function(alvo){v10UI.irPara.call(this,alvo);if(!this.est)return;Upgrade.context();if(alvo==='memoria')Report.render(this.resultadoAtual());if(alvo==='rastreabilidade')Trace.render(this.resultadoAtual());};
+UI.isolarFundo=function(ativo){document.querySelectorAll('.topo,.shell').forEach(el=>{el.inert=ativo;if(ativo)el.setAttribute('aria-hidden','true');else el.removeAttribute('aria-hidden');});if(ativo)setTimeout(()=>document.getElementById('abertura-avisos')?.focus(),30);};
+UI.iniciar=async function(){
+  const accept=document.getElementById('btn-aceitar');if(accept)accept.disabled=true;
+  try {
+    Upgrade.mount();
+    const loaded=await Storage.load();this.est=loaded||Engine.estadoPadrao();if(!loaded)this.gerar();
+    this.montarSelects();this.ligarEventos();Manual.iniciar();this.preencherFormulario();this.atualizar();
+    if(this.avisosAceitos()){document.getElementById('abertura').hidden=true;this.isolarFundo(false);}else this.mostrarAvisos();
+    if(Storage.message){const div=document.getElementById('v12-recovery');div.hidden=false;div.innerHTML='<b>Recuperação local:</b> '+this.esc(Storage.message)+(Storage.recoveryRaw?' <button id="v12-recovery-download">Baixar dados antigos para recuperação</button>':'');const b=document.getElementById('v12-recovery-download');if(b)b.onclick=()=>this.baixar(typeof Storage.recoveryRaw==='string'?Storage.recoveryRaw:JSON.stringify(Storage.recoveryRaw,null,2),'CarbonCalc_recuperacao.json','application/json');}
+    if(Storage.loadWarnings?.length)this.toast('Projeto anterior migrado. Confira a rastreabilidade dos fatores.');
+  } catch(e) {
+    console.error(e);const a=document.getElementById('abertura');a.hidden=false;a.classList.add('direta');
+    document.getElementById('abertura-avisos').innerHTML='<h2>Não foi possível iniciar o projeto</h2><p>'+this.esc(e.message)+'</p><p>Reabra o arquivo em um navegador atualizado e preserve o backup JSON antes de limpar os dados locais.</p>';
+  } finally {if(accept)accept.disabled=false;}
+};
+UI.htmlLeitura=function(res,titulo){
+  const names={A:'Faixa interna A',B:'Faixa interna B',C:'Faixa interna C',D:'Faixa interna D',E:'Faixa interna E'};
+  const values=[res.bench.a,res.bench.b,res.bench.c,res.bench.d];
+  const valid=res.classificavel&&!Validation.invalidos.size;
+  return `<div class="leitura-corpo"><div class="leitura-bloco"><span class="rot">${this.esc(titulo||'Construção e fim de vida incluído')}</span><span class="val">${this.n(res.total/1000,1)} <small>tCO₂e</small></span></div>
+    <div class="leitura-bloco sec"><span class="rot">Intensidade A1–A5 (etiqueta)</span><span class="val">${valid?this.n(res.intensidadeA,res.unidade==='km'?0:1):'—'} <small>kgCO₂e/(${this.esc(res.unidade)})</small></span></div>
+    <div class="leitura-bloco sec"><span class="rot">Massa adquirida / incorporada</span><span class="val">${this.n(res.massaTotalT,1)} / ${this.n(res.massaIncorporadaT,1)} <small>t</small></span></div>
+    <div class="leitura-bloco sec"><span class="rot">Classificação exploratória</span><span class="val">${valid?res.faixa:'—'} <small>${valid?names[res.faixa]:'Dados não classificáveis'}</small></span></div></div>
+    <div class="faixa" role="img" aria-label="Classificação interna de A1 a A5"><div class="faixa-item" data-f="A" data-on="${valid&&res.faixa==='A'?1:0}"><b>A</b>até ${this.n(values[0],1)}</div>${['B','C','D'].map((x,i)=>`<div class="faixa-item" data-f="${x}" data-on="${valid&&res.faixa===x?1:0}"><b>${x}</b>${this.n(values[i],1)}–${this.n(values[i+1],1)}</div>`).join('')}<div class="faixa-item" data-f="E" data-on="${valid&&res.faixa==='E'?1:0}"><b>E</b>acima de ${this.n(values[3],1)}</div></div>
+    <p class="nota" style="padding:9px 16px;margin:0">Referências internas não verificadas. A etiqueta considera somente A1–A5; B e C são parcelas separadas. Curva ABC considera A1–A3 + A4, e não a emissão de todas as etapas.</p>`;
+};
+UI.atualizar=function(){
+  if(!this.est)return;
+  const cmp=Engine.comparar(this.est);this.ultimo=cmp;
+  this.renderQuant(cmp.base);this.renderTransporte(cmp.base);this.renderCanteiro(cmp.base);this.renderOperacao(cmp.base);
+  this.renderCompensacao(cmp[this.est.visualizacao.compensacao]);this.renderCenarios(cmp);this.renderResultados(this.resultadoAtual());
+  this.renderFatores();this.renderSincronia();this.renderFimVida(cmp.base);Trace.render(this.resultadoAtual());
+  if(document.getElementById('painel-memoria')?.classList.contains('ativo'))Report.render(this.resultadoAtual());
+  Validation.reaplicar();Upgrade.context();this.salvarLS();
+};
+UI.renderFimVida=function(r){
+  const el=document.getElementById('v12-c-resumo');if(!el)return;const c=r.fimVida;
+  el.innerHTML=`<p class="nota"><b>Balanço de massa:</b> ${this.n(r.massaTotalT,2)} t adquiridas − ${this.n(r.massaPerdasT,2)} t de perdas = ${this.n(r.massaIncorporadaT,2)} t incorporadas. C modelado: ${this.n(c.massaDemT,2)} t; não abrangido: ${this.n(c.massaNaoModeladaT,2)} t.</p>`;
+};
+UI.renderResultados=function(res){
+  v10UI.resultados.call(this,{...res,compensacao:{...res.compensacao,ativo:false}});
+  const lp=document.getElementById('leitura-principal');
+  const cp=this.ultimo[this.est.visualizacao.compensacao].compensacao;
+  if(cp.ativo)lp.insertAdjacentHTML('beforeend',`<div class="aviso-box" style="margin:12px"><strong>Meta futura de restauração — ${this.est.visualizacao.compensacao==='base'?'base':'mitigado'}:</strong> ${this.n(cp.alvo/1000,1)} tCO₂e em ${cp.horizonte} anos; área estimada ${this.n(cp.area,2)} ha. Essa projeção não reduz as emissões brutas do inventário.</div>`);
+  document.getElementById('res-legenda').textContent=(this.est.visualizacao.resultado==='base'?'Cenário-base':'Cenário mitigado')+' · '+res.tipologia.nome+' · '+this.n(res.refQtd,3)+' '+res.unidade+' · A1–A5'+(res.moduloB.ativo?' + parcelas de B':'')+(res.fimVida.ativo?' + C simplificado':'')+'. Etiqueta: somente A1–A5.';
+};
+UI.renderOperacao=function(res){v10UI.operacao.call(this,res);if(res.moduloB.ativo)document.getElementById('saida-modulo-b').insertAdjacentHTML('beforeend','<div class="aviso-box">B2–B5 é carbono incorporado na fase de uso; B6/B7 são consumos operacionais. Instalação e destinação dos componentes substituídos não foram modeladas. A soma apresentada não equivale a um ciclo completo verificado.</div>');};
+UI.renderCompensacao=function(res){
+  v10UI.compensacao.call(this,res);
+  if(res.compensacao.ativo){const c=res.compensacao;document.getElementById('saida-compensacao').insertAdjacentHTML('beforeend',`<div class="aviso-box"><b>Projeção, não neutralização.</b> A meta de ${this.n(c.alvo/1000,1)} tCO₂e ainda depende de realização e comprovação. Emissões brutas mantidas: ${this.n(c.base/1000,1)} tCO₂e. Saldo futuro meramente projetado: ${this.n(c.saldoProjetado/1000,1)} tCO₂e.</div>`);}
+};
+UI.renderFatores=function(){
+  const tb=document.querySelector('#tab-fatores tbody');if(!tb)return;
+  const normalize=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+  const search=normalize(document.getElementById('f-busca-fator')?.value||''),fam=document.getElementById('f-filtro-fam')?.value||'',kind=document.getElementById('v12-f-tipo')?.value||'';
+  const list=Factors.catalogo.filter(f=>(!kind||f.grupo===kind)&&(!fam||f.fam===fam)&&(!search||normalize(f.nome+' '+f.grupo+' '+f.origem).includes(search)));
+  tb.innerHTML=list.map(f=>`<tr><td><b>${this.esc(f.nome)}</b><span class="v12-tipo">${this.esc(f.un)} · ${this.esc(f.grupo)}${f.fisico?' · massa '+this.n(f.fisico.mu,2)+' kg/'+this.esc(f.fisico.un)+' · perda '+this.pct(f.fisico.perda,0):''}</span></td><td class="n">${this.n(f.valor,4)}</td><td class="n"><b>${this.n(Factors.valor(this.est,f.key),4)}</b>${Factors.custom(this.est,f.key)?'<span class="v12-tipo">personalizado</span>':''}</td><td class="v12-muted">${this.esc(f.origem)}</td><td>${Trace.tag(this.est,f.key)}</td><td><button data-factor="${this.esc(f.key)}">Editar fator / fonte</button></td></tr>`).join('')||'<tr><td colspan="6" class="vazio">Nenhum fator corresponde ao filtro.</td></tr>';
+};
+UI.renderCenarios=function(cmp){
+  const lc=document.getElementById('leitura-cenario');
+  lc.innerHTML=this.htmlLeitura(cmp.mitigado,'Construção + C incluído — cenário mitigado')+`<div class="leitura-corpo"><div class="leitura-bloco sec"><span class="rot">Base</span><span class="val">${this.n(cmp.base.total/1000,1)} <small>tCO₂e</small></span></div><div class="leitura-bloco sec"><span class="rot">Diferença base − mitigado</span><span class="val">${this.n(cmp.delta/1000,1)} <small>tCO₂e · ${this.pct(cmp.pct)}</small></span></div></div>`;
+  const clean={...this.est,evidencias:{},fontes:{},historico:[]};
+  const signature=JSON.stringify(clean);
+  if(this._effectSig!==signature){this._effectSig=signature;this._effects=MEDIDAS.map(m=>{const copy={...clean,cenario:{medidas:[m.id]}};return cmp.base.total-Engine.calcular(copy).total;});}
+  const chosen=new Set(this.est.cenario.medidas);
+  const list=document.getElementById('lista-medidas');
+  list.innerHTML=MEDIDAS.map((m,i)=>{const gain=this._effects[i];return `<div class="medida"><input type="checkbox" id="med-${m.id}" data-med="${m.id}" ${chosen.has(m.id)?'checked':''}><div><h4><label for="med-${m.id}">${this.esc(m.nome)}</label></h4><p>${this.esc(m.desc)}</p><span class="meta">Custo declarado: ${this.esc(m.custo)} · barreira: ${this.esc(m.barreira)} · referência herdada: ${this.esc(m.ref)}</span></div><div class="efeito">${Math.abs(gain)>.5?(gain>0?'−':'+')+this.n(Math.abs(gain)/1000,2)+' t':'—'}<small>${gain<-.5?'aumenta as emissões':gain>.5?'efeito isolado':'sem efeito relevante'}</small></div></div>`;}).join('');
+  list.querySelectorAll('[data-med]').forEach(el=>el.addEventListener('change',ev=>{const set=new Set(this.est.cenario.medidas);if(ev.target.checked)set.add(ev.target.dataset.med);else set.delete(ev.target.dataset.med);this.est.cenario.medidas=[...set];Project.log(this.est,'Medida de cenário alterada',ev.target.dataset.med);this.atualizar();}));
+};
+UI.baixarProjeto=function(){
+  const envelope={app:APP_INFO.nome,versao:APP_INFO.versao,schemaVersion:APP_INFO.schemaVersion,gerado:new Date().toISOString(),estado:this.est};
+  if(Validation.invalidos.size)this.toast('O backup contém o último estado válido, não as entradas inválidas pendentes.');
+  this.baixar(JSON.stringify(envelope,null,2),(this.est.obra.nome||'obra').replace(/[^\w\-]+/g,'_')+'_CarbonCalc_v1.2.json','application/json');
+};
+UI.abrirProjeto=async function(ev){
+  const file=ev.target.files?.[0];if(!file)return;
+  try{if(file.size>25*1024*1024)throw new Error('Limite de 25 MB por arquivo de projeto.');const raw=JSON.parse(await file.text());const checked=Validation.validarArquivo(raw);Engine.comparar(checked.estado);ImportDialog.show(checked,file.name);}
+  catch(err){this.toast('Projeto não carregado: '+(err.message||'arquivo inválido'));}
+  finally{ev.target.value='';}
+};
+UI.exportarCSV=function(){
+  if(!Validation.permitirExportar())return;
+  const res=this.resultadoAtual(),rows=[],push=(...v)=>rows.push(v);
+  const cell=v=>{let s=typeof v==='number'?String(v).replace('.',','):String(v??'');if(typeof v!=='number'&&/^[\s]*[=+@-]/.test(s))s="'"+s;return '"'+s.replace(/"/g,'""')+'"';};
+  push('CarbonCalc Pro',APP_INFO.versao,'Cenário',this.est.visualizacao.resultado);push('Obra',this.est.obra.nome,'Órgão',this.est.obra.orgao);push('UF',this.est.obra.uf,'Ano',this.est.obra.ano);push('Unidade de referência',res.unidade,'Porte',res.refQtd);push('Origem dos quantitativos',this.est.inventario.modo,this.est.inventario.referencia);push();
+  push('Classe ABC','Material','Unidade','Qtd líquida','Perda (fração)','Qtd bruta','FE','Massa adquirida (t)','Distância efetiva (km)','A1–A3 kgCO2e','A4 kgCO2e');
+  res.itens.forEach(i=>push(i.classe,i.nome,i.un,i.qLiq,i.perda,i.qBruta,i.fator,i.massaT,i.dist,i.a13,i.a4));push();
+  Object.values(res.etapas).forEach(s=>push(s.nome,s.valor,'kgCO2e'));push('TOTAL A1–A5',res.totalA,'kgCO2e');push('C incluído?',res.fimVida.ativo?'sim':'não');
+  for(const k of ['c1','c2','c3','c4'])push(k.toUpperCase(),res.fimVida[k],'kgCO2e');
+  push('Massa adquirida',res.massaTotalT,'t');push('Massa incorporada líquida',res.massaIncorporadaT,'t');push('Massa de perdas',res.massaPerdasT,'t');
+  push('B incluído?',res.moduloB.ativo?'sim':'não');for(const k of ['b1','b2b5','b6','b7'])push(k,res.moduloB[k],'kgCO2e');push('SOMA DAS PARCELAS INCLUÍDAS',res.cicloVida,'kgCO2e');push('Intensidade A1–A5',res.intensidadeA,'kgCO2e/('+res.unidade+')');push('Etiqueta exploratória A1–A5',res.faixa);push();
+  const cp=this.ultimo[this.est.visualizacao.compensacao].compensacao;
+  if(cp.ativo){push('Meta futura de restauração — sem abatimento',this.est.visualizacao.compensacao);push('Meta',cp.alvo,'kgCO2e');push('Área hipotética',cp.area,'ha');push('Emissões brutas mantidas',cp.base,'kgCO2e');}
+  push();push('FONTES DOS FATORES UTILIZADOS');push('Chave','Nome','Valor','Unidade','Situação','Documento','Emissor','Ano-base','Região','Fronteira','Método GWP','Indicador','Referência','URL','Revisão','EPD','Validade EPD','Revisor declarado','Anexo','Origem herdada não verificada');
+  Factors.usados(this.est,res).forEach(k=>{const f=Factors.mapa[k],m=Factors.meta(this.est,k);push(k,f.nome,Factors.valor(this.est,k),f.un,Factors.qualidade(this.est,k).label,m.titulo,m.emissor,m.ano,m.geografia,m.fronteira,m.metodo,m.indicador,m.referencia,m.url,m.revisao,m.epdCodigo,m.epdValidade,m.revisor,this.est.evidencias[m.documentoId]?.nome||'',f.origem);});
+  push();push('LIMITAÇÃO','Estimativa paramétrica. Nenhuma fonte herdada foi verificada externamente. O cadastro documental não autentica documentos.');
+  this.baixar('\ufeff'+rows.map(r=>r.map(cell).join(';')).join('\r\n'),'CarbonCalc_'+this.est.visualizacao.resultado+'_v1.2.csv','text/csv;charset=utf-8');
+};
+
+/* Manual: correções de fronteira e capítulos correspondentes às funções novas. */
+const findManual=id=>SECOES_MANUAL.find(s=>s.id===id);
+findManual('benchmark').html=`<p>A etiqueta compara exclusivamente a intensidade <b>A1–A5</b> com faixas internas por tipologia. As faixas foram herdadas do modelo original e não têm calibração externa comprovada nesta versão.</p><div class="formula">Intensidade da etiqueta = (A1–A3 + A4 + A5) ÷ porte</div><p>Incluir B ou C muda a soma das parcelas incluídas, mas não a etiqueta. Assim a fronteira da classificação permanece constante. “Faixa A” não significa certificação ambiental nem comprova desempenho frente ao mercado.</p><p>Inventário vazio, porte nulo ou divergência entre parâmetros e geração desativam a classificação. A curva ABC é outra análise: classifica os materiais pelo acumulado de A1–A3 + A4, incluindo na classe o item que cruza o respectivo limite de 80% ou 95%.</p>`;
+findManual('cenarios').html+='<div class="aviso-box"><b>Versão 1.1:</b> Quantitativos, Transporte, Canteiro e Operação exibem o inventário-base. As substituições são aplicadas somente ao resultado derivado. Use o seletor superior para escolher o cenário em Resultados, Rastreabilidade e Memória. A Compensação tem seletor próprio, identificado no relatório.</div>';
+findManual('compensacao').html+='<div class="aviso-box"><b>Emissões brutas preservadas:</b> dimensionar uma área não comprova remoção. O campo de saldo futuro é uma projeção condicionada; a aplicação não abate essa meta do inventário. Taxas e custos são hipóteses herdadas, não dados florestais verificados.</div>';
+SECOES_MANUAL.push({id:'v12-rastreabilidade',titulo:'Rastreabilidade, fontes e EPD',html:`<p>Na tela <b>Fatores de emissão</b>, abra “Editar fator / fonte”. O cadastro abrange materiais, energia, transporte, resíduos, água e C1. Alterar um fator técnico modifica todas as etapas que o utilizam.</p><h4>Do valor inicial ao dado documentado</h4><p>Todo fator inicial começa com a procedência indicada no código original, sem presumir que aquela instituição comprovou o número. Cadastre documento, emissor, referência, ano-base, região, fronteira, método GWP e indicador. A origem do catálogo continua visível como informação não verificada.</p><h4>EPD e unidade declarada</h4><p>Registre código, operador, verificador transcrito do documento, fabricante, produto, planta, datas e revisão. A unidade usada no cálculo é fixa; converta o valor da fonte antes de adotá-lo e descreva o procedimento. Confirme se o indicador é o pretendido e se cobre a mesma fronteira: um valor de CO₂ direto ou apenas GWP fóssil não deve ser confundido automaticamente com GWP-total.</p><h4>Situação documental</h4><p>“Sem lastro documental” indica ausência de documento localizável. “Metadados parciais” indica cadastro incompleto. “Campos essenciais completos” apenas confirma preenchimento dos campos. “Revisado pelo usuário” exige declaração, nome do revisor e campos essenciais; não é verificação por terceira parte. EPD com validade anterior à data atual recebe alerta.</p><h4>Anexos e privacidade</h4><p>Anexe PDF, PNG ou JPEG com até 3 MB. São permitidos até 30 anexos e 15 MB no conjunto do projeto. O conteúdo é armazenado localmente e incorporado ao JSON. Não há leitura automática, envio a servidores nem consulta automática ao endereço da fonte. Links só são acessados quando acionados.</p><h4>Cobertura ponderada</h4><div class="formula">Cobertura A1–A3 = soma das emissões absolutas de materiais com cadastro completo ÷ soma das emissões absolutas de todos os materiais</div><p>Esse percentual mede cobertura do cadastro, não precisão do fator ou dos quantitativos. Não substitui análise de incerteza.</p>`});
+SECOES_MANUAL.push({id:'v12-memoria',titulo:'Memória, importação e conservação do projeto',html:`<p><b>Memória de cálculo</b> reúne identificação, unidade funcional de referência, origem dos quantitativos, fórmulas, balanço de massa, fatores, comparação dos cenários, parcelas B/C, limitações e meta futura de remoção. Selecione o cenário no topo antes de imprimir ou baixar a memória HTML.</p><h4>Fim de vida sem repetição das perdas</h4><div class="formula">Massa adquirida = massa incorporada + perdas de construção\nMassa com fim de vida modelado = massa incorporada × fração abrangida\nC = C1 + C2 + C3 + C4</div><p>C1 usa um fator por tonelada; C2 é massa × distância × fator do modal. C3 recebe processamento de reciclagem/reuso; C4 recebe disposição em aterro. As perdas já tratadas em A5 não retornam em C. A simplificação não modela misturas de destinos, rejeitos, materiais temporários nem créditos D.</p><h4>Importar versões anteriores</h4><p>Arquivos JSON antigos são validados e migrados para a estrutura 2. Antes de substituir o projeto, o sistema exibe resumo e advertências. Um arquivo inválido não substitui o estado atual. Metadados desconhecidos não são inventados durante a migração.</p><h4>Guardar e recuperar</h4><p>O salvamento automático usa IndexedDB, com tentativa de localStorage quando indisponível. O cabeçalho informa o resultado da gravação. Um inventário deliberadamente esvaziado permanece vazio ao reabrir; não é regenerado silenciosamente. Use “Baixar projeto” para um backup portátil com fontes e anexos.</p><p>Arquivos HTML abertos em locais distintos ou navegadores diferentes podem não compartilhar o mesmo armazenamento. Limpeza do navegador remove os dados. A memória HTML e o CSV não substituem o backup JSON.</p><h4>Revisões 1.1 e 1.2</h4><p>A revisão 1.1 separa os cenários de edição, corrige unidades, balanço de massa/fim de vida, limites ABC, entradas inválidas e importação. A revisão 1.2 inclui fontes, EPD, evidências, cobertura documental, fatores técnicos editáveis, memória e exportação rastreável. Os valores iniciais não foram atualizados externamente.</p>`});
+if(typeof module!=='undefined'&&module.exports)Object.assign(module.exports,{Engine,Factors,Project,Validation,APP_INFO,TIPOLOGIAS,MATERIAIS,UI,Report});
+
+/* Ajustes didáticos coerentes com a versão integrada. */
+findManual('roteiro').html += '<div class="aviso-box">Os laboratórios são exercícios independentes, baseados nos fatores iniciais do catálogo. Eles não adotam automaticamente os fatores e documentos específicos do projeto em edição.</div>';
+Manual.labTransporte=function(){
+ const alvo=document.getElementById('lab-saida-transporte');if(!alvo)return;
+ const massa=Math.max(0,Engine.num(this.val('lab-tm'),0)),dist=Math.max(0,Engine.num(this.val('lab-td'),0));
+ const modal=MODAIS.find(x=>x.id===this.val('lab-tmod'))||MODAIS[0];
+ alvo.innerHTML='<div class="destaque">'+UI.co2(massa*dist*modal.fe)+'CO₂e</div><p class="nota">Trabalho de transporte = '+UI.n(massa,2)+' t × '+UI.n(dist,2)+' km = '+UI.n(massa*dist,2)+' t·km.<br>Emissão = '+UI.n(massa*dist,2)+' t·km × '+UI.n(modal.fe,5)+' kgCO₂e/(t·km) = '+UI.n(massa*dist*modal.fe,2)+' kgCO₂e.</p>'+MODAIS.map(x=>'<p class="nota">'+UI.esc(x.nome)+': '+UI.co2(massa*dist*x.fe)+'CO₂e</p>').join('');
+};
 
 
 /* ---------- Inicialização ---------- */

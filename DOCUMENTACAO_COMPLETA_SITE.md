@@ -220,7 +220,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/ambienta/` | 1263353 bytes | 1252139 caracteres |
 | `/solarincidence-pro/` | 282551 bytes | 280392 caracteres |
 | `/eletroposto-calc/` | 183380 bytes | 181470 caracteres |
-| `/carboncalcpro/` | 186068 bytes | 184143 caracteres |
+| `/carboncalcpro/` | 287798 bytes | 284380 caracteres |
 | `/friopro/` | 7125228 bytes | 7106816 caracteres |
 | `/concessaorod/` | 265214 bytes | 263033 caracteres |
 | `/bts-financeiro/` | 124921 bytes | 124028 caracteres |
@@ -1877,11 +1877,13 @@ Observacoes:
 Rota: `/carboncalcpro/`  
 Arquivo: `carboncalcpro/index.html`
 
-Ultima inclusao:
+Ultima atualizacao:
 
 - Fonte: `C:\Users\ACER\Documents\Downloads\CarbonCalcPro (2).html`
 - Data: 09/09/2026
 - Alteracao: inclusao de novo card na home, criacao do filtro `Sustentabilidade`, e publicacao do aplicativo CarbonCalc Pro como HTML standalone.
+- Em 11/09/2026, atualizado com `C:\Users\ACER\Documents\Downloads\CarbonCalc_Pro_v1.2.html`, identificado como `CarbonCalc Pro v1.2`.
+- Backup anterior: `C:\Obras Inteligentes\backups\carboncalcpro-index-before-v1-2-20260911-0750.html`.
 
 Observacoes:
 
