@@ -275,6 +275,16 @@ dialog textarea{width:100%;min-height:220px;font-family:var(--num);font-size:12p
   .ab-opcao{margin-left:0;width:100%}}
 @media (prefers-reduced-motion:reduce){#abLegal.on{animation:none}.ab-marca.on{transition:none}}
 
+
+/* ---------- validação inline e histórico ---------- */
+.faixa-erros{background:#FBE9E6;color:#8A2C1B;border-bottom:1px solid #E9B5AC;
+  padding:8px 24px;font-size:12.5px;line-height:1.45}
+[data-tema="escuro"] .faixa-erros{background:#3A1F1A;color:#F3B9AC;border-bottom-color:#5B2E25}
+input.invalido,select.invalido{border-color:#C4402E !important;background:#FDF3F1}
+[data-tema="escuro"] input.invalido,[data-tema="escuro"] select.invalido{background:#3A1F1A}
+input.invalido:focus,select.invalido:focus{outline:2px solid #C4402E;outline-offset:1px}
+.bt-topo:disabled{opacity:.4;cursor:not-allowed}
+
 @media(max-width:860px){
   .rail{position:static;width:100%;flex:1 1 100%;height:auto;border-right:0;border-bottom:1px solid var(--borda);
     display:flex;flex-wrap:wrap;gap:4px;padding:8px}
@@ -353,6 +363,8 @@ dialog textarea{width:100%;min-height:220px;font-family:var(--num);font-size:12p
   <div class="marca"><b>ConcessãoRod</b><span>modelagem econômico-financeira</span></div>
   <input class="proj" id="nomeProjeto" placeholder="Nome do projeto" aria-label="Nome do projeto">
   <div class="topo-acoes">
+    <button class="bt-topo" id="btDesfazer" title="Nada a desfazer" disabled>Desfazer</button>
+    <button class="bt-topo" id="btRefazer" title="Nada a refazer" disabled>Refazer</button>
     <button class="bt-topo" id="btTema" title="Alternar tema claro/escuro">Tema</button>
     <button class="bt-topo" id="btExemplo">Carregar exemplo</button>
     <button class="bt-topo" id="btImportar">Importar</button>
@@ -361,6 +373,7 @@ dialog textarea{width:100%;min-height:220px;font-family:var(--num);font-size:12p
   </div>
 </header>
 
+<div id="faixaErros" class="faixa-erros" role="alert" hidden></div>
 <section class="faixa-res" id="faixaRes" aria-live="polite">
   <div class="kpi neutro" id="kpiTIR"><div class="rot">TIR do projeto</div><div class="val">—</div><div class="sub">&nbsp;</div></div>
   <div class="kpi neutro" id="kpiVPL"><div class="rot">VPL na TMA</div><div class="val">—</div><div class="sub">&nbsp;</div></div>
@@ -431,6 +444,8 @@ dialog textarea{width:100%;min-height:220px;font-family:var(--num);font-size:12p
         <div class="campo unid"><label for="p_ir">IRPJ + CSLL</label><input type="number" id="p_ir" data-m="projeto.irCsllPct" step="0.1"><em>%</em>
           <span class="dica">Sobre o lucro após depreciação.</span></div>
         <div class="campo unid"><label for="p_dep">Depreciação do capex</label><input type="number" id="p_dep" data-m="projeto.depreciacaoAnos" step="1"><em>anos</em></div>
+        <div class="campo unid"><label for="p_jdo">Juros de obra</label><input type="number" id="p_jdo" data-m="projeto.jurosObraPct" step="0.1"><em>% a.a.</em>
+          <span class="dica">Capitaliza o capex da pré-operação na base depreciável. Não é saída de caixa: num fluxo desalavancado o custo do capital já está na TMA.</span></div>
       </div>
       <div class="grade g4" style="margin-top:12px">
         <div class="campo unid"><label for="p_acess">Receitas acessórias</label><input type="number" id="p_acess" data-m="projeto.receitaAcessoriaPct" step="0.1"><em>%</em>
@@ -479,6 +494,12 @@ dialog textarea{width:100%;min-height:220px;font-family:var(--num);font-size:12p
           <span class="dica">Desvio de rota no primeiro ano de cobrança.</span></div>
         <div class="campo unid"><label for="s_recup">Recuperação anual da perda</label><input type="number" id="s_recup" data-m="trafego.recuperacaoPct" step="1"><em>% a.a.</em>
           <span class="dica">Quanto da perda inicial retorna a cada ano.</span></div>
+      </div>
+      <div class="grade g3" style="margin-top:12px">
+        <div class="campo unid"><label for="s_elast">Elasticidade-preço da demanda</label><input type="number" id="s_elast" data-m="trafego.elasticidade" step="0.05"><em>—</em>
+          <span class="dica">Negativa. Em rodovia costuma ficar entre −0,10 e −0,30. Zero desliga o efeito.</span></div>
+        <div class="campo unid"><label for="s_tarref">Tarifa de referência do estudo de tráfego</label><input type="number" id="s_tarref" data-m="trafego.tarifaRef" step="0.1"><em>R$</em>
+          <span class="dica">Tarifa para a qual o VDM foi projetado. A elasticidade só atua sobre o desvio em relação a ela.</span></div>
         <div class="campo unid"><label for="s_teto">Teto de crescimento acumulado</label><input type="number" id="s_teto" data-m="trafego.tetoAcumuladoPct" step="10"><em>%</em>
           <span class="dica">Limite de saturação sobre o VDM inicial. Use 0 para não limitar.</span></div>
       </div>
@@ -658,6 +679,7 @@ dialog textarea{width:100%;min-height:220px;font-family:var(--num);font-size:12p
       <h3>Demonstração anual</h3>
       <div class="linha-bt" style="margin-bottom:10px">
         <button class="bt pequeno" id="btCsvFluxo">Baixar CSV</button>
+        <button class="bt pequeno" id="btXlsxFluxo" title="Planilha com números já formatados como número">Baixar planilha (.xlsx)</button>
         <button class="bt pequeno" id="btCopiarFluxo">Copiar para planilha</button>
         <label class="mini" style="display:flex;gap:6px;align-items:center;margin-left:6px">
           <input type="checkbox" id="chkMilhoes" checked> exibir em R$ milhões</label>
@@ -740,6 +762,8 @@ dialog textarea{width:100%;min-height:220px;font-family:var(--num);font-size:12p
       <button class="bt amarelo" id="btGerarRel">Gerar relatório</button>
       <button class="bt" id="btImprimir">Imprimir ou salvar em PDF</button>
       <button class="bt" id="btCsvTudo">Baixar CSV consolidado</button>
+      <button class="bt" id="btXlsxTudo">Baixar planilha (.xlsx)</button>
+      <button class="bt" id="btJsonTudo" title="Premissas, indicadores e fluxo num único arquivo">Baixar resultado (.json)</button>
     </div>
     <div id="saidaRelatorio"></div>
   </section>
@@ -865,9 +889,11 @@ function modeloPadrao() {
       regime: "real", inflacao: 4.0,
       tma: 9.0, tribReceitaPct: 8.65, irCsllPct: 34, depreciacaoAnos: 25,
       receitaAcessoriaPct: 2.0, valorResidualPct: 0, evasaoPadraoPct: 2.0,
-      capitalProprioPct: 30
+      capitalProprioPct: 30,
+      jurosObraPct: 0                       // capitaliza JDO na base depreciável; não é saída de caixa
     },
-    trafego: { perdaAberturaPct: 6, recuperacaoPct: 40, tetoAcumuladoPct: 0 },
+    trafego: { perdaAberturaPct: 6, recuperacaoPct: 40, tetoAcumuladoPct: 0,
+      elasticidade: 0, tarifaRef: 0 },      // elasticidade-preço da demanda e tarifa de referência
     cobranca: { automaticoPct: 55, custoAutomatico: 0.12, custoManual: 0.45, descontoAutomaticoPct: 5 },
     classes: classesPadrao(),
     segmentos: [],
@@ -897,14 +923,31 @@ var recalcPend = null;  // debounce
 function salvar() {
   try { localStorage.setItem(CHAVE, JSON.stringify(M)); } catch (e) { /* memória cheia ou modo restrito */ }
 }
+/* Completa um modelo com os padrões que faltarem.
+
+   Necessário sempre que um modelo vem de fora do código atual: arquivo salvo
+   antes de uma versão nova, JSON importado, cenário antigo. Sem isso, uma
+   premissa acrescentada depois chega como undefined e contamina o cálculo
+   silenciosamente. Só os blocos de configuração são completados; listas
+   (segmentos, praças, capex, opex, classes, cenários) ficam como vieram. */
+function normalizarModelo(o) {
+  const pad = modeloPadrao();
+  const m = Object.assign({}, pad, o || {});
+  ["projeto", "trafego", "cobranca", "capexCfg", "tarifa", "outorga", "sensib"].forEach((k) => {
+    if (pad[k] && typeof pad[k] === "object" && !Array.isArray(pad[k])) {
+      m[k] = Object.assign({}, pad[k], (o && o[k]) || {});
+    }
+  });
+  return m;
+}
+
 function carregar() {
   try {
     const s = localStorage.getItem(CHAVE);
     if (!s) return false;
     const o = JSON.parse(s);
     if (!o || !o.projeto) return false;
-    M = Object.assign(modeloPadrao(), o);
-    M.projeto = Object.assign(modeloPadrao().projeto, o.projeto || {});
+    M = normalizarModelo(o);
     return true;
   } catch (e) { return false; }
 }
@@ -923,17 +966,231 @@ function torrada(msg, tipo) {
 <script>
 "use strict";
 /* =========================================================================
-   MOTOR DE CÁLCULO
-   Convenções:
-   - t = 0 é o ano da assinatura do contrato (ano-base do tráfego informado).
-   - Anos 1..anosPreOp são de pré-operação: há investimento, não há pedágio.
-   - A arrecadação começa em t = anosPreOp + 1 e vai até t = prazoAnos.
-   - Em regime real todos os fluxos estão em moeda constante do ano-base e a
-     TMA informada é real. Em regime nominal os fluxos são inflacionados e a
-     TMA informada é nominal.
-   ========================================================================= */
-var MOTOR = (function () {
+   HISTORICO — desfazer e refazer sobre instantâneos do modelo.
 
+   Guarda serializações completas, não deltas. O modelo inteiro do exemplo
+   grande tem ~40 KB serializados; com o limite de 60 passos o custo máximo
+   fica na casa de 2 MB, o que não justifica a complexidade de um diff.
+   ========================================================================= */
+var HISTORICO = (function () {
+  var LIMITE = 60;
+  var pilha = [], pos = -1, ultimo = null, suspenso = false;
+
+  function serial() { return JSON.stringify(M); }
+
+  function iniciar() {
+    pilha = [serial()]; pos = 0; ultimo = pilha[0];
+    atualizarBotoes();
+  }
+
+  /* Registra o estado atual se ele mudou desde o último registro.
+     Devolve true quando um passo novo foi criado. */
+  function registrar() {
+    if (suspenso) return false;
+    var s = serial();
+    if (s === ultimo) return false;
+    pilha = pilha.slice(0, pos + 1);
+    pilha.push(s);
+    if (pilha.length > LIMITE) pilha.shift();
+    pos = pilha.length - 1;
+    ultimo = s;
+    atualizarBotoes();
+    return true;
+  }
+
+  function aplicar() {
+    suspenso = true;
+    try {
+      M = JSON.parse(pilha[pos]);
+      ultimo = pilha[pos];
+      if (typeof redesenharTudo === "function") redesenharTudo();
+      if (typeof salvar === "function") salvar();
+    } finally { suspenso = false; }
+    atualizarBotoes();
+  }
+
+  function desfazer() { if (pos <= 0) return false; pos--; aplicar(); return true; }
+  function refazer() { if (pos >= pilha.length - 1) return false; pos++; aplicar(); return true; }
+
+  function pode() { return { desfazer: pos > 0, refazer: pos >= 0 && pos < pilha.length - 1 }; }
+
+  function atualizarBotoes() {
+    if (typeof document === "undefined") return;
+    var p = pode();
+    var a = document.getElementById("btDesfazer"), b = document.getElementById("btRefazer");
+    if (a) { a.disabled = !p.desfazer; a.title = p.desfazer ? "Desfazer (Ctrl+Z)" : "Nada a desfazer"; }
+    if (b) { b.disabled = !p.refazer; b.title = p.refazer ? "Refazer (Ctrl+Shift+Z)" : "Nada a refazer"; }
+  }
+
+  return {
+    iniciar: iniciar, registrar: registrar, desfazer: desfazer, refazer: refazer,
+    pode: pode, tamanho: function () { return pilha.length; }, posicao: function () { return pos; },
+    atualizarBotoes: atualizarBotoes
+  };
+})();
+
+/* =========================================================================
+   VALIDACAO — esquema declarativo verificado a cada edição.
+
+   O motor já avisa sobre resultados impossíveis, mas depois de calcular.
+   Aqui o objetivo é outro: apontar no próprio campo, antes do cálculo, o
+   valor que não pode existir. Cada regra diz o limite e a razão dele.
+   ========================================================================= */
+var VALIDACAO = (function () {
+
+  var ESQUEMA = {
+    "projeto.prazoAnos": { min: 1, max: 70, inteiro: true, rot: "Prazo da concessão",
+      porque: "O prazo precisa cobrir ao menos um ano." },
+    "projeto.anosPreOp": { min: 0, max: 20, inteiro: true, rot: "Pré-operação",
+      porque: "Anos sem arrecadação antes da operação." },
+    "projeto.tma": { min: 0, max: 40, rot: "TMA",
+      porque: "Taxa de desconto em % ao ano." },
+    "projeto.inflacao": { min: -5, max: 50, rot: "Inflação",
+      porque: "Só é usada no regime nominal." },
+    "projeto.tribReceitaPct": { min: 0, max: 30, rot: "Tributos sobre a receita",
+      porque: "Alíquota agregada em % da receita bruta." },
+    "projeto.irCsllPct": { min: 0, max: 60, rot: "IRPJ e CSLL",
+      porque: "Alíquota sobre o lucro real." },
+    "projeto.depreciacaoAnos": { min: 1, max: 60, inteiro: true, rot: "Prazo de depreciação" },
+    "projeto.receitaAcessoriaPct": { min: 0, max: 50, rot: "Receita acessória" },
+    "projeto.valorResidualPct": { min: 0, max: 100, rot: "Valor residual" },
+    "projeto.jurosObraPct": { min: 0, max: 30, rot: "Juros de obra",
+      porque: "Capitaliza na base depreciável; não é saída de caixa." },
+    "trafego.elasticidade": { min: -3, max: 0, rot: "Elasticidade-preço",
+      porque: "Deve ser negativa: tarifa maior afasta demanda." },
+    "trafego.tarifaRef": { min: 0, max: 500, rot: "Tarifa de referência" },
+    "trafego.perdaAberturaPct": { min: 0, max: 100, rot: "Perda na abertura" },
+    "trafego.recuperacaoPct": { min: 0, max: 100, rot: "Recuperação da perda" },
+    "cobranca.automaticoPct": { min: 0, max: 100, rot: "Cobrança automática" },
+    "cobranca.custoAutomatico": { min: 0, max: 20, rot: "Custo por transação automática" },
+    "cobranca.custoManual": { min: 0, max: 20, rot: "Custo por transação manual" },
+    "cobranca.descontoAutomaticoPct": { min: 0, max: 100, rot: "Desconto no automático" },
+    "capexCfg.contingenciaPct": { min: 0, max: 100, rot: "Contingência" },
+    "capexCfg.verificadorPct": { min: 0, max: 20, rot: "Verificador independente" },
+    "capexCfg.reinvestimentoAnos": { min: 0, max: 40, inteiro: true, rot: "Ciclo de reinvestimento" },
+    "capexCfg.reinvestimentoPct": { min: 0, max: 100, rot: "Reinvestimento" },
+    "tarifa.tarifaBase": { min: 0, max: 500, rot: "Tarifa informada" },
+    "tarifa.tetoTarifa": { min: 0, max: 500, rot: "Teto tarifário" },
+    "tarifa.alvoTIR": { min: 0, max: 60, rot: "TIR alvo" },
+    "tarifa.arredondamento": { min: 0, max: 5, rot: "Arredondamento" },
+    "tarifa.ganhoRealPct": { min: -10, max: 10, rot: "Ganho real da tarifa" },
+    "outorga.valorFixo": { min: 0, max: 1e12, rot: "Outorga fixa" },
+    "outorga.parcelas": { min: 1, max: 40, inteiro: true, rot: "Parcelas da outorga" },
+    "outorga.variavelPct": { min: 0, max: 50, rot: "Outorga variável" }
+  };
+
+  /* Regras que dependem de mais de um campo. */
+  var CRUZADAS = [
+    {
+      campos: ["projeto.anosPreOp", "projeto.prazoAnos"],
+      testar: function (m) {
+        return U.n(m.projeto.anosPreOp) + 1 <= Math.round(U.n(m.projeto.prazoAnos, 25));
+      },
+      msg: "A pré-operação consome todo o prazo: não sobra nenhum ano de arrecadação."
+    },
+    {
+      campos: ["tarifa.tetoTarifa", "tarifa.tarifaBase"],
+      testar: function (m) {
+        var teto = U.n(m.tarifa.tetoTarifa);
+        return teto <= 0 || m.tarifa.metodo !== "fixa" || U.n(m.tarifa.tarifaBase) <= teto;
+      },
+      msg: "A tarifa informada está acima do teto tarifário."
+    },
+    {
+      campos: ["trafego.elasticidade", "trafego.tarifaRef"],
+      testar: function (m) {
+        return U.n(m.trafego.elasticidade) === 0 || U.n(m.trafego.tarifaRef) > 0;
+      },
+      msg: "A elasticidade só atua se houver tarifa de referência maior que zero."
+    },
+    {
+      campos: ["trafego.elasticidade"],
+      testar: function (m) { return U.n(m.trafego.elasticidade) > -1; },
+      msg: "Com elasticidade igual ou menor que −1 a receita para de crescer com a tarifa."
+    }
+  ];
+
+  /* Verifica um caminho isolado. Devolve null quando está válido. */
+  function campo(caminho, valor) {
+    var r = ESQUEMA[caminho];
+    if (!r) return null;
+    var bruto = String(valor === undefined || valor === null ? "" : valor).trim();
+    if (bruto === "") return { caminho: caminho, msg: (r.rot || caminho) + " não pode ficar em branco." };
+    var v = U.n(valor, NaN);
+    if (!isFinite(v)) return { caminho: caminho, msg: (r.rot || caminho) + " precisa ser um número." };
+    if (r.inteiro && Math.abs(v - Math.round(v)) > 1e-9) {
+      return { caminho: caminho, msg: (r.rot || caminho) + " precisa ser um número inteiro." };
+    }
+    if (v < r.min || v > r.max) {
+      return {
+        caminho: caminho,
+        msg: (r.rot || caminho) + " deve ficar entre " + U.num(r.min, 2) + " e " + U.num(r.max, 2) +
+          (r.porque ? ". " + r.porque : ".")
+      };
+    }
+    return null;
+  }
+
+  /* Verifica o modelo inteiro: campos simples e regras cruzadas. */
+  function modelo(m) {
+    var erros = [];
+    Object.keys(ESQUEMA).forEach(function (c) {
+      var e = campo(c, U.get(m, c));
+      if (e) erros.push(e);
+    });
+    CRUZADAS.forEach(function (r) {
+      var ok = true;
+      try { ok = r.testar(m); } catch (e) { ok = true; }
+      if (!ok) erros.push({ caminho: r.campos[0], campos: r.campos, msg: r.msg, cruzada: true });
+    });
+    return erros;
+  }
+
+  /* Marca ou limpa o campo na tela. */
+  function pintar(erros) {
+    if (typeof document === "undefined") return;
+    document.querySelectorAll("[data-m]").forEach(function (el) {
+      el.classList.remove("invalido");
+      el.removeAttribute("aria-invalid");
+      if (el.dataset.dicaOriginal !== undefined) { el.title = el.dataset.dicaOriginal; }
+    });
+    var mapa = {};
+    erros.forEach(function (e) {
+      (e.campos || [e.caminho]).forEach(function (c) { (mapa[c] = mapa[c] || []).push(e.msg); });
+    });
+    Object.keys(mapa).forEach(function (c) {
+      var el = document.querySelector('[data-m="' + c + '"]');
+      if (!el) return;
+      if (el.dataset.dicaOriginal === undefined) el.dataset.dicaOriginal = el.title || "";
+      el.classList.add("invalido");
+      el.setAttribute("aria-invalid", "true");
+      el.title = mapa[c].join(" ");
+    });
+    var faixa = document.getElementById("faixaErros");
+    if (faixa) {
+      if (!erros.length) { faixa.hidden = true; faixa.textContent = ""; }
+      else {
+        faixa.hidden = false;
+        faixa.textContent = erros.length === 1
+          ? erros[0].msg
+          : erros.length + " campos precisam de correção: " + erros[0].msg;
+      }
+    }
+  }
+
+  function verificar(m) { var e = modelo(m); pintar(e); return e; }
+
+  return { ESQUEMA: ESQUEMA, CRUZADAS: CRUZADAS, campo: campo, modelo: modelo, pintar: pintar, verificar: verificar };
+})();
+</script>
+<script>
+"use strict";
+/* =========================================================================
+   FLUXO — construção do fluxo de caixa livre desalavancado.
+   Depende apenas de U. Não conhece solucionador nem sensibilidade:
+   recebe um modelo e uma tarifa, devolve o fluxo e os indicadores.
+   ========================================================================= */
+var FLUXO = (function () {
   /* ---------- matemática financeira ---------- */
   function vpl(fluxo, taxa) {
     const i = taxa / 100;
@@ -1071,11 +1328,28 @@ var MOTOR = (function () {
   }
 
   /* ---------- receita de um ano ---------- */
+  /* Elasticidade-preço da demanda.
+
+     A projeção de tráfego é feita para uma tarifa de referência. Cobrar acima
+     dela afasta parte da demanda; cobrar abaixo atrai. O fator aplicado é
+     (tarifa / tarifa de referência) ^ elasticidade, com elasticidade negativa.
+
+     A receita varia com a tarifa elevada a (1 + elasticidade). Com elasticidade
+     igual ou menor que -1 a receita para de crescer com a tarifa e o
+     solucionador perde a monotonicidade — esse caso é avisado em resolver(). */
+  function fatorDemanda(m, tarifaBase) {
+    const e = U.n(m.trafego.elasticidade, 0);
+    const ref = U.n(m.trafego.tarifaRef, 0);
+    if (e === 0 || ref <= 0 || tarifaBase <= 0) return 1;
+    return Math.pow(tarifaBase / ref, e);
+  }
+
   function receitaAno(m, tarifaBase, t, arredondar) {
     const ini = inicioOperacao(m);
     const detalhe = [];
     let pedagio = 0, transacoes = 0, veicEquiv = 0;
     if (t < ini) return { pedagio: 0, transacoes: 0, veicEquiv: 0, detalhe };
+    const fDem = fatorDemanda(m, tarifaBase);
 
     for (const p of m.pracas) {
       const pIni = U.n(p.inicioAno, ini);
@@ -1091,7 +1365,7 @@ var MOTOR = (function () {
       for (const c of m.classes) {
         const vdm = U.n(seg.vdm && seg.vdm[c.id]);
         if (vdm <= 0) continue;
-        const passantes = vdm * 365 * fCresc * fAber * fSentido * fCapt;
+        const passantes = vdm * 365 * fCresc * fAber * fSentido * fCapt * fDem;
         const pagantes = passantes * fEvas * (1 - U.n(c.isencaoPct) / 100);
         const tar = tarifaClasse(m, p, c, tarifaBase, t, arredondar);
         rP += pagantes * tar;
@@ -1119,11 +1393,14 @@ var MOTOR = (function () {
         anos[0] += total;
         continue;
       }
+      // Normalização em dois passos: primeiro a fração de cada ano dentro do
+      // cronograma informado, depois o valor. Se a soma não fecha 100%, o que
+      // foi lançado é redistribuído proporcionalmente — nunca truncado.
       for (const k of Object.keys(cr)) {
         const a = parseInt(k, 10);
         if (!isFinite(a) || a < 0 || a > T) continue;
-        const parte = total * (U.n(cr[k]) / somaPct) * (somaPct / 100);
-        anos[a] += parte * Math.pow(1 + ganho, a);
+        const fracao = U.n(cr[k]) / somaPct;           // soma 1 por construção
+        anos[a] += total * fracao * Math.pow(1 + ganho, a);
       }
     }
     // contingência e verificador seguem a mesma distribuição dos itens
@@ -1186,11 +1463,31 @@ var MOTOR = (function () {
     const depAnos = Math.max(1, Math.round(U.n(pj.depreciacaoAnos, 25)));
     const parcelas = Math.max(1, Math.round(U.n(m.outorga.parcelas, 1)));
 
-    // depreciação linear de cada desembolso
+    /* Juros de obra (JDO).
+
+       Num fluxo livre desalavancado o custo do capital está no desconto, não no
+       fluxo: lançar JDO como desembolso seria contá-lo duas vezes. O que o JDO
+       legitimamente faz é engrossar a base de ativo que será depreciada — é
+       assim que os modelos regulatórios tratam a capitalização durante a obra.
+       Portanto ele NÃO entra no caixa; entra apenas na base depreciável, e o
+       efeito que produz no resultado é exclusivamente o escudo fiscal. */
+    const jdo = U.n(pj.jurosObraPct) / 100;
+    const iniOp = inicioOperacao(m);
+    const baseDep = new Array(T + 1).fill(0);
+    let jdoTotal = 0;
+    for (let d = 0; d <= T; d++) {
+      const capitalizado = (jdo > 0 && d < iniOp)
+        ? capexAno[d] * Math.pow(1 + jdo, iniOp - d)
+        : capexAno[d];
+      baseDep[d] = capitalizado;
+      jdoTotal += capitalizado - capexAno[d];
+    }
+
+    // depreciação linear de cada desembolso, sobre a base capitalizada
     const deprec = new Array(T + 1).fill(0);
     for (let d = 0; d <= T; d++) {
-      if (capexAno[d] <= 0) continue;
-      const q = capexAno[d] / depAnos;
+      if (baseDep[d] <= 0) continue;
+      const q = baseDep[d] / depAnos;
       for (let a = d + 1; a <= Math.min(T, d + depAnos); a++) deprec[a] += q;
     }
 
@@ -1243,7 +1540,7 @@ var MOTOR = (function () {
       l.acum = ac; l.acumDesc = acd;
     });
 
-    return { T, linhas, fcl, capexAno, capexBase: cxBase, deprec };
+    return { T, linhas, fcl, capexAno, capexBase: cxBase, deprec, jdoTotal };
   }
 
   /* ---------- indicadores ---------- */
@@ -1264,6 +1561,7 @@ var MOTOR = (function () {
       receitaTotal: U.soma(fx.linhas.map((l) => l.bruta)),
       opexTotal: U.soma(fx.linhas.map((l) => l.opex)),
       capexTotal: fx.capexBase.total,
+      jdoCapitalizado: fx.jdoTotal || 0,
       irTotal: U.soma(fx.linhas.map((l) => l.ir)),
       outorgaTotal: outorgaTotal,
       outorgaVariavelTotal: U.soma(fx.linhas.map((l) => l.outVar)),
@@ -1272,6 +1570,61 @@ var MOTOR = (function () {
       vpEntradas: vpEnt, vpSaidas: vpSai,
       arrecadacaoDescontada: vpl(fx.linhas.map((l) => l.bruta), tma)
     };
+  }
+
+  return {
+    vpl, tir, payback,
+    extensaoTotal, nPracas, inicioOperacao, quantidadeCapex, totalItemCapex, capexBase,
+    fatorCrescimento, fatorAbertura, vdmSegmento,
+    coberturaKm, coberturaMedia, tarifaBasicaPraca, tarifaClasse,
+    fatorDemanda, receitaAno, capexPorAno, opexAno, construirFluxo, indicadores
+  };
+})();
+</script>
+<script>
+"use strict";
+/* =========================================================================
+   SOLVER — resolução numérica da tarifa e da outorga.
+   Depende de FLUXO. Não conhece a interface nem a análise de sensibilidade.
+   ========================================================================= */
+var SOLVER = (function () {
+  // dependências explícitas de FLUXO
+  var vpl = FLUXO.vpl;
+  var tir = FLUXO.tir;
+  var payback = FLUXO.payback;
+  var extensaoTotal = FLUXO.extensaoTotal;
+  var nPracas = FLUXO.nPracas;
+  var inicioOperacao = FLUXO.inicioOperacao;
+  var quantidadeCapex = FLUXO.quantidadeCapex;
+  var totalItemCapex = FLUXO.totalItemCapex;
+  var capexBase = FLUXO.capexBase;
+  var fatorCrescimento = FLUXO.fatorCrescimento;
+  var fatorAbertura = FLUXO.fatorAbertura;
+  var vdmSegmento = FLUXO.vdmSegmento;
+  var coberturaKm = FLUXO.coberturaKm;
+  var coberturaMedia = FLUXO.coberturaMedia;
+  var tarifaBasicaPraca = FLUXO.tarifaBasicaPraca;
+  var tarifaClasse = FLUXO.tarifaClasse;
+  var fatorDemanda = FLUXO.fatorDemanda;
+  var receitaAno = FLUXO.receitaAno;
+  var capexPorAno = FLUXO.capexPorAno;
+  var opexAno = FLUXO.opexAno;
+  var construirFluxo = FLUXO.construirFluxo;
+  var indicadores = FLUXO.indicadores;
+
+  /* ---------- bisseção genérica ---------- */
+  function bisseccao(f, lo, hi, alvo = 0, iter = 200, tol = 1e-7) {
+    let fa = f(lo) - alvo, fb = f(hi) - alvo;
+    if (!isFinite(fa) || !isFinite(fb)) return null;
+    if (fa > 0 && fb > 0) return { valor: lo, fora: "abaixo" };
+    if (fa < 0 && fb < 0) return { valor: hi, fora: "acima" };
+    let a = lo, b = hi;
+    for (let k = 0; k < iter; k++) {
+      const m = (a + b) / 2, fm = f(m) - alvo;
+      if (Math.abs(fm) < tol || (b - a) < tol) return { valor: m, fora: null };
+      if (fa * fm <= 0) { b = m; fb = fm; } else { a = m; fa = fm; }
+    }
+    return { valor: (a + b) / 2, fora: null };
   }
 
   /* ---------- solucionadores ---------- */
@@ -1302,13 +1655,24 @@ var MOTOR = (function () {
     let tarifa = U.n(m.tarifa.tarifaBase, 1);
     let modoResolvido = met;
 
-    // Sem praça, sem segmento ou sem tráfego não há tarifa a resolver.
+    /* Com elasticidade igual ou menor que -1 a receita não cresce com a tarifa:
+       não existe tarifa de equilíbrio, e insistir na bisseção só devolveria o
+       teto do intervalo de busca — um número sem significado na tela. */
+    const elast = U.n(m.trafego.elasticidade, 0);
+    const elasticidadeResolve = !(elast <= -1 && U.n(m.trafego.tarifaRef, 0) > 0);
+    if (!elasticidadeResolve) {
+      avisos.push("Elasticidade de " + U.num(elast, 2) + ": acima de |1| o aumento de tarifa reduz a " +
+        "arrecadação e não existe tarifa de equilíbrio. A tarifa informada foi mantida.");
+    }
+
+    // Sem praça, sem segmento, sem tráfego ou sem equilíbrio possível não há tarifa a resolver.
     const temAnoOperacional = Math.round(U.n(m.projeto.prazoAnos, 25)) >= inicioOperacao(m);
     const temArrecadacao = m.pracas.length > 0 && m.segmentos.length > 0 && temAnoOperacional &&
-      m.segmentos.some((s) => vdmSegmento(s, m) > 0);
+      elasticidadeResolve && m.segmentos.some((s) => vdmSegmento(s, m) > 0);
 
     if (!temArrecadacao && met !== "fixa") {
-      avisos.push(temAnoOperacional
+      if (!elasticidadeResolve) { /* o aviso específico já foi emitido acima */ }
+      else avisos.push(temAnoOperacional
         ? "Não há arrecadação possível: verifique segmentos, tráfego e praças. A tarifa informada foi mantida."
         : "A pré-operação consome todo o prazo da concessão: não sobra ano de arrecadação. A tarifa informada foi mantida.");
       modoResolvido = "fixa";
@@ -1360,7 +1724,46 @@ var MOTOR = (function () {
     return { fluxo: fx, ind, avisos, tarifa, outorga };
   }
 
-  /* ---------- sensibilidade ---------- */
+  return { bisseccao, vplComTarifa, fatorParcelas, resolver };
+})();
+</script>
+<script>
+"use strict";
+/* =========================================================================
+   SENSIBILIDADE — tornado, aranha, matriz e ponto de equilíbrio.
+   Depende de SOLVER (e, por ele, de FLUXO). É a única camada que sabe
+   que existe "caso-base" e que uma premissa pode ser deslocada.
+   ========================================================================= */
+var SENSIB = (function () {
+  // dependências explícitas de FLUXO
+  var vpl = FLUXO.vpl;
+  var tir = FLUXO.tir;
+  var payback = FLUXO.payback;
+  var extensaoTotal = FLUXO.extensaoTotal;
+  var nPracas = FLUXO.nPracas;
+  var inicioOperacao = FLUXO.inicioOperacao;
+  var quantidadeCapex = FLUXO.quantidadeCapex;
+  var totalItemCapex = FLUXO.totalItemCapex;
+  var capexBase = FLUXO.capexBase;
+  var fatorCrescimento = FLUXO.fatorCrescimento;
+  var fatorAbertura = FLUXO.fatorAbertura;
+  var vdmSegmento = FLUXO.vdmSegmento;
+  var coberturaKm = FLUXO.coberturaKm;
+  var coberturaMedia = FLUXO.coberturaMedia;
+  var tarifaBasicaPraca = FLUXO.tarifaBasicaPraca;
+  var tarifaClasse = FLUXO.tarifaClasse;
+  var fatorDemanda = FLUXO.fatorDemanda;
+  var receitaAno = FLUXO.receitaAno;
+  var capexPorAno = FLUXO.capexPorAno;
+  var opexAno = FLUXO.opexAno;
+  var construirFluxo = FLUXO.construirFluxo;
+  var indicadores = FLUXO.indicadores;
+  // dependências explícitas de SOLVER
+  var bisseccao = SOLVER.bisseccao;
+  var vplComTarifa = SOLVER.vplComTarifa;
+  var fatorParcelas = SOLVER.fatorParcelas;
+  var resolver = SOLVER.resolver;
+
   const VARIAVEIS = [
     { id: "trafego", nome: "Tráfego (VDM)", tipo: "mult" },
     { id: "crescimento", nome: "Taxa de crescimento", tipo: "mult" },
@@ -1497,12 +1900,22 @@ var MOTOR = (function () {
   }
 
   return {
-    vpl, tir, payback, bisseccao, resolver, construirFluxo, indicadores,
-    receitaAno, opexAno, capexPorAno, capexBase, tarifaClasse, tarifaBasicaPraca,
-    fatorCrescimento, fatorAbertura, extensaoTotal, inicioOperacao, vdmSegmento,
-    tornado, aranha, matriz, pontoEquilibrio, aplicarVariacao, medir, VARIAVEIS, coberturaKm,
-    prepararSensibilidade, variaveisRelevantes
+    VARIAVEIS, aplicarVariacao, medir, prepararSensibilidade, variaveisRelevantes,
+    tornado, aranha, matriz, pontoEquilibrio
   };
+})();
+
+/* -------------------------------------------------------------------------
+   MOTOR — fachada estável sobre os três módulos. Mantida porque a interface,
+   os testes e os arquivos salvos pelos usuários referenciam esses nomes.
+   ------------------------------------------------------------------------- */
+var MOTOR = (function () {
+  var f = {};
+  [FLUXO, SOLVER, SENSIB].forEach(function (mod) {
+    Object.keys(mod).forEach(function (k) { f[k] = mod[k]; });
+  });
+  f.FLUXO = FLUXO; f.SOLVER = SOLVER; f.SENSIB = SENSIB;
+  return f;
 })();
 </script>
 <script>
@@ -1656,18 +2069,84 @@ var G = (function () {
     let s = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img">`;
     s += `<line x1="${x(o.base).toFixed(1)}" y1="14" x2="${x(o.base).toFixed(1)}" y2="${H - 20}" style="stroke:var(--borda-forte);stroke-width:1.4;stroke-dasharray:4 3"/>`;
     s += `<text x="${x(o.base).toFixed(1)}" y="10" text-anchor="middle" ${txtEixo}>caso-base ${o.fmt ? o.fmt(o.base) : U.num(o.base, 2)}</text>`;
+    // As variáveis já chegam ordenadas por amplitude. Destacar as primeiras e
+    // esmaecer o restante evita que nove barras concorram pela mesma atenção.
+    const destaque = o.destaque === undefined ? 3 : o.destaque;
     it.forEach((i, k) => {
       const yy = 22 + k * 30;
+      const forte = k < destaque;
+      const op = forte ? ".9" : ".34";
       const a = Math.min(i.baixo, i.alto), b = Math.max(i.baixo, i.alto);
       const xa = x(a), xb = x(b), xbase = x(o.base);
-      s += `<rect x="${Math.min(xa, xbase).toFixed(1)}" y="${yy}" width="${Math.abs(xbase - xa).toFixed(1)}" height="18" fill="${CORES[3]}" opacity=".85"><title>${U.esc(i.nome)} desfavorável: ${o.fmt ? o.fmt(i.baixo) : U.num(i.baixo, 2)}</title></rect>`;
-      s += `<rect x="${Math.min(xb, xbase).toFixed(1)}" y="${yy}" width="${Math.abs(xb - xbase).toFixed(1)}" height="18" fill="${CORES[2]}" opacity=".85"><title>${U.esc(i.nome)} favorável: ${o.fmt ? o.fmt(i.alto) : U.num(i.alto, 2)}</title></rect>`;
-      s += `<text x="${mE - 8}" y="${yy + 13}" text-anchor="end" ${txtRot}>${U.esc(i.nome)}</text>`;
-      s += `<text x="${W - mD + 6}" y="${yy + 13}" ${txtEixo}>${o.fmt ? o.fmt(i.amplitude) : U.num(i.amplitude, 2)}</text>`;
+      s += `<rect x="${Math.min(xa, xbase).toFixed(1)}" y="${yy}" width="${Math.abs(xbase - xa).toFixed(1)}" height="18" fill="${CORES[3]}" opacity="${op}"><title>${U.esc(i.nome)} desfavorável: ${o.fmt ? o.fmt(i.baixo) : U.num(i.baixo, 2)}</title></rect>`;
+      s += `<rect x="${Math.min(xb, xbase).toFixed(1)}" y="${yy}" width="${Math.abs(xb - xbase).toFixed(1)}" height="18" fill="${CORES[2]}" opacity="${op}"><title>${U.esc(i.nome)} favorável: ${o.fmt ? o.fmt(i.alto) : U.num(i.alto, 2)}</title></rect>`;
+      s += `<text x="${mE - 8}" y="${yy + 13}" text-anchor="end" ${txtRot}${forte ? ' style="font-weight:650"' : ' opacity=".62"'}>${U.esc(i.nome)}</text>`;
+      s += `<text x="${W - mD + 6}" y="${yy + 13}" ${txtEixo}${forte ? "" : ' opacity=".62"'}>${o.fmt ? o.fmt(i.amplitude) : U.num(i.amplitude, 2)}</text>`;
+      if (k === destaque - 1 && it.length > destaque) {
+        const ys = yy + 24;
+        s += `<line x1="12" y1="${ys}" x2="${W - 12}" y2="${ys}" style="stroke:var(--borda);stroke-width:1;stroke-dasharray:3 4"/>`;
+      }
     });
     s += "</svg>";
     cx.innerHTML = s;
-    legenda(cont, [{ nome: "variação desfavorável", cor: CORES[3] }, { nome: "variação favorável", cor: CORES[2] }]);
+    legenda(cont, [
+      { nome: "variação desfavorável", cor: CORES[3] },
+      { nome: "variação favorável", cor: CORES[2] },
+      { nome: "abaixo da linha: efeito secundário", cor: "var(--borda-forte)" }
+    ]);
+  }
+
+  /* ---------- facetas: um painel pequeno por variável ----------
+     Nove séries num só par de eixos viram um novelo. Separadas em painéis
+     com a MESMA escala vertical, a comparação fica imediata: a premissa que
+     importa é a de reta inclinada, a irrelevante é a de reta plana. */
+  function facetas(cont, o) {
+    const cx = moldura(cont, o.titulo, o.legenda);
+    const ser = o.series, n = ser.length;
+    if (!n) { cx.innerHTML = '<div class="vazio">Sem séries para exibir.</div>'; return; }
+    const cols = n <= 4 ? 2 : 3, linhasG = Math.ceil(n / cols);
+    const cw = 232, ch = 148, gx = 14, gy = 16;
+    const W = cols * cw + (cols - 1) * gx, H = linhasG * ch + (linhasG - 1) * gy;
+    const mE = 46, mD = 8, mT = 20, mB = 26;
+
+    let lo = Infinity, hi = -Infinity;
+    ser.forEach((s2) => s2.valores.forEach((v) => {
+      if (!isFinite(v)) return;
+      lo = Math.min(lo, v); hi = Math.max(hi, v);
+    }));
+    if (!isFinite(lo) || lo === hi) { lo = (lo || 0) - 1; hi = (hi || 0) + 1; }
+    const marg = (hi - lo) * 0.12; lo -= marg; hi += marg;
+
+    let s = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img">`;
+    ser.forEach((se, k) => {
+      const col = k % cols, lin = Math.floor(k / cols);
+      const ox = col * (cw + gx), oy = lin * (ch + gy);
+      const pw = cw - mE - mD, ph = ch - mT - mB;
+      const X = (i) => ox + mE + (i / Math.max(1, o.categorias.length - 1)) * pw;
+      const Y = (v) => oy + mT + (1 - (v - lo) / (hi - lo)) * ph;
+
+      s += `<rect x="${ox}" y="${oy}" width="${cw}" height="${ch}" rx="5" fill="var(--papel-2)" stroke="var(--borda)"/>`;
+      s += `<text x="${ox + 8}" y="${oy + 13}" ${txtRot} style="font-weight:650">${U.esc(se.nome)}</text>`;
+
+      // referência do caso-base
+      if (o.base !== undefined && isFinite(o.base)) {
+        s += `<line x1="${ox + mE}" y1="${Y(o.base).toFixed(1)}" x2="${(ox + mE + pw).toFixed(1)}" y2="${Y(o.base).toFixed(1)}" style="stroke:var(--borda-forte);stroke-width:1;stroke-dasharray:3 3"/>`;
+      }
+      [lo, (lo + hi) / 2, hi].forEach((v) => {
+        s += `<text x="${ox + mE - 5}" y="${(Y(v) + 3).toFixed(1)}" text-anchor="end" ${txtEixo}>${o.fmtEixo ? o.fmtEixo(v) : U.num(v, 1)}</text>`;
+      });
+
+      const pts = se.valores.map((v, i) => (isFinite(v) ? `${X(i).toFixed(1)},${Y(v).toFixed(1)}` : null)).filter(Boolean);
+      if (pts.length > 1) s += `<polyline points="${pts.join(" ")}" fill="none" stroke="${se.cor}" stroke-width="2" stroke-linejoin="round"/>`;
+      se.valores.forEach((v, i) => {
+        if (!isFinite(v)) return;
+        s += `<circle cx="${X(i).toFixed(1)}" cy="${Y(v).toFixed(1)}" r="2.6" fill="${se.cor}"><title>${U.esc(se.nome)} em ${U.esc(o.categorias[i])}: ${o.fmtDica ? o.fmtDica(v) : U.num(v, 2)}</title></circle>`;
+      });
+      s += `<text x="${ox + mE}" y="${oy + ch - 8}" ${txtEixo}>${U.esc(o.categorias[0])}</text>`;
+      s += `<text x="${(ox + mE + pw).toFixed(1)}" y="${oy + ch - 8}" text-anchor="end" ${txtEixo}>${U.esc(o.categorias[o.categorias.length - 1])}</text>`;
+    });
+    s += "</svg>";
+    cx.innerHTML = s;
   }
 
   /* ---------- esquema linear da rodovia ---------- */
@@ -1723,7 +2202,7 @@ var G = (function () {
     cont.innerHTML = s;
   }
 
-  return { barras, linhas, tornado, rodovia, moldura, legenda };
+  return { barras, linhas, tornado, facetas, rodovia, moldura, legenda };
 })();
 </script>
 <script>
@@ -2176,6 +2655,9 @@ function pintarIndicadores() {
     cel("Receita bruta do contrato", U.compacto(i.receitaTotal), "soma nominal do período"),
     cel("Opex do contrato", U.compacto(i.opexTotal), "inclui custo de arrecadação"),
     cel("Capex total", U.compacto(i.capexTotal), "com contingência e verificador"),
+    (i.jdoCapitalizado > 0
+      ? cel("Juros de obra capitalizados", U.compacto(i.jdoCapitalizado), "somados à base depreciável, fora do caixa")
+      : ""),
     cel("Tributos sobre lucro", U.compacto(i.irTotal), "IRPJ e CSLL acumulados")
   ].join("");
 }
@@ -2322,13 +2804,14 @@ function pintarSensibilidade(qual) {
 
   if (qual === "aranha") {
     const a = MOTOR.aranha(M, ind, amp, passos);
-    G.linhas($("#grafAranha"), {
+    G.facetas($("#grafAranha"), {
       titulo: "Sensibilidade paramétrica",
-      legenda: "Variação percentual de cada premissa no eixo horizontal.",
+      legenda: `Um painel por premissa, todos na mesma escala vertical (${ind === "vpl" ? "R$ mi" : ind === "tarifa" ? "R$" : "% a.a."}). ` +
+        "A linha tracejada é o caso-base: reta inclinada indica premissa determinante, reta plana indica premissa irrelevante.",
       categorias: a.pontos.map((p) => (p > 0 ? "+" : "") + U.num(p, 0) + "%"),
       series: a.series.map((s, k) => ({ nome: s.nome, valores: s.valores, cor: CORES[k % CORES.length] })),
-      fmtEixo: (v) => (ind === "vpl" ? U.num(v / 1e6, 0) : U.num(v, 1)), fmtDica: fmtInd,
-      rotuloY: ind === "vpl" ? "R$ mi" : ind === "tarifa" ? "R$" : "% a.a."
+      base: a.base,
+      fmtEixo: (v) => (ind === "vpl" ? U.num(v / 1e6, 0) : U.num(v, 1)), fmtDica: fmtInd
     });
     const th = $("#tabAranha thead"), tb = $("#tabAranha tbody");
     th.innerHTML = `<tr><th>Variável</th>${a.pontos.map((p) => `<th class="n">${(p > 0 ? "+" : "") + U.num(p, 0)}%</th>`).join("")}</tr>`;
@@ -2424,7 +2907,7 @@ function pintarCenarios() {
       const c = M.cenarios[+car.dataset.carregar];
       if (!confirm(`Substituir o modelo atual pelo cenário “${c.nome}”?`)) return;
       const cen = M.cenarios;
-      M = Object.assign(modeloPadrao(), U.clone(c.modelo)); M.cenarios = cen;
+      M = normalizarModelo(U.clone(c.modelo)); M.cenarios = cen;
       salvar(); redesenharTudo(); torrada(`Cenário “${c.nome}” carregado.`, "ok");
       return;
     }
@@ -2588,6 +3071,330 @@ function csvConsolidado() {
 <script>
 "use strict";
 /* =========================================================================
+   XLSX — escritor de planilha em JavaScript puro.
+
+   Um .xlsx é um ZIP de arquivos XML. Como a ferramenta não pode carregar
+   bibliotecas, o ZIP é gravado sem compressão (método "store"): o Excel, o
+   LibreOffice e o Google Sheets abrem normalmente, e o custo é só o tamanho.
+
+   A vantagem sobre o CSV é que os números saem como números — a planilha
+   soma, filtra e faz gráfico sem o usuário ter que reconverter separador
+   decimal nem reinterpretar coluna de texto.
+   ========================================================================= */
+var XLSX = (function () {
+
+  /* ---------- CRC-32, exigido pelo formato ZIP ---------- */
+  var TABELA = (function () {
+    var t = new Uint32Array(256);
+    for (var n = 0; n < 256; n++) {
+      var c = n;
+      for (var k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+      t[n] = c >>> 0;
+    }
+    return t;
+  })();
+
+  function crc32(bytes) {
+    var c = 0xFFFFFFFF;
+    for (var i = 0; i < bytes.length; i++) c = TABELA[(c ^ bytes[i]) & 0xFF] ^ (c >>> 8);
+    return (c ^ 0xFFFFFFFF) >>> 0;
+  }
+
+  function utf8(txt) {
+    if (typeof TextEncoder !== "undefined") return new TextEncoder().encode(txt);
+    var s = unescape(encodeURIComponent(txt)), a = new Uint8Array(s.length);
+    for (var i = 0; i < s.length; i++) a[i] = s.charCodeAt(i);
+    return a;
+  }
+
+  function esc(t) {
+    return String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;").replace(/\x00-\x08\x0B\x0C\x0E-\x1F/g, "");
+  }
+
+  /* ---------- montagem do ZIP (store) ---------- */
+  function zipar(arquivos) {
+    var partes = [], central = [], deslocamento = 0;
+    // data/hora fixas: a reprodutibilidade do arquivo vale mais que o carimbo
+    var hora = 0, data = ((2020 - 1980) << 9) | (1 << 5) | 1;
+
+    function u32(v) { return [v & 0xFF, (v >>> 8) & 0xFF, (v >>> 16) & 0xFF, (v >>> 24) & 0xFF]; }
+    function u16(v) { return [v & 0xFF, (v >>> 8) & 0xFF]; }
+
+    arquivos.forEach(function (a) {
+      var nome = utf8(a.nome), dados = utf8(a.conteudo), c = crc32(dados);
+      var local = [].concat(
+        u32(0x04034b50), u16(20), u16(0x0800), u16(0), u16(hora), u16(data),
+        u32(c), u32(dados.length), u32(dados.length), u16(nome.length), u16(0)
+      );
+      partes.push(new Uint8Array(local), nome, dados);
+      central.push({ nome: nome, crc: c, tam: dados.length, desloc: deslocamento });
+      deslocamento += local.length + nome.length + dados.length;
+    });
+
+    var dirPartes = [], dirTam = 0;
+    central.forEach(function (e) {
+      var h = [].concat(
+        u32(0x02014b50), u16(20), u16(20), u16(0x0800), u16(0), u16(hora), u16(data),
+        u32(e.crc), u32(e.tam), u32(e.tam), u16(e.nome.length),
+        u16(0), u16(0), u16(0), u16(0), u32(0), u32(e.desloc)
+      );
+      dirPartes.push(new Uint8Array(h), e.nome);
+      dirTam += h.length + e.nome.length;
+    });
+
+    var fim = new Uint8Array([].concat(
+      u32(0x06054b50), u16(0), u16(0), u16(central.length), u16(central.length),
+      u32(dirTam), u32(deslocamento), u16(0)
+    ));
+
+    var total = deslocamento + dirTam + fim.length;
+    var saida = new Uint8Array(total), p = 0;
+    partes.concat(dirPartes, [fim]).forEach(function (b) { saida.set(b, p); p += b.length; });
+    return saida;
+  }
+
+  /* ---------- células ---------- */
+  function coluna(n) {                       // 0 -> A, 26 -> AA
+    var s = "";
+    n = n + 1;
+    while (n > 0) { var r = (n - 1) % 26; s = String.fromCharCode(65 + r) + s; n = Math.floor((n - 1) / 26); }
+    return s;
+  }
+
+  function celula(ref, v, estilo) {
+    if (v === null || v === undefined || v === "") return '<c r="' + ref + '"' + (estilo ? ' s="' + estilo + '"' : "") + "/>";
+    if (typeof v === "number" && isFinite(v)) {
+      return '<c r="' + ref + '"' + (estilo ? ' s="' + estilo + '"' : "") + "><v>" + v + "</v></c>";
+    }
+    return '<c r="' + ref + '" t="inlineStr"' + (estilo ? ' s="' + estilo + '"' : "") +
+      "><is><t xml:space=\"preserve\">" + esc(v) + "</t></is></c>";
+  }
+
+  /* Uma aba a partir de uma matriz. A primeira linha vira cabeçalho em negrito
+     e os números recebem formato com duas casas e separador de milhar. */
+  function aba(matriz, larguras) {
+    var linhas = matriz.map(function (lin, i) {
+      var cs = lin.map(function (v, j) {
+        var est = i === 0 ? "1" : (typeof v === "number" && isFinite(v) ? "2" : "");
+        return celula(coluna(j) + (i + 1), v, est);
+      }).join("");
+      return '<row r="' + (i + 1) + '">' + cs + "</row>";
+    }).join("");
+    var cols = "";
+    if (larguras && larguras.length) {
+      cols = "<cols>" + larguras.map(function (w, j) {
+        return '<col min="' + (j + 1) + '" max="' + (j + 1) + '" width="' + w + '" customWidth="1"/>';
+      }).join("") + "</cols>";
+    }
+    var congelar = '<sheetViews><sheetView workbookViewId="0">' +
+      '<pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/>' +
+      "</sheetView></sheetViews>";
+    return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+      '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">' +
+      congelar + cols + "<sheetData>" + linhas + "</sheetData></worksheet>";
+  }
+
+  var ESTILOS = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+    '<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">' +
+    '<numFmts count="1"><numFmt numFmtId="164" formatCode="#,##0.00"/></numFmts>' +
+    '<fonts count="2"><font><sz val="11"/><name val="Calibri"/></font>' +
+    '<font><b/><sz val="11"/><name val="Calibri"/></font></fonts>' +
+    '<fills count="2"><fill><patternFill patternType="none"/></fill>' +
+    '<fill><patternFill patternType="gray125"/></fill></fills>' +
+    '<borders count="1"><border/></borders>' +
+    '<cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>' +
+    '<cellXfs count="3">' +
+    '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>' +
+    '<xf numFmtId="0" fontId="1" fillId="0" borderId="0" xfId="0" applyFont="1"/>' +
+    '<xf numFmtId="164" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/>' +
+    "</cellXfs>" +
+    '<cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles>' +
+    "</styleSheet>";
+
+  /* abas: [{ nome, matriz, larguras }] */
+  function gerar(abas) {
+    var arquivos = [];
+    var tipos = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+      '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">' +
+      '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>' +
+      '<Default Extension="xml" ContentType="application/xml"/>' +
+      '<Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>' +
+      '<Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>' +
+      abas.map(function (a, i) {
+        return '<Override PartName="/xl/worksheets/sheet' + (i + 1) + '.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>';
+      }).join("") + "</Types>";
+
+    var rels = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+      '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
+      '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/>' +
+      "</Relationships>";
+
+    var wb = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+      '<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" ' +
+      'xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets>' +
+      abas.map(function (a, i) {
+        return '<sheet name="' + esc(a.nome.slice(0, 31)) + '" sheetId="' + (i + 1) + '" r:id="rId' + (i + 1) + '"/>';
+      }).join("") + "</sheets></workbook>";
+
+    var wbRels = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+      '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
+      abas.map(function (a, i) {
+        return '<Relationship Id="rId' + (i + 1) + '" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet' + (i + 1) + '.xml"/>';
+      }).join("") +
+      '<Relationship Id="rId' + (abas.length + 1) + '" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>' +
+      "</Relationships>";
+
+    arquivos.push({ nome: "[Content_Types].xml", conteudo: tipos });
+    arquivos.push({ nome: "_rels/.rels", conteudo: rels });
+    arquivos.push({ nome: "xl/workbook.xml", conteudo: wb });
+    arquivos.push({ nome: "xl/_rels/workbook.xml.rels", conteudo: wbRels });
+    arquivos.push({ nome: "xl/styles.xml", conteudo: ESTILOS });
+    abas.forEach(function (a, i) {
+      arquivos.push({ nome: "xl/worksheets/sheet" + (i + 1) + ".xml", conteudo: aba(a.matriz, a.larguras) });
+    });
+    return zipar(arquivos);
+  }
+
+  return { gerar: gerar, zipar: zipar, crc32: crc32, coluna: coluna, aba: aba, utf8: utf8 };
+})();
+
+/* =========================================================================
+   Exportações estruturadas do modelo e do resultado
+   ========================================================================= */
+
+/* Baixa dados binários (o baixar() comum prefixa BOM e serve só para texto). */
+function baixarBinario(nome, bytes, tipo) {
+  var b = new Blob([bytes], { type: tipo || "application/octet-stream" });
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(b); a.download = nome;
+  document.body.appendChild(a); a.click();
+  setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 400);
+}
+
+/* Pacote completo: premissas, resultado e fluxo num único JSON, com a versão
+   do formato, para que quem consumir saiba o que esperar. */
+function pacoteJSON() {
+  return {
+    formato: "concessaorod/resultado",
+    versao: 2,
+    geradoEm: new Date().toISOString(),
+    modelo: M,
+    resultado: R ? {
+      tarifa: R.tarifa,
+      outorga: R.outorga,
+      avisos: R.avisos,
+      indicadores: R.ind,
+      tarifasPorPraca: R.tarifas || null
+    } : null,
+    fluxo: R ? R.fluxo.linhas.map(function (l) {
+      var o = {};
+      COLS_FLUXO.forEach(function (c) { o[c[0]] = c[3] ? c[3](l) : l[c[0]]; });
+      return o;
+    }) : []
+  };
+}
+
+function abasPlanilha() {
+  var abas = [];
+
+  /* Premissas */
+  var pr = [["Item", "Valor"]];
+  pr.push(["Projeto", M.projeto.nome || ""]);
+  pr.push(["Rodovia", M.projeto.rodovia || ""]);
+  pr.push(["Órgão", M.projeto.orgao || ""]);
+  pr.push(["Ano base", U.n(M.projeto.anoBase)]);
+  pr.push(["Prazo (anos)", U.n(M.projeto.prazoAnos)]);
+  pr.push(["Pré-operação (anos)", U.n(M.projeto.anosPreOp)]);
+  pr.push(["Regime", M.projeto.regime === "nominal" ? "nominal" : "real"]);
+  pr.push(["TMA (% a.a.)", U.n(M.projeto.tma)]);
+  pr.push(["Tributos sobre receita (%)", U.n(M.projeto.tribReceitaPct)]);
+  pr.push(["IRPJ e CSLL (%)", U.n(M.projeto.irCsllPct)]);
+  pr.push(["Juros de obra (% a.a.)", U.n(M.projeto.jurosObraPct)]);
+  pr.push(["Elasticidade-preço", U.n(M.trafego.elasticidade)]);
+  pr.push(["Tarifa de referência (R$)", U.n(M.trafego.tarifaRef)]);
+  pr.push(["Extensão total (km)", MOTOR.extensaoTotal(M)]);
+  pr.push(["Praças", M.pracas.length]);
+  pr.push(["Método da tarifa", M.tarifa.metodo]);
+  abas.push({ nome: "Premissas", matriz: pr, larguras: [34, 22] });
+
+  /* Indicadores */
+  if (R) {
+    var i = R.ind;
+    var ind = [["Indicador", "Valor", "Unidade"]];
+    ind.push(["Tarifa básica", R.tarifa, "R$"]);
+    ind.push(["VPL na TMA", i.vpl, "R$"]);
+    ind.push(["TIR do projeto", i.tir, "% a.a."]);
+    ind.push(["Payback descontado", i.payback, "anos"]);
+    ind.push(["Payback simples", i.paybackSimples, "anos"]);
+    ind.push(["Margem Ebitda média", i.margemEbitda, "%"]);
+    ind.push(["Investimento total", i.capexTotal, "R$"]);
+    ind.push(["Juros de obra capitalizados", i.jdoCapitalizado, "R$"]);
+    ind.push(["Receita bruta do contrato", i.receitaTotal, "R$"]);
+    ind.push(["Opex do contrato", i.opexTotal, "R$"]);
+    ind.push(["Tributo sobre lucro", i.irTotal, "R$"]);
+    ind.push(["Outorga fixa", i.outorgaTotal, "R$"]);
+    ind.push(["Outorga variável", i.outorgaVariavelTotal, "R$"]);
+    ind.push(["Índice de lucratividade", i.indiceLucratividade, "—"]);
+    abas.push({ nome: "Indicadores", matriz: ind, larguras: [32, 20, 12] });
+
+    /* Fluxo de caixa: uma coluna por rubrica, números como números */
+    var cab = COLS_FLUXO.map(function (c) { return c[1]; });
+    var fl = [cab];
+    R.fluxo.linhas.forEach(function (l) {
+      fl.push(COLS_FLUXO.map(function (c) {
+        var v = c[3] ? c[3](l) : l[c[0]];
+        return typeof v === "number" ? v : (v === null || v === undefined ? "" : v);
+      }));
+    });
+    abas.push({ nome: "Fluxo de caixa", matriz: fl, larguras: cab.map(function () { return 15; }) });
+  }
+
+  /* Segmentos e praças */
+  var sg = [["Segmento", "Extensão (km)", "VDM total", "Crescimento", "% a.a."]];
+  M.segmentos.forEach(function (s) {
+    sg.push([s.nome, U.n(s.extensaoKm), MOTOR.vdmSegmento(s, M), s.crescTipo, U.n(s.crescPct)]);
+  });
+  abas.push({ nome: "Segmentos", matriz: sg, larguras: [28, 15, 14, 16, 10] });
+
+  var pc = [["Praça", "Segmento", "km", "Sentido", "Captura (%)", "Evasão (%)", "Início (ano)"]];
+  M.pracas.forEach(function (p) {
+    var s = M.segmentos.find(function (x) { return x.id === p.segId; });
+    pc.push([p.nome, s ? s.nome : "—", U.n(p.km), p.sentido === "unico" ? "único" : "duplo",
+      U.n(p.capturaPct, 100), U.n(p.evasaoPct), U.n(p.inicioAno)]);
+  });
+  abas.push({ nome: "Praças", matriz: pc, larguras: [26, 26, 10, 12, 14, 13, 13] });
+
+  /* Sensibilidade */
+  if (R && M.segmentos.length && M.pracas.length) {
+    try {
+      var amp = U.n(M.sensib.amplitude, 20);
+      var t = MOTOR.tornado(M, M.sensib.indicador, amp);
+      var sn = [["Variável", "Desfavorável (−" + U.num(amp, 0) + "%)", "Favorável (+" + U.num(amp, 0) + "%)", "Amplitude"]];
+      t.lista.forEach(function (x) { sn.push([x.nome, x.baixo, x.alto, x.amplitude]); });
+      sn.push([]);
+      sn.push(["Caso-base", t.base]);
+      abas.push({ nome: "Sensibilidade", matriz: sn, larguras: [28, 22, 22, 16] });
+    } catch (e) { /* sensibilidade indisponível não impede a exportação */ }
+  }
+
+  return abas;
+}
+
+function exportarPlanilha() {
+  var bytes = XLSX.gerar(abasPlanilha());
+  baixarBinario((M.projeto.nome || "concessao") + ".xlsx", bytes,
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+}
+
+function exportarPacote() {
+  baixar((M.projeto.nome || "concessao") + " — resultado.json",
+    JSON.stringify(pacoteJSON(), null, 2), "application/json;charset=utf-8");
+}
+</script>
+<script>
+"use strict";
+/* =========================================================================
    MANUAL INTERATIVO
    ========================================================================= */
 var MANUAL = [
@@ -2728,11 +3535,38 @@ var MANUAL = [
 { id: "sensibilidade", tit: "Sensibilidade", html: `
 <h2>Sensibilidade</h2>
 <div class="aviso"><b>Sobre qual base a sensibilidade é medida.</b> Ao analisar TIR ou VPL, o modelo primeiro resolve a tarifa do caso-base e a congela. Sem isso o exercício seria vazio: como a tarifa se reajusta para zerar o VPL a cada iteração, a TIR voltaria sempre à TMA e o tráfego pareceria irrelevante. Congelando a tarifa, a pergunta passa a ser a que importa — fixado o que o contrato vai cobrar, como o resultado reage aos choques. Ao analisar a tarifa de equilíbrio vale o inverso: é ela que precisa flutuar.</div>
-<p>O <b>tornado</b> move uma premissa por vez e ordena as variáveis pelo tamanho do efeito. É a primeira leitura que se deve fazer: em quase toda concessão rodoviária o tráfego domina, seguido de capex. Isso justifica por que o risco de demanda é o item mais disputado na negociação contratual.</p>
+<p>O <b>tornado</b> move uma premissa por vez e ordena as variáveis pelo tamanho do efeito; as três primeiras aparecem destacadas e o restante esmaecido abaixo de uma linha, porque nove barras com o mesmo peso visual não informam onde olhar. A <b>aranha</b> traz um painel por premissa, todos na mesma escala vertical: reta inclinada é premissa determinante, reta plana é premissa irrelevante. É a primeira leitura que se deve fazer: em quase toda concessão rodoviária o tráfego domina, seguido de capex. Isso justifica por que o risco de demanda é o item mais disputado na negociação contratual.</p>
 <p>A <b>aranha</b> mostra a mesma informação em curvas: inclinação alta significa alta sensibilidade, e curvatura indica não linearidade — típica quando o tributo sobre o lucro começa a incidir.</p>
 <p>A <b>matriz</b> cruza duas variáveis e revela combinações que isoladamente pareciam toleráveis.</p>
 <p>O <b>ponto de equilíbrio</b> responde a uma pergunta direta: quanto cada premissa pode piorar até o VPL zerar. Margens estreitas, abaixo de doze pontos percentuais, merecem tratamento contratual explícito.</p>
 <div class="aviso"><b>Limite do método.</b> Sensibilidade univariada não é análise de risco. Ela ignora correlações — tráfego baixo costuma vir junto com economia fraca e inflação de insumos diferente. Para decisão de investimento, complemente com simulação estocástica.</div>` },
+
+{ id: "elasticidade", tit: "Elasticidade e juros de obra", html: `
+<p>Duas premissas ficam desligadas por padrão porque exigem decisão consciente de quem modela. Ligadas, mudam o resultado de forma relevante.</p>
+
+<h4>Elasticidade-preço da demanda</h4>
+<p>A projeção de tráfego foi feita supondo alguma tarifa. Cobrar acima dela afasta parte dos usuários; cobrar abaixo atrai. O modelo aplica o fator
+<code>(tarifa ÷ tarifa de referência) ^ elasticidade</code>, com elasticidade negativa, sobre todo o tráfego pagante.</p>
+<p>Informe a <b>tarifa de referência</b> do estudo que gerou o VDM — sem ela o efeito não atua, porque não haveria contra o que comparar. Em rodovia a elasticidade costuma ficar entre −0,10 e −0,30; valores fora dessa faixa precisam de estudo de demanda que os sustente.</p>
+<div class="aviso"><b>Por que o limite de −1 importa.</b> A receita varia com a tarifa elevada a (1 + elasticidade). Com elasticidade de −1 a receita para de reagir; abaixo disso, aumentar a tarifa <i>reduz</i> arrecadação. Nesse regime não existe "tarifa que zera o VPL" em sentido útil, e o modelo avisa em vez de devolver um número sem significado.</div>
+
+<h4>Juros de obra</h4>
+<p>O capex desembolsado antes da operação é capitalizado à taxa informada até o início da arrecadação, e o valor capitalizado passa a ser a base de depreciação.</p>
+<div class="aviso"><b>O que os juros de obra NÃO fazem aqui.</b> Eles não entram no fluxo de caixa. Este é um fluxo livre desalavancado: o custo do capital já está embutido na TMA que desconta o fluxo. Lançar juros de obra também como desembolso seria cobrá-los duas vezes do projeto e derrubar o VPL artificialmente. O efeito legítimo é outro e é apenas fiscal — base depreciável maior, imposto sobre o lucro menor. É assim que a capitalização durante a obra aparece nos modelos regulatórios.</div>
+` },
+
+{ id: "conferencia", tit: "Conferência e histórico", html: `
+<h4>Validação enquanto você digita</h4>
+<p>Cada campo numérico tem faixa declarada. Valor fora dela marca o campo em vermelho e descreve o limite e a razão dele, antes de qualquer cálculo. Há ainda regras que dependem de mais de um campo — pré-operação que consome todo o prazo, tarifa acima do teto, elasticidade sem tarifa de referência — sinalizadas na faixa no topo da tela.</p>
+<p>Isso é diferente dos avisos do cálculo: a validação recusa o que não pode existir; os avisos comentam um resultado que existe mas merece atenção.</p>
+
+<h4>Desfazer e refazer</h4>
+<p>Cada alteração que muda o modelo vira um passo no histórico, até 60 passos. Use os botões no topo ou <code>Ctrl+Z</code> e <code>Ctrl+Shift+Z</code>. Desfazer restaura o modelo inteiro, não apenas o último campo — inclusive linhas de tabela removidas por engano.</p>
+<p>Como qualquer editor, ao editar depois de desfazer o ramo refeito é descartado.</p>
+
+<h4>Exportação</h4>
+<p>Além do CSV, a ferramenta gera uma <b>planilha .xlsx</b> com abas de premissas, indicadores, fluxo, segmentos, praças e sensibilidade. A diferença prática é que os números saem como números: a planilha soma, filtra e faz gráfico sem reinterpretação de separador decimal. Há também um <b>.json</b> com premissas, indicadores e fluxo completos, para quem for processar os dados em outra ferramenta.</p>
+` },
 
 { id: "armadilhas", tit: "Armadilhas frequentes", html: `
 <h2>Armadilhas frequentes</h2>
@@ -3682,7 +4516,7 @@ function exemploCompacto() {
     { id: "o4", descricao: "Seguros", criterio: "pctCapex", valor: 0.35, inicioAno: 1, ganhoRealPct: 0 }
   ];
   m.tarifa.metodo = "reversaVPL";
-  return m;
+  return normalizarModelo(m);
 }
 
 /* ---------- exemplo completo carregado pelo botão ---------- */
@@ -3736,11 +4570,13 @@ function exemploCompleto() {
   m.tarifa = { metodo: "reversaVPL", tarifaBase: 9, politica: "uniforme", tetoTarifa: 0, alvoTIR: 8.5, ganhoRealPct: 0, arredondamento: 0.1 };
   m.outorga = { modo: "nenhuma", valorFixo: 0, parcelas: 1, variavelPct: 0 };
   m.trafego = { perdaAberturaPct: 7, recuperacaoPct: 35, tetoAcumuladoPct: 220 };
-  return m;
+  return normalizarModelo(m);
 }
 
 /* ---------- ciclo de recálculo ---------- */
 function recalcular() {
+  VALIDACAO.verificar(M);
+  HISTORICO.registrar();
   try {
     R = MOTOR.resolver(M);
   } catch (e) {
@@ -3927,6 +4763,9 @@ function iniciar() {
     catch (e) { torrada("O navegador bloqueou a cópia. Use o botão de CSV.", "ruim"); }
   };
   $("#btCsvTudo").onclick = () => baixar((M.projeto.nome || "concessao") + " — consolidado.csv", csvConsolidado(), "text/csv;charset=utf-8");
+  $("#btXlsxFluxo").onclick = () => { exportarPlanilha(); torrada("Planilha gerada.", "ok"); };
+  $("#btXlsxTudo").onclick = () => { exportarPlanilha(); torrada("Planilha gerada.", "ok"); };
+  $("#btJsonTudo").onclick = () => { exportarPacote(); torrada("Resultado exportado.", "ok"); };
   $("#btSalvarCenario").onclick = () => salvarCenario();
   $("#btCenariosPadrao").onclick = cenariosPadrao;
   $("#btGerarRel").onclick = gerarRelatorio;
@@ -3938,6 +4777,21 @@ function iniciar() {
   };
   $("#btRodarTestes").onclick = () => { torrada("Rodando testes…"); setTimeout(pintarTestes, 30); };
   $("#btRecalcular").onclick = () => { recalcular(); torrada("Modelo recalculado.", "ok"); };
+
+  $("#btDesfazer").onclick = () => {
+    if (HISTORICO.desfazer()) torrada("Alteração desfeita.", "ok");
+    else torrada("Nada a desfazer.", "aviso");
+  };
+  $("#btRefazer").onclick = () => {
+    if (HISTORICO.refazer()) torrada("Alteração refeita.", "ok");
+    else torrada("Nada a refazer.", "aviso");
+  };
+  document.addEventListener("keydown", (ev) => {
+    if (!(ev.ctrlKey || ev.metaKey)) return;
+    const k = (ev.key || "").toLowerCase();
+    if (k === "z" && !ev.shiftKey) { ev.preventDefault(); HISTORICO.desfazer(); }
+    else if ((k === "z" && ev.shiftKey) || k === "y") { ev.preventDefault(); HISTORICO.refazer(); }
+  });
 
   // exemplo, importação e exportação
   $("#btExemplo").onclick = () => {
@@ -3961,10 +4815,11 @@ function iniciar() {
         {
           rotulo: "Importar", classe: "pri", acao: () => {
             try {
-              const o = JSON.parse($("#impTxt").value);
+              const bruto = JSON.parse($("#impTxt").value);
+              // aceita tanto o modelo puro quanto o pacote de resultado
+              const o = (bruto && bruto.formato === "concessaorod/resultado") ? bruto.modelo : bruto;
               if (!o || !o.projeto) throw new Error("Estrutura não reconhecida.");
-              M = Object.assign(modeloPadrao(), o);
-              M.projeto = Object.assign(modeloPadrao().projeto, o.projeto);
+              M = normalizarModelo(o);
               salvar(); $("#dlg").close(); redesenharTudo();
               torrada("Modelo importado.", "ok");
             } catch (e) { torrada("Não foi possível ler: " + e.message, "ruim"); }
@@ -3981,6 +4836,7 @@ function iniciar() {
 
   atualizarContadores();
   recalcular();
+  HISTORICO.iniciar();
   irPara("projeto");
 
   if (typeof abrirAbertura === "function") abrirAbertura();

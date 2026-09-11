@@ -221,7 +221,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/eletroposto-calc/` | 183380 bytes | 181470 caracteres |
 | `/carboncalcpro/` | 186068 bytes | 184143 caracteres |
 | `/friopro/` | 7125228 bytes | 7106816 caracteres |
-| `/concessaorod/` | 221640 bytes | 219837 caracteres |
+| `/concessaorod/` | 265214 bytes | 263033 caracteres |
 | `/entenda-ia/` | 175035 bytes | 172793 caracteres |
 | `/abc-fiscal/` | 351255 bytes | 349022 caracteres |
 
@@ -1911,11 +1911,13 @@ Observacoes:
 Rota: `/concessaorod/`  
 Arquivo: `concessaorod/index.html`
 
-Ultima inclusao:
+Ultima atualizacao:
 
 - Fonte: `C:\Users\ACER\Documents\Downloads\ConcessaoRod - modelagem economico-financeira de concessoes rodoviarias (1).html`
 - Data: 10/09/2026
 - Alteracao: inclusao de novo card na home, criacao do filtro `Concessoes`, e publicacao do aplicativo ConcessaoRod como HTML standalone.
+- Em 10/09/2026, atualizado com `ConcessaoRod - modelagem economico-financeira de concessoes rodoviarias (2).html`, identificado como nova versao com chave interna `concessaorod.modelo.v2`.
+- Backup anterior: `C:\Obras Inteligentes\backups\concessaorod-index-before-v2-20260910-2328.html`.
 
 Observacoes:
 
