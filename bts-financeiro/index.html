@@ -1,0 +1,2388 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-tema="claro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BTS Financeiro — modelagem econômico-financeira de contratos Built to Suit</title>
+<meta name="description" content="Calculadora offline de modelagem econômico-financeira para contratos de locação Built to Suit: aluguel de equilíbrio, VPL, TIR, payback descontado e fluxo de caixa detalhado.">
+<style>
+/* ============================================================
+   BTS Financeiro — folha de estilo
+   Direção visual: "livro-razão de obra". Papel frio, tinta naval,
+   latão como única cor de destaque. Números em algarismos tabulares.
+   ============================================================ */
+:root{
+  --tinta:#0E2233;
+  --tinta-2:#3B5871;
+  --tinta-3:#6E8399;
+  --papel:#F1F4F7;
+  --superficie:#FFFFFF;
+  --superficie-2:#F7F9FB;
+  --linha:#D8E0E8;
+  --linha-forte:#B9C6D2;
+  --latao:#A8762B;
+  --latao-claro:#F3E7D2;
+  --obra:#A8323A;
+  --obra-suave:#F6E2E3;
+  --locacao:#0E7C6B;
+  --locacao-suave:#DDEFEB;
+  --alerta:#B06A12;
+  --foco:#2D6CB5;
+  --sombra:0 1px 2px rgba(14,34,51,.06), 0 6px 18px -10px rgba(14,34,51,.22);
+  --r:6px;
+  --fonte-ui:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --fonte-display:ui-serif,Georgia,"Iowan Old Style","Times New Roman",serif;
+}
+html[data-tema="escuro"]{
+  --tinta:#DCE5EC;
+  --tinta-2:#A9BACA;
+  --tinta-3:#7D91A4;
+  --papel:#0D141B;
+  --superficie:#131C25;
+  --superficie-2:#18232E;
+  --linha:#26333F;
+  --linha-forte:#38495A;
+  --latao:#D9A55A;
+  --latao-claro:#3A2E1B;
+  --obra:#E4737B;
+  --obra-suave:#3A2226;
+  --locacao:#4FC0AC;
+  --locacao-suave:#16322E;
+  --alerta:#E0A55B;
+  --foco:#6BA8E8;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--papel);color:var(--tinta);
+  font-family:var(--fonte-ui);font-size:15px;line-height:1.55;
+  -webkit-text-size-adjust:100%;
+}
+h1,h2,h3,h4{font-family:var(--fonte-display);font-weight:600;letter-spacing:-.01em;margin:0}
+.num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
+a{color:var(--foco)}
+:focus-visible{outline:2px solid var(--foco);outline-offset:2px;border-radius:3px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ---------- cabeçalho ---------- */
+.topo{
+  position:sticky;top:0;z-index:40;
+  background:var(--tinta);color:var(--papel);
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+html[data-tema="escuro"] .topo{background:#091119;color:var(--tinta)}
+.topo-in{display:flex;align-items:center;gap:18px;padding:10px 20px}
+.marca{display:flex;align-items:baseline;gap:10px;margin-right:auto;min-width:0}
+.marca b{font-family:var(--fonte-display);font-size:19px;font-weight:600;letter-spacing:.01em}
+.marca span{font-size:12.5px;color:rgba(255,255,255,.62);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html[data-tema="escuro"] .marca span{color:var(--tinta-3)}
+.topo button{
+  background:rgba(255,255,255,.09);color:inherit;border:1px solid rgba(255,255,255,.16);
+  padding:6px 11px;border-radius:var(--r);font:inherit;font-size:13px;cursor:pointer;white-space:nowrap;
+}
+.topo button:hover{background:rgba(255,255,255,.18)}
+
+/* ---------- estrutura ---------- */
+.palco{display:grid;grid-template-columns:352px minmax(0,1fr);gap:0;align-items:start}
+.trilho{
+  position:sticky;top:49px;max-height:calc(100vh - 49px);overflow-y:auto;
+  background:var(--superficie);border-right:1px solid var(--linha);padding:16px 16px 60px;
+}
+.tela{padding:18px 22px 80px;min-width:0}
+@media (max-width:980px){
+  .palco{grid-template-columns:1fr}
+  .trilho{position:static;max-height:none;border-right:none;border-bottom:1px solid var(--linha)}
+  .tela{padding:16px 14px 70px}
+}
+
+/* ---------- formulário ---------- */
+.grupo{border:1px solid var(--linha);border-radius:var(--r);margin-bottom:10px;background:var(--superficie)}
+.grupo>summary{
+  cursor:pointer;list-style:none;padding:10px 12px;font-weight:600;font-size:13.5px;
+  display:flex;align-items:center;gap:8px;border-radius:var(--r);
+}
+.grupo>summary::-webkit-details-marker{display:none}
+.grupo>summary::before{content:"";width:7px;height:7px;border-right:1.6px solid var(--tinta-3);border-bottom:1.6px solid var(--tinta-3);transform:rotate(-45deg);transition:transform .15s;flex:none;margin-left:2px}
+.grupo[open]>summary::before{transform:rotate(45deg)}
+.grupo>summary:hover{background:var(--superficie-2)}
+.grupo .corpo{padding:4px 12px 13px;border-top:1px solid var(--linha)}
+.campo{margin-top:11px}
+.campo>label{display:block;font-size:12.5px;color:var(--tinta-2);margin-bottom:3px;line-height:1.35}
+.campo .dica{display:block;font-size:11.5px;color:var(--tinta-3);margin-top:3px;line-height:1.4}
+input[type=text],input[type=number],select,textarea{
+  width:100%;padding:7px 9px;border:1px solid var(--linha-forte);border-radius:5px;
+  background:var(--superficie);color:var(--tinta);font:inherit;font-size:14px;
+  font-variant-numeric:tabular-nums;
+}
+textarea{font-size:13px;line-height:1.5;resize:vertical}
+select{cursor:pointer}
+input:disabled,select:disabled,textarea:disabled{background:var(--superficie-2);color:var(--tinta-3);cursor:not-allowed}
+.dupla{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.tripla{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px}
+.sufixo{position:relative}
+.sufixo input{padding-right:34px}
+.sufixo em{position:absolute;right:9px;top:50%;transform:translateY(-50%);font-style:normal;font-size:12px;color:var(--tinta-3);pointer-events:none}
+.check{display:flex;gap:8px;align-items:flex-start;margin-top:11px;font-size:13px;color:var(--tinta-2);cursor:pointer}
+.check input{margin:3px 0 0;flex:none;accent-color:var(--latao)}
+.invalido{border-color:var(--obra)!important;background:var(--obra-suave)}
+.erro{color:var(--obra);font-size:11.5px;margin-top:3px;display:block}
+.acoes-trilho{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+.btn{
+  padding:8px 12px;border:1px solid var(--linha-forte);border-radius:5px;background:var(--superficie);
+  color:var(--tinta);font:inherit;font-size:13px;cursor:pointer;text-align:center;
+}
+.btn:hover{background:var(--superficie-2);border-color:var(--tinta-3)}
+.btn-forte{background:var(--tinta);color:var(--superficie);border-color:var(--tinta)}
+.btn-forte:hover{background:var(--tinta-2);color:#fff}
+html[data-tema="escuro"] .btn-forte{background:var(--latao);color:#12181F;border-color:var(--latao)}
+
+/* ---------- herói: linha do tempo ---------- */
+.heroi{background:var(--superficie);border:1px solid var(--linha);border-radius:var(--r);padding:14px 16px 6px;box-shadow:var(--sombra)}
+.heroi h2{font-size:14px;font-weight:600;color:var(--tinta-2);font-family:var(--fonte-ui);letter-spacing:0}
+.legenda-tempo{display:flex;flex-wrap:wrap;gap:14px;font-size:11.5px;color:var(--tinta-2);padding:2px 0 10px}
+.legenda-tempo i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+
+/* ---------- destaque do aluguel ---------- */
+.painel-aluguel{
+  display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:0;margin-top:14px;
+  background:var(--superficie);border:1px solid var(--linha);border-radius:var(--r);overflow:hidden;box-shadow:var(--sombra);
+}
+.aluguel-cara{padding:18px 20px;border-right:1px solid var(--linha);background:linear-gradient(180deg,var(--superficie) 0%,var(--superficie-2) 100%)}
+.aluguel-rotulo{font-size:12.5px;color:var(--tinta-2)}
+.aluguel-valor{font-family:var(--fonte-display);font-size:clamp(30px,5.2vw,46px);line-height:1.08;font-weight:600;letter-spacing:-.02em;margin:4px 0 2px;font-variant-numeric:tabular-nums}
+.aluguel-nota{font-size:12.5px;color:var(--tinta-3)}
+.aluguel-lado{padding:14px 18px;display:grid;grid-template-columns:1fr 1fr;gap:10px 16px;align-content:center}
+.mini{min-width:0}
+.mini b{display:block;font-size:17px;font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.mini span{font-size:11.5px;color:var(--tinta-3);display:block}
+@media (max-width:700px){.painel-aluguel{grid-template-columns:1fr}.aluguel-cara{border-right:none;border-bottom:1px solid var(--linha)}}
+
+/* ---------- veredito ---------- */
+.veredito{display:flex;gap:10px;align-items:flex-start;padding:11px 14px;border-radius:var(--r);margin-top:12px;font-size:13.5px;border:1px solid}
+.veredito.bom{background:var(--locacao-suave);border-color:var(--locacao);color:var(--tinta)}
+.veredito.atencao{background:var(--latao-claro);border-color:var(--latao);color:var(--tinta)}
+.veredito.ruim{background:var(--obra-suave);border-color:var(--obra);color:var(--tinta)}
+.veredito b{font-weight:600}
+
+/* ---------- abas ---------- */
+.abas{display:flex;gap:2px;margin:18px 0 0;border-bottom:1px solid var(--linha);overflow-x:auto;scrollbar-width:thin}
+.abas button{
+  background:none;border:none;border-bottom:2px solid transparent;padding:9px 13px;margin-bottom:-1px;
+  font:inherit;font-size:13.5px;color:var(--tinta-2);cursor:pointer;white-space:nowrap;border-radius:4px 4px 0 0;
+}
+.abas button:hover{color:var(--tinta);background:var(--superficie-2)}
+.abas button[aria-selected=true]{color:var(--tinta);border-bottom-color:var(--latao);font-weight:600}
+.folha{display:none;padding-top:16px}
+.folha.ativa{display:block}
+
+/* ---------- cartões e quadros ---------- */
+.quadro{background:var(--superficie);border:1px solid var(--linha);border-radius:var(--r);padding:14px 16px;margin-bottom:14px}
+.quadro>h3{font-size:15px;margin-bottom:2px}
+.quadro>.sub{font-size:12.5px;color:var(--tinta-3);margin-bottom:12px}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:900px){.duo{grid-template-columns:1fr}}
+
+/* ---------- tabelas ---------- */
+.rolagem{overflow:auto;max-height:520px;border:1px solid var(--linha);border-radius:var(--r)}
+table{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeric:tabular-nums}
+th,td{padding:5px 9px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--linha)}
+th{position:sticky;top:0;background:var(--superficie-2);z-index:2;font-weight:600;font-size:11.5px;color:var(--tinta-2);text-align:right;border-bottom:1px solid var(--linha-forte)}
+th:first-child,td:first-child{text-align:left}
+th:nth-child(2),td:nth-child(2){text-align:left}
+tbody tr:hover{background:var(--superficie-2)}
+td.neg{color:var(--obra)}
+td.pos{color:var(--locacao)}
+tr.fase-obra td:nth-child(2){color:var(--obra)}
+tr.fase-loc td:nth-child(2){color:var(--locacao)}
+tr.ano-linha{background:var(--superficie-2);font-weight:600}
+.tabela-simples td,.tabela-simples th{border-bottom:1px solid var(--linha)}
+.tabela-simples{font-size:13.5px}
+
+/* ---------- gráficos ---------- */
+.grafico{width:100%;display:block;overflow:visible}
+.grafico text{font-family:var(--fonte-ui);font-variant-numeric:tabular-nums}
+.eixo{stroke:var(--linha);stroke-width:1}
+.malha{stroke:var(--linha);stroke-width:1;stroke-dasharray:2 3;opacity:.7}
+.rot{fill:var(--tinta-3);font-size:10.5px}
+.zero{stroke:var(--linha-forte);stroke-width:1.2}
+
+/* ---------- manual ---------- */
+.manual{display:grid;grid-template-columns:296px minmax(0,1fr);gap:22px;align-items:start}
+@media (max-width:900px){.manual{grid-template-columns:1fr}}
+.manual-nav{position:sticky;top:60px;border:1px solid var(--linha);border-radius:var(--r);background:var(--superficie);padding:12px;max-height:calc(100vh - 90px);overflow:auto}
+.manual-nav input{margin-bottom:8px}
+.manual-nav a{display:block;padding:5px 8px;border-radius:4px;color:var(--tinta-2);text-decoration:none;font-size:13px;line-height:1.35}
+.manual-nav a:hover{background:var(--superficie-2);color:var(--tinta)}
+.manual-nav a.atual{background:var(--latao-claro);color:var(--tinta);font-weight:600}
+.manual-nav a.lido::after{content:" ✓";color:var(--locacao)}
+.manual-nav .cap{font-size:11px;color:var(--tinta-3);margin:10px 0 3px;padding-left:8px;font-weight:600}
+.manual-txt{max-width:104ch}
+.manual-txt section{border-bottom:1px solid var(--linha);padding-bottom:20px;margin-bottom:20px;scroll-margin-top:66px}
+.manual-txt h3{font-size:20px;margin-bottom:8px}
+.manual-txt h4{font-size:15px;margin:16px 0 4px}
+.manual-txt p{margin:8px 0}
+.manual-txt ul,.manual-txt ol{margin:8px 0;padding-left:22px}
+.manual-txt li{margin:4px 0}
+.manual-txt code{background:var(--superficie-2);border:1px solid var(--linha);padding:1px 5px;border-radius:4px;font-size:13px}
+.formula{background:var(--superficie-2);border-left:3px solid var(--latao);padding:10px 14px;margin:12px 0;border-radius:0 var(--r) var(--r) 0;font-variant-numeric:tabular-nums;overflow-x:auto}
+.formula b{font-family:var(--fonte-display);font-size:15.5px;display:block;margin-bottom:2px}
+.lab{background:var(--superficie-2);border:1px dashed var(--linha-forte);border-radius:var(--r);padding:13px 15px;margin:14px 0}
+.lab h5{margin:0 0 8px;font-size:13px;font-family:var(--fonte-ui);color:var(--tinta-2);font-weight:600}
+.lab .saida{margin-top:9px;font-size:14px;font-variant-numeric:tabular-nums;padding-top:9px;border-top:1px solid var(--linha)}
+.marcar{display:inline-flex;gap:7px;align-items:center;font-size:12.5px;color:var(--tinta-3);cursor:pointer;margin-top:10px}
+mark{background:var(--latao-claro);color:inherit;padding:0 2px;border-radius:2px}
+
+/* ---------- faixa de fases da linha do tempo ---------- */
+.fases{display:flex;flex-wrap:wrap;gap:7px 24px;padding:2px 0 12px;font-size:12.5px}
+.fases .fase{display:flex;gap:7px;align-items:baseline;min-width:0}
+.fases i{width:9px;height:9px;border-radius:2px;flex:none;position:relative;top:1px}
+.fases b{font-weight:600;white-space:nowrap}
+.fases small{color:var(--tinta-3);font-size:11.5px}
+
+/* ---------- abertura ---------- */
+html.travado,html.travado body{overflow:hidden}
+.abertura{position:fixed;inset:0;z-index:200;background:var(--tinta);color:#EDF2F7;
+  display:flex;align-items:center;justify-content:center;padding:22px}
+.abertura[hidden]{display:none}
+html[data-tema="escuro"] .abertura{background:#070D13}
+.abertura.saindo{animation:sumir .45s ease forwards}
+@keyframes sumir{to{opacity:0;visibility:hidden}}
+.abertura-palco{width:min(680px,100%);text-align:center}
+.abertura h1{font-size:clamp(26px,5vw,40px);letter-spacing:-.02em;margin:0;color:#fff;
+  animation:entrar .7s ease both}
+.abertura .sub{color:#93A8BC;font-size:14px;margin-top:6px;animation:entrar .7s ease .35s both}
+@keyframes entrar{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.cena{width:100%;height:auto;margin-top:18px}
+.cena .piso{animation:subirPiso .55s cubic-bezier(.22,.9,.3,1) both;animation-delay:var(--d)}
+@keyframes subirPiso{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+.cena .luz{animation:acender .4s ease both;animation-delay:var(--d)}
+@keyframes acender{from{opacity:0}to{opacity:.85}}
+.cena .coroa{animation:entrar .5s ease 2.05s both}
+.cena .chave{animation:entrar .5s ease 2.35s both}
+.cena .parcela{transform-origin:0 100%;animation:crescer .45s cubic-bezier(.22,.9,.3,1) both;animation-delay:var(--d)}
+@keyframes crescer{from{opacity:0;transform:scaleY(0)}to{opacity:1;transform:scaleY(1)}}
+.cena .rotulo{animation:entrar .5s ease both;animation-delay:var(--d)}
+.cena .risco{stroke-dasharray:620;stroke-dashoffset:620;animation:tracar 1.5s ease .2s both}
+@keyframes tracar{to{stroke-dashoffset:0}}
+.pular{position:absolute;right:18px;top:16px;background:rgba(255,255,255,.1);color:#EDF2F7;
+  border:1px solid rgba(255,255,255,.2);border-radius:5px;padding:6px 12px;font:inherit;font-size:13px;cursor:pointer}
+.pular:hover{background:rgba(255,255,255,.2)}
+.termo{width:min(680px,100%);background:var(--superficie);color:var(--tinta);border-radius:8px;
+  padding:24px 26px;box-shadow:0 24px 60px -20px rgba(0,0,0,.6);max-height:88vh;overflow:auto;
+  animation:entrar .45s ease both}
+.termo h2{font-size:21px;margin-bottom:4px}
+.termo .selo{font-size:12.5px;color:var(--tinta-3);margin-bottom:14px}
+.termo ul{margin:10px 0;padding-left:20px;font-size:13.5px;line-height:1.55}
+.termo li{margin:7px 0}
+.termo li b{font-weight:600}
+.termo .aceite{display:flex;gap:9px;align-items:flex-start;margin:18px 0 14px;font-size:13.5px;cursor:pointer;
+  border-top:1px solid var(--linha);padding-top:16px}
+.termo .aceite input{margin:3px 0 0;flex:none;accent-color:var(--latao);width:16px;height:16px}
+.termo .linha-botoes{display:flex;gap:10px;flex-wrap:wrap}
+.termo button[disabled]{opacity:.45;cursor:not-allowed}
+@media (prefers-reduced-motion:reduce){
+  .abertura *{animation-duration:.01s!important;animation-delay:0s!important}
+}
+@media print{.abertura{display:none!important}}
+
+/* ---------- menu de exemplos ---------- */
+.menu-exemplos{position:absolute;right:12px;top:46px;z-index:60;background:var(--superficie);
+  border:1px solid var(--linha-forte);border-radius:var(--r);box-shadow:var(--sombra);padding:6px;min-width:280px}
+.menu-exemplos[hidden]{display:none}
+.menu-exemplos button{display:block;width:100%;text-align:left;background:none;border:none;color:var(--tinta);
+  font:inherit;font-size:13.5px;padding:8px 10px;border-radius:4px;cursor:pointer;line-height:1.35}
+.menu-exemplos button:hover{background:var(--superficie-2)}
+.menu-exemplos button small{display:block;color:var(--tinta-3);font-size:11.5px;margin-top:1px}
+
+/* ---------- diversos ---------- */
+.pilula{display:inline-block;padding:1px 8px;border-radius:999px;font-size:11.5px;border:1px solid var(--linha-forte);color:var(--tinta-2);background:var(--superficie-2)}
+.barra-ferramentas{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:11px}
+.barra-ferramentas label{font-size:12.5px;color:var(--tinta-2);display:flex;gap:6px;align-items:center}
+.barra-ferramentas select{width:auto;padding:5px 8px;font-size:13px}
+.vazio{padding:26px;text-align:center;color:var(--tinta-3);font-size:13.5px}
+.rodape{padding:16px 22px 40px;color:var(--tinta-3);font-size:12px;border-top:1px solid var(--linha);margin-top:10px}
+.rodape p{margin:4px 0;max-width:90ch}
+@media print{
+  .trilho,.topo,.abas,.acoes-trilho,.barra-ferramentas{display:none!important}
+  .palco{grid-template-columns:1fr}
+  .folha{display:block!important}
+  body{background:#fff}
+  .quadro,.painel-aluguel,.heroi{break-inside:avoid;box-shadow:none}
+}
+</style>
+</head>
+<body>
+<div class="abertura" id="abertura" role="dialog" aria-modal="true" aria-label="Abertura do sistema">
+  <button type="button" class="pular" id="btnPular">Pular</button>
+
+  <div class="abertura-palco" id="aberturaAnimacao">
+    <h1>BTS&nbsp;Financeiro</h1>
+    <p class="sub">Modelagem econômico-financeira de contratos Built to Suit</p>
+    <svg class="cena" viewBox="0 0 660 250" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <line class="risco" x1="30" y1="206" x2="630" y2="206" stroke="#3B5871" stroke-width="1.5"/>
+      <rect class="piso" style="--d:.30s" x="70" y="180" width="130" height="24" fill="#A8323A" opacity=".9"/>
+      <rect class="piso" style="--d:.52s" x="70" y="154" width="130" height="24" fill="#A8323A" opacity=".8"/>
+      <rect class="piso" style="--d:.74s" x="70" y="128" width="130" height="24" fill="#A8323A" opacity=".7"/>
+      <rect class="piso" style="--d:.96s" x="70" y="102" width="130" height="24" fill="#A8323A" opacity=".6"/>
+      <rect class="piso" style="--d:1.18s" x="70" y="76" width="130" height="24" fill="#A8323A" opacity=".5"/>
+      <rect class="piso" style="--d:1.40s" x="70" y="50" width="130" height="24" fill="#A8323A" opacity=".4"/>
+      <rect class="coroa" x="62" y="40" width="146" height="8" rx="2" fill="#D9A55A"/>
+      <g fill="#F3E7D2">
+        <rect class="luz" style="--d:1.9s" x="84" y="186" width="14" height="12"/>
+        <rect class="luz" style="--d:2.0s" x="112" y="160" width="14" height="12"/>
+        <rect class="luz" style="--d:2.1s" x="140" y="134" width="14" height="12"/>
+        <rect class="luz" style="--d:2.2s" x="168" y="108" width="14" height="12"/>
+        <rect class="luz" style="--d:2.3s" x="84" y="82" width="14" height="12"/>
+      </g>
+      <g class="chave">
+        <line x1="208" y1="120" x2="252" y2="120" stroke="#D9A55A" stroke-width="2"/>
+        <polygon points="252,114 264,120 252,126" fill="#D9A55A"/>
+        <text x="208" y="108" fill="#93A8BC" font-size="12" font-family="system-ui,sans-serif">entrega</text>
+      </g>
+      <g fill="#0E7C6B">
+        <rect class="parcela" style="--d:2.55s" x="280" y="176" width="26" height="30"/>
+        <rect class="parcela" style="--d:2.73s" x="320" y="168" width="26" height="38"/>
+        <rect class="parcela" style="--d:2.91s" x="360" y="160" width="26" height="46"/>
+        <rect class="parcela" style="--d:3.09s" x="400" y="152" width="26" height="54"/>
+        <rect class="parcela" style="--d:3.27s" x="440" y="144" width="26" height="62"/>
+        <rect class="parcela" style="--d:3.45s" x="480" y="136" width="26" height="70"/>
+        <rect class="parcela" style="--d:3.63s" x="520" y="128" width="26" height="78"/>
+        <rect class="parcela" style="--d:3.81s" x="560" y="120" width="26" height="86"/>
+      </g>
+      <text class="rotulo" style="--d:3.0s" x="280" y="228" fill="#93A8BC" font-size="12" font-family="system-ui,sans-serif">aluguéis reajustados ao longo do contrato</text>
+      <text class="rotulo" style="--d:1.6s" x="70" y="228" fill="#93A8BC" font-size="12" font-family="system-ui,sans-serif">obra</text>
+    </svg>
+  </div>
+
+  <div class="termo" id="aberturaTermo" hidden>
+    <h2>Antes de começar</h2>
+    <p class="selo">Leia as condições de uso desta ferramenta.</p>
+    <ul>
+      <li><b>Instrumento de apoio, não parecer.</b> O sistema calcula um modelo econômico-financeiro a partir das premissas que você informar. Os resultados não constituem avaliação imobiliária, laudo, parecer contábil, jurídico ou recomendação de investimento.</li>
+      <li><b>As premissas são suas.</b> Custos, prazos, taxas, alíquotas e valor residual são digitados por você. Números plausíveis produzem respostas plausíveis; premissas equivocadas produzem resultados equivocados com a mesma elegância.</li>
+      <li><b>A tributação depende do caso concreto.</b> As alíquotas sugeridas são pontos de partida. O regime do locador, o entendimento do município quanto ao ISS e a transição para o IBS e a CBS precisam ser confirmados com assessoria contábil.</li>
+      <li><b>O contrato não é modelado.</b> Multa rescisória, garantias, reequilíbrio, cláusulas de expansão e obrigações de manutenção ficam fora do cálculo e podem alterar completamente a decisão.</li>
+      <li><b>Sem garantia.</b> A ferramenta é fornecida no estado em que se encontra. Nem o autor nem terceiros respondem por decisões tomadas com base nela. Confira os resultados antes de usá-los.</li>
+      <li><b>Seus dados não saem daqui.</b> Todo o cálculo roda no navegador. Nada é enviado para servidores. O cenário em uso fica gravado apenas neste computador e pode ser apagado limpando os dados do site.</li>
+    </ul>
+    <label class="aceite"><input type="checkbox" id="chkTermo"><span>Li as condições acima, entendo que os resultados dependem das premissas que eu informar e assumo a responsabilidade pelo uso da ferramenta.</span></label>
+    <div class="linha-botoes">
+      <button type="button" class="btn btn-forte" id="btnAceitar" disabled>Concordo e quero acessar</button>
+      <button type="button" class="btn" id="btnRecusar">Não concordo</button>
+    </div>
+  </div>
+</div>
+
+<header class="topo">
+  <div class="topo-in">
+    <div class="marca">
+      <b>BTS Financeiro</b>
+      <span>modelagem econômico-financeira de contratos Built to Suit</span>
+    </div>
+    <button type="button" id="btnExemplos" title="Carregar um cenário pronto">Exemplos</button>
+    <button type="button" id="btnTema" aria-live="polite">Tema escuro</button>
+  </div>
+  <div class="menu-exemplos" id="menuExemplos" hidden role="menu" aria-label="Cenários de exemplo"></div>
+</header>
+
+<div class="palco">
+<!-- ===================== TRILHO DE PREMISSAS ===================== -->
+<aside class="trilho" aria-label="Premissas do modelo">
+
+  <details class="grupo" open>
+    <summary>Investimento e obra</summary>
+    <div class="corpo">
+      <div class="campo">
+        <label for="custoObra">Custo total da obra (R$)</label>
+        <input type="text" inputmode="decimal" id="custoObra" class="moeda" value="50.000.000,00">
+        <span class="dica">Projeto, construção, instalações e acabamento. Sem o terreno.</span>
+      </div>
+      <div class="dupla">
+        <div class="campo">
+          <label for="custoTerreno">Terreno (R$)</label>
+          <input type="text" inputmode="decimal" id="custoTerreno" class="moeda" value="8.000.000,00">
+        </div>
+        <div class="campo">
+          <label for="mesTerreno">Mês da aquisição</label>
+          <input type="number" id="mesTerreno" value="0" min="0" step="1">
+        </div>
+      </div>
+      <div class="campo">
+        <label for="prazoObra">Prazo de construção (meses)</label>
+        <input type="number" id="prazoObra" value="24" min="1" max="180" step="1">
+      </div>
+      <div class="campo">
+        <label for="perfilDesembolso">Cronograma físico-financeiro</label>
+        <select id="perfilDesembolso">
+          <option value="linear">Linear — parcelas iguais</option>
+          <option value="s_suave" selected>Curva S suave</option>
+          <option value="s_forte">Curva S acentuada</option>
+          <option value="personalizado">Personalizado</option>
+        </select>
+      </div>
+      <div class="campo" id="campoCustom" hidden>
+        <label for="desembolsoCustom">Percentuais mês a mês</label>
+        <textarea id="desembolsoCustom" rows="3" placeholder="2; 4; 6; 9; 12; 15; …"></textarea>
+        <span class="dica">Separe por ponto e vírgula, espaço ou quebra de linha. Os valores são normalizados para 100%.</span>
+      </div>
+      <div class="campo">
+        <label for="pctLocador">Parcela financiada pelo locador (%)</label>
+        <div class="sufixo"><input type="text" inputmode="decimal" id="pctLocador" class="pct" value="100"><em>%</em></div>
+        <span class="dica">O restante é aportado pelo locatário durante a obra e não entra na base a ser remunerada.</span>
+      </div>
+    </div>
+  </details>
+
+  <details class="grupo" open>
+    <summary>Contrato de locação</summary>
+    <div class="corpo">
+      <div class="dupla">
+        <div class="campo">
+          <label for="prazoLocacao">Prazo do contrato</label>
+          <input type="number" id="prazoLocacao" value="20" min="1" step="1">
+        </div>
+        <div class="campo">
+          <label for="unidadePrazo">Unidade</label>
+          <select id="unidadePrazo"><option value="anos" selected>anos</option><option value="meses">meses</option></select>
+        </div>
+      </div>
+      <div class="campo">
+        <label for="carencia">Carência após a obra (meses)</label>
+        <input type="number" id="carencia" value="0" min="0" max="60" step="1">
+        <span class="dica">Intervalo entre o recebimento da obra e o primeiro aluguel.</span>
+      </div>
+      <div class="dupla">
+        <div class="campo">
+          <label for="indiceReajuste">Índice de reajuste</label>
+          <select id="indiceReajuste">
+            <option value="nenhum">Sem reajuste</option>
+            <option value="ipca" selected>IPCA</option>
+            <option value="igpm">IGP-M</option>
+            <option value="incc">INCC</option>
+            <option value="custom">Outro</option>
+          </select>
+        </div>
+        <div class="campo">
+          <label for="reajusteTaxa">Taxa projetada</label>
+          <div class="sufixo"><input type="text" inputmode="decimal" id="reajusteTaxa" class="pct" value="4,00"><em>% a.a.</em></div>
+        </div>
+      </div>
+      <div class="dupla">
+        <div class="campo">
+          <label for="periodicidadeReajuste">Periodicidade</label>
+          <select id="periodicidadeReajuste"><option value="anual" selected>Anual</option><option value="mensal">Mensal (pro rata)</option></select>
+        </div>
+        <div class="campo">
+          <label for="momentoPagamento">Pagamento</label>
+          <select id="momentoPagamento"><option value="postecipado" selected>Vencido</option><option value="antecipado">Antecipado</option></select>
+        </div>
+      </div>
+      <div class="campo">
+        <label for="modoAluguel">Como definir o aluguel</label>
+        <select id="modoAluguel">
+          <option value="equilibrio" selected>Aluguel de equilíbrio — VPL zero na TMA</option>
+          <option value="pmt">Equivalência financeira — PMT sobre o capital</option>
+          <option value="informado">Aluguel informado</option>
+        </select>
+        <span class="dica" id="dicaModo"></span>
+      </div>
+      <div class="campo" id="campoAluguelInformado" hidden>
+        <label for="aluguelInformado">Aluguel mensal inicial (R$)</label>
+        <input type="text" inputmode="decimal" id="aluguelInformado" class="moeda" value="500.000,00">
+      </div>
+    </div>
+  </details>
+
+  <details class="grupo">
+    <summary>Retorno exigido e risco</summary>
+    <div class="corpo">
+      <div class="campo">
+        <label for="tma">Taxa mínima de atratividade / WACC</label>
+        <div class="sufixo"><input type="text" inputmode="decimal" id="tma" class="pct" value="10,00"><em>% a.a.</em></div>
+      </div>
+      <div class="campo">
+        <label for="tipoTMA">Natureza da taxa</label>
+        <select id="tipoTMA">
+          <option value="nominal" selected>Nominal — já embute a inflação</option>
+          <option value="real">Real — será convertida pelo índice de reajuste</option>
+        </select>
+        <span class="dica" id="dicaTMA"></span>
+      </div>
+      <div class="campo">
+        <label for="inadimplencia">Perda por inadimplência e vacância</label>
+        <div class="sufixo"><input type="text" inputmode="decimal" id="inadimplencia" class="pct" value="2,00"><em>%</em></div>
+      </div>
+    </div>
+  </details>
+
+  <details class="grupo">
+    <summary>Tributos e custos operacionais</summary>
+    <div class="corpo">
+      <div class="campo">
+        <label for="aliqReceita">Tributos sobre a receita</label>
+        <div class="sufixo"><input type="text" inputmode="decimal" id="aliqReceita" class="pct" value="3,65"><em>%</em></div>
+        <span class="dica">PIS, Cofins e, quando incidente, ISS.</span>
+      </div>
+      <div class="campo">
+        <label for="aliqLucro">Tributos sobre o lucro (IRPJ + CSLL)</label>
+        <div class="sufixo"><input type="text" inputmode="decimal" id="aliqLucro" class="pct" value="34,00"><em>%</em></div>
+      </div>
+      <div class="dupla">
+        <div class="campo">
+          <label for="opexPct">Custos sobre a receita</label>
+          <div class="sufixo"><input type="text" inputmode="decimal" id="opexPct" class="pct" value="3,00"><em>%</em></div>
+        </div>
+        <div class="campo">
+          <label for="opexFixo">Custos fixos (R$/mês)</label>
+          <input type="text" inputmode="decimal" id="opexFixo" class="moeda" value="0,00">
+        </div>
+      </div>
+      <span class="dica">IPTU, seguro, administração predial e manutenção a cargo do locador.</span>
+      <label class="check"><input type="checkbox" id="opexReajusta" checked><span>Reajustar os custos fixos pelo mesmo índice</span></label>
+      <label class="check"><input type="checkbox" id="usarDepreciacao" checked><span>Considerar a depreciação da edificação na base tributável</span></label>
+      <div class="campo" id="campoVidaUtil">
+        <label for="vidaUtil">Vida útil da edificação (anos)</label>
+        <input type="number" id="vidaUtil" value="25" min="1" max="100" step="1">
+      </div>
+    </div>
+  </details>
+
+  <details class="grupo">
+    <summary>Destino do imóvel ao final</summary>
+    <div class="corpo">
+      <div class="campo">
+        <label for="destinoFinal">Titularidade após o contrato</label>
+        <select id="destinoFinal">
+          <option value="locador" selected>Permanece com o locador</option>
+          <option value="locatario">Reverte ao patrimônio do locatário</option>
+        </select>
+        <span class="dica" id="dicaDestino"></span>
+      </div>
+      <div class="dupla">
+        <div class="campo">
+          <label for="valorTerminalPct">Valor do imóvel ao final</label>
+          <div class="sufixo"><input type="text" inputmode="decimal" id="valorTerminalPct" class="pct" value="60,00"><em>%</em></div>
+        </div>
+        <div class="campo">
+          <label for="corrigirTerminal">Correção</label>
+          <select id="corrigirTerminal"><option value="sim" selected>Corrigido pelo índice</option><option value="nao">A preços de hoje</option></select>
+        </div>
+      </div>
+      <span class="dica" id="dicaTerminal">Percentual do investimento total. Reflete a depreciação física e a especificidade do imóvel sob medida.</span>
+      <div id="blocoLocatario" hidden>
+        <div class="campo">
+          <label for="valorReversao">Valor pago pelo locatário na reversão (R$)</label>
+          <input type="text" inputmode="decimal" id="valorReversao" class="moeda" value="0,00">
+          <span class="dica">Zero quando a reversão é gratuita — nesse caso o aluguel precisa amortizar todo o investimento.</span>
+        </div>
+      </div>
+      <label class="check"><input type="checkbox" id="tributarGanho"><span>Tributar o ganho de capital na alienação</span></label>
+      <div class="campo" id="campoAliqGanho" hidden>
+        <label for="aliqGanho">Alíquota sobre o ganho</label>
+        <div class="sufixo"><input type="text" inputmode="decimal" id="aliqGanho" class="pct" value="15,00"><em>%</em></div>
+      </div>
+    </div>
+  </details>
+
+  <div class="acoes-trilho">
+    <button type="button" class="btn" id="btnSalvar">Salvar cenário</button>
+    <button type="button" class="btn" id="btnAbrir">Abrir cenário</button>
+    <button type="button" class="btn" id="btnRestaurar">Restaurar padrões</button>
+    <button type="button" class="btn btn-forte" id="btnImprimir">Imprimir</button>
+  </div>
+  <input type="file" id="arquivoCenario" accept="application/json" hidden>
+</aside>
+
+<!-- ===================== TELA DE RESULTADOS ===================== -->
+<main class="tela">
+  <div class="heroi">
+    <h2>Linha do tempo do contrato</h2>
+    <div id="linhaTempo"></div>
+  </div>
+
+  <div class="painel-aluguel">
+    <div class="aluguel-cara">
+      <div class="aluguel-rotulo" id="rotuloAluguel">Aluguel mensal inicial</div>
+      <div class="aluguel-valor num" id="valorAluguel">—</div>
+      <div class="aluguel-nota" id="notaAluguel"></div>
+    </div>
+    <div class="aluguel-lado">
+      <div class="mini"><b class="num" id="kpiVPL">—</b><span>VPL na TMA</span></div>
+      <div class="mini"><b class="num" id="kpiTIR">—</b><span>TIR do projeto</span></div>
+      <div class="mini"><b class="num" id="kpiPayback">—</b><span>Payback descontado</span></div>
+      <div class="mini"><b class="num" id="kpiTaxaLoc">—</b><span>Aluguel / investimento</span></div>
+      <div class="mini"><b class="num" id="kpiYield">—</b><span>Yield on cost</span></div>
+      <div class="mini"><b class="num" id="kpiCapital">—</b><span>Capital na entrega</span></div>
+    </div>
+  </div>
+
+  <div id="veredito"></div>
+
+  <div class="abas" role="tablist">
+    <button role="tab" aria-selected="true" data-folha="resultado">Resultado</button>
+    <button role="tab" aria-selected="false" data-folha="fluxo">Fluxo de caixa</button>
+    <button role="tab" aria-selected="false" data-folha="sensibilidade">Sensibilidade e risco</button>
+    <button role="tab" aria-selected="false" data-folha="locatario">Visão do locatário</button>
+    <button role="tab" aria-selected="false" data-folha="manual">Manual</button>
+  </div>
+
+  <section class="folha ativa" id="folha-resultado" role="tabpanel">
+    <div class="quadro">
+      <h3>Caixa acumulado descontado</h3>
+      <div class="sub">Quando a curva cruza o eixo zero, o investimento foi recuperado com a remuneração exigida.</div>
+      <div id="gAcumulado"></div>
+    </div>
+    <div class="duo">
+      <div class="quadro">
+        <h3>Caixa do exercício</h3>
+        <div class="sub">Desembolsos da obra e caixa líquido da locação, por ano.</div>
+        <div id="gAnual"></div>
+      </div>
+      <div class="quadro">
+        <h3>Do aluguel bruto ao caixa livre</h3>
+        <div class="sub">Composição média da receita ao longo do contrato.</div>
+        <div id="gComposicao"></div>
+      </div>
+    </div>
+    <div class="duo">
+      <div class="quadro">
+        <h3>Evolução do aluguel</h3>
+        <div class="sub">Valor nominal contratado e valor equivalente a preços de hoje.</div>
+        <div id="gAluguel"></div>
+      </div>
+      <div class="quadro">
+        <h3>Quadro-resumo</h3>
+        <div class="sub">Consolidação das premissas e dos resultados.</div>
+        <div id="resumoTabela"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="folha" id="folha-fluxo" role="tabpanel">
+    <div class="quadro">
+      <div class="barra-ferramentas">
+        <label>Detalhamento
+          <select id="granularidade"><option value="anual" selected>Anual</option><option value="mensal">Mensal</option></select>
+        </label>
+        <label>Fase
+          <select id="filtroFase"><option value="tudo" selected>Todas</option><option value="obra">Obra</option><option value="locacao">Locação</option></select>
+        </label>
+        <button type="button" class="btn" id="btnCSV">Exportar CSV</button>
+      </div>
+      <div class="rolagem" id="tabelaFluxo"></div>
+    </div>
+  </section>
+
+  <section class="folha" id="folha-sensibilidade" role="tabpanel">
+    <div class="quadro">
+      <h3>Impacto isolado de cada premissa</h3>
+      <div class="sub">Variação do VPL quando cada variável se afasta do cenário-base, mantidas as demais.</div>
+      <div id="gTornado"></div>
+    </div>
+    <div class="quadro">
+      <h3>VPL cruzando TMA e custo da obra</h3>
+      <div class="sub">Valores em R$ milhões. O aluguel permanece o do cenário-base.</div>
+      <div id="matrizSens"></div>
+    </div>
+    <div class="quadro">
+      <h3>Simulação de Monte Carlo</h3>
+      <div class="sub">Aluguel fixado no cenário-base; sorteiam-se as variáveis de realização em distribuição triangular.</div>
+      <div class="barra-ferramentas">
+        <label>Iterações <select id="mcIter"><option>2000</option><option selected>5000</option><option>10000</option></select></label>
+        <label>Custo da obra ± <input type="text" inputmode="decimal" class="pct" id="mcObra" value="12" style="width:60px"> %</label>
+        <label>Reajuste ± <input type="text" inputmode="decimal" class="pct" id="mcReaj" value="1,5" style="width:60px"> p.p.</label>
+        <label>Atraso da obra até <input type="number" id="mcAtraso" value="6" min="0" max="36" style="width:62px"> meses</label>
+        <button type="button" class="btn btn-forte" id="btnMC">Simular</button>
+      </div>
+      <div id="saidaMC"><div class="vazio">Defina as faixas e execute a simulação.</div></div>
+    </div>
+  </section>
+
+  <section class="folha" id="folha-locatario" role="tabpanel">
+    <div class="quadro">
+      <h3>Locar sob medida ou construir por conta própria</h3>
+      <div class="sub">Compara o valor presente dos aluguéis com o valor presente de o próprio usuário executar a obra, à taxa de desconto dele.</div>
+      <div class="barra-ferramentas">
+        <label>Taxa de desconto do locatário
+          <span class="sufixo" style="display:inline-block;width:110px"><input type="text" inputmode="decimal" class="pct" id="tmaLocatario" value="8,00"><em>% a.a.</em></span>
+        </label>
+        <label><input type="checkbox" id="locatarioTributos" style="accent-color:var(--latao)"> Aluguel gera crédito ou dedução fiscal</label>
+        <label id="wrapCredito" hidden>Alíquota
+          <span class="sufixo" style="display:inline-block;width:84px"><input type="text" inputmode="decimal" class="pct" id="aliqCredito" value="34,00"><em>%</em></span>
+        </label>
+      </div>
+      <div id="saidaLocatario"></div>
+    </div>
+  </section>
+
+  <section class="folha" id="folha-manual" role="tabpanel">
+    <div class="manual">
+      <nav class="manual-nav" id="manualNav" aria-label="Sumário do manual"></nav>
+      <div class="manual-txt" id="manualTxt"></div>
+    </div>
+  </section>
+</main>
+</div>
+
+<footer class="rodape">
+  <p>BTS Financeiro — arquivo único, sem dependências externas, funciona offline. Todos os cálculos são executados no seu navegador e nada é enviado para fora do computador.</p>
+  <p><button type="button" class="btn" id="btnTermos" style="font-size:12px;padding:4px 10px">Ver termos de uso</button></p>
+  <p>A ferramenta é um instrumento de apoio à decisão. Os resultados dependem inteiramente das premissas informadas e não substituem a análise técnica, contábil e jurídica do caso concreto.</p>
+</footer>
+<script>
+"use strict";
+/* ============================================================
+   BTS Financeiro — motor de cálculo
+   ============================================================ */
+var BTS = (function(){
+
+/* ---------- conversão de taxas ---------- */
+function mensalDeAnual(a){ return Math.pow(1+a, 1/12) - 1; }
+function anualDeMensal(m){ return Math.pow(1+m, 12) - 1; }
+function fisher(real, inflacao){ return (1+real)*(1+inflacao) - 1; }
+
+/* ---------- séries financeiras ---------- */
+function pmt(capital, i, n, antecipado){
+  if(n <= 0) return 0;
+  var p;
+  if(Math.abs(i) < 1e-12) p = capital / n;
+  else p = capital * i / (1 - Math.pow(1+i, -n));
+  return antecipado ? p/(1+i) : p;
+}
+function vpl(fluxos, i){
+  if(i <= -1) return NaN;
+  var s = 0, d = 1, inv = 1/(1+i), t;
+  for(t = 0; t < fluxos.length; t++){ s += fluxos[t] * d; d *= inv; }
+  return isFinite(s) ? s : NaN;
+}
+function tir(fluxos){
+  var f = function(r){ return vpl(fluxos, r); };
+  function bisseccao(lo, hi, flo){
+    var m, fm, k;
+    for(k = 0; k < 120; k++){
+      m = (lo + hi) / 2; fm = f(m);
+      if(!isFinite(fm)) return null;
+      if(fm === 0) return m;
+      if(flo * fm < 0){ hi = m; } else { lo = m; flo = fm; }
+    }
+    return (lo + hi) / 2;
+  }
+  var f0 = f(0), f1 = f(1);
+  if(isFinite(f0) && isFinite(f1) && f0 * f1 < 0) return bisseccao(0, 1, f0);
+  var anterior = null, rAnterior = null, r, v, i;
+  for(i = -95; i <= 300; i++){
+    r = i <= 100 ? i/100 : 1 + (i - 100) * 0.06;
+    v = f(r);
+    if(!isFinite(v)){ anterior = null; continue; }
+    if(v === 0) return r;
+    if(anterior !== null && anterior * v < 0) return bisseccao(rAnterior, r, anterior);
+    anterior = v; rAnterior = r;
+  }
+  return null;
+}
+
+/* ---------- cronograma físico-financeiro ---------- */
+function perfilCurva(n, tipo, custom){
+  var w = [], k, x, e, acum, v, soma;
+  if(n <= 0) return [];
+  if(tipo === 'linear'){
+    for(k = 0; k < n; k++) w.push(1);
+  } else if(tipo === 'personalizado'){
+    custom = custom || [];
+    for(k = 0; k < n; k++) w.push(k < custom.length ? Math.max(0, custom[k]) : 0);
+    if(w.reduce(function(a,b){return a+b;},0) <= 0) for(k = 0; k < n; k++) w[k] = 1;
+  } else {
+    e = (tipo === 's_forte') ? 3.2 : 2.0;
+    acum = [];
+    for(k = 0; k <= n; k++){
+      x = k / n;
+      v = Math.pow(x, e) / (Math.pow(x, e) + Math.pow(1-x, e));
+      acum.push(isFinite(v) ? v : (x < 0.5 ? 0 : 1));
+    }
+    for(k = 1; k <= n; k++) w.push(acum[k] - acum[k-1]);
+  }
+  soma = w.reduce(function(a,b){ return a+b; }, 0);
+  if(soma <= 0) return new Array(n).fill(1/n);
+  return w.map(function(v){ return v/soma; });
+}
+
+/* ---------- modelo completo ----------
+   p: objeto de premissas já normalizado (taxas em decimal, prazos em meses)
+   ------------------------------------- */
+function modelar(p){
+  var im   = mensalDeAnual(p.tmaNominal);
+  var Tc   = Math.max(0, Math.round(p.prazoObra));
+  var Tcar = Math.max(0, Math.round(p.carencia));
+  var N    = Math.max(1, Math.round(p.prazoMeses));
+  var entrega   = Tc + Tcar;          // data de referência do capital
+  var fim       = entrega + N;        // último mês do horizonte
+  var pesos = perfilCurva(Tc, p.perfil, p.custom);
+
+  /* desembolsos */
+  var desembTotal = new Array(fim+1).fill(0);
+  var desembLocador = new Array(fim+1).fill(0);
+  var k, t, v;
+  for(k = 1; k <= Tc; k++){
+    v = p.custoObra * pesos[k-1];
+    desembTotal[k] += v;
+    desembLocador[k] += v * p.pctLocador;
+  }
+  var mt = Math.min(Math.max(0, Math.round(p.mesTerreno)), fim);
+  desembTotal[mt] += p.custoTerreno;
+  desembLocador[mt] += p.custoTerreno * p.pctLocador;
+
+  var invTotal = desembTotal.reduce(function(a,b){return a+b;}, 0);
+  var invLocador = desembLocador.reduce(function(a,b){return a+b;}, 0);
+
+  /* capital capitalizado até a entrega */
+  var capital = 0;
+  for(t = 0; t <= entrega; t++) capital += desembLocador[t] * Math.pow(1+im, entrega - t);
+  var jurosObra = capital - invLocador;
+
+  /* fator de reajuste do k-ésimo aluguel */
+  function fator(kk){
+    if(p.reajAnual === 0) return 1;
+    if(p.periodicidade === 'mensal') return Math.pow(1 + mensalDeAnual(p.reajAnual), kk - 1);
+    return Math.pow(1 + p.reajAnual, Math.floor((kk - 1) / 12));
+  }
+
+  var baseDep = p.usarDep ? p.custoObra * p.pctLocador : 0;
+  var depMensal = (p.usarDep && p.vidaUtil > 0) ? baseDep / (p.vidaUtil * 12) : 0;
+  var terrenoLocador = p.custoTerreno * p.pctLocador;
+
+  /* monta o fluxo para um dado aluguel inicial */
+  function montar(aluguel0){
+    var fc = new Array(fim+1).fill(0);
+    var linhas = [];
+    var i, tt, f, bruto, efetiva, trec, opexV, opexF, ebitda, dep, lair, imp, fcl;
+    var depAcum = 0, receitaBruta = 0, receitaEfetiva = 0, totTrec = 0, totOpex = 0,
+        totImp = 0, totFCL = 0, noi12 = 0;
+
+    for(i = 0; i <= entrega; i++) fc[i] -= desembLocador[i];
+
+    for(k = 1; k <= N; k++){
+      tt = entrega + (p.antecipado ? k - 1 : k);
+      f = fator(k);
+      bruto   = aluguel0 * f;
+      efetiva = bruto * (1 - p.inad);
+      trec    = efetiva * p.aliqReceita;
+      opexV   = efetiva * p.opexPct;
+      opexF   = p.opexFixo * (p.opexReajusta ? f : 1);
+      ebitda  = efetiva - trec - opexV - opexF;
+      dep = 0;
+      if(depMensal > 0 && depAcum < baseDep - 1e-9){
+        dep = Math.min(depMensal, baseDep - depAcum);
+        depAcum += dep;
+      }
+      lair = ebitda - dep;
+      imp  = Math.max(0, lair) * p.aliqLucro;
+      fcl  = ebitda - imp;
+      fc[tt] += fcl;
+      if(k <= 12) noi12 += ebitda;
+      receitaBruta += bruto; receitaEfetiva += efetiva; totTrec += trec;
+      totOpex += opexV + opexF; totImp += imp; totFCL += fcl;
+      linhas.push({k:k, t:tt, bruto:bruto, efetiva:efetiva, trec:trec,
+                   opex:opexV+opexF, dep:dep, ebitda:ebitda, imposto:imp, fcl:fcl});
+    }
+
+    /* evento terminal */
+    var fatorFinal = p.corrigirTerminal ? Math.pow(1 + p.reajAnual, fim/12) : 1;
+    var valorImovelFim = invTotal * p.vtPct * fatorFinal;
+    var entradaFinal = (p.destino === 'locador')
+        ? valorImovelFim * p.pctLocador
+        : p.valorReversao;
+    var contabil = Math.max(0, baseDep - depAcum) + terrenoLocador;
+    var ganho = entradaFinal - contabil;
+    var impGanho = p.tributarGanho ? Math.max(0, ganho) * p.aliqGanho : 0;
+    fc[fim] += entradaFinal - impGanho;
+
+    return {
+      fc: fc, linhas: linhas, aluguel0: aluguel0,
+      valorImovelFim: valorImovelFim, entradaFinal: entradaFinal,
+      impostoGanho: impGanho, valorContabil: contabil, depAcumulada: depAcum,
+      receitaBruta: receitaBruta, receitaEfetiva: receitaEfetiva,
+      tributosReceita: totTrec, custosOperacionais: totOpex,
+      tributosLucro: totImp, caixaLocacao: totFCL, noi12: noi12
+    };
+  }
+
+  function vplDe(a){ return vpl(montar(a).fc, im); }
+
+  /* aluguel por equivalência financeira pura (PMT sobre o capital) */
+  var aluguelPMT = pmt(capital, im, N, p.antecipado);
+
+  /* aluguel de equilíbrio: VPL = 0 na TMA */
+  function aluguelEquilibrio(){
+    var lo = 0, hi = Math.max(1, aluguelPMT * 4), j = 0, m;
+    if(vplDe(lo) >= 0) return 0;
+    while(vplDe(hi) < 0 && j < 90){ hi *= 2; j++; }
+    if(vplDe(hi) < 0) return null;
+    for(j = 0; j < 90; j++){
+      m = (lo + hi) / 2;
+      if(vplDe(m) < 0) lo = m; else hi = m;
+    }
+    return (lo + hi) / 2;
+  }
+
+  var aluguel0;
+  if(p.modo === 'pmt') aluguel0 = aluguelPMT;
+  else if(p.modo === 'informado') aluguel0 = p.aluguelInformado;
+  else aluguel0 = aluguelEquilibrio();
+  if(aluguel0 === null || !isFinite(aluguel0)) aluguel0 = aluguelPMT;
+
+  var r = montar(aluguel0);
+
+  /* indicadores */
+  var VPL = vpl(r.fc, im);
+  var tirMensal = tir(r.fc);
+  var TIR = (tirMensal === null) ? null : anualDeMensal(tirMensal);
+
+  /* payback descontado */
+  var acum = [], soma = 0, payback = null, desc, d = 1, inv = 1/(1+im);
+  var eps = Math.max(1, invLocador) * 1e-9;
+  for(t = 0; t < r.fc.length; t++){
+    desc = r.fc[t] * d; d *= inv;
+    soma += desc;
+    acum.push(soma);
+    if(payback === null && t > 0 && acum[t-1] < -eps && soma >= -eps){
+      payback = (t - 1) + (-acum[t-1]) / (soma - acum[t-1]);
+    }
+  }
+  if(payback !== null && payback > fim) payback = fim;
+
+  /* série anual agregada */
+  var anos = [], a, ini, f2;
+  var nAnos = Math.ceil(fim / 12);
+  for(a = 1; a <= nAnos; a++){
+    ini = (a-1)*12 + 1;
+    var linha = {ano:a, desembolso:0, bruto:0, efetiva:0, trec:0, opex:0, dep:0,
+                 ebitda:0, imposto:0, fcl:0, terminal:0, liquido:0};
+    for(t = ini; t <= Math.min(a*12, fim); t++){
+      linha.desembolso += desembLocador[t] || 0;
+    }
+    if(a === 1) linha.desembolso += desembLocador[0] || 0;
+    r.linhas.forEach(function(L){
+      if(L.t >= ini && L.t <= a*12 || (a===1 && L.t===0)){
+        linha.bruto += L.bruto; linha.efetiva += L.efetiva; linha.trec += L.trec;
+        linha.opex += L.opex; linha.dep += L.dep; linha.ebitda += L.ebitda;
+        linha.imposto += L.imposto; linha.fcl += L.fcl;
+      }
+    });
+    if(fim >= ini && fim <= a*12) linha.terminal = r.entradaFinal - r.impostoGanho;
+    linha.liquido = -linha.desembolso + linha.fcl + linha.terminal;
+    anos.push(linha);
+  }
+
+  return {
+    p:p, im:im, Tc:Tc, Tcar:Tcar, N:N, entrega:entrega, fim:fim,
+    pesos:pesos, desembTotal:desembTotal, desembLocador:desembLocador,
+    invTotal:invTotal, invLocador:invLocador, capital:capital, jurosObra:jurosObra,
+    aluguel0:aluguel0, aluguelPMT:aluguelPMT,
+    calcularEquilibrio: function(){ return p.modo === 'equilibrio' ? aluguel0 : aluguelEquilibrio(); },
+    fc:r.fc, linhas:r.linhas, anos:anos, acumDescontado:acum,
+    VPL:VPL, TIR:TIR, tirMensal:tirMensal, payback:payback,
+    valorImovelFim:r.valorImovelFim, entradaFinal:r.entradaFinal,
+    impostoGanho:r.impostoGanho, valorContabil:r.valorContabil,
+    receitaBruta:r.receitaBruta, receitaEfetiva:r.receitaEfetiva,
+    tributosReceita:r.tributosReceita, custosOperacionais:r.custosOperacionais,
+    tributosLucro:r.tributosLucro, caixaLocacao:r.caixaLocacao,
+    yieldOnCost: r.noi12 / (invLocador || 1),
+    taxaLocacao: aluguel0 / (invLocador || 1),
+    aluguelReal: aluguel0 / Math.pow(1 + p.reajAnual, entrega/12),
+    fator: fator, montar: montar, vplDe: vplDe
+  };
+}
+
+/* ---------- visão do locatário ---------- */
+function analisarLocatario(m, taxaAnual, creditoFiscal){
+  var il = mensalDeAnual(taxaAnual), t, k, f;
+  var p = m.p;
+  var vpAluguel = 0, vpAporteObra = 0, vpObraPropria = 0;
+
+  for(k = 1; k <= m.N; k++){
+    f = m.fator(k);
+    t = m.entrega + (p.antecipado ? k-1 : k);
+    vpAluguel += (m.aluguel0 * f) / Math.pow(1+il, t);
+  }
+  var vpAluguelLiquido = vpAluguel * (1 - (creditoFiscal || 0));
+
+  for(t = 0; t <= m.fim; t++){
+    vpAporteObra  += (m.desembTotal[t] - m.desembLocador[t]) / Math.pow(1+il, t);
+    vpObraPropria += m.desembTotal[t] / Math.pow(1+il, t);
+  }
+
+  var desc = Math.pow(1+il, m.fim);
+  var vpImovelProprio = m.valorImovelFim / desc;
+  var recebeImovel = (p.destino === 'locatario');
+  var vpImovelRecebido = recebeImovel ? (m.valorImovelFim / desc) : 0;
+  var vpReversaoPaga = recebeImovel ? (p.valorReversao / desc) : 0;
+
+  var custoBTS = vpAluguelLiquido + vpAporteObra + vpReversaoPaga - vpImovelRecebido;
+  var custoProprio = vpObraPropria - vpImovelProprio;
+
+  return {
+    taxa: taxaAnual, il: il,
+    vpAluguel: vpAluguel, vpAluguelLiquido: vpAluguelLiquido,
+    vpAporteObra: vpAporteObra, vpReversaoPaga: vpReversaoPaga,
+    vpImovelRecebido: vpImovelRecebido, vpObraPropria: vpObraPropria,
+    vpImovelProprio: vpImovelProprio,
+    custoBTS: custoBTS, custoProprio: custoProprio,
+    diferenca: custoProprio - custoBTS,
+    diferencaPct: custoProprio !== 0 ? (custoProprio - custoBTS)/Math.abs(custoProprio) : 0
+  };
+}
+
+/* ---------- sensibilidade ---------- */
+function tornado(pBase, variacoes){
+  var base = modelar(pBase);
+  var saida = [];
+  variacoes.forEach(function(v){
+    var pBaixo = Object.assign({}, pBase), pAlto = Object.assign({}, pBase);
+    pBaixo[v.campo] = v.baixo; pAlto[v.campo] = v.alto;
+    pBaixo.modo = 'informado'; pBaixo.aluguelInformado = base.aluguel0;
+    pAlto.modo  = 'informado'; pAlto.aluguelInformado  = base.aluguel0;
+    var mB = modelar(pBaixo), mA = modelar(pAlto);
+    saida.push({ rotulo:v.rotulo, legendaBaixo:v.legendaBaixo, legendaAlto:v.legendaAlto,
+                 vplBaixo:mB.VPL, vplAlto:mA.VPL, base:base.VPL,
+                 amplitude: Math.abs(mA.VPL - mB.VPL) });
+  });
+  saida.sort(function(a,b){ return b.amplitude - a.amplitude; });
+  return { base: base.VPL, itens: saida };
+}
+
+function triangular(min, moda, max, u){
+  var c = (moda - min) / (max - min);
+  if(u < c) return min + Math.sqrt(u * (max - min) * (moda - min));
+  return max - Math.sqrt((1 - u) * (max - min) * (max - moda));
+}
+
+function monteCarlo(pBase, cfg){
+  var base = modelar(pBase);
+  var n = cfg.iteracoes, i, res = [], p2, m;
+  var vpls = [], tirs = [], negativos = 0;
+  for(i = 0; i < n; i++){
+    p2 = Object.assign({}, pBase);
+    p2.modo = 'informado';
+    p2.aluguelInformado = base.aluguel0;
+    p2.custoObra = pBase.custoObra * triangular(1-cfg.obra, 1, 1+cfg.obra, Math.random());
+    p2.reajAnual = Math.max(0, triangular(pBase.reajAnual-cfg.reaj, pBase.reajAnual, pBase.reajAnual+cfg.reaj, Math.random()));
+    p2.prazoObra = Math.round(triangular(pBase.prazoObra, pBase.prazoObra, pBase.prazoObra + cfg.atraso + 0.001, Math.random()));
+    p2.inad = Math.max(0, triangular(pBase.inad*0.5, pBase.inad, pBase.inad*2 + 0.01, Math.random()));
+    m = modelar(p2);
+    vpls.push(m.VPL);
+    if(m.TIR !== null) tirs.push(m.TIR);
+    if(m.VPL < 0) negativos++;
+  }
+  vpls.sort(function(a,b){ return a-b; });
+  tirs.sort(function(a,b){ return a-b; });
+  function q(arr, x){
+    if(!arr.length) return null;
+    var idx = (arr.length-1)*x, lo = Math.floor(idx), hi = Math.ceil(idx);
+    return arr[lo] + (arr[hi]-arr[lo])*(idx-lo);
+  }
+  return {
+    n:n, base: base.VPL, vpls: vpls, tirs: tirs,
+    probNegativo: negativos/n,
+    media: vpls.reduce(function(a,b){return a+b;},0)/n,
+    p5: q(vpls,0.05), p50: q(vpls,0.5), p95: q(vpls,0.95),
+    tirP5: q(tirs,0.05), tirP50: q(tirs,0.5), tirP95: q(tirs,0.95)
+  };
+}
+
+return {
+  mensalDeAnual: mensalDeAnual, anualDeMensal: anualDeMensal, fisher: fisher,
+  pmt: pmt, vpl: vpl, tir: tir, perfilCurva: perfilCurva,
+  modelar: modelar, analisarLocatario: analisarLocatario,
+  tornado: tornado, monteCarlo: monteCarlo, triangular: triangular
+};
+})();
+if(typeof window !== 'undefined') window.BTS = BTS;
+
+/* ============================================================
+   Camada de interface — formatação e gráficos
+   ============================================================ */
+(function(){
+"use strict";
+var $  = function(s, r){ return (r||document).querySelector(s); };
+var $$ = function(s, r){ return Array.prototype.slice.call((r||document).querySelectorAll(s)); };
+
+/* ---------- números ---------- */
+function lerNumero(txt){
+  if(typeof txt === 'number') return isFinite(txt) ? txt : 0;
+  var s = String(txt == null ? '' : txt).trim();
+  if(!s) return 0;
+  s = s.replace(/\s|R\$|%/g, '');
+  if(s.indexOf(',') > -1){
+    s = s.replace(/\./g, '').replace(',', '.');
+  } else {
+    var partes = s.split('.');
+    if(partes.length > 2 || (partes.length === 2 && partes[1].length === 3)) s = partes.join('');
+  }
+  var v = parseFloat(s);
+  return isFinite(v) ? v : 0;
+}
+var nfMoeda = new Intl.NumberFormat('pt-BR', {style:'currency', currency:'BRL', minimumFractionDigits:2, maximumFractionDigits:2});
+var nfMoeda0 = new Intl.NumberFormat('pt-BR', {style:'currency', currency:'BRL', maximumFractionDigits:0});
+function moeda(v){ return isFinite(v) ? nfMoeda.format(v) : '—'; }
+function moeda0(v){ return isFinite(v) ? nfMoeda0.format(v) : '—'; }
+function numero(v, d){
+  if(!isFinite(v)) return '—';
+  return v.toLocaleString('pt-BR', {minimumFractionDigits:d==null?2:d, maximumFractionDigits:d==null?2:d});
+}
+function pct(v, d){ return isFinite(v) ? numero(v*100, d==null?2:d) + '%' : '—'; }
+function compacto(v){
+  if(!isFinite(v)) return '—';
+  var a = Math.abs(v), s = v < 0 ? '−' : '';
+  if(a >= 1e9) return s + 'R$ ' + numero(a/1e9, 2) + ' bi';
+  if(a >= 1e6) return s + 'R$ ' + numero(a/1e6, 1) + ' mi';
+  if(a >= 1e3) return s + 'R$ ' + numero(a/1e3, 0) + ' mil';
+  return s + 'R$ ' + numero(a, 0);
+}
+function meses(n){
+  if(!isFinite(n)) return '—';
+  var a = Math.floor(n/12), m = Math.round(n - a*12);
+  if(m === 12){ a += 1; m = 0; }
+  if(a === 0) return numero(n,0) + (Math.round(n) === 1 ? ' mês' : ' meses');
+  return a + (a === 1 ? ' ano' : ' anos') + (m ? ' e ' + m + (m === 1 ? ' mês' : ' meses') : '');
+}
+function esc(s){ return String(s).replace(/[&<>"]/g, function(c){
+  return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]; }); }
+
+/* ---------- escala de eixo ---------- */
+function escalaNice(min, max){
+  if(min === max){ min -= 1; max += 1; }
+  if(min > 0) min = 0;
+  if(max < 0) max = 0;
+  var bruto = (max - min) / 5;
+  var mag = Math.pow(10, Math.floor(Math.log(bruto)/Math.LN10));
+  var norm = bruto / mag, passo;
+  if(norm <= 1) passo = 1; else if(norm <= 2) passo = 2;
+  else if(norm <= 2.5) passo = 2.5; else if(norm <= 5) passo = 5; else passo = 10;
+  passo *= mag;
+  return { min: Math.floor(min/passo)*passo, max: Math.ceil(max/passo)*passo, passo: passo };
+}
+
+/* ---------- gráfico genérico ---------- */
+function grafico(alvo, spec){
+  var W = 820, H = spec.altura || 260;
+  var mE = spec.margemEsq == null ? 64 : spec.margemEsq, mD = 16, mT = spec.legenda ? 26 : 12, mB = 34;
+  var pw = W - mE - mD, ph = H - mT - mB;
+  var cats = spec.categorias || [];
+  var n = cats.length;
+  var todos = [];
+  spec.series.forEach(function(s){ s.dados.forEach(function(v){ if(isFinite(v)) todos.push(v); }); });
+  if(!todos.length) todos = [0, 1];
+  var esc2 = escalaNice(Math.min.apply(null, todos), Math.max.apply(null, todos));
+  var y = function(v){ return mT + ph - (v - esc2.min) / (esc2.max - esc2.min) * ph; };
+  var banda = n > 0 ? pw / n : pw;
+  var xc = function(i){ return mE + banda * (i + 0.5); };
+  var fy = spec.formatarY || compacto;
+  var out = ['<svg class="grafico" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + esc(spec.titulo || 'gráfico') + '" style="height:auto">'];
+
+  /* malha e eixo Y */
+  for(var v = esc2.min; v <= esc2.max + 1e-9; v += esc2.passo){
+    var yy = y(v);
+    out.push('<line class="' + (Math.abs(v) < 1e-9 ? 'zero' : 'malha') + '" x1="' + mE + '" y1="' + yy.toFixed(1) + '" x2="' + (W-mD) + '" y2="' + yy.toFixed(1) + '"/>');
+    out.push('<text class="rot" x="' + (mE-7) + '" y="' + (yy+3.5).toFixed(1) + '" text-anchor="end">' + esc(fy(v)) + '</text>');
+  }
+  /* rótulos X */
+  var passoRot = Math.max(1, Math.ceil(n / 16));
+  cats.forEach(function(c, i){
+    if(i % passoRot === 0 || i === n-1){
+      out.push('<text class="rot" x="' + xc(i).toFixed(1) + '" y="' + (H-12) + '" text-anchor="middle">' + esc(c) + '</text>');
+    }
+  });
+  if(spec.rotuloX) out.push('<text class="rot" x="' + (W-mD) + '" y="' + (H-1) + '" text-anchor="end">' + esc(spec.rotuloX) + '</text>');
+
+  /* séries */
+  var barras = spec.series.filter(function(s){ return s.tipo === 'barra'; });
+  var idxB = 0;
+  spec.series.forEach(function(s){
+    var i, d, x0, x1, alt, yy0;
+    if(s.tipo === 'barra'){
+      var larg = banda * 0.72 / (barras.length || 1);
+      var desloc = (idxB - (barras.length-1)/2) * larg;
+      for(i = 0; i < n; i++){
+        d = s.dados[i]; if(!isFinite(d)) continue;
+        x0 = xc(i) + desloc - larg/2;
+        yy0 = y(Math.max(0, d)); alt = Math.abs(y(d) - y(0));
+        var cor = s.corNegativa && d < 0 ? s.corNegativa : s.cor;
+        out.push('<rect x="' + x0.toFixed(1) + '" y="' + yy0.toFixed(1) + '" width="' + Math.max(1, larg).toFixed(1) +
+                 '" height="' + Math.max(0.6, alt).toFixed(1) + '" fill="' + cor + '" opacity="' + (s.opacidade||0.92) + '">' +
+                 '<title>' + esc(cats[i] + ' · ' + (s.nome||'') + ' ' + moeda0(d)) + '</title></rect>');
+      }
+      idxB++;
+    } else {
+      var pts = [], area = [];
+      for(i = 0; i < n; i++){
+        d = s.dados[i]; if(!isFinite(d)) continue;
+        pts.push(xc(i).toFixed(1) + ',' + y(d).toFixed(1));
+      }
+      if(s.tipo === 'area' && pts.length){
+        area = pts.slice();
+        out.push('<polygon points="' + xc(0).toFixed(1) + ',' + y(0).toFixed(1) + ' ' + area.join(' ') + ' ' +
+                 xc(n-1).toFixed(1) + ',' + y(0).toFixed(1) + '" fill="' + s.cor + '" opacity="0.14"/>');
+      }
+      out.push('<polyline points="' + pts.join(' ') + '" fill="none" stroke="' + s.cor +
+               '" stroke-width="' + (s.espessura||2) + '" stroke-linejoin="round" stroke-linecap="round"' +
+               (s.tracejado ? ' stroke-dasharray="5 4"' : '') + '/>');
+      if(s.pontos !== false && n <= 40){
+        for(i = 0; i < n; i++){
+          d = s.dados[i]; if(!isFinite(d)) continue;
+          out.push('<circle cx="' + xc(i).toFixed(1) + '" cy="' + y(d).toFixed(1) + '" r="2.6" fill="' + s.cor + '">' +
+                   '<title>' + esc(cats[i] + ' · ' + (s.nome||'') + ' ' + moeda0(d)) + '</title></circle>');
+        }
+      }
+    }
+  });
+
+  /* marcadores verticais */
+  (spec.marcadores || []).forEach(function(m){
+    var x = xc(m.indice);
+    out.push('<line x1="' + x.toFixed(1) + '" y1="' + mT + '" x2="' + x.toFixed(1) + '" y2="' + (mT+ph) + '" stroke="var(--latao)" stroke-width="1.4" stroke-dasharray="4 3"/>');
+    out.push('<text class="rot" x="' + (x+4).toFixed(1) + '" y="' + (mT+12) + '" fill="var(--latao)">' + esc(m.texto) + '</text>');
+  });
+
+  /* legenda */
+  if(spec.legenda){
+    var lx = mE;
+    spec.series.forEach(function(s){
+      if(!s.nome) return;
+      out.push('<rect x="' + lx + '" y="6" width="9" height="9" rx="2" fill="' + s.cor + '"/>');
+      out.push('<text class="rot" x="' + (lx+13) + '" y="14">' + esc(s.nome) + '</text>');
+      lx += 20 + s.nome.length * 6.1;
+    });
+  }
+  out.push('<line class="eixo" x1="' + mE + '" y1="' + mT + '" x2="' + mE + '" y2="' + (mT+ph) + '"/>');
+  out.push('</svg>');
+  alvo.innerHTML = out.join('');
+}
+
+/* ---------- gráfico tornado ---------- */
+function tornadoSVG(alvo, dados){
+  if(!dados.itens.length){ alvo.innerHTML = '<div class="vazio">Sem dados.</div>'; return; }
+  var W = 820, linhaH = 34, mE = 190, mD = 16, mT = 14;
+  var H = mT + dados.itens.length * linhaH + 26;
+  var vals = [dados.base];
+  dados.itens.forEach(function(d){ vals.push(d.vplBaixo, d.vplAlto); });
+  var e = escalaNice(Math.min.apply(null, vals), Math.max.apply(null, vals));
+  var pw = W - mE - mD;
+  var x = function(v){ return mE + (v - e.min)/(e.max - e.min) * pw; };
+  var out = ['<svg class="grafico" viewBox="0 0 ' + W + ' ' + H + '" style="height:auto">'];
+  for(var v = e.min; v <= e.max + 1e-9; v += e.passo){
+    out.push('<line class="malha" x1="' + x(v).toFixed(1) + '" y1="' + mT + '" x2="' + x(v).toFixed(1) + '" y2="' + (H-24) + '"/>');
+    out.push('<text class="rot" x="' + x(v).toFixed(1) + '" y="' + (H-8) + '" text-anchor="middle">' + esc(compacto(v)) + '</text>');
+  }
+  out.push('<line class="zero" x1="' + x(dados.base).toFixed(1) + '" y1="' + mT + '" x2="' + x(dados.base).toFixed(1) + '" y2="' + (H-24) + '" stroke="var(--latao)" stroke-width="1.6"/>');
+  dados.itens.forEach(function(d, i){
+    var yy = mT + i*linhaH + 6, h = 18;
+    var a = x(Math.min(d.vplBaixo, d.vplAlto)), b = x(Math.max(d.vplBaixo, d.vplAlto));
+    var xb = x(dados.base);
+    out.push('<text class="rot" x="' + (mE-10) + '" y="' + (yy+13) + '" text-anchor="end" style="font-size:12px;fill:var(--tinta-2)">' + esc(d.rotulo) + '</text>');
+    out.push('<rect x="' + a.toFixed(1) + '" y="' + yy + '" width="' + Math.max(1,(xb-a)).toFixed(1) + '" height="' + h + '" fill="var(--obra)" opacity=".85"><title>' + esc(d.legendaBaixo + ' → VPL ' + moeda0(d.vplBaixo)) + '</title></rect>');
+    out.push('<rect x="' + xb.toFixed(1) + '" y="' + yy + '" width="' + Math.max(1,(b-xb)).toFixed(1) + '" height="' + h + '" fill="var(--locacao)" opacity=".85"><title>' + esc(d.legendaAlto + ' → VPL ' + moeda0(d.vplAlto)) + '</title></rect>');
+  });
+  out.push('</svg>');
+  alvo.innerHTML = out.join('');
+}
+
+/* ---------- histograma ---------- */
+function histograma(alvo, valores, base){
+  var nB = 32, min = valores[0], max = valores[valores.length-1];
+  if(min === max){ min -= 1; max += 1; }
+  var larg = (max-min)/nB, baldes = new Array(nB).fill(0), i, idx;
+  for(i = 0; i < valores.length; i++){
+    idx = Math.min(nB-1, Math.floor((valores[i]-min)/larg));
+    baldes[idx]++;
+  }
+  var W = 820, H = 220, mE = 50, mD = 14, mT = 12, mB = 32;
+  var pw = W-mE-mD, ph = H-mT-mB, maxB = Math.max.apply(null, baldes);
+  var out = ['<svg class="grafico" viewBox="0 0 ' + W + ' ' + H + '" style="height:auto">'];
+  var zx = mE + (0-min)/(max-min)*pw;
+  for(i = 0; i < nB; i++){
+    var x0 = mE + i*pw/nB, h = baldes[i]/maxB*ph;
+    var centro = min + (i+0.5)*larg;
+    out.push('<rect x="' + x0.toFixed(1) + '" y="' + (mT+ph-h).toFixed(1) + '" width="' + (pw/nB-1).toFixed(1) +
+             '" height="' + h.toFixed(1) + '" fill="' + (centro < 0 ? 'var(--obra)' : 'var(--locacao)') + '" opacity=".8">' +
+             '<title>' + esc(compacto(centro) + ' · ' + baldes[i] + ' cenários') + '</title></rect>');
+  }
+  if(zx >= mE && zx <= W-mD)
+    out.push('<line x1="' + zx.toFixed(1) + '" y1="' + mT + '" x2="' + zx.toFixed(1) + '" y2="' + (mT+ph) + '" class="zero"/>');
+  var bx = mE + (base-min)/(max-min)*pw;
+  if(bx >= mE && bx <= W-mD){
+    out.push('<line x1="' + bx.toFixed(1) + '" y1="' + mT + '" x2="' + bx.toFixed(1) + '" y2="' + (mT+ph) + '" stroke="var(--latao)" stroke-width="1.6" stroke-dasharray="4 3"/>');
+    out.push('<text class="rot" x="' + (bx+5).toFixed(1) + '" y="' + (mT+12) + '" fill="var(--latao)">cenário-base</text>');
+  }
+  for(i = 0; i <= 4; i++){
+    var vv = min + (max-min)*i/4;
+    out.push('<text class="rot" x="' + (mE + pw*i/4).toFixed(1) + '" y="' + (H-10) + '" text-anchor="middle">' + esc(compacto(vv)) + '</text>');
+  }
+  out.push('</svg>');
+  alvo.innerHTML = out.join('');
+}
+
+/* ---------- linha do tempo ----------
+   Rótulos longos saem do SVG e vão para a faixa de fases em HTML,
+   de modo que fases curtas nunca encavalem o texto da fase seguinte.
+   ------------------------------------- */
+function linhaDoTempo(alvo, m){
+  var W = 820, H = 74, mE = 8, mD = 8, y0 = 14, alt = 30;
+  var pw = W - mE - mD, total = Math.max(1, m.fim);
+  var x = function(t){ return mE + t/total*pw; };
+  var out = ['<svg class="grafico" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Linha do tempo do contrato" style="height:auto">'];
+
+  function faixa(t0, t1, cor, curto){
+    var a = x(t0), b = x(t1), w = Math.max(2, b - a);
+    out.push('<rect x="' + a.toFixed(1) + '" y="' + y0 + '" width="' + w.toFixed(1) + '" height="' + alt + '" fill="' + cor + '" opacity=".15"/>');
+    out.push('<rect x="' + a.toFixed(1) + '" y="' + y0 + '" width="' + w.toFixed(1) + '" height="3" fill="' + cor + '"/>');
+    /* o rótulo curto só entra se couber com folga dentro da própria faixa */
+    if(curto && w > curto.length * 7 + 18){
+      out.push('<text x="' + (a + w/2).toFixed(1) + '" y="' + (y0 + 21) +
+               '" text-anchor="middle" style="font-size:12px;font-weight:600;fill:var(--tinta)">' + esc(curto) + '</text>');
+    }
+  }
+  faixa(0, m.Tc, 'var(--obra)', 'Obra');
+  if(m.Tcar > 0) faixa(m.Tc, m.entrega, 'var(--linha-forte)', 'Carência');
+  faixa(m.entrega, m.fim, 'var(--locacao)', 'Locação');
+  out.push('<circle cx="' + x(m.fim).toFixed(1) + '" cy="' + (y0 + alt/2) + '" r="5" fill="var(--latao)"/>');
+
+  /* marcos: meses repetidos são fundidos e rótulos que colidiriam são descartados */
+  var brutos = [0, m.Tc, m.entrega, m.fim], unicos = [];
+  brutos.forEach(function(t){ if(unicos.indexOf(t) < 0) unicos.push(t); });
+  unicos.sort(function(a, b){ return a - b; });
+
+  var candidatos = unicos.map(function(t, i){
+    var texto = 'mês ' + t;
+    var larg = texto.length * 6.2;
+    var xx = x(t);
+    var anc = i === 0 ? 'start' : (i === unicos.length - 1 ? 'end' : 'middle');
+    var a = anc === 'start' ? xx : (anc === 'end' ? xx - larg : xx - larg/2);
+    return { t:t, texto:texto, x:xx, anc:anc, a:a, b:a + larg, extremo: i === 0 || i === unicos.length - 1 };
+  });
+  var ocupados = [], mantidos = [];
+  function livre(c){
+    return ocupados.every(function(o){ return c.b + 10 < o.a || c.a > o.b + 10; });
+  }
+  candidatos.filter(function(c){ return c.extremo; }).forEach(function(c){
+    if(livre(c)){ ocupados.push(c); mantidos.push(c); }
+  });
+  candidatos.filter(function(c){ return !c.extremo; }).forEach(function(c){
+    if(livre(c)){ ocupados.push(c); mantidos.push(c); }
+  });
+  mantidos.forEach(function(k){
+    out.push('<line x1="' + k.x.toFixed(1) + '" y1="' + (y0 - 6) + '" x2="' + k.x.toFixed(1) + '" y2="' + (y0 + alt + 5) + '" stroke="var(--linha-forte)" stroke-width="1"/>');
+    out.push('<text class="rot" x="' + k.x.toFixed(1) + '" y="' + (y0 + alt + 18) + '" text-anchor="' + k.anc + '">' + esc(k.texto) + '</text>');
+  });
+  out.push('</svg>');
+
+  /* faixa de fases em HTML — sem risco de sobreposição */
+  var fases = [
+    ['var(--obra)', 'Obra · ' + meses(m.Tc), compacto(m.invLocador) + ' aportados pelo locador']
+  ];
+  if(m.Tcar > 0) fases.push(['var(--linha-forte)', 'Carência · ' + meses(m.Tcar), 'sem receita e sem desembolso']);
+  fases.push(['var(--locacao)', 'Locação · ' + meses(m.N), 'aluguel inicial ' + compacto(m.aluguel0)]);
+  fases.push(['var(--latao)', 'Ao final', m.p.destino === 'locatario'
+      ? (m.p.valorReversao > 0 ? 'reverte ao locatário por ' + compacto(m.p.valorReversao) : 'reverte ao locatário sem pagamento')
+      : 'permanece com o locador · ' + compacto(m.valorImovelFim * m.p.pctLocador)]);
+
+  alvo.innerHTML = out.join('') +
+    '<div class="fases">' + fases.map(function(f){
+      return '<span class="fase"><i style="background:' + f[0] + '"></i><b>' + esc(f[1]) + '</b><small>' + esc(f[2]) + '</small></span>';
+    }).join('') + '</div>';
+}
+
+window.UI = { $:$, $$:$$, lerNumero:lerNumero, moeda:moeda, moeda0:moeda0, numero:numero,
+  pct:pct, compacto:compacto, meses:meses, esc:esc, grafico:grafico, tornadoSVG:tornadoSVG,
+  histograma:histograma, linhaDoTempo:linhaDoTempo, escalaNice:escalaNice };
+})();
+
+/* ============================================================
+   Camada de interface — controlador
+   ============================================================ */
+(function(){
+"use strict";
+var U = window.UI, $ = U.$, $$ = U.$$;
+var moeda = U.moeda, moeda0 = U.moeda0, numero = U.numero, pct = U.pct,
+    compacto = U.compacto, meses = U.meses, esc = U.esc, lerNumero = U.lerNumero;
+var modeloAtual = null, tempo = null;
+var CHAVE = 'bts-financeiro-v1';
+
+var CAMPOS = ['custoObra','custoTerreno','mesTerreno','prazoObra','perfilDesembolso',
+  'desembolsoCustom','pctLocador','prazoLocacao','unidadePrazo','carencia','indiceReajuste',
+  'reajusteTaxa','periodicidadeReajuste','momentoPagamento','modoAluguel','aluguelInformado',
+  'tma','tipoTMA','inadimplencia','aliqReceita','aliqLucro','opexPct','opexFixo','opexReajusta',
+  'usarDepreciacao','vidaUtil','destinoFinal','valorTerminalPct','corrigirTerminal',
+  'valorReversao','tributarGanho','aliqGanho','tmaLocatario','locatarioTributos','aliqCredito'];
+
+var PADROES = {};
+
+/* ---------- leitura das premissas ---------- */
+function lerPremissas(){
+  var unidade = $('#unidadePrazo').value;
+  var prazo = Math.max(1, Math.round(lerNumero($('#prazoLocacao').value)));
+  var prazoMeses = unidade === 'anos' ? prazo * 12 : prazo;
+  var indice = $('#indiceReajuste').value;
+  var reaj = indice === 'nenhum' ? 0 : lerNumero($('#reajusteTaxa').value) / 100;
+  var tmaIn = lerNumero($('#tma').value) / 100;
+  var tmaNominal = $('#tipoTMA').value === 'real' ? BTS.fisher(tmaIn, reaj) : tmaIn;
+  var custom = $('#desembolsoCustom').value.split(/[;\n\t ]+/)
+      .map(function(s){ return lerNumero(s); }).filter(function(v){ return isFinite(v) && v > 0; });
+
+  return {
+    custoObra: lerNumero($('#custoObra').value),
+    custoTerreno: lerNumero($('#custoTerreno').value),
+    mesTerreno: Math.max(0, Math.round(lerNumero($('#mesTerreno').value))),
+    prazoObra: Math.max(1, Math.round(lerNumero($('#prazoObra').value))),
+    perfil: $('#perfilDesembolso').value,
+    custom: custom,
+    pctLocador: Math.min(1, Math.max(0, lerNumero($('#pctLocador').value) / 100)),
+    prazoMeses: prazoMeses,
+    carencia: Math.max(0, Math.round(lerNumero($('#carencia').value))),
+    indice: indice,
+    reajAnual: reaj,
+    periodicidade: $('#periodicidadeReajuste').value,
+    antecipado: $('#momentoPagamento').value === 'antecipado',
+    modo: $('#modoAluguel').value,
+    aluguelInformado: lerNumero($('#aluguelInformado').value),
+    tmaEntrada: tmaIn,
+    tmaTipo: $('#tipoTMA').value,
+    tmaNominal: tmaNominal,
+    inad: Math.max(0, lerNumero($('#inadimplencia').value) / 100),
+    aliqReceita: Math.max(0, lerNumero($('#aliqReceita').value) / 100),
+    aliqLucro: Math.max(0, lerNumero($('#aliqLucro').value) / 100),
+    opexPct: Math.max(0, lerNumero($('#opexPct').value) / 100),
+    opexFixo: Math.max(0, lerNumero($('#opexFixo').value)),
+    opexReajusta: $('#opexReajusta').checked,
+    usarDep: $('#usarDepreciacao').checked,
+    vidaUtil: Math.max(1, lerNumero($('#vidaUtil').value)),
+    destino: $('#destinoFinal').value,
+    vtPct: Math.max(0, lerNumero($('#valorTerminalPct').value) / 100),
+    corrigirTerminal: $('#corrigirTerminal').value === 'sim',
+    valorReversao: Math.max(0, lerNumero($('#valorReversao').value)),
+    tributarGanho: $('#tributarGanho').checked,
+    aliqGanho: Math.max(0, lerNumero($('#aliqGanho').value) / 100)
+  };
+}
+
+function validar(p){
+  var erros = [];
+  if(p.custoObra + p.custoTerreno <= 0) erros.push('Informe o custo da obra ou do terreno.');
+  if(p.tmaNominal <= -1) erros.push('A taxa de atratividade precisa ser maior que −100%.');
+  if(p.prazoMeses < 1) erros.push('O prazo do contrato precisa ter ao menos um mês.');
+  if(p.pctLocador <= 0) erros.push('O locador precisa financiar alguma parcela do investimento.');
+  if(p.aliqLucro >= 1) erros.push('A alíquota sobre o lucro precisa ser menor que 100%.');
+  return erros;
+}
+
+/* ---------- visibilidade condicional ---------- */
+function ajustarFormulario(){
+  $('#campoCustom').hidden = $('#perfilDesembolso').value !== 'personalizado';
+  $('#campoAluguelInformado').hidden = $('#modoAluguel').value !== 'informado';
+  $('#campoVidaUtil').style.display = $('#usarDepreciacao').checked ? '' : 'none';
+  $('#campoAliqGanho').hidden = !$('#tributarGanho').checked;
+  $('#reajusteTaxa').disabled = $('#indiceReajuste').value === 'nenhum';
+  $('#blocoLocatario').hidden = $('#destinoFinal').value !== 'locatario';
+  $('#wrapCredito').hidden = !$('#locatarioTributos').checked;
+
+  var dicas = {
+    equilibrio: 'Resolve o aluguel que zera o VPL considerando tributos, custos, reajuste e destino do imóvel.',
+    pmt: 'Série uniforme que amortiza o capital na TMA. Não considera tributos, custos nem valor residual.',
+    informado: 'Use um aluguel já negociado para medir o retorno que ele produz.'
+  };
+  $('#dicaModo').textContent = dicas[$('#modoAluguel').value];
+  $('#dicaTMA').textContent = $('#tipoTMA').value === 'real'
+    ? 'A taxa informada será combinada com o índice de reajuste pela relação de Fisher.'
+    : 'Fluxos nominais descontados a uma taxa nominal.';
+  $('#dicaDestino').textContent = $('#destinoFinal').value === 'locatario'
+    ? 'Sem valor residual para o locador: o aluguel precisa amortizar todo o investimento dentro do prazo.'
+    : 'O valor do imóvel ao final entra no fluxo como valor terminal.';
+  $('#dicaTerminal').textContent = $('#destinoFinal').value === 'locatario'
+    ? 'Percentual do investimento total. Usado para medir o que o locatário recebe na reversão.'
+    : 'Percentual do investimento total. Reflete a depreciação física e a especificidade do imóvel sob medida.';
+}
+
+/* ---------- veredito ---------- */
+function veredito(m){
+  var p = m.p, classe = 'bom', txt = '';
+  var alertas = [];
+  if(m.payback === null || m.payback > m.fim) alertas.push('o investimento não é recuperado dentro do prazo contratado');
+  if(m.TIR === null) alertas.push('a TIR não pôde ser calculada porque o fluxo troca de sinal mais de uma vez');
+
+  if(p.modo === 'equilibrio'){
+    classe = 'atencao';
+    txt = '<b>' + moeda(m.aluguel0) + '</b> é o aluguel mínimo que remunera exatamente a TMA de ' +
+      pct(p.tmaNominal) + ' ao ano. Abaixo disso o contrato destrói valor para o locador; acima, a TIR supera a taxa exigida.';
+    var d = m.aluguel0 - m.aluguelPMT;
+    if(Math.abs(d) / (m.aluguelPMT || 1) > 0.02){
+      txt += ' A equivalência financeira pura indicaria ' + moeda(m.aluguelPMT) + ' — a diferença de ' +
+        compacto(Math.abs(d)) + ' por mês vem ' + (d > 0 ? 'dos tributos e custos que o aluguel precisa cobrir' :
+        'do valor residual do imóvel, que reduz o quanto o aluguel precisa amortizar') + '.';
+    }
+  } else if(m.VPL > 0.005 * m.invLocador){
+    classe = 'bom';
+    txt = 'VPL positivo de <b>' + moeda0(m.VPL) + '</b> na TMA de ' + pct(p.tmaNominal) +
+      ' ao ano. O contrato remunera o capital e ainda gera ' + pct(m.VPL / m.invLocador) + ' de valor sobre o investimento.';
+  } else if(m.VPL < -0.005 * m.invLocador){
+    classe = 'ruim';
+    txt = 'VPL negativo de <b>' + moeda0(m.VPL) + '</b>. Nas premissas atuais o aluguel não remunera o capital: ' +
+      'seriam necessários <b>' + moeda(m.calcularEquilibrio()) + '</b> por mês para zerar o VPL.';
+  } else {
+    classe = 'atencao';
+    txt = 'VPL praticamente nulo. O contrato devolve exatamente a TMA exigida, sem margem para desvios.';
+  }
+  if(alertas.length) txt += ' Atenção: ' + alertas.join(' e ') + '.';
+  $('#veredito').className = 'veredito ' + classe;
+  $('#veredito').innerHTML = '<div>' + txt + '</div>';
+}
+
+/* ---------- quadro-resumo ---------- */
+function resumo(m){
+  var p = m.p;
+  var linhas = [
+    ['Investimento total do empreendimento', moeda0(m.invTotal)],
+    ['Aporte do locador', moeda0(m.invLocador) + (p.pctLocador < 1 ? ' · ' + pct(p.pctLocador, 0) + ' do total' : '')],
+    ['Juros da obra até a entrega', moeda0(m.jurosObra)],
+    ['Capital a remunerar na entrega', moeda0(m.capital)],
+    ['Aluguel inicial', moeda(m.aluguel0)],
+    ['Aluguel inicial a preços de hoje', moeda(m.aluguelReal)],
+    ['Aluguel no último mês do contrato', moeda(m.aluguel0 * m.fator(m.N))],
+    ['Receita bruta acumulada', moeda0(m.receitaBruta)],
+    ['Tributos sobre a receita', moeda0(m.tributosReceita)],
+    ['Custos operacionais', moeda0(m.custosOperacionais)],
+    ['Tributos sobre o lucro', moeda0(m.tributosLucro)],
+    ['Caixa líquido da locação', moeda0(m.caixaLocacao)],
+    [p.destino === 'locatario' ? 'Recebido na reversão' : 'Valor terminal do imóvel', moeda0(m.entradaFinal)],
+    ['Horizonte total do modelo', meses(m.fim)]
+  ];
+  $('#resumoTabela').innerHTML = '<table class="tabela-simples"><tbody>' + linhas.map(function(l){
+    return '<tr><td style="color:var(--tinta-2)">' + esc(l[0]) + '</td><td><b>' + l[1] + '</b></td></tr>';
+  }).join('') + '</tbody></table>';
+}
+
+/* ---------- gráficos do resultado ---------- */
+function graficos(m){
+  var cats = [], dados = [], i;
+  var passo = m.fim > 160 ? 3 : 1;
+  for(i = 0; i <= m.fim; i += passo){ cats.push(String(i)); dados.push(m.acumDescontado[i]); }
+  var marc = [];
+  if(m.payback !== null && m.payback <= m.fim)
+    marc.push({indice: Math.round(m.payback/passo), texto: 'payback ' + meses(m.payback)});
+  U.grafico($('#gAcumulado'), {
+    altura: 260, categorias: cats, rotuloX: 'mês',
+    series: [{tipo:'area', nome:'caixa acumulado descontado', cor:'var(--foco)', dados:dados, pontos:false}],
+    marcadores: marc
+  });
+
+  U.grafico($('#gAnual'), {
+    altura: 250, legenda: true, rotuloX: 'ano',
+    categorias: m.anos.map(function(a){ return String(a.ano); }),
+    series: [
+      {tipo:'barra', nome:'caixa do ano', cor:'var(--locacao)', corNegativa:'var(--obra)',
+       dados: m.anos.map(function(a){ return a.liquido; })}
+    ]
+  });
+
+  var soma = m.receitaBruta || 1;
+  var partes = [
+    ['Inadimplência e vacância', m.receitaBruta - m.receitaEfetiva, 'var(--linha-forte)'],
+    ['Tributos sobre a receita', m.tributosReceita, 'var(--alerta)'],
+    ['Custos operacionais', m.custosOperacionais, 'var(--tinta-3)'],
+    ['Tributos sobre o lucro', m.tributosLucro, 'var(--obra)'],
+    ['Caixa livre do locador', m.caixaLocacao, 'var(--locacao)']
+  ];
+  var barras = partes.map(function(p){
+    return '<tr><td style="text-align:left;color:var(--tinta-2)">' + esc(p[0]) + '</td>' +
+      '<td style="width:52%"><span style="display:block;height:11px;border-radius:3px;background:' + p[2] +
+      ';width:' + Math.max(0.6, p[1]/soma*100).toFixed(1) + '%"></span></td>' +
+      '<td>' + pct(p[1]/soma, 1) + '</td><td>' + compacto(p[1]) + '</td></tr>';
+  }).join('');
+  $('#gComposicao').innerHTML = '<table class="tabela-simples" style="margin-top:6px"><tbody>' + barras +
+    '</tbody></table><p style="font-size:12.5px;color:var(--tinta-3);margin-top:8px">Base: receita bruta acumulada de ' +
+    compacto(m.receitaBruta) + ' ao longo de ' + meses(m.N) + ' de locação.</p>';
+
+  var catsA = [], nom = [], real = [];
+  var passoA = m.N > 160 ? 6 : (m.N > 60 ? 3 : 1);
+  for(i = 1; i <= m.N; i += passoA){
+    catsA.push(String(i));
+    nom.push(m.aluguel0 * m.fator(i));
+    real.push(m.aluguel0 * m.fator(i) / Math.pow(1 + m.p.reajAnual, (m.entrega + i)/12));
+  }
+  U.grafico($('#gAluguel'), {
+    altura: 250, legenda: true, rotuloX: 'mês de locação', categorias: catsA,
+    series: [
+      {tipo:'linha', nome:'valor nominal', cor:'var(--locacao)', dados:nom, pontos:false},
+      {tipo:'linha', nome:'a preços de hoje', cor:'var(--tinta-3)', dados:real, pontos:false, tracejado:true}
+    ]
+  });
+}
+
+/* ---------- tabela de fluxo ---------- */
+function tabelaFluxo(m){
+  var gran = $('#granularidade').value, filtro = $('#filtroFase').value;
+  var html, linhas = [], i;
+  function cel(v, inv){
+    var c = v < -0.005 ? 'neg' : (v > 0.005 ? 'pos' : '');
+    return '<td class="' + c + '">' + (Math.abs(v) < 0.005 ? '—' : numero(v, 0)) + '</td>';
+  }
+  if(gran === 'anual'){
+    html = '<table><thead><tr><th>Ano</th><th>Fase</th><th>Aporte</th><th>Aluguel bruto</th>' +
+      '<th>Tributos s/ receita</th><th>Custos</th><th>Depreciação</th><th>IRPJ/CSLL</th>' +
+      '<th>Caixa da locação</th><th>Evento final</th><th>Caixa do ano</th><th>Acumulado descontado</th></tr></thead><tbody>';
+    var acum;
+    m.anos.forEach(function(a){
+      var fase = a.desembolso > 0 && a.bruto > 0 ? 'obra e locação' : (a.desembolso > 0 ? 'obra' : (a.bruto > 0 ? 'locação' : 'carência'));
+      if(filtro === 'obra' && a.desembolso <= 0) return;
+      if(filtro === 'locacao' && a.bruto <= 0) return;
+      acum = m.acumDescontado[Math.min(a.ano*12, m.fim)];
+      var cls = a.desembolso > 0 ? 'fase-obra' : (a.bruto > 0 ? 'fase-loc' : '');
+      linhas.push('<tr class="' + cls + '"><td>' + a.ano + '</td><td>' + fase + '</td>' +
+        cel(-a.desembolso) + cel(a.bruto) + cel(-a.trec) + cel(-a.opex) + cel(-a.dep) +
+        cel(-a.imposto) + cel(a.fcl) + cel(a.terminal) + cel(a.liquido) +
+        '<td class="' + (acum < 0 ? 'neg' : 'pos') + '">' + numero(acum, 0) + '</td></tr>');
+    });
+  } else {
+    html = '<table><thead><tr><th>Mês</th><th>Fase</th><th>Aporte</th><th>Aluguel bruto</th>' +
+      '<th>Receita efetiva</th><th>Tributos s/ receita</th><th>Custos</th><th>Depreciação</th>' +
+      '<th>IRPJ/CSLL</th><th>Caixa do mês</th><th>Acumulado descontado</th></tr></thead><tbody>';
+    var mapa = {};
+    m.linhas.forEach(function(L){ mapa[L.t] = L; });
+    for(i = 0; i <= m.fim; i++){
+      var L = mapa[i], ap = m.desembLocador[i] || 0;
+      var ehObra = ap > 0, ehLoc = !!L;
+      if(filtro === 'obra' && !ehObra) continue;
+      if(filtro === 'locacao' && !ehLoc) continue;
+      if(!ehObra && !ehLoc && i !== m.fim) continue;
+      var fase = ehObra && ehLoc ? 'obra e locação' : (ehObra ? 'obra' : (ehLoc ? 'locação' : 'evento final'));
+      var cls = ehObra ? 'fase-obra' : (ehLoc ? 'fase-loc' : '');
+      linhas.push('<tr class="' + cls + '"><td>' + i + '</td><td>' + fase + '</td>' +
+        cel(-ap) + cel(L ? L.bruto : 0) + cel(L ? L.efetiva : 0) + cel(L ? -L.trec : 0) +
+        cel(L ? -L.opex : 0) + cel(L ? -L.dep : 0) + cel(L ? -L.imposto : 0) +
+        cel(m.fc[i]) +
+        '<td class="' + (m.acumDescontado[i] < 0 ? 'neg' : 'pos') + '">' + numero(m.acumDescontado[i], 0) + '</td></tr>');
+    }
+  }
+  $('#tabelaFluxo').innerHTML = linhas.length
+    ? html + linhas.join('') + '</tbody></table>'
+    : '<div class="vazio">Nenhuma linha para o filtro escolhido.</div>';
+}
+
+/* ---------- visão do locatário ---------- */
+function visaoLocatario(m){
+  var taxa = lerNumero($('#tmaLocatario').value) / 100;
+  var credito = $('#locatarioTributos').checked ? lerNumero($('#aliqCredito').value) / 100 : 0;
+  var a = BTS.analisarLocatario(m, taxa, credito);
+  var vantajoso = a.diferenca > 0;
+  var linhas = [
+    ['Valor presente dos aluguéis', a.vpAluguel],
+    credito > 0 ? ['Aluguéis líquidos do efeito fiscal', a.vpAluguelLiquido] : null,
+    m.p.pctLocador < 1 ? ['Aporte do locatário durante a obra', a.vpAporteObra] : null,
+    m.p.destino === 'locatario' && m.p.valorReversao > 0 ? ['Pagamento na reversão', a.vpReversaoPaga] : null,
+    m.p.destino === 'locatario' ? ['Imóvel recebido ao final', -a.vpImovelRecebido] : null,
+    ['<b>Custo presente do BTS</b>', a.custoBTS]
+  ].filter(Boolean);
+  var linhas2 = [
+    ['Desembolsos da obra e do terreno', a.vpObraPropria],
+    ['Imóvel em patrimônio ao final do horizonte', -a.vpImovelProprio],
+    ['<b>Custo presente da execução própria</b>', a.custoProprio]
+  ];
+  function bloco(tit, arr){
+    return '<h4 style="font-family:var(--fonte-ui);font-size:13px;color:var(--tinta-2);margin:0 0 4px">' + tit + '</h4>' +
+      '<table class="tabela-simples"><tbody>' + arr.map(function(l){
+        return '<tr><td style="text-align:left">' + l[0] + '</td><td>' + moeda0(l[1]) + '</td></tr>';
+      }).join('') + '</tbody></table>';
+  }
+  $('#saidaLocatario').innerHTML =
+    '<div class="duo">' + bloco('Contratar o BTS', linhas) + bloco('Executar por conta própria', linhas2) + '</div>' +
+    '<div class="veredito ' + (vantajoso ? 'bom' : 'ruim') + '" style="margin-top:14px"><div>' +
+      (vantajoso
+        ? 'A locação sob medida custa <b>' + moeda0(Math.abs(a.diferenca)) + '</b> a menos em valor presente do que executar a obra — ' + pct(Math.abs(a.diferencaPct), 1) + ' de economia à taxa de ' + pct(taxa) + ' ao ano.'
+        : 'A locação sob medida custa <b>' + moeda0(Math.abs(a.diferenca)) + '</b> a mais em valor presente do que executar a obra — ' + pct(Math.abs(a.diferencaPct), 1) + ' acima, à taxa de ' + pct(taxa) + ' ao ano.') +
+    '</div></div>' +
+    '<p style="font-size:12.5px;color:var(--tinta-3);margin-top:10px">A comparação isola o custo financeiro. ' +
+    'Ficam de fora o custo de estruturar e fiscalizar a obra, o risco de atraso assumido por quem constrói, ' +
+    'a imobilização de capital e o tratamento contábil de cada alternativa.</p>';
+}
+
+/* ---------- sensibilidade ---------- */
+function sensibilidade(m){
+  var p = m.p;
+  var vars = [
+    {campo:'custoObra', rotulo:'Custo da obra ±15%', baixo:p.custoObra*0.85, alto:p.custoObra*1.15,
+     legendaBaixo:'obra 15% menor', legendaAlto:'obra 15% maior'},
+    {campo:'tmaNominal', rotulo:'TMA ±2 p.p.', baixo:p.tmaNominal-0.02, alto:p.tmaNominal+0.02,
+     legendaBaixo:'TMA −2 p.p.', legendaAlto:'TMA +2 p.p.'},
+    {campo:'reajAnual', rotulo:'Reajuste ±1,5 p.p.', baixo:Math.max(0,p.reajAnual-0.015), alto:p.reajAnual+0.015,
+     legendaBaixo:'reajuste menor', legendaAlto:'reajuste maior'},
+    {campo:'prazoObra', rotulo:'Prazo da obra ±6 meses', baixo:Math.max(1,p.prazoObra-6), alto:p.prazoObra+6,
+     legendaBaixo:'obra antecipada', legendaAlto:'obra atrasada'},
+    {campo:'vtPct', rotulo:'Valor residual ±15 p.p.', baixo:Math.max(0,p.vtPct-0.15), alto:p.vtPct+0.15,
+     legendaBaixo:'residual menor', legendaAlto:'residual maior'},
+    {campo:'inad', rotulo:'Inadimplência ±3 p.p.', baixo:Math.max(0,p.inad-0.03), alto:p.inad+0.03,
+     legendaBaixo:'menos perdas', legendaAlto:'mais perdas'},
+    {campo:'opexPct', rotulo:'Custos operacionais ±3 p.p.', baixo:Math.max(0,p.opexPct-0.03), alto:p.opexPct+0.03,
+     legendaBaixo:'custos menores', legendaAlto:'custos maiores'}
+  ];
+  U.tornadoSVG($('#gTornado'), BTS.tornado(p, vars));
+
+  var dTMA = [-0.02,-0.01,0,0.01,0.02], dObra = [-0.2,-0.1,0,0.1,0.2];
+  var html = '<div class="rolagem" style="max-height:none"><table><thead><tr><th>TMA \\ obra</th>' +
+    dObra.map(function(d){ return '<th>' + (d>0?'+':'') + numero(d*100,0) + '%</th>'; }).join('') + '</tr></thead><tbody>';
+  dTMA.forEach(function(dt){
+    html += '<tr><td>' + numero((p.tmaNominal+dt)*100, 2) + '% a.a.</td>';
+    dObra.forEach(function(dob){
+      var p2 = Object.assign({}, p);
+      p2.tmaNominal = p.tmaNominal + dt;
+      p2.custoObra = p.custoObra * (1 + dob);
+      p2.modo = 'informado'; p2.aluguelInformado = m.aluguel0;
+      var v = BTS.modelar(p2).VPL;
+      html += '<td class="' + (v < 0 ? 'neg' : 'pos') + '"' +
+        (dt === 0 && dob === 0 ? ' style="font-weight:700;background:var(--latao-claro)"' : '') +
+        '>' + numero(v/1e6, 2) + '</td>';
+    });
+    html += '</tr>';
+  });
+  $('#matrizSens').innerHTML = html + '</tbody></table></div>';
+}
+
+function rodarMonteCarlo(){
+  var alvo = $('#saidaMC');
+  alvo.innerHTML = '<div class="vazio">Simulando…</div>';
+  setTimeout(function(){
+    var p = lerPremissas();
+    var r = BTS.monteCarlo(p, {
+      iteracoes: parseInt($('#mcIter').value, 10),
+      obra: lerNumero($('#mcObra').value)/100,
+      reaj: lerNumero($('#mcReaj').value)/100,
+      atraso: Math.max(0, Math.round(lerNumero($('#mcAtraso').value)))
+    });
+    alvo.innerHTML = '<div id="gHist"></div>' +
+      '<table class="tabela-simples" style="margin-top:10px"><tbody>' +
+      '<tr><td style="text-align:left">Probabilidade de VPL negativo</td><td><b>' + pct(r.probNegativo, 1) + '</b></td></tr>' +
+      '<tr><td style="text-align:left">VPL — percentil 5 / mediana / percentil 95</td><td>' +
+        compacto(r.p5) + ' · ' + compacto(r.p50) + ' · ' + compacto(r.p95) + '</td></tr>' +
+      '<tr><td style="text-align:left">TIR — percentil 5 / mediana / percentil 95</td><td>' +
+        (r.tirP5 === null ? '—' : pct(r.tirP5) + ' · ' + pct(r.tirP50) + ' · ' + pct(r.tirP95)) + '</td></tr>' +
+      '<tr><td style="text-align:left">VPL médio das ' + numero(r.n, 0) + ' simulações</td><td>' + compacto(r.media) + '</td></tr>' +
+      '</tbody></table>';
+    U.histograma($('#gHist'), r.vpls, r.base);
+  }, 30);
+}
+
+/* ---------- renderização ---------- */
+function render(){
+  ajustarFormulario();
+  var p = lerPremissas();
+  var erros = validar(p);
+  if(erros.length){
+    $('#veredito').className = 'veredito ruim';
+    $('#veredito').innerHTML = '<div>' + erros.map(esc).join(' ') + '</div>';
+    return;
+  }
+  var m = BTS.modelar(p);
+  modeloAtual = m;
+
+  U.linhaDoTempo($('#linhaTempo'), m);
+  $('#rotuloAluguel').textContent = p.modo === 'equilibrio'
+    ? 'Aluguel mensal de equilíbrio' : (p.modo === 'pmt' ? 'Aluguel por equivalência financeira' : 'Aluguel mensal informado');
+  $('#valorAluguel').textContent = moeda(m.aluguel0);
+  $('#notaAluguel').textContent = 'primeiro mês · ' + pct(m.taxaLocacao, 3) + ' do investimento do locador ao mês · ' +
+    'último mês do contrato ' + moeda0(m.aluguel0 * m.fator(m.N));
+  $('#kpiVPL').textContent = compacto(m.VPL);
+  $('#kpiVPL').style.color = m.VPL < -1 ? 'var(--obra)' : (m.VPL > 1 ? 'var(--locacao)' : '');
+  $('#kpiTIR').textContent = m.TIR === null ? 'indefinida' : pct(m.TIR) + ' a.a.';
+  $('#kpiPayback').textContent = (m.payback === null || m.payback > m.fim) ? 'além do prazo' : meses(m.payback);
+  $('#kpiTaxaLoc').textContent = pct(m.taxaLocacao, 3) + ' a.m.';
+  $('#kpiYield').textContent = pct(m.yieldOnCost) + ' a.a.';
+  $('#kpiCapital').textContent = compacto(m.capital);
+
+  veredito(m);
+  resumo(m);
+  graficos(m);
+  tabelaFluxo(m);
+  visaoLocatario(m);
+  sensibilidade(m);
+  salvarEstado();
+}
+
+function agendar(){ clearTimeout(tempo); tempo = setTimeout(render, 130); }
+
+/* ---------- persistência ---------- */
+function coletar(){
+  var o = {};
+  CAMPOS.forEach(function(id){
+    var el = document.getElementById(id);
+    if(!el) return;
+    o[id] = el.type === 'checkbox' ? el.checked : el.value;
+  });
+  return o;
+}
+function aplicar(o){
+  CAMPOS.forEach(function(id){
+    var el = document.getElementById(id);
+    if(!el || !(id in o)) return;
+    if(el.type === 'checkbox') el.checked = !!o[id]; else el.value = o[id];
+  });
+}
+function salvarEstado(){
+  try{ localStorage.setItem(CHAVE, JSON.stringify(coletar())); }catch(e){}
+}
+function carregarEstado(){
+  try{
+    var s = localStorage.getItem(CHAVE);
+    if(s) aplicar(JSON.parse(s));
+  }catch(e){}
+}
+
+/* ---------- exemplos ---------- */
+var EXEMPLOS = [
+  {nome:'Centro de distribuição — reversão ao locatário',
+   v:{custoObra:'45.000.000,00', custoTerreno:'12.000.000,00', mesTerreno:'0', prazoObra:'18',
+      perfilDesembolso:'s_suave', pctLocador:'100', prazoLocacao:'15', unidadePrazo:'anos', carencia:'0',
+      indiceReajuste:'ipca', reajusteTaxa:'4,00', periodicidadeReajuste:'anual', momentoPagamento:'postecipado',
+      modoAluguel:'equilibrio', tma:'11,00', tipoTMA:'nominal', inadimplencia:'2,00', aliqReceita:'3,65',
+      aliqLucro:'34,00', opexPct:'2,00', opexFixo:'0,00', usarDepreciacao:true, vidaUtil:'25',
+      destinoFinal:'locatario', valorTerminalPct:'55,00', corrigirTerminal:'sim', valorReversao:'0,00',
+      tributarGanho:false, tmaLocatario:'9,00'}},
+  {nome:'Unidade fabril — imóvel fica com o locador',
+   v:{custoObra:'30.000.000,00', custoTerreno:'6.000.000,00', mesTerreno:'0', prazoObra:'24',
+      perfilDesembolso:'s_forte', pctLocador:'100', prazoLocacao:'20', unidadePrazo:'anos', carencia:'2',
+      indiceReajuste:'igpm', reajusteTaxa:'5,00', periodicidadeReajuste:'anual', momentoPagamento:'postecipado',
+      modoAluguel:'equilibrio', tma:'12,00', tipoTMA:'nominal', inadimplencia:'3,00', aliqReceita:'3,65',
+      aliqLucro:'34,00', opexPct:'4,00', opexFixo:'0,00', usarDepreciacao:true, vidaUtil:'25',
+      destinoFinal:'locador', valorTerminalPct:'65,00', corrigirTerminal:'sim', valorReversao:'0,00',
+      tributarGanho:true, aliqGanho:'15,00', tmaLocatario:'8,00'}},
+  {nome:'Edifício corporativo — obra longa e carência',
+   v:{custoObra:'120.000.000,00', custoTerreno:'40.000.000,00', mesTerreno:'0', prazoObra:'36',
+      perfilDesembolso:'s_suave', pctLocador:'85', prazoLocacao:'25', unidadePrazo:'anos', carencia:'3',
+      indiceReajuste:'ipca', reajusteTaxa:'3,50', periodicidadeReajuste:'anual', momentoPagamento:'antecipado',
+      modoAluguel:'equilibrio', tma:'6,00', tipoTMA:'real', inadimplencia:'4,00', aliqReceita:'3,65',
+      aliqLucro:'34,00', opexPct:'5,00', opexFixo:'0,00', usarDepreciacao:true, vidaUtil:'25',
+      destinoFinal:'locador', valorTerminalPct:'70,00', corrigirTerminal:'sim', valorReversao:'0,00',
+      tributarGanho:false, tmaLocatario:'7,00'}}
+];
+
+/* ---------- CSV ---------- */
+function baixar(nome, conteudo, tipo){
+  var b = new Blob(['\ufeff' + conteudo], {type: tipo || 'text/plain;charset=utf-8'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(b); a.download = nome;
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 200);
+}
+function exportarCSV(){
+  var m = modeloAtual;
+  if(!m) return;
+  var mapa = {}, i, L, l = [];
+  m.linhas.forEach(function(x){ mapa[x.t] = x; });
+  l.push(['Mes','Fase','Aporte do locador','Aluguel bruto','Receita efetiva','Tributos sobre receita',
+          'Custos operacionais','Depreciacao','IRPJ CSLL','Evento final','Caixa do mes','Acumulado descontado'].join(';'));
+  function n(v){ return numero(v, 2); }
+  for(i = 0; i <= m.fim; i++){
+    L = mapa[i];
+    var ap = m.desembLocador[i] || 0;
+    var fase = ap > 0 && L ? 'obra e locacao' : (ap > 0 ? 'obra' : (L ? 'locacao' : (i === m.fim ? 'evento final' : 'carencia')));
+    var ev = (i === m.fim) ? (m.entradaFinal - m.impostoGanho) : 0;
+    l.push([i, fase, n(-ap), n(L?L.bruto:0), n(L?L.efetiva:0), n(L?-L.trec:0), n(L?-L.opex:0),
+            n(L?-L.dep:0), n(L?-L.imposto:0), n(ev), n(m.fc[i]), n(m.acumDescontado[i])].join(';'));
+  }
+  l.push('');
+  l.push(['Aluguel inicial', n(m.aluguel0)].join(';'));
+  l.push(['VPL', n(m.VPL)].join(';'));
+  l.push(['TIR anual', m.TIR === null ? 'indefinida' : numero(m.TIR*100, 4) + '%'].join(';'));
+  l.push(['Payback descontado (meses)', m.payback === null ? 'alem do prazo' : numero(m.payback, 1)].join(';'));
+  baixar('fluxo-bts.csv', l.join('\n'), 'text/csv;charset=utf-8');
+}
+
+/* ---------- eventos ---------- */
+function ligar(){
+  CAMPOS.forEach(function(id){
+    var el = document.getElementById(id);
+    if(!el) return;
+    el.addEventListener('input', agendar);
+    el.addEventListener('change', agendar);
+  });
+  $$('.moeda, .pct').forEach(function(el){
+    el.addEventListener('blur', function(){
+      var v = lerNumero(el.value);
+      if(el.classList.contains('moeda')) el.value = numero(v, 2);
+      else el.value = numero(v, v % 1 === 0 ? 0 : 2);
+    });
+    el.addEventListener('focus', function(){ el.select(); });
+  });
+  $$('.abas [role=tab]').forEach(function(b){
+    b.addEventListener('click', function(){
+      $$('.abas [role=tab]').forEach(function(x){ x.setAttribute('aria-selected', 'false'); });
+      b.setAttribute('aria-selected', 'true');
+      $$('.folha').forEach(function(f){ f.classList.remove('ativa'); });
+      $('#folha-' + b.dataset.folha).classList.add('ativa');
+    });
+  });
+  $('#btnCSV').addEventListener('click', exportarCSV);
+  $('#btnMC').addEventListener('click', rodarMonteCarlo);
+  $('#btnImprimir').addEventListener('click', function(){ window.print(); });
+  $('#btnSalvar').addEventListener('click', function(){
+    baixar('cenario-bts.json', JSON.stringify(coletar(), null, 2), 'application/json');
+  });
+  $('#btnAbrir').addEventListener('click', function(){ $('#arquivoCenario').click(); });
+  $('#arquivoCenario').addEventListener('change', function(e){
+    var f = e.target.files[0];
+    if(!f) return;
+    var r = new FileReader();
+    r.onload = function(){
+      try{ aplicar(JSON.parse(r.result)); render(); }
+      catch(err){ alert('O arquivo não é um cenário válido.'); }
+    };
+    r.readAsText(f);
+    e.target.value = '';
+  });
+  $('#btnRestaurar').addEventListener('click', function(){
+    aplicar(PADROES); render();
+  });
+  var menu = $('#menuExemplos');
+  menu.innerHTML = EXEMPLOS.map(function(e, i){
+    return '<button type="button" role="menuitem" data-ex="' + i + '">' + esc(e.nome.split(' — ')[0]) +
+           '<small>' + esc(e.nome.split(' — ')[1] || '') + '</small></button>';
+  }).join('');
+  function fecharMenu(){ menu.hidden = true; }
+  $('#btnExemplos').addEventListener('click', function(ev){
+    ev.stopPropagation();
+    menu.hidden = !menu.hidden;
+    if(!menu.hidden){ var b = menu.querySelector('button'); if(b) b.focus(); }
+  });
+  menu.addEventListener('click', function(ev){
+    var b = ev.target.closest('[data-ex]');
+    if(!b) return;
+    var e = EXEMPLOS[parseInt(b.dataset.ex, 10)];
+    if(e){ aplicar(PADROES); aplicar(e.v); render(); }
+    fecharMenu();
+  });
+  document.addEventListener('click', function(ev){
+    if(!menu.hidden && !menu.contains(ev.target)) fecharMenu();
+  });
+  document.addEventListener('keydown', function(ev){
+    if(ev.key === 'Escape') fecharMenu();
+  });
+  $('#btnTema').addEventListener('click', function(){
+    var atual = document.documentElement.getAttribute('data-tema');
+    var novo = atual === 'claro' ? 'escuro' : 'claro';
+    document.documentElement.setAttribute('data-tema', novo);
+    $('#btnTema').textContent = novo === 'claro' ? 'Tema escuro' : 'Tema claro';
+    try{ localStorage.setItem('bts-tema', novo); }catch(e){}
+  });
+}
+
+/* ---------- partida ---------- */
+function iniciar(){
+  PADROES = coletar();
+  try{
+    var t = localStorage.getItem('bts-tema');
+    if(t){ document.documentElement.setAttribute('data-tema', t);
+           $('#btnTema').textContent = t === 'claro' ? 'Tema escuro' : 'Tema claro'; }
+  }catch(e){}
+  carregarEstado();
+  ligar();
+  if(window.MANUAL) window.MANUAL.montar();
+  render();
+}
+if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', iniciar);
+else iniciar();
+
+window.APP = { render: render, lerPremissas: lerPremissas, modelo: function(){ return modeloAtual; } };
+})();
+
+/* ============================================================
+   Manual interativo
+   ============================================================ */
+(function(){
+"use strict";
+var U = window.UI, $ = U.$, $$ = U.$$;
+var numero = U.numero, moeda = U.moeda, pct = U.pct, esc = U.esc, lerNumero = U.lerNumero;
+var CHAVE = 'bts-manual-lidos';
+
+var SECOES = [
+  {cap:'Primeiros passos', id:'inicio', t:'Como usar em cinco minutos', html:
+   '<p>Preencha o trilho à esquerda de cima para baixo. A cada alteração o modelo é recalculado e todas as abas se atualizam.</p>'+
+   '<ol>'+
+   '<li>Informe o custo da obra, o terreno e o prazo de construção.</li>'+
+   '<li>Defina o prazo do contrato, o índice de reajuste e a taxa de atratividade exigida.</li>'+
+   '<li>Ajuste tributos e custos operacionais que ficam a cargo do locador.</li>'+
+   '<li>Escolha o que acontece com o imóvel ao final: fica com o locador ou reverte ao locatário.</li>'+
+   '<li>Leia o aluguel resultante no painel superior e confira os indicadores ao lado.</li>'+
+   '</ol>'+
+   '<p>O botão <b>Exemplos</b> carrega cenários prontos para você ver o comportamento do modelo antes de montar o seu. ' +
+   'O cenário em uso fica gravado no próprio navegador e volta na próxima visita.</p>'},
+
+  {cap:'Primeiros passos', id:'conceito', t:'O que o modelo representa', html:
+   '<p>No Built to Suit o investidor adquire ou já detém um terreno, constrói um imóvel conforme a especificação de um ' +
+   'usuário determinado e o entrega em locação por prazo longo. O aluguel não é fixado por comparação com o mercado: ' +
+   'ele é calculado para devolver o capital investido e remunerá-lo à taxa exigida, dentro do prazo contratado.</p>'+
+   '<p>Daí decorrem as três características que o modelo precisa capturar:</p>'+
+   '<ul>'+
+   '<li><b>Prazo longo e denúncia onerosa.</b> O contrato existe para dar horizonte à amortização. No direito brasileiro ' +
+   'a locação sob medida tem disciplina própria no art. 54-A da Lei 8.245/1991, incluído pela Lei 12.744/2012, que admite ' +
+   'a livre pactuação das cláusulas e a renúncia ao direito de revisão do aluguel.</li>'+
+   '<li><b>Investimento antes da receita.</b> Há um período, às vezes de anos, em que só existe desembolso. Esse capital ' +
+   'precisa ser capitalizado até a entrega.</li>'+
+   '<li><b>Imóvel específico.</b> Um galpão desenhado para um processo industrial vale menos para terceiros. Isso aparece ' +
+   'no modelo como valor residual reduzido.</li>'+
+   '</ul>'},
+
+  {cap:'Fase de obra', id:'cronograma', t:'Cronograma físico-financeiro', html:
+   '<p>O custo da obra é distribuído ao longo dos meses de construção segundo o perfil escolhido. A curva S suave ' +
+   'concentra os desembolsos no miolo da obra; a acentuada aprofunda essa concentração; a linear distribui em parcelas iguais.</p>'+
+   '<p>O perfil personalizado aceita os percentuais mês a mês, separados por ponto e vírgula, espaço ou quebra de linha. ' +
+   'Os valores são normalizados: se você digitar <code>1 2 3 4</code>, o modelo entende 10%, 20%, 30% e 40%.</p>'+
+   '<p>O terreno entra como desembolso único no mês indicado, normalmente o mês zero. A distribuição importa porque ' +
+   'cada real desembolsado cedo custa mais juros até a entrega.</p>'},
+
+  {cap:'Fase de obra', id:'capital', t:'Capital a remunerar na entrega', lab:'capitalizacao', html:
+   '<p>Cada parcela desembolsada é levada à data de entrega pela taxa de atratividade. A soma é o capital que o aluguel ' +
+   'precisa amortizar e remunerar.</p>'+
+   '<div class="formula"><b>C = Σ D<sub>t</sub> · (1 + i)<sup>(T − t)</sup></b>' +
+   'D<sub>t</sub> é o desembolso do mês t, T é o mês da entrega e i é a taxa mensal equivalente à TMA.</div>'+
+   '<p>A diferença entre esse capital e a soma nominal dos desembolsos é o que o painel chama de <b>juros da obra</b>. ' +
+   'Em obras longas ela pesa: dois anos de construção a 12% ao ano acrescentam por volta de 13% ao capital a remunerar.</p>'+
+   '<p>A taxa mensal usada é a equivalente composta, não a proporcional:</p>'+
+   '<div class="formula"><b>i<sub>mês</sub> = (1 + i<sub>ano</sub>)<sup>1/12</sup> − 1</b>' +
+   'A 12% ao ano, isso dá 0,9489% ao mês, e não 1%.</div>'},
+
+  {cap:'Fase de locação', id:'modos', t:'Os três modos de definir o aluguel', lab:'pmt', html:
+   '<p><b>Equivalência financeira</b> devolve a série uniforme que amortiza o capital na TMA, como uma prestação de ' +
+   'financiamento. É o cálculo clássico e o mais fácil de explicar numa negociação.</p>'+
+   '<div class="formula"><b>A = C · i / [1 − (1 + i)<sup>−n</sup>]</b>' +
+   'n é o número de meses do contrato. Com pagamento antecipado, divide-se o resultado por (1 + i).</div>'+
+   '<p>Esse valor, porém, ignora tributos, custos operacionais, inadimplência e o que acontece com o imóvel ao final. ' +
+   'Um aluguel calculado só por ele costuma ser insuficiente: parte da receita vai para o fisco antes de chegar ao investidor.</p>'+
+   '<p><b>Aluguel de equilíbrio</b> resolve numericamente o valor inicial que zera o valor presente líquido do fluxo ' +
+   'completo, já líquido de tributos e custos e já considerando o destino do imóvel. É o modo recomendado.</p>'+
+   '<p><b>Aluguel informado</b> serve para o caminho inverso: você digita o valor já negociado e o modelo devolve o ' +
+   'retorno que ele produz. É assim que se avalia uma proposta recebida.</p>'+
+   '<p>Compare sempre os dois primeiros. Quando o imóvel reverte ao locatário, o aluguel de equilíbrio fica acima da ' +
+   'equivalência pura, porque não há valor residual para socorrer o investidor. Quando o imóvel permanece com o locador ' +
+   'e guarda valor relevante, pode ficar abaixo.</p>'},
+
+  {cap:'Fase de locação', id:'reajuste', t:'Reajuste, taxa nominal e taxa real', lab:'fisher', html:
+   '<p>O reajuste anual é aplicado em degraus: os doze primeiros aluguéis mantêm o valor inicial, os doze seguintes ' +
+   'sobem pelo índice, e assim por diante. A opção mensal distribui o mesmo efeito pro rata, o que serve para simulações ' +
+   'mas raramente corresponde ao contrato.</p>'+
+   '<p>A armadilha mais comum da modelagem é misturar naturezas. Se você projeta aluguéis corrigidos pelo IPCA, ' +
+   'os fluxos são nominais e precisam ser descontados por uma taxa nominal. Descontar fluxos nominais por uma taxa real ' +
+   'infla o resultado e produz um aluguel artificialmente baixo.</p>'+
+   '<div class="formula"><b>(1 + i<sub>nominal</sub>) = (1 + i<sub>real</sub>) · (1 + inflação)</b>' +
+   'Escolhendo "Real" no campo de natureza da taxa, o modelo faz essa conversão automaticamente com o índice informado.</div>'+
+   '<p>O gráfico de evolução do aluguel mostra as duas leituras: o valor nominal contratado e o valor equivalente a ' +
+   'preços de hoje. Quando o reajuste apenas repõe a inflação projetada, a segunda linha é horizontal.</p>'},
+
+  {cap:'Fase de locação', id:'tributos', t:'Tributos, custos e depreciação', html:
+   '<p>O modelo separa três incidências:</p>'+
+   '<ul>'+
+   '<li><b>Sobre a receita</b> — PIS, Cofins e, quando o município entender incidente, o ISS. O padrão de 3,65% ' +
+   'corresponde ao regime cumulativo.</li>'+
+   '<li><b>Sobre o lucro</b> — IRPJ e CSLL, aplicados sobre a receita já deduzida dos custos operacionais e da depreciação. ' +
+   'Quando a base é negativa, o modelo não gera imposto nem crédito.</li>'+
+   '<li><b>Sobre o ganho de capital</b> — opcional, incide apenas se você marcar a alienação do imóvel ao final.</li>'+
+   '</ul>'+
+   '<p>A depreciação não é saída de caixa, mas reduz a base tributável. Ignorá-la superestima o imposto e, por ' +
+   'consequência, o aluguel de equilíbrio. Só a edificação deprecia; o terreno não. A vida útil padrão de 25 anos ' +
+   'corresponde à taxa de 4% ao ano usualmente admitida para edificações.</p>'+
+   '<p>A alíquota efetiva depende do regime tributário do locador e da estrutura adotada. Trate os padrões como ponto ' +
+   'de partida e confirme com a assessoria contábil do caso.</p>'},
+
+  {cap:'Fase de locação', id:'destino', t:'Destino do imóvel ao final', html:
+   '<p>Esta é a escolha que mais muda o resultado, e a que mais se erra.</p>'+
+   '<p>Se o imóvel <b>permanece com o locador</b>, ele continua valendo alguma coisa depois do contrato. Esse valor entra ' +
+   'no fluxo como valor terminal e reduz o quanto o aluguel precisa amortizar. O percentual padrão de 60% do investimento ' +
+   'já embute desgaste físico e a especificidade do projeto — imóveis muito customizados justificam percentuais menores.</p>'+
+   '<p>Se o imóvel <b>reverte ao locatário</b>, não há valor terminal para o investidor. Todo o capital precisa ser ' +
+   'devolvido pelos aluguéis, e o aluguel de equilíbrio sobe. É o erro mais frequente em planilhas caseiras: manter o ' +
+   'valor residual no fluxo de quem não vai ficar com o bem.</p>'+
+   '<p>A reversão pode ser onerosa. Nesse caso informe o valor que o locatário paga ao final — funciona como opção de ' +
+   'compra e alivia proporcionalmente o aluguel.</p>'},
+
+  {cap:'Resultados', id:'indicadores', t:'Como ler os indicadores', html:
+   '<p><b>VPL</b> é o valor que o contrato agrega além da remuneração já exigida pela TMA. No modo de equilíbrio ele é ' +
+   'zero por construção — o que interessa ali é o aluguel, não o VPL.</p>'+
+   '<p><b>TIR</b> é a taxa que zera o valor presente do fluxo. Só é comparável à TMA se ambas tiverem a mesma natureza: ' +
+   'como os fluxos são nominais, a TIR devolvida também é nominal. Fluxos que trocam de sinal mais de uma vez podem não ' +
+   'ter TIR única; nesse caso o painel informa que ela é indefinida e o VPL passa a ser o critério.</p>'+
+   '<p><b>Payback descontado</b> é o mês em que o caixa acumulado, já trazido a valor presente, cruza o zero. Num BTS ' +
+   'bem calibrado ele fica próximo do término do contrato: se sobrasse muito prazo depois do payback, o aluguel estaria ' +
+   'alto demais para o risco assumido.</p>'+
+   '<p><b>Yield on cost</b> é o resultado operacional do primeiro ano de locação dividido pelo investimento do locador. ' +
+   'Serve para comparar o projeto com imóveis prontos à venda no mercado.</p>'+
+   '<p><b>Aluguel sobre investimento</b> é a taxa mensal que o mercado imobiliário usa como referência rápida. ' +
+   'Valores muito acima da faixa praticada em imóveis semelhantes costumam indicar premissa de custo inflada ou prazo curto demais.</p>'},
+
+  {cap:'Resultados', id:'locatario', t:'A comparação do lado do locatário', html:
+   '<p>A aba de visão do locatário responde a uma pergunta diferente: para quem vai usar o imóvel, sai mais barato ' +
+   'pagar aluguel ou construir?</p>'+
+   '<p>Os dois caminhos são trazidos a valor presente pela taxa de desconto do locatário, que normalmente é menor que a ' +
+   'do investidor — ele não está assumindo risco de desenvolvimento. De um lado, a soma dos aluguéis; do outro, os ' +
+   'desembolsos da obra menos o valor do imóvel que ficaria em seu patrimônio.</p>'+
+   '<p>A comparação isola o custo financeiro. Ficam fora dela três coisas que costumam decidir a escolha na prática: ' +
+   'o custo de estruturar e fiscalizar uma obra, o risco de atraso e de aditivo que passa para quem constrói, e a ' +
+   'imobilização de capital que poderia ir para a atividade-fim.</p>'},
+
+  {cap:'Resultados', id:'risco', t:'Sensibilidade e Monte Carlo', html:
+   '<p>O gráfico de impacto isolado mostra quanto o VPL se move quando cada premissa se afasta do cenário-base, mantidas ' +
+   'as demais e <b>mantido o aluguel</b> — afinal, depois de assinado o contrato o aluguel não se ajusta às frustrações ' +
+   'do investidor. As barras são ordenadas pela amplitude, de modo que a primeira é a variável que merece mais atenção ' +
+   'na negociação.</p>'+
+   '<p>A matriz cruza taxa de atratividade e custo da obra, as duas fontes de erro mais comuns. Os valores estão em ' +
+   'milhões de reais.</p>'+
+   '<p>A simulação de Monte Carlo sorteia custo de obra, reajuste, atraso e inadimplência em distribuições triangulares ' +
+   'e devolve a distribuição do VPL. A leitura mais útil é a probabilidade de VPL negativo: ela traduz em uma ' +
+   'só medida o risco de o contrato, como assinado, não entregar a remuneração exigida.</p>'},
+
+  {cap:'Encerramento', id:'limites', t:'O que o modelo não faz', html:
+   '<p>Nenhum modelo substitui o exame do contrato. Estes pontos ficam fora do cálculo e precisam ser tratados à parte:</p>'+
+   '<ul>'+
+   '<li><b>Estrutura de financiamento.</b> O modelo trata o capital como um bloco remunerado à TMA. Dívida com carência, ' +
+   'CRI e alavancagem mudam o fluxo do acionista.</li>'+
+   '<li><b>Rescisão antecipada.</b> A multa pactuada, que no BTS costuma alcançar os aluguéis vincendos, não é modelada.</li>'+
+   '<li><b>Vacância após o contrato.</b> O valor terminal supõe realização a preço de mercado, sem prazo de exposição.</li>'+
+   '<li><b>Reforma tributária.</b> A transição para IBS e CBS altera a tributação da receita de locação ao longo do próprio ' +
+   'prazo de contratos longos. O campo de tributos sobre a receita aceita um único percentual médio; contratos que ' +
+   'atravessam a transição merecem simulações separadas por período.</li>'+
+   '<li><b>Aportes intermediários.</b> Expansões e retrofits durante a locação precisam ser modelados como um segundo ciclo.</li>'+
+   '</ul>'+
+   '<p>Os resultados dependem inteiramente das premissas informadas e não substituem análise técnica, contábil e jurídica ' +
+   'do caso concreto.</p>'}
+];
+
+var LABS = {
+  capitalizacao: {
+    titulo: 'Levar um desembolso até a entrega',
+    campos: [['labCapV','Valor desembolsado (R$)','1.000.000,00'],
+             ['labCapT','Taxa anual (%)','12,00'],
+             ['labCapN','Meses até a entrega','18']],
+    calc: function(v){
+      var i = BTS.mensalDeAnual(v.labCapT/100);
+      var montante = v.labCapV * Math.pow(1+i, v.labCapN);
+      return 'Taxa mensal equivalente: <b>' + numero(i*100, 4) + '%</b><br>' +
+             'Montante na entrega: <b>' + moeda(montante) + '</b><br>' +
+             'Juros embutidos: ' + moeda(montante - v.labCapV) +
+             ' · ' + pct(montante/v.labCapV - 1) + ' sobre o valor original';
+    }
+  },
+  pmt: {
+    titulo: 'Aluguel por equivalência financeira',
+    campos: [['labPmtC','Capital na entrega (R$)','60.000.000,00'],
+             ['labPmtT','TMA anual (%)','11,00'],
+             ['labPmtN','Prazo do contrato (anos)','15']],
+    calc: function(v){
+      var i = BTS.mensalDeAnual(v.labPmtT/100), n = Math.round(v.labPmtN*12);
+      var a = BTS.pmt(v.labPmtC, i, n, false);
+      return 'Aluguel mensal: <b>' + moeda(a) + '</b><br>' +
+             'Equivale a ' + pct(a/v.labPmtC, 3) + ' do capital ao mês<br>' +
+             'Soma nominal dos aluguéis: ' + moeda(a*n) + ' em ' + n + ' meses';
+    }
+  },
+  fisher: {
+    titulo: 'Converter taxa real em nominal',
+    campos: [['labFiR','Taxa real (%)','6,00'],
+             ['labFiI','Inflação projetada (%)','4,00']],
+    calc: function(v){
+      var nom = BTS.fisher(v.labFiR/100, v.labFiI/100);
+      var soma = v.labFiR/100 + v.labFiI/100;
+      return 'Taxa nominal correta: <b>' + numero(nom*100, 4) + '% ao ano</b><br>' +
+             'A soma simples daria ' + numero(soma*100, 2) + '% — diferença de ' +
+             numero((nom-soma)*100, 2) + ' ponto percentual, que ao longo de vinte anos muda o aluguel de forma sensível.';
+    }
+  }
+};
+
+function lidos(){
+  try{ return JSON.parse(localStorage.getItem(CHAVE) || '[]'); }catch(e){ return []; }
+}
+function gravarLidos(a){
+  try{ localStorage.setItem(CHAVE, JSON.stringify(a)); }catch(e){}
+}
+
+function montar(){
+  var nav = $('#manualNav'), txt = $('#manualTxt');
+  if(!nav || !txt) return;
+  var marcados = lidos();
+
+  var capAtual = '', navHTML = '<input type="text" id="manualBusca" placeholder="Buscar no manual" aria-label="Buscar no manual">';
+  SECOES.forEach(function(s){
+    if(s.cap !== capAtual){ capAtual = s.cap; navHTML += '<div class="cap">' + esc(s.cap) + '</div>'; }
+    navHTML += '<a href="#man-' + s.id + '" data-id="' + s.id + '"' +
+      (marcados.indexOf(s.id) > -1 ? ' class="lido"' : '') + '>' + esc(s.t) + '</a>';
+  });
+  navHTML += '<div style="margin-top:10px;font-size:12px;color:var(--tinta-3)" id="manualProgresso"></div>';
+  nav.innerHTML = navHTML;
+
+  txt.innerHTML = SECOES.map(function(s){
+    var lab = '';
+    if(s.lab && LABS[s.lab]){
+      var L = LABS[s.lab];
+      lab = '<div class="lab" data-lab="' + s.lab + '"><h5>' + esc(L.titulo) + '</h5><div class="tripla">' +
+        L.campos.map(function(c){
+          return '<div class="campo" style="margin-top:0"><label for="' + c[0] + '">' + esc(c[1]) + '</label>' +
+                 '<input type="text" inputmode="decimal" id="' + c[0] + '" value="' + c[2] + '"></div>';
+        }).join('') + '</div><div class="saida" id="saida-' + s.lab + '"></div></div>';
+    }
+    return '<section id="man-' + s.id + '"><h3>' + esc(s.t) + '</h3>' + s.html + lab +
+      '<label class="marcar"><input type="checkbox" data-marcar="' + s.id + '"' +
+      (marcados.indexOf(s.id) > -1 ? ' checked' : '') + '> marcar como lido</label></section>';
+  }).join('');
+
+  /* laboratórios */
+  Object.keys(LABS).forEach(function(k){
+    var L = LABS[k];
+    function rodar(){
+      var v = {};
+      L.campos.forEach(function(c){ v[c[0]] = lerNumero($('#' + c[0]).value); });
+      var el = $('#saida-' + k);
+      if(el) el.innerHTML = L.calc(v);
+    }
+    L.campos.forEach(function(c){
+      var el = $('#' + c[0]);
+      if(el) el.addEventListener('input', rodar);
+    });
+    rodar();
+  });
+
+  /* progresso */
+  function atualizarProgresso(){
+    var m = lidos();
+    var el = $('#manualProgresso');
+    if(el) el.textContent = m.length + ' de ' + SECOES.length + ' seções lidas';
+  }
+  atualizarProgresso();
+  $$('[data-marcar]', txt).forEach(function(cb){
+    cb.addEventListener('change', function(){
+      var m = lidos(), id = cb.dataset.marcar, i = m.indexOf(id);
+      if(cb.checked && i < 0) m.push(id);
+      if(!cb.checked && i > -1) m.splice(i, 1);
+      gravarLidos(m);
+      var link = nav.querySelector('[data-id="' + id + '"]');
+      if(link) link.classList.toggle('lido', cb.checked);
+      atualizarProgresso();
+    });
+  });
+
+  /* busca */
+  var busca = $('#manualBusca');
+  busca.addEventListener('input', function(){
+    var q = busca.value.trim().toLowerCase();
+    $$('section', txt).forEach(function(sec){
+      var achou = !q || sec.textContent.toLowerCase().indexOf(q) > -1;
+      sec.style.display = achou ? '' : 'none';
+    });
+    $$('a[data-id]', nav).forEach(function(a){
+      var sec = $('#man-' + a.dataset.id);
+      a.style.display = (sec && sec.style.display === 'none') ? 'none' : '';
+    });
+  });
+
+  /* navegação ativa */
+  if('IntersectionObserver' in window){
+    var obs = new IntersectionObserver(function(entradas){
+      entradas.forEach(function(e){
+        if(!e.isIntersecting) return;
+        var id = e.target.id.replace('man-', '');
+        $$('a[data-id]', nav).forEach(function(a){ a.classList.toggle('atual', a.dataset.id === id); });
+      });
+    }, {rootMargin: '-70px 0px -65% 0px'});
+    $$('section', txt).forEach(function(s){ obs.observe(s); });
+  }
+}
+
+window.MANUAL = { montar: montar, secoes: SECOES };
+})();
+
+/* ============================================================
+   Abertura animada e termo de uso
+   ============================================================ */
+(function(){
+"use strict";
+var $ = function(s){ return document.querySelector(s); };
+var CHAVE = 'bts-termo-v1';
+var DURACAO = 4000;
+var raiz = document.documentElement;
+var capa, animacao, termo, chk, aceitar, recusar, pular;
+var relogio = null, encerrado = false;
+
+function reduzido(){
+  try{ return window.matchMedia('(prefers-reduced-motion: reduce)').matches; }
+  catch(e){ return false; }
+}
+function jaAceito(){
+  try{ return localStorage.getItem(CHAVE) === 'sim'; }catch(e){ return false; }
+}
+
+function fechar(){
+  if(encerrado) return;
+  encerrado = true;
+  clearTimeout(relogio);
+  capa.classList.add('saindo');
+  raiz.classList.remove('travado');
+  setTimeout(function(){ capa.hidden = true; }, 480);
+}
+
+function mostrarTermo(){
+  clearTimeout(relogio);
+  if(jaAceito()){ fechar(); return; }
+  animacao.hidden = true;
+  pular.hidden = true;
+  termo.hidden = false;
+  chk.checked = false;
+  aceitar.disabled = true;
+  setTimeout(function(){ chk.focus(); }, 60);
+}
+
+function abrirTermo(){
+  encerrado = false;
+  capa.hidden = false;
+  capa.classList.remove('saindo');
+  raiz.classList.add('travado');
+  animacao.hidden = true;
+  pular.hidden = true;
+  termo.hidden = false;
+  aceitar.disabled = !chk.checked;
+}
+
+function iniciar(){
+  capa = $('#abertura'); animacao = $('#aberturaAnimacao'); termo = $('#aberturaTermo');
+  chk = $('#chkTermo'); aceitar = $('#btnAceitar'); recusar = $('#btnRecusar'); pular = $('#btnPular');
+  if(!capa) return;
+
+  raiz.classList.add('travado');
+
+  chk.addEventListener('change', function(){ aceitar.disabled = !chk.checked; });
+  aceitar.addEventListener('click', function(){
+    if(!chk.checked) return;
+    try{ localStorage.setItem(CHAVE, 'sim'); }catch(e){}
+    fechar();
+  });
+  recusar.addEventListener('click', function(){
+    termo.innerHTML = '<h2>Sem problema</h2>' +
+      '<p class="selo">O sistema não será aberto sem a concordância com as condições de uso.</p>' +
+      '<p style="font-size:13.5px;line-height:1.6">Se mudar de ideia, recarregue a página. ' +
+      'Se o que incomodou foi alguma cláusula específica, vale registrar: o termo existe para deixar claro que ' +
+      'os números saem das premissas que você digita, e não de uma avaliação profissional do seu caso.</p>' +
+      '<div class="linha-botoes" style="margin-top:16px"><button type="button" class="btn btn-forte" id="btnVoltarTermo">Reler as condições</button></div>';
+    $('#btnVoltarTermo').addEventListener('click', function(){ location.reload(); });
+  });
+  pular.addEventListener('click', mostrarTermo);
+  capa.addEventListener('keydown', function(e){
+    if(e.key === 'Escape' && !animacao.hidden) mostrarTermo();
+  });
+
+  var botaoRodape = $('#btnTermos');
+  if(botaoRodape) botaoRodape.addEventListener('click', abrirTermo);
+
+  relogio = setTimeout(mostrarTermo, reduzido() ? 300 : DURACAO);
+}
+
+if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', iniciar);
+else iniciar();
+
+window.ABERTURA = { mostrarTermo: mostrarTermo, fechar: fechar, abrirTermo: abrirTermo,
+                    aceito: jaAceito, duracao: DURACAO };
+})();
+</script>
+</body>
+</html>

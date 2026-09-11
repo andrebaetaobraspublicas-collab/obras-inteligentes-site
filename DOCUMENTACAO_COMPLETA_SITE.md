@@ -134,6 +134,7 @@ Inventario originalmente verificado em 21/07/2026 e atualizado em 09/09/2026 par
 | 79 / CARBONO | CarbonCalc Pro | `/carboncalcpro/` | `C:\Obras Inteligentes\carboncalcpro\index.html` | existe | 200 |
 | 80 / REFRIGERACAO | FrioPro | `/friopro/` | `C:\Obras Inteligentes\friopro\index.html` | existe | 200 |
 | 81 / CONCESSOES | ConcessaoRod | `/concessaorod/` | `C:\Obras Inteligentes\concessaorod\index.html` | existe | 200 |
+| 82 / BUILT TO SUIT | BTS Financeiro | `/bts-financeiro/` | `C:\Obras Inteligentes\bts-financeiro\index.html` | existe | 200 |
 
 ## Tamanhos verificados
 
@@ -222,6 +223,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/carboncalcpro/` | 186068 bytes | 184143 caracteres |
 | `/friopro/` | 7125228 bytes | 7106816 caracteres |
 | `/concessaorod/` | 265214 bytes | 263033 caracteres |
+| `/bts-financeiro/` | 124921 bytes | 124028 caracteres |
 | `/entenda-ia/` | 175035 bytes | 172793 caracteres |
 | `/abc-fiscal/` | 351255 bytes | 349022 caracteres |
 
@@ -1919,14 +1921,33 @@ Ultima atualizacao:
 - Data: 10/09/2026
 - Alteracao: inclusao de novo card na home, criacao do filtro `Concessoes`, e publicacao do aplicativo ConcessaoRod como HTML standalone.
 - Em 10/09/2026, atualizado com `ConcessaoRod - modelagem economico-financeira de concessoes rodoviarias (2).html`, identificado como nova versao com chave interna `concessaorod.modelo.v2`.
+- Em 11/09/2026, o filtro `Concessoes` foi renomeado para `Concessoes e Built to Suit`, mantendo a rota `/concessaorod/`.
 - Backup anterior: `C:\Obras Inteligentes\backups\concessaorod-index-before-v2-20260910-2328.html`.
 
 Observacoes:
 
 - Aplicativo standalone empacotado em HTML unico.
 - Tela inicial do site aponta para `/concessaorod/`.
-- O card foi classificado no filtro `Concessoes`.
+- O card foi classificado no filtro `Concessoes e Built to Suit`.
 - Validar apos futuras alteracoes se premissas do projeto, segmentos homogeneos, pracas de pedagio, investimento, operacao, tarifa, outorga, fluxo de caixa, indicadores, sensibilidade, cenarios e relatorios continuam carregando corretamente.
+
+### BTS Financeiro
+
+Rota: `/bts-financeiro/`  
+Arquivo: `bts-financeiro/index.html`
+
+Ultima inclusao:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\bts-financeiro (1).html`
+- Data: 11/09/2026
+- Alteracao: inclusao de novo card na home, renomeacao do filtro `Concessoes` para `Concessoes e Built to Suit`, e publicacao do aplicativo BTS Financeiro como HTML standalone.
+
+Observacoes:
+
+- Aplicativo standalone empacotado em HTML unico.
+- Tela inicial do site aponta para `/bts-financeiro/`.
+- O card foi classificado no filtro `Concessoes e Built to Suit`.
+- Validar apos futuras alteracoes se a modelagem economico-financeira de contratos Built to Suit, comparacao com execucao propria, fluxo de caixa, cenarios e relatorios continuam carregando corretamente.
 
 ## Aplicativos didaticos fora da grade
 
@@ -2175,6 +2196,7 @@ $headers=@{ 'User-Agent'='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
   '/carboncalcpro/',
   '/friopro/',
   '/concessaorod/',
+  '/bts-financeiro/',
   '/entenda-ia/'
 ) | ForEach-Object {
   $url = "https://www.obrasinteligentes.ia.br$_?v=check"
