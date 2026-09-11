@@ -170,7 +170,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/protendpro/` | 915441 bytes | 915441 caracteres |
 | `/eventogramapro/` | 821282 bytes | 817343 caracteres |
 | `/termo-massa/` | 199232 bytes | 196348 caracteres |
-| `/cabocalc/` | 206539 bytes | 202935 caracteres |
+| `/cabocalc/` | 422002 bytes | 415010 caracteres |
 | `/subestacaopro/` | 860087 bytes | 851059 caracteres |
 | `/brucknercalc/` | 1479721 bytes | 1475264 caracteres |
 | `/molapro/` | 426577 bytes | 421455 caracteres |
@@ -886,6 +886,8 @@ Ultima atualizacao:
 - Data: 28/08/2026
 - Alteracao: substituicao integral de `cabocalc/index.html` pela nova versao CaboCalc - Cabos estruturais estacionarios enviada.
 - Backup da versao anterior salvo em `C:\Obras Inteligentes\backups\cabocalc-index-before-update-20260828-193907.html`.
+- Em 11/09/2026, atualizado com `CaboCalc_v1.4.html`, identificado como CaboCalc v1.4 - Catenaria 3D e biblioteca tecnica.
+- Backup anterior: `C:\Obras Inteligentes\backups\cabocalc-index-before-v1-4-20260911-0635.html`.
 
 Observacoes:
 
