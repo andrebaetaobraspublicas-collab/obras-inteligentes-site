@@ -225,7 +225,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/friopro/` | 7125228 bytes | 7106816 caracteres |
 | `/concessaorod/` | 265214 bytes | 263033 caracteres |
 | `/bts-financeiro/` | 191127 bytes | 189533 caracteres |
-| `/bombeiapro/` | 280220 bytes | 275812 caracteres |
+| `/bombeiapro/` | 431916 bytes | 424310 caracteres |
 | `/entenda-ia/` | 175035 bytes | 172793 caracteres |
 | `/abc-fiscal/` | 351255 bytes | 349022 caracteres |
 
@@ -1960,11 +1960,13 @@ Observacoes:
 Rota: `/bombeiapro/`  
 Arquivo: `bombeiapro/index.html`
 
-Ultima inclusao:
+Ultima atualizacao:
 
 - Fonte: `C:\Users\ACER\Documents\Downloads\BombeiaPro_v1.2.html`
 - Data: 11/09/2026
 - Alteracao: inclusao de novo card na home e publicacao do aplicativo BombeiaPro como HTML standalone.
+- Em 11/09/2026, atualizado com `C:\Users\ACER\Documents\Downloads\BombeiaPro_v1.3.html`, identificado como nova versao com catalogo `v1.3`.
+- Backup anterior: `C:\Obras Inteligentes\backups\bombeiapro-index-before-v1-3-20260911-2201.html`.
 
 Observacoes:
 
