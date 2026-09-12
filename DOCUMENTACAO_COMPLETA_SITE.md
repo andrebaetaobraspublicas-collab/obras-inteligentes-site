@@ -135,6 +135,7 @@ Inventario originalmente verificado em 21/07/2026 e atualizado em 09/09/2026 par
 | 80 / REFRIGERACAO | FrioPro | `/friopro/` | `C:\Obras Inteligentes\friopro\index.html` | existe | 200 |
 | 81 / CONCESSOES | ConcessaoRod | `/concessaorod/` | `C:\Obras Inteligentes\concessaorod\index.html` | existe | 200 |
 | 82 / BUILT TO SUIT | BTS Financeiro | `/bts-financeiro/` | `C:\Obras Inteligentes\bts-financeiro\index.html` | existe | 200 |
+| 83 / BOMBEAMENTO | BombeiaPro | `/bombeiapro/` | `C:\Obras Inteligentes\bombeiapro\index.html` | existe | 200 |
 
 ## Tamanhos verificados
 
@@ -224,6 +225,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/friopro/` | 7125228 bytes | 7106816 caracteres |
 | `/concessaorod/` | 265214 bytes | 263033 caracteres |
 | `/bts-financeiro/` | 124921 bytes | 124028 caracteres |
+| `/bombeiapro/` | 280220 bytes | 275812 caracteres |
 | `/entenda-ia/` | 175035 bytes | 172793 caracteres |
 | `/abc-fiscal/` | 351255 bytes | 349022 caracteres |
 
@@ -1951,6 +1953,24 @@ Observacoes:
 - O card foi classificado no filtro `Concessoes e Built to Suit`.
 - Validar apos futuras alteracoes se a modelagem economico-financeira de contratos Built to Suit, comparacao com execucao propria, fluxo de caixa, cenarios e relatorios continuam carregando corretamente.
 
+### BombeiaPro
+
+Rota: `/bombeiapro/`  
+Arquivo: `bombeiapro/index.html`
+
+Ultima inclusao:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\BombeiaPro_v1.2.html`
+- Data: 11/09/2026
+- Alteracao: inclusao de novo card na home e publicacao do aplicativo BombeiaPro como HTML standalone.
+
+Observacoes:
+
+- Aplicativo standalone empacotado em HTML unico.
+- Tela inicial do site aponta para `/bombeiapro/`.
+- O card foi classificado no filtro `Equipamentos, Apoios e Montagens`.
+- Validar apos futuras alteracoes se simulacao de bombeamento de concreto, linha de bombeamento, pressoes, vazoes, limites operacionais e relatorios continuam carregando corretamente.
+
 ## Aplicativos didaticos fora da grade
 
 ### NeuralLab
@@ -2199,6 +2219,7 @@ $headers=@{ 'User-Agent'='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
   '/friopro/',
   '/concessaorod/',
   '/bts-financeiro/',
+  '/bombeiapro/',
   '/entenda-ia/'
 ) | ForEach-Object {
   $url = "https://www.obrasinteligentes.ia.br$_?v=check"
