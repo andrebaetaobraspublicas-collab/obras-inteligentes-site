@@ -224,7 +224,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/carboncalcpro/` | 287798 bytes | 284380 caracteres |
 | `/friopro/` | 7125228 bytes | 7106816 caracteres |
 | `/concessaorod/` | 265214 bytes | 263033 caracteres |
-| `/bts-financeiro/` | 124921 bytes | 124028 caracteres |
+| `/bts-financeiro/` | 191127 bytes | 189533 caracteres |
 | `/bombeiapro/` | 280220 bytes | 275812 caracteres |
 | `/entenda-ia/` | 175035 bytes | 172793 caracteres |
 | `/abc-fiscal/` | 351255 bytes | 349022 caracteres |
@@ -1940,11 +1940,13 @@ Observacoes:
 Rota: `/bts-financeiro/`  
 Arquivo: `bts-financeiro/index.html`
 
-Ultima inclusao:
+Ultima atualizacao:
 
 - Fonte: `C:\Users\ACER\Documents\Downloads\bts-financeiro (1).html`
 - Data: 11/09/2026
 - Alteracao: inclusao de novo card na home, renomeacao do filtro `Concessoes` para `Concessoes e Built to Suit`, e publicacao do aplicativo BTS Financeiro como HTML standalone.
+- Em 11/09/2026, atualizado com `C:\Users\ACER\Documents\Downloads\bts-financeiro (2).html`, identificado como nova versao com motor de calculo `v1.2`.
+- Backup anterior: `C:\Obras Inteligentes\backups\bts-financeiro-index-before-v1-2-20260911-2135.html`.
 
 Observacoes:
 

@@ -232,6 +232,21 @@ tr.ano-linha{background:var(--superficie-2);font-weight:600}
 .marcar{display:inline-flex;gap:7px;align-items:center;font-size:12.5px;color:var(--tinta-3);cursor:pointer;margin-top:10px}
 mark{background:var(--latao-claro);color:inherit;padding:0 2px;border-radius:2px}
 
+/* ---------- listas dinâmicas (ciclos e faixas tributárias) ---------- */
+.lista-itens{display:flex;flex-direction:column;gap:8px;margin:8px 0}
+.item-lista{border:1px solid var(--linha);border-radius:6px;padding:9px 10px;background:var(--fundo-2)}
+.item-lista .cabeca{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px}
+.item-lista .cabeca b{font-family:var(--fonte-ui);font-size:12.5px;font-weight:600;color:var(--tinta-2)}
+.item-lista .grade{display:grid;grid-template-columns:1fr 1fr;gap:7px 9px}
+.item-lista .grade .largo{grid-column:1 / -1}
+.item-lista label{font-size:11px;color:var(--tinta-3);display:block;margin-bottom:2px}
+.item-lista input,.item-lista select{width:100%;font-size:13px;padding:5px 7px}
+.btn-mini{font-size:12px;padding:4px 10px}
+.btn-x{border:none;background:none;color:var(--tinta-3);cursor:pointer;font-size:16px;line-height:1;padding:0 4px}
+.btn-x:hover{color:var(--obra)}
+.linha-botoes-mini{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+.lista-vazia{font-size:12.5px;color:var(--tinta-3);font-style:italic;padding:4px 0}
+
 /* ---------- faixa de fases da linha do tempo ---------- */
 .fases{display:flex;flex-wrap:wrap;gap:7px 24px;padding:2px 0 12px;font-size:12.5px}
 .fases .fase{display:flex;gap:7px;align-items:baseline;min-width:0}
@@ -433,6 +448,18 @@ html[data-tema="escuro"] .abertura{background:#070D13}
     </div>
   </details>
 
+  <details class="grupo">
+    <summary>Ciclos de investimento</summary>
+    <div class="corpo">
+      <span class="dica">Expansões, retrofits e novos módulos executados durante a locação. Cada ciclo acrescenta
+      desembolso e, a partir da sua entrega, aluguel.</span>
+      <div id="listaCiclos" class="lista-itens"></div>
+      <button type="button" class="btn btn-mini" id="btnAddCiclo">Adicionar ciclo</button>
+      <input type="hidden" id="ciclosJSON" value="[]">
+      <span class="dica" id="dicaCiclos"></span>
+    </div>
+  </details>
+
   <details class="grupo" open>
     <summary>Contrato de locação</summary>
     <div class="corpo">
@@ -516,16 +543,103 @@ html[data-tema="escuro"] .abertura{background:#070D13}
   </details>
 
   <details class="grupo">
+    <summary>Financiamento e alavancagem</summary>
+    <div class="corpo">
+      <div class="campo">
+        <label for="finPct">Parcela do investimento financiada</label>
+        <div class="sufixo"><input type="text" inputmode="decimal" id="finPct" class="pct" value="0,00"><em>%</em></div>
+        <span class="dica">Incide sobre os desembolsos da obra e do terreno. Os ciclos de expansão são aportados com capital próprio.</span>
+      </div>
+      <div class="dupla">
+        <div class="campo">
+          <label for="finTaxa">Custo da dívida</label>
+          <div class="sufixo"><input type="text" inputmode="decimal" id="finTaxa" class="pct" value="9,00"><em>% a.a.</em></div>
+        </div>
+        <div class="campo">
+          <label for="finPrazo">Amortização (meses)</label>
+          <input type="number" id="finPrazo" value="180" min="0" max="600" step="1">
+        </div>
+      </div>
+      <div class="dupla">
+        <div class="campo">
+          <label for="finSistema">Sistema de amortização</label>
+          <select id="finSistema">
+            <option value="price" selected>Price — prestação constante</option>
+            <option value="sac">SAC — amortização constante</option>
+            <option value="bullet">Bullet — principal ao final</option>
+          </select>
+        </div>
+        <div class="campo">
+          <label for="finCarencia">Carência (meses)</label>
+          <input type="number" id="finCarencia" value="0" min="0" max="120" step="1">
+        </div>
+      </div>
+      <div class="campo">
+        <label for="finCarenciaModo">Juros durante a carência</label>
+        <select id="finCarenciaModo">
+          <option value="pagos" selected>Pagos mês a mês</option>
+          <option value="capitalizados">Capitalizados no saldo devedor</option>
+        </select>
+        <span class="dica" id="dicaFin"></span>
+      </div>
+    </div>
+  </details>
+
+  <details class="grupo">
     <summary>Tributos e custos operacionais</summary>
     <div class="corpo">
       <div class="campo">
-        <label for="aliqReceita">Tributos sobre a receita</label>
-        <div class="sufixo"><input type="text" inputmode="decimal" id="aliqReceita" class="pct" value="3,65"><em>%</em></div>
-        <span class="dica">PIS, Cofins e, quando incidente, ISS.</span>
+        <label for="regimeTributario">Regime de apuração</label>
+        <select id="regimeTributario">
+          <option value="real" selected>Lucro real</option>
+          <option value="presumido">Lucro presumido</option>
+        </select>
+        <span class="dica" id="dicaRegime"></span>
       </div>
       <div class="campo">
-        <label for="aliqLucro">Tributos sobre o lucro (IRPJ + CSLL)</label>
-        <div class="sufixo"><input type="text" inputmode="decimal" id="aliqLucro" class="pct" value="34,00"><em>%</em></div>
+        <label for="aliqReceita">Tributos sobre a receita</label>
+        <div class="sufixo"><input type="text" inputmode="decimal" id="aliqReceita" class="pct" value="3,65"><em>%</em></div>
+        <span class="dica">PIS, Cofins e, quando incidente, ISS. Com o cronograma de transição ativo, este campo vira apenas referência.</span>
+      </div>
+      <div id="blocoReal">
+        <div class="campo">
+          <label for="aliqLucro">Tributos sobre o lucro (IRPJ + CSLL)</label>
+          <div class="sufixo"><input type="text" inputmode="decimal" id="aliqLucro" class="pct" value="34,00"><em>%</em></div>
+        </div>
+        <label class="check"><input type="checkbox" id="compensarPrejuizo" checked><span>Compensar prejuízos fiscais, limitados a 30% do lucro</span></label>
+      </div>
+      <div id="blocoPresumido" hidden>
+        <div class="dupla">
+          <div class="campo">
+            <label for="presuncaoIR">Presunção do IRPJ</label>
+            <div class="sufixo"><input type="text" inputmode="decimal" id="presuncaoIR" class="pct" value="32,00"><em>%</em></div>
+          </div>
+          <div class="campo">
+            <label for="presuncaoCS">Presunção da CSLL</label>
+            <div class="sufixo"><input type="text" inputmode="decimal" id="presuncaoCS" class="pct" value="32,00"><em>%</em></div>
+          </div>
+        </div>
+        <div class="dupla">
+          <div class="campo">
+            <label for="aliqIRPJ">IRPJ</label>
+            <div class="sufixo"><input type="text" inputmode="decimal" id="aliqIRPJ" class="pct" value="15,00"><em>%</em></div>
+          </div>
+          <div class="campo">
+            <label for="aliqCSLL">CSLL</label>
+            <div class="sufixo"><input type="text" inputmode="decimal" id="aliqCSLL" class="pct" value="9,00"><em>%</em></div>
+          </div>
+        </div>
+        <div class="dupla">
+          <div class="campo">
+            <label for="adicionalIR">Adicional de IRPJ</label>
+            <div class="sufixo"><input type="text" inputmode="decimal" id="adicionalIR" class="pct" value="10,00"><em>%</em></div>
+          </div>
+          <div class="campo">
+            <label for="limiteAdicional">Limite mensal do adicional</label>
+            <input type="text" inputmode="decimal" id="limiteAdicional" class="moeda" value="20.000,00">
+          </div>
+        </div>
+        <span class="dica">No presumido não há dedução de depreciação nem de juros: a base é a receita bruta presumida.</span>
       </div>
       <div class="dupla">
         <div class="campo">
@@ -543,6 +657,40 @@ html[data-tema="escuro"] .abertura{background:#070D13}
       <div class="campo" id="campoVidaUtil">
         <label for="vidaUtil">Vida útil da edificação (anos)</label>
         <input type="number" id="vidaUtil" value="25" min="1" max="100" step="1">
+      </div>
+    </div>
+  </details>
+
+  <details class="grupo">
+    <summary>Transição da reforma tributária</summary>
+    <div class="corpo">
+      <label class="check"><input type="checkbox" id="usarTransicao"><span>Aplicar cronograma de alíquotas por ano-calendário</span></label>
+      <div id="blocoTransicao" hidden>
+        <div class="dupla">
+          <div class="campo">
+            <label for="anoInicio">Ano-calendário do mês zero</label>
+            <input type="number" id="anoInicio" value="2026" min="2000" max="2100" step="1">
+          </div>
+          <div class="campo">
+            <label for="mesInicio">Mês inicial</label>
+            <select id="mesInicio">
+              <option value="1" selected>janeiro</option><option value="2">fevereiro</option>
+              <option value="3">março</option><option value="4">abril</option>
+              <option value="5">maio</option><option value="6">junho</option>
+              <option value="7">julho</option><option value="8">agosto</option>
+              <option value="9">setembro</option><option value="10">outubro</option>
+              <option value="11">novembro</option><option value="12">dezembro</option>
+            </select>
+          </div>
+        </div>
+        <div id="listaTransicao" class="lista-itens"></div>
+        <div class="linha-botoes-mini">
+          <button type="button" class="btn btn-mini" id="btnAddFaixa">Adicionar ano</button>
+          <button type="button" class="btn btn-mini" id="btnTransicaoPadrao">Cronograma de referência</button>
+        </div>
+        <input type="hidden" id="transicaoJSON" value="[]">
+        <span class="dica">A alíquota vigente em cada ano-calendário incide sobre a receita daquele mês. Os valores de
+        referência consideram o redutor aplicável às operações com bens imóveis e precisam ser confirmados para o caso concreto.</span>
       </div>
     </div>
   </details>
@@ -584,6 +732,41 @@ html[data-tema="escuro"] .abertura{background:#070D13}
     </div>
   </details>
 
+  <details class="grupo">
+    <summary>Opção de compra e resgate antecipado</summary>
+    <div class="corpo">
+      <label class="check"><input type="checkbox" id="usarOpcao"><span>O locatário pode resgatar o imóvel antes do término</span></label>
+      <div id="blocoOpcao" hidden>
+        <div class="campo">
+          <label for="opcaoMes">Mês de locação do exercício</label>
+          <input type="number" id="opcaoMes" value="120" min="1" max="1200" step="1">
+        </div>
+        <div class="campo">
+          <label for="opcaoMetodo">Preço de exercício</label>
+          <select id="opcaoMetodo">
+            <option value="saldo" selected>Saldo presente do contrato</option>
+            <option value="tabela">Percentual do investimento, corrigido</option>
+            <option value="valor">Valor fixo acordado</option>
+          </select>
+          <span class="dica" id="dicaOpcao"></span>
+        </div>
+        <div class="campo" id="campoOpcaoPct" hidden>
+          <label for="opcaoPct">Percentual do investimento</label>
+          <div class="sufixo"><input type="text" inputmode="decimal" id="opcaoPct" class="pct" value="70,00"><em>%</em></div>
+        </div>
+        <div class="campo" id="campoOpcaoValor" hidden>
+          <label for="opcaoValor">Valor de exercício (R$)</label>
+          <input type="text" inputmode="decimal" id="opcaoValor" class="moeda" value="0,00">
+        </div>
+        <div class="campo">
+          <label for="opcaoProb">Probabilidade estimada de exercício</label>
+          <div class="sufixo"><input type="text" inputmode="decimal" id="opcaoProb" class="pct" value="30,00"><em>%</em></div>
+          <span class="dica">Entra no VPL esperado e sorteia o exercício na simulação de Monte Carlo.</span>
+        </div>
+      </div>
+    </div>
+  </details>
+
   <div class="acoes-trilho">
     <button type="button" class="btn" id="btnSalvar">Salvar cenário</button>
     <button type="button" class="btn" id="btnAbrir">Abrir cenário</button>
@@ -608,11 +791,11 @@ html[data-tema="escuro"] .abertura{background:#070D13}
     </div>
     <div class="aluguel-lado">
       <div class="mini"><b class="num" id="kpiVPL">—</b><span>VPL na TMA</span></div>
-      <div class="mini"><b class="num" id="kpiTIR">—</b><span>TIR do projeto</span></div>
+      <div class="mini"><b class="num" id="kpiTIR">—</b><span id="rotTIR">TIR do projeto</span></div>
       <div class="mini"><b class="num" id="kpiPayback">—</b><span>Payback descontado</span></div>
       <div class="mini"><b class="num" id="kpiTaxaLoc">—</b><span>Aluguel / investimento</span></div>
       <div class="mini"><b class="num" id="kpiYield">—</b><span>Yield on cost</span></div>
-      <div class="mini"><b class="num" id="kpiCapital">—</b><span>Capital na entrega</span></div>
+      <div class="mini"><b class="num" id="kpiCapital">—</b><span id="rotCapital">Capital na entrega</span></div>
     </div>
   </div>
 
@@ -622,6 +805,7 @@ html[data-tema="escuro"] .abertura{background:#070D13}
     <button role="tab" aria-selected="true" data-folha="resultado">Resultado</button>
     <button role="tab" aria-selected="false" data-folha="fluxo">Fluxo de caixa</button>
     <button role="tab" aria-selected="false" data-folha="sensibilidade">Sensibilidade e risco</button>
+    <button role="tab" aria-selected="false" data-folha="estrutura">Estrutura financeira</button>
     <button role="tab" aria-selected="false" data-folha="locatario">Visão do locatário</button>
     <button role="tab" aria-selected="false" data-folha="manual">Manual</button>
   </div>
@@ -698,6 +882,32 @@ html[data-tema="escuro"] .abertura{background:#070D13}
     </div>
   </section>
 
+  <section class="folha" id="folha-estrutura" role="tabpanel">
+    <div class="cartao">
+      <h3>Serviço da dívida e saldo devedor</h3>
+      <div id="gDivida"></div>
+      <div id="quadroDivida"></div>
+    </div>
+    <div class="cartao">
+      <h3>Cobertura do serviço da dívida</h3>
+      <div id="gDSCR"></div>
+      <div id="notaDSCR"></div>
+    </div>
+    <div class="cartao">
+      <h3>Opção de compra e resgate antecipado</h3>
+      <div id="saidaOpcao"></div>
+    </div>
+    <div class="cartao">
+      <h3>Ciclos de investimento</h3>
+      <div id="saidaCiclos"></div>
+    </div>
+    <div class="cartao">
+      <h3>Transição tributária</h3>
+      <div id="gTransicao"></div>
+      <div id="quadroTransicao"></div>
+    </div>
+  </section>
+
   <section class="folha" id="folha-locatario" role="tabpanel">
     <div class="quadro">
       <h3>Locar sob medida ou construir por conta própria</h3>
@@ -732,7 +942,9 @@ html[data-tema="escuro"] .abertura{background:#070D13}
 <script>
 "use strict";
 /* ============================================================
-   BTS Financeiro — motor de cálculo
+   BTS Financeiro — motor de cálculo (v1.2)
+   Módulos: alavancagem, opção de compra, ciclos de investimento,
+   transição tributária e regime de lucro presumido.
    ============================================================ */
 var BTS = (function(){
 
@@ -749,6 +961,11 @@ function pmt(capital, i, n, antecipado){
   else p = capital * i / (1 - Math.pow(1+i, -n));
   return antecipado ? p/(1+i) : p;
 }
+function anuidade(i, n){
+  if(n <= 0) return 0;
+  if(Math.abs(i) < 1e-12) return n;
+  return (1 - Math.pow(1+i, -n)) / i;
+}
 function vpl(fluxos, i){
   if(i <= -1) return NaN;
   var s = 0, d = 1, inv = 1/(1+i), t;
@@ -760,6 +977,7 @@ function tir(fluxos){
   function bisseccao(lo, hi, flo){
     var m, fm, k;
     for(k = 0; k < 120; k++){
+      if(hi - lo < 1e-13) break;              /* já convergiu: insistir não melhora */
       m = (lo + hi) / 2; fm = f(m);
       if(!isFinite(fm)) return null;
       if(fm === 0) return m;
@@ -806,118 +1024,408 @@ function perfilCurva(n, tipo, custom){
   return w.map(function(v){ return v/soma; });
 }
 
-/* ---------- modelo completo ----------
-   p: objeto de premissas já normalizado (taxas em decimal, prazos em meses)
-   ------------------------------------- */
-function modelar(p){
+/* ---------- cronograma padrão da transição tributária ----------
+   Alíquota efetiva sobre a receita de locação de imóveis.
+   Composição: PIS/Cofins cumulativos até 2026; CBS plena a partir de
+   2027; IBS em transição de 2029 a 2032; redutor de 70% da alíquota
+   padrão aplicável às operações com bens imóveis.
+   --------------------------------------------------------------- */
+var TRANSICAO_PADRAO = [
+  {ano:2026, aliq:3.65},
+  {ano:2027, aliq:2.74},
+  {ano:2029, aliq:3.17},
+  {ano:2030, aliq:3.70},
+  {ano:2031, aliq:4.23},
+  {ano:2032, aliq:4.76},
+  {ano:2033, aliq:7.95}
+];
+
+/* ---------- normalização de premissas ---------- */
+function norm(p){
+  var q = Object.assign({}, p);
+  if(q.finPct == null) q.finPct = 0;
+  if(q.finTaxa == null) q.finTaxa = 0;
+  if(q.finPrazo == null) q.finPrazo = 0;
+  if(q.finCarencia == null) q.finCarencia = 0;
+  if(!q.finSistema) q.finSistema = 'price';
+  if(!q.finCarenciaModo) q.finCarenciaModo = 'pagos';
+  if(!q.regime) q.regime = 'real';
+  if(q.presuncaoIR == null) q.presuncaoIR = 0.32;
+  if(q.presuncaoCS == null) q.presuncaoCS = 0.32;
+  if(q.aliqIRPJ == null) q.aliqIRPJ = 0.15;
+  if(q.adicionalIR == null) q.adicionalIR = 0.10;
+  if(q.limiteAdicional == null) q.limiteAdicional = 20000;
+  if(q.aliqCSLL == null) q.aliqCSLL = 0.09;
+  if(q.compensarPrejuizo == null) q.compensarPrejuizo = true;
+  if(!q.ciclos) q.ciclos = [];
+  if(!q.transicao) q.transicao = [];
+  if(q.usarTransicao == null) q.usarTransicao = false;
+  if(q.anoInicio == null) q.anoInicio = new Date().getFullYear();
+  if(q.mesInicio == null) q.mesInicio = 1;
+  if(q.opcao == null) q.opcao = false;
+  if(q.opcaoMes == null) q.opcaoMes = 0;
+  if(!q.opcaoMetodo) q.opcaoMetodo = 'saldo';
+  if(q.opcaoPct == null) q.opcaoPct = 0;
+  if(q.opcaoValor == null) q.opcaoValor = 0;
+  if(q.opcaoProb == null) q.opcaoProb = 0;
+  return q;
+}
+
+/* ---------- modelo completo ---------- */
+function modelar(pIn){
+  var p    = norm(pIn);
   var im   = mensalDeAnual(p.tmaNominal);
   var Tc   = Math.max(0, Math.round(p.prazoObra));
   var Tcar = Math.max(0, Math.round(p.carencia));
   var N    = Math.max(1, Math.round(p.prazoMeses));
-  var entrega   = Tc + Tcar;          // data de referência do capital
-  var fim       = entrega + N;        // último mês do horizonte
-  var pesos = perfilCurva(Tc, p.perfil, p.custom);
+  var entrega = Tc + Tcar;
+  var fim     = entrega + N;
+  var pesos   = perfilCurva(Tc, p.perfil, p.custom);
+  var k, t, v, i;
 
-  /* desembolsos */
-  var desembTotal = new Array(fim+1).fill(0);
-  var desembLocador = new Array(fim+1).fill(0);
-  var k, t, v;
+  /* ----- desembolsos da operação-base ----- */
+  var desembBase = new Array(fim+1).fill(0);
+  var desembBaseLocador = new Array(fim+1).fill(0);
   for(k = 1; k <= Tc; k++){
     v = p.custoObra * pesos[k-1];
-    desembTotal[k] += v;
-    desembLocador[k] += v * p.pctLocador;
+    desembBase[k] += v;
+    desembBaseLocador[k] += v * p.pctLocador;
   }
   var mt = Math.min(Math.max(0, Math.round(p.mesTerreno)), fim);
-  desembTotal[mt] += p.custoTerreno;
-  desembLocador[mt] += p.custoTerreno * p.pctLocador;
+  desembBase[mt] += p.custoTerreno;
+  desembBaseLocador[mt] += p.custoTerreno * p.pctLocador;
 
-  var invTotal = desembTotal.reduce(function(a,b){return a+b;}, 0);
-  var invLocador = desembLocador.reduce(function(a,b){return a+b;}, 0);
-
-  /* capital capitalizado até a entrega */
+  /* capital da operação-base capitalizado até a entrega */
   var capital = 0;
-  for(t = 0; t <= entrega; t++) capital += desembLocador[t] * Math.pow(1+im, entrega - t);
-  var jurosObra = capital - invLocador;
+  for(t = 0; t <= entrega; t++) capital += desembBaseLocador[t] * Math.pow(1+im, entrega - t);
+  var invBaseLocador = desembBaseLocador.reduce(function(a,b){return a+b;}, 0);
+  var jurosObra = capital - invBaseLocador;
 
-  /* fator de reajuste do k-ésimo aluguel */
+  /* ----- fator de reajuste e anuidade com reajuste embutido ----- */
   function fator(kk){
     if(p.reajAnual === 0) return 1;
     if(p.periodicidade === 'mensal') return Math.pow(1 + mensalDeAnual(p.reajAnual), kk - 1);
     return Math.pow(1 + p.reajAnual, Math.floor((kk - 1) / 12));
   }
+  function mesDoAluguel(kk){ return entrega + (p.antecipado ? kk - 1 : kk); }
 
-  var baseDep = p.usarDep ? p.custoObra * p.pctLocador : 0;
-  var depMensal = (p.usarDep && p.vidaUtil > 0) ? baseDep / (p.vidaUtil * 12) : 0;
+  /* fatores e datas de cada aluguel, construídos por multiplicação sucessiva
+     para evitar uma potência por mês no caminho crítico */
+  var FAT = new Array(N+1), MES = new Array(N+1);
+  (function(){
+    var kk, atual = 1, bloco = 0, passoMensal = p.reajAnual === 0 ? 0 : mensalDeAnual(p.reajAnual);
+    for(kk = 1; kk <= N; kk++){
+      if(p.reajAnual !== 0){
+        if(p.periodicidade === 'mensal'){ if(kk > 1) atual *= (1 + passoMensal); }
+        else {
+          var b = Math.floor((kk - 1) / 12);
+          while(bloco < b){ atual *= (1 + p.reajAnual); bloco++; }
+        }
+      }
+      FAT[kk] = atual;
+      MES[kk] = entrega + (p.antecipado ? kk - 1 : kk);
+    }
+  })();
+
+  /* valor presente, na data-base informada, de uma série de aluguéis
+     unitários reajustados — é o denominador da equivalência financeira */
+  function anuidadeReajustada(deK, dataBase){
+    if(deK > N) return 0;
+    var s = 0, kk, dfat = 1 / (1 + im);
+    var df = Math.pow(1 + im, -(MES[deK] - dataBase));
+    for(kk = deK; kk <= N; kk++){ s += FAT[kk] * df; df *= dfat; }
+    return s;
+  }
+  var anuidadeBase = anuidadeReajustada(1, entrega);
+
+  /* ----- ciclos de investimento ----- */
+  var desembTotal = desembBase.slice();
+  var desembLocador = desembBaseLocador.slice();
+  var ciclos = [];
+  (p.ciclos || []).forEach(function(c, idx){
+    var mesIni = Math.max(0, Math.round(c.mes || 0));
+    var prazo  = Math.max(1, Math.round(c.prazo || 1));
+    var valor  = Math.max(0, c.valor || 0);
+    var entregaC = Math.min(mesIni + prazo, fim);
+    if(valor <= 0 || mesIni >= fim) return;
+    var pesosC = perfilCurva(prazo, c.perfil || 'linear', null);
+    var capC = 0, j;
+    for(j = 1; j <= prazo; j++){
+      var mm = mesIni + j;
+      if(mm > fim) break;
+      var vv = valor * pesosC[j-1];
+      desembTotal[mm] += vv;
+      desembLocador[mm] += vv * p.pctLocador;
+      capC += vv * p.pctLocador * Math.pow(1+im, entregaC - mm);
+    }
+    /* meses de aluguel que ainda restam depois da entrega do ciclo */
+    /* o aluguel adicional cobre o primeiro mês de locação posterior à entrega do ciclo */
+    var primeiroK = Math.max(1, entregaC - entrega + 1);
+    var nRest = Math.max(0, N - primeiroK + 1);
+    var razao = 0, anuidadeC = nRest > 0 ? anuidadeReajustada(primeiroK, entregaC) : 0;
+    if(c.modo !== 'informado' && anuidadeC > 0 && capital > 0 && anuidadeBase > 0){
+      razao = (capC / anuidadeC) / (capital / anuidadeBase);
+    }
+    /* o valor informado é o aluguel adicional na data de entrega do ciclo;
+       daí em diante acompanha o mesmo índice do aluguel-base */
+    var adicionalBase = Math.max(0, c.adicional || 0) / (fator(primeiroK) || 1);
+    ciclos.push({
+      id: idx, mes: mesIni, prazo: prazo, valor: valor, entregaMes: entregaC,
+      modo: c.modo === 'informado' ? 'informado' : 'proporcional',
+      adicional: Math.max(0, c.adicional || 0), adicionalBase: adicionalBase,
+      rotulo: c.rotulo || ('Ciclo ' + (idx+2)),
+      capital: capC, investido: valor * p.pctLocador, anuidade: anuidadeC,
+      primeiroK: primeiroK, mesesRestantes: nRest, razao: razao
+    });
+  });
+
+  var invTotal   = desembTotal.reduce(function(a,b){return a+b;}, 0);
+  var invLocador = desembLocador.reduce(function(a,b){return a+b;}, 0);
+
+  /* ----- transição tributária ----- */
+  var tabela = (p.transicao || []).slice().sort(function(a,b){ return a.ano - b.ano; });
+  function anoDoMes(t){ return p.anoInicio + Math.floor((p.mesInicio - 1 + t) / 12); }
+  function aliqReceitaNoMes(t){
+    if(!p.usarTransicao || !tabela.length) return p.aliqReceita;
+    var ano = anoDoMes(t), a = tabela[0].aliq, j;
+    for(j = 0; j < tabela.length; j++) if(ano >= tabela[j].ano) a = tabela[j].aliq;
+    return a;
+  }
+
+  /* ----- dívida ----- */
+  var ifm = mensalDeAnual(p.finTaxa);
+  var saque = new Array(fim+1).fill(0);
+  var jurosMes = new Array(fim+1).fill(0);
+  var amortMes = new Array(fim+1).fill(0);
+  var saldoMes = new Array(fim+1).fill(0);
+  var divida = { usa:false, saldoEntrega:0, sacado:0, jurosObra:0, jurosTotal:0,
+                 amortTotal:0, inicioAmort:entrega, nAmort:0, prestacao:0, saldoFinal:0, quitacaoFinal:0 };
+
+  if(p.finPct > 0 && p.finTaxa > -1){
+    divida.usa = true;
+    for(t = 0; t <= entrega; t++) saque[t] = desembBaseLocador[t] * p.finPct;
+    var saldo = 0;
+    for(t = 0; t <= entrega; t++){
+      saldo = saldo * (1 + ifm) + saque[t];
+      saldoMes[t] = saldo;
+    }
+    divida.sacado = saque.reduce(function(a,b){return a+b;}, 0);
+    divida.saldoEntrega = saldo;
+    divida.jurosObra = saldo - divida.sacado;
+
+    var carencia = Math.max(0, Math.round(p.finCarencia));
+    var inicioAmort = entrega + carencia;
+    divida.inicioAmort = inicioAmort;
+    var nAmort = Math.max(0, Math.round(p.finPrazo));
+    divida.nAmort = nAmort;
+    var saldoAmort = saldo, prest = 0, amortSAC = 0;
+
+    /* carência: juros pagos ou capitalizados */
+    for(t = entrega + 1; t <= Math.min(inicioAmort, fim); t++){
+      var jc = saldoAmort * ifm;
+      if(p.finCarenciaModo === 'capitalizados'){ saldoAmort += jc; jurosMes[t] = 0; }
+      else jurosMes[t] = jc;
+      saldoMes[t] = saldoAmort;
+    }
+    if(nAmort > 0){
+      prest = pmt(saldoAmort, ifm, nAmort, false);
+      amortSAC = saldoAmort / nAmort;
+    }
+    divida.prestacao = prest;
+    var restam = nAmort;
+    for(t = Math.min(inicioAmort, fim) + 1; t <= fim; t++){
+      if(saldoAmort <= 1e-6){ saldoMes[t] = 0; continue; }
+      var ju = saldoAmort * ifm, am = 0;
+      if(restam > 0){
+        if(p.finSistema === 'sac') am = amortSAC;
+        else if(p.finSistema === 'bullet') am = (restam === 1) ? saldoAmort : 0;
+        else am = prest - ju;
+        am = Math.max(0, Math.min(am, saldoAmort));
+        restam--;
+      }
+      jurosMes[t] = ju;
+      amortMes[t] = am;
+      saldoAmort -= am;
+      saldoMes[t] = saldoAmort;
+    }
+    if(saldoAmort > 1e-6){
+      divida.quitacaoFinal = saldoAmort;
+      amortMes[fim] += saldoAmort;
+      saldoAmort = 0;
+      saldoMes[fim] = 0;
+    }
+    divida.jurosTotal = jurosMes.reduce(function(a,b){return a+b;}, 0) + divida.jurosObra;
+    divida.amortTotal = amortMes.reduce(function(a,b){return a+b;}, 0);
+    divida.saldoFinal = saldoAmort;
+  }
+
+  /* multiplicador do aluguel-base e parcela absoluta trazida pelos ciclos */
+  function razaoNoK(kk){
+    var r = 1, j;
+    for(j = 0; j < ciclos.length; j++)
+      if(ciclos[j].modo !== 'informado' && kk >= ciclos[j].primeiroK) r += ciclos[j].razao;
+    return r;
+  }
+  function absolutoNoK(kk){
+    var a = 0, j;
+    for(j = 0; j < ciclos.length; j++)
+      if(ciclos[j].modo === 'informado' && kk >= ciclos[j].primeiroK) a += ciclos[j].adicionalBase;
+    return a;
+  }
+
+  /* ----- base depreciável ----- */
+  var baseDepTotal = (p.usarDep && p.regime === 'real')
+      ? p.custoObra * p.pctLocador + ciclos.reduce(function(s,c){ return s + c.investido; }, 0) : 0;
   var terrenoLocador = p.custoTerreno * p.pctLocador;
 
-  /* monta o fluxo para um dado aluguel inicial */
-  function montar(aluguel0){
-    var fc = new Array(fim+1).fill(0);
-    var linhas = [];
-    var i, tt, f, bruto, efetiva, trec, opexV, opexF, ebitda, dep, lair, imp, fcl;
-    var depAcum = 0, receitaBruta = 0, receitaEfetiva = 0, totTrec = 0, totOpex = 0,
-        totImp = 0, totFCL = 0, noi12 = 0;
+  /* ----- demais séries independentes do aluguel ----- */
+  var RAZ = new Array(N+1), ABS = new Array(N+1), DEP = new Array(N+1);
+  (function(){
+    var kk, j, A, dd;
+    var ativos = [];
+    if(p.usarDep && p.regime === 'real' && p.vidaUtil > 0){
+      ativos.push({inicio: entrega, base: p.custoObra * p.pctLocador, acum: 0});
+      ciclos.forEach(function(c){ ativos.push({inicio: c.entregaMes, base: c.investido, acum: 0}); });
+      ativos = ativos.filter(function(a){ return a.base > 0; });
+      ativos.forEach(function(a){ a.mensal = a.base / (p.vidaUtil * 12); });
+    }
+    var temCiclos = ciclos.length > 0, temAtivos = ativos.length > 0;
+    for(kk = 1; kk <= N; kk++){
+      RAZ[kk] = temCiclos ? razaoNoK(kk) : 1;
+      ABS[kk] = temCiclos ? absolutoNoK(kk) : 0;
+      dd = 0;
+      if(temAtivos){
+        for(j = 0; j < ativos.length; j++){
+          A = ativos[j];
+          if(MES[kk] > A.inicio && A.acum < A.base - 1e-9){
+            var d1 = Math.min(A.mensal, A.base - A.acum);
+            A.acum += d1; dd += d1;
+          }
+        }
+      }
+      DEP[kk] = dd;
+    }
+  })();
+  var ALIQ = null;
+  if(p.usarTransicao && tabela.length){
+    ALIQ = new Array(fim+1);
+    for(i = 0; i <= fim; i++) ALIQ[i] = aliqReceitaNoMes(i);
+  }
+  var aliqFixa = p.aliqReceita;
 
-    for(i = 0; i <= entrega; i++) fc[i] -= desembLocador[i];
+  /* ----- montagem do fluxo para um dado aluguel-base ----- */
+  function montar(aluguel0){
+    var fcProjeto = new Array(fim+1).fill(0);
+    var fcEquity  = new Array(fim+1).fill(0);
+    var linhas = [];
+    var prejuizo = 0, depAcum = 0;
+    var receitaBruta = 0, receitaEfetiva = 0, totTrec = 0, totOpex = 0,
+        totImp = 0, totFCL = 0, noi12 = 0, totJuros = 0, dscrMin = null, dscrSoma = 0, dscrN = 0;
+    var tt, f, bruto, efetiva, aliqR, trec, opexV, opexF, ebitda, dep, lair,
+        impCom, impSem, fclProj, fclEq, serv, dscr, j;
+
+    for(i = 0; i <= entrega; i++){
+      fcProjeto[i] -= desembLocador[i];
+      fcEquity[i]  -= desembLocador[i] - saque[i];
+    }
+    for(i = entrega + 1; i <= fim; i++){
+      fcProjeto[i] -= desembLocador[i];
+      fcEquity[i]  -= desembLocador[i];
+    }
 
     for(k = 1; k <= N; k++){
-      tt = entrega + (p.antecipado ? k - 1 : k);
-      f = fator(k);
-      bruto   = aluguel0 * f;
+      tt = MES[k];
+      f = FAT[k];
+      bruto   = (aluguel0 * RAZ[k] + ABS[k]) * f;
       efetiva = bruto * (1 - p.inad);
-      trec    = efetiva * p.aliqReceita;
+      aliqR   = ALIQ === null ? aliqFixa : ALIQ[tt];
+      trec    = efetiva * aliqR;
       opexV   = efetiva * p.opexPct;
       opexF   = p.opexFixo * (p.opexReajusta ? f : 1);
       ebitda  = efetiva - trec - opexV - opexF;
-      dep = 0;
-      if(depMensal > 0 && depAcum < baseDep - 1e-9){
-        dep = Math.min(depMensal, baseDep - depAcum);
-        depAcum += dep;
+
+      dep = DEP[k];
+      depAcum += dep;
+
+      if(p.regime === 'presumido'){
+        var baseIR = bruto * p.presuncaoIR;
+        var baseCS = bruto * p.presuncaoCS;
+        impSem = baseIR * p.aliqIRPJ + Math.max(0, baseIR - p.limiteAdicional) * p.adicionalIR
+               + baseCS * p.aliqCSLL;
+        impCom = impSem;
+      } else {
+        lair = ebitda - dep;
+        impSem = tributoReal(lair, null);
+        impCom = tributoReal(lair - jurosMes[tt], prejuizo, true);
       }
-      lair = ebitda - dep;
-      imp  = Math.max(0, lair) * p.aliqLucro;
-      fcl  = ebitda - imp;
-      fc[tt] += fcl;
+      totJuros += jurosMes[tt];
+
+      fclProj = ebitda - impSem;
+      serv    = jurosMes[tt] + amortMes[tt];
+      fclEq   = ebitda - impCom - serv;
+      fcProjeto[tt] += fclProj;
+      fcEquity[tt]  += fclEq;
+
+      dscr = serv > 1e-9 ? (ebitda - impCom) / serv : null;
+      if(dscr !== null){ dscrSoma += dscr; dscrN++; if(dscrMin === null || dscr < dscrMin) dscrMin = dscr; }
+
       if(k <= 12) noi12 += ebitda;
       receitaBruta += bruto; receitaEfetiva += efetiva; totTrec += trec;
-      totOpex += opexV + opexF; totImp += imp; totFCL += fcl;
-      linhas.push({k:k, t:tt, bruto:bruto, efetiva:efetiva, trec:trec,
-                   opex:opexV+opexF, dep:dep, ebitda:ebitda, imposto:imp, fcl:fcl});
+      totOpex += opexV + opexF; totImp += impCom; totFCL += fclEq;
+      linhas.push({k:k, t:tt, bruto:bruto, efetiva:efetiva, aliqReceita:aliqR, trec:trec,
+                   opex:opexV+opexF, dep:dep, ebitda:ebitda, imposto:impCom,
+                   juros:jurosMes[tt], amort:amortMes[tt], servico:serv, dscr:dscr,
+                   fcl:fclEq, fclProjeto:fclProj});
     }
 
-    /* evento terminal */
+    /* tributo do lucro real com compensação de prejuízo */
+    function tributoReal(base, prej, aplicar){
+      if(base > 0){
+        var comp = 0;
+        if(aplicar && p.compensarPrejuizo && prejuizo > 0) comp = Math.min(prejuizo, 0.30 * base);
+        if(aplicar) prejuizo -= comp;
+        return (base - comp) * p.aliqLucro;
+      }
+      if(aplicar && p.compensarPrejuizo) prejuizo += -base;
+      return 0;
+    }
+
+    /* ----- evento terminal ----- */
     var fatorFinal = p.corrigirTerminal ? Math.pow(1 + p.reajAnual, fim/12) : 1;
     var valorImovelFim = invTotal * p.vtPct * fatorFinal;
     var entradaFinal = (p.destino === 'locador')
         ? valorImovelFim * p.pctLocador
         : p.valorReversao;
-    var contabil = Math.max(0, baseDep - depAcum) + terrenoLocador;
+    var contabil = Math.max(0, baseDepTotal - depAcum) + terrenoLocador;
     var ganho = entradaFinal - contabil;
     var impGanho = p.tributarGanho ? Math.max(0, ganho) * p.aliqGanho : 0;
-    fc[fim] += entradaFinal - impGanho;
+    fcProjeto[fim] += entradaFinal - impGanho;
+    fcEquity[fim]  += entradaFinal - impGanho;
 
     return {
-      fc: fc, linhas: linhas, aluguel0: aluguel0,
+      fcProjeto: fcProjeto, fc: fcEquity, linhas: linhas, aluguel0: aluguel0,
       valorImovelFim: valorImovelFim, entradaFinal: entradaFinal,
       impostoGanho: impGanho, valorContabil: contabil, depAcumulada: depAcum,
       receitaBruta: receitaBruta, receitaEfetiva: receitaEfetiva,
       tributosReceita: totTrec, custosOperacionais: totOpex,
-      tributosLucro: totImp, caixaLocacao: totFCL, noi12: noi12
+      tributosLucro: totImp, caixaLocacao: totFCL, noi12: noi12,
+      jurosLocacao: totJuros, prejuizoFinal: prejuizo,
+      dscrMin: dscrMin, dscrMedio: dscrN ? dscrSoma/dscrN : null
     };
   }
 
   function vplDe(a){ return vpl(montar(a).fc, im); }
 
-  /* aluguel por equivalência financeira pura (PMT sobre o capital) */
   var aluguelPMT = pmt(capital, im, N, p.antecipado);
 
-  /* aluguel de equilíbrio: VPL = 0 na TMA */
   function aluguelEquilibrio(){
     var lo = 0, hi = Math.max(1, aluguelPMT * 4), j = 0, m;
     if(vplDe(lo) >= 0) return 0;
     while(vplDe(hi) < 0 && j < 90){ hi *= 2; j++; }
     if(vplDe(hi) < 0) return null;
+    var tol = Math.max(1e-8, (aluguelPMT || 1) * 1e-12);
     for(j = 0; j < 90; j++){
+      if(hi - lo < tol) break;
       m = (lo + hi) / 2;
       if(vplDe(m) < 0) lo = m; else hi = m;
     }
@@ -932,16 +1440,25 @@ function modelar(p){
 
   var r = montar(aluguel0);
 
-  /* indicadores */
+  /* ----- indicadores ----- */
   var VPL = vpl(r.fc, im);
   var tirMensal = tir(r.fc);
   var TIR = (tirMensal === null) ? null : anualDeMensal(tirMensal);
+  /* sem dívida o fluxo do projeto é idêntico ao do acionista: não vale
+     pagar uma segunda busca de TIR para chegar ao mesmo número */
+  var vplProjeto, tirProjeto, tirProjMensal;
+  if(divida.usa){
+    vplProjeto = vpl(r.fcProjeto, im);
+    tirProjMensal = tir(r.fcProjeto);
+    tirProjeto = (tirProjMensal === null) ? null : anualDeMensal(tirProjMensal);
+  } else {
+    vplProjeto = VPL; tirProjMensal = tirMensal; tirProjeto = TIR;
+  }
 
-  /* payback descontado */
-  var acum = [], soma = 0, payback = null, desc, d = 1, inv = 1/(1+im);
+  var acum = [], soma = 0, payback = null, desc, d = 1, invD = 1/(1+im);
   var eps = Math.max(1, invLocador) * 1e-9;
   for(t = 0; t < r.fc.length; t++){
-    desc = r.fc[t] * d; d *= inv;
+    desc = r.fc[t] * d; d *= invD;
     soma += desc;
     acum.push(soma);
     if(payback === null && t > 0 && acum[t-1] < -eps && soma >= -eps){
@@ -950,59 +1467,140 @@ function modelar(p){
   }
   if(payback !== null && payback > fim) payback = fim;
 
-  /* série anual agregada */
-  var anos = [], a, ini, f2;
+  var capitalProprio = 0;
+  for(t = 0; t <= entrega; t++)
+    capitalProprio += (desembBaseLocador[t] - saque[t]) * Math.pow(1+im, entrega - t);
+
+  /* ----- série anual ----- */
+  var anos = [], a, ini;
   var nAnos = Math.ceil(fim / 12);
   for(a = 1; a <= nAnos; a++){
     ini = (a-1)*12 + 1;
-    var linha = {ano:a, desembolso:0, bruto:0, efetiva:0, trec:0, opex:0, dep:0,
-                 ebitda:0, imposto:0, fcl:0, terminal:0, liquido:0};
+    var linha = {ano:a, anoCalendario: anoDoMes(ini), desembolso:0, saque:0, bruto:0, efetiva:0,
+                 trec:0, opex:0, dep:0, ebitda:0, imposto:0, juros:0, amort:0, servico:0,
+                 fcl:0, terminal:0, liquido:0, dscr:null, aliqReceita:null, saldoDivida:0};
     for(t = ini; t <= Math.min(a*12, fim); t++){
       linha.desembolso += desembLocador[t] || 0;
+      linha.saque += saque[t] || 0;
     }
-    if(a === 1) linha.desembolso += desembLocador[0] || 0;
-    r.linhas.forEach(function(L){
-      if(L.t >= ini && L.t <= a*12 || (a===1 && L.t===0)){
-        linha.bruto += L.bruto; linha.efetiva += L.efetiva; linha.trec += L.trec;
-        linha.opex += L.opex; linha.dep += L.dep; linha.ebitda += L.ebitda;
-        linha.imposto += L.imposto; linha.fcl += L.fcl;
-      }
-    });
-    if(fim >= ini && fim <= a*12) linha.terminal = r.entradaFinal - r.impostoGanho;
-    linha.liquido = -linha.desembolso + linha.fcl + linha.terminal;
+    if(a === 1){ linha.desembolso += desembLocador[0] || 0; linha.saque += saque[0] || 0; }
+    linha.saldoDivida = saldoMes[Math.min(a*12, fim)] || 0;
     anos.push(linha);
   }
+  /* cada linha mensal é lançada no seu ano numa única passada, em vez de
+     varrer todas as linhas para cada ano */
+  r.linhas.forEach(function(L){
+    var idx = L.t === 0 ? 0 : Math.ceil(L.t / 12) - 1;
+    var linha = anos[Math.max(0, Math.min(anos.length - 1, idx))];
+    if(!linha) return;
+    linha.bruto += L.bruto; linha.efetiva += L.efetiva; linha.trec += L.trec;
+    linha.opex += L.opex; linha.dep += L.dep; linha.ebitda += L.ebitda;
+    linha.imposto += L.imposto; linha.juros += L.juros; linha.amort += L.amort;
+    linha.servico += L.servico; linha.fcl += L.fcl;
+    if(linha.aliqReceita === null) linha.aliqReceita = L.aliqReceita;
+  });
+  anos.forEach(function(linha){
+    var ini2 = (linha.ano-1)*12 + 1;
+    if(linha.servico > 1e-9) linha.dscr = (linha.ebitda - linha.imposto) / linha.servico;
+    if(fim >= ini2 && fim <= linha.ano*12) linha.terminal = r.entradaFinal - r.impostoGanho;
+    linha.liquido = -linha.desembolso + linha.saque + linha.fcl + linha.terminal;
+  });
+
+  function aluguelNoK(kk){ return (aluguel0 * razaoNoK(kk) + absolutoNoK(kk)) * fator(kk); }
 
   return {
-    p:p, im:im, Tc:Tc, Tcar:Tcar, N:N, entrega:entrega, fim:fim,
+    p:p, im:im, ifm:ifm, Tc:Tc, Tcar:Tcar, N:N, entrega:entrega, fim:fim,
     pesos:pesos, desembTotal:desembTotal, desembLocador:desembLocador,
-    invTotal:invTotal, invLocador:invLocador, capital:capital, jurosObra:jurosObra,
-    aluguel0:aluguel0, aluguelPMT:aluguelPMT,
+    desembBaseLocador:desembBaseLocador, saque:saque,
+    jurosMes:jurosMes, amortMes:amortMes, saldoMes:saldoMes, divida:divida,
+    ciclos:ciclos, transicao:tabela, anoDoMes:anoDoMes, aliqReceitaNoMes:aliqReceitaNoMes,
+    invTotal:invTotal, invLocador:invLocador, invBaseLocador:invBaseLocador,
+    capital:capital, capitalProprio:capitalProprio, jurosObra:jurosObra,
+    aluguel0:aluguel0, aluguelPMT:aluguelPMT, aluguelNoK:aluguelNoK,
+    razaoNoK:razaoNoK, absolutoNoK:absolutoNoK,
     calcularEquilibrio: function(){ return p.modo === 'equilibrio' ? aluguel0 : aluguelEquilibrio(); },
-    fc:r.fc, linhas:r.linhas, anos:anos, acumDescontado:acum,
+    fc:r.fc, fcProjeto:r.fcProjeto, linhas:r.linhas, anos:anos, acumDescontado:acum,
     VPL:VPL, TIR:TIR, tirMensal:tirMensal, payback:payback,
+    vplProjeto:vplProjeto, tirProjeto:tirProjeto,
+    dscrMin:r.dscrMin, dscrMedio:r.dscrMedio, jurosLocacao:r.jurosLocacao,
     valorImovelFim:r.valorImovelFim, entradaFinal:r.entradaFinal,
     impostoGanho:r.impostoGanho, valorContabil:r.valorContabil,
     receitaBruta:r.receitaBruta, receitaEfetiva:r.receitaEfetiva,
     tributosReceita:r.tributosReceita, custosOperacionais:r.custosOperacionais,
     tributosLucro:r.tributosLucro, caixaLocacao:r.caixaLocacao,
-    yieldOnCost: r.noi12 / (invLocador || 1),
-    taxaLocacao: aluguel0 / (invLocador || 1),
+    yieldOnCost: r.noi12 / (invBaseLocador || 1),
+    taxaLocacao: aluguel0 / (invBaseLocador || 1),
     aluguelReal: aluguel0 / Math.pow(1 + p.reajAnual, entrega/12),
     fator: fator, montar: montar, vplDe: vplDe
   };
 }
 
+/* ---------- opção de compra e resgate antecipado ---------- */
+function analisarOpcao(m){
+  var p = m.p;
+  if(!p.opcao) return null;
+  var kx = Math.max(1, Math.min(m.N, Math.round(p.opcaoMes)));
+  var tx = m.entrega + (p.antecipado ? kx - 1 : kx);
+  var strike = 0, k, tk, base;
+
+  if(p.opcaoMetodo === 'valor'){
+    strike = p.opcaoValor;
+  } else if(p.opcaoMetodo === 'tabela'){
+    strike = m.invLocador * p.opcaoPct * Math.pow(1 + p.reajAnual, tx/12);
+  } else {
+    /* saldo presente do contrato: aluguéis vincendos + valor terminal */
+    for(k = kx + 1; k <= m.N; k++){
+      tk = m.entrega + (p.antecipado ? k - 1 : k);
+      strike += m.aluguelNoK(k) / Math.pow(1 + m.im, tk - tx);
+    }
+    strike += (m.entradaFinal - m.impostoGanho) / Math.pow(1 + m.im, m.fim - tx);
+  }
+  strike = Math.max(0, strike);
+
+  var p2 = Object.assign({}, p);
+  p2.opcao = false;
+  p2.prazoMeses = kx;
+  p2.destino = 'locatario';
+  p2.valorReversao = strike;
+  p2.modo = 'informado';
+  p2.aluguelInformado = m.aluguel0;
+  p2.ciclos = (p.ciclos || []).filter(function(c){
+    return (Math.round(c.mes||0) + Math.round(c.prazo||1)) < tx;
+  });
+  var m2 = BTSmodelarInterno(p2);
+
+  var prob = Math.max(0, Math.min(1, p.opcaoProb));
+  var saldoDivida = m.saldoMes[Math.min(tx, m.fim)] || 0;
+
+  return {
+    mesLocacao: kx, mesModelo: tx, strike: strike, modelo: m2,
+    VPL: m2.VPL, TIR: m2.TIR, payback: m2.payback,
+    diferencaVPL: m2.VPL - m.VPL,
+    probabilidade: prob,
+    vplEsperado: (1 - prob) * m.VPL + prob * m2.VPL,
+    saldoDividaNoExercicio: saldoDivida,
+    sobraAposQuitar: strike - saldoDivida,
+    aluguelPerdido: (function(){
+      var s = 0, j, tj;
+      for(j = kx + 1; j <= m.N; j++){
+        tj = m.entrega + (p.antecipado ? j - 1 : j);
+        s += m.aluguelNoK(j) / Math.pow(1 + m.im, tj);
+      }
+      return s;
+    })()
+  };
+}
+var BTSmodelarInterno = modelar;
+
 /* ---------- visão do locatário ---------- */
 function analisarLocatario(m, taxaAnual, creditoFiscal){
-  var il = mensalDeAnual(taxaAnual), t, k, f;
+  var il = mensalDeAnual(taxaAnual), t, k;
   var p = m.p;
   var vpAluguel = 0, vpAporteObra = 0, vpObraPropria = 0;
 
   for(k = 1; k <= m.N; k++){
-    f = m.fator(k);
     t = m.entrega + (p.antecipado ? k-1 : k);
-    vpAluguel += (m.aluguel0 * f) / Math.pow(1+il, t);
+    vpAluguel += m.aluguelNoK(k) / Math.pow(1+il, t);
   }
   var vpAluguelLiquido = vpAluguel * (1 - (creditoFiscal || 0));
 
@@ -1051,6 +1649,7 @@ function tornado(pBase, variacoes){
 }
 
 function triangular(min, moda, max, u){
+  if(max - min < 1e-12) return min;
   var c = (moda - min) / (max - min);
   if(u < c) return min + Math.sqrt(u * (max - min) * (moda - min));
   return max - Math.sqrt((1 - u) * (max - min) * (max - moda));
@@ -1058,8 +1657,9 @@ function triangular(min, moda, max, u){
 
 function monteCarlo(pBase, cfg){
   var base = modelar(pBase);
-  var n = cfg.iteracoes, i, res = [], p2, m;
-  var vpls = [], tirs = [], negativos = 0;
+  var n = cfg.iteracoes, i, p2, m, op;
+  var vpls = [], tirs = [], negativos = 0, exercidos = 0;
+  var probOpcao = (pBase.opcao && cfg.opcao !== false) ? Math.max(0, Math.min(1, pBase.opcaoProb || 0)) : 0;
   for(i = 0; i < n; i++){
     p2 = Object.assign({}, pBase);
     p2.modo = 'informado';
@@ -1068,6 +1668,14 @@ function monteCarlo(pBase, cfg){
     p2.reajAnual = Math.max(0, triangular(pBase.reajAnual-cfg.reaj, pBase.reajAnual, pBase.reajAnual+cfg.reaj, Math.random()));
     p2.prazoObra = Math.round(triangular(pBase.prazoObra, pBase.prazoObra, pBase.prazoObra + cfg.atraso + 0.001, Math.random()));
     p2.inad = Math.max(0, triangular(pBase.inad*0.5, pBase.inad, pBase.inad*2 + 0.01, Math.random()));
+    if(probOpcao > 0 && Math.random() < probOpcao){
+      p2.opcao = true;
+      m = modelar(p2);
+      op = analisarOpcao(m);
+      exercidos++;
+      if(op){ vpls.push(op.VPL); if(op.TIR !== null) tirs.push(op.TIR); if(op.VPL < 0) negativos++; continue; }
+    }
+    p2.opcao = false;
     m = modelar(p2);
     vpls.push(m.VPL);
     if(m.TIR !== null) tirs.push(m.TIR);
@@ -1082,7 +1690,7 @@ function monteCarlo(pBase, cfg){
   }
   return {
     n:n, base: base.VPL, vpls: vpls, tirs: tirs,
-    probNegativo: negativos/n,
+    probNegativo: negativos/n, exercidos: exercidos,
     media: vpls.reduce(function(a,b){return a+b;},0)/n,
     p5: q(vpls,0.05), p50: q(vpls,0.5), p95: q(vpls,0.95),
     tirP5: q(tirs,0.05), tirP50: q(tirs,0.5), tirP95: q(tirs,0.95)
@@ -1091,9 +1699,10 @@ function monteCarlo(pBase, cfg){
 
 return {
   mensalDeAnual: mensalDeAnual, anualDeMensal: anualDeMensal, fisher: fisher,
-  pmt: pmt, vpl: vpl, tir: tir, perfilCurva: perfilCurva,
-  modelar: modelar, analisarLocatario: analisarLocatario,
-  tornado: tornado, monteCarlo: monteCarlo, triangular: triangular
+  pmt: pmt, anuidade: anuidade, vpl: vpl, tir: tir, perfilCurva: perfilCurva,
+  modelar: modelar, analisarLocatario: analisarLocatario, analisarOpcao: analisarOpcao,
+  tornado: tornado, monteCarlo: monteCarlo, triangular: triangular,
+  TRANSICAO_PADRAO: TRANSICAO_PADRAO
 };
 })();
 if(typeof window !== 'undefined') window.BTS = BTS;
@@ -1170,7 +1779,15 @@ function grafico(alvo, spec){
   var cats = spec.categorias || [];
   var n = cats.length;
   var todos = [];
-  spec.series.forEach(function(s){ s.dados.forEach(function(v){ if(isFinite(v)) todos.push(v); }); });
+  var pilhas = {};
+  spec.series.forEach(function(s){
+    s.dados.forEach(function(v, i){
+      if(!isFinite(v)) return;
+      if(s.empilhar){ pilhas[i] = (pilhas[i] || 0) + v; }
+      else todos.push(v);
+    });
+  });
+  Object.keys(pilhas).forEach(function(i){ todos.push(pilhas[i]); });
   if(!todos.length) todos = [0, 1];
   var esc2 = escalaNice(Math.min.apply(null, todos), Math.max.apply(null, todos));
   var y = function(v){ return mT + ph - (v - esc2.min) / (esc2.max - esc2.min) * ph; };
@@ -1195,23 +1812,31 @@ function grafico(alvo, spec){
   if(spec.rotuloX) out.push('<text class="rot" x="' + (W-mD) + '" y="' + (H-1) + '" text-anchor="end">' + esc(spec.rotuloX) + '</text>');
 
   /* séries */
-  var barras = spec.series.filter(function(s){ return s.tipo === 'barra'; });
+  var barras = spec.series.filter(function(s){ return s.tipo === 'barra' && !s.empilhar; });
   var idxB = 0;
+  var base = {};
   spec.series.forEach(function(s){
     var i, d, x0, x1, alt, yy0;
     if(s.tipo === 'barra'){
-      var larg = banda * 0.72 / (barras.length || 1);
-      var desloc = (idxB - (barras.length-1)/2) * larg;
+      var pilha = !!s.empilhar;
+      var larg = pilha ? banda * 0.72 : banda * 0.72 / (barras.length || 1);
+      var desloc = pilha ? 0 : (idxB - (barras.length-1)/2) * larg;
       for(i = 0; i < n; i++){
         d = s.dados[i]; if(!isFinite(d)) continue;
         x0 = xc(i) + desloc - larg/2;
-        yy0 = y(Math.max(0, d)); alt = Math.abs(y(d) - y(0));
+        if(pilha){
+          var b0 = base[i] || 0;
+          yy0 = y(Math.max(b0, b0 + d)); alt = Math.abs(y(b0 + d) - y(b0));
+          base[i] = b0 + d;
+        } else {
+          yy0 = y(Math.max(0, d)); alt = Math.abs(y(d) - y(0));
+        }
         var cor = s.corNegativa && d < 0 ? s.corNegativa : s.cor;
         out.push('<rect x="' + x0.toFixed(1) + '" y="' + yy0.toFixed(1) + '" width="' + Math.max(1, larg).toFixed(1) +
                  '" height="' + Math.max(0.6, alt).toFixed(1) + '" fill="' + cor + '" opacity="' + (s.opacidade||0.92) + '">' +
                  '<title>' + esc(cats[i] + ' · ' + (s.nome||'') + ' ' + moeda0(d)) + '</title></rect>');
       }
-      idxB++;
+      if(!pilha) idxB++;
     } else {
       var pts = [], area = [];
       for(i = 0; i < n; i++){
@@ -1344,6 +1969,34 @@ function linhaDoTempo(alvo, m){
   faixa(0, m.Tc, 'var(--obra)', 'Obra');
   if(m.Tcar > 0) faixa(m.Tc, m.entrega, 'var(--linha-forte)', 'Carência');
   faixa(m.entrega, m.fim, 'var(--locacao)', 'Locação');
+
+  /* execução dos ciclos de expansão, sobreposta à faixa de locação */
+  (m.ciclos || []).forEach(function(c){
+    var a = x(c.mes), b = x(c.entregaMes);
+    out.push('<rect x="' + a.toFixed(1) + '" y="' + (y0 + alt - 6) + '" width="' + Math.max(2, b - a).toFixed(1) +
+             '" height="6" fill="var(--obra)" opacity=".85"><title>' + esc(c.rotulo) + '</title></rect>');
+    out.push('<polygon points="' + b.toFixed(1) + ',' + (y0 - 2) + ' ' + (b - 4).toFixed(1) + ',' + (y0 - 9) +
+             ' ' + (b + 4).toFixed(1) + ',' + (y0 - 9) + '" fill="var(--obra)"/>');
+  });
+
+  /* exercício da opção de compra */
+  var opc = null;
+  if(m.p.opcao){
+    var kx = Math.max(1, Math.min(m.N, Math.round(m.p.opcaoMes)));
+    opc = m.entrega + (m.p.antecipado ? kx - 1 : kx);
+    out.push('<line x1="' + x(opc).toFixed(1) + '" y1="' + (y0 - 4) + '" x2="' + x(opc).toFixed(1) +
+             '" y2="' + (y0 + alt + 4) + '" stroke="var(--latao)" stroke-width="2" stroke-dasharray="4 3"/>');
+  }
+
+  /* fim da amortização da dívida */
+  if(m.divida && m.divida.usa){
+    var fimDiv = null, j2;
+    for(j2 = m.fim; j2 >= 0; j2--) if((m.amortMes[j2] || 0) > 1e-6){ fimDiv = j2; break; }
+    if(fimDiv !== null && fimDiv < m.fim)
+      out.push('<circle cx="' + x(fimDiv).toFixed(1) + '" cy="' + (y0 + alt + 1) + '" r="3.2" fill="var(--foco)"><title>' +
+               esc('dívida quitada no mês ' + fimDiv) + '</title></circle>');
+  }
+
   out.push('<circle cx="' + x(m.fim).toFixed(1) + '" cy="' + (y0 + alt/2) + '" r="5" fill="var(--latao)"/>');
 
   /* marcos: meses repetidos são fundidos e rótulos que colidiriam são descartados */
@@ -1381,6 +2034,17 @@ function linhaDoTempo(alvo, m){
   ];
   if(m.Tcar > 0) fases.push(['var(--linha-forte)', 'Carência · ' + meses(m.Tcar), 'sem receita e sem desembolso']);
   fases.push(['var(--locacao)', 'Locação · ' + meses(m.N), 'aluguel inicial ' + compacto(m.aluguel0)]);
+  (m.ciclos || []).forEach(function(c){
+    fases.push(['var(--obra)', c.rotulo + ' · entrega no mês ' + c.entregaMes,
+      compacto(c.valor) + (c.modo === 'informado' ? ' · aluguel negociado' : ' · aluguel por equivalência')]);
+  });
+  if(m.divida && m.divida.usa)
+    fases.push(['var(--foco)', 'Dívida · ' + meses(m.divida.nAmort) + ' de amortização',
+      compacto(m.divida.saldoEntrega) + ' na entrega' +
+      (m.p.finCarencia > 0 ? ' · carência de ' + meses(m.p.finCarencia) : '')]);
+  if(opc !== null)
+    fases.push(['var(--latao)', 'Opção no mês ' + opc,
+      'resgate antecipado · probabilidade de ' + Math.round(Math.max(0, Math.min(1, m.p.opcaoProb)) * 100) + '%']);
   fases.push(['var(--latao)', 'Ao final', m.p.destino === 'locatario'
       ? (m.p.valorReversao > 0 ? 'reverte ao locatário por ' + compacto(m.p.valorReversao) : 'reverte ao locatário sem pagamento')
       : 'permanece com o locador · ' + compacto(m.valorImovelFim * m.p.pctLocador)]);
@@ -1412,9 +2076,22 @@ var CAMPOS = ['custoObra','custoTerreno','mesTerreno','prazoObra','perfilDesembo
   'reajusteTaxa','periodicidadeReajuste','momentoPagamento','modoAluguel','aluguelInformado',
   'tma','tipoTMA','inadimplencia','aliqReceita','aliqLucro','opexPct','opexFixo','opexReajusta',
   'usarDepreciacao','vidaUtil','destinoFinal','valorTerminalPct','corrigirTerminal',
-  'valorReversao','tributarGanho','aliqGanho','tmaLocatario','locatarioTributos','aliqCredito'];
+  'valorReversao','tributarGanho','aliqGanho','tmaLocatario','locatarioTributos','aliqCredito',
+  'finPct','finTaxa','finPrazo','finSistema','finCarencia','finCarenciaModo',
+  'regimeTributario','compensarPrejuizo','presuncaoIR','presuncaoCS','aliqIRPJ','aliqCSLL',
+  'adicionalIR','limiteAdicional','usarTransicao','anoInicio','mesInicio','transicaoJSON','ciclosJSON',
+  'usarOpcao','opcaoMes','opcaoMetodo','opcaoPct','opcaoValor','opcaoProb'];
 
 var PADROES = {};
+
+/* ---------- listas dinâmicas ---------- */
+function lerLista(id){
+  try{
+    var a = JSON.parse($(id).value);
+    return Array.isArray(a) ? a : [];
+  }catch(e){ return []; }
+}
+function gravarLista(id, arr){ $(id).value = JSON.stringify(arr); }
 
 /* ---------- leitura das premissas ---------- */
 function lerPremissas(){
@@ -1460,7 +2137,44 @@ function lerPremissas(){
     corrigirTerminal: $('#corrigirTerminal').value === 'sim',
     valorReversao: Math.max(0, lerNumero($('#valorReversao').value)),
     tributarGanho: $('#tributarGanho').checked,
-    aliqGanho: Math.max(0, lerNumero($('#aliqGanho').value) / 100)
+    aliqGanho: Math.max(0, lerNumero($('#aliqGanho').value) / 100),
+
+    /* alavancagem */
+    finPct: Math.min(1, Math.max(0, lerNumero($('#finPct').value) / 100)),
+    finTaxa: lerNumero($('#finTaxa').value) / 100,
+    finPrazo: Math.max(0, Math.round(lerNumero($('#finPrazo').value))),
+    finSistema: $('#finSistema').value,
+    finCarencia: Math.max(0, Math.round(lerNumero($('#finCarencia').value))),
+    finCarenciaModo: $('#finCarenciaModo').value,
+
+    /* regime de apuração */
+    regime: $('#regimeTributario').value,
+    compensarPrejuizo: $('#compensarPrejuizo').checked,
+    presuncaoIR: Math.max(0, lerNumero($('#presuncaoIR').value) / 100),
+    presuncaoCS: Math.max(0, lerNumero($('#presuncaoCS').value) / 100),
+    aliqIRPJ: Math.max(0, lerNumero($('#aliqIRPJ').value) / 100),
+    aliqCSLL: Math.max(0, lerNumero($('#aliqCSLL').value) / 100),
+    adicionalIR: Math.max(0, lerNumero($('#adicionalIR').value) / 100),
+    limiteAdicional: Math.max(0, lerNumero($('#limiteAdicional').value)),
+
+    /* transição tributária */
+    usarTransicao: $('#usarTransicao').checked,
+    anoInicio: Math.round(lerNumero($('#anoInicio').value)) || new Date().getFullYear(),
+    mesInicio: parseInt($('#mesInicio').value, 10) || 1,
+    transicao: lerLista('#transicaoJSON').map(function(f){
+      return { ano: Math.round(f.ano), aliq: Math.max(0, f.aliq) / 100 };
+    }),
+
+    /* ciclos de investimento */
+    ciclos: lerLista('#ciclosJSON'),
+
+    /* opção de compra */
+    opcao: $('#usarOpcao').checked,
+    opcaoMes: Math.max(1, Math.round(lerNumero($('#opcaoMes').value))),
+    opcaoMetodo: $('#opcaoMetodo').value,
+    opcaoPct: Math.max(0, lerNumero($('#opcaoPct').value) / 100),
+    opcaoValor: Math.max(0, lerNumero($('#opcaoValor').value)),
+    opcaoProb: Math.min(1, Math.max(0, lerNumero($('#opcaoProb').value) / 100))
   };
 }
 
@@ -1471,6 +2185,11 @@ function validar(p){
   if(p.prazoMeses < 1) erros.push('O prazo do contrato precisa ter ao menos um mês.');
   if(p.pctLocador <= 0) erros.push('O locador precisa financiar alguma parcela do investimento.');
   if(p.aliqLucro >= 1) erros.push('A alíquota sobre o lucro precisa ser menor que 100%.');
+  if(p.finPct > 0 && p.finTaxa <= -1) erros.push('O custo da dívida precisa ser maior que −100%.');
+  if(p.finPct > 0 && p.finPrazo <= 0 && p.finSistema !== 'bullet')
+    erros.push('Informe o prazo de amortização da dívida.');
+  if(p.opcao && p.opcaoMes > p.prazoMeses)
+    erros.push('O exercício da opção precisa ocorrer dentro do prazo do contrato.');
   return erros;
 }
 
@@ -1483,6 +2202,29 @@ function ajustarFormulario(){
   $('#reajusteTaxa').disabled = $('#indiceReajuste').value === 'nenhum';
   $('#blocoLocatario').hidden = $('#destinoFinal').value !== 'locatario';
   $('#wrapCredito').hidden = !$('#locatarioTributos').checked;
+
+  var presumido = $('#regimeTributario').value === 'presumido';
+  $('#blocoReal').hidden = presumido;
+  $('#blocoPresumido').hidden = !presumido;
+  $('#campoVidaUtil').style.display = ($('#usarDepreciacao').checked && !presumido) ? '' : 'none';
+  $('#dicaRegime').textContent = presumido
+    ? 'A base é a receita bruta presumida: depreciação e juros não reduzem o imposto.'
+    : 'A base é o lucro contábil: depreciação e juros da dívida reduzem o imposto.';
+
+  $('#blocoTransicao').hidden = !$('#usarTransicao').checked;
+  $('#blocoOpcao').hidden = !$('#usarOpcao').checked;
+  var met = $('#opcaoMetodo').value;
+  $('#campoOpcaoPct').hidden = met !== 'tabela';
+  $('#campoOpcaoValor').hidden = met !== 'valor';
+  $('#dicaOpcao').textContent = met === 'saldo'
+    ? 'Valor presente, na data do exercício, dos aluguéis vincendos e do valor terminal, descontados à TMA.'
+    : (met === 'tabela' ? 'Percentual do investimento total do locador, corrigido pelo índice até a data do exercício.'
+                        : 'Preço fixo em reais, tal como escrito no contrato.');
+
+  var alav = lerNumero($('#finPct').value) > 0;
+  $('#dicaFin').textContent = alav
+    ? 'Os juros da fase de obra são capitalizados no saldo devedor até a entrega.'
+    : 'Sem alavancagem, o fluxo do acionista coincide com o fluxo do projeto.';
 
   var dicas = {
     equilibrio: 'Resolve o aluguel que zera o VPL considerando tributos, custos, reajuste e destino do imóvel.',
@@ -1530,9 +2272,88 @@ function veredito(m){
     classe = 'atencao';
     txt = 'VPL praticamente nulo. O contrato devolve exatamente a TMA exigida, sem margem para desvios.';
   }
+  if(m.divida.usa){
+    txt += ' Com ' + pct(m.divida.saldoEntrega / (m.capital || 1), 0) + ' do capital financiado a ' +
+      pct(p.finTaxa) + ' ao ano, o número acima é o do acionista: sem dívida o mesmo contrato daria ' +
+      (m.tirProjeto === null ? 'TIR indefinida' : pct(m.tirProjeto) + ' ao ano') + '.';
+    if(m.dscrMin !== null && m.dscrMin < 1)
+      alertas.push('em algum mês o caixa não cobre o serviço da dívida');
+  }
+  if(p.regime === 'presumido') txt += ' A apuração é pelo lucro presumido, sem dedução de depreciação nem de juros.';
   if(alertas.length) txt += ' Atenção: ' + alertas.join(' e ') + '.';
   $('#veredito').className = 'veredito ' + classe;
   $('#veredito').innerHTML = '<div>' + txt + '</div>';
+}
+
+
+/* ---------- listas: ciclos de investimento ---------- */
+function pintarCiclos(){
+  var arr = lerLista('#ciclosJSON'), alvo = $('#listaCiclos');
+  if(!arr.length){
+    alvo.innerHTML = '<div class="lista-vazia">Nenhum ciclo além da operação inicial.</div>';
+    $('#dicaCiclos').textContent = '';
+    return;
+  }
+  alvo.innerHTML = arr.map(function(c, i){
+    var inf = c.modo === 'informado';
+    return '<div class="item-lista" data-i="' + i + '">' +
+      '<div class="cabeca"><b>' + esc(c.rotulo || ('Ciclo ' + (i+2))) + '</b>' +
+      '<button type="button" class="btn-x" data-rem="' + i + '" aria-label="Remover ciclo">&times;</button></div>' +
+      '<div class="grade">' +
+        '<div class="largo"><label>Descrição</label><input type="text" data-c="rotulo" value="' + esc(c.rotulo||'') + '"></div>' +
+        '<div><label>Mês de início do aporte</label><input type="number" min="0" step="1" data-c="mes" value="' + (c.mes||0) + '"></div>' +
+        '<div><label>Prazo de execução (meses)</label><input type="number" min="1" step="1" data-c="prazo" value="' + (c.prazo||1) + '"></div>' +
+        '<div class="largo"><label>Custo do ciclo (R$)</label><input type="text" inputmode="decimal" data-c="valor" value="' + numero(c.valor||0, 2) + '"></div>' +
+        '<div class="largo"><label>Aluguel adicional</label><select data-c="modo">' +
+          '<option value="proporcional"' + (inf?'':' selected') + '>Por equivalência, na mesma base do aluguel inicial</option>' +
+          '<option value="informado"' + (inf?' selected':'') + '>Valor negociado</option></select></div>' +
+        (inf ? '<div class="largo"><label>Acréscimo mensal na entrega do ciclo (R$)</label>' +
+               '<input type="text" inputmode="decimal" data-c="adicional" value="' + numero(c.adicional||0, 2) + '"></div>' : '') +
+      '</div></div>';
+  }).join('');
+}
+function colherCiclos(){
+  var arr = [];
+  $$('#listaCiclos .item-lista').forEach(function(bl){
+    var o = {};
+    $$('[data-c]', bl).forEach(function(el){
+      var campo = el.dataset.c;
+      if(campo === 'rotulo' || campo === 'modo') o[campo] = el.value;
+      else o[campo] = lerNumero(el.value);
+    });
+    o.mes = Math.max(0, Math.round(o.mes || 0));
+    o.prazo = Math.max(1, Math.round(o.prazo || 1));
+    o.valor = Math.max(0, o.valor || 0);
+    o.adicional = Math.max(0, o.adicional || 0);
+    arr.push(o);
+  });
+  gravarLista('#ciclosJSON', arr);
+}
+
+/* ---------- listas: faixas da transição tributária ---------- */
+function pintarTransicao(){
+  var arr = lerLista('#transicaoJSON'), alvo = $('#listaTransicao');
+  if(!arr.length){
+    alvo.innerHTML = '<div class="lista-vazia">Nenhuma faixa definida — a alíquota única continua valendo.</div>';
+    return;
+  }
+  alvo.innerHTML = arr.map(function(f, i){
+    return '<div class="item-lista" data-i="' + i + '"><div class="grade">' +
+      '<div><label>A partir do ano</label><input type="number" min="2000" max="2100" step="1" data-f="ano" value="' + (f.ano||2026) + '"></div>' +
+      '<div><label>Alíquota sobre a receita (%)</label><input type="text" inputmode="decimal" data-f="aliq" value="' + numero(f.aliq||0, 2) + '"></div>' +
+      '</div><div class="cabeca" style="margin:6px 0 0"><b></b>' +
+      '<button type="button" class="btn-x" data-remf="' + i + '" aria-label="Remover faixa">&times;</button></div></div>';
+  }).join('');
+}
+function colherTransicao(){
+  var arr = [];
+  $$('#listaTransicao .item-lista').forEach(function(bl){
+    var o = {};
+    $$('[data-f]', bl).forEach(function(el){ o[el.dataset.f] = lerNumero(el.value); });
+    arr.push({ano: Math.round(o.ano || 2026), aliq: Math.max(0, o.aliq || 0)});
+  });
+  arr.sort(function(a,b){ return a.ano - b.ano; });
+  gravarLista('#transicaoJSON', arr);
 }
 
 /* ---------- quadro-resumo ---------- */
@@ -1543,18 +2364,22 @@ function resumo(m){
     ['Aporte do locador', moeda0(m.invLocador) + (p.pctLocador < 1 ? ' · ' + pct(p.pctLocador, 0) + ' do total' : '')],
     ['Juros da obra até a entrega', moeda0(m.jurosObra)],
     ['Capital a remunerar na entrega', moeda0(m.capital)],
+    m.divida.usa ? ['Saldo devedor na entrega', moeda0(m.divida.saldoEntrega)] : null,
+    m.divida.usa ? ['Capital próprio na entrega', moeda0(m.capitalProprio)] : null,
+    m.divida.usa ? ['Cobertura mínima do serviço da dívida', m.dscrMin === null ? '—' : numero(m.dscrMin, 2) + 'x'] : null,
     ['Aluguel inicial', moeda(m.aluguel0)],
     ['Aluguel inicial a preços de hoje', moeda(m.aluguelReal)],
-    ['Aluguel no último mês do contrato', moeda(m.aluguel0 * m.fator(m.N))],
+    ['Aluguel no último mês do contrato', moeda(m.aluguelNoK(m.N))],
     ['Receita bruta acumulada', moeda0(m.receitaBruta)],
     ['Tributos sobre a receita', moeda0(m.tributosReceita)],
     ['Custos operacionais', moeda0(m.custosOperacionais)],
-    ['Tributos sobre o lucro', moeda0(m.tributosLucro)],
+    ['Tributos sobre o lucro (' + (p.regime === 'presumido' ? 'lucro presumido' : 'lucro real') + ')', moeda0(m.tributosLucro)],
+    m.divida.usa ? ['Juros pagos durante a locação', moeda0(m.jurosLocacao)] : null,
     ['Caixa líquido da locação', moeda0(m.caixaLocacao)],
     [p.destino === 'locatario' ? 'Recebido na reversão' : 'Valor terminal do imóvel', moeda0(m.entradaFinal)],
     ['Horizonte total do modelo', meses(m.fim)]
   ];
-  $('#resumoTabela').innerHTML = '<table class="tabela-simples"><tbody>' + linhas.map(function(l){
+  $('#resumoTabela').innerHTML = '<table class="tabela-simples"><tbody>' + linhas.filter(Boolean).map(function(l){
     return '<tr><td style="color:var(--tinta-2)">' + esc(l[0]) + '</td><td><b>' + l[1] + '</b></td></tr>';
   }).join('') + '</tbody></table>';
 }
@@ -1768,6 +2593,219 @@ function rodarMonteCarlo(){
   }, 30);
 }
 
+
+/* ============================================================
+   Aba: estrutura financeira
+   ============================================================ */
+function tabelinha(linhas){
+  return '<table class="tabela-simples"><tbody>' + linhas.filter(Boolean).map(function(l){
+    return '<tr><td style="text-align:left;color:var(--tinta-2)">' + l[0] + '</td><td><b>' + l[1] + '</b></td></tr>';
+  }).join('') + '</tbody></table>';
+}
+
+function blocoDivida(m){
+  var d = m.divida;
+  if(!d.usa){
+    $('#gDivida').innerHTML = '';
+    $('#quadroDivida').innerHTML = '<div class="vazio">Operação sem alavancagem. ' +
+      'Todo o investimento é aportado com capital próprio, e o fluxo do acionista coincide com o fluxo do projeto.</div>';
+    $('#gDSCR').innerHTML = '';
+    $('#notaDSCR').innerHTML = '<p style="font-size:12.5px;color:var(--tinta-3)">' +
+      'A cobertura do serviço da dívida só é calculada quando há financiamento.</p>';
+    return;
+  }
+  $('#gDivida').innerHTML = '<div id="gServico"></div><div id="gSaldo" style="margin-top:10px"></div>';
+  var cats = m.anos.map(function(a){ return String(a.ano); });
+  U.grafico($('#gServico'), {
+    altura: 230, legenda: true, rotuloX: 'ano',
+    categorias: cats,
+    series: [
+      {tipo:'barra', nome:'juros', cor:'var(--obra)', empilhar:true, dados: m.anos.map(function(a){ return a.juros; })},
+      {tipo:'barra', nome:'amortização', cor:'var(--tinta-3)', empilhar:true, dados: m.anos.map(function(a){ return a.amort; })},
+      {tipo:'linha', nome:'EBITDA menos imposto', cor:'var(--locacao)', pontos:false,
+       dados: m.anos.map(function(a){ return a.ebitda - a.imposto; })}
+    ]
+  });
+  U.grafico($('#gSaldo'), {
+    altura: 200, legenda: true, rotuloX: 'ano', categorias: cats,
+    series: [{tipo:'area', nome:'saldo devedor', cor:'var(--foco)', pontos:false,
+              dados: m.anos.map(function(a){ return a.saldoDivida; })}]
+  });
+
+  var alav = m.divida.saldoEntrega / (m.capital || 1);
+  $('#quadroDivida').innerHTML = tabelinha([
+    ['Sacado durante a obra', moeda0(d.sacado)],
+    ['Juros capitalizados até a entrega', moeda0(d.jurosObra)],
+    ['Saldo devedor na entrega', moeda0(d.saldoEntrega)],
+    ['Alavancagem sobre o capital na entrega', pct(alav, 1)],
+    ['Capital próprio na entrega', moeda0(m.capitalProprio)],
+    d.prestacao > 0 ? ['Prestação inicial', moeda(d.prestacao)] : null,
+    ['Juros pagos ao longo do contrato', moeda0(d.jurosTotal - d.jurosObra)],
+    d.quitacaoFinal > 0.5 ? ['Saldo quitado no último mês', moeda0(d.quitacaoFinal)] : null,
+    ['VPL do acionista', moeda0(m.VPL)],
+    ['VPL do projeto sem dívida', moeda0(m.vplProjeto)],
+    ['TIR do acionista', m.TIR === null ? 'indefinida' : pct(m.TIR) + ' a.a.'],
+    ['TIR do projeto sem dívida', m.tirProjeto === null ? 'indefinida' : pct(m.tirProjeto) + ' a.a.']
+  ]);
+
+  var dscr = m.anos.map(function(a){ return a.dscr; });
+  var comDados = dscr.filter(function(v){ return v !== null && isFinite(v); });
+  if(comDados.length){
+    U.grafico($('#gDSCR'), {
+      altura: 220, legenda: true, rotuloX: 'ano', categorias: cats,
+      formatarY: function(v){ return numero(v, 2) + 'x'; },
+      series: [
+        {tipo:'linha', nome:'cobertura no ano', cor:'var(--foco)', pontos:false,
+         dados: dscr.map(function(v){ return v === null ? NaN : v; })},
+        {tipo:'linha', nome:'referência de 1,20x', cor:'var(--alerta)', tracejado:true, pontos:false,
+         dados: cats.map(function(){ return 1.2; })}
+      ]
+    });
+  } else $('#gDSCR').innerHTML = '';
+
+  var minimo = m.dscrMin, medio = m.dscrMedio;
+  var cls = minimo === null ? 'atencao' : (minimo >= 1.2 ? 'bom' : (minimo >= 1 ? 'atencao' : 'ruim'));
+  var txt;
+  if(minimo === null) txt = 'Não há meses com serviço da dívida no horizonte modelado.';
+  else if(minimo >= 1.2) txt = 'A cobertura mínima é de <b>' + numero(minimo, 2) + 'x</b> e a média, de ' +
+      numero(medio, 2) + 'x. O caixa da operação acomoda o serviço da dívida com folga em todos os meses.';
+  else if(minimo >= 1) txt = 'A cobertura mínima cai a <b>' + numero(minimo, 2) + 'x</b>, acima de 1 mas abaixo do ' +
+      'patamar de 1,20x usualmente exigido em operações estruturadas. Média de ' + numero(medio, 2) + 'x.';
+  else txt = 'Em algum mês o caixa da operação não cobre o serviço da dívida: a cobertura mínima é de <b>' +
+      numero(minimo, 2) + 'x</b>. O locador precisaria aportar recursos ou renegociar o perfil de amortização.';
+  $('#notaDSCR').innerHTML = '<div class="veredito ' + cls + '" style="margin-top:8px"><div>' + txt + '</div></div>';
+}
+
+function blocoOpcao(m){
+  if(!m.p.opcao){
+    $('#saidaOpcao').innerHTML = '<div class="vazio">O contrato não prevê resgate antecipado. ' +
+      'Ative a opção no trilho à esquerda para medir o efeito de uma saída antes do término.</div>';
+    return;
+  }
+  var o = BTS.analisarOpcao(m);
+  if(!o){ $('#saidaOpcao').innerHTML = '<div class="vazio">Não foi possível avaliar a opção.</div>'; return; }
+  var melhor = o.VPL > m.VPL;
+  $('#saidaOpcao').innerHTML =
+    '<div class="duo">' +
+      tabelinha([
+        ['Mês de locação do exercício', meses(o.mesLocacao) + ' de contrato'],
+        ['Preço de exercício', moeda0(o.strike)],
+        ['Aluguéis que deixam de ser recebidos, a valor presente', moeda0(o.aluguelPerdido)],
+        m.divida.usa ? ['Saldo devedor na data', moeda0(o.saldoDividaNoExercicio)] : null,
+        m.divida.usa ? ['Sobra após quitar a dívida', moeda0(o.sobraAposQuitar)] : null
+      ]) +
+      tabelinha([
+        ['VPL levando o contrato até o fim', moeda0(m.VPL)],
+        ['VPL com o exercício da opção', moeda0(o.VPL)],
+        ['Diferença', moeda0(o.diferencaVPL)],
+        ['TIR com o exercício', o.TIR === null ? 'indefinida' : pct(o.TIR) + ' a.a.'],
+        ['Probabilidade atribuída', pct(o.probabilidade, 0)],
+        ['<b>VPL esperado</b>', moeda0(o.vplEsperado)]
+      ]) +
+    '</div>' +
+    '<div class="veredito ' + (melhor ? 'bom' : 'ruim') + '" style="margin-top:12px"><div>' +
+      (melhor
+        ? 'Pelo preço de exercício adotado, o resgate antecipado <b>melhora</b> o resultado do locador em ' +
+          moeda0(o.diferencaVPL) + ' de valor presente. O locatário dificilmente exercerá a opção nesses termos.'
+        : 'O resgate antecipado <b>custa</b> ' + moeda0(Math.abs(o.diferencaVPL)) + ' de valor presente ao locador. ' +
+          'É o cenário que o locatário tende a escolher, e o aluguel deveria embutir esse risco.') +
+    '</div></div>' +
+    '<p style="font-size:12.5px;color:var(--tinta-3);margin-top:10px">O exercício é tratado como reversão do imóvel ' +
+    'ao locatário na data escolhida: o contrato termina, o preço entra no fluxo e o saldo devedor é quitado. ' +
+    'O VPL esperado pondera os dois desfechos pela probabilidade informada.</p>';
+}
+
+function blocoCiclos(m){
+  if(!m.ciclos.length){
+    $('#saidaCiclos').innerHTML = '<div class="vazio">A operação tem um único ciclo de investimento. ' +
+      'Acrescente expansões ou retrofits no trilho à esquerda.</div>';
+    return;
+  }
+  var totalK = m.N;
+  var html = '<table><thead><tr><th>Ciclo</th><th>Aporte</th><th>Entrega</th><th>Custo</th>' +
+    '<th>Capital na entrega</th><th>Aluguel adicional</th><th>Participação</th></tr></thead><tbody>';
+  var base0 = m.aluguel0;
+  m.ciclos.forEach(function(c){
+    var k = Math.min(totalK, c.primeiroK);
+    var adicional = c.modo === 'informado'
+      ? c.adicionalBase * m.fator(k)
+      : base0 * c.razao * m.fator(k);
+    var total = m.aluguelNoK(k);
+    html += '<tr><td style="text-align:left">' + esc(c.rotulo) + '</td>' +
+      '<td>mês ' + c.mes + '</td><td>mês ' + c.entregaMes + '</td>' +
+      '<td>' + compacto(c.valor) + '</td><td>' + compacto(c.capital) + '</td>' +
+      '<td>' + moeda0(adicional) + '</td>' +
+      '<td>' + pct(total > 0 ? adicional/total : 0, 1) + '</td></tr>';
+  });
+  html += '<tr style="font-weight:700"><td style="text-align:left">Operação inicial</td><td>mês 0</td>' +
+    '<td>mês ' + m.entrega + '</td><td>' + compacto(m.p.custoObra + m.p.custoTerreno) + '</td>' +
+    '<td>' + compacto(m.capital) + '</td><td>' + moeda0(m.aluguel0) + '</td><td>—</td></tr>';
+  html += '</tbody></table>';
+
+  var catsC = [], serie = [], i, passo = m.N > 160 ? 6 : (m.N > 60 ? 3 : 1);
+  for(i = 1; i <= m.N; i += passo){ catsC.push(String(i)); serie.push(m.aluguelNoK(i)); }
+  $('#saidaCiclos').innerHTML = '<div class="rolagem" style="max-height:none">' + html + '</div>' +
+    '<div id="gCiclos" style="margin-top:12px"></div>' +
+    '<p style="font-size:12.5px;color:var(--tinta-3);margin-top:8px">Na equivalência, o acréscimo é dimensionado ' +
+    'para remunerar o capital do ciclo na mesma base do aluguel inicial, ao longo do prazo que ainda resta de contrato. ' +
+    'O aporte dos ciclos é feito com capital próprio.</p>';
+  U.grafico($('#gCiclos'), {
+    altura: 220, rotuloX: 'mês de locação', categorias: catsC,
+    series: [{tipo:'area', nome:'aluguel total', cor:'var(--locacao)', pontos:false, dados: serie}]
+  });
+}
+
+function blocoTransicao(m){
+  if(!m.p.usarTransicao || !m.transicao.length){
+    $('#gTransicao').innerHTML = '';
+    $('#quadroTransicao').innerHTML = '<div class="vazio">Alíquota única de ' + pct(m.p.aliqReceita) +
+      ' sobre a receita em todo o contrato. Ative o cronograma no trilho à esquerda para escalonar a carga por ano-calendário.</div>';
+    return;
+  }
+  var cats = m.anos.map(function(a){ return String(a.anoCalendario); });
+  U.grafico($('#gTransicao'), {
+    altura: 220, legenda: true, rotuloX: 'ano-calendário', categorias: cats,
+    formatarY: function(v){ return numero(v*100, 2) + '%'; },
+    series: [{tipo:'linha', nome:'alíquota sobre a receita', cor:'var(--alerta)', pontos:false,
+              dados: m.anos.map(function(a){ return a.aliqReceita === null ? NaN : a.aliqReceita; })}]
+  });
+
+  var unica = Object.assign({}, m.p);
+  unica.usarTransicao = false;
+  unica.modo = 'informado'; unica.aluguelInformado = m.aluguel0;
+  var mu = BTS.modelar(unica);
+  var equil = Object.assign({}, m.p);
+  equil.usarTransicao = false; equil.modo = 'equilibrio';
+  var me = BTS.modelar(equil);
+
+  var faixas = m.transicao.map(function(f){
+    return '<tr><td style="text-align:left">A partir de ' + f.ano + '</td><td>' + pct(f.aliq) + '</td></tr>';
+  }).join('');
+
+  $('#quadroTransicao').innerHTML =
+    '<div class="duo">' +
+      '<div><h4 style="font-family:var(--fonte-ui);font-size:13px;color:var(--tinta-2);margin:0 0 4px">Cronograma aplicado</h4>' +
+      '<table class="tabela-simples"><tbody>' + faixas + '</tbody></table></div>' +
+      tabelinha([
+        ['Tributos sobre a receita no cronograma', moeda0(m.tributosReceita)],
+        ['Tributos com alíquota única de ' + pct(m.p.aliqReceita), moeda0(mu.tributosReceita)],
+        ['Diferença', moeda0(m.tributosReceita - mu.tributosReceita)],
+        ['Aluguel de equilíbrio com o cronograma', moeda(m.calcularEquilibrio())],
+        ['Aluguel de equilíbrio com alíquota única', moeda(me.aluguel0)]
+      ]) +
+    '</div>' +
+    '<p style="font-size:12.5px;color:var(--tinta-3);margin-top:10px">O contrato atravessa ' +
+    (m.anos.length ? (m.anos[0].anoCalendario + ' a ' + m.anos[m.anos.length-1].anoCalendario) : '') +
+    '. Contratos longos assinados agora cruzam a transição inteira, e a alíquota do primeiro ano não representa a carga média.</p>';
+}
+
+function estrutura(m){
+  blocoDivida(m);
+  blocoOpcao(m);
+  blocoCiclos(m);
+  blocoTransicao(m);
+}
+
 /* ---------- renderização ---------- */
 function render(){
   ajustarFormulario();
@@ -1793,13 +2831,16 @@ function render(){
   $('#kpiPayback').textContent = (m.payback === null || m.payback > m.fim) ? 'além do prazo' : meses(m.payback);
   $('#kpiTaxaLoc').textContent = pct(m.taxaLocacao, 3) + ' a.m.';
   $('#kpiYield').textContent = pct(m.yieldOnCost) + ' a.a.';
-  $('#kpiCapital').textContent = compacto(m.capital);
+  $('#kpiCapital').textContent = compacto(m.divida.usa ? m.capitalProprio : m.capital);
+  $('#rotTIR').textContent = m.divida.usa ? 'TIR do acionista' : 'TIR do projeto';
+  $('#rotCapital').textContent = m.divida.usa ? 'Capital próprio na entrega' : 'Capital na entrega';
 
   veredito(m);
   resumo(m);
   graficos(m);
   tabelaFluxo(m);
   visaoLocatario(m);
+  estrutura(m);
   sensibilidade(m);
   salvarEstado();
 }
@@ -1822,6 +2863,8 @@ function aplicar(o){
     if(!el || !(id in o)) return;
     if(el.type === 'checkbox') el.checked = !!o[id]; else el.value = o[id];
   });
+  pintarCiclos();
+  pintarTransicao();
 }
 function salvarEstado(){
   try{ localStorage.setItem(CHAVE, JSON.stringify(coletar())); }catch(e){}
@@ -1858,7 +2901,45 @@ var EXEMPLOS = [
       modoAluguel:'equilibrio', tma:'6,00', tipoTMA:'real', inadimplencia:'4,00', aliqReceita:'3,65',
       aliqLucro:'34,00', opexPct:'5,00', opexFixo:'0,00', usarDepreciacao:true, vidaUtil:'25',
       destinoFinal:'locador', valorTerminalPct:'70,00', corrigirTerminal:'sim', valorReversao:'0,00',
-      tributarGanho:false, tmaLocatario:'7,00'}}
+      tributarGanho:false, tmaLocatario:'7,00'}},
+  {nome:'Galpão alavancado — CRI com 60% do capital',
+   v:{custoObra:'50.000.000,00', custoTerreno:'8.000.000,00', mesTerreno:'0', prazoObra:'24',
+      perfilDesembolso:'s_suave', pctLocador:'100', prazoLocacao:'20', unidadePrazo:'anos', carencia:'0',
+      indiceReajuste:'ipca', reajusteTaxa:'4,00', periodicidadeReajuste:'anual', momentoPagamento:'postecipado',
+      modoAluguel:'equilibrio', tma:'12,00', tipoTMA:'nominal', inadimplencia:'2,00', aliqReceita:'3,65',
+      aliqLucro:'34,00', opexPct:'3,00', opexFixo:'0,00', usarDepreciacao:true, vidaUtil:'25',
+      destinoFinal:'locador', valorTerminalPct:'60,00', corrigirTerminal:'sim', tributarGanho:false,
+      finPct:'60,00', finTaxa:'10,50', finPrazo:'180', finSistema:'price', finCarencia:'6',
+      finCarenciaModo:'pagos', tmaLocatario:'9,00'}},
+  {nome:'Data center — expansão no meio do contrato',
+   v:{custoObra:'80.000.000,00', custoTerreno:'15.000.000,00', mesTerreno:'0', prazoObra:'20',
+      perfilDesembolso:'s_forte', pctLocador:'100', prazoLocacao:'20', unidadePrazo:'anos', carencia:'0',
+      indiceReajuste:'ipca', reajusteTaxa:'4,00', periodicidadeReajuste:'anual', momentoPagamento:'postecipado',
+      modoAluguel:'equilibrio', tma:'13,00', tipoTMA:'nominal', inadimplencia:'1,50', aliqReceita:'3,65',
+      aliqLucro:'34,00', opexPct:'2,50', opexFixo:'0,00', usarDepreciacao:true, vidaUtil:'20',
+      destinoFinal:'locador', valorTerminalPct:'50,00', corrigirTerminal:'sim', tributarGanho:false,
+      ciclosJSON:'[{\"rotulo\":\"Expansão do módulo 2\",\"mes\":80,\"prazo\":14,\"valor\":40000000,\"modo\":\"proporcional\",\"adicional\":0}]',
+      tmaLocatario:'10,00'}},
+  {nome:'Contrato longo — atravessando a reforma tributária',
+   v:{custoObra:'60.000.000,00', custoTerreno:'10.000.000,00', mesTerreno:'0', prazoObra:'24',
+      perfilDesembolso:'s_suave', pctLocador:'100', prazoLocacao:'25', unidadePrazo:'anos', carencia:'0',
+      indiceReajuste:'ipca', reajusteTaxa:'4,00', periodicidadeReajuste:'anual', momentoPagamento:'postecipado',
+      modoAluguel:'equilibrio', tma:'11,00', tipoTMA:'nominal', inadimplencia:'2,00', aliqReceita:'3,65',
+      aliqLucro:'34,00', opexPct:'3,00', opexFixo:'0,00', usarDepreciacao:true, vidaUtil:'25',
+      destinoFinal:'locador', valorTerminalPct:'60,00', corrigirTerminal:'sim', tributarGanho:false,
+      usarTransicao:true, anoInicio:'2026', mesInicio:'1',
+      transicaoJSON:'[{\"ano\":2026,\"aliq\":3.65},{\"ano\":2027,\"aliq\":2.74},{\"ano\":2029,\"aliq\":3.17},{\"ano\":2030,\"aliq\":3.7},{\"ano\":2031,\"aliq\":4.23},{\"ano\":2032,\"aliq\":4.76},{\"ano\":2033,\"aliq\":7.95}]',
+      tmaLocatario:'9,00'}},
+  {nome:'SPE no presumido — locação com opção de compra',
+   v:{custoObra:'25.000.000,00', custoTerreno:'5.000.000,00', mesTerreno:'0', prazoObra:'15',
+      perfilDesembolso:'linear', pctLocador:'100', prazoLocacao:'15', unidadePrazo:'anos', carencia:'0',
+      indiceReajuste:'ipca', reajusteTaxa:'4,00', periodicidadeReajuste:'anual', momentoPagamento:'postecipado',
+      modoAluguel:'equilibrio', tma:'11,00', tipoTMA:'nominal', inadimplencia:'2,00', aliqReceita:'3,65',
+      regimeTributario:'presumido', presuncaoIR:'32,00', presuncaoCS:'32,00', aliqIRPJ:'15,00',
+      aliqCSLL:'9,00', adicionalIR:'10,00', limiteAdicional:'20.000,00',
+      opexPct:'3,00', opexFixo:'0,00', usarDepreciacao:true, vidaUtil:'25',
+      destinoFinal:'locador', valorTerminalPct:'55,00', corrigirTerminal:'sim', tributarGanho:false,
+      usarOpcao:true, opcaoMes:'96', opcaoMetodo:'saldo', opcaoProb:'40,00', tmaLocatario:'9,00'}}
 ];
 
 /* ---------- CSV ---------- */
@@ -1874,22 +2955,41 @@ function exportarCSV(){
   if(!m) return;
   var mapa = {}, i, L, l = [];
   m.linhas.forEach(function(x){ mapa[x.t] = x; });
-  l.push(['Mes','Fase','Aporte do locador','Aluguel bruto','Receita efetiva','Tributos sobre receita',
-          'Custos operacionais','Depreciacao','IRPJ CSLL','Evento final','Caixa do mes','Acumulado descontado'].join(';'));
+  l.push(['Mes','Fase','Aporte do locador','Saque da divida','Aluguel bruto','Receita efetiva','Aliquota receita',
+          'Tributos sobre receita','Custos operacionais','Depreciacao','IRPJ CSLL','Juros','Amortizacao','DSCR',
+          'Evento final','Caixa do acionista','Caixa do projeto','Saldo devedor','Acumulado descontado'].join(';'));
   function n(v){ return numero(v, 2); }
   for(i = 0; i <= m.fim; i++){
     L = mapa[i];
     var ap = m.desembLocador[i] || 0;
     var fase = ap > 0 && L ? 'obra e locacao' : (ap > 0 ? 'obra' : (L ? 'locacao' : (i === m.fim ? 'evento final' : 'carencia')));
     var ev = (i === m.fim) ? (m.entradaFinal - m.impostoGanho) : 0;
-    l.push([i, fase, n(-ap), n(L?L.bruto:0), n(L?L.efetiva:0), n(L?-L.trec:0), n(L?-L.opex:0),
-            n(L?-L.dep:0), n(L?-L.imposto:0), n(ev), n(m.fc[i]), n(m.acumDescontado[i])].join(';'));
+    l.push([i, fase, n(-ap), n(m.saque[i]||0), n(L?L.bruto:0), n(L?L.efetiva:0),
+            L ? numero(L.aliqReceita*100, 4) + '%' : '', n(L?-L.trec:0), n(L?-L.opex:0),
+            n(L?-L.dep:0), n(L?-L.imposto:0), n(-(m.jurosMes[i]||0)), n(-(m.amortMes[i]||0)),
+            (L && L.dscr !== null) ? numero(L.dscr, 3) : '',
+            n(ev), n(m.fc[i]), n(m.fcProjeto[i]), n(m.saldoMes[i]||0), n(m.acumDescontado[i])].join(';'));
   }
   l.push('');
   l.push(['Aluguel inicial', n(m.aluguel0)].join(';'));
   l.push(['VPL', n(m.VPL)].join(';'));
   l.push(['TIR anual', m.TIR === null ? 'indefinida' : numero(m.TIR*100, 4) + '%'].join(';'));
   l.push(['Payback descontado (meses)', m.payback === null ? 'alem do prazo' : numero(m.payback, 1)].join(';'));
+  l.push(['VPL do projeto sem divida', n(m.vplProjeto)].join(';'));
+  l.push(['TIR do projeto sem divida', m.tirProjeto === null ? 'indefinida' : numero(m.tirProjeto*100, 4) + '%'].join(';'));
+  if(m.divida.usa){
+    l.push(['Saldo devedor na entrega', n(m.divida.saldoEntrega)].join(';'));
+    l.push(['DSCR minimo', m.dscrMin === null ? '' : numero(m.dscrMin, 3)].join(';'));
+    l.push(['DSCR medio', m.dscrMedio === null ? '' : numero(m.dscrMedio, 3)].join(';'));
+  }
+  if(m.p.opcao){
+    var op = BTS.analisarOpcao(m);
+    if(op){
+      l.push(['Preco de exercicio da opcao', n(op.strike)].join(';'));
+      l.push(['VPL com exercicio', n(op.VPL)].join(';'));
+      l.push(['VPL esperado', n(op.vplEsperado)].join(';'));
+    }
+  }
   baixar('fluxo-bts.csv', l.join('\n'), 'text/csv;charset=utf-8');
 }
 
@@ -1917,6 +3017,56 @@ function ligar(){
       $('#folha-' + b.dataset.folha).classList.add('ativa');
     });
   });
+  /* ciclos de investimento */
+  $('#listaCiclos').addEventListener('input', function(){ colherCiclos(); agendar(); });
+  $('#listaCiclos').addEventListener('change', function(ev){
+    colherCiclos();
+    if(ev.target.dataset && ev.target.dataset.c === 'modo') pintarCiclos();
+    agendar();
+  });
+  $('#listaCiclos').addEventListener('click', function(ev){
+    var b = ev.target.closest('[data-rem]');
+    if(!b) return;
+    var arr = lerLista('#ciclosJSON');
+    arr.splice(parseInt(b.dataset.rem, 10), 1);
+    gravarLista('#ciclosJSON', arr);
+    pintarCiclos(); render();
+  });
+  $('#btnAddCiclo').addEventListener('click', function(){
+    var arr = lerLista('#ciclosJSON');
+    if(arr.length >= 6) return;
+    var p = lerPremissas();
+    var inicio = p.prazoObra + p.carencia + 36 + arr.length * 24;
+    arr.push({rotulo: 'Expansão ' + (arr.length + 1), mes: inicio, prazo: 12,
+              valor: Math.round(p.custoObra * 0.3), modo: 'proporcional', adicional: 0});
+    gravarLista('#ciclosJSON', arr);
+    pintarCiclos(); render();
+  });
+
+  /* faixas da transição tributária */
+  $('#listaTransicao').addEventListener('input', function(){ colherTransicao(); agendar(); });
+  $('#listaTransicao').addEventListener('click', function(ev){
+    var b = ev.target.closest('[data-remf]');
+    if(!b) return;
+    var arr = lerLista('#transicaoJSON');
+    arr.splice(parseInt(b.dataset.remf, 10), 1);
+    gravarLista('#transicaoJSON', arr);
+    pintarTransicao(); render();
+  });
+  $('#btnAddFaixa').addEventListener('click', function(){
+    var arr = lerLista('#transicaoJSON');
+    if(arr.length >= 12) return;
+    var ultimo = arr.length ? arr[arr.length-1] : {ano: lerNumero($('#anoInicio').value) || 2026, aliq: 3.65};
+    arr.push({ano: Math.round(ultimo.ano) + 1, aliq: ultimo.aliq});
+    gravarLista('#transicaoJSON', arr);
+    pintarTransicao(); render();
+  });
+  $('#btnTransicaoPadrao').addEventListener('click', function(){
+    gravarLista('#transicaoJSON', BTS.TRANSICAO_PADRAO.map(function(f){ return {ano:f.ano, aliq:f.aliq}; }));
+    $('#usarTransicao').checked = true;
+    pintarTransicao(); render();
+  });
+
   $('#btnCSV').addEventListener('click', exportarCSV);
   $('#btnMC').addEventListener('click', rodarMonteCarlo);
   $('#btnImprimir').addEventListener('click', function(){ window.print(); });
@@ -1980,6 +3130,8 @@ function iniciar(){
            $('#btnTema').textContent = t === 'claro' ? 'Tema escuro' : 'Tema claro'; }
   }catch(e){}
   carregarEstado();
+  pintarCiclos();
+  pintarTransicao();
   ligar();
   if(window.MANUAL) window.MANUAL.montar();
   render();
@@ -1987,7 +3139,8 @@ function iniciar(){
 if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', iniciar);
 else iniciar();
 
-window.APP = { render: render, lerPremissas: lerPremissas, modelo: function(){ return modeloAtual; } };
+window.APP = { render: render, lerPremissas: lerPremissas, modelo: function(){ return modeloAtual; },
+               pintarListas: function(){ pintarCiclos(); pintarTransicao(); } };
 })();
 
 /* ============================================================
@@ -2099,6 +3252,84 @@ var SECOES = [
    '<p>A reversão pode ser onerosa. Nesse caso informe o valor que o locatário paga ao final — funciona como opção de ' +
    'compra e alivia proporcionalmente o aluguel.</p>'},
 
+  {cap:'Estrutura financeira', id:'alavancagem', t:'Dívida, DSCR e o fluxo do acionista', lab:'dscr', html:
+   '<p>Sem financiamento, o capital é um bloco só e a TIR mede o projeto. Com dívida, passam a existir dois fluxos ' +
+   'distintos, e confundi-los é a forma mais rápida de tomar uma decisão errada.</p>'+
+   '<p>O <b>fluxo do projeto</b> ignora a dívida: é o que a operação produz por si. O <b>fluxo do acionista</b> ' +
+   'acrescenta o saque da dívida durante a obra e desconta juros e amortização durante a locação. O painel superior ' +
+   'mostra a TIR do acionista quando há alavancagem; a TIR do projeto aparece na aba de estrutura financeira, ao lado.</p>'+
+   '<p>A alavancagem agrega valor por duas vias. A primeira é o <b>spread</b>: se a dívida custa menos que a taxa exigida ' +
+   'pelo acionista, a diferença fica com ele. A segunda é o <b>benefício fiscal dos juros</b>, que no lucro real reduzem ' +
+   'a base do IRPJ e da CSLL — é por isso que o mesmo contrato admite aluguel de equilíbrio menor quando alavancado.</p>'+
+   '<p>Durante a obra os juros são capitalizados no saldo devedor, que só começa a ser amortizado depois da entrega e ' +
+   'da carência escolhida. Três sistemas estão disponíveis: Price, com prestação constante; SAC, que concentra o esforço ' +
+   'no início e pressiona a cobertura nos primeiros anos; e bullet, que adia todo o principal e exige refinanciamento ' +
+   'ou venda no vencimento.</p>'+
+   '<p>O <b>DSCR</b> divide o caixa operacional depois do imposto pelo serviço da dívida do período. Abaixo de 1, a ' +
+   'operação não se paga e alguém precisa aportar; entre 1 e 1,2, opera sem folga; de 1,2 para cima é o patamar que ' +
+   'estruturações de CRI costumam exigir. O gráfico mostra ano a ano, e o pior mês vira alerta no painel.</p>'},
+
+  {cap:'Estrutura financeira', id:'opcao', t:'Opção de compra e resgate antecipado', html:
+   '<p>Muitos contratos permitem que o locatário compre o imóvel antes do término. Para o locador isso é uma opção ' +
+   'vendida — quase sempre de graça — que o locatário exercerá exatamente quando lhe for conveniente, ou seja, quando ' +
+   'for ruim para o locador.</p>'+
+   '<p>O modelo trata o exercício como reversão antecipada: o contrato termina no mês escolhido, o preço entra no fluxo ' +
+   'e o saldo devedor é quitado. Três formas de precificar o exercício estão disponíveis:</p>'+
+   '<ul>'+
+   '<li><b>Saldo presente do contrato</b> — valor presente dos aluguéis vincendos somado ao valor terminal, descontados ' +
+   'à TMA. É a fórmula que preserva o locador: o VPL fica praticamente igual ao do contrato levado até o fim.</li>'+
+   '<li><b>Percentual do investimento, corrigido</b> — a tabela de resgate que os contratos costumam trazer. Simples de ' +
+   'redigir e quase sempre desfavorável a uma das partes, porque não acompanha o saldo econômico.</li>'+
+   '<li><b>Valor fixo</b> — preço acordado em reais, sem correção.</li>'+
+   '</ul>'+
+   '<p>O quadro compara os dois desfechos e calcula o <b>VPL esperado</b>, ponderado pela probabilidade que você atribuir ' +
+   'ao exercício. Se o exercício destrói valor, esse é o cenário que o locatário escolherá, e o aluguel negociado ' +
+   'deveria embutir o prêmio dessa opção. A simulação de Monte Carlo também sorteia o exercício segundo essa probabilidade.</p>'},
+
+  {cap:'Estrutura financeira', id:'ciclos', t:'Ciclos de investimento e expansões', html:
+   '<p>Nem todo BTS nasce pronto. Expansões, retrofits e novos módulos no meio do contrato são a regra em galpões ' +
+   'logísticos, plantas industriais e data centers.</p>'+
+   '<p>Cada ciclo tem mês de início do aporte, prazo de execução e custo. O desembolso entra no fluxo distribuído ' +
+   'linearmente ao longo da execução, e o aluguel só aumenta a partir do primeiro mês de locação posterior à entrega ' +
+   'do ciclo.</p>'+
+   '<p>O acréscimo pode ser calculado por <b>equivalência</b> ou informado. Na equivalência, o capital do ciclo é ' +
+   'capitalizado até a sua própria entrega e dividido pela série de aluguéis que ainda resta, já com o reajuste ' +
+   'embutido — o acréscimo fica na mesma base de remuneração do aluguel inicial. O teste é direto: acrescentar um ciclo ' +
+   'por equivalência não muda o aluguel-base, porque a expansão se paga sozinha.</p>'+
+   '<p>Quando o acréscimo é negociado e não calculado, informe o valor na data de entrega do ciclo; daí em diante ele ' +
+   'acompanha o mesmo índice do aluguel principal. Se o valor negociado ficar abaixo da equivalência, o aluguel-base ' +
+   'sobe para compensar — e é exatamente esse diferencial que a aba mostra.</p>'+
+   '<p>Os ciclos são aportados com capital próprio. Financiá-los exigiria uma segunda operação de dívida, com perfil ' +
+   'e garantias próprios, que o modelo não representa.</p>'},
+
+  {cap:'Estrutura financeira', id:'transicao', t:'A transição da reforma tributária', html:
+   '<p>Um contrato de vinte anos assinado hoje atravessa inteira a substituição de PIS, Cofins, ICMS e ISS pelo IBS e ' +
+   'pela CBS. Usar uma alíquota única em todo o horizonte subestima ou superestima a carga, dependendo de onde se ' +
+   'escolheu o ponto.</p>'+
+   '<p>Ativando o cronograma, você informa o ano-calendário do mês zero e uma tabela de alíquotas por ano. A alíquota ' +
+   'vigente em cada ano incide sobre a receita daquele mês, e o aluguel de equilíbrio passa a ser resolvido contra a ' +
+   'trajetória inteira, não contra um ponto dela.</p>'+
+   '<p>O botão de cronograma de referência carrega uma trajetória construída sobre o desenho da transição: PIS e Cofins ' +
+   'até 2026, CBS plena a partir de 2027, IBS entrando em décimos entre 2029 e 2032 e alíquota cheia em 2033, sempre ' +
+   'com o redutor aplicável às operações com bens imóveis. São estimativas de partida. As alíquotas de referência ainda ' +
+   'serão fixadas, o enquadramento da operação depende do caso e a apuração de créditos muda o resultado líquido: ' +
+   'confirme os números com assessoria contábil antes de levar o cálculo a uma negociação.</p>'+
+   '<p>O quadro comparativo mostra quanto o cronograma altera o tributo total e o aluguel de equilíbrio em relação à ' +
+   'alíquota única. Em contratos longos a diferença costuma ser de vários pontos percentuais no aluguel.</p>'},
+
+  {cap:'Estrutura financeira', id:'regime', t:'Lucro real ou lucro presumido', html:
+   '<p>A escolha do regime muda a conta de forma relevante, e nem sempre na direção que se espera.</p>'+
+   '<p>No <b>lucro real</b>, a base é o resultado contábil: a depreciação da edificação e os juros da dívida reduzem o ' +
+   'imposto. Prejuízos fiscais podem ser compensados nos anos seguintes, limitados a 30% do lucro do período — ' +
+   'limitação que importa em operações alavancadas, que costumam apurar prejuízo nos primeiros anos.</p>'+
+   '<p>No <b>lucro presumido</b>, o imposto é calculado sobre um percentual da receita bruta, independentemente do ' +
+   'resultado. Não há dedução de depreciação nem de juros. Em locação de imóveis próprios a presunção usual é de 32% ' +
+   'para IRPJ e CSLL, mas o enquadramento depende do objeto social e da forma como a receita é classificada — ' +
+   'este é um ponto que merece confirmação, não presunção.</p>'+
+   '<p>Como regra de bolso, o presumido tende a favorecer operações com margem alta e pouca dívida, e o real favorece ' +
+   'operações alavancadas ou com depreciação pesada. Troque o regime no formulário e compare os dois aluguéis de ' +
+   'equilíbrio: a diferença aparece imediatamente.</p>'},
+
   {cap:'Resultados', id:'indicadores', t:'Como ler os indicadores', html:
    '<p><b>VPL</b> é o valor que o contrato agrega além da remuneração já exigida pela TMA. No modo de equilíbrio ele é ' +
    'zero por construção — o que interessa ali é o aluguel, não o VPL.</p>'+
@@ -2137,20 +3368,40 @@ var SECOES = [
   {cap:'Encerramento', id:'limites', t:'O que o modelo não faz', html:
    '<p>Nenhum modelo substitui o exame do contrato. Estes pontos ficam fora do cálculo e precisam ser tratados à parte:</p>'+
    '<ul>'+
-   '<li><b>Estrutura de financiamento.</b> O modelo trata o capital como um bloco remunerado à TMA. Dívida com carência, ' +
-   'CRI e alavancagem mudam o fluxo do acionista.</li>'+
-   '<li><b>Rescisão antecipada.</b> A multa pactuada, que no BTS costuma alcançar os aluguéis vincendos, não é modelada.</li>'+
+   '<li><b>Rescisão antecipada por inadimplemento.</b> A multa pactuada, que no BTS costuma alcançar os aluguéis ' +
+   'vincendos, não é modelada. A opção de compra cobre a saída negociada, não a saída litigiosa.</li>'+
    '<li><b>Vacância após o contrato.</b> O valor terminal supõe realização a preço de mercado, sem prazo de exposição.</li>'+
-   '<li><b>Reforma tributária.</b> A transição para IBS e CBS altera a tributação da receita de locação ao longo do próprio ' +
-   'prazo de contratos longos. O campo de tributos sobre a receita aceita um único percentual médio; contratos que ' +
-   'atravessam a transição merecem simulações separadas por período.</li>'+
-   '<li><b>Aportes intermediários.</b> Expansões e retrofits durante a locação precisam ser modelados como um segundo ciclo.</li>'+
+   '<li><b>Financiamento dos ciclos de expansão.</b> Os aportes posteriores à entrega são feitos com capital próprio. ' +
+   'Uma segunda operação de dívida, com garantias e perfil próprios, ficaria fora do desenho atual.</li>'+
+   '<li><b>Crédito tributário na transição.</b> O cronograma trata a alíquota incidente sobre a receita. A apuração de ' +
+   'créditos sobre insumos e obras, que no IBS e na CBS muda o resultado líquido, não é representada.</li>'+
+   '<li><b>Refinanciamento.</b> No sistema bullet o principal vence de uma vez; o modelo supõe que há caixa ou ' +
+   'rolagem disponível, sem custo de renegociação.</li>'+
+   '<li><b>Câmbio, alavancagem em moeda estrangeira e cobertura.</b> Todo o fluxo é em reais.</li>'+
    '</ul>'+
    '<p>Os resultados dependem inteiramente das premissas informadas e não substituem análise técnica, contábil e jurídica ' +
    'do caso concreto.</p>'}
 ];
 
 var LABS = {
+  dscr: {
+    titulo: 'Cobertura do serviço da dívida',
+    campos: [['labDsE','Caixa operacional após imposto (R$/mês)','420.000,00'],
+             ['labDsS','Saldo devedor (R$)','30.000.000,00'],
+             ['labDsT','Custo da dívida (% a.a.)','10,50'],
+             ['labDsN','Prazo de amortização (meses)','180']],
+    calc: function(v){
+      var i = BTS.mensalDeAnual(v.labDsT/100);
+      var prest = BTS.pmt(v.labDsS, i, Math.max(1, Math.round(v.labDsN)), false);
+      var cob = prest > 0 ? v.labDsE / prest : null;
+      var maxDivida = i > 0 ? BTS.pmt(1, i, Math.max(1, Math.round(v.labDsN)), false) : 0;
+      var teto = maxDivida > 0 ? (v.labDsE / 1.2) / maxDivida : 0;
+      return 'Prestação mensal: <b>' + moeda(prest) + '</b><br>' +
+             'Cobertura: <b>' + (cob === null ? '—' : numero(cob, 2) + 'x') + '</b> · ' +
+             (cob >= 1.2 ? 'dentro do patamar usual' : (cob >= 1 ? 'opera sem folga' : 'o caixa não cobre o serviço')) + '<br>' +
+             'Dívida máxima para manter 1,20x: ' + moeda(teto);
+    }
+  },
   capitalizacao: {
     titulo: 'Levar um desembolso até a entrega',
     campos: [['labCapV','Valor desembolsado (R$)','1.000.000,00'],
