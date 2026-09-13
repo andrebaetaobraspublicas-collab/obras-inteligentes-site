@@ -227,7 +227,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/concessaorod/` | 265214 bytes | 263033 caracteres |
 | `/bts-financeiro/` | 191127 bytes | 189533 caracteres |
 | `/bombeiapro/` | 431916 bytes | 424310 caracteres |
-| `/credito-iva-sinapi/` | 3913765 bytes | 3867100 caracteres |
+| `/credito-iva-sinapi/` | 4237039 bytes | 4187409 caracteres |
 | `/entenda-ia/` | 175035 bytes | 172793 caracteres |
 | `/abc-fiscal/` | 351255 bytes | 349022 caracteres |
 
@@ -1982,11 +1982,13 @@ Observacoes:
 Rota: `/credito-iva-sinapi/`  
 Arquivo: `credito-iva-sinapi/index.html`
 
-Ultima inclusao:
+Ultima atualizacao:
 
 - Fonte: `C:\Users\ACER\Documents\Downloads\credito-iva-sinapi-v2.3.html`
 - Data: 13/09/2026
 - Alteracao: inclusao de novo card na home e publicacao do aplicativo Credito de IVA no SINAPI como HTML standalone.
+- Em 13/09/2026, atualizado com `C:\Users\ACER\Documents\Downloads\credito-iva-sinapi-v2.4.html`, identificado como `Credito de IVA no SINAPI v2.4`.
+- Backup anterior: `C:\Obras Inteligentes\backups\credito-iva-sinapi-index-before-v2-4-20260913-2050.html`.
 
 Observacoes:
 
