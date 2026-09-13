@@ -136,6 +136,7 @@ Inventario originalmente verificado em 21/07/2026 e atualizado em 09/09/2026 par
 | 81 / CONCESSOES | ConcessaoRod | `/concessaorod/` | `C:\Obras Inteligentes\concessaorod\index.html` | existe | 200 |
 | 82 / BUILT TO SUIT | BTS Financeiro | `/bts-financeiro/` | `C:\Obras Inteligentes\bts-financeiro\index.html` | existe | 200 |
 | 83 / BOMBEAMENTO | BombeiaPro | `/bombeiapro/` | `C:\Obras Inteligentes\bombeiapro\index.html` | existe | 200 |
+| 84 / IVA SINAPI | Credito de IVA no SINAPI | `/credito-iva-sinapi/` | `C:\Obras Inteligentes\credito-iva-sinapi\index.html` | existe | 200 |
 
 ## Tamanhos verificados
 
@@ -226,6 +227,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/concessaorod/` | 265214 bytes | 263033 caracteres |
 | `/bts-financeiro/` | 191127 bytes | 189533 caracteres |
 | `/bombeiapro/` | 431916 bytes | 424310 caracteres |
+| `/credito-iva-sinapi/` | 3913765 bytes | 3867100 caracteres |
 | `/entenda-ia/` | 175035 bytes | 172793 caracteres |
 | `/abc-fiscal/` | 351255 bytes | 349022 caracteres |
 
@@ -1975,6 +1977,24 @@ Observacoes:
 - O card foi classificado no filtro `Equipamentos, Apoios e Montagens`.
 - Validar apos futuras alteracoes se simulacao de bombeamento de concreto, linha de bombeamento, pressoes, vazoes, limites operacionais e relatorios continuam carregando corretamente.
 
+### Credito de IVA no SINAPI
+
+Rota: `/credito-iva-sinapi/`  
+Arquivo: `credito-iva-sinapi/index.html`
+
+Ultima inclusao:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\credito-iva-sinapi-v2.3.html`
+- Data: 13/09/2026
+- Alteracao: inclusao de novo card na home e publicacao do aplicativo Credito de IVA no SINAPI como HTML standalone.
+
+Observacoes:
+
+- Aplicativo standalone empacotado em HTML unico.
+- Tela inicial do site aponta para `/credito-iva-sinapi/`.
+- O card foi classificado no filtro `Orcamento`.
+- Validar apos futuras alteracoes se simulacao economica de creditos de IBS/CBS, composicoes SINAPI, premissas fiscais, cenarios, bases de dados e relatorios continuam carregando corretamente.
+
 ## Aplicativos didaticos fora da grade
 
 ### NeuralLab
@@ -2224,6 +2244,7 @@ $headers=@{ 'User-Agent'='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
   '/concessaorod/',
   '/bts-financeiro/',
   '/bombeiapro/',
+  '/credito-iva-sinapi/',
   '/entenda-ia/'
 ) | ForEach-Object {
   $url = "https://www.obrasinteligentes.ia.br$_?v=check"
