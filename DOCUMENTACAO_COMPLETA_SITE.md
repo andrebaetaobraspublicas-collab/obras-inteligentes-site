@@ -137,6 +137,7 @@ Inventario originalmente verificado em 21/07/2026 e atualizado em 09/09/2026 par
 | 82 / BUILT TO SUIT | BTS Financeiro | `/bts-financeiro/` | `C:\Obras Inteligentes\bts-financeiro\index.html` | existe | 200 |
 | 83 / BOMBEAMENTO | BombeiaPro | `/bombeiapro/` | `C:\Obras Inteligentes\bombeiapro\index.html` | existe | 200 |
 | 84 / IVA SINAPI | Credito de IVA no SINAPI | `/credito-iva-sinapi/` | `C:\Obras Inteligentes\credito-iva-sinapi\index.html` | existe | 200 |
+| 85 / VAPOR | VaporPro | `/vaporpro/` | `C:\Obras Inteligentes\vaporpro\index.html` | existe | 200 |
 
 ## Tamanhos verificados
 
@@ -228,6 +229,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/bts-financeiro/` | 191127 bytes | 189533 caracteres |
 | `/bombeiapro/` | 431916 bytes | 424310 caracteres |
 | `/credito-iva-sinapi/` | 4277989 bytes | 4227517 caracteres |
+| `/vaporpro/` | 226870 bytes | 223972 caracteres |
 | `/entenda-ia/` | 175035 bytes | 172793 caracteres |
 | `/abc-fiscal/` | 351255 bytes | 349022 caracteres |
 
@@ -1097,6 +1099,24 @@ Observacoes:
 - O card foi classificado no filtro `Engenharia Mecanica`.
 - Backup da home anterior salvo em `C:\Obras Inteligentes\backups\index-before-friccalc-20260828-072344.html`.
 - Validar apos futuras alteracoes se os calculos de freios, embreagens, atrito, torque, energia dissipada, pressao, aquecimento e relatorios continuam carregando corretamente.
+
+### VaporPro
+
+Rota: `/vaporpro/`  
+Arquivo: `vaporpro/index.html`
+
+Ultima inclusao:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\VaporPro (1).html`
+- Data: 14/09/2026
+- Alteracao: inclusao de novo card na home e publicacao do aplicativo VaporPro como HTML standalone.
+
+Observacoes:
+
+- Aplicativo standalone empacotado em HTML unico.
+- Tela inicial do site aponta para `/vaporpro/`.
+- O card foi classificado no filtro `Engenharia Mecanica`.
+- Validar apos futuras alteracoes se dimensionamento de caldeiras, queimadores, sistemas de condensado, propriedades de vapor, consumo de combustivel, emissoes, NR-13 e relatorios continuam carregando corretamente.
 
 ### CompressorSelect Pro
 
@@ -2249,6 +2269,7 @@ $headers=@{ 'User-Agent'='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
   '/bts-financeiro/',
   '/bombeiapro/',
   '/credito-iva-sinapi/',
+  '/vaporpro/',
   '/entenda-ia/'
 ) | ForEach-Object {
   $url = "https://www.obrasinteligentes.ia.br$_?v=check"
