@@ -138,6 +138,7 @@ Inventario originalmente verificado em 21/07/2026 e atualizado em 09/09/2026 par
 | 83 / BOMBEAMENTO | BombeiaPro | `/bombeiapro/` | `C:\Obras Inteligentes\bombeiapro\index.html` | existe | 200 |
 | 84 / IVA SINAPI | Credito de IVA no SINAPI | `/credito-iva-sinapi/` | `C:\Obras Inteligentes\credito-iva-sinapi\index.html` | existe | 200 |
 | 85 / VAPOR | VaporPro | `/vaporpro/` | `C:\Obras Inteligentes\vaporpro\index.html` | existe | 200 |
+| 86 / HIDRAULICA | HidraulicaPro | `/hidraulicapro/` | `C:\Obras Inteligentes\hidraulicapro\index.html` | existe | 200 |
 
 ## Tamanhos verificados
 
@@ -230,6 +231,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/bombeiapro/` | 431916 bytes | 424310 caracteres |
 | `/credito-iva-sinapi/` | 4277989 bytes | 4227517 caracteres |
 | `/vaporpro/` | 226870 bytes | 223972 caracteres |
+| `/hidraulicapro/` | 677372 bytes | 666952 caracteres |
 | `/entenda-ia/` | 175035 bytes | 172793 caracteres |
 | `/abc-fiscal/` | 351255 bytes | 349022 caracteres |
 
@@ -1117,6 +1119,24 @@ Observacoes:
 - Tela inicial do site aponta para `/vaporpro/`.
 - O card foi classificado no filtro `Engenharia Mecanica`.
 - Validar apos futuras alteracoes se dimensionamento de caldeiras, queimadores, sistemas de condensado, propriedades de vapor, consumo de combustivel, emissoes, NR-13 e relatorios continuam carregando corretamente.
+
+### HidraulicaPro
+
+Rota: `/hidraulicapro/`  
+Arquivo: `hidraulicapro/index.html`
+
+Ultima inclusao:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\HidraulicaPro_v1.6.html`
+- Data: 14/09/2026
+- Alteracao: inclusao de novo card na home e publicacao do aplicativo HidraulicaPro como HTML standalone.
+
+Observacoes:
+
+- Aplicativo standalone empacotado em HTML unico.
+- Tela inicial do site aponta para `/hidraulicapro/`.
+- O card foi classificado no filtro `Engenharia Mecanica`.
+- Validar apos futuras alteracoes se pre-dimensionamento de sistemas hidraulicos, bomba, cilindro, valvulas, tubulacoes, reservatorio, perdas, eficiencia e relatorios continuam carregando corretamente.
 
 ### CompressorSelect Pro
 
@@ -2270,6 +2290,7 @@ $headers=@{ 'User-Agent'='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
   '/bombeiapro/',
   '/credito-iva-sinapi/',
   '/vaporpro/',
+  '/hidraulicapro/',
   '/entenda-ia/'
 ) | ForEach-Object {
   $url = "https://www.obrasinteligentes.ia.br$_?v=check"
