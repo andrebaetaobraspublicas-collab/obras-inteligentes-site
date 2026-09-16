@@ -141,6 +141,7 @@ Inventario originalmente verificado em 21/07/2026 e atualizado em 09/09/2026 par
 | 86 / HIDRAULICA | HidraulicaPro | `/hidraulicapro/` | `C:\Obras Inteligentes\hidraulicapro\index.html` | existe | 200 |
 | 87 / CAPACITORES | CapacitorPro | `/capacitorpro/` | `C:\Obras Inteligentes\capacitorpro\index.html` | existe | 200 |
 | 88 / PONTES | PonteCalc PRO | `/pontecalc-pro/` | `C:\Obras Inteligentes\pontecalc-pro\index.html` | existe | 200 |
+| 89 / FLUIDOS | Navier-Stokes | `/navier-stokes/` | `C:\Obras Inteligentes\navier-stokes\index.html` | existe | 200 |
 
 ## Tamanhos verificados
 
@@ -236,6 +237,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/hidraulicapro/` | 677372 bytes | 666952 caracteres |
 | `/capacitorpro/` | 599453 bytes | 590655 caracteres |
 | `/pontecalc-pro/` | 807590 bytes | 794080 caracteres |
+| `/navier-stokes/` | 236541 bytes | 233834 caracteres |
 | `/entenda-ia/` | 175035 bytes | 172793 caracteres |
 | `/abc-fiscal/` | 351255 bytes | 349022 caracteres |
 
@@ -732,6 +734,24 @@ Observacoes:
 - Tela inicial do site aponta para `/pontecalc-pro/`.
 - O card foi classificado no filtro `Pavimentacao, Saneamento e Infraestrutura`.
 - Validar apos futuras alteracoes se modulos de tabuleiro, grelha, mesoestrutura, fundacoes, hidraulica, BIM/IFC e relatorios continuam carregando corretamente.
+
+### Navier-Stokes
+
+Rota: `/navier-stokes/`  
+Arquivo: `navier-stokes/index.html`
+
+Ultima inclusao:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\navier-stokes-diferencas-finitas (5).html`
+- Data: 16/09/2026
+- Alteracao: inclusao de novo card na home, criacao do filtro `Mecanica dos Fluidos` e publicacao do aplicativo como HTML standalone.
+
+Observacoes:
+
+- Aplicativo standalone empacotado em HTML unico.
+- Tela inicial do site aponta para `/navier-stokes/`.
+- O card foi classificado no filtro `Mecanica dos Fluidos`.
+- Validar apos futuras alteracoes se o solucionador 2D/3D, as visualizacoes, os casos de simulacao e as verificacoes numericas continuam carregando corretamente.
 
 ### SolarPro
 
@@ -2335,6 +2355,7 @@ $headers=@{ 'User-Agent'='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
   '/hidraulicapro/',
   '/capacitorpro/',
   '/pontecalc-pro/',
+  '/navier-stokes/',
   '/entenda-ia/'
 ) | ForEach-Object {
   $url = "https://www.obrasinteligentes.ia.br$_?v=check"

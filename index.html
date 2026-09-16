@@ -530,6 +530,7 @@ body.modal-open{overflow:hidden}
       <button class="filter-btn" type="button" data-filter="Arquitetura e Design de Interiores">Arquitetura e Design de Interiores</button>
       <button class="filter-btn" type="button" data-filter="Pavimentacao, Saneamento e Infraestrutura">Pavimenta&ccedil;&atilde;o, Saneamento e Infraestrutura</button>
       <button class="filter-btn" type="button" data-filter="Engenharia Mecanica">Engenharia Mec&acirc;nica</button>
+      <button class="filter-btn" type="button" data-filter="Mecanica dos Fluidos">Mec&acirc;nica dos Fluidos</button>
       <button class="filter-btn" type="button" data-filter="Equipamentos, Apoios e Montagens">Equipamentos, Apoios e Montagens</button>
       <button class="filter-btn" type="button" data-filter="Gestao de Obras e de Contratos">Gest&atilde;o de Obras e de Contratos</button>
       <button class="filter-btn" type="button" data-filter="Manutencao Predial">Manuten&ccedil;&atilde;o Predial</button>
@@ -539,7 +540,7 @@ body.modal-open{overflow:hidden}
       <button class="filter-btn" type="button" data-filter="Orcamento">Or&ccedil;amento</button>
       <button class="filter-btn" type="button" data-filter="Artigos">Artigos</button>
     </div>
-    <div class="app-filter-status" id="appFilterStatus">88 aplicativos encontrados</div>
+    <div class="app-filter-status" id="appFilterStatus">89 aplicativos encontrados</div>
   </div>
 
   <div class="apps">
@@ -1521,6 +1522,23 @@ body.modal-open{overflow:hidden}
       <div class="meta">Abrir sistema &middot; pontes e infraestrutura</div>
     </a>
 
+    <a class="app" href="/navier-stokes/" aria-label="Abrir Navier-Stokes por diferencas finitas">
+      <span class="arrow">&rarr;</span>
+      <div class="app-num">89 / FLUIDOS</div>
+      <svg class="app-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 18c6-6 12-6 18 0s12 6 18 0"/>
+        <path d="M6 28c6-6 12-6 18 0s12 6 18 0"/>
+        <path d="M8 38h32"/>
+        <path d="M12 10h24"/>
+        <path d="M16 10v28"/>
+        <path d="M24 10v28"/>
+        <path d="M32 10v28"/>
+      </svg>
+      <h3>Navier-Stokes</h3>
+      <p>Solucionador de escoamentos incompress&iacute;veis 2D e 3D por diferen&ccedil;as finitas, com malha cartesiana, visualiza&ccedil;&otilde;es, verifica&ccedil;&otilde;es e casos de simula&ccedil;&atilde;o.</p>
+      <div class="meta">Abrir sistema &middot; mec&acirc;nica dos fluidos</div>
+    </a>
+
   </div>
 </section>
 
@@ -1657,6 +1675,7 @@ body.modal-open{overflow:hidden}
         <a href="/hidraulicapro/">Hidr&aacute;ulicaPro - Sistemas Hidr&aacute;ulicos</a>
         <a href="/capacitorpro/">CapacitorPro - Bancos de Capacitores</a>
         <a href="/pontecalc-pro/">PonteCalc PRO - Engenharia de Pontes</a>
+        <a href="/navier-stokes/">Navier-Stokes - Mec&acirc;nica dos Fluidos</a>
         <a href="/canteiro-sicro/">Canteiro de Obras - Sicro</a>
         <a href="/locar-ou-comprar-pro/">Locar ou Comprar Pro</a>
         <a href="/acesscheck/">AcessCheck - Vistoria de Acessibilidade</a>
@@ -1833,7 +1852,8 @@ body.modal-open{overflow:hidden}
     ["/vaporpro/", ["Engenharia Mecanica", "vaporpro vapor caldeiras queimadores condensado geracao vapor agua combustivel emissoes eficiencia termica nr13 utilidades engenharia mecanica"]],
     ["/hidraulicapro/", ["Engenharia Mecanica", "hidraulicapro hidraulica sistemas hidraulicos bomba cilindro valvula valvulas tubulacao tubulacoes reservatorio perdas vazao pressao oleo eficiencia engenharia mecanica"]],
     ["/capacitorpro/", ["Instalacoes Eletricas", "capacitorpro capacitor capacitores banco capacitores fator potencia correcao fator potencia reativo kvar harmonicos estagios controlador temporal instalacoes eletricas"]],
-    ["/pontecalc-pro/", ["Pavimentacao, Saneamento e Infraestrutura", "pontecalc pro pontes ponte tabuleiro grelha longarina mesoestrutura fundacoes fundacao hidraulica drenagem bim ifc infraestrutura obras de arte especiais oae"]]
+    ["/pontecalc-pro/", ["Pavimentacao, Saneamento e Infraestrutura", "pontecalc pro pontes ponte tabuleiro grelha longarina mesoestrutura fundacoes fundacao hidraulica drenagem bim ifc infraestrutura obras de arte especiais oae"]],
+    ["/navier-stokes/", ["Mecanica dos Fluidos", "navier stokes diferencas finitas escoamento incompressivel cfd fluido fluidos simulacao 2d 3d malha cartesiana mac pressao velocidade viscosidade reynolds mecanica dos fluidos"]]
   ]);
 
   const appCards = Array.from(document.querySelectorAll(".apps .app"));
