@@ -233,7 +233,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/credito-iva-sinapi/` | 4277989 bytes | 4227517 caracteres |
 | `/vaporpro/` | 226870 bytes | 223972 caracteres |
 | `/hidraulicapro/` | 677372 bytes | 666952 caracteres |
-| `/capacitorpro/` | 494627 bytes | 487083 caracteres |
+| `/capacitorpro/` | 599453 bytes | 590655 caracteres |
 | `/entenda-ia/` | 175035 bytes | 172793 caracteres |
 | `/abc-fiscal/` | 351255 bytes | 349022 caracteres |
 
@@ -551,11 +551,13 @@ Observacoes:
 Rota: `/capacitorpro/`  
 Arquivo: `capacitorpro/index.html`
 
-Ultima inclusao:
+Ultima atualizacao:
 
 - Fonte: `C:\Users\ACER\Documents\Downloads\CapacitorPro_v1_3.html`
 - Data: 15/09/2026
 - Alteracao: inclusao de novo card na home e publicacao do aplicativo CapacitorPro como HTML standalone.
+- Em 15/09/2026, atualizado com `C:\Users\ACER\Documents\Downloads\CapacitorPro_v1_4.html`, identificado como `CapacitorPro v1.4`.
+- Backup anterior: `C:\Obras Inteligentes\backups\capacitorpro-index-before-v1-4-20260915-2142.html`.
 
 Observacoes:
 
