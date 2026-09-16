@@ -139,6 +139,7 @@ Inventario originalmente verificado em 21/07/2026 e atualizado em 09/09/2026 par
 | 84 / IVA SINAPI | Credito de IVA no SINAPI | `/credito-iva-sinapi/` | `C:\Obras Inteligentes\credito-iva-sinapi\index.html` | existe | 200 |
 | 85 / VAPOR | VaporPro | `/vaporpro/` | `C:\Obras Inteligentes\vaporpro\index.html` | existe | 200 |
 | 86 / HIDRAULICA | HidraulicaPro | `/hidraulicapro/` | `C:\Obras Inteligentes\hidraulicapro\index.html` | existe | 200 |
+| 87 / CAPACITORES | CapacitorPro | `/capacitorpro/` | `C:\Obras Inteligentes\capacitorpro\index.html` | existe | 200 |
 
 ## Tamanhos verificados
 
@@ -232,6 +233,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/credito-iva-sinapi/` | 4277989 bytes | 4227517 caracteres |
 | `/vaporpro/` | 226870 bytes | 223972 caracteres |
 | `/hidraulicapro/` | 677372 bytes | 666952 caracteres |
+| `/capacitorpro/` | 494627 bytes | 487083 caracteres |
 | `/entenda-ia/` | 175035 bytes | 172793 caracteres |
 | `/abc-fiscal/` | 351255 bytes | 349022 caracteres |
 
@@ -543,6 +545,24 @@ Observacoes:
 - Aplicativo standalone.
 - O card foi remanejado do filtro `Instalacoes` para `Instalacoes Eletricas` em 27/08/2026.
 - Validado com carregamento da tela legal e presenca da interface principal.
+
+### CapacitorPro
+
+Rota: `/capacitorpro/`  
+Arquivo: `capacitorpro/index.html`
+
+Ultima inclusao:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\CapacitorPro_v1_3.html`
+- Data: 15/09/2026
+- Alteracao: inclusao de novo card na home e publicacao do aplicativo CapacitorPro como HTML standalone.
+
+Observacoes:
+
+- Aplicativo standalone empacotado em HTML unico.
+- Tela inicial do site aponta para `/capacitorpro/`.
+- O card foi classificado no filtro `Instalacoes Eletricas`.
+- Validar apos futuras alteracoes se dimensionamento e simulacao de bancos de capacitores, fator de potencia, harmonicos, estagios, controlador temporal, analise economica e relatorios continuam carregando corretamente.
 
 ### ReservatorioPro
 
@@ -2291,6 +2311,7 @@ $headers=@{ 'User-Agent'='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
   '/credito-iva-sinapi/',
   '/vaporpro/',
   '/hidraulicapro/',
+  '/capacitorpro/',
   '/entenda-ia/'
 ) | ForEach-Object {
   $url = "https://www.obrasinteligentes.ia.br$_?v=check"
