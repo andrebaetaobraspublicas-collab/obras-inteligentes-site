@@ -237,7 +237,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/vaporpro/` | 226870 bytes | 223972 caracteres |
 | `/hidraulicapro/` | 677372 bytes | 666952 caracteres |
 | `/capacitorpro/` | 599453 bytes | 590655 caracteres |
-| `/pontecalc-pro/` | 807590 bytes | 794080 caracteres |
+| `/pontecalc-pro/` | 3065032 bytes | 3025139 caracteres |
 | `/navier-stokes/` | 658912 bytes | 654839 caracteres |
 | `/analisador-estrutural-mef/` | 373711 bytes | 370394 caracteres |
 | `/entenda-ia/` | 175035 bytes | 172793 caracteres |
@@ -724,11 +724,12 @@ Observacoes:
 Rota: `/pontecalc-pro/`  
 Arquivo: `pontecalc-pro/index.html`
 
-Ultima inclusao:
+Ultima atualizacao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\PonteCalc_PRO_v1.7.html`
-- Data: 16/09/2026
-- Alteracao: inclusao de novo card na home e publicacao do aplicativo PonteCalc PRO como HTML standalone.
+- Fonte: `C:\Users\ACER\Documents\Downloads\PonteCalc_PRO_Consolidado.html`
+- Data: 17/09/2026
+- Versao: edicao consolidada, revisao 1.7.1
+- Alteracao: substituicao do aplicativo pela edicao consolidada, preservando a rota, o card e o filtro `Pavimentacao, Saneamento e Infraestrutura`.
 
 Observacoes:
 
