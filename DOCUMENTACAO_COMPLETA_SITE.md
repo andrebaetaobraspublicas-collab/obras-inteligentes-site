@@ -142,6 +142,7 @@ Inventario originalmente verificado em 21/07/2026 e atualizado em 09/09/2026 par
 | 87 / CAPACITORES | CapacitorPro | `/capacitorpro/` | `C:\Obras Inteligentes\capacitorpro\index.html` | existe | 200 |
 | 88 / PONTES | PonteCalc PRO | `/pontecalc-pro/` | `C:\Obras Inteligentes\pontecalc-pro\index.html` | existe | 200 |
 | 89 / FLUIDOS | Navier-Stokes | `/navier-stokes/` | `C:\Obras Inteligentes\navier-stokes\index.html` | existe | 200 |
+| 90 / MEF | Analisador Estrutural MEF | `/analisador-estrutural-mef/` | `C:\Obras Inteligentes\analisador-estrutural-mef\index.html` | existe | 200 |
 
 ## Tamanhos verificados
 
@@ -238,6 +239,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/capacitorpro/` | 599453 bytes | 590655 caracteres |
 | `/pontecalc-pro/` | 807590 bytes | 794080 caracteres |
 | `/navier-stokes/` | 658912 bytes | 654839 caracteres |
+| `/analisador-estrutural-mef/` | 371105 bytes | 367803 caracteres |
 | `/entenda-ia/` | 175035 bytes | 172793 caracteres |
 | `/abc-fiscal/` | 351255 bytes | 349022 caracteres |
 
@@ -754,6 +756,25 @@ Observacoes:
 - O card foi classificado no filtro `Mecanica dos Fluidos`.
 - A versao 2.1 contempla laboratorio CFD 2D, 3D e compressivel.
 - Validar apos futuras alteracoes se os solucionadores, as visualizacoes, os casos de simulacao e as verificacoes numericas continuam carregando corretamente.
+
+### Analisador Estrutural MEF
+
+Rota: `/analisador-estrutural-mef/`  
+Arquivo: `analisador-estrutural-mef/index.html`
+
+Ultima inclusao:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\analisador-estrutural-mef-v1.1.html`
+- Data: 17/09/2026
+- Versao: 1.1
+- Alteracao: inclusao de novo card e publicacao do aplicativo como HTML standalone.
+
+Observacoes:
+
+- Aplicativo standalone empacotado em HTML unico.
+- Tela inicial do site aponta para `/analisador-estrutural-mef/`.
+- O card foi classificado no filtro `Estruturas`.
+- Validar apos futuras alteracoes a modelagem 2D/3D, analise linear, flambagem, colapso plastico, importacao de geometria e relatorio em PDF.
 
 ### SolarPro
 
@@ -2358,6 +2379,7 @@ $headers=@{ 'User-Agent'='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
   '/capacitorpro/',
   '/pontecalc-pro/',
   '/navier-stokes/',
+  '/analisador-estrutural-mef/',
   '/entenda-ia/'
 ) | ForEach-Object {
   $url = "https://www.obrasinteligentes.ia.br$_?v=check"
