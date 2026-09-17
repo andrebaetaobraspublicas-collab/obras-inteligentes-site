@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Analisador estrutural MEF • V1.1</title>
+<title>Analisador estrutural MEF • V1.2</title>
 <meta name="description" content="Análise linear-elástica de estruturas de concreto armado e metálicas por elementos finitos, com modelagem 2D e 3D, importação de geometria e relatório em PDF.">
 <style>
 /* ===================== sistema de design =====================
@@ -274,7 +274,7 @@ table.dados td.acao{width:24px; text-align:center}
 <div id="legal" hidden></div>
 
 <header class="topo">
-  <div class="marca"><b>Analisador estrutural</b><span>V1.1 · elementos finitos · 2D e 3D</span></div>
+  <div class="marca"><b>Analisador estrutural</b><span>V1.2 · elementos finitos · 2D e 3D</span></div>
   <nav class="abas" id="abas" role="tablist"></nav>
   <div class="acoes">
     <button class="btn btn-i" id="btnTema" title="Alternar tema claro/escuro" aria-label="Alternar tema">◐</button>
@@ -3444,17 +3444,26 @@ const FEMRender = (function () {
         ctx.globalAlpha=1;
       }
 
-      /* --- V1.1: deformada nodal poligonal; recuperação intrabarra reservada à V1.2 --- */
+      /* --- V1.2: deformada intrabarra com interpolação cúbica (frame) --- */
       if (o.deformada && desl) {
         ctx.strokeStyle = T.deformada || '#E8563F';
         ctx.lineWidth = 1.8;
         for (const e of barras) {
           const el = modelo.elements[e];
           const a = idx.get(el.nodes[0]), b = idx.get(el.nodes[1]);
+          const er = resultado && resultado.elements ? resultado.elements[e] : null;
           ctx.globalAlpha=this.alphaElement(modelo,el);
-          const pa = posDef(a), pb = posDef(b);
-          const p0 = this.proj(pa), p1 = this.proj(pb);
-          ctx.beginPath(); ctx.moveTo(p0[0], p0[1]); ctx.lineTo(p1[0], p1[1]); ctx.stroke();
+          const curva = this.curvaDeformadaBarra(modelo, el, er, a, b, fEsc, desl);
+          if (curva.length >= 2) {
+            ctx.beginPath();
+            const p0 = this.proj(curva[0]);
+            ctx.moveTo(p0[0], p0[1]);
+            for (let k = 1; k < curva.length; k++) {
+              const pk = this.proj(curva[k]);
+              ctx.lineTo(pk[0], pk[1]);
+            }
+            ctx.stroke();
+          }
           ctx.globalAlpha=1;
         }
       }
@@ -3488,7 +3497,7 @@ const FEMRender = (function () {
         ctx.fillText(`4 PAVIMENTOS  ·  ${p.nx} × ${p.ny} VÃOS  ·  ${modelo.elements.length} BARRAS`,14,63);
         ctx.fillStyle='#6BB8CB';ctx.fillText('Pilares claros  ·  Vigas X azuis  ·  Vigas Y verdes',14,80);
       }
-      if(o.deformada&&desl){ctx.fillStyle='#EB9B7C';ctx.font='11px ui-sans-serif,system-ui';ctx.textAlign='left';ctx.fillText('Deformada nodal poligonal · escala '+fEsc.toPrecision(3)+'×',14,this.alt-14);}
+      if(o.deformada&&desl){ctx.fillStyle='#EB9B7C';ctx.font='11px ui-sans-serif,system-ui';ctx.textAlign='left';ctx.fillText('Deformada com interpolação cúbica nas barras · escala '+fEsc.toPrecision(3)+'×',14,this.alt-14);}
       if (o.legenda && faixa) this.desenharLegenda(ctx, faixa, T);
       if (this.destaque) this.desenharDestaque(ctx, modelo, idx, T);
     }
@@ -3524,6 +3533,48 @@ const FEMRender = (function () {
         dmax = Math.max(dmax, Math.hypot(u[i * 6], u[i * 6 + 1], u[i * 6 + 2]));
       if (dmax < 1e-14) return 0;
       return (this.tamanho * 0.08) / dmax;
+    }
+
+    curvaDeformadaBarra(modelo, el, er, a, b, fEsc, desl) {
+      const na = modelo.nodes[a], nb = modelo.nodes[b];
+      const pa = [na.x, na.y, na.z || 0], pb = [nb.x, nb.y, nb.z || 0];
+      const pga = desl ? [pa[0] + desl[a * 6] * fEsc, pa[1] + desl[a * 6 + 1] * fEsc, pa[2] + desl[a * 6 + 2] * fEsc] : pa;
+      const pgb = desl ? [pb[0] + desl[b * 6] * fEsc, pb[1] + desl[b * 6 + 1] * fEsc, pb[2] + desl[b * 6 + 2] * fEsc] : pb;
+      if (!er || !er.ul || !isFinite(fEsc) || fEsc === 0) return [pga, pgb];
+      if (el.kind !== 'frame') return [pga, pgb];
+      let ax;
+      try {
+        ax = FEMElem.localAxes(pa[0], pa[1], pa[2], pb[0], pb[1], pb[2], el.beta || 0);
+      } catch (e) {
+        return [pga, pgb];
+      }
+      const L = ax.L || er.L || Math.hypot(pb[0] - pa[0], pb[1] - pa[1], pb[2] - pa[2]);
+      if (!(L > 1e-12)) return [pa, pb];
+      const ex = ax.lam[0], ey = ax.lam[1], ez = ax.lam[2];
+      const ul = er.ul;
+      const ux1 = ul[0] * fEsc, uy1 = ul[1] * fEsc, uz1 = ul[2] * fEsc;
+      const rx1 = ul[3], ry1 = ul[4], rz1 = ul[5];
+      const ux2 = ul[6] * fEsc, uy2 = ul[7] * fEsc, uz2 = ul[8] * fEsc;
+      const rx2 = ul[9], ry2 = ul[10], rz2 = ul[11];
+      const nSeg = Math.max(12, Math.min(40, Math.round(L * 4)));
+      const pts = [];
+      for (let i = 0; i <= nSeg; i++) {
+        const xi = i / nSeg;
+        const x = L * xi;
+        const h1 = 1 - 3 * xi * xi + 2 * xi * xi * xi;
+        const h2 = L * (xi - 2 * xi * xi + xi * xi * xi);
+        const h3 = 3 * xi * xi - 2 * xi * xi * xi;
+        const h4 = L * (-xi * xi + xi * xi * xi);
+        const u = (1 - xi) * ux1 + xi * ux2;
+        const v = h1 * uy1 + h2 * rz1 * fEsc + h3 * uy2 + h4 * rz2 * fEsc;
+        const w = h1 * uz1 - h2 * ry1 * fEsc + h3 * uz2 - h4 * ry2 * fEsc;
+        pts.push([
+          pa[0] + ex[0] * (x + u) + ey[0] * v + ez[0] * w,
+          pa[1] + ex[1] * (x + u) + ey[1] * v + ez[1] * w,
+          pa[2] + ex[2] * (x + u) + ey[2] * v + ez[2] * w
+        ]);
+      }
+      return pts;
     }
 
     faixaContorno(modelo, res, comp) {
@@ -5670,7 +5721,7 @@ const App = (function () {
     S._refAv = refs.some(r => r[0] === S._refAv) ? S._refAv : refs[0][0];
 
     const validation=S._validation;
-    out.push(bloco('Validação do modelo • V1.1',[
+    out.push(bloco('Validação do modelo • V1.2',[
       el('button',{class:'btn btn-p',onclick:validarModelo},['Validar modelo antes de analisar']),
       el('div',{class:'nota'},['IDs, referências, geometria, Jacobianos, seções, ações e condições prescritas. A estabilidade estrutural é checada ao fatorar o sistema.']),
       ...(validation?validation.errors.map(t=>el('div',{class:'aviso erro'},[t])):[]),
@@ -5702,7 +5753,7 @@ const App = (function () {
       campo('Modo torcional', sel([['0', 'Ignorar (apenas flexão)'], ['1', 'Incluir Ip/A']], S._torcao ? '1' : '0',
         v => { S._torcao = v === '1'; })),
       el('div', { class: 'nota' }, [
-        'V1.1: flambagem de barras com liberações internas está bloqueada. Sem rigidez ao empenamento, modos torcionais compartilham o autovalor GJ/r₀², ' +
+        'V1.2: flambagem de barras com liberações internas está bloqueada. Sem rigidez ao empenamento, modos torcionais compartilham o autovalor GJ/r₀², ' +
         'um resultado degenerado e conservador demais para seções abertas. Por isso a parcela torcional ' +
         'fica desligada por padrão: verifique a flambagem por torção pela formulação da norma.'
       ]),
@@ -6447,13 +6498,13 @@ const Manual = (function () {
 
   /* ---------------- conteúdo ---------------- */
   const PAGINAS = [
-    {grupo:'V1.1',id:'predio4',titulo:'Prédio de quatro pavimentos',corpo:()=>[
+    {grupo:'V1.2',id:'predio4',titulo:'Prédio de quatro pavimentos',corpo:()=>[
       p('Em Modelo → Exemplos → Prédio • 4 pavimentos, carregue o novo edifício espacial. O gerador permite alterar o número de vãos, os módulos X/Y, a altura dos pisos, as seções e as cargas de piso. São quatro pavimentos elevados sobre a base engastada.'),
       p('Na configuração inicial são três vãos de 5 m em X e dois vãos de 5 m em Y: planta de 15 × 10 m, altura de 12,80 m, 12 alinhamentos de pilares, 60 nós, 48 trechos de pilares e 68 vigas (116 barras). O material é concreto C30 homogêneo elástico; pilares de 40 × 40 cm e vigas de 25 × 55 cm são apenas hipóteses ilustrativas.'),
       p('As vigas têm seu eixo y local na vertical (β = 90°), mantendo a altura da seção orientada corretamente. No inspetor, destaque cada pórtico XZ ou YZ. O destaque visual NÃO altera o modelo de cálculo. XY é a planta; XZ e YZ são elevações.'),
       p('G inclui peso próprio das barras e 5 kN/m² de piso; Q usa 2 kN/m². As ações de piso são transferidas só às vigas X por faixas tributárias em Y, sem dupla contagem. HX e HY são forças laterais ilustrativas distribuídas pelos nós, crescentes com o pavimento, não um cálculo normativo de vento. As combinações são exemplos editáveis.'),
       aviso('Os planos dos pisos são referências gráficas. Não existem lajes estruturais, diafragma rígido, efeitos de segunda ordem, fissuração ou dimensionamento de armaduras. Não se trata de projeto de edifício pronto para execução.'),
-      p('Execute Validar modelo e Analisar. Selecione HX/HY para observar a deformação lateral e, nas combinações, confira esforços e reações. A V1.1 ainda mostra a deformada nodal como linhas retas por elemento; a flecha no interior de uma barra não está recuperada.')
+      p('Execute Validar modelo e Analisar. Selecione HX/HY para observar a deformação lateral e, nas combinações, confira esforços e reações. A V1.2 já mostra a deformada intrabarra com interpolação cúbica para elementos de pórtico, recuperando a flecha curva no interior das barras; treliças permanecem com deformada linear entre nós.')
     ]},
     {
       grupo: 'Primeiros passos', id: 'inicio', titulo: 'O que este aplicativo faz',
@@ -6610,7 +6661,7 @@ const Manual = (function () {
     {
       grupo: 'Resultados', id: 'leitura', titulo: 'Leitura dos resultados',
       corpo: () => [
-        p('O visor mostra diagramas de esforço normal, cortante, momentos e torção nas barras, e mapas de tensão nos elementos contínuos. A deformada é desenhada em escala ampliada; o fator automático limita o deslocamento máximo a cerca de oito por cento da dimensão do modelo.'),
+        p('O visor mostra diagramas de esforço normal, cortante, momentos e torção nas barras, e mapas de tensão nos elementos contínuos. A deformada é desenhada em escala ampliada; em barras de pórtico, a linha deformada é interpolada por funções cúbicas de Hermite, enquanto treliças e elementos contínuos continuam sendo exibidos por seus deslocamentos nodais. O fator automático limita o deslocamento máximo a cerca de oito por cento da dimensão do modelo.'),
         h3('Tensões nos contínuos'),
         p('A tensão de von Mises resume um estado multiaxial em um valor de comparação com a resistência ao escoamento, e é adequada ao aço. Para concreto examine as tensões principais: σ1 indica tração e aponta a direção provável de fissuração; σ2 e σ3 indicam compressão.'),
         labTensoes(),
@@ -6628,7 +6679,7 @@ const Manual = (function () {
       corpo: () => [
         p('Cada caso de carregamento é resolvido isoladamente. Como a análise é linear, as combinações resultam de superposição: a matriz é fatorada uma única vez e cada caso consome apenas uma retro-substituição. Por isso acrescentar casos custa pouco.'),
         p('O botão de sugestão monta combinações no formato da NBR 8681: coeficiente 1,4 nas ações permanentes e na variável principal, e 1,4 vezes ψ₀ nas demais variáveis, além de uma combinação quase permanente de serviço. Os valores de ψ dependem da natureza da ação e precisam ser ajustados conforme a Tabela 6 da norma.'),
-        aviso('A superposição vale apenas em regime linear. A V1.1 combina as ações com a mesma matriz e recalcula tensões derivadas. Flambagem e plasticidade são análises separadas e simplificadas.')
+        aviso('A superposição vale apenas em regime linear. A V1.2 combina as ações com a mesma matriz e recalcula tensões derivadas. Flambagem e plasticidade são análises separadas e simplificadas.')
       ]
     },
     {
@@ -6640,10 +6691,10 @@ const Manual = (function () {
       ]
     },
     {
-      grupo: 'Referência', id: 'validacao', titulo: 'Testes executáveis da V1.1',
+      grupo: 'Referência', id: 'validacao', titulo: 'Testes executáveis da V1.2',
       corpo: () => {
         const out=el('div');
-        return [p('A V1.1 inclui testes de regressão executáveis. Eles comparam casos de controle com expressões analíticas, verificam combinações e condições de contorno e confirmam a rejeição de modelos inválidos. Não representam certificação do programa nem validação de qualquer projeto.'),
+        return [p('A V1.2 inclui testes de regressão executáveis. Eles comparam casos de controle com expressões analíticas, verificam combinações e condições de contorno e confirmam a rejeição de modelos inválidos. Não representam certificação do programa nem validação de qualquer projeto.'),
           el('button',{class:'btn btn-p',onclick:()=>{const r=FEMTests.run();out.innerHTML='';out.appendChild(p(`${r.passed}/${r.tests.length} testes aprovados em ${r.ms} ms.`));const t=el('table',{class:'dados'});r.tests.forEach(x=>t.appendChild(el('tr',{},[el('td',{txt:x.name}),el('td',{txt:x.ok?'Aprovado':'FALHOU: '+x.error})])));out.appendChild(t);}},['Executar bateria de testes']),out,
           p('A formulação de equilíbrio utiliza as seis componentes, incluindo momentos das forças. O programa rejeita Jacobianos não positivos; exige referências válidas; não ignora liberações singulares e não cria apoios para translações sem rigidez.'),
           p('Referência de benchmark: Itasca Software, Elastic Beam with Concentrated Loads, documentação 9.2. O ensaio usa duas cargas simétricas em viga Euler-Bernoulli. Os demais ensaios são verificações algébricas internas e soluções clássicas explicitadas no código de teste.'),el('a',{href:'https://docs.itascacg.com/itasca920/common/sel/test3d/Beam/ConcentratedLoadsBeam/ConcentratedLoadsBeam.html',target:'_blank',rel:'noopener noreferrer'},['Abrir referência técnica do benchmark'])];

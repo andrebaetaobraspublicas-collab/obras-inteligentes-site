@@ -239,7 +239,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/capacitorpro/` | 599453 bytes | 590655 caracteres |
 | `/pontecalc-pro/` | 807590 bytes | 794080 caracteres |
 | `/navier-stokes/` | 658912 bytes | 654839 caracteres |
-| `/analisador-estrutural-mef/` | 371105 bytes | 367803 caracteres |
+| `/analisador-estrutural-mef/` | 373711 bytes | 370394 caracteres |
 | `/entenda-ia/` | 175035 bytes | 172793 caracteres |
 | `/abc-fiscal/` | 351255 bytes | 349022 caracteres |
 
@@ -762,12 +762,12 @@ Observacoes:
 Rota: `/analisador-estrutural-mef/`  
 Arquivo: `analisador-estrutural-mef/index.html`
 
-Ultima inclusao:
+Ultima atualizacao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\analisador-estrutural-mef-v1.1.html`
+- Fonte: `C:\Users\ACER\Documents\Downloads\analisador-estrutural-mef-v1.2.html`
 - Data: 17/09/2026
-- Versao: 1.1
-- Alteracao: inclusao de novo card e publicacao do aplicativo como HTML standalone.
+- Versao: 1.2
+- Alteracao: substituicao do aplicativo pela nova versao, preservando a rota, o card e o filtro `Estruturas`.
 
 Observacoes:
 
