@@ -237,7 +237,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/hidraulicapro/` | 677372 bytes | 666952 caracteres |
 | `/capacitorpro/` | 599453 bytes | 590655 caracteres |
 | `/pontecalc-pro/` | 807590 bytes | 794080 caracteres |
-| `/navier-stokes/` | 236541 bytes | 233834 caracteres |
+| `/navier-stokes/` | 658912 bytes | 654839 caracteres |
 | `/entenda-ia/` | 175035 bytes | 172793 caracteres |
 | `/abc-fiscal/` | 351255 bytes | 349022 caracteres |
 
@@ -740,18 +740,20 @@ Observacoes:
 Rota: `/navier-stokes/`  
 Arquivo: `navier-stokes/index.html`
 
-Ultima inclusao:
+Ultima atualizacao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\navier-stokes-diferencas-finitas (5).html`
-- Data: 16/09/2026
-- Alteracao: inclusao de novo card na home, criacao do filtro `Mecanica dos Fluidos` e publicacao do aplicativo como HTML standalone.
+- Fonte: `C:\Users\ACER\Documents\Downloads\NavierStokes_2_1.html`
+- Data: 17/09/2026
+- Versao: 2.1
+- Alteracao: substituicao do aplicativo pela nova versao, preservando a rota, o card e o filtro `Mecanica dos Fluidos`.
 
 Observacoes:
 
 - Aplicativo standalone empacotado em HTML unico.
 - Tela inicial do site aponta para `/navier-stokes/`.
 - O card foi classificado no filtro `Mecanica dos Fluidos`.
-- Validar apos futuras alteracoes se o solucionador 2D/3D, as visualizacoes, os casos de simulacao e as verificacoes numericas continuam carregando corretamente.
+- A versao 2.1 contempla laboratorio CFD 2D, 3D e compressivel.
+- Validar apos futuras alteracoes se os solucionadores, as visualizacoes, os casos de simulacao e as verificacoes numericas continuam carregando corretamente.
 
 ### SolarPro
 
