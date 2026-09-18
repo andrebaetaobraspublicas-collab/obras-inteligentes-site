@@ -530,7 +530,7 @@ body.modal-open{overflow:hidden}
       <button class="filter-btn" type="button" data-filter="Arquitetura e Design de Interiores">Arquitetura e Design de Interiores</button>
       <button class="filter-btn" type="button" data-filter="Pavimentacao, Saneamento e Infraestrutura">Pavimenta&ccedil;&atilde;o, Saneamento e Infraestrutura</button>
       <button class="filter-btn" type="button" data-filter="Engenharia Mecanica">Engenharia Mec&acirc;nica</button>
-      <button class="filter-btn" type="button" data-filter="Mecanica dos Fluidos">Mec&acirc;nica dos Fluidos</button>
+      <button class="filter-btn" type="button" data-filter="Mecanica dos Fluidos e Transferencia de Calor">Mec&acirc;nica dos Fluidos e Transfer&ecirc;ncia de Calor</button>
       <button class="filter-btn" type="button" data-filter="Equipamentos, Apoios e Montagens">Equipamentos, Apoios e Montagens</button>
       <button class="filter-btn" type="button" data-filter="Gestao de Obras e de Contratos">Gest&atilde;o de Obras e de Contratos</button>
       <button class="filter-btn" type="button" data-filter="Manutencao Predial">Manuten&ccedil;&atilde;o Predial</button>
@@ -540,7 +540,7 @@ body.modal-open{overflow:hidden}
       <button class="filter-btn" type="button" data-filter="Orcamento">Or&ccedil;amento</button>
       <button class="filter-btn" type="button" data-filter="Artigos">Artigos</button>
     </div>
-    <div class="app-filter-status" id="appFilterStatus">90 aplicativos encontrados</div>
+    <div class="app-filter-status" id="appFilterStatus">91 aplicativos encontrados</div>
   </div>
 
   <div class="apps">
@@ -1551,6 +1551,20 @@ body.modal-open{overflow:hidden}
       <div class="meta">Abrir sistema &middot; elementos finitos</div>
     </a>
 
+    <a class="app" href="/heatflow-pro/" aria-label="Abrir HeatFlow PRO - Conducao de calor">
+      <span class="arrow">&rarr;</span>
+      <div class="app-num">91 / CALOR</div>
+      <svg class="app-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M8 14h32M8 24h32M8 34h32"/>
+        <path d="M14 8c5 5 5 11 0 16s-5 11 0 16"/>
+        <path d="M26 8c5 5 5 11 0 16s-5 11 0 16"/>
+        <path d="M38 8c5 5 5 11 0 16s-5 11 0 16"/>
+      </svg>
+      <h3>HeatFlow PRO</h3>
+      <p>Simula&ccedil;&atilde;o da condu&ccedil;&atilde;o de calor em modelos 1D, 2D e 3D, com regimes permanente e transiente, editor geom&eacute;trico e relat&oacute;rios.</p>
+      <div class="meta">Abrir sistema &middot; transfer&ecirc;ncia de calor</div>
+    </a>
+
   </div>
 </section>
 
@@ -1689,6 +1703,7 @@ body.modal-open{overflow:hidden}
         <a href="/pontecalc-pro/">PonteCalc PRO - Engenharia de Pontes</a>
         <a href="/navier-stokes/">Navier-Stokes - Mec&acirc;nica dos Fluidos</a>
         <a href="/analisador-estrutural-mef/">Analisador Estrutural MEF</a>
+        <a href="/heatflow-pro/">HeatFlow PRO - Transfer&ecirc;ncia de Calor</a>
         <a href="/canteiro-sicro/">Canteiro de Obras - Sicro</a>
         <a href="/locar-ou-comprar-pro/">Locar ou Comprar Pro</a>
         <a href="/acesscheck/">AcessCheck - Vistoria de Acessibilidade</a>
@@ -1866,8 +1881,9 @@ body.modal-open{overflow:hidden}
     ["/hidraulicapro/", ["Engenharia Mecanica", "hidraulicapro hidraulica sistemas hidraulicos bomba cilindro valvula valvulas tubulacao tubulacoes reservatorio perdas vazao pressao oleo eficiencia engenharia mecanica"]],
     ["/capacitorpro/", ["Instalacoes Eletricas", "capacitorpro capacitor capacitores banco capacitores fator potencia correcao fator potencia reativo kvar harmonicos estagios controlador temporal instalacoes eletricas"]],
     ["/pontecalc-pro/", ["Pavimentacao, Saneamento e Infraestrutura", "pontecalc pro pontes ponte tabuleiro grelha longarina mesoestrutura fundacoes fundacao hidraulica drenagem bim ifc infraestrutura obras de arte especiais oae"]],
-    ["/navier-stokes/", ["Mecanica dos Fluidos", "navier stokes diferencas finitas escoamento incompressivel cfd fluido fluidos simulacao 2d 3d malha cartesiana mac pressao velocidade viscosidade reynolds mecanica dos fluidos"]],
-    ["/analisador-estrutural-mef/", ["Estruturas", "analisador estrutural mef metodo elementos finitos analise linear elastica concreto armado metalicas aco modelagem 2d 3d flambagem colapso plastico geometria relatorio pdf estruturas"]]
+    ["/navier-stokes/", ["Mecanica dos Fluidos e Transferencia de Calor", "navier stokes diferencas finitas escoamento incompressivel cfd fluido fluidos simulacao 2d 3d malha cartesiana mac pressao velocidade viscosidade reynolds mecanica dos fluidos transferencia calor"]],
+    ["/analisador-estrutural-mef/", ["Estruturas", "analisador estrutural mef metodo elementos finitos analise linear elastica concreto armado metalicas aco modelagem 2d 3d flambagem colapso plastico geometria relatorio pdf estruturas"]],
+    ["/heatflow-pro/", ["Mecanica dos Fluidos e Transferencia de Calor", "heatflow pro heat flow conducao calor transferencia calor simulacao termica termico diferencas finitas conservativas 1d 2d 3d permanente transiente materiais editor geometrico mecanica fluidos"]]
   ]);
 
   const appCards = Array.from(document.querySelectorAll(".apps .app"));

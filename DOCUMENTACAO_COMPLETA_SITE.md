@@ -143,6 +143,7 @@ Inventario originalmente verificado em 21/07/2026 e atualizado em 09/09/2026 par
 | 88 / PONTES | PonteCalc PRO | `/pontecalc-pro/` | `C:\Obras Inteligentes\pontecalc-pro\index.html` | existe | 200 |
 | 89 / FLUIDOS | Navier-Stokes | `/navier-stokes/` | `C:\Obras Inteligentes\navier-stokes\index.html` | existe | 200 |
 | 90 / MEF | Analisador Estrutural MEF | `/analisador-estrutural-mef/` | `C:\Obras Inteligentes\analisador-estrutural-mef\index.html` | existe | 200 |
+| 91 / CALOR | HeatFlow PRO | `/heatflow-pro/` | `C:\Obras Inteligentes\heatflow-pro\index.html` | existe | 200 |
 
 ## Tamanhos verificados
 
@@ -240,6 +241,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/pontecalc-pro/` | 3065032 bytes | 3025139 caracteres |
 | `/navier-stokes/` | 658912 bytes | 654839 caracteres |
 | `/analisador-estrutural-mef/` | 373711 bytes | 370394 caracteres |
+| `/heatflow-pro/` | 492898 bytes | 487169 caracteres |
 | `/entenda-ia/` | 175035 bytes | 172793 caracteres |
 | `/abc-fiscal/` | 351255 bytes | 349022 caracteres |
 
@@ -748,13 +750,13 @@ Ultima atualizacao:
 - Fonte: `C:\Users\ACER\Documents\Downloads\NavierStokes_2_1.html`
 - Data: 17/09/2026
 - Versao: 2.1
-- Alteracao: substituicao do aplicativo pela nova versao, preservando a rota, o card e o filtro `Mecanica dos Fluidos`.
+- Alteracao: substituicao do aplicativo pela nova versao, preservando a rota e o card; o filtro foi posteriormente ampliado para `Mecanica dos Fluidos e Transferencia de Calor`.
 
 Observacoes:
 
 - Aplicativo standalone empacotado em HTML unico.
 - Tela inicial do site aponta para `/navier-stokes/`.
-- O card foi classificado no filtro `Mecanica dos Fluidos`.
+- O card esta classificado no filtro `Mecanica dos Fluidos e Transferencia de Calor`.
 - A versao 2.1 contempla laboratorio CFD 2D, 3D e compressivel.
 - Validar apos futuras alteracoes se os solucionadores, as visualizacoes, os casos de simulacao e as verificacoes numericas continuam carregando corretamente.
 
@@ -776,6 +778,25 @@ Observacoes:
 - Tela inicial do site aponta para `/analisador-estrutural-mef/`.
 - O card foi classificado no filtro `Estruturas`.
 - Validar apos futuras alteracoes a modelagem 2D/3D, analise linear, flambagem, colapso plastico, importacao de geometria e relatorio em PDF.
+
+### HeatFlow PRO
+
+Rota: `/heatflow-pro/`  
+Arquivo: `heatflow-pro/index.html`
+
+Ultima inclusao:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\HeatFlow_PRO_v1_4.html`
+- Data: 17/09/2026
+- Versao: 1.4
+- Alteracao: inclusao de novo card e ampliacao do filtro para `Mecanica dos Fluidos e Transferencia de Calor`.
+
+Observacoes:
+
+- Aplicativo standalone empacotado em HTML unico.
+- Tela inicial do site aponta para `/heatflow-pro/`.
+- O HeatFlow PRO e o Navier-Stokes foram classificados no filtro `Mecanica dos Fluidos e Transferencia de Calor`.
+- Validar apos futuras alteracoes os modelos 1D/2D/3D, regimes permanente e transiente, editor geometrico, projetos locais e relatorios.
 
 ### SolarPro
 
@@ -2381,6 +2402,7 @@ $headers=@{ 'User-Agent'='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
   '/pontecalc-pro/',
   '/navier-stokes/',
   '/analisador-estrutural-mef/',
+  '/heatflow-pro/',
   '/entenda-ia/'
 ) | ForEach-Object {
   $url = "https://www.obrasinteligentes.ia.br$_?v=check"
