@@ -241,7 +241,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/pontecalc-pro/` | 3065032 bytes | 3025139 caracteres |
 | `/navier-stokes/` | 658912 bytes | 654839 caracteres |
 | `/analisador-estrutural-mef/` | 373711 bytes | 370394 caracteres |
-| `/heatflow-pro/` | 492898 bytes | 487169 caracteres |
+| `/heatflow-pro/` | 674639 bytes | 667480 caracteres |
 | `/entenda-ia/` | 175035 bytes | 172793 caracteres |
 | `/abc-fiscal/` | 351255 bytes | 349022 caracteres |
 
@@ -784,12 +784,12 @@ Observacoes:
 Rota: `/heatflow-pro/`  
 Arquivo: `heatflow-pro/index.html`
 
-Ultima inclusao:
+Ultima atualizacao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\HeatFlow_PRO_v1_4.html`
+- Fonte: `C:\Users\ACER\Documents\Downloads\HeatFlow_PRO_v1_6.html`
 - Data: 17/09/2026
-- Versao: 1.4
-- Alteracao: inclusao de novo card e ampliacao do filtro para `Mecanica dos Fluidos e Transferencia de Calor`.
+- Versao: 1.6
+- Alteracao: substituicao do aplicativo pela nova versao, preservando a rota, o card e o filtro `Mecanica dos Fluidos e Transferencia de Calor`.
 
 Observacoes:
 
