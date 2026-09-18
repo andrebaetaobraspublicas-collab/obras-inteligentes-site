@@ -239,7 +239,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/hidraulicapro/` | 677372 bytes | 666952 caracteres |
 | `/capacitorpro/` | 599453 bytes | 590655 caracteres |
 | `/pontecalc-pro/` | 3065032 bytes | 3025139 caracteres |
-| `/navier-stokes/` | 658912 bytes | 654839 caracteres |
+| `/navier-stokes/` | 743475 bytes | 738489 caracteres |
 | `/analisador-estrutural-mef/` | 373711 bytes | 370394 caracteres |
 | `/heatflow-pro/` | 674639 bytes | 667480 caracteres |
 | `/entenda-ia/` | 175035 bytes | 172793 caracteres |
@@ -747,18 +747,18 @@ Arquivo: `navier-stokes/index.html`
 
 Ultima atualizacao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\NavierStokes_2_1.html`
-- Data: 17/09/2026
-- Versao: 2.1
-- Alteracao: substituicao do aplicativo pela nova versao, preservando a rota e o card; o filtro foi posteriormente ampliado para `Mecanica dos Fluidos e Transferencia de Calor`.
+- Fonte: `C:\Users\ACER\Documents\Downloads\NavierStokes_2_2_Tubos.html`
+- Data: 18/09/2026
+- Versao: 2.2 Tubos
+- Alteracao: substituicao do aplicativo pela nova versao e atualizacao da descricao e dos termos de busca do card, preservando a rota e o filtro `Mecanica dos Fluidos e Transferencia de Calor`.
 
 Observacoes:
 
 - Aplicativo standalone empacotado em HTML unico.
 - Tela inicial do site aponta para `/navier-stokes/`.
 - O card esta classificado no filtro `Mecanica dos Fluidos e Transferencia de Calor`.
-- A versao 2.1 contempla laboratorio CFD 2D, 3D e compressivel.
-- Validar apos futuras alteracoes se os solucionadores, as visualizacoes, os casos de simulacao e as verificacoes numericas continuam carregando corretamente.
+- A versao 2.2 contempla laboratorio CFD 2D, 3D e compressivel, alem do modulo 3D de tubos e conexoes.
+- Validar apos futuras alteracoes se os solucionadores, o laboratorio de tubos e conexoes, as visualizacoes, os casos de simulacao e as verificacoes numericas continuam carregando corretamente.
 
 ### Analisador Estrutural MEF
 

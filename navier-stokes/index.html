@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Navier–Stokes 2.1 — laboratório CFD 2D, 3D e compressível</title>
+<title>Navier–Stokes 2.2 — CFD e laboratório de tubos e conexões</title>
 <meta name="description" content="Laboratório CFD offline: incompressível MAC/RK3/MG-PCG, compressível MUSCL–Rusanov, Smagorinsky 3D, testes reproduzíveis e projetos locais.">
 <style>
 :root{
@@ -333,18 +333,37 @@ button:disabled{opacity:.5;cursor:not-allowed}input:disabled,select:disabled{opa
 @media(max-width:800px){.legal-corpo{grid-template-columns:1fr;gap:2px;}.legal-bloco.destaque-legal{grid-row:auto;}.legal-footer21{flex-direction:column;align-items:stretch;gap:10px;}.legal-footer21 #btEntrar{width:100%;}.legal-caixa{padding:14px 15px;}.legal-corpo p,.legal-corpo li{font-size:14px;}.coef-grid21{grid-template-columns:repeat(2,minmax(0,1fr));}.toolbar21 .tools21{gap:4px;}}
 @media(max-width:500px){.abertura-legal{padding:6px;}.legal-caixa{padding:12px;}.coef-grid21{grid-template-columns:1fr;}.visual-caption21{font-size:10.5px;}.toolbar21 .botao{font-size:11px;padding:6px 8px;}}
 
+/* Módulo isolado: nenhum seletor genérico modifica os menus anteriores. */
+#painel-tubos .tc-layout{display:grid;grid-template-columns:330px minmax(0,1fr);min-height:calc(100vh - 52px)}
+.tc-rail{padding:18px 14px 30px;background:var(--surface);border-right:1px solid var(--line);max-height:calc(100vh - 52px);overflow-y:auto;position:sticky;top:52px}
+.tc-heading h2{font-size:23px;letter-spacing:-.03em;margin:3px 0 6px}.tc-heading p{font-size:12.5px;color:var(--ink-2);line-height:1.5;margin:0 0 14px}.tc-eyebrow{font-size:10px;letter-spacing:.13em;font-weight:700;color:var(--accent)}
+.tc-presets{display:flex;gap:5px;margin-bottom:15px}.tc-presets button{border:1px solid var(--line);background:var(--panel);padding:5px 8px;border-radius:4px;font-size:11px;cursor:pointer}
+#tc-form details{border-top:1px solid var(--line-soft);padding:10px 0}#tc-form summary{font-size:12px;font-weight:650;cursor:pointer;margin-bottom:10px;color:var(--ink-2)}
+#tc-form input,#tc-form select{width:100%;background:var(--panel);border:1px solid var(--line);padding:6px 7px;border-radius:4px;font-size:12px;min-width:0}
+#tc-form .campo{margin-bottom:9px}#tc-form .campo label{font-size:11.5px}.tc-duo{display:grid;grid-template-columns:1fr 1fr;gap:9px}.tc-note{font-size:11.5px;line-height:1.5;color:var(--ink-2);margin:6px 0 11px}.tc-rail-actions{display:grid;gap:7px;margin-top:10px}
+.tc-main{padding:18px;min-width:0;display:flex;flex-direction:column;gap:12px}.tc-main-header{display:flex;align-items:center;justify-content:space-between;gap:12px}.tc-main-header h2{font-size:24px;letter-spacing:-.03em;margin:2px 0}.tc-pill{border:1px solid var(--line);border-radius:20px;padding:5px 12px;background:var(--surface);font-size:12px;white-space:nowrap}.tc-pill.busy{color:var(--accent);border-color:var(--accent)}
+.tc-message{padding:9px 12px;border:1px solid var(--line);border-left:3px solid var(--accent);background:var(--surface);font-size:12px;color:var(--ink-2)}.tc-message.error{border-left-color:var(--hot);color:var(--hot)}
+.tc-toolbar{display:flex;align-items:center;gap:7px;flex-wrap:wrap}.tc-toolbar label{font-size:12px;color:var(--ink-2);margin-left:auto}.tc-toolbar input{width:95px;border:1px solid var(--line);background:var(--surface);padding:6px;border-radius:3px}.tc-toolbar .botao{font-size:12px;padding:7px 10px}
+.tc-viewport{position:relative;border:1px solid #1d3948;background:#07121a;border-radius:7px;overflow:hidden}#tc-canvas{display:block;width:100%;height:auto;cursor:grab;touch-action:none}.tc-view-hint{position:absolute;top:11px;left:12px;font-size:10px;color:#b2c6d0;pointer-events:none;background:#07121ac7;padding:4px 7px;border-radius:4px}
+.tc-view-controls{display:flex;gap:11px;align-items:center;flex-wrap:wrap;font-size:11.5px;color:var(--ink-2)}.tc-view-controls select,.tc-result-heading select{background:var(--surface);border:1px solid var(--line);padding:5px;border-radius:3px;font-size:12px}.tc-view-controls .botao{font-size:11px;padding:5px 9px}
+.tc-result-heading{display:flex;align-items:center;gap:10px;justify-content:space-between;margin-top:6px}.tc-result-heading h3{font-size:15px;margin:0}.tc-result-heading label{font-size:12px}.tc-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.tc-kpi{background:var(--surface);border:1px solid var(--line);border-radius:5px;padding:12px 13px}.tc-kpi small{display:block;color:var(--ink-2);font-size:11px}.tc-kpi strong{display:block;font-family:var(--mono);font-size:21px;letter-spacing:-.04em;font-weight:500;margin:5px 0}.tc-kpi span{font-size:10px;color:var(--ink-3)}
+.tc-result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.tc-card{background:var(--surface);border:1px solid var(--line);border-radius:5px;padding:14px;min-width:0}.tc-card h3{margin:0 0 10px;font-size:14px}.tc-card table{width:100%;font-size:11.5px;border-collapse:collapse}.tc-card th,.tc-card td{padding:6px 7px;text-align:right;border-bottom:1px solid var(--line-soft);font-variant-numeric:tabular-nums}.tc-card th{color:var(--ink-2);font-weight:500}.tc-card th:first-child,.tc-card td:first-child{text-align:left}.tc-overflow{overflow-x:auto}.tc-card .tc-warning{margin:5px 0;font-size:11.5px;color:var(--warm);line-height:1.5}.tc-card .tc-ok{color:var(--good)}#tc-chart{width:100%;height:auto;display:block}.tc-export{display:flex;gap:8px;flex-wrap:wrap}.tc-export button{font-size:12px}.tc-help{background:var(--panel);padding:15px;border:1px solid var(--line);border-radius:4px}.tc-help summary{font-size:14px;font-weight:600;cursor:pointer}.tc-help p{font-size:12px;line-height:1.6;color:var(--ink-2);max-width:110ch}.tc-help a{color:var(--accent);overflow-wrap:anywhere}
+@media(max-width:1100px){.topo .marca span{display:none}.tc-main{padding:12px}.tc-result-grid{grid-template-columns:1fr}.abas .aba{padding:6px 9px}}
+@media(max-width:850px){#painel-tubos .tc-layout{grid-template-columns:1fr}.tc-rail{position:static;max-height:none;border-right:0;border-bottom:1px solid var(--line)}.tc-main-header h2{font-size:20px}.tc-cards{grid-template-columns:repeat(2,minmax(0,1fr))}.tc-result-heading{align-items:flex-start;flex-direction:column}.tc-main-header{flex-wrap:wrap}.topo{height:auto;min-height:52px;flex-wrap:wrap;padding:8px 10px}.topo .abas{order:3;width:100%;margin-left:0;justify-content:space-between}.tc-toolbar label{margin-left:0}.tc-rail{padding:14px}.tc-main{padding:10px}.tc-card{padding:10px}.tc-view-hint{font-size:8px;top:4px;left:4px}}
+
 </style>
 </head>
 <body>
 <header class="topo">
   <div class="marca">
-    <b>Navier&#8209;Stokes <small class="versao">2.1</small></b>
+    <b>Navier&#8209;Stokes <small class="versao">2.2</small></b>
     <span>laboratório CFD · incompressível e compressível</span>
   </div>
   <nav class="abas" role="tablist">
     <button class="aba" role="tab" id="aba-sim" aria-selected="true" aria-controls="painel-sim">Simulador</button>
     <button class="aba" role="tab" id="aba-val" aria-selected="false" aria-controls="painel-val">Validação</button>
     <button class="aba" role="tab" id="aba-man" aria-selected="false" aria-controls="painel-man">Manual</button>
+    <button class="aba" role="tab" id="aba-tubos" aria-selected="false" aria-controls="painel-tubos">Tubos e conexões</button>
   </nav>
   <button class="icone-btn" id="btAbertura" title="Rever a abertura e os avisos legais" aria-label="Rever avisos legais">⚖</button>
   <button class="icone-btn" id="btTema" title="Alternar tema claro e escuro" aria-label="Alternar tema">◐</button>
@@ -682,6 +701,82 @@ button:disabled{opacity:.5;cursor:not-allowed}input:disabled,select:disabled{opa
     <p class="vazio-busca" id="vazioBusca" hidden>Nada encontrado para esse termo.</p>
   </nav>
   <article class="texto" id="textoManual"></article>
+</main>
+
+<main class="painel" id="painel-tubos" role="tabpanel" aria-labelledby="aba-tubos" hidden>
+ <div class="tc-layout">
+  <aside class="tc-rail">
+   <div class="tc-heading"><span class="tc-eyebrow">LABORATÓRIO LOCAL · 3D</span><h2>Tubos e conexões</h2><p>Uma peça de cada vez. Perdas de energia, forças e momentos do fluido.</p></div>
+   <div class="tc-presets"><button data-tc-demo="reto">Tubo laminar</button><button data-tc-demo="joelho90">Joelho 90°</button><button data-tc-demo="te">Tê</button></div>
+   <form id="tc-form" novalidate>
+    <details open><summary>01 &nbsp; Geometria e material</summary>
+     <div class="campo"><label for="tc-nome">Nome do estudo</label><input id="tc-nome" name="nome" type="text" maxlength="100"></div>
+     <div class="campo"><label for="tc-tipo">Peça / trecho local</label><select id="tc-tipo" name="tipo"></select></div>
+     <div class="campo"><label for="tc-material">Material</label><select id="tc-material" name="material"></select></div>
+     <div class="tc-duo"><div class="campo"><label for="tc-diam">Diâmetro interno D₁ (mm)</label><input id="tc-diam" name="diam" type="number" min="5" max="2000" step="1"></div>
+      <div class="campo"><label for="tc-eps">Rugosidade ε (mm)</label><input id="tc-eps" name="eps" type="number" min="0" max="20" step="0.001"></div></div>
+     <p id="tc-material-nota" class="tc-note"></p>
+     <div class="tc-duo"><div class="campo tc-d2"><label for="tc-diam2">Diâmetro interno D₂ (mm)</label><input id="tc-diam2" name="diam2" type="number" min="5" max="2000" step="1"></div>
+      <div class="campo tc-branch"><label for="tc-diamB">Diâmetro da derivação (mm)</label><input id="tc-diamB" name="diamB" type="number" min="5" max="2000" step="1"></div></div>
+     <div class="tc-duo"><div class="campo"><label for="tc-lin" id="tc-lin-label">Tubo de entrada (m)</label><input id="tc-lin" name="lin" type="number" min="0.001" max="100" step=".01"></div>
+      <div class="campo tc-not-straight"><label for="tc-lout">Tubo de saída (m)</label><input id="tc-lout" name="lout" type="number" min="0.001" max="100" step=".01"></div></div>
+     <div class="tc-duo"><div class="campo tc-branch"><label for="tc-lb">Tubo na derivação (m)</label><input id="tc-lb" name="lb" type="number" min="0.001" max="100" step=".01"></div>
+      <div class="campo tc-d2"><label for="tc-lpeca">Comprimento da conexão (m)</label><input id="tc-lpeca" name="lpeca" type="number" min=".001" max="100" step=".005"></div></div>
+     <div class="tc-duo"><div class="campo tc-bend"><label for="tc-rd">Raio de eixo R/D₁</label><input id="tc-rd" name="rd" type="number" min=".65" max="10" step=".1"></div>
+      <div class="campo tc-angle"><label for="tc-angulo">Ângulo da curva (°)</label><input id="tc-angulo" name="angulo" type="number" min="10" max="120" step="5"></div></div>
+     <div class="campo"><label for="tc-inclinacao">Rotação do plano da peça (°)</label><input id="tc-inclinacao" name="inclinacao" type="number" min="-90" max="90" step="15"><p class="tc-note">0°: plano horizontal XY. 90°: plano vertical XZ. Gravidade em −Z global.</p></div>
+     <p class="tc-note">Informe diâmetros <b>internos reais</b>, não apenas DN. Paredes rígidas; espessura, SDR, deformação e resistência não são calculados.</p>
+    </details>
+    <details open><summary>02 &nbsp; Fluido e condições de corte</summary>
+     <div class="tc-duo"><div class="campo"><label for="tc-q">Vazão de entrada (L/s)</label><input id="tc-q" name="q" type="number" min=".000001" max="10000" step=".005"></div>
+      <div class="campo"><label for="tc-pressao">Pressão na saída 1 (kPa)</label><input id="tc-pressao" name="pressao" type="number" min="-90" max="100000" step="10"></div></div>
+     <p class="tc-note">Pressão manométrica, relativa à pressão externa. Necessária para as forças. Não altera o escoamento incompressível apenas por mudar sua referência.</p>
+     <div class="tc-duo"><div class="campo"><label for="tc-rho">Massa específica ρ (kg/m³)</label><input id="tc-rho" name="rho" type="number" min="1" max="20000" step=".1"></div>
+      <div class="campo"><label for="tc-mu">Viscosidade μ (mPa·s)</label><input id="tc-mu" name="mu" type="number" min=".001" max="100000" step=".001"></div></div>
+     <div class="tc-duo"><div class="campo"><label for="tc-temperatura">Temperatura registrada (°C)</label><input id="tc-temperatura" name="temperatura" type="number" min="-100" max="500" step="1"></div>
+      <div class="campo"><label for="tc-perfil">Perfil de entrada</label><select id="tc-perfil" name="perfil"><option value="parabolico">Parabólico (laminar)</option><option value="uniforme">Uniforme</option></select></div></div>
+     <p class="tc-note">Valores iniciais aproximados de água a 20 °C. Ao mudar fluido/temperatura, informe ρ e μ correspondentes; não são atualizados automaticamente.</p>
+     <div class="campo tc-branch"><label for="tc-divisao">Vazão para derivação (%)</label><input id="tc-divisao" name="divisao" type="number" min="5" max="95" step="5"><p class="tc-note">A divisão é prescrita. A pressão da saída direta é a referência; a pressão na derivação é calculada, não imposta igual.</p></div>
+    </details>
+    <details><summary>03 &nbsp; Malha e método</summary>
+     <div class="tc-duo"><div class="campo"><label for="tc-res">Células no diâmetro D₁</label><select id="tc-res" name="res"><option>8</option><option>10</option><option>12</option><option>16</option><option>20</option><option>24</option><option>32</option></select></div>
+      <div class="campo"><label for="tc-esquema">Advecção</label><select id="tc-esquema" name="esquema"><option value="central">Central / RK3</option><option value="upwind">Upwind / RK3</option></select></div></div>
+     <div class="campo"><label for="tc-modelo">Modelo submalha</label><select id="tc-modelo" name="modelo"><option value="auto">Automático: sem modelo / Smagorinsky</option><option value="nenhum">Sem modelo submalha</option><option value="parede">Smagorinsky amortecido</option><option value="smagorinsky">Smagorinsky</option></select></div>
+     <div class="tc-duo"><div class="campo"><label for="tc-cfl">CFL</label><input id="tc-cfl" name="cfl" type="number" min=".05" max=".6" step=".05"></div><div class="campo"><label for="tc-iter">Máximo de iterações / projeção</label><input id="tc-iter" name="iter" type="number" min="30" max="2000" step="50"></div></div>
+     <div class="campo"><label for="tc-tol">Tolerância de divergência (adimensional)</label><input id="tc-tol" name="tol" type="number" min="1e-10" max=".001" step=".000001"></div>
+     <p class="tc-note">MAC 3D · SSP-RK3 · MG-PCG. Parede cartesiana em escada. Máximo de 650 mil células na caixa. Não é cut-cell. Aumente os trechos de entrada/saída e refine para avaliar sensibilidade.</p>
+    </details>
+    <details><summary>04 &nbsp; Referência de momentos</summary><div class="trio"><div class="campo"><label for="tc-mx">X (m)</label><input id="tc-mx" name="mx" type="number" step=".01"></div><div class="campo"><label for="tc-my">Y (m)</label><input id="tc-my" name="my" type="number" step=".01"></div><div class="campo"><label for="tc-mz">Z (m)</label><input id="tc-mz" name="mz" type="number" step=".01"></div></div><p class="tc-note">Coordenadas globais. Regra da mão direita. Origem: início da curva/redutor ou centro da junção do tê.</p></details>
+   </form>
+   <div class="tc-rail-actions"><button id="tc-build" class="botao primario">Gerar geometria e malha</button><button id="tc-save" class="botao">Salvar projeto JSON</button><button id="tc-load" class="botao">Abrir projeto JSON</button><input type="file" id="tc-file" accept="application/json,.json" hidden></div>
+  </aside>
+  <section class="tc-main">
+   <header class="tc-main-header"><div><span class="tc-eyebrow">TUBOS E CONEXÕES · NOVO MÓDULO</span><h2 id="tc-title">Estudo local</h2></div><span class="tc-pill" id="tc-state">Configure a peça</span></header>
+   <div id="tc-message" class="tc-message" aria-live="polite">Gere a geometria para visualizar as seções e iniciar o cálculo. Os outros simuladores permanecem independentes.</div>
+   <div class="tc-toolbar"><button id="tc-run" class="botao primario">▶ Executar CFD</button><button id="tc-step" class="botao">Um passo</button><button id="tc-reset" class="botao">Reiniciar</button><label>Tempo-alvo (s) <input type="number" id="tc-target" min=".000001" step=".01" value="10"></label><button id="tc-until" class="botao">Até o alvo</button></div>
+   <div class="tc-viewport"><canvas id="tc-canvas" width="1400" height="820" aria-label="Visualização tridimensional da conexão, corte do campo CFD e traçadores"></canvas><div class="tc-view-hint">Arraste para girar · traçadores ilustrativos sobre o campo disponível</div></div>
+   <div class="tc-view-controls"><label>Campo <select id="tc-field"><option value="speed">Velocidade (m/s)</option><option value="pressure">Pressão relativa à saída 1 (Pa)</option></select></label><label>Paleta <select id="tc-palette"><option value="turbo">Turbo</option><option value="viridis">Viridis</option><option value="inferno">Inferno</option><option value="divergente">Divergente</option></select></label><label><input type="checkbox" id="tc-particles" checked> Traçadores</label><label><input type="checkbox" id="tc-cuts" checked> Seções da conexão</label><button class="botao" id="tc-top">Vista em planta</button><button class="botao" id="tc-iso">Vista 3D</button><button class="botao" id="tc-png">Imagem PNG</button></div>
+   <div class="tc-result-heading"><h3>Resultados do campo calculado</h3><label>Escopo <select id="tc-scope"><option value="peca">Somente conexão</option><option value="total">Conexão + tubos de entrada/saída</option></select></label></div>
+   <p class="tc-note" id="tc-scope-note">As seções de corte delimitam a peça. Resultantes incluem o peso do fluido, não o peso do tubo nem reações de apoios.</p>
+   <div class="tc-cards" id="tc-cards"></div>
+   <div class="tc-result-grid"><article class="tc-card"><h3>Forças e momentos</h3><div id="tc-forces"></div><p class="tc-note">Ação do fluido sobre a parede molhada do escopo selecionado. A equilibrante é a resultante oposta necessária para balancear somente essa ação; não distribui cargas por apoios, juntas ou flanges.</p></article><article class="tc-card"><h3>Perdas e qualidade do cálculo</h3><div id="tc-quality"></div><p class="tc-note">h e K usam energia total média ponderada pela vazão. Diferença de pressão estática não é, por si só, perda de carga de um redutor.</p></article></div>
+   <article class="tc-card tc-overflow"><h3>Seções de medição</h3><div id="tc-sections"></div></article>
+   <article class="tc-card"><h3>Evolução temporal</h3><canvas id="tc-chart" width="1400" height="340"></canvas><p class="tc-note">Curvas de K da conexão e do conjunto. Oscilações/transientes não devem ser confundidos com um valor de perda permanente.</p></article>
+   <article class="tc-card"><h3>Comparação hidráulica independente</h3><div id="tc-reference"></div><p class="tc-note"><b>O material não cria uma rugosidade fictícia no CFD.</b> A comparação usa ε editável no fator de Darcy. Os campos numéricos assumem parede lisa rígida; não usar este módulo como validação de perdas turbulentas comerciais.</p></article>
+   <div class="tc-export"><button id="tc-csv" class="botao">Exportar resultados CSV</button><button id="tc-fields" class="botao">Exportar campo CSV</button><button id="tc-history" class="botao">Exportar histórico CSV</button><button id="tc-record" class="botao">Registrar esta malha</button></div>
+   <article class="tc-card"><h3>Comparação entre estudos / malhas</h3><div id="tc-records"><p class="tc-note">Registre resultados após estabilização para comparar resoluções ou parâmetros. Não há declaração automática de independência de malha.</p></div></article>
+   <details class="tc-help" open><summary>Método, hipóteses e limites deste módulo</summary>
+    <p>O motor incompressível 3D da versão 2.1 é reutilizado com domínio interno parametrizado e portas em qualquer orientação. A vazão total e a divisão do tê são prescritas. Os perfis axiais de saída são extrapolados, limitados ao sentido de saída e normalizados para a vazão imposta. Refluxo na boca externa não é modelado; aumente o prolongamento quando houver separação próxima ao corte. A pressão é resolvida a menos de uma constante e ancorada na saída 1.</p>
+    <p><b>Perda de carga:</b> H = ⟨p/ρ + |v|²/2 + gz⟩<sub>vazão</sub>/g. Para o tê, a perda global usa a energia ponderada das duas saídas; também são mostradas diferenças por caminho. K = 2gΔH/V₁², sempre com V₁ nominal na entrada. As portas da peça podem ficar em escoamento não desenvolvido: K entre esses cortes não é um K universal de catálogo.</p>
+    <p><b>Forças:</b> F = −d(∫ρv dV)/dt − ∫<sub>portas</sub>ρv(v·n)dA − ∫<sub>portas</sub>pn dA + ∫<sub>portas</sub>τn dA + ∫ρg dV. Os momentos aplicam r × a cada parcela; o termo de armazenamento de momento angular também é incluído. A normal sai do volume de fluido. A pressão usada é manométrica relativa à externa.</p>
+    <p><b>Geometria:</b> diâmetros internos; curvas de seção circular e raio de eixo definido; tê ideal de interseção de cilindros; redutor/expansão concêntricos; luva ideal de passagem parametrizada. Não são réplicas dimensionais de catálogo. O tê central é cortado a ±max(0,75D₁; 0,75D<sub>ramal</sub>) no eixo e à mesma distância na derivação. Curvas/redutores são cortados em suas extremidades nominais.</p>
+    <p><b>Validade:</b> líquido monofásico newtoniano, incompressível e isotérmico; parede estacionária rígida, sem escorregamento. Sem cavitação, ar aprisionado, deformação/viscoelasticidade do PEAD/PVC, transientes de pressão, golpe de aríete, FSI ou cálculo estrutural. A temperatura é um registro; informe propriedades coerentes.</p>
+    <p><b>Precisão:</b> superfície em escada, inclusive cortes oblíquos. O erro de área é apresentado; pressão e forças são sensíveis a essa aproximação. Refinar a malha e ampliar os prolongamentos é indispensável. Modelos submalha em Re alto são exploratórios; rugosidade não é resolvida. Reações em apoios reais exigem outro modelo, não incluído.</p>
+    <p><b>Persistência:</b> projetos JSON contêm configuração e campos para retomar o cálculo. Arquivos do módulo não substituem os projetos dos outros menus. Todo o processamento continua no navegador, com Worker Blob e sem serviços externos.</p>
+    <div id="tc-sources"></div>
+   </details>
+  </section>
+ </div>
 </main>
 
 <script id="ns-main">
@@ -5797,6 +5892,377 @@ CASOS.push({
 });
 
 
+/* ============================================================
+   TUBOS E CONEXÕES • módulo local 1.0 / aplicação 2.2
+   Reutiliza o motor MAC 3D/RK3/tensões/PCG da versão 2.1.
+   Unidades internas: D_entrada, V_média_entrada, rho*V².
+   Geometria voxelizada, portas de vazão prescrita e pressão relativa.
+   Não é um solver de rede, de suportes ou de golpe de aríete.
+   ============================================================ */
+const Tubos = {
+  versao:'1.0.0',
+  fontes:[
+    {nome:'EPA — EPANET 2.2, Darcy–Weisbach, rugosidades e perdas localizadas',url:'https://usepa.github.io/EPANET2.2/3_network_model.html'},
+    {nome:'Basilisk — fronteiras embutidas (contraste com a máscara cartesiana deste módulo)',url:'https://basilisk.fr/src/embed.h'},
+    {nome:'OpenFOAM — integração de forças de pressão e viscosidade',url:'https://www.openfoam.com/documentation/guides/latest/doc/guide-fos-forces-forces.html'}
+  ],
+  materiais:{
+    pvc:{nome:'PVC / PVC-O',eps:.001524,nota:'Plástico novo genérico: EPA, tabela 3.2. Não é valor certificado de fabricante.'},
+    pead:{nome:'PEAD',eps:.001524,nota:'Plástico novo genérico: EPA, tabela 3.2. Ajuste conforme parede real e catálogo.'},
+    cpvc:{nome:'CPVC',eps:.001524,nota:'Plástico novo genérico: EPA, tabela 3.2.'},
+    ferro:{nome:'Ferro fundido, sem revestimento',eps:.25908,nota:'Ferro fundido novo: EPA, tabela 3.2. Envelhecimento e revestimento alteram a rugosidade.'},
+    ductil:{nome:'Ferro dúctil (rugosidade editável)',eps:.25908,nota:'Estimativa inicial de ferro fundido sem revestimento, não específica de ferro dúctil. Informar a superfície interna efetiva.'},
+    aco:{nome:'Aço',eps:.04572,nota:'Aço novo genérico: EPA, tabela 3.2.'},
+    galvanizado:{nome:'Ferro/aço galvanizado',eps:.1524,nota:'Ferro galvanizado novo: EPA, tabela 3.2.'},
+    outro:{nome:'Outro / personalizado',eps:.01,nota:'Valor de demonstração. Informar rugosidade absoluta equivalente.'}
+  },
+  tipos:{reto:'Tubo reto',joelho90:'Joelho de 90°',joelho45:'Joelho de 45°',curva:'Curva de ângulo variável',te:'Tê com divisão de vazão',redutor:'Redutor concêntrico',expansao:'Expansão concêntrica',luva:'Luva / união (passagem interna)'},
+  padrao:{tipo:'joelho90',material:'pvc',diam:50,diam2:35,diamB:50,lin:.15,lout:.20,lb:.15,lpeca:.075,rd:1.5,angulo:60,
+    q:.025,rho:998.2,mu:1.002,temperatura:20,eps:.001524,pressao:200,divisao:50,inclinacao:0,
+    res:10,modelo:'auto',perfil:'parabolico',esquema:'central',cfl:.4,iter:450,tol:1e-6,
+    mx:0,my:0,mz:0,nome:'Estudo local',escopo:'peca'},
+  dot:(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2],
+  cross:(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],
+  add:(a,b)=>a.map((v,i)=>v+b[i]),sub:(a,b)=>a.map((v,i)=>v-b[i]),scale:(a,s)=>a.map(v=>v*s),norm:a=>Math.hypot(...a),
+  rot(a,graus){const t=graus*Math.PI/180,c=Math.cos(t),s=Math.sin(t);return[a[0],a[1]*c-a[2]*s,a[1]*s+a[2]*c];},
+  validar(entrada){
+    const c=Object.assign({},this.padrao,entrada),ranges={diam:[5,2000],diam2:[5,2000],diamB:[5,2000],lin:[.001,100],lout:[.001,100],lb:[.001,100],lpeca:[.001,100],rd:[.65,10],angulo:[10,120],q:[.000001,10000],rho:[1,20000],mu:[.001,100000],temperatura:[-100,500],eps:[0,20],pressao:[-90,100000],divisao:[5,95],inclinacao:[-90,90],res:[6,32],mx:[-10000,10000],my:[-10000,10000],mz:[-10000,10000],cfl:[.05,.6],iter:[30,2000],tol:[1e-10,1e-3]};
+    for(const [key,[lo,hi]]of Object.entries(ranges)){c[key]=+c[key];if(!Number.isFinite(c[key])||c[key]<lo||c[key]>hi)throw Error('Valor inválido em '+key+'; intervalo: '+lo+' a '+hi+'.');}
+    if(!this.tipos[c.tipo]||!this.materiais[c.material])throw Error('Tipo ou material desconhecido.');
+    if(!['auto','nenhum','parede','smagorinsky'].includes(c.modelo)||!['central','upwind'].includes(c.esquema)||!['uniforme','parabolico'].includes(c.perfil))throw Error('Método ou perfil inválido.');
+    c.res=Math.round(c.res);c.iter=Math.round(c.iter);c.nome=String(c.nome||'Estudo local').slice(0,100);
+    if(c.tipo==='redutor'&&c.diam2>=c.diam)throw Error('O diâmetro de saída do redutor precisa ser menor que o de entrada.');
+    if(c.tipo==='expansao'&&c.diam2<=c.diam)throw Error('O diâmetro de saída da expansão precisa ser maior que o de entrada.');
+    const small=(['redutor','expansao','luva'].includes(c.tipo)?Math.min(c.diam,c.diam2):c.tipo==='te'?Math.min(c.diam,c.diamB):c.diam);
+    if(small/c.diam*c.res<6)throw Error('A menor passagem teria menos de 6 células no diâmetro. Aumente a resolução ou reduza a diferença de diâmetros.');
+    c.D=c.diam/1000;c.Q=c.q/1000;c.A=Math.PI*c.D*c.D/4;c.U=c.Q/c.A;c.nu=c.mu*.001/c.rho;c.Re=c.U*c.D/c.nu;
+    return c;
+  },
+  atrito(Re,eps,D){
+    if(!(Re>0))return{f:0,regime:'repouso'};
+    const lam=64/Re;if(Re<=2000)return{f:lam,regime:'laminar'};
+    const turb=r=>{let x=7;for(let k=0;k<30;k++)x=-2*Math.log10(eps/(3.7*D)+2.51*x/r);return 1/(x*x);};
+    if(Re>=4000)return{f:turb(Re),regime:'turbulento'};
+    const t=(Re-2000)/2000,b=t*t*(3-2*t);return{f:(1-b)*lam+b*turb(Re),regime:'transição — interpolação indicativa'};
+  },
+  /* Perda de ENERGIA por fluxo volumétrico; não confundir com Δp estática. */
+  perda(secoes){const a=secoes[0],outs=secoes.slice(1),Q=outs.reduce((s,b)=>s+b.Q,0);return{total:a.E-outs.reduce((s,b)=>s+b.Q*b.E,0)/Math.max(Q,1e-30),caminhos:outs.map(b=>({nome:b.nome,h:(a.E-b.E)/9.80665,dpEstatica:a.p-b.p}))};},
+  referencia(c,g){
+    const f1=this.atrito(c.Re,c.eps/1000,c.D),d2=c.tipo==='te'?c.D:c.diam2/1000;
+    const est=(L,D,Q)=>{const V=Q/(Math.PI*D*D/4),Re=V*D/c.nu,f=this.atrito(Re,c.eps/1000,D);return{L,D,Q,V,Re,f:f.f,h:f.f*L/D*V*V/(2*9.80665),regime:f.regime};};
+    const linhas=[];let k=null,nota='Sem K de catálogo cadastrado para esta geometria.';
+    if(c.tipo==='reto'){linhas.push(est(c.lin,c.D,c.Q));k=0;nota='Tubo reto: comparação de atrito totalmente desenvolvido.';}
+    else{
+      linhas.push(est(c.lin,c.D,c.Q));
+      if(c.tipo==='te'){linhas.push(est(c.lout,c.D,c.Q*(1-c.divisao/100)));linhas.push(est(c.lb,c.diamB/1000,c.Q*c.divisao/100));nota='Tê: K depende da razão de vazões, diâmetros e convenção de referência. Não adotar constante universal.';}
+      else linhas.push(est(c.lout,['redutor','expansao'].includes(c.tipo)?d2:c.D,c.Q));
+      if(c.tipo==='joelho90'){k=null;nota='EPA, tabela 3.3: K = 0,9 (curto), 0,8 (médio), 0,6 (longo), para joelhos genéricos. A tabela não fixa o R/D desta geometria; não se faz correspondência automática.';}
+      if(c.tipo==='joelho45'){k=.4;nota='EPA, tabela 3.3: joelho 45° genérico; não valida o raio escolhido.';}
+      if(c.tipo==='luva'&&Math.abs(c.diam2-c.diam)<1e-9){k=0;nota='Luva ideal de passagem contínua, sem degrau interno: não impõe perda localizada adicional por ser luva.';}
+    }
+    return{f:f1.f,regime:f1.regime,retos:linhas,k,nota,eps:c.eps,escopo:'Comparação independente por Darcy–Weisbach/Colebrook. A rugosidade não é resolvida no CFD de parede lisa.'};
+  }
+};
+function GeometriaTubos(c){
+  this.c=c;this.h=1/c.res;this.paths=[];this.ports=[];this.corePorts=[];const D2=c.diam2/c.diam,DB=c.diamB/c.diam,Li=c.lin/c.D,Lo=c.lout/c.D,Lb=c.lb/c.D,Lp=c.lpeca/c.D,R=c.rd;
+  const line=(a,b,r1,r2,flow=1)=>this.paths.push({a,b,r1,r2,flow});
+  const port=(nome,pos,n,r,flow)=>({nome,pos,n,r,flow});
+  if(['joelho90','joelho45','curva'].includes(c.tipo)){
+    const ang=(c.tipo==='joelho90'?90:c.tipo==='joelho45'?45:c.angulo)*Math.PI/180,N=Math.max(24,Math.ceil(R*ang/c.res*120));
+    line([-Li,0,0],[0,0,0],.5,.5);let a=[0,0,0];
+    for(let i=1;i<=N;i++){const t=ang*i/N,b=[R*Math.sin(t),R*(1-Math.cos(t)),0];line(a,b,.5,.5);a=b;}
+    const n=[Math.cos(ang),Math.sin(ang),0],end=Tubos.add(a,Tubos.scale(n,Lo));line(a,end,.5,.5);
+    this.ports=[port('Entrada',[-Li,0,0],[-1,0,0],.5,-1),port('Saída',end,n,.5,1)];
+    this.corePorts=[port('Antes da curva',[0,0,0],[-1,0,0],.5,-1),port('Depois da curva',a,n,.5,1)];this.coreLength=R*ang;
+  }else if(c.tipo==='te'){
+    const C=Math.max(.75,.75*DB),beta=c.divisao/100;
+    line([-C-Li,0,0],[0,0,0],.5,.5,1);line([0,0,0],[C+Lo,0,0],.5,.5,1-beta);line([0,0,0],[0,C+Lb,0],DB/2,DB/2,beta);
+    this.ports=[port('Entrada',[-C-Li,0,0],[-1,0,0],.5,-1),port('Saída direta',[C+Lo,0,0],[1,0,0],.5,1-beta),port('Derivação',[0,C+Lb,0],[0,1,0],DB/2,beta)];
+    this.corePorts=[port('Entrada do tê',[-C,0,0],[-1,0,0],.5,-1),port('Saída direta do tê',[C,0,0],[1,0,0],.5,1-beta),port('Ramificação do tê',[0,C,0],[0,1,0],DB/2,beta)];this.coreLength=2*C;
+  }else if(c.tipo==='reto'){
+    line([0,0,0],[Li,0,0],.5,.5);this.ports=[port('Entrada',[0,0,0],[-1,0,0],.5,-1),port('Saída',[Li,0,0],[1,0,0],.5,1)];this.corePorts=this.ports;this.coreLength=Li;
+  }else{
+    line([-Li,0,0],[0,0,0],.5,.5);
+    if(c.tipo==='luva'){line([0,0,0],[Lp,0,0],D2/2,D2/2);line([Lp,0,0],[Lp+Lo,0,0],.5,.5);}
+    else{line([0,0,0],[Lp,0,0],.5,D2/2);line([Lp,0,0],[Lp+Lo,0,0],D2/2,D2/2);}
+    const rout=c.tipo==='luva'?.5:D2/2;
+    this.ports=[port('Entrada',[-Li,0,0],[-1,0,0],.5,-1),port('Saída',[Lp+Lo,0,0],[1,0,0],rout,1)];
+    this.corePorts=[port('Antes da conexão',[0,0,0],[-1,0,0],.5,-1),port('Depois da conexão',[Lp,0,0],[1,0,0],rout,1)];this.coreLength=Lp;
+  }
+  this.pathLength=this.paths.reduce((s,p)=>s+Tubos.norm(Tubos.sub(p.b,p.a)),0);
+  let lo=[Infinity,Infinity,Infinity],hi=[-Infinity,-Infinity,-Infinity];
+  for(const p of this.paths){p.d=Tubos.sub(p.b,p.a);p.len2=Tubos.dot(p.d,p.d);p.len=Math.sqrt(p.len2);p.t=Tubos.scale(p.d,1/p.len);for(let k=0;k<3;k++){lo[k]=Math.min(lo[k],p.a[k]-p.r1,p.b[k]-p.r2);hi[k]=Math.max(hi[k],p.a[k]+p.r1,p.b[k]+p.r2);}}
+  this.origin=lo.map(v=>Math.floor((v-3*this.h)/this.h)*this.h);this.dims=hi.map((v,k)=>Math.ceil((v+3*this.h-this.origin[k])/this.h));
+  this.N=this.dims.reduce((a,b)=>a*b,1);if(this.N>650000)throw Error('A caixa CFD teria '+this.N.toLocaleString('pt-BR')+' células. Limite desta versão: 650.000. Reduza resolução ou prolongamentos.');
+}
+GeometriaTubos.prototype.nearest=function(x){let best=null,dmin=Infinity;for(const p of this.paths){const v=Tubos.sub(x,p.a),t=NS.clamp(Tubos.dot(v,p.d)/p.len2,0,1),ctr=Tubos.add(p.a,Tubos.scale(p.d,t)),dist=Tubos.norm(Tubos.sub(x,ctr)),r=p.r1+(p.r2-p.r1)*t;if(dist-r<dmin){dmin=dist-r;best={p,ctr,dist,r,t};}}return best;};
+GeometriaTubos.prototype.radial=function(x,p){const v=Tubos.sub(x,p.pos),d=Tubos.dot(v,p.n);return{d,r:Math.sqrt(Math.max(0,Tubos.dot(v,v)-d*d))};};
+GeometriaTubos.prototype.inside=function(x){
+  for(const p of this.ports){const r=this.radial(x,p);if(r.d>1e-9&&r.r<p.r+1e-10)return false;}
+  const c=this.c;
+  if(['redutor','expansao','luva'].includes(c.tipo)){const L=c.lpeca/c.D,D2=c.diam2/c.diam,xx=x[0];let r=.5;if(xx>=0&&xx<=L)r=c.tipo==='luva'?D2/2:.5+(.5*D2-.5)*xx/L;else if(xx>L&&c.tipo!=='luva')r=D2/2;return x[1]*x[1]+x[2]*x[2]<r*r;}
+  const near=this.nearest(x);return near.dist<near.r;
+};
+GeometriaTubos.prototype.tag=function(x){if(this.inside(x))return 1;for(let k=0;k<this.ports.length;k++){const p=this.ports[k],r=this.radial(x,p);if(r.d>0&&r.d<3.1*this.h&&r.r<p.r)return k+2;}return 0;};
+GeometriaTubos.prototype.inCore=function(x){return this.corePorts.every(p=>Tubos.dot(Tubos.sub(x,p.pos),p.n)<=1e-10);};
+GeometriaTubos.prototype.info=function(){return{paths:this.paths,ports:this.ports,corePorts:this.corePorts,origin:this.origin,dims:this.dims,h:this.h,N:this.N,pathLength:this.pathLength,coreLength:this.coreLength};};
+
+function SolverTubos(cfg){
+  this.tc=Tubos.validar(cfg);this.geo=new GeometriaTubos(this.tc);const c=this.tc,g=this.geo,[nx,ny,nz]=g.dims;
+  const cc={esq:{tipo:'parede'},dir:{tipo:'parede'},inf:{tipo:'parede'},sup:{tipo:'parede'},fre:{tipo:'parede'},fun:{tipo:'parede'}};
+  this.maxPortRe=Math.max(...g.ports.map(p=>c.Re*Math.abs(p.flow)/(2*p.r)));
+  Solver3D.call(this,{ny,razao:nx/ny,profundidade:nz/ny,Re:c.Re,cc,Uent:1,cfl:c.cfl,esquema:c.esquema,modelo:c.modelo==='auto'?(this.maxPortRe<2000?'nenhum':'parede'):c.modelo,Cs:.17,metodoPressao:'mgpcg',integrador:'rk3',iterPressao:c.iter,tolDiv:c.tol,tolPressao:1e-6,tolRelPressao:1e-7});
+  this.h=g.h;this.Lx=nx*g.h;this.Ly=ny*g.h;this.Lz=nz*g.h;this.tags=new Uint8Array(this.p.length);this.active=[];
+  for(let i=0;i<nx;i++)for(let j=0;j<ny;j++)for(let k=0;k<nz;k++){const q=this.ip(i,j,k),x=this.pos(i,j,k),tag=g.tag(x);this.tags[q]=tag;this.solido[q]=tag===1?0:1;if(tag===1)this.active.push([i,j,k,q]);}
+  this.faces=[new Uint8Array(this.u.length),new Uint8Array(this.v.length),new Uint8Array(this.w.length)];this.zeroFaces=[[],[],[]];this.ghostFaces=[];this.open=g.ports.map(()=>[]);this.insideFaces=[[],[],[]];
+  const dims=[nx,ny,nz];
+  for(let ax=0;ax<3;ax++){const nn=dims.map((n,k)=>n+(k===ax?1:0));for(let i=0;i<nn[0];i++)for(let j=0;j<nn[1];j++)for(let k=0;k<nn[2];k++){
+    const b=[i,j,k],a=b.slice();a[ax]--;const ta=this.tagAt(...a),tb=this.tagAt(...b),idx=this.fi(ax,...b),free=ta&&tb;
+    if(!free){this.zeroFaces[ax].push(idx);continue;}this.faces[ax][idx]=1;
+    if(ta===1&&tb===1){this.insideFaces[ax].push([i,j,k,idx]);continue;}
+    let pi=(ta>1?ta:tb)-2;const x=this.facePos(ax,i,j,k);
+    if(ta===1||tb===1){const inside=ta===1?a:b,sg=ta===1?1:-1,q=this.ip(...inside);this.open[pi].push({ax,idx,ijk:b,cell:inside,q,sign:sg,pos:x});}
+    else this.ghostFaces.push({ax,idx,pi,pos:x});
+  }}
+  if(!this.active.length||this.open.some(a=>!a.length))throw Error('A malha não contém fluido e portas suficientes. Ajuste dimensões/resolução.');
+  this.prepararMascara();if(this.componentes!==1)throw Error('Geometria desconectada nesta malha. Aumente a resolução ou reveja diâmetros.');
+  this.portFactors=new Float64Array(g.ports.length);this.portProfiles=this.open.map(()=>[]);
+  this.volumes={total:this.buildCV(false),peca:this.buildCV(true)};
+  this.previousMomentum=null;this.momentumRate={total:{F:[0,0,0],M:[0,0,0]},peca:{F:[0,0,0],M:[0,0,0]}};
+  this.hist=[];this.initialise();this.last=this.measure();
+}
+SolverTubos.prototype=Object.create(Solver3D.prototype);SolverTubos.prototype.constructor=SolverTubos;
+SolverTubos.prototype.pos=function(i,j,k){const o=this.geo.origin,h=this.h;return[o[0]+(i+.5)*h,o[1]+(j+.5)*h,o[2]+(k+.5)*h];};
+SolverTubos.prototype.facePos=function(ax,i,j,k){const x=this.pos(i,j,k);x[ax]-=.5*this.h;return x;};
+SolverTubos.prototype.fi=function(a,i,j,k){return a===0?this.iu(i,j,k):a===1?this.iv(i,j,k):this.iw(i,j,k);};
+SolverTubos.prototype.tagAt=function(i,j,k){return i<0||j<0||k<0||i>=this.nx||j>=this.ny||k>=this.nz?0:this.tags[this.ip(i,j,k)];};
+SolverTubos.prototype.faceLivre=function(a,i,j,k){if(!this.faces)return false;const idx=this.fi(a,i,j,k);return this.faces[a][idx]===1;};
+SolverTubos.prototype.anularSolidos=function(){const arr=[this.u,this.v,this.w];for(let a=0;a<3;a++)for(const k of this.zeroFaces[a])arr[a][k]=0;};
+SolverTubos.prototype.initialise=function(){
+  const arr=[this.u,this.v,this.w];for(let a=0;a<3;a++)for(const [i,j,k,q]of this.insideFaces[a]){const x=this.facePos(a,i,j,k),near=this.geo.nearest(x),profile=this.tc.perfil==='parabolico'?2*Math.max(0,1-(near.dist/near.r)**2):1;arr[a][q]=near.p.t[a]*near.p.flow/(4*near.r*near.r)*profile;}
+  this.aplicarCC(false);this.anularSolidos();this.viscosidadeTurbulenta();this.calcularPasso();this.projetar();this.corrigir();this.aplicarCC(true);this._inicialProjetado=true;this.divMax=this.residuo();this.previousMomentum=this.momenta();
+};
+SolverTubos.prototype.aplicarCC=function(ghostOnly){
+  if(!this.open)return;const arr=[this.u,this.v,this.w],h2=this.h*this.h;
+  if(!ghostOnly)for(let a=0;a<this.open.length;a++){
+    const port=this.geo.ports[a],list=this.open[a],profile=[];let flux=0;
+    for(const f of list){let speed;
+      if(a===0){const r=this.geo.radial(f.pos,port).r;speed=this.tc.perfil==='parabolico'?2*Math.max(.001,1-r*r/(port.r*port.r)):1;}
+      else{const ij=f.ijk.slice();ij[f.ax]-=f.sign;const source=arr[f.ax][this.fi(f.ax,...ij)];speed=Math.abs(port.n[f.ax])>1e-6?Math.max(.01,source/port.n[f.ax]):.01;}
+      const vel=speed*port.n[f.ax];profile.push(vel);flux+=f.sign*vel*h2;
+    }
+    const factor=port.flow*Math.PI/4/flux;this.portFactors[a]=factor;
+    for(let n=0;n<list.length;n++)arr[list[n].ax][list[n].idx]=profile[n]*factor;
+    this.portProfiles[a]=profile.map(v=>v*factor);
+  }
+  // Ghost velocity is an axial extrapolation. It does not overwrite projected cap fluxes.
+  for(const f of this.ghostFaces){const p=this.geo.ports[f.pi],r=this.geo.radial(f.pos,p).r,profile=this.tc.perfil==='parabolico'?2*Math.max(0,1-r*r/(p.r*p.r)):1;arr[f.ax][f.idx]=p.n[f.ax]*p.flow/(4*p.r*p.r)*profile;}
+};
+SolverTubos.prototype.equilibrarVazao=function(){
+  // Individual port targets are compatible by construction. Correct only round-off.
+  const a=[this.u,this.v,this.w];let sum=0;for(const p of this.open)for(const f of p)sum+=f.sign*a[f.ax][f.idx];
+  const end=this.open[this.open.length-1],p=this.geo.ports[this.open.length-1];let w=0;for(const f of end)w+=f.sign*p.n[f.ax];if(w>0)for(const f of end)a[f.ax][f.idx]-=sum*p.n[f.ax]/w;
+  this.correcaoVazao=Math.abs(sum)*this.h*this.h;
+};
+SolverTubos.prototype.prepararMascara=function(){NS.prepararPoisson(this);NS.distancias(this);};
+SolverTubos.prototype.buildCV=function(core){
+  const mask=new Uint8Array(this.p.length),cells=[],ports=core?this.geo.corePorts:this.geo.ports,faces=ports.map(()=>[]),h=this.h;
+  for(const it of this.active)if(!core||this.geo.inCore(this.pos(...it))){mask[it[3]]=1;cells.push(it);}
+  if(!core||this.tc.tipo==='reto')return{cells:this.active,faces:this.open,ports:this.geo.ports,volume:this.active.length*h*h*h};
+  for(const [i,j,k,q]of cells)for(let ax=0;ax<3;ax++)for(const sign of [-1,1]){
+    const nb=[i,j,k];nb[ax]+=sign;if(this.tagAt(...nb)!==1)continue;const qn=this.ip(...nb);if(mask[qn])continue;
+    const fi=[i,j,k];if(sign>0)fi[ax]++;const pos=this.facePos(ax,...fi);let near=0,dist=Infinity;
+    ports.forEach((p,a)=>{const d=Math.abs(Tubos.dot(Tubos.sub(pos,p.pos),p.n));if(d<dist){dist=d;near=a;}});
+    faces[near].push({ax,idx:this.fi(ax,...fi),ijk:fi,cell:[i,j,k],q,qn,sign,pos});
+  }
+  if(!cells.length||faces.some(f=>!f.length))throw Error('Conexão central não resolvida na malha. Aumente seu comprimento ou a resolução.');
+  return{cells,faces,ports,volume:cells.length*h*h*h};
+};
+SolverTubos.prototype.velocityFace=function(f){const v=this.centro(...f.cell),out=[v.u,v.v,v.w];if(f.qn!==undefined){const i=Math.floor(f.qn/this.pdi),j=Math.floor(f.qn%this.pdi/this.pdj),k=f.qn%this.pdj,w=this.centro(i,j,k);out[0]=.5*(out[0]+w.u);out[1]=.5*(out[1]+w.v);out[2]=.5*(out[2]+w.w);}out[f.ax]=[this.u,this.v,this.w][f.ax][f.idx];return out;};
+SolverTubos.prototype.strainCell=function(i,j,k){const{ny,nz}=this;let xy=0,xz=0,yz=0;for(let a=0;a<2;a++)for(let b=0;b<2;b++){xy+=this._sxy[((i+a)*(ny+1)+j+b)*nz+k];xz+=this._sxz[((i+a)*ny+j)*(nz+1)+k+b];yz+=this._syz[(i*(ny+1)+j+a)*(nz+1)+k+b];}const q=this.ip(i,j,k);return[this._sxx[q],this._syy[q],this._szz[q],xy/4,xz/4,yz/4];};
+SolverTubos.prototype.momenta=function(){
+  const out={};for(const key of ['total','peca']){const F=[0,0,0],M=[0,0,0];for(const [i,j,k]of this.volumes[key].cells){const v=this.centro(i,j,k),a=[v.u,v.v,v.w],x=this.pos(i,j,k),m=Tubos.cross(x,a);for(let z=0;z<3;z++){F[z]+=a[z]*this.h**3;M[z]+=m[z]*this.h**3;}}out[key]={F,M};}return out;
+};
+SolverTubos.prototype.passo=function(){const old=this.t,prev=this.previousMomentum;NS.passoInc(this);if(this.t>old){const now=this.momenta(),dt=this.t-old;for(const key of ['total','peca'])for(const vec of ['F','M'])this.momentumRate[key][vec]=now[key][vec].map((v,i)=>(v-prev[key][vec][i])/dt);this.previousMomentum=now;}return this.divMax;};
+SolverTubos.prototype.measureCV=function(key,offset){
+  const c=this.tc,cv=this.volumes[key],rho=c.rho,U=c.U,D=c.D,area=this.h*this.h*D*D,grav=9.80665,ref=[c.mx,c.my,c.mz],scaleF=rho*U*U*D*D,scaleM=scaleF*D;
+  const storage=this.momentumRate[key],fStore=Tubos.rot(Tubos.scale(storage.F,-scaleF),c.inclinacao),mOrigin=Tubos.rot(Tubos.scale(storage.M,-scaleM),c.inclinacao),mStore=Tubos.sub(mOrigin,Tubos.cross(ref,fStore));
+  const F=fStore.slice(),M=mStore.slice(),pressure=[0,0,0],momentum=[0,0,0],visc=[0,0,0],secoes=[];
+  for(let a=0;a<cv.faces.length;a++){
+    let qsum=0,pArea=0,pPower=0,kPower=0,A=0,pRef=0;const faces=cv.faces[a],port=cv.ports[a];
+    for(const f of faces){const vel=this.velocityFace(f).map(v=>v*U),vg=Tubos.rot(vel,c.inclinacao),ng=Tubos.rot([0,0,0].map((_,i)=>i===f.ax?f.sign:0),c.inclinacao),x=Tubos.rot(Tubos.scale(f.pos,D),c.inclinacao),r=Tubos.sub(x,ref),qn=vel[f.ax]*f.sign*area;
+      const pn=f.qn===undefined?this.p[f.q]:.5*(this.p[f.q]+this.p[f.qn]);const piezo=pn*rho*U*U+offset,press=piezo-rho*grav*x[2];
+      const str=this.strainCell(...f.cell),nu=1/this.Re+this.nut[f.q],tau=f.ax===0?[str[0],str[3],str[4]]:f.ax===1?[str[3],str[1],str[5]]:[str[4],str[5],str[2]],tv=Tubos.rot(tau.map(s=>2*rho*U*U*nu*s*f.sign*area),c.inclinacao);
+      const fp=Tubos.scale(ng,-press*area),fm=Tubos.scale(vg,-rho*qn),ff=Tubos.add(Tubos.add(fp,fm),tv),mm=Tubos.cross(r,ff);for(let j=0;j<3;j++){F[j]+=ff[j];M[j]+=mm[j];pressure[j]+=fp[j];momentum[j]+=fm[j];visc[j]+=tv[j];}
+      qsum+=qn;pPower+=qn*piezo/rho;kPower+=qn*Tubos.dot(vel,vel)/2;
+      const projected=area*Math.abs(port.n[f.ax]);A+=projected;pArea+=press*projected;pRef+=pn*projected;
+    }
+    const q= Math.abs(qsum),E=Math.abs(qsum)>1e-18?(pPower+kPower)/qsum:NaN,nomA=Math.PI*(port.r*D)**2;
+    secoes.push({nome:port.nome,Q:q,signedQ:qsum,A,areaNominal:nomA,erroArea:100*(A/nomA-1),V:q/A,Vnom:q/nomA,p:pArea/A,pNum:pRef/A,E,hTotal:E/grav,alpha:Math.abs(qsum)>1e-18?(2*kPower/qsum)/((q/A)**2):NaN});
+  }
+  let centroid=[0,0,0];for(const [i,j,k]of cv.cells)centroid=Tubos.add(centroid,this.pos(i,j,k));centroid=Tubos.rot(Tubos.scale(centroid,D/Math.max(1,cv.cells.length)),c.inclinacao);
+  const W=[0,0,-rho*grav*cv.volume*D**3],MW=Tubos.cross(Tubos.sub(centroid,ref),W);for(let a=0;a<3;a++){F[a]+=W[a];M[a]+=MW[a];}
+  const loss=Tubos.perda(secoes),h=loss.total/grav,dpTotal=rho*loss.total,K=2*loss.total/(U*U),balance=(secoes.reduce((s,a)=>s+a.signedQ,0))/c.Q;
+  return{F,M,R:Tubos.norm(F),MR:Tubos.norm(M),equilibranteF:Tubos.scale(F,-1),equilibranteM:Tubos.scale(M,-1),pressure,momentum,visc,storage:fStore,weight:W,secoes,h,dpTotal,K,caminhos:loss.caminhos,massBalance:balance,volume:cv.volume*D**3,centroid};
+};
+SolverTubos.prototype.measure=function(){
+  this.viscosidadeTurbulenta();const c=this.tc,port=this.open[1],ng=this.geo.ports[1];let s=0,a=0;for(const f of port){const w=Math.abs(ng.n[f.ax]);s+=this.p[f.q]*w;a+=w;}const zref=Tubos.rot(Tubos.scale(ng.pos,c.D),c.inclinacao)[2],offset=c.pressao*1000+c.rho*9.80665*zref-c.rho*c.U*c.U*s/a;
+  const total=this.measureCV('total',offset),peca=this.measureCV('peca',offset),residence=this.volumes.total.volume/(Math.PI/4),tReal=this.t*c.D/c.U;
+  const warnings=[];
+  if(this.maxPortRe>=2000)warnings.push('Re elevado/transicional em ao menos uma porta: CFD de parede lisa sub-resolvido. Smagorinsky não torna esta malha uma simulação de tubulação turbulenta validada.');
+  if(c.eps>0)warnings.push('Rugosidade/material afetam a comparação Darcy–Weisbach, não a parede lisa do campo CFD. Não há correção oculta de K.');
+  const errArea=Math.max(...total.secoes.map(p=>Math.abs(p.erroArea)));if(errArea>3)warnings.push('Discretização das seções: diferença máxima de área '+errArea.toFixed(1)+'%. Refinar malha.');
+  if(this.t<2*residence)warnings.push('Transiente: menos de dois tempos de residência calculados. Ainda não usar K como coeficiente permanente.');
+  if(!this.pressaoConvergiu)warnings.push('Poisson não atingiu a tolerância neste passo. Aumentar iterações/refinar protocolo.');
+  if(total.h<0)warnings.push('Perda global negativa no instante atual: energia armazenada/transiente ou erro numérico. Não truncada para zero.');
+  if(total.secoes.some(s=>s.signedQ*(s===total.secoes[0]?-1:1)<0))warnings.push('Fluxo reverso detectado nas seções.');
+  return{t:this.t,tReal,passos:this.passos,dt:this.dt*c.D/c.U,Re:c.Re,maxPortRe:this.maxPortRe,U:c.U,div:this.divMax,resPressao:this.resPressao,iter:this.iteracoesPasso||this.iteracoesUsadas,pressureOK:this.pressaoConvergiu,instavel:this.instavel,falha:this.falha,total,peca,residence,residenceSeconds:residence*c.D/c.U,offset,warnings,reference:Tubos.referencia(c,this.geo),modelo:this.modelo,N:this.p.length,fluidCells:this.active.length};
+};
+SolverTubos.prototype.frame=function(){
+  const n=this.p.length,uc=new Float32Array(n),vc=new Float32Array(n),wc=new Float32Array(n),pressure=new Float32Array(n),speed=new Float32Array(n),c=this.tc;
+  const m=this.measure();this.last=m;for(const[i,j,k,q]of this.active){const a=this.centro(i,j,k),z=Tubos.rot(Tubos.scale(this.pos(i,j,k),c.D),c.inclinacao)[2];uc[q]=a.u;vc[q]=a.v;wc[q]=a.w;pressure[q]=this.p[q]*c.rho*c.U*c.U+m.offset-c.rho*9.80665*z-c.pressao*1000;speed[q]=Math.hypot(a.u,a.v,a.w)*c.U;}
+  return{cfg:c,geo:this.geo.info(),data:{uc,vc,wc,pressure,speed,mask:this.solido},result:m};
+};
+SolverTubos.prototype.exportState=function(){return{format:'NSFDD-tubos-local',version:Tubos.versao,cfg:this.tc,t:this.t,passos:this.passos,rates:this.momentumRate,fields:{u:Array.from(this.u),v:Array.from(this.v),w:Array.from(this.w),p:Array.from(this.p)}};};
+Tubos.restaurar=function(snap){
+  if(!snap||snap.format!=='NSFDD-tubos-local')throw Error('Arquivo não é um projeto do módulo Tubos.');const s=new SolverTubos(snap.cfg);
+  if(snap.fields){for(const key of ['u','v','w','p']){const v=snap.fields[key];if(!Array.isArray(v)||v.length!==s[key].length||v.some(a=>!Number.isFinite(a)))throw Error('Campo '+key+' inválido no projeto.');s[key].set(v);}if(!Number.isFinite(snap.t)||snap.t<0||!Number.isInteger(snap.passos)||snap.passos<0)throw Error('Tempo/passos inválidos.');s.t=snap.t;s.passos=snap.passos;s.divMax=s.residuo();if(s.divMax>1)throw Error('Campo restaurado não conserva massa.');s.previousMomentum=s.momenta();if(snap.rates){for(const k of ['total','peca'])for(const v of ['F','M']){const x=snap.rates[k]?.[v];if(!Array.isArray(x)||x.length!==3||x.some(a=>!Number.isFinite(a)))throw Error('Taxa de quantidade de movimento inválida.');s.momentumRate[k][v]=x.slice();}}}
+  return s;
+};
+Tubos.workerMain=function(){let s=null;self.onmessage=function(ev){const m=ev.data;try{
+  if(m.type==='init'){s=m.project?Tubos.restaurar(m.project):new SolverTubos(m.cfg);self.postMessage({type:'frame',generation:m.generation,frame:s.frame()});}
+  else if(m.type==='step'){if(!s)throw Error('Malha não inicializada.');const start=performance.now();let n=0;while(n<(m.steps||3)&&performance.now()-start<100&&!s.instavel){if(m.target&&s.t*s.tc.D/s.tc.U>=m.target-1e-12)break;if(m.target)s.dtLimite=(m.target-s.t*s.tc.D/s.tc.U)*s.tc.U/s.tc.D;s.passo();n++;}self.postMessage({type:'frame',generation:m.generation,frame:s.frame(),advanced:n,ms:performance.now()-start});}
+  else if(m.type==='save'){self.postMessage({type:'project',project:s.exportState(),generation:m.generation});}
+}catch(e){self.postMessage({type:'error',generation:m.generation,error:e.message,stack:e.stack});}};};
+
+/* Interface própria do módulo: estado separado de App / Motor / Projetos. */
+const TubosUI={
+  worker:null,busy:false,running:false,generation:0,frame:null,draft:null,dirty:true,target:null,history:[],records:[],active:false,
+  yaw:-.28,pitch:1.03,lastTime:0,particles:[],trail:null,angleDrag:null,
+  $:id=>document.getElementById(id),
+  fmt(x,d=3){return Number.isFinite(x)?(Math.abs(x)>0&&Math.abs(x)<1e-3?x.toExponential(3).replace('.',','):x.toLocaleString('pt-BR',{maximumFractionDigits:d,minimumFractionDigits:Math.min(d,2)})):'—';},
+  esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));},
+  message(text,error=false){const e=this.$('tc-message');if(e){e.textContent=text;e.classList.toggle('error',error);}},
+  badge(text,busy=false){const e=this.$('tc-state');e.textContent=text;e.classList.toggle('busy',busy);},
+  read(){const c={...Tubos.padrao};for(const el of this.$('tc-form').elements){if(el.name)c[el.name]=el.type==='number'||el.name==='res'?+el.value:el.value;}return Tubos.validar(c);},
+  fill(c){for(const el of this.$('tc-form').elements)if(el.name&&c[el.name]!==undefined)el.value=c[el.name];this.visibility();},
+  visibility(){const t=this.$('tc-tipo').value,root=this.$('tc-form');for(const e of root.querySelectorAll('.tc-branch'))e.hidden=t!=='te';for(const e of root.querySelectorAll('.tc-d2'))e.hidden=!['redutor','expansao','luva'].includes(t);for(const e of root.querySelectorAll('.tc-bend'))e.hidden=!['joelho90','joelho45','curva'].includes(t);for(const e of root.querySelectorAll('.tc-angle'))e.hidden=t!=='curva';for(const e of root.querySelectorAll('.tc-not-straight'))e.hidden=t==='reto';this.$('tc-lin-label').textContent=t==='reto'?'Comprimento do tubo (m)':'Tubo de entrada (m)';this.$('tc-material-nota').textContent=Tubos.materiais[this.$('tc-material').value].nota;},
+  terminate(){if(this.worker)this.worker.terminate();this.worker=null;this.busy=false;this.running=false;this.generation++;},
+  makeWorker(){const text=this.$('ns-main').textContent+'\nTubos.workerMain();',url=URL.createObjectURL(new Blob([text],{type:'text/javascript'}));let w;try{w=new Worker(url);}finally{URL.revokeObjectURL(url);}return w;},
+  build(autorun=false,project=null){
+    try{const c=project?Tubos.validar(project.cfg):this.read(),g=new GeometriaTubos(c);this.terminate();this.history=[];this.particles=[];this.dirty=false;this.frame=null;for(const id of ['tc-cards','tc-forces','tc-quality','tc-sections','tc-reference'])this.$(id).textContent='Gerando novo caso…';this.chart();this.geom=g.info();this.currentCfg=c;this.active=true;this.draw();this.badge('Gerando malha…',true);this.message('Construindo domínio 3D e preparando a projeção de pressão.');this.$('tc-title').textContent=Tubos.tipos[c.tipo]+' · '+c.material.toUpperCase()+' · D₁ '+this.fmt(c.diam,0)+' mm';
+      this.worker=this.makeWorker();const gen=this.generation;this.busy=true;this.running=autorun;this.$('tc-run').textContent=this.running?'❚❚ Pausar':'▶ Executar CFD';
+      this.worker.onmessage=e=>{const m=e.data;if(m.generation!==this.generation)return;
+        if(m.type==='error'){this.busy=false;this.running=false;this.message('Cálculo interrompido: '+m.error,true);this.badge('Interrompido');this.$('tc-run').textContent='▶ Executar CFD';return;}
+        if(m.type==='project'){const p=m.project;p.history=this.history;p.records=this.records;this.download(JSON.stringify(p),this.filename('projeto')+'.json','application/json');this.message('Projeto exportado com configuração e campos calculados.');return;}
+        if(m.type==='frame'){const first=!this.frame;this.busy=false;this.frame=m.frame;this.geom=m.frame.geo;this.currentCfg=m.frame.cfg;const r=m.frame.result;
+          if(first&&!project)this.$('tc-target').value=(r.residenceSeconds*3).toPrecision(5);
+          if(project&&first){this.history=Array.isArray(project.history)?project.history.filter(a=>Array.isArray(a)&&a.every(Number.isFinite)).slice(-10000):[];this.records=Array.isArray(project.records)?project.records.filter(r=>r&&Number.isFinite(r.Re)&&Number.isFinite(r.K)&&typeof r.tipo==='string').slice(-100):[];this.renderRecords();}
+          if(!this.history.length||r.tReal>this.history[this.history.length-1][0])this.history.push([r.tReal,r.peca.K,r.total.K,r.peca.R,r.peca.MR,r.div,r.peca.h,r.total.h]);if(this.history.length>10000)this.history.shift();
+          if(r.instavel){this.running=false;this.message(r.falha,true);}
+          else if(this.target!==null&&r.tReal>=this.target-1e-10){this.running=false;this.target=null;this.message('Tempo-alvo atingido. Confira estabilidade e sensibilidade antes de interpretar perdas permanentes.');}
+          else if(!this.dirty)this.message(r.passos===0?'Malha pronta; o campo é a condição inicial projetada. Clique Executar CFD.':'CFD local em '+r.fluidCells.toLocaleString('pt-BR')+' células de fluido. Resultados não incluem cálculo de apoios.');
+          this.badge(this.running?'Calculando':r.passos?'Pausado / campo disponível':'Malha pronta',this.running);this.$('tc-run').textContent=this.running?'❚❚ Pausar':'▶ Executar CFD';this.renderResults();this.draw();
+          if(this.running&&!this.dirty&&this.active)queueMicrotask(()=>this.request());
+        }
+      };
+      this.worker.onerror=e=>{this.busy=false;this.running=false;this.message('O Worker foi bloqueado ou falhou. Os menus anteriores continuam disponíveis. '+(e.message||''),true);this.badge('Worker indisponível');};
+      this.worker.postMessage({type:'init',generation:gen,cfg:c,project});
+    }catch(e){this.running=false;this.message(e.message,true);this.badge('Rever parâmetros');}
+  },
+  request(once=false){if(this.busy||!this.worker||(!this.running&&!once))return;this.busy=true;this.worker.postMessage({type:'step',steps:once?1:4,generation:this.generation,target:this.target});},
+  pause(){this.running=false;this.$('tc-run').textContent='▶ Executar CFD';this.badge(this.busy?'Concluindo passo…':'Pausado');},
+  run(){if(this.running){this.pause();return;}if(this.dirty||!this.worker){this.target=null;this.build(true);return;}this.target=null;this.running=true;this.$('tc-run').textContent='❚❚ Pausar';this.request();},
+  async save(){if(!this.worker||!this.frame){this.message('Gere a malha antes de salvar um projeto.',true);return;}this.pause();this.worker.postMessage({type:'save',generation:this.generation});},
+  download(text,name,type='text/plain'){const url=URL.createObjectURL(new Blob([text],{type})),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),3000);},
+  filename(prefix){return 'tubos-'+prefix+'-'+(this.currentCfg?.tipo||'estudo');},
+  table(head,rows){return '<table><thead><tr>'+head.map(x=>'<th>'+this.esc(x)+'</th>').join('')+'</tr></thead><tbody>'+rows.map(r=>'<tr>'+r.map(x=>'<td>'+this.esc(x)+'</td>').join('')+'</tr>').join('')+'</tbody></table>';},
+  result(){return this.frame?.result?.[this.$('tc-scope').value];},
+  renderResults(){const f=this.frame;if(!f)return;const r=f.result,c=f.cfg,scope=this.$('tc-scope').value,a=r[scope],fmt=(x,d)=>this.fmt(x,d),solved=r.passos>0,show=(x,d)=>solved?fmt(x,d):'—';
+    this.$('tc-scope-note').textContent=(scope==='total'?'Todo o volume entre as bocas externas, incluindo os tubos informados.':c.tipo==='reto'?'Para tubo reto, o escopo é todo o trecho informado.':'Somente a região central demarcada pelos anéis de corte; exclui os prolongamentos.')+' Forças incluem o peso do fluido, não o peso do tubo ou reações de apoios.';
+    const cards=[['Reynolds na entrada',fmt(r.Re,0),'D₁ interno; V₁ = '+fmt(r.U,5)+' m/s'],['Perda de carga ΔH',show(a.h,8)+' m','Energia total ponderada por vazão'],['Coeficiente K',show(a.K,5),'Referência: velocidade nominal de entrada'],['Força resultante',show(a.R,3)+' N','Ação do fluido no volume selecionado'],['Momento resultante',show(a.MR,4)+' N·m','Referência global ('+[c.mx,c.my,c.mz].map(x=>fmt(x,3)).join('; ')+') m'],['Tempo calculado',fmt(r.tReal,4)+' s',fmt(r.t/r.residence,2)+' tempos de residência · '+r.passos+' passos']];
+    this.$('tc-cards').innerHTML=cards.map(x=>'<div class="tc-kpi"><small>'+this.esc(x[0])+'</small><strong>'+this.esc(x[1])+'</strong><span>'+this.esc(x[2])+'</span></div>').join('');
+    this.$('tc-forces').innerHTML=this.table(['Componente','Fluido → parede','Equilibrante'],['X','Y','Z'].map((s,i)=>['F'+s+' (N)',show(a.F[i],4),show(-a.F[i],4)]).concat(['X','Y','Z'].map((s,i)=>['M'+s+' (N·m)',show(a.M[i],5),show(-a.M[i],5)])));
+    const trans=solved?(r.t<2*r.residence?'Em transiente (menos de 2 residências)':'Avaliar estabilização pela série temporal'):'Condição inicial: ainda não é resultado CFD';
+    this.$('tc-quality').innerHTML=this.table(['Indicador','Valor'],[['Estado',trans],['Δp estática entrada–saída 1',show(a.secoes[0].p-a.secoes[1].p,5)+' Pa'],['Perda de pressão total',show(a.dpTotal,5)+' Pa'],['Divergência máxima',fmt(r.div,9)],['Desbalanço nas seções',fmt(a.massBalance*100,6)+'%'],['Poisson',r.pressureOK?'Tolerância atingida':'Não convergiu'],['Malha da caixa',f.geo.dims.join(' × ')],['Células de fluido',fmt(r.fluidCells,0)],['Modelo',r.modelo],['Maior Re nominal nas portas',fmt(r.maxPortRe,0)],['Δt físico',fmt(r.dt,7)+' s']])+r.warnings.map(w=>'<p class="tc-warning">'+this.esc(w)+'</p>').join('');
+    this.$('tc-sections').innerHTML=this.table(['Seção','Q (L/s)','p man. (kPa)','V malha (m/s)','ΔA (%)','H total (m)'],a.secoes.map(s=>[s.nome,show(s.Q*1000,6),show(s.p/1000,6),show(s.V,5),fmt(s.erroArea,2),show(s.hTotal,7)]));
+    if(a.caminhos.length>1)this.$('tc-sections').innerHTML+='<p class="tc-note">Por caminho (referência V₁): '+a.caminhos.map(b=>this.esc(b.nome)+': ΔH = '+show(b.h,8)+' m').join(' · ')+'</p>';
+    const ref=r.reference;let refrows=ref.retos.map((x,i)=>['Tubo reto '+(i+1),fmt(x.L,3),fmt(x.D*1000,1),fmt(x.f,6),fmt(x.h,8)]);
+    this.$('tc-reference').innerHTML=this.table(['Trecho auxiliar','L (m)','D (mm)','f Darcy','h (m)'],refrows)+'<p class="tc-note">Regime: '+this.esc(ref.regime)+' · ε = '+fmt(c.eps,6)+' mm. '+this.esc(ref.nota)+'</p>'+(ref.k===null?'':'<p class="tc-note">K de referência genérica = '+fmt(ref.k,3)+'; é uma comparação, nunca uma imposição ao campo CFD.</p>');
+    if(c.tipo==='reto'){const hRef=ref.retos[0].h;this.$('tc-reference').innerHTML+='<p class="tc-note">Diferença CFD × Darcy: '+(solved?fmt(100*(r.total.h/hRef-1),2)+'%':'a calcular')+'. A condição totalmente desenvolvida e a área discretizada devem ser verificadas.</p>';}
+    this.chart();
+  },
+  chart(){const cv=this.$('tc-chart'),cx=cv.getContext('2d'),W=cv.width,H=cv.height;cx.clearRect(0,0,W,H);cx.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--ink-2');cx.font='18px system-ui';if(this.history.length<2){cx.fillText('Execute o CFD para construir a série temporal.',32,50);return;}const data=this.history.filter(a=>a.slice(0,3).every(Number.isFinite));let mn=Infinity,mx=-Infinity;for(const p of data){mn=Math.min(mn,p[1],p[2]);mx=Math.max(mx,p[1],p[2]);}const pad=(mx-mn)*.12||.1;mn-=pad;mx+=pad;const x0=data[0][0],x1=data[data.length-1][0],px=x=>74+(W-110)*(x-x0)/Math.max(1e-12,x1-x0),py=y=>H-48-(H-83)*(y-mn)/(mx-mn);cx.strokeStyle='#708796';cx.lineWidth=1;for(let k=0;k<5;k++){const v=mn+(mx-mn)*k/4,y=py(v);cx.globalAlpha=.2;cx.beginPath();cx.moveTo(72,y);cx.lineTo(W-20,y);cx.stroke();cx.globalAlpha=1;cx.fillText(this.fmt(v,3),8,y+5);}for(const[idx,color,label]of[[1,'#139c9a','K conexão'],[2,'#df8248','K conjunto']]){cx.strokeStyle=color;cx.lineWidth=3;cx.beginPath();data.forEach((a,i)=>i?cx.lineTo(px(a[0]),py(a[idx])):cx.moveTo(px(a[0]),py(a[idx])));cx.stroke();cx.fillStyle=color;cx.fillText(label,100+(idx-1)*210,24);}cx.fillStyle='#708796';cx.fillText(this.fmt(x0,3)+' s',74,H-16);cx.fillText(this.fmt(x1,3)+' s',W-160,H-16);},
+  metadata(){return{formato:'NSFDD-Tubos-resultados',versao:'2.2.0',modulo:Tubos.versao,gerado:new Date().toISOString(),cfg:this.currentCfg,scope:this.$('tc-scope').value,result:this.frame?.result,metodo:'MAC 3D / SSP-RK3 / MG-PCG; parede lisa voxelizada; pressão por referência de saída',limites:'Não inclui suportes, resistência, rugosidade CFD, compressibilidade, cavitação, FSI ou golpe de aríete.'};},
+  csv(){if(!this.frame||!this.frame.result.passos){this.message('Execute ao menos um passo antes de exportar resultados.',true);return;}const a=this.result(),r=this.frame.result,rows=[['Estudo',this.currentCfg.nome],['Escopo',this.$('tc-scope').value],['Tipo','CFD parede lisa; não é reação de apoio'],['tempo_s',r.tReal],['Re',r.Re],['h_m',a.h],['K_Ventrada',a.K],['dp_total_Pa',a.dpTotal],['erro_massa_relativo',a.massBalance],...a.F.map((v,i)=>['F'+'XYZ'[i]+'_N',v]),...a.M.map((v,i)=>['M'+'XYZ'[i]+'_Nm',v])];for(const s of a.secoes)rows.push([s.nome+' Q_m3s',s.Q],[s.nome+' p_Pa',s.p],[s.nome+' E_Jkg',s.E],[s.nome+' A_malha_m2',s.A]);this.csvRows(rows,this.filename('resultados'));this.download(JSON.stringify(this.metadata(),null,2),this.filename('metadados')+'.json','application/json');},
+  csvRows(rows,name){const val=v=>typeof v==='number'?String(v).replace('.',','):'"'+String(v).replaceAll('"','""')+'"';this.download('\ufeff'+rows.map(r=>r.map(val).join(';')).join('\r\n'),name+'.csv','text/csv;charset=utf-8');},
+  exportFields(){if(!this.frame){this.message('Gere e execute o CFD antes de exportar campos.',true);return;}const f=this.frame,c=f.cfg,d=f.data,g=f.geo,[nx,ny,nz]=g.dims,rows=[['x_m','y_m','z_m','u_ms','v_ms','w_ms','p_manometrica_Pa','solido']];for(let i=0;i<nx;i++)for(let j=0;j<ny;j++)for(let k=0;k<nz;k++){const q=(i*ny+j)*nz+k;if(d.mask[q])continue;const p=Tubos.rot(g.origin.map((v,a)=>(v+([i,j,k][a]+.5)*g.h)*c.D),c.inclinacao),v=Tubos.rot([d.uc[q]*c.U,d.vc[q]*c.U,d.wc[q]*c.U],c.inclinacao);rows.push([...p,...v,d.pressure[q]+c.pressao*1000,0]);}this.csvRows(rows,this.filename('campo'));this.download(JSON.stringify(this.metadata(),null,2),this.filename('campo-metadados')+'.json','application/json');},
+  record(){if(!this.frame||!this.frame.result.passos){this.message('Execute o CFD antes de registrar.',true);return;}const r=this.frame.result,c=this.frame.cfg,a=this.result();this.records.push({tipo:c.tipo,Re:r.Re,res:c.res,cells:r.fluidCells,t:r.tReal,scope:this.$('tc-scope').value,K:a.K,h:a.h,F:a.F,M:a.M,div:r.div,config:c});if(this.records.length>100)this.records.shift();this.renderRecords();},
+  renderRecords(){if(!this.records.length)return;this.$('tc-records').innerHTML=this.table(['Peça','Re','Cél./D','t (s)','Escopo','K','h (m)'],this.records.map(r=>[r.tipo,this.fmt(r.Re,0),r.res,this.fmt(r.t,3),r.scope,this.fmt(r.K,5),this.fmt(r.h,8)]));},
+  init(){
+    const $=this.$;for(const[k,v]of Object.entries(Tubos.tipos))$('tc-tipo').add(new Option(v,k));for(const[k,v]of Object.entries(Tubos.materiais))$('tc-material').add(new Option(v.nome,k));this.fill(Tubos.padrao);this.currentCfg=Tubos.validar(Tubos.padrao);this.geom=new GeometriaTubos(this.currentCfg).info();
+    $('tc-sources').innerHTML='<p class="tc-note">Referências do módulo:</p>'+Tubos.fontes.map(f=>'<p class="tc-note"><a target="_blank" rel="noopener" href="'+f.url+'">'+this.esc(f.nome)+'</a></p>').join('');
+    const changed=()=>{this.pause();this.dirty=true;this.visibility();this.message('Parâmetros alterados. Gere novamente a geometria antes de continuar; os resultados exibidos pertencem à configuração anterior.');};
+    $('tc-form').addEventListener('input',changed);$('tc-tipo').addEventListener('change',()=>{const t=$('tc-tipo').value;if(t==='expansao'&&+$('tc-diam2').value<=+$('tc-diam').value)$('tc-diam2').value=+$('tc-diam').value*1.4;if(t==='redutor'&&+$('tc-diam2').value>=+$('tc-diam').value)$('tc-diam2').value=+$('tc-diam').value*.7;if(t==='luva')$('tc-diam2').value=$('tc-diam').value;changed();});
+    $('tc-material').addEventListener('change',()=>{$('tc-eps').value=Tubos.materiais[$('tc-material').value].eps;changed();});
+    document.querySelectorAll('[data-tc-demo]').forEach(b=>b.addEventListener('click',()=>{const t=b.dataset.tcDemo,c={...Tubos.padrao,tipo:t,nome:t==='reto'?'Tubo laminar de verificação':t==='te'?'Tê — vazão dividida':'Joelho 90° — água',q:t==='reto'?.005:.025};if(t==='reto'){c.res=12;c.lin=.1;}this.fill(c);this.dirty=true;this.target=null;this.build(false);}));
+    $('tc-build').onclick=()=>{this.target=null;this.build();};$('tc-run').onclick=()=>this.run();$('tc-step').onclick=()=>{if(this.dirty||!this.worker){this.build(false);return;}this.pause();this.target=null;this.request(true);};$('tc-reset').onclick=()=>{this.target=null;this.build();};
+    $('tc-until').onclick=()=>{const t=+$('tc-target').value;if(!(t>0&&Number.isFinite(t))){this.message('Informe um tempo-alvo positivo.',true);return;}this.target=t;if(this.dirty||!this.worker)this.build(true);else{if(t<=this.frame.result.tReal){this.message('O alvo precisa ser maior que o tempo atual.',true);return;}this.running=true;this.request();}};
+    $('tc-save').onclick=()=>this.save();$('tc-load').onclick=()=>$('tc-file').click();$('tc-file').onchange=async e=>{const file=e.target.files[0];if(!file)return;try{if(file.size>160e6)throw Error('Arquivo excede 160 MB.');const p=JSON.parse(await file.text());if(p.format!=='NSFDD-tubos-local')throw Error('Use um JSON exportado por Tubos e conexões.');this.fill(Tubos.validar(p.cfg));this.target=null;this.build(false,p);}catch(e){this.message(e.message,true);}finally{$('tc-file').value='';}};
+    $('tc-scope').onchange=()=>{this.renderResults();this.draw();};for(const id of ['tc-field','tc-palette','tc-cuts','tc-particles'])$(id).onchange=()=>{this.particles=[];this.draw();};$('tc-top').onclick=()=>{this.yaw=0;this.pitch=Math.PI/2;this.draw();};$('tc-iso').onclick=()=>{this.yaw=-.28;this.pitch=1.03;this.draw();};
+    $('tc-csv').onclick=()=>this.csv();$('tc-fields').onclick=()=>this.exportFields();$('tc-history').onclick=()=>this.csvRows([['tempo_s','K_peca','K_total','F_peca_N','M_peca_Nm','div','h_peca_m','h_total_m'],...this.history],this.filename('historico'));$('tc-record').onclick=()=>this.record();
+    $('tc-png').onclick=()=>{this.draw();$('tc-canvas').toBlob(b=>{const u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download=this.filename('visualizacao')+'.png';a.click();setTimeout(()=>URL.revokeObjectURL(u),3000);});};
+    const cv=$('tc-canvas');cv.onpointerdown=e=>{this.angleDrag=[e.clientX,e.clientY,this.yaw,this.pitch];cv.setPointerCapture(e.pointerId);};cv.onpointermove=e=>{if(this.angleDrag){this.yaw=this.angleDrag[2]+(e.clientX-this.angleDrag[0])*.008;this.pitch=NS.clamp(this.angleDrag[3]+(e.clientY-this.angleDrag[1])*.007,.1,Math.PI/2);this.draw();}};cv.onpointerup=cv.onpointercancel=()=>{this.angleDrag=null;};
+    const tabs=[['aba-sim','painel-sim'],['aba-val','painel-val'],['aba-man','painel-man'],['aba-tubos','painel-tubos']];for(const [b,p]of tabs)$(b).addEventListener('click',()=>{for(const[bb,pp]of tabs){$(bb).setAttribute('aria-selected',String(bb===b));$(pp).hidden=pp!==p;}this.active=p==='painel-tubos';if(this.active){App.rodando=false;if($('btRodar'))$('btRodar').textContent='Executar';this.draw();}else this.pause();});
+    const loop=t=>{requestAnimationFrame(loop);if(!this.active)return;const dt=Math.min(.045,(t-this.lastTime)/1000||.016);this.lastTime=t;if(this.frame&&$('tc-particles').checked&&this.frame.result.passos>0){this.moveParticles(dt);this.draw();}};requestAnimationFrame(loop);this.draw();
+  }
+};
+
+/* Canvas local: dados reais no corte médio + partículas ilustrativas em volume. */
+TubosUI.projection=function(){const c=this.currentCfg,g=this.geom,cv=this.$('tc-canvas'),W=cv.width,H=cv.height,ct=Math.cos(this.yaw),st=Math.sin(this.yaw),sp=Math.sin(this.pitch),cp=Math.cos(this.pitch),raw=x=>{const p=Tubos.rot(x,c.inclinacao);return[p[0]*ct-p[1]*st,(p[0]*st+p[1]*ct)*sp-p[2]*cp,p[0]*st+p[1]*ct+p[2]*sp];};let lo=[Infinity,Infinity],hi=[-Infinity,-Infinity];for(const p of g.paths)for(const pt of [p.a,p.b])for(const dy of [-1,1])for(const dz of [-1,1]){const x=[pt[0],pt[1]+dy*Math.max(p.r1,p.r2),pt[2]+dz*Math.max(p.r1,p.r2)],a=raw(x);for(let k=0;k<2;k++){lo[k]=Math.min(lo[k],a[k]);hi[k]=Math.max(hi[k],a[k]);}}const scale=Math.min((W-200)/Math.max(hi[0]-lo[0],1),(H-210)/Math.max(hi[1]-lo[1],1)),ox=(W-scale*(hi[0]+lo[0]))/2,oy=(H-scale*(hi[1]+lo[1]))/2;return{scale,raw,proj:x=>{const a=raw(x);return[ox+scale*a[0],oy+scale*a[1],a[2]];}};};
+TubosUI.colorLUT=function(){if(this.$('tc-palette').value!=='turbo')return NS.lut(this.$('tc-palette').value);if(this._turbo)return this._turbo;const pts=[[.08,.10,.34],[.12,.36,.75],[.05,.72,.82],[.2,.91,.52],[.82,.94,.15],[1,.67,.08],[.91,.22,.08],[.5,.03,.02]],out=new Uint8Array(768);for(let i=0;i<256;i++){const x=i/255*(pts.length-1),k=Math.min(pts.length-2,Math.floor(x)),t=x-k;for(let j=0;j<3;j++)out[3*i+j]=255*(pts[k][j]*(1-t)+pts[k+1][j]*t);}return this._turbo=out;};
+TubosUI.draw=function(){if(!this.geom||!this.$('tc-canvas'))return;const cv=this.$('tc-canvas'),ctx=cv.getContext('2d'),W=cv.width,H=cv.height,g=this.geom,c=this.currentCfg,P=this.projection(),proj=P.proj;ctx.setTransform(1,0,0,1,0,0);ctx.fillStyle='#07121a';ctx.fillRect(0,0,W,H);const grad=ctx.createRadialGradient(W*.5,H*.45,20,W*.5,H*.45,W*.65);grad.addColorStop(0,'#14313d');grad.addColorStop(1,'#07121a');ctx.fillStyle=grad;ctx.fillRect(0,0,W,H);
+  // Center-section heat map, not an invented velocity field.
+  let mn=0,mx=1;const lut=this.colorLUT();if(this.frame){const f=this.frame,[nx,ny,nz]=g.dims,k=NS.clamp(Math.round((-g.origin[2])/g.h-.5),0,nz-1),values=f.data[this.$('tc-field').value];mn=Infinity;mx=-Infinity;for(let i=0;i<nx;i++)for(let j=0;j<ny;j++){const q=(i*ny+j)*nz+k;if(!f.data.mask[q]&&Number.isFinite(values[q])){mn=Math.min(mn,values[q]);mx=Math.max(mx,values[q]);}}if(!Number.isFinite(mn)){mn=0;mx=1;}if(mx-mn<1e-12)mx=mn+1e-12;
+    const off=this._heat||(this._heat=document.createElement('canvas'));if(off.width!==nx||off.height!==ny){off.width=nx;off.height=ny;}const ox=off.getContext('2d'),img=ox.createImageData(nx,ny);for(let i=0;i<nx;i++)for(let j=0;j<ny;j++){const q=(i*ny+j)*nz+k,p=(j*nx+i)*4;if(f.data.mask[q])continue;const t=Math.pow(NS.clamp((values[q]-mn)/(mx-mn),0,1),.85),l=Math.round(255*t);img.data[p]=lut[l*3];img.data[p+1]=lut[l*3+1];img.data[p+2]=lut[l*3+2];img.data[p+3]=220;}ox.putImageData(img,0,0);const z=g.origin[2]+(k+.5)*g.h,a=proj([g.origin[0],g.origin[1],z]),b=proj([g.origin[0]+g.h,g.origin[1],z]),d=proj([g.origin[0],g.origin[1]+g.h,z]);ctx.save();ctx.setTransform(b[0]-a[0],b[1]-a[1],d[0]-a[0],d[1]-a[1],a[0],a[1]);ctx.imageSmoothingEnabled=true;ctx.drawImage(off,0,0);ctx.restore();
+  }
+  const ring=(pos,tan,r,color,alpha=1)=>{const a=Tubos.norm([tan[0],tan[1],0])>0?[-tan[1],tan[0],0]:[1,0,0],b=[0,0,1];ctx.beginPath();for(let i=0;i<=48;i++){const t=i/48*2*Math.PI,p=proj(pos.map((v,j)=>v+r*(a[j]*Math.cos(t)+b[j]*Math.sin(t))));i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]);}ctx.strokeStyle=color;ctx.globalAlpha=alpha;ctx.stroke();ctx.globalAlpha=1;};
+  ctx.lineWidth=2;for(let k=0;k<g.paths.length;k++){const p=g.paths[k],t=p.t||Tubos.scale(Tubos.sub(p.b,p.a),1/Tubos.norm(Tubos.sub(p.b,p.a)));for(const ang of [0,Math.PI,.5*Math.PI,1.5*Math.PI]){const normal=[-t[1]*Math.cos(ang),t[0]*Math.cos(ang),Math.sin(ang)],a=proj(Tubos.add(p.a,Tubos.scale(normal,p.r1))),b=proj(Tubos.add(p.b,Tubos.scale(normal,p.r2)));ctx.strokeStyle='#9ed6dc';ctx.globalAlpha=this.frame?.result.passos?.38:.68;ctx.beginPath();ctx.moveTo(...a.slice(0,2));ctx.lineTo(...b.slice(0,2));ctx.stroke();}if(k===0||k===g.paths.length-1||g.paths.length<5)ring(p.a,t,p.r1,'#bbdce3',.4);}ctx.globalAlpha=1;
+  if(this.$('tc-cuts').checked&&c.tipo!=='reto')for(const p of g.corePorts)ring(p.pos,p.n,p.r*1.03,'#ffd281',.8);
+  for(let n=0;n<g.ports.length;n++){const p=g.ports[n];ctx.lineWidth=3;ring(p.pos,p.n,p.r,'#d7f4f5');const pos=proj(Tubos.add(p.pos,Tubos.scale(p.n,.65))),a=proj(Tubos.add(p.pos,Tubos.scale(p.n,.25))),b=proj(Tubos.add(p.pos,Tubos.scale(p.n,.55)));ctx.strokeStyle=n?'#ffcd6c':'#74e5f0';this.arrow(ctx,n?a:b,n?b:a,10);ctx.fillStyle='#e2f0f3';ctx.font='18px system-ui';ctx.textAlign='center';ctx.fillText(p.nome,pos[0],pos[1]-15);ctx.font='14px ui-monospace';ctx.fillStyle='#9eb9c7';ctx.fillText(this.fmt(Math.abs(p.flow)*c.q,4)+' L/s',pos[0],pos[1]+7);}
+  ctx.textAlign='left';if(this.frame&&this.$('tc-particles').checked){ctx.strokeStyle='#e0f8ff';ctx.lineWidth=1.7;ctx.globalAlpha=.7;ctx.beginPath();for(const p of this.particles){const a=proj(p.pos),b=proj(p.last||p.pos);ctx.moveTo(b[0],b[1]);ctx.lineTo(a[0],a[1]);}ctx.stroke();ctx.globalAlpha=1;}
+  // Global axes at the moment reference; arrows are a schematic, not a force scale.
+  const refLocal=Tubos.rot([c.mx/c.D,c.my/c.D,c.mz/c.D],-c.inclinacao),o=proj(refLocal);ctx.fillStyle='#ffe3a7';ctx.beginPath();ctx.arc(o[0],o[1],5,0,7);ctx.fill();ctx.font='13px system-ui';ctx.fillText('O · referência de momento',o[0]+9,o[1]-10);
+  const rt=this.result();if(rt&&this.frame.result.passos&&rt.R>1e-9){const fl=Tubos.rot(Tubos.scale(rt.F,1/rt.R),-c.inclinacao),b=proj(Tubos.add(refLocal,Tubos.scale(fl,1.1)));ctx.strokeStyle='#ffcf73';ctx.lineWidth=4;this.arrow(ctx,o,b,14);ctx.font='16px system-ui';ctx.fillText('F = '+this.fmt(rt.R,2)+' N',b[0]+10,b[1]-9);}
+  // Orientação global das componentes das forças e momentos.
+  const axisOrigin=[W-100,92];for(const [name,axis,color]of [['X',[1,0,0],'#ffb47e'],['Y',[0,1,0],'#a5e891'],['Z',[0,0,1],'#80cbed']]){const local=Tubos.rot(axis,-c.inclinacao),v=P.raw(local),base=P.raw([0,0,0]),end=[axisOrigin[0]+42*(v[0]-base[0]),axisOrigin[1]+42*(v[1]-base[1])];ctx.strokeStyle=color;ctx.lineWidth=2;this.arrow(ctx,axisOrigin,end,8);ctx.fillStyle=color;ctx.font='15px ui-monospace';ctx.fillText(name,end[0]+5,end[1]-3);}
+  ctx.textAlign='left';ctx.fillStyle='#cfdee6';ctx.font='19px system-ui';ctx.fillText(Tubos.tipos[c.tipo]+' · D₁ '+this.fmt(c.diam,0)+' mm · Rigidamente confinado',26,H-65);ctx.fillStyle='#93afbd';ctx.font='14px ui-monospace';ctx.fillText(this.frame?'t = '+this.fmt(this.frame.result.tReal,4)+' s · '+this.frame.result.passos+' passos · Re '+this.fmt(c.Re,0)+' · '+(this.frame.result.passos?'campo CFD':'condição inicial projetada'):'Geometria nominal · clique Gerar geometria e malha',26,H-38);
+  if(this.frame){const x=W-370,y=H-74;for(let i=0;i<260;i++){const k=Math.round(i/259*255);ctx.fillStyle=`rgb(${lut[3*k]},${lut[3*k+1]},${lut[3*k+2]})`;ctx.fillRect(x+i,y,1,13);}ctx.fillStyle='#deedf2';ctx.font='14px ui-monospace';ctx.fillText(this.fmt(mn,4),x,y+34);ctx.textAlign='right';ctx.fillText(this.fmt(mx,4),x+260,y+34);ctx.textAlign='left';ctx.font='12px system-ui';ctx.fillText(this.$('tc-field').value==='speed'?'Velocidade (m/s) · gamma 0,85':'p − p saída 1 (Pa) · gamma 0,85',x,y-10);}
+};
+TubosUI.arrow=function(ctx,a,b,size){const t=Math.atan2(b[1]-a[1],b[0]-a[0]);ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.moveTo(b[0]-size*Math.cos(t-.5),b[1]-size*Math.sin(t-.5));ctx.lineTo(b[0],b[1]);ctx.lineTo(b[0]-size*Math.cos(t+.5),b[1]-size*Math.sin(t+.5));ctx.stroke();};
+TubosUI.sample=function(x){const f=this.frame,g=f.geo,[nx,ny,nz]=g.dims,z=x.map((v,k)=>(v-g.origin[k])/g.h-.5),base=z.map(Math.floor),w=z.map((v,k)=>v-base[k]);let out=[0,0,0],weight=0;for(let a=0;a<2;a++)for(let b=0;b<2;b++)for(let c=0;c<2;c++){const i=base[0]+a,j=base[1]+b,k=base[2]+c;if(i<0||j<0||k<0||i>=nx||j>=ny||k>=nz)continue;const q=(i*ny+j)*nz+k;if(f.data.mask[q])continue;const ww=(a?w[0]:1-w[0])*(b?w[1]:1-w[1])*(c?w[2]:1-w[2]);out[0]+=ww*f.data.uc[q];out[1]+=ww*f.data.vc[q];out[2]+=ww*f.data.wc[q];weight+=ww;}return weight>.2?out.map(v=>v/weight):null;};
+TubosUI.newParticle=function(any=false){const p=this.geom.ports[0],r=p.r*.88,theta=Math.random()*Math.PI*2,rr=r*Math.sqrt(Math.random()),n=p.n,dir=[-n[1],n[0],0],pos=Tubos.add(Tubos.add(p.pos,Tubos.scale(n,-this.geom.h)),[dir[0]*rr*Math.cos(theta),dir[1]*rr*Math.cos(theta),rr*Math.sin(theta)]);if(any){const path=this.geom.paths[Math.floor(Math.random()*this.geom.paths.length)],t=Math.random();for(let i=0;i<3;i++)pos[i]=path.a[i]+t*(path.b[i]-path.a[i]);pos[2]+=rr*.7;}return{pos,last:pos.slice(),life:Math.random()*20};};
+TubosUI.moveParticles=function(dt){if(!this.frame||!this.frame.result.passos)return;if(!this.particles.length)for(let i=0;i<700;i++)this.particles.push(this.newParticle(true));for(let k=0;k<this.particles.length;k++){const p=this.particles[k],v=this.sample(p.pos);if(!v||p.life>35){this.particles[k]=this.newParticle();continue;}p.last=p.pos.slice();p.pos=Tubos.add(p.pos,Tubos.scale(v,dt*1.5));p.life+=dt;if(!this.sample(p.pos))this.particles[k]=this.newParticle();}};
+
+const iniciarInterfaceAntesTubos=iniciarInterface;
+iniciarInterface=function(){iniciarInterfaceAntesTubos();TubosUI.init();};
+NS.versao='2.2.0';
+
+/* Verificações locais adicionadas à aba já existente. Critérios independentes. */
+const testesTubos=[
+ {id:'tubos_unidades',titulo:'Tubos — unidades e fator de Darcy',descricao:'Confere conversão de vazão/diâmetro, Reynolds, Hagen–Poiseuille e residual de Colebrook.',tolerancia:'erro algébrico < 10⁻¹⁰',async executar(prog){const c=Tubos.validar({...Tubos.padrao,diam:100,q:1}),Re=4*c.rho*.001/(Math.PI*.1*.001002),a=Tubos.atrito(1000,0,.1),b=Tubos.atrito(1e5,.0001,.1),err=Math.max(Math.abs(c.Re/Re-1),Math.abs(a.f-.064),Math.abs(1/Math.sqrt(b.f)+2*Math.log10(.0001/(3.7*.1)+2.51/(1e5*Math.sqrt(b.f)))));prog(1);return NS.resultadoTeste(err<1e-10,[['Erro máximo',NS.fmt(err,12)],['Re calculado',NS.fmt(c.Re,4)]]);}},
+ {id:'tubos_energia',titulo:'Tubos — queda estática não é perda de carga',descricao:'Redução ideal com aumento de velocidade: energia total constante apesar da queda de pressão estática.',tolerancia:'ΔE nula e Δp estática diferente de zero',async executar(prog){const s=[{nome:'Entrada',Q:.01,p:100000,E:101},{nome:'Saída',Q:.01,p:97000,E:101}],r=Tubos.perda(s);prog(1);return NS.resultadoTeste(r.total===0&&r.caminhos[0].dpEstatica===3000,[['Perda de energia',String(r.total)],['Queda de pressão estática','3000 Pa']]);}},
+ ...['joelho90','joelho45','te','redutor'].map(tipo=>({id:'tubos_'+tipo,titulo:'Tubos — continuidade em '+Tubos.tipos[tipo],descricao:'Domínio interno 3D com portas locais; verifica três passos, finitude, compatibilidade e divisão da vazão quando há ramal.',tolerancia:'divergência < 10⁻⁵; erro relativo de vazão < 10⁻¹⁰',async executar(prog){const s=new SolverTubos({...Tubos.padrao,tipo,diam2:40,res:8,lin:.1,lout:.1,lb:.1,divisao:25});for(let i=0;i<3;i++)s.passo();const m=s.measure();let err=Math.abs(m.total.massBalance);for(let k=0;k<s.geo.ports.length;k++)err=Math.max(err,Math.abs(m.total.secoes[k].signedQ/s.tc.Q-s.geo.ports[k].flow));prog(1);return NS.resultadoTeste(!s.instavel&&s.divMax<1e-5&&err<1e-10&&m.total.F.every(Number.isFinite)&&m.peca.M.every(Number.isFinite),[['Divergência',NS.fmt(s.divMax,10)],['Erro de vazão',NS.fmt(err,12)],['Células de fluido',String(s.active.length)]]);}})),
+ {id:'tubos_pressao',titulo:'Tubos — pressão de referência altera empuxo, não velocidade',descricao:'Incrementa a pressão manométrica em 100 kPa e compara a variação de força com a área vetorial das portas discretizadas.',tolerancia:'erro relativo da força < 10⁻¹⁰; velocidades inalteradas',async executar(prog){const s=new SolverTubos({...Tubos.padrao,res:8,lin:.1,lout:.1});s.passo();const old=s.u.slice(),a=s.measure().total;s.tc.pressao+=100;const b=s.measure().total,expect=[0,0,0];for(const list of s.open)for(const f of list)expect[f.ax]-=100000*f.sign*s.h*s.h*s.tc.D*s.tc.D;let e=0;for(let i=0;i<3;i++)e=Math.max(e,Math.abs(b.F[i]-a.F[i]-expect[i])/Math.max(1,Math.abs(expect[i])));prog(1);return NS.resultadoTeste(e<1e-10&&old.every((x,i)=>x===s.u[i]),[['Erro da força',NS.fmt(e,12)],['Velocidades','inalteradas']]);}},
+ {id:'tubos_momento',titulo:'Tubos — transporte de momento entre referências',descricao:'Aplica M_B = M_A − (B−A) × F a uma conexão em plano inclinado, incluindo peso e armazenamento.',tolerancia:'erro relativo < 10⁻¹⁰',async executar(prog){const s=new SolverTubos({...Tubos.padrao,res:8,lin:.1,lout:.1,inclinacao:35});s.passo();const a=s.measure().peca,r=[.2,-.1,.03];[s.tc.mx,s.tc.my,s.tc.mz]=r;const b=s.measure().peca,x=Tubos.sub(a.M,Tubos.cross(r,a.F)),e=Math.max(...x.map((v,i)=>Math.abs(v-b.M[i])))/Math.max(1,Tubos.norm(x));prog(1);return NS.resultadoTeste(e<1e-10,[['Erro de transporte do momento',NS.fmt(e,12)]]);}},
+ {id:'tubos_material',titulo:'Tubos — material sem rugosidade CFD fictícia',descricao:'Ao alterar ε, apenas a comparação Darcy muda. O campo CFD permanece de parede lisa, conforme a interface informa.',tolerancia:'f rugoso maior que liso; velocidade preservada',async executar(prog){const s=new SolverTubos({...Tubos.padrao,tipo:'reto',res:8,lin:.1,q:1});const old=s.u.slice(),a=s.measure().reference.f;s.tc.eps=.26;const b=s.measure().reference.f;prog(1);return NS.resultadoTeste(b>a&&old.every((x,i)=>x===s.u[i]),[['f com ε inicial',NS.fmt(a,6)],['f com ε = 0,26 mm',NS.fmt(b,6)],['CFD','não alterado']]);}},
+ {id:'tubos_reinicio',titulo:'Tubos — exportação e restauração dos campos',descricao:'Restaura o snapshot completo após cinco passos e verifica mais um passo em ambos os estados.',tolerancia:'diferença de velocidades < 10⁻⁷; mesmo tempo',async executar(prog){const a=new SolverTubos({...Tubos.padrao,tipo:'reto',res:8,lin:.1});for(let i=0;i<5;i++)a.passo();const b=Tubos.restaurar(JSON.parse(JSON.stringify(a.exportState())));a.passo();b.passo();let e=0;for(const key of ['u','v','w'])for(let k=0;k<a[key].length;k++)e=Math.max(e,Math.abs(a[key][k]-b[key][k]));prog(1);return NS.resultadoTeste(!a.instavel&&!b.instavel&&e<1e-7&&Math.abs(a.t-b.t)<1e-10,[['Diferença do campo',NS.fmt(e,12)],['Diferença de tempo',NS.fmt(Math.abs(a.t-b.t),12)]]);}},
+ {id:'tubos_poiseuille',titulo:'Tubos — Hagen–Poiseuille circular tridimensional',descricao:'Tubo de D=50 mm, L=0,1 m, Q=0,005 L/s, 12 células/D; 350 passos. Compara perda total com Darcy f=64/Re. Tolerância inclui superfície cartesiana.',tolerancia:'desvio de perda < 10%; divergência < 10⁻⁵',async executar(prog){const s=new SolverTubos({...Tubos.padrao,tipo:'reto',diam:50,lin:.1,res:12,q:.005});for(let i=0;i<350;i++){s.passo();if(s.instavel)throw Error(s.falha);if(i%50===0){prog(i/350);await espera();}}const m=s.measure(),ref=m.reference.retos[0].h,err=Math.abs(m.total.h/ref-1);prog(1);return NS.resultadoTeste(err<.1&&s.divMax<1e-5,[['h CFD (m)',NS.fmt(m.total.h,10)],['h Hagen–Poiseuille (m)',NS.fmt(ref,10)],['Desvio relativo (%)',NS.fmt(err*100,4)],['Divergência',NS.fmt(s.divMax,10)]]);}}
+];
+testesTubos.push({id:'tubos_re_portas',titulo:'Tubos — Reynolds nas seções de diâmetro diferente',descricao:'A escolha automática do modelo deve considerar o maior Reynolds nominal das portas, não apenas a entrada.',tolerancia:'Re de saída = 2 × Re de entrada e modelo amortecido selecionado',async executar(prog){const s=new SolverTubos({...Tubos.padrao,tipo:'redutor',diam2:25,res:12,lin:.1,lout:.1,q:.04});const e=Math.abs(s.maxPortRe/(2*s.Re)-1);prog(1);return NS.resultadoTeste(s.Re<2000&&s.maxPortRe>2000&&s.modelo==='parede'&&e<1e-12,[['Re de entrada',NS.fmt(s.Re,3)],['Re máximo',NS.fmt(s.maxPortRe,3)],['Modelo automático',s.modelo]]);}});
+CASOS.push(...testesTubos);
+SECOES.push({id:'tubos-local',titulo:'Tubos e conexões — laboratório local',html:`<p>O menu <b>Tubos e conexões</b> estuda uma peça ou trecho curto, sem criar uma rede hidráulica ou estrutura de suportes. Mantém seu próprio estado e seus projetos JSON, sem substituir o simulador geral.</p><p>São resolvidas as equações incompressíveis em domínio interno 3D com vazão de entrada e divisão de vazão do tê prescritas. A pressão manométrica da saída 1 ancora o nível de pressão para calcular empuxos. O motor MAC/RK3/MG-PCG e as tensões viscosas 3D vêm da versão 2.1.</p><p>A perda usa energia total ponderada pela vazão, não apenas diferença de pressão estática. O resultado distingue a conexão central do conjunto com os tubos de entrada e saída. As resultantes são obtidas por balanço de quantidade de movimento e momento angular, incluindo armazenamento e peso do fluido.</p><p>Materiais alimentam a rugosidade editável da comparação independente Darcy–Weisbach. O CFD é de parede lisa rígida, sem resolução da rugosidade, viscoelasticidade, cavitação ou golpe de aríete. Modelos submalha em alto Reynolds são exploratórios. A área discretizada dos cortes é informada porque altera pressões e empuxos. A ampliação dos trechos retos e o refinamento da malha devem ser testados.</p><p>O próprio módulo contém memória de cálculo, convenções, referências, exportações e informações detalhadas de validade. Os testes adicionais aparecem na aba <b>Validação</b>.</p>`});
+
 /* espaço de nomes público: acesso pelo console e pelos testes */
 if (typeof window !== 'undefined') {
   window.NSFDD = {
@@ -5804,7 +6270,7 @@ if (typeof window !== 'undefined') {
     GEOMETRIAS_2D, GEOMETRIAS_3D, GEOMETRIAS_COMP,
     aplicarGeometria2D, aplicarGeometria3D, aplicarGeometriaComp,
     riemannExato, choqueObliquo, dentroNACA, perfilNACA,
-    Geo21, IB21, Visual21, Estudo21, App, SECOES, LABS, CASOS, Motor, Projetos, Validacao, construir, desenhar, aplicarParametros, iniciarInterface,
+    Geo21, IB21, Visual21, Estudo21, Tubos, GeometriaTubos, SolverTubos, TubosUI, App, SECOES, LABS, CASOS, Motor, Projetos, Validacao, construir, desenhar, aplicarParametros, iniciarInterface,
     reverAbertura,
     get sol() { return sol; }, get cena() { return cena; }, get historico() { return historico; }
   };
