@@ -144,6 +144,7 @@ Inventario originalmente verificado em 21/07/2026 e atualizado em 09/09/2026 par
 | 89 / FLUIDOS | Navier-Stokes | `/navier-stokes/` | `C:\Obras Inteligentes\navier-stokes\index.html` | existe | 200 |
 | 90 / MEF | Analisador Estrutural MEF | `/analisador-estrutural-mef/` | `C:\Obras Inteligentes\analisador-estrutural-mef\index.html` | existe | 200 |
 | 91 / CALOR | HeatFlow PRO | `/heatflow-pro/` | `C:\Obras Inteligentes\heatflow-pro\index.html` | existe | 200 |
+| 92 / BARRAGENS | Dimensionamento de Barragens | `/dimensionamento-barragens/` | `C:\Obras Inteligentes\dimensionamento-barragens\index.html` | existe | 200 |
 
 ## Tamanhos verificados
 
@@ -242,6 +243,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/navier-stokes/` | 743475 bytes | 738489 caracteres |
 | `/analisador-estrutural-mef/` | 373711 bytes | 370394 caracteres |
 | `/heatflow-pro/` | 674639 bytes | 667480 caracteres |
+| `/dimensionamento-barragens/` | 212448 bytes | 210257 caracteres |
 | `/entenda-ia/` | 175035 bytes | 172793 caracteres |
 | `/abc-fiscal/` | 351255 bytes | 349022 caracteres |
 
@@ -797,6 +799,24 @@ Observacoes:
 - Tela inicial do site aponta para `/heatflow-pro/`.
 - O HeatFlow PRO e o Navier-Stokes foram classificados no filtro `Mecanica dos Fluidos e Transferencia de Calor`.
 - Validar apos futuras alteracoes os modelos 1D/2D/3D, regimes permanente e transiente, editor geometrico, projetos locais e relatorios.
+
+### Dimensionamento de Barragens
+
+Rota: `/dimensionamento-barragens/`  
+Arquivo: `dimensionamento-barragens/index.html`
+
+Ultima inclusao:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\dimensionamento-barragens (2).html`
+- Data: 18/09/2026
+- Alteracao: inclusao de novo card e publicacao do aplicativo como HTML standalone.
+
+Observacoes:
+
+- Aplicativo standalone empacotado em HTML unico.
+- Tela inicial do site aponta para `/dimensionamento-barragens/`.
+- O card foi classificado no filtro `Pavimentacao, Saneamento e Infraestrutura`.
+- Validar apos futuras alteracoes os modelos de barragens de concreto, terra e enrocamento, hidrologia, vertedouro, estabilidade, quantitativos e relatorio.
 
 ### SolarPro
 
@@ -2403,6 +2423,7 @@ $headers=@{ 'User-Agent'='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
   '/navier-stokes/',
   '/analisador-estrutural-mef/',
   '/heatflow-pro/',
+  '/dimensionamento-barragens/',
   '/entenda-ia/'
 ) | ForEach-Object {
   $url = "https://www.obrasinteligentes.ia.br$_?v=check"
