@@ -145,6 +145,7 @@ Inventario originalmente verificado em 21/07/2026 e atualizado em 09/09/2026 par
 | 90 / MEF | Analisador Estrutural MEF | `/analisador-estrutural-mef/` | `C:\Obras Inteligentes\analisador-estrutural-mef\index.html` | existe | 200 |
 | 91 / CALOR | HeatFlow PRO | `/heatflow-pro/` | `C:\Obras Inteligentes\heatflow-pro\index.html` | existe | 200 |
 | 92 / BARRAGENS | Dimensionamento de Barragens | `/dimensionamento-barragens/` | `C:\Obras Inteligentes\dimensionamento-barragens\index.html` | existe | 200 |
+| 93 / TERRENO 3D | EstereoTerreno Pro | `/estereoterreno-pro/` | `C:\Obras Inteligentes\estereoterreno-pro\index.html` | existe | 200 |
 
 ## Tamanhos verificados
 
@@ -244,6 +245,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/analisador-estrutural-mef/` | 373711 bytes | 370394 caracteres |
 | `/heatflow-pro/` | 674639 bytes | 667480 caracteres |
 | `/dimensionamento-barragens/` | 212448 bytes | 210257 caracteres |
+| `/estereoterreno-pro/` | 144441 bytes | 143361 caracteres |
 | `/entenda-ia/` | 175035 bytes | 172793 caracteres |
 | `/abc-fiscal/` | 351255 bytes | 349022 caracteres |
 
@@ -817,6 +819,24 @@ Observacoes:
 - Tela inicial do site aponta para `/dimensionamento-barragens/`.
 - O card foi classificado no filtro `Pavimentacao, Saneamento e Infraestrutura`.
 - Validar apos futuras alteracoes os modelos de barragens de concreto, terra e enrocamento, hidrologia, vertedouro, estabilidade, quantitativos e relatorio.
+
+### EstereoTerreno Pro
+
+Rota: `/estereoterreno-pro/`  
+Arquivo: `estereoterreno-pro/index.html`
+
+Ultima inclusao:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\EstereoTerreno_Pro (2).html`
+- Data: 18/09/2026
+- Alteracao: inclusao de novo card e publicacao do aplicativo como HTML standalone.
+
+Observacoes:
+
+- Aplicativo standalone empacotado em HTML unico.
+- Tela inicial do site aponta para `/estereoterreno-pro/`.
+- O card foi classificado no filtro `Pavimentacao, Saneamento e Infraestrutura`.
+- Validar apos futuras alteracoes o carregamento do par estereoscopico, a reconstrucao 3D, o modelo digital do terreno, curvas de nivel, medicoes e exportacoes.
 
 ### SolarPro
 
@@ -2424,6 +2444,7 @@ $headers=@{ 'User-Agent'='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
   '/analisador-estrutural-mef/',
   '/heatflow-pro/',
   '/dimensionamento-barragens/',
+  '/estereoterreno-pro/',
   '/entenda-ia/'
 ) | ForEach-Object {
   $url = "https://www.obrasinteligentes.ia.br$_?v=check"

@@ -1,0 +1,3043 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EstereoTerreno Pro — Reconstrução 3D por Estereoscopia</title>
+<style>
+:root{
+  --bg:#f4f5f7; --panel:#ffffff; --panel-2:#fafbfc; --ink:#16181d; --ink-2:#5b6270;
+  --line:#dfe3e8; --line-2:#c7ccd4; --accent:#1d6fa5; --accent-soft:#e6f1fb;
+  --ok:#1d7a4f; --warn:#96610a; --err:#a33030; --radius:8px;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+}
+[data-theme="dark"]{
+  --bg:#14161a; --panel:#1c1f25; --panel-2:#22262d; --ink:#e8eaee; --ink-2:#a0a7b4;
+  --line:#2e333c; --line-2:#3d444f; --accent:#69aee0; --accent-soft:#16344a;
+  --ok:#5fc08c; --warn:#d8a44a; --err:#e07a7a;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font:14px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{background:var(--panel);border-bottom:1px solid var(--line);padding:12px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;position:sticky;top:0;z-index:50}
+header h1{font-size:17px;font-weight:600;margin:0;letter-spacing:-.2px}
+header .sub{font-size:12px;color:var(--ink-2)}
+.spacer{flex:1}
+button,select,input,textarea{font:inherit;color:inherit}
+.btn{background:var(--panel);border:1px solid var(--line-2);border-radius:var(--radius);padding:7px 13px;cursor:pointer}
+.btn:hover{background:var(--panel-2);border-color:var(--accent)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.sm{padding:4px 9px;font-size:12px}
+nav.tabs{display:flex;gap:2px;padding:0 20px;background:var(--panel);border-bottom:1px solid var(--line);overflow-x:auto;position:sticky;top:53px;z-index:49}
+nav.tabs button{background:none;border:none;border-bottom:2px solid transparent;padding:10px 14px;cursor:pointer;color:var(--ink-2);white-space:nowrap}
+nav.tabs button.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+main{padding:20px;max-width:1280px;margin:0 auto}
+section.tab{display:none}
+section.tab.active{display:block}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:16px}
+.card h2{font-size:15px;margin:0 0 12px;font-weight:600}
+.card h3{font-size:13px;margin:16px 0 8px;font-weight:600;color:var(--ink-2);text-transform:uppercase;letter-spacing:.4px}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.g4{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+label.f{display:block;font-size:12px;color:var(--ink-2);margin-bottom:4px}
+input[type=number],input[type=text],select{width:100%;padding:7px 9px;border:1px solid var(--line-2);border-radius:var(--radius);background:var(--panel-2)}
+input[type=range]{width:100%}
+.drop{border:2px dashed var(--line-2);border-radius:12px;padding:18px;text-align:center;cursor:pointer;background:var(--panel-2);transition:.15s}
+.drop:hover,.drop.over{border-color:var(--accent);background:var(--accent-soft)}
+.drop img{max-width:100%;max-height:200px;border-radius:6px;display:block;margin:0 auto 8px}
+.drop .ph{color:var(--ink-2);font-size:13px;padding:24px 0}
+.meta{font-family:var(--mono);font-size:11px;color:var(--ink-2);text-align:left;margin-top:8px;white-space:pre-wrap}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+.kpi{background:var(--panel-2);border:1px solid var(--line);border-radius:var(--radius);padding:10px 12px}
+.kpi .l{font-size:11px;color:var(--ink-2)}
+.kpi .v{font-size:19px;font-weight:600;font-variant-numeric:tabular-nums}
+.kpi .u{font-size:11px;color:var(--ink-2);font-weight:400}
+.bar{height:8px;background:var(--panel-2);border:1px solid var(--line);border-radius:5px;overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--accent);width:0;transition:width .12s}
+.msg{padding:9px 12px;border-radius:var(--radius);font-size:13px;margin:10px 0;border:1px solid}
+.msg.ok{background:color-mix(in srgb,var(--ok) 12%,transparent);border-color:var(--ok)}
+.msg.warn{background:color-mix(in srgb,var(--warn) 14%,transparent);border-color:var(--warn)}
+.msg.err{background:color-mix(in srgb,var(--err) 12%,transparent);border-color:var(--err)}
+canvas{max-width:100%;border-radius:var(--radius);display:block}
+#glwrap{position:relative;background:var(--panel-2);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+#gl{width:100%;height:520px;display:block;cursor:grab}
+#gl:active{cursor:grabbing}
+#glhud{position:absolute;left:10px;bottom:10px;font-family:var(--mono);font-size:11px;color:var(--ink-2);background:color-mix(in srgb,var(--panel) 80%,transparent);padding:4px 8px;border-radius:5px;pointer-events:none}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line)}
+th{color:var(--ink-2);font-weight:600;font-size:12px}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+.exp{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:10px}
+.exp button{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;padding:10px 12px}
+.exp button b{font-size:13px;font-weight:600}
+.exp button span{font-size:11px;color:var(--ink-2);font-weight:400}
+.manual{display:grid;grid-template-columns:230px 1fr;gap:18px;align-items:start}
+.manual nav{position:sticky;top:110px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px}
+.manual nav a{display:block;padding:6px 9px;border-radius:6px;color:var(--ink-2);text-decoration:none;font-size:13px}
+.manual nav a:hover{background:var(--panel-2)}
+.manual nav a.active{background:var(--accent-soft);color:var(--accent);font-weight:600}
+.manual article{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 22px}
+.manual article h2{font-size:17px;margin-top:0}
+.manual article h3{text-transform:none;letter-spacing:0;font-size:14px;color:var(--ink)}
+.manual article p,.manual article li{font-size:14px;color:var(--ink)}
+.manual article code{font-family:var(--mono);font-size:12.5px;background:var(--panel-2);padding:1px 5px;border-radius:4px}
+.manual article .form{font-family:var(--mono);font-size:13px;background:var(--panel-2);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:0;padding:10px 12px;margin:10px 0;white-space:pre-wrap}
+mark{background:color-mix(in srgb,var(--warn) 35%,transparent);color:inherit;border-radius:3px}
+.hide{display:none!important}
+.chk{display:flex;align-items:center;gap:7px;font-size:13px;margin:6px 0}
+.chk input{width:15px;height:15px}
+.foot{color:var(--ink-2);font-size:12px;text-align:center;padding:24px 0}
+#splash{position:fixed;inset:0;z-index:9000;background:var(--bg);display:flex;align-items:flex-end;justify-content:center;
+  opacity:1;transition:opacity .4s ease}
+#splash.saindo{opacity:0;pointer-events:none}
+#cvSplash{position:absolute;inset:0;width:100%;height:100%;border-radius:0;transition:filter .5s ease,opacity .5s ease}
+#splash.fase-legal #cvSplash{filter:blur(7px) saturate(.75);opacity:.34}
+#splashUI{position:relative;z-index:2;text-align:center;padding:0 24px 7vh;pointer-events:none;
+  transition:opacity .45s ease,transform .45s ease}
+#splash.fase-legal #splashUI{opacity:0;transform:translateY(-14px);pointer-events:none}
+#splashTitulo h1{margin:0;font-size:clamp(26px,4.6vw,46px);font-weight:600;letter-spacing:-.6px;color:var(--ink);
+  animation:sobe .9s .15s both}
+#splashTitulo p{margin:6px 0 0;font-size:clamp(12px,1.7vw,16px);color:var(--ink-2);animation:sobe .9s .35s both}
+#splashFase{margin-top:26px;font-size:13px;color:var(--accent);font-weight:500;min-height:19px;animation:sobe .9s .6s both}
+#splashBarra{margin:12px auto 0;width:min(340px,62vw);height:3px;background:var(--line);border-radius:3px;overflow:hidden}
+#splashBarra>i{display:block;height:100%;width:0;background:var(--accent)}
+#splashPular{margin-top:14px;font-size:11px;color:var(--ink-2);opacity:.75;animation:sobe 1s 1.6s both}
+@keyframes sobe{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+#legal{position:relative;z-index:3;display:none;width:min(760px,94vw);max-height:92vh}
+#splash.fase-legal{align-items:center}
+#splash.fase-legal #legal{display:block;animation:sobe .5s both}
+.legalCaixa{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px 26px;
+  max-height:92vh;overflow:auto;box-shadow:0 18px 60px rgba(0,0,0,.28)}
+.legalCaixa h2{margin:0 0 4px;font-size:18px;font-weight:600}
+.legalTexto{max-height:46vh;overflow:auto;padding-right:8px;margin-top:10px;
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.legalTexto h3{font-size:13px;margin:14px 0 4px;color:var(--accent);text-transform:none;letter-spacing:0}
+.legalTexto p{margin:0 0 8px;font-size:13px;line-height:1.6;color:var(--ink)}
+@media (max-width:620px){ .legalTexto{max-height:40vh} .legalCaixa{padding:16px 18px} }
+@media (prefers-reduced-motion:reduce){ #splashTitulo h1,#splashTitulo p,#splashFase,#splashPular{animation:none} }
+.tag{display:inline-block;font-size:11px;padding:2px 7px;border-radius:20px;background:var(--accent-soft);color:var(--accent);font-weight:600}
+.hint{font-size:12px;color:var(--ink-2);margin-top:4px}
+.steps{counter-reset:s;list-style:none;padding:0}
+.steps li{counter-increment:s;padding:8px 0 8px 34px;position:relative;border-bottom:1px solid var(--line)}
+.steps li::before{content:counter(s);position:absolute;left:0;top:8px;width:24px;height:24px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-size:12px;font-weight:600}
+</style>
+</head>
+<body>
+<div id="splash" aria-label="Abertura do EstereoTerreno Pro">
+  <canvas id="cvSplash"></canvas>
+  <div id="splashUI">
+    <div id="splashTitulo">
+      <h1>EstereoTerreno&nbsp;Pro</h1>
+      <p>Reconstrução tridimensional de terreno por estereoscopia</p>
+    </div>
+    <div id="splashFase">Aquisição do par estereoscópico</div>
+    <div id="splashBarra"><i></i></div>
+    <div id="splashPular">clique ou pressione Esc para avançar</div>
+  </div>
+
+  <div id="legal">
+    <div class="legalCaixa">
+      <h2>Avisos legais e condições de uso</h2>
+      <div class="legalTexto">
+        <h3>1. Natureza e finalidade</h3>
+        <p>O EstereoTerreno Pro é um instrumento de <b>reconhecimento e estimativa preliminar</b>. Produz modelos tridimensionais aproximados a partir de duas fotografias, sem apoio de campo e sem calibração metrológica de câmera.</p>
+        <p>Não substitui levantamento topográfico convencional, aerofotogrametria com pontos de apoio, varredura a laser, nem qualquer serviço técnico privativo de profissional legalmente habilitado.</p>
+
+        <h3>2. Responsabilidade técnica</h3>
+        <p>A exatidão dos resultados depende integralmente dos parâmetros informados pelo usuário — base entre as tomadas, distância focal, dimensão do sensor e altura da câmera — e da adequação geométrica do par de fotografias.</p>
+        <p>A conferência crítica de todo resultado é responsabilidade exclusiva do usuário. Volumes, cotas, áreas e curvas de nível aqui gerados <b>não se prestam a medição contratual, a liquidação de despesa pública, a pagamento de serviços nem a prova pericial</b> sem levantamento convencional que os confirme.</p>
+
+        <h3>3. Ausência de garantia</h3>
+        <p>O programa é fornecido no estado em que se encontra, sem garantia expressa ou implícita de exatidão, adequação a finalidade específica ou ausência de erros. O autor não responde por perdas, danos ou decisões tomadas com base em seus resultados.</p>
+
+        <h3>4. Privacidade e tratamento de dados</h3>
+        <p>Todo o processamento ocorre no próprio navegador. Nenhuma imagem, coordenada ou parâmetro é transmitido a servidor algum. Não há coleta de dados, telemetria ou identificação de usuários. As preferências de tema e de manual ficam gravadas apenas no armazenamento local do navegador.</p>
+
+        <h3>5. Imagens, aeronaves e legislação aplicável</h3>
+        <p>O usuário é responsável por deter os direitos de uso das fotografias processadas e por observar a legislação aplicável à operação de aeronaves não tripuladas, ao uso do espaço aéreo e à proteção de dados pessoais, especialmente quando as imagens permitirem identificar pessoas ou propriedades privadas.</p>
+
+        <h3>6. Independência</h3>
+        <p>Esta é uma ferramenta de autoria pessoal. Seus resultados e seu conteúdo não representam posição oficial de qualquer instituição à qual o autor esteja vinculado, nem constituem orientação normativa, parecer ou entendimento institucional.</p>
+      </div>
+      <label class="chk" style="margin-top:14px"><input type="checkbox" id="legalNao"><span>Não exibir a abertura nas próximas vezes</span></label>
+      <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        <button class="btn primary" id="btnAceito">Li e concordo — entrar no sistema</button>
+        <span class="hint" id="legalHint">O acesso ao sistema depende da concordância com os termos acima.</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<header>
+  <div>
+    <h1>EstereoTerreno Pro</h1>
+    <div class="sub">Reconstrução 3D de terreno por estereoscopia de duas fotos — 100% offline</div>
+  </div>
+  <div class="spacer"></div>
+  <span class="tag" id="statusTag">aguardando fotos</span>
+  <button class="btn sm" id="btnTheme" title="Alternar tema">◐ Tema</button>
+  <button class="btn sm" id="btnReset" title="Limpar tudo">Limpar</button>
+</header>
+
+<nav class="tabs" id="tabs">
+  <button data-tab="entrada" class="active">1 · Entrada</button>
+  <button data-tab="proc">2 · Processamento</button>
+  <button data-tab="viewer">3 · Visualizador 3D</button>
+  <button data-tab="result">4 · Resultados e exportação</button>
+  <button data-tab="manual">Manual</button>
+</nav>
+
+<main>
+
+<!-- ============ ENTRADA ============ -->
+<section class="tab active" id="tab-entrada">
+  <div class="card">
+    <h2>Par estereoscópico</h2>
+    <p class="hint">Envie duas fotos do mesmo terreno tomadas de posições diferentes (voo de drone em linha reta, ou duas janelas distintas do mesmo edifício). A sobreposição deve ser superior a 60% e o deslocamento entre as tomadas predominantemente horizontal.</p>
+    <div class="grid g2" style="margin-top:12px">
+      <div>
+        <label class="f">Foto A — tomada da ESQUERDA (referência)</label>
+        <div class="drop" id="dropA"><div class="ph">Clique ou arraste a imagem A</div></div>
+        <div class="meta" id="metaA"></div>
+        <input type="file" id="fileA" accept="image/*" class="hide">
+      </div>
+      <div>
+        <label class="f">Foto B — tomada da DIREITA</label>
+        <div class="drop" id="dropB"><div class="ph">Clique ou arraste a imagem B</div></div>
+        <div class="meta" id="metaB"></div>
+        <input type="file" id="fileB" accept="image/*" class="hide">
+      </div>
+    </div>
+    <div class="msg warn hide" id="msgOrder">A ordem importa: se o resultado sair invertido (relevo "afundado"), use <b>Inverter A ↔ B</b> abaixo.</div>
+    <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn sm" id="btnSwap">⇄ Inverter A ↔ B</button>
+      <button class="btn sm" id="btnDemo">Carregar par sintético de demonstração</button>
+    </div>
+  </div>
+
+  <div class="card" id="cardRoi">
+    <h2>Recorte da área útil</h2>
+    <p class="hint">Molduras de reprodutor de vídeo, tarjas pretas, marcas d'água e barras de ferramentas são idênticas nas duas fotos e contaminam a correspondência. Recorte apenas a cena.</p>
+    <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start;margin-top:10px">
+      <canvas id="cvRoi" width="360" height="240" style="border:1px solid var(--line);cursor:crosshair"></canvas>
+      <div style="flex:1;min-width:260px">
+        <div class="grid g4">
+          <div><label class="f">Esquerda (%)</label><input type="number" id="roiL" value="0" min="0" max="95" step="0.5"></div>
+          <div><label class="f">Direita (%)</label><input type="number" id="roiR" value="100" min="5" max="100" step="0.5"></div>
+          <div><label class="f">Topo (%)</label><input type="number" id="roiT" value="0" min="0" max="95" step="0.5"></div>
+          <div><label class="f">Base (%)</label><input type="number" id="roiB" value="100" min="5" max="100" step="0.5"></div>
+        </div>
+        <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn sm" id="btnRoiAuto">Detectar bordas estáticas</button>
+          <button class="btn sm" id="btnRoiReset">Usar a imagem inteira</button>
+        </div>
+        <div class="hint" style="margin-top:8px">Também é possível arrastar diretamente sobre a miniatura para definir o recorte.</div>
+        <div id="roiMsg"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Geometria de tomada</h2>
+    <div class="grid g3">
+      <div>
+        <label class="f">Modo de captura</label>
+        <select id="inModo">
+          <option value="nadir">Drone nadir (câmera para baixo)</option>
+          <option value="obliquo">Oblíquo / janela de edifício</option>
+        </select>
+        <div class="hint">No modo nadir a cota do terreno é <code>H − Z</code>. No oblíquo o eixo Z é a distância à câmera.</div>
+      </div>
+      <div>
+        <label class="f">Base entre as tomadas B (m)</label>
+        <input type="number" id="inBase" value="10" min="0.05" step="0.05">
+        <button class="btn sm" id="btnBaseGPS" style="margin-top:6px">Calcular pelo GPS das fotos</button>
+      </div>
+      <div>
+        <label class="f">Altura de voo / da câmera H (m)</label>
+        <input type="number" id="inAlt" value="40" min="1" step="1">
+        <div class="hint">Acima do plano de referência do terreno.</div>
+      </div>
+      <div>
+        <label class="f">Distância focal (mm)</label>
+        <input type="number" id="inFoco" value="6.72" min="0.5" step="0.01">
+      </div>
+      <div>
+        <label class="f">Largura do sensor (mm)</label>
+        <input type="number" id="inSensor" value="9.65" min="1" step="0.01">
+        <div class="hint">Ou informe o equivalente 35 mm abaixo.</div>
+      </div>
+      <div>
+        <label class="f">Equivalente 35 mm (opcional)</label>
+        <input type="number" id="inEq35" value="" step="1" placeholder="ex.: 24">
+        <button class="btn sm" id="btnEq35" style="margin-top:6px">Aplicar equivalente</button>
+      </div>
+    </div>
+    <div class="msg ok" id="msgGeom" style="margin-top:12px"></div>
+  </div>
+
+  <div class="card">
+    <h2>Georreferenciamento (opcional)</h2>
+    <p class="hint">Se informado, todas as exportações saem em coordenadas absolutas. Sem isso, o modelo é métrico mas com origem local (0,0) no centro da cena.</p>
+    <div class="grid g4">
+      <div><label class="f">E da origem (m)</label><input type="number" id="inE0" value="0" step="0.01"></div>
+      <div><label class="f">N da origem (m)</label><input type="number" id="inN0" value="0" step="0.01"></div>
+      <div><label class="f">Cota da origem (m)</label><input type="number" id="inZ0" value="0" step="0.01"></div>
+      <div><label class="f">Azimute do eixo X (°)</label><input type="number" id="inAz" value="90" step="0.1"></div>
+      <div><label class="f">Sistema (EPSG)</label><input type="text" id="inEpsg" value="EPSG:31983" placeholder="EPSG:31983"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PROCESSAMENTO ============ -->
+<section class="tab" id="tab-proc">
+  <div class="card">
+    <h2>Diagnóstico do par</h2>
+    <p class="hint">Mede o movimento real da câmera entre as duas tomadas e informa se elas formam um par estereoscópico utilizável, antes de gastar tempo no processamento.</p>
+    <div style="margin-top:10px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <button class="btn" id="btnDiag">Analisar o par</button>
+      <div class="chk" style="margin:0"><input type="checkbox" id="inPrealinhar"><label for="inPrealinhar">Pré-alinhar a foto B (compensa rotação e escala)</label></div>
+    </div>
+    <div id="diagOut"></div>
+  </div>
+
+  <div class="card">
+    <h2>Parâmetros do correspondente estéreo</h2>
+    <div class="grid g3">
+      <div>
+        <label class="f">Resolução de processamento (px de largura)</label>
+        <select id="inRes">
+          <option value="320">320 — rascunho (segundos)</option>
+          <option value="480" selected>480 — equilibrado</option>
+          <option value="640">640 — detalhado</option>
+          <option value="800">800 — alto (lento)</option>
+          <option value="1024">1024 — máximo (muito lento)</option>
+        </select>
+      </div>
+      <div>
+        <label class="f">Métrica de correspondência</label>
+        <select id="inMetrica">
+          <option value="census" selected>Census 5×5 (robusta à iluminação)</option>
+          <option value="sad">SAD (soma de diferenças absolutas)</option>
+        </select>
+      </div>
+      <div>
+        <label class="f">Janela de agregação (px, ímpar)</label>
+        <input type="number" id="inJanela" value="9" min="3" max="25" step="2">
+      </div>
+      <div>
+        <label class="f">Disparidade mínima (px)</label>
+        <input type="number" id="inDmin" value="0" step="1">
+      </div>
+      <div>
+        <label class="f">Disparidade máxima (px)</label>
+        <input type="number" id="inDmax" value="64" step="1">
+      </div>
+      <div>
+        <label class="f">Tolerância vertical ±(px)</label>
+        <input type="number" id="inVtol" value="1" min="0" max="4" step="1">
+        <div class="hint">Compensa falta de retificação entre as tomadas.</div>
+      </div>
+      <div>
+        <label class="f">Unicidade mínima (%)</label>
+        <input type="number" id="inUniq" value="12" min="0" max="60" step="1">
+        <div class="hint">Rejeita pixels cujo 2º melhor custo é próximo do melhor.</div>
+      </div>
+      <div>
+        <label class="f">Consistência esquerda–direita (px)</label>
+        <input type="number" id="inLR" value="1.5" min="0" max="8" step="0.5">
+      </div>
+      <div>
+        <label class="f">Área mínima de mancha (px)</label>
+        <input type="number" id="inSpeckle" value="60" min="0" max="2000" step="10">
+      </div>
+    </div>
+    <div class="chk"><input type="checkbox" id="inSub" checked><label for="inSub">Refinamento subpixel (parábola no custo)</label></div>
+    <div class="chk"><input type="checkbox" id="inMed" checked><label for="inMed">Filtro de mediana 3×3 na disparidade</label></div>
+    <div class="chk"><input type="checkbox" id="inFill" checked><label for="inFill">Preencher vazios do MDT por interpolação</label></div>
+
+    <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <button class="btn" id="btnAlinhar">Estimar faixa de disparidade automaticamente</button>
+      <button class="btn primary" id="btnProcessar">Processar par estéreo</button>
+      <span id="procTime" class="hint"></span>
+    </div>
+    <div class="bar" style="margin-top:12px"><i id="prog"></i></div>
+    <div id="procMsg"></div>
+  </div>
+
+  <div class="card">
+    <h2>Mapa de disparidade</h2>
+    <div class="grid g2">
+      <div>
+        <label class="f">Disparidade (azul = longe · vermelho = perto)</label>
+        <canvas id="cvDisp" width="480" height="360"></canvas>
+      </div>
+      <div>
+        <label class="f">Imagem de referência reamostrada</label>
+        <canvas id="cvRef" width="480" height="360"></canvas>
+      </div>
+    </div>
+    <div class="kpis" style="margin-top:14px" id="dispKpis"></div>
+  </div>
+</section>
+
+<!-- ============ VISUALIZADOR ============ -->
+<section class="tab" id="tab-viewer">
+  <div class="card">
+    <h2>Modelo 3D do terreno</h2>
+    <div id="glwrap">
+      <canvas id="gl"></canvas>
+      <div id="glhud">arraste = orbitar · roda = zoom · shift+arraste = deslocar</div>
+    </div>
+    <div class="grid g4" style="margin-top:14px">
+      <div>
+        <label class="f">Representação</label>
+        <select id="vMode">
+          <option value="points">Nuvem de pontos</option>
+          <option value="mesh" selected>Malha sombreada</option>
+          <option value="wire">Malha em arame</option>
+        </select>
+      </div>
+      <div>
+        <label class="f">Cor</label>
+        <select id="vColor">
+          <option value="photo" selected>Textura da foto</option>
+          <option value="hypso">Hipsométrica (cota)</option>
+          <option value="slope">Declividade</option>
+        </select>
+      </div>
+      <div>
+        <label class="f">Exagero vertical <b id="vExagV">1,0×</b></label>
+        <input type="range" id="vExag" min="0.2" max="6" step="0.1" value="1">
+      </div>
+      <div>
+        <label class="f">Tamanho do ponto <b id="vPtV">2</b></label>
+        <input type="range" id="vPt" min="1" max="8" step="1" value="2">
+      </div>
+    </div>
+    <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn sm" id="vTop">Vista de topo</button>
+      <button class="btn sm" id="vFront">Vista frontal</button>
+      <button class="btn sm" id="vIso">Vista isométrica</button>
+      <button class="btn sm" id="vGrid">Grade ⟷</button>
+      <button class="btn sm" id="vSnap">Capturar PNG da vista</button>
+    </div>
+    <div id="viewerMsg"></div>
+  </div>
+</section>
+
+<!-- ============ RESULTADOS ============ -->
+<section class="tab" id="tab-result">
+  <div class="card">
+    <h2>Síntese quantitativa</h2>
+    <div class="kpis" id="resKpis"></div>
+  </div>
+
+  <div class="card">
+    <h2>Volumetria e curvas de nível</h2>
+    <div class="grid g3">
+      <div><label class="f">Cota de referência do projeto (m)</label><input type="number" id="inZref" value="0" step="0.1"></div>
+      <div><label class="f">Equidistância das curvas (m)</label><input type="number" id="inEqd" value="1" min="0.05" step="0.05"></div>
+      <div><label class="f">Resolução da célula do MDT (m)</label><input type="number" id="inCell" value="0" min="0" step="0.05"><div class="hint">0 = automática.</div></div>
+    </div>
+    <button class="btn" id="btnVol" style="margin-top:12px">Recalcular MDT, volumes e curvas</button>
+    <div class="kpis" style="margin-top:14px" id="volKpis"></div>
+    <div class="grid g2" style="margin-top:14px">
+      <div><label class="f">Modelo digital do terreno (hipsométrico + curvas)</label><canvas id="cvDem" width="520" height="400"></canvas></div>
+      <div><label class="f">Corte (vermelho) e aterro (azul) em relação à cota de referência</label><canvas id="cvCut" width="520" height="400"></canvas></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Exportação</h2>
+    <p class="hint">Todos os arquivos são gerados localmente no navegador, sem envio de dados.</p>
+    <div class="exp" id="expBox">
+      <button class="btn" data-exp="ply"><b>PLY — nuvem de pontos</b><span>CloudCompare, MeshLab, QGIS</span></button>
+      <button class="btn" data-exp="obj"><b>OBJ — malha 3D</b><span>SketchUp, Blender, Rhino, AutoCAD</span></button>
+      <button class="btn" data-exp="stl"><b>STL — malha sólida</b><span>impressão 3D e CAD</span></button>
+      <button class="btn" data-exp="xyz"><b>XYZ — pontos brutos</b><span>topografia, AutoCAD Civil 3D</span></button>
+      <button class="btn" data-exp="csv"><b>CSV — planilha de pontos</b><span>Excel, Google Planilhas</span></button>
+      <button class="btn" data-exp="asc"><b>ASC — grade ESRI (MDT)</b><span>QGIS, ArcGIS, Global Mapper</span></button>
+      <button class="btn" data-exp="dxf"><b>DXF — curvas de nível</b><span>AutoCAD, BricsCAD, QGIS</span></button>
+      <button class="btn" data-exp="geojson"><b>GeoJSON — curvas de nível</b><span>web GIS, QGIS, Leaflet</span></button>
+      <button class="btn" data-exp="json"><b>JSON — projeto completo</b><span>reimportação e integração</span></button>
+      <button class="btn" data-exp="png"><b>PNG — mapa de disparidade</b><span>documentação e relatórios</span></button>
+      <button class="btn" data-exp="md"><b>MD — relatório técnico</b><span>memória de cálculo completa</span></button>
+      <button class="btn" data-exp="prj"><b>PRJ — arquivo de projeção</b><span>acompanha o ASC no GIS</span></button>
+    </div>
+    <div id="expMsg"></div>
+  </div>
+
+  <div class="card">
+    <h2>Controle de qualidade</h2>
+    <table id="qcTable"><tbody></tbody></table>
+  </div>
+</section>
+
+<!-- ============ MANUAL ============ -->
+<section class="tab" id="tab-manual">
+  <div class="card" style="padding:12px 16px">
+    <input type="text" id="manSearch" placeholder="Buscar no manual (ex.: disparidade, base, volume, erro)">
+  </div>
+  <div class="manual">
+    <nav id="manNav"></nav>
+    <article id="manBody"></article>
+  </div>
+</section>
+
+</main>
+<div class="foot">EstereoTerreno Pro · arquivo único, sem dependências externas · processamento integralmente local</div>
+<script>
+"use strict";
+/* ==========================================================================
+   EstereoTerreno Pro — núcleo de cálculo
+   Nenhuma dependência externa. Todas as funções puras ficam expostas em
+   window.STEREO para permitir a bateria de testes automatizados.
+   ========================================================================== */
+const STEREO = (function(){
+
+/* ---------- utilitários numéricos ---------- */
+const clamp = (v,a,b)=> v<a?a:(v>b?b:v);
+const nf = (v,d=2)=> (v===null||v===undefined||!isFinite(v)) ? "—" :
+  v.toLocaleString("pt-BR",{minimumFractionDigits:d,maximumFractionDigits:d});
+
+function percentile(arr, p){
+  const a = Array.from(arr).filter(v=>isFinite(v)).sort((x,y)=>x-y);
+  if(!a.length) return NaN;
+  const i = clamp(Math.round((a.length-1)*p),0,a.length-1);
+  return a[i];
+}
+
+/* distância geodésica entre duas posições GPS (m) — fórmula de haversine */
+function haversine(lat1,lon1,lat2,lon2){
+  const R=6371008.8, tr=Math.PI/180;
+  const dLat=(lat2-lat1)*tr, dLon=(lon2-lon1)*tr;
+  const a=Math.sin(dLat/2)**2+Math.cos(lat1*tr)*Math.cos(lat2*tr)*Math.sin(dLon/2)**2;
+  return 2*R*Math.asin(Math.min(1,Math.sqrt(a)));
+}
+
+/* distância focal em pixels a partir da geometria do sensor */
+function focalPx(focoMm, sensorMm, larguraPx){ return focoMm/sensorMm*larguraPx; }
+/* equivalente 35 mm → foco real dado o sensor */
+function focoDeEq35(eq35, sensorMm){ return eq35*sensorMm/36; }
+
+/* amostra do solo por pixel (GSD) e erro teórico de altimetria */
+function gsd(H, focoMm, sensorMm, larguraPx){ return H*sensorMm/(focoMm*larguraPx); }
+function erroZ(Z, sigmaD, fpx, base){ return (Z*Z*sigmaD)/(fpx*base); }
+
+/* ---------- conversão para escala de cinza ---------- */
+function toGray(rgba, n){
+  const g = new Float32Array(n);
+  for(let i=0,j=0;i<n;i++,j+=4) g[i] = 0.299*rgba[j] + 0.587*rgba[j+1] + 0.114*rgba[j+2];
+  return g;
+}
+
+/* equalização local simples: remove gradiente de iluminação (média móvel) */
+function removeIluminacao(g, w, h, raio){
+  const out = new Float32Array(g.length);
+  const ii = integral(g, w, h);
+  for(let y=0;y<h;y++) for(let x=0;x<w;x++){
+    const m = boxMean(ii, w, h, x, y, raio);
+    out[y*w+x] = g[y*w+x] - m + 128;
+  }
+  return out;
+}
+
+/* imagem integral (soma acumulada) para filtros de caixa em tempo constante */
+function integral(src, w, h){
+  const ii = new Float64Array((w+1)*(h+1));
+  for(let y=0;y<h;y++){
+    let acc=0;
+    for(let x=0;x<w;x++){
+      acc += src[y*w+x];
+      ii[(y+1)*(w+1)+(x+1)] = ii[y*(w+1)+(x+1)] + acc;
+    }
+  }
+  return ii;
+}
+function boxSum(ii,w,h,x0,y0,x1,y1){
+  x0=clamp(x0,0,w); y0=clamp(y0,0,h); x1=clamp(x1,0,w); y1=clamp(y1,0,h);
+  const W=w+1;
+  return ii[y1*W+x1]-ii[y0*W+x1]-ii[y1*W+x0]+ii[y0*W+x0];
+}
+function boxMean(ii,w,h,x,y,r){
+  const x0=clamp(x-r,0,w), y0=clamp(y-r,0,h), x1=clamp(x+r+1,0,w), y1=clamp(y+r+1,0,h);
+  const n=(x1-x0)*(y1-y0);
+  return n>0 ? boxSum(ii,w,h,x0,y0,x1,y1)/n : 0;
+}
+
+/* ---------- transformada census 5×5 (24 bits) ---------- */
+function census5(g, w, h){
+  const c = new Uint32Array(w*h);
+  for(let y=0;y<h;y++){
+    for(let x=0;x<w;x++){
+      const ref = g[y*w+x];
+      let bits=0, k=0;
+      for(let dy=-2;dy<=2;dy++){
+        const yy = clamp(y+dy,0,h-1)*w;
+        for(let dx=-2;dx<=2;dx++){
+          if(dx===0&&dy===0) continue;
+          const xx = clamp(x+dx,0,w-1);
+          if(g[yy+xx] < ref) bits |= (1<<k);
+          k++;
+        }
+      }
+      c[y*w+x]=bits>>>0;
+    }
+  }
+  return c;
+}
+function popcount(v){
+  v = v - ((v>>1) & 0x55555555);
+  v = (v & 0x33333333) + ((v>>2) & 0x33333333);
+  return (((v + (v>>4)) & 0x0F0F0F0F) * 0x01010101) >> 24;
+}
+
+/* ==========================================================================
+   Correspondência estéreo por blocos com agregação de caixa.
+   Executa uma disparidade por chamada de step() para não travar a interface.
+   ========================================================================== */
+function createStereoMatcher(o){
+  const w=o.w, h=o.h, n=w*h;
+  const dmin=Math.round(o.dmin), dmax=Math.round(o.dmax);
+  const win=Math.max(1,(o.win|0)|1), r=(win-1)>>1;
+  const vtol=Math.max(0,o.vtol|0);
+  const metric = o.metric==="sad" ? "sad" : "census";
+  const CMAX = metric==="census" ? 24 : 255;
+
+  const gL=o.grayL, gR=o.grayR;
+  const cL = metric==="census" ? census5(gL,w,h) : null;
+  const cR = metric==="census" ? census5(gR,w,h) : null;
+
+  const best   = new Float32Array(n).fill(Infinity);
+  const best2  = new Float32Array(n).fill(Infinity);
+  const bestD  = new Int32Array(n).fill(-1);
+  const cPrev  = new Float32Array(n).fill(Infinity);  // custo agregado em d-1
+  const cMinus = new Float32Array(n).fill(Infinity);  // custo em bestD-1
+  const cPlus  = new Float32Array(n).fill(Infinity);  // custo em bestD+1
+  const aggPrev= new Float32Array(n).fill(Infinity);
+  const bestRC = new Float32Array(n).fill(Infinity);  // melhor custo por pixel da direita
+  const bestRD = new Int32Array(n).fill(-1);
+
+  const cost = new Float32Array(n);
+  let d = dmin, count=0;
+  const total = dmax-dmin+1;
+
+  function custoPixel(x,y,dd){
+    let m = Infinity;
+    for(let dy=-vtol; dy<=vtol; dy++){
+      const qy = y+dy, qx = x-dd;
+      if(qy<0||qy>=h||qx<0||qx>=w) continue;
+      const p = y*w+x, q = qy*w+qx;
+      const c = metric==="census" ? popcount((cL[p]^cR[q])>>>0) : Math.abs(gL[p]-gR[q]);
+      if(c<m) m=c;
+    }
+    return m===Infinity ? CMAX : m;
+  }
+
+  function step(){
+    if(d>dmax) return true;
+    for(let y=0;y<h;y++) for(let x=0;x<w;x++) cost[y*w+x]=custoPixel(x,y,d);
+    const ii = integral(cost,w,h);
+    for(let y=0;y<h;y++){
+      const y0=clamp(y-r,0,h), y1=clamp(y+r+1,0,h);
+      for(let x=0;x<w;x++){
+        const x0=clamp(x-r,0,w), x1=clamp(x+r+1,0,w);
+        const area=(x1-x0)*(y1-y0);
+        const agg = boxSum(ii,w,h,x0,y0,x1,y1)/area;
+        const p=y*w+x;
+        if(bestD[p]===d-1) cPlus[p]=agg;           // custo logo após o melhor atual
+        if(agg<best[p]){
+          best2[p]=best[p];
+          best[p]=agg; bestD[p]=d;
+          cMinus[p]=aggPrev[p]; cPlus[p]=Infinity;
+        } else if(agg<best2[p]) best2[p]=agg;
+        aggPrev[p]=agg;
+        const qx=x-d;
+        if(qx>=0){
+          const q=y*w+qx;
+          if(agg<bestRC[q]){ bestRC[q]=agg; bestRD[q]=d; }
+        }
+      }
+    }
+    d++; count++;
+    return d>dmax;
+  }
+
+  function finish(){
+    const disp = new Float32Array(n).fill(NaN);
+    const valid = new Uint8Array(n);
+    const uniq = (o.uniq||0)/100;
+    const lrThr = o.lr===undefined?1.5:o.lr;
+    for(let p=0;p<n;p++){
+      const bd=bestD[p];
+      if(bd<0) continue;
+      if(uniq>0 && isFinite(best2[p]) && best[p]>0){
+        if((best2[p]-best[p])/best[p] < uniq) continue;
+      }
+      let dv=bd;
+      if(o.subpixel!==false && isFinite(cMinus[p]) && isFinite(cPlus[p])){
+        const den = cMinus[p]-2*best[p]+cPlus[p];
+        if(Math.abs(den)>1e-9){
+          const off = 0.5*(cMinus[p]-cPlus[p])/den;
+          if(Math.abs(off)<=1) dv = bd+off;
+        }
+      }
+      if(dv<=0) continue;
+      disp[p]=dv; valid[p]=1;
+    }
+    if(lrThr>0){
+      for(let y=0;y<h;y++) for(let x=0;x<w;x++){
+        const p=y*w+x;
+        if(!valid[p]) continue;
+        const qx=Math.round(x-disp[p]);
+        if(qx<0||qx>=w){ valid[p]=0; disp[p]=NaN; continue; }
+        const dr=bestRD[y*w+qx];
+        if(dr<0 || Math.abs(dr-disp[p])>lrThr){ valid[p]=0; disp[p]=NaN; }
+      }
+    }
+    if(o.median!==false) medianaDisp(disp,valid,w,h);
+    if(o.speckle>0) removeSpeckles(disp,valid,w,h,o.speckle,1.5);
+    let nv=0,sum=0,mn=Infinity,mx=-Infinity;
+    for(let p=0;p<n;p++) if(valid[p]){ nv++; sum+=disp[p]; if(disp[p]<mn)mn=disp[p]; if(disp[p]>mx)mx=disp[p]; }
+    return {disp, valid, w, h, stats:{
+      validos:nv, total:n, cobertura:nv/n,
+      dMedia: nv?sum/nv:NaN, dMin:nv?mn:NaN, dMax:nv?mx:NaN,
+      dP05:percentile(disp.filter(v=>isFinite(v)),0.05),
+      dP95:percentile(disp.filter(v=>isFinite(v)),0.95)
+    }};
+  }
+  return {step, finish, get progresso(){ return count/total; }, total};
+}
+
+function matchStereo(o){
+  const m=createStereoMatcher(o);
+  let guard=0;
+  while(!m.step()){ if(++guard>4096) break; }
+  return m.finish();
+}
+
+/* ---------- filtro de mediana 3×3 preservando invalidez ---------- */
+function medianaDisp(disp,valid,w,h){
+  const out=Float32Array.from(disp), ov=Uint8Array.from(valid), buf=[];
+  for(let y=1;y<h-1;y++) for(let x=1;x<w-1;x++){
+    const p=y*w+x;
+    if(!valid[p]) continue;
+    buf.length=0;
+    for(let dy=-1;dy<=1;dy++) for(let dx=-1;dx<=1;dx++){
+      const q=(y+dy)*w+(x+dx);
+      if(valid[q]) buf.push(disp[q]);
+    }
+    if(buf.length>=5){ buf.sort((a,b)=>a-b); out[p]=buf[(buf.length-1)>>1]; }
+  }
+  disp.set(out); valid.set(ov);
+}
+
+/* ---------- remoção de manchas (componentes conexos pequenos) ---------- */
+function removeSpeckles(disp,valid,w,h,minArea,tol){
+  const lab=new Int32Array(w*h).fill(-1);
+  const fila=new Int32Array(w*h);
+  let comp=0;
+  for(let s=0;s<w*h;s++){
+    if(!valid[s]||lab[s]>=0) continue;
+    let qi=0,qn=0; fila[qn++]=s; lab[s]=comp;
+    const membros=[];
+    while(qi<qn){
+      const p=fila[qi++]; membros.push(p);
+      const x=p%w,y=(p/w)|0;
+      for(let k=0;k<4;k++){
+        const nx=x+[1,-1,0,0][k], ny=y+[0,0,1,-1][k];
+        if(nx<0||ny<0||nx>=w||ny>=h) continue;
+        const q=ny*w+nx;
+        if(!valid[q]||lab[q]>=0) continue;
+        if(Math.abs(disp[q]-disp[p])>tol) continue;
+        lab[q]=comp; fila[qn++]=q;
+      }
+    }
+    if(membros.length<minArea) for(const p of membros){ valid[p]=0; disp[p]=NaN; }
+    comp++;
+  }
+  return comp;
+}
+
+/* ---------- alinhamento global aproximado (estima a faixa de disparidade) ---------- */
+function estimaFaixa(gL,gR,w,h,maxShiftFrac){
+  const alvo=160;
+  const esc=Math.max(1,Math.round(w/alvo));
+  const sw=Math.floor(w/esc), sh=Math.floor(h/esc);
+  const a=new Float32Array(sw*sh), b=new Float32Array(sw*sh);
+  for(let y=0;y<sh;y++) for(let x=0;x<sw;x++){
+    a[y*sw+x]=gL[(y*esc)*w+(x*esc)];
+    b[y*sw+x]=gR[(y*esc)*w+(x*esc)];
+  }
+  const maxS=Math.round(sw*(maxShiftFrac||0.35));
+  let melhor={dx:0,dy:0,custo:Infinity};
+  for(let dy=-3;dy<=3;dy++){
+    for(let dx=-4;dx<=maxS;dx++){
+      let s=0,c=0;
+      for(let y=4;y<sh-4;y+=1){
+        const yy=y+dy; if(yy<0||yy>=sh) continue;
+        for(let x=4;x<sw-4;x+=1){
+          const xx=x-dx; if(xx<0||xx>=sw) continue;
+          s+=Math.abs(a[y*sw+x]-b[yy*sw+xx]); c++;
+        }
+      }
+      if(c>0){ const m=s/c; if(m<melhor.custo) melhor={dx,dy,custo:m}; }
+    }
+  }
+  const dCentro=melhor.dx*esc;
+  return {
+    escala:esc, dxGrosso:dCentro, dy:melhor.dy*esc, custo:melhor.custo,
+    dmin:Math.max(0,Math.round(dCentro-Math.max(16,dCentro*0.8))),
+    dmax:Math.round(dCentro+Math.max(24,dCentro*0.9))+8
+  };
+}
+
+/* ==========================================================================
+   Triangulação: disparidade → nuvem de pontos métrica
+   Z = f·B/d ;  X = (u−cx)·Z/f ;  Yc = (v−cy)·Z/f
+   ========================================================================== */
+function reconstruir(o){
+  const {disp,valid,w,h}=o;
+  const fpx=o.fpx, base=o.base, H=o.H||0;
+  const cx=o.cx!==undefined?o.cx:(w-1)/2, cy=o.cy!==undefined?o.cy:(h-1)/2;
+  const modo=o.modo||"nadir";
+  const X=[],Y=[],Z=[],IDX=[];
+  const zMinLim=o.zMin!==undefined?o.zMin:-1e9, zMaxLim=o.zMax!==undefined?o.zMax:1e9;
+  for(let y=0;y<h;y++) for(let x=0;x<w;x++){
+    const p=y*w+x;
+    if(!valid[p]) continue;
+    const d=disp[p];
+    if(!(d>0)) continue;
+    const dist=fpx*base/d;                    // distância câmera→ponto
+    if(!isFinite(dist)||dist<=0) continue;
+    const Xc=(x-cx)*dist/fpx, Yc=(y-cy)*dist/fpx;
+    let e,nn,z;
+    if(modo==="nadir"){ e=Xc; nn=-Yc; z=H-dist; }
+    else { e=Xc; nn=dist; z=H-Yc; }
+    if(z<zMinLim||z>zMaxLim) continue;
+    X.push(e); Y.push(nn); Z.push(z); IDX.push(p);
+  }
+  return {x:Float64Array.from(X), y:Float64Array.from(Y), z:Float64Array.from(Z),
+          idx:Int32Array.from(IDX), n:X.length};
+}
+
+function percentil3(arr,n){
+  const a=Array.prototype.slice.call(arr,0,n).sort((x,y)=>x-y);
+  const at=f=>a[clamp(Math.round((a.length-1)*f),0,a.length-1)];
+  return {p25:at(0.25), p50:at(0.5), p75:at(0.75)};
+}
+
+/* Remove apenas erros grosseiros de cota, por critério robusto de quartis.
+   O critério do desvio padrão foi descartado porque eliminava feições reais
+   (edificações, taludes) em terrenos predominantemente planos. */
+function filtraOutliers(nuvem, margem){
+  const k=margem===undefined?1:margem;
+  const n=nuvem.n;
+  if(n<20) return Object.assign({},nuvem);
+  const a=Array.prototype.slice.call(nuvem.z,0,n).sort((x,y)=>x-y);
+  const at=f=>a[clamp(Math.round((a.length-1)*f),0,a.length-1)];
+  const p02=at(0.02), p98=at(0.98);
+  const faixa=Math.max(p98-p02, 1e-6);
+  const lo=p02-k*faixa, hi=p98+k*faixa;
+  let s=0,s2=0;
+  for(let i=0;i<n;i++){ s+=nuvem.z[i]; s2+=nuvem.z[i]*nuvem.z[i]; }
+  const m=s/n, sd=Math.sqrt(Math.max(0,s2/n-m*m));
+  const keep=[];
+  for(let i=0;i<n;i++) if(nuvem.z[i]>=lo && nuvem.z[i]<=hi) keep.push(i);
+  return {
+    x:Float64Array.from(keep,i=>nuvem.x[i]),
+    y:Float64Array.from(keep,i=>nuvem.y[i]),
+    z:Float64Array.from(keep,i=>nuvem.z[i]),
+    idx:Int32Array.from(keep,i=>nuvem.idx[i]),
+    n:keep.length, media:m, desvio:sd
+  };
+}
+
+
+/* ==========================================================================
+   Diagnóstico do par: mede o movimento real entre as duas fotos e decide
+   se elas formam um par estereoscópico utilizável.
+   ========================================================================== */
+function reduzir(g,w,h,esc){
+  const sw=Math.floor(w/esc), sh=Math.floor(h/esc);
+  const o=new Float32Array(sw*sh);
+  for(let y=0;y<sh;y++) for(let x=0;x<sw;x++){
+    let s=0,c=0;
+    for(let j=0;j<esc;j++) for(let i=0;i<esc;i++){
+      const yy=y*esc+j, xx=x*esc+i;
+      if(yy>=h||xx>=w) continue;
+      s+=g[yy*w+xx]; c++;
+    }
+    o[y*sw+x]=c?s/c:0;
+  }
+  return {g:o,w:sw,h:sh};
+}
+
+/* fluxo por blocos em grade, com busca grosseira seguida de refinamento */
+function fluxoBlocos(gA,gB,w,h,o){
+  o=o||{};
+  const esc=Math.max(1,Math.round(w/(o.alvo||240)));
+  const A=reduzir(gA,w,h,esc), B=reduzir(gB,w,h,esc);
+  const sw=A.w, sh=A.h;
+  const j=o.bloco||10;
+  const r=Math.max(8,Math.round(sw*(o.fracao||0.25)));
+  const nx=o.nx||8, ny=o.ny||6;
+  const pts=[];
+  const sad=(cx,cy,dx,dy)=>{
+    let s=0,c=0;
+    for(let yy=-j;yy<j;yy++){
+      const ya=(cy+yy)*sw, yb=(cy+dy+yy)*sw;
+      for(let xx=-j;xx<j;xx++){ s+=Math.abs(A.g[ya+cx+xx]-B.g[yb+cx+dx+xx]); c++; }
+    }
+    return s/c;
+  };
+  for(let iy=0;iy<ny;iy++) for(let ix=0;ix<nx;ix++){
+    const cx=Math.round(sw*(0.10+0.80*(nx>1?ix/(nx-1):0.5)));
+    const cy=Math.round(sh*(0.12+0.76*(ny>1?iy/(ny-1):0.5)));
+    if(cx-j<0||cy-j<0||cx+j>=sw||cy+j>=sh) continue;
+    let m=0,m2=0,n=0;
+    for(let yy=cy-j;yy<cy+j;yy++) for(let xx=cx-j;xx<cx+j;xx++){
+      const v=A.g[yy*sw+xx]; m+=v; m2+=v*v; n++;
+    }
+    const sd=Math.sqrt(Math.max(0,m2/n-(m/n)*(m/n)));
+    if(sd<(o.textura||6)) continue;
+    let melhor=Infinity,bdx=0,bdy=0;
+    const passo=3;
+    for(let dy=-r;dy<=r;dy+=passo) for(let dx=-r;dx<=r;dx+=passo){
+      if(cy+dy-j<0||cx+dx-j<0||cy+dy+j>=sh||cx+dx+j>=sw) continue;
+      const c=sad(cx,cy,dx,dy);
+      if(c<melhor){ melhor=c; bdx=dx; bdy=dy; }
+    }
+    let seg=Infinity;
+    for(let dy=bdy-passo;dy<=bdy+passo;dy++) for(let dx=bdx-passo;dx<=bdx+passo;dx++){
+      if(cy+dy-j<0||cx+dx-j<0||cy+dy+j>=sh||cx+dx+j>=sw) continue;
+      const c=sad(cx,cy,dx,dy);
+      if(c<melhor){ seg=melhor; melhor=c; bdx=dx; bdy=dy; } else if(c<seg) seg=c;
+    }
+    pts.push({x:cx*esc,y:cy*esc,dx:bdx*esc,dy:bdy*esc,custo:melhor,
+      textura:sd, noLimite:(Math.abs(bdx)>=r-passo||Math.abs(bdy)>=r-passo)});
+  }
+  return {pontos:pts, escala:esc, raio:r*esc};
+}
+
+/* ajuste de similaridade (translação, rotação e escala) por mínimos quadrados,
+   com rejeição iterativa dos piores resíduos */
+function ajustaSimilaridade(pontos, iteracoes){
+  let ativos=pontos.slice();
+  let fit=null;
+  const IT=iteracoes||3;
+  for(let it=0; it<IT && ativos.length>=4; it++){
+    let px=0,py=0,qx=0,qy=0;
+    for(const p of ativos){ px+=p.x; py+=p.y; qx+=p.x+p.dx; qy+=p.y+p.dy; }
+    const n=ativos.length;
+    px/=n; py/=n; qx/=n; qy/=n;
+    let a=0,b=0,den=0;
+    for(const p of ativos){
+      const ax=p.x-px, ay=p.y-py, bx=p.x+p.dx-qx, by=p.y+p.dy-qy;
+      a+=ax*bx+ay*by; b+=ax*by-ay*bx; den+=ax*ax+ay*ay;
+    }
+    if(den<1e-9) break;
+    const rot=Math.atan2(b,a), s=Math.sqrt(a*a+b*b)/den;
+    const ca=s*Math.cos(rot), sa=s*Math.sin(rot);
+    const tx=qx-(ca*px-sa*py), ty=qy-(sa*px+ca*py);
+    const res=ativos.map(p=>{
+      const ex=(ca*p.x-sa*p.y+tx)-(p.x+p.dx);
+      const ey=(sa*p.x+ca*p.y+ty)-(p.y+p.dy);
+      return Math.hypot(ex,ey);
+    });
+    const rms=Math.sqrt(res.reduce((t,v)=>t+v*v,0)/n);
+    fit={escala:s, rotacao:rot*180/Math.PI, tx, ty, residuo:rms, n};
+    if(it<IT-1){
+      const ord=res.slice().sort((x,y)=>x-y);
+      const corte=ord[Math.max(3,Math.floor(ord.length*0.7))];
+      const novos=ativos.filter((p,i)=>res[i]<=corte);
+      if(novos.length<4) break;
+      ativos=novos;
+    }
+  }
+  return fit;
+}
+
+/* veredito sobre a usabilidade do par */
+function diagnosticarPar(gA,gB,w,h,o){
+  const fl=fluxoBlocos(gA,gB,w,h,o);
+  const bons=fl.pontos.filter(p=>!p.noLimite);
+  if(bons.length<6){
+    return {ok:false, n:bons.length, codigo:"sem_correspondencia",
+      titulo:"As fotos não se correspondem",
+      texto:"Apenas "+bons.length+" de "+fl.pontos.length+" regiões foram localizadas na segunda foto dentro da busca de ± "+
+        Math.round(fl.raio)+" px. As imagens provavelmente cobrem cenas diferentes, ou o deslocamento entre elas é grande demais."};
+  }
+  const fit=ajustaSimilaridade(bons);
+  const dxs=bons.map(p=>p.dx), dys=bons.map(p=>p.dy);
+  const med=a=>a.reduce((s,v)=>s+v,0)/a.length;
+  const desv=a=>{const m=med(a);return Math.sqrt(med(a.map(v=>(v-m)*(v-m))));};
+  const d={ok:true, n:bons.length, total:fl.pontos.length,
+    dxMedio:med(dxs), dyMedio:med(dys), dxDesvio:desv(dxs), dyDesvio:desv(dys),
+    escala:fit?fit.escala:1, rotacao:fit?fit.rotacao:0,
+    residuo:fit?fit.residuo:NaN, fit,
+    custoMediano:bons.map(p=>p.custo).sort((a,b)=>a-b)[bons.length>>1],
+    pontos:bons};
+  const problemas=[];
+  if(Math.abs(d.escala-1)>0.03) problemas.push("mudança de escala de "+((d.escala-1)*100).toFixed(1)+
+    "% (a câmera avançou, recuou ou mudou de altura entre as tomadas)");
+  if(Math.abs(d.rotacao)>1.0) problemas.push("rotação de "+d.rotacao.toFixed(1)+
+    "° no plano da imagem (a câmera girou entre as tomadas)");
+  if(d.dyDesvio>w*0.012) problemas.push("dispersão vertical de "+d.dyDesvio.toFixed(0)+
+    " px entre regiões (em um par retificado o deslocamento vertical é praticamente constante)");
+  if(d.residuo>w*0.03) problemas.push("resíduo de "+d.residuo.toFixed(0)+
+    " px após remover translação, rotação e escala — o que resta indica mudança de ponto de vista com componente frontal");
+  d.problemas=problemas;
+  if(!problemas.length){
+    d.codigo="adequado"; d.titulo="Par adequado à estereoscopia";
+    d.texto="Deslocamento horizontal médio de "+d.dxMedio.toFixed(0)+" px e vertical de "+
+      d.dyMedio.toFixed(0)+" px, com dispersão vertical de apenas "+d.dyDesvio.toFixed(1)+" px.";
+  } else if(problemas.length===1 && Math.abs(d.escala-1)<=0.08 && Math.abs(d.rotacao)<=4){
+    d.codigo="corrigivel"; d.titulo="Par utilizável após pré-alinhamento";
+    d.texto="Foi detectada "+problemas[0]+". O pré-alinhamento compensa esse efeito antes da correspondência.";
+  } else {
+    d.codigo="inadequado"; d.titulo="Par inadequado à estereoscopia";
+    d.texto="Foram detectados os seguintes desvios: "+problemas.join("; ")+".";
+  }
+  d.ok = d.codigo!=="inadequado";
+  return d;
+}
+
+/* reamostragem bilinear aplicando a similaridade estimada, com reintrodução
+   de uma disparidade de referência d0 para manter as disparidades positivas */
+function aplicarSimilaridade(g,w,h,fit,d0){
+  const s=fit.escala, a=fit.rotacao*Math.PI/180;
+  const ca=s*Math.cos(a), sa=s*Math.sin(a);
+  const out=new Float32Array(w*h).fill(NaN);
+  const desloc=d0||0;
+  for(let y=0;y<h;y++) for(let x=0;x<w;x++){
+    const xa=x+desloc;
+    const qx=ca*xa-sa*y+fit.tx, qy=sa*xa+ca*y+fit.ty;
+    if(qx<0||qy<0||qx>=w-1||qy>=h-1) continue;
+    const x0=qx|0, y0=qy|0, fx=qx-x0, fy=qy-y0;
+    const p=y0*w+x0;
+    out[y*w+x]=(g[p]*(1-fx)+g[p+1]*fx)*(1-fy)+(g[p+w]*(1-fx)+g[p+w+1]*fx)*fy;
+  }
+  for(let i=0;i<out.length;i++) if(!isFinite(out[i])) out[i]=0;
+  return out;
+}
+
+/* detecção das bordas estáticas (moldura de player, tarja, barra de tarefas):
+   colunas e linhas idênticas nas duas imagens não pertencem à cena */
+function bordasEstaticas(gA,gB,w,h,limiar){
+  const lim=limiar===undefined?2.5:limiar;
+  const dif=new Float32Array(w*h);
+  for(let i=0;i<w*h;i++) dif[i]=Math.abs(gA[i]-gB[i]);
+  const col=new Float32Array(w), lin=new Float32Array(h);
+  for(let y=0;y<h;y++) for(let x=0;x<w;x++){ col[x]+=dif[y*w+x]/h; lin[y]+=dif[y*w+x]/w; }
+  const acha=(v,n)=>{
+    let a=0,b=n-1;
+    while(a<n && v[a]<lim) a++;
+    while(b>a && v[b]<lim) b--;
+    return [a,b];
+  };
+  const [x0,x1]=acha(col,w), [y0,y1]=acha(lin,h);
+  const val=(x1-x0)>w*0.3 && (y1-y0)>h*0.3;
+  return {x0:val?x0/w:0, x1:val?(x1+1)/w:1, y0:val?y0/h:0, y1:val?(y1+1)/h:1,
+    detectou: val && (x0>2||y0>2||x1<w-3||y1<h-3)};
+}
+
+/* validação dos parâmetros indispensáveis à triangulação */
+function validarGeometria(p){
+  const faltando=[];
+  if(!(p.foco>0)) faltando.push("distância focal");
+  if(!(p.sensor>0)) faltando.push("largura do sensor");
+  if(!(p.base>0)) faltando.push("base entre as tomadas");
+  if(!(p.H>0)) faltando.push("altura da câmera");
+  return {valido:faltando.length===0, faltando};
+}
+
+/* ==========================================================================
+   Modelo digital do terreno (grade regular) a partir da nuvem
+   ========================================================================== */
+function gridarMDT(nuvem, cellPref, maxCels){
+  const n=nuvem.n;
+  if(!n) return null;
+  let x0=Infinity,x1=-Infinity,y0=Infinity,y1=-Infinity;
+  for(let i=0;i<n;i++){
+    if(nuvem.x[i]<x0)x0=nuvem.x[i]; if(nuvem.x[i]>x1)x1=nuvem.x[i];
+    if(nuvem.y[i]<y0)y0=nuvem.y[i]; if(nuvem.y[i]>y1)y1=nuvem.y[i];
+  }
+  const larg=Math.max(1e-6,x1-x0), alt=Math.max(1e-6,y1-y0);
+  let cell=cellPref>0?cellPref:Math.sqrt(larg*alt/n)*1.4;
+  const lim=maxCels||420;
+  cell=Math.max(cell, larg/lim, alt/lim);
+  const nx=Math.max(2,Math.ceil(larg/cell)+1), ny=Math.max(2,Math.ceil(alt/cell)+1);
+  const soma=new Float64Array(nx*ny), cont=new Int32Array(nx*ny);
+  for(let i=0;i<n;i++){
+    const cxi=clamp(Math.round((nuvem.x[i]-x0)/cell),0,nx-1);
+    const cyi=clamp(Math.round((nuvem.y[i]-y0)/cell),0,ny-1);
+    const p=cyi*nx+cxi; soma[p]+=nuvem.z[i]; cont[p]++;
+  }
+  const z=new Float32Array(nx*ny).fill(NaN), mask=new Uint8Array(nx*ny);
+  for(let p=0;p<nx*ny;p++) if(cont[p]>0){ z[p]=soma[p]/cont[p]; mask[p]=1; }
+  return {z,mask,nx,ny,cell,x0,y0,cont};
+}
+
+/* preenchimento iterativo de vazios pela média dos vizinhos válidos */
+function preencherVazios(dem, passes){
+  const {nx,ny}=dem; const z=dem.z, m=dem.mask;
+  const P=passes||12;
+  for(let it=0;it<P;it++){
+    let mudou=0;
+    const zc=Float32Array.from(z), mc=Uint8Array.from(m);
+    for(let y=0;y<ny;y++) for(let x=0;x<nx;x++){
+      const p=y*nx+x;
+      if(mc[p]) continue;
+      let s=0,c=0;
+      for(let dy=-1;dy<=1;dy++) for(let dx=-1;dx<=1;dx++){
+        const xx=x+dx, yy=y+dy;
+        if(xx<0||yy<0||xx>=nx||yy>=ny) continue;
+        const q=yy*nx+xx;
+        if(mc[q]){ s+=zc[q]; c++; }
+      }
+      if(c>=3){ z[p]=s/c; m[p]=2; mudou++; }
+    }
+    if(!mudou) break;
+  }
+  return dem;
+}
+
+/* declividade em % pelo método de Horn */
+function declividade(dem){
+  const {nx,ny,cell,z,mask}=dem;
+  const s=new Float32Array(nx*ny).fill(NaN);
+  const g=(x,y)=>{ const xx=clamp(x,0,nx-1), yy=clamp(y,0,ny-1); return z[yy*nx+xx]; };
+  for(let y=0;y<ny;y++) for(let x=0;x<nx;x++){
+    const p=y*nx+x;
+    if(!mask[p]) continue;
+    const dzdx=((g(x+1,y-1)+2*g(x+1,y)+g(x+1,y+1))-(g(x-1,y-1)+2*g(x-1,y)+g(x-1,y+1)))/(8*cell);
+    const dzdy=((g(x-1,y+1)+2*g(x,y+1)+g(x+1,y+1))-(g(x-1,y-1)+2*g(x,y-1)+g(x+1,y-1)))/(8*cell);
+    s[p]=Math.sqrt(dzdx*dzdx+dzdy*dzdy)*100;
+  }
+  return s;
+}
+
+function estatMDT(dem){
+  let mn=Infinity,mx=-Infinity,s=0,c=0;
+  for(let p=0;p<dem.nx*dem.ny;p++) if(dem.mask[p]){ const v=dem.z[p]; if(v<mn)mn=v; if(v>mx)mx=v; s+=v; c++; }
+  return {min:c?mn:NaN, max:c?mx:NaN, media:c?s/c:NaN, celulas:c,
+          area:c*dem.cell*dem.cell, amplitude:c?mx-mn:NaN};
+}
+
+/* volumetria de corte e aterro em relação a uma cota de projeto */
+function volumes(dem, zref){
+  const a=dem.cell*dem.cell;
+  let corte=0, aterro=0, areaC=0, areaA=0;
+  for(let p=0;p<dem.nx*dem.ny;p++){
+    if(!dem.mask[p]) continue;
+    const d=dem.z[p]-zref;
+    if(d>0){ corte+=d*a; areaC+=a; } else { aterro+=-d*a; areaA+=a; }
+  }
+  return {corte, aterro, liquido:corte-aterro, areaCorte:areaC, areaAterro:areaA,
+          area:areaC+areaA, zref};
+}
+
+/* ==========================================================================
+   Curvas de nível — marching squares com encadeamento de segmentos
+   ========================================================================== */
+function curvasNivel(dem, intervalo){
+  const {nx,ny,cell,x0,y0,z,mask}=dem;
+  const st=estatMDT(dem);
+  if(!isFinite(st.min)) return [];
+  const niveis=[];
+  const z0=Math.ceil(st.min/intervalo)*intervalo;
+  for(let v=z0; v<=st.max; v+=intervalo) niveis.push(+v.toFixed(6));
+  const saida=[];
+  for(const nivel of niveis){
+    const segs=[];
+    for(let y=0;y<ny-1;y++) for(let x=0;x<nx-1;x++){
+      const p00=y*nx+x, p10=y*nx+x+1, p01=(y+1)*nx+x, p11=(y+1)*nx+x+1;
+      if(!mask[p00]||!mask[p10]||!mask[p01]||!mask[p11]) continue;
+      const v00=z[p00],v10=z[p10],v01=z[p01],v11=z[p11];
+      let idx=0;
+      if(v00>nivel)idx|=1; if(v10>nivel)idx|=2; if(v11>nivel)idx|=4; if(v01>nivel)idx|=8;
+      if(idx===0||idx===15) continue;
+      const X=x0+x*cell, Y=y0+y*cell;
+      const ip=(a,b,t)=>a+(b-a)*t;
+      const T=(va,vb)=> (nivel-va)/((vb-va)||1e-12);
+      const B=()=>[ip(X,X+cell,T(v00,v10)), Y];
+      const R=()=>[X+cell, ip(Y,Y+cell,T(v10,v11))];
+      const T_=()=>[ip(X,X+cell,T(v01,v11)), Y+cell];
+      const L=()=>[X, ip(Y,Y+cell,T(v00,v01))];
+      const tab={1:[[L,B]],2:[[B,R]],3:[[L,R]],4:[[R,T_]],5:[[L,T_],[B,R]],6:[[B,T_]],
+                 7:[[L,T_]],8:[[T_,L]],9:[[T_,B]],10:[[T_,R],[L,B]],11:[[T_,R]],
+                 12:[[R,L]],13:[[R,B]],14:[[B,L]]};
+      for(const par of (tab[idx]||[])) segs.push([par[0](),par[1]()]);
+    }
+    if(segs.length) saida.push({cota:nivel, linhas:encadear(segs)});
+  }
+  return saida;
+}
+
+function encadear(segs){
+  const key=p=>p[0].toFixed(4)+"|"+p[1].toFixed(4);
+  const mapa=new Map();
+  segs.forEach((s,i)=>{
+    for(const k of [key(s[0]),key(s[1])]){
+      if(!mapa.has(k)) mapa.set(k,[]);
+      mapa.get(k).push(i);
+    }
+  });
+  const usado=new Array(segs.length).fill(false);
+  const linhas=[];
+  for(let i=0;i<segs.length;i++){
+    if(usado[i]) continue;
+    usado[i]=true;
+    const linha=[segs[i][0],segs[i][1]];
+    for(let dir=0;dir<2;dir++){
+      let ponta=dir===0?linha[linha.length-1]:linha[0];
+      let cresce=true, guarda=0;
+      while(cresce && guarda++<20000){
+        cresce=false;
+        const cand=mapa.get(key(ponta))||[];
+        for(const j of cand){
+          if(usado[j]) continue;
+          const s=segs[j];
+          let novo=null;
+          if(key(s[0])===key(ponta)) novo=s[1];
+          else if(key(s[1])===key(ponta)) novo=s[0];
+          if(novo){
+            usado[j]=true;
+            if(dir===0) linha.push(novo); else linha.unshift(novo);
+            ponta=novo; cresce=true; break;
+          }
+        }
+      }
+    }
+    if(linha.length>=2) linhas.push(linha);
+  }
+  return linhas;
+}
+
+/* ==========================================================================
+   Georreferenciamento: rotação por azimute + translação para E/N absolutos
+   ========================================================================== */
+function georref(x,y,z,g){
+  if(!g||!g.ativo) return [x,y,z];
+  const az=(g.azimute===undefined||g.azimute===null||!isFinite(g.azimute))?90:g.azimute;
+  const a=(90-az)*Math.PI/180;
+  const ca=Math.cos(a), sa=Math.sin(a);
+  return [ (g.E0||0)+x*ca-y*sa, (g.N0||0)+x*sa+y*ca, z+(g.Z0||0) ];
+}
+
+/* ==========================================================================
+   Exportadores
+   ========================================================================== */
+function expPLY(nuvem, cores, g){
+  const L=[];
+  L.push("ply","format ascii 1.0",
+    "comment gerado por EstereoTerreno Pro",
+    "comment sistema "+((g&&g.epsg)||"local"),
+    "element vertex "+nuvem.n,
+    "property float x","property float y","property float z",
+    "property uchar red","property uchar green","property uchar blue",
+    "end_header");
+  for(let i=0;i<nuvem.n;i++){
+    const [X,Y,Z]=georref(nuvem.x[i],nuvem.y[i],nuvem.z[i],g);
+    const c=cores?cores[i]:[200,200,200];
+    L.push(X.toFixed(3)+" "+Y.toFixed(3)+" "+Z.toFixed(3)+" "+c[0]+" "+c[1]+" "+c[2]);
+  }
+  return L.join("\n")+"\n";
+}
+
+/* malha a partir da grade do MDT: dois triângulos por célula válida */
+function malhaDoMDT(dem, g){
+  const {nx,ny,cell,x0,y0,z,mask}=dem;
+  const map=new Int32Array(nx*ny).fill(-1);
+  const verts=[];
+  for(let y=0;y<ny;y++) for(let x=0;x<nx;x++){
+    const p=y*nx+x;
+    if(!mask[p]) continue;
+    map[p]=verts.length;
+    const [X,Y,Z]=georref(x0+x*cell, y0+y*cell, z[p], g);
+    verts.push([X,Y,Z]);
+  }
+  const faces=[];
+  for(let y=0;y<ny-1;y++) for(let x=0;x<nx-1;x++){
+    const a=map[y*nx+x], b=map[y*nx+x+1], c=map[(y+1)*nx+x+1], d=map[(y+1)*nx+x];
+    if(a<0||b<0||c<0||d<0) continue;
+    faces.push([a,b,c],[a,c,d]);
+  }
+  return {verts,faces};
+}
+
+function expOBJ(dem, g){
+  const m=malhaDoMDT(dem,g);
+  const L=["# EstereoTerreno Pro — malha do terreno",
+           "# vertices: "+m.verts.length+"  faces: "+m.faces.length,
+           "o terreno"];
+  for(const v of m.verts) L.push("v "+v[0].toFixed(3)+" "+v[1].toFixed(3)+" "+v[2].toFixed(3));
+  for(const f of m.faces) L.push("f "+(f[0]+1)+" "+(f[1]+1)+" "+(f[2]+1));
+  return L.join("\n")+"\n";
+}
+
+function expSTL(dem, g){
+  const m=malhaDoMDT(dem,g);
+  const L=["solid terreno"];
+  for(const f of m.faces){
+    const A=m.verts[f[0]],B=m.verts[f[1]],C=m.verts[f[2]];
+    const u=[B[0]-A[0],B[1]-A[1],B[2]-A[2]], v=[C[0]-A[0],C[1]-A[1],C[2]-A[2]];
+    let nx2=u[1]*v[2]-u[2]*v[1], ny2=u[2]*v[0]-u[0]*v[2], nz2=u[0]*v[1]-u[1]*v[0];
+    const len=Math.hypot(nx2,ny2,nz2)||1; nx2/=len; ny2/=len; nz2/=len;
+    L.push("facet normal "+nx2.toFixed(6)+" "+ny2.toFixed(6)+" "+nz2.toFixed(6));
+    L.push(" outer loop");
+    for(const P of [A,B,C]) L.push("  vertex "+P[0].toFixed(3)+" "+P[1].toFixed(3)+" "+P[2].toFixed(3));
+    L.push(" endloop","endfacet");
+  }
+  L.push("endsolid terreno");
+  return L.join("\n")+"\n";
+}
+
+function expXYZ(nuvem,g){
+  const L=[];
+  for(let i=0;i<nuvem.n;i++){
+    const [X,Y,Z]=georref(nuvem.x[i],nuvem.y[i],nuvem.z[i],g);
+    L.push(X.toFixed(3)+" "+Y.toFixed(3)+" "+Z.toFixed(3));
+  }
+  return L.join("\n")+"\n";
+}
+
+function expCSV(nuvem,cores,g){
+  const L=["id;este_m;norte_m;cota_m;r;g;b"];
+  for(let i=0;i<nuvem.n;i++){
+    const [X,Y,Z]=georref(nuvem.x[i],nuvem.y[i],nuvem.z[i],g);
+    const c=cores?cores[i]:[0,0,0];
+    L.push([i+1,X.toFixed(3),Y.toFixed(3),Z.toFixed(3),c[0],c[1],c[2]]
+      .join(";").replace(/\./g,","));
+  }
+  return L.join("\n")+"\n";
+}
+
+/* grade ESRI ASCII — origem no canto inferior esquerdo, linhas de cima para baixo */
+function expASC(dem,g,nodata){
+  const nd=nodata===undefined?-9999:nodata;
+  const [E0,N0]=georref(dem.x0,dem.y0,0,g);
+  const L=["ncols "+dem.nx,"nrows "+dem.ny,
+           "xllcorner "+(E0-dem.cell/2).toFixed(4),
+           "yllcorner "+(N0-dem.cell/2).toFixed(4),
+           "cellsize "+dem.cell.toFixed(4),
+           "NODATA_value "+nd];
+  const dz=(g&&g.ativo)?(g.Z0||0):0;
+  for(let y=dem.ny-1;y>=0;y--){
+    const linha=[];
+    for(let x=0;x<dem.nx;x++){
+      const p=y*dem.nx+x;
+      linha.push(dem.mask[p]?(dem.z[p]+dz).toFixed(3):nd);
+    }
+    L.push(linha.join(" "));
+  }
+  return L.join("\n")+"\n";
+}
+
+function expDXF(curvas,g){
+  const L=["0","SECTION","2","HEADER","0","ENDSEC","0","SECTION","2","ENTITIES"];
+  for(const c of curvas){
+    for(const linha of c.linhas){
+      L.push("0","POLYLINE","8","CURVAS_"+String(c.cota).replace(/[.\-]/g,"_"),
+             "66","1","70","8","10","0.0","20","0.0","30",c.cota.toFixed(3));
+      for(const pt of linha){
+        const [X,Y,Z]=georref(pt[0],pt[1],c.cota,g);
+        L.push("0","VERTEX","8","CURVAS","10",X.toFixed(3),"20",Y.toFixed(3),"30",Z.toFixed(3),"70","32");
+      }
+      L.push("0","SEQEND");
+    }
+  }
+  L.push("0","ENDSEC","0","EOF");
+  return L.join("\n")+"\n";
+}
+
+function expGeoJSON(curvas,g){
+  const feats=[];
+  for(const c of curvas){
+    for(const linha of c.linhas){
+      feats.push({type:"Feature",
+        properties:{cota:c.cota, unidade:"m"},
+        geometry:{type:"LineString",
+          coordinates:linha.map(pt=>{const q=georref(pt[0],pt[1],c.cota,g);return [+q[0].toFixed(3),+q[1].toFixed(3)];})}});
+    }
+  }
+  return JSON.stringify({type:"FeatureCollection",
+    crs:{type:"name",properties:{name:(g&&g.epsg)||"local"}},features:feats},null,1);
+}
+
+function expRelatorio(ctx){
+  const {params, dispStats, nuvem, demStats, vol, curvas, g, qc} = ctx;
+  const L=[];
+  L.push("# Relatório de reconstrução 3D por estereoscopia","",
+    "Gerado por **EstereoTerreno Pro** em "+new Date().toLocaleString("pt-BR")+".","",
+    "## 1. Dados de entrada","",
+    "| Parâmetro | Valor |","|---|---|",
+    "| Foto A | "+(params.nomeA||"—")+" |",
+    "| Foto B | "+(params.nomeB||"—")+" |",
+    "| Resolução original | "+params.wOrig+" × "+params.hOrig+" px |",
+    "| Resolução de processamento | "+params.w+" × "+params.h+" px |",
+    "| Modo de captura | "+(params.modo==="nadir"?"drone nadir":"oblíquo")+" |",
+    "| Base entre tomadas (B) | "+nf(params.base,2)+" m |",
+    "| Altura da câmera (H) | "+nf(params.H,2)+" m |",
+    "| Distância focal | "+nf(params.foco,2)+" mm |",
+    "| Largura do sensor | "+nf(params.sensor,2)+" mm |",
+    "| Focal em pixels (f) | "+nf(params.fpx,1)+" px |",
+    "| Sistema de coordenadas | "+((g&&g.ativo)?g.epsg:"local (origem no centro da cena)")+" |","",
+    "## 2. Correspondência estéreo","",
+    "| Métrica | Valor |","|---|---|",
+    "| Algoritmo | "+(params.metric==="census"?"census 5×5 + agregação de caixa":"SAD + agregação de caixa")+" |",
+    "| Janela de agregação | "+params.win+" × "+params.win+" px |",
+    "| Faixa de disparidade | "+params.dmin+" a "+params.dmax+" px |",
+    "| Tolerância vertical | ± "+params.vtol+" px |",
+    "| Cobertura válida | "+nf(dispStats.cobertura*100,1)+" % |",
+    "| Disparidade média | "+nf(dispStats.dMedia,2)+" px |",
+    "| Disparidade P05–P95 | "+nf(dispStats.dP05,2)+" a "+nf(dispStats.dP95,2)+" px |","",
+    "## 3. Produto altimétrico","",
+    "| Grandeza | Valor |","|---|---|",
+    "| Pontos reconstruídos | "+nuvem.n.toLocaleString("pt-BR")+" |",
+    "| Célula do MDT | "+nf(params.cell,3)+" m |",
+    "| Área coberta | "+nf(demStats.area,1)+" m² |",
+    "| Cota mínima | "+nf(demStats.min,2)+" m |",
+    "| Cota máxima | "+nf(demStats.max,2)+" m |",
+    "| Cota média | "+nf(demStats.media,2)+" m |",
+    "| Amplitude altimétrica | "+nf(demStats.amplitude,2)+" m |",
+    "| GSD estimado | "+nf(params.gsd,4)+" m/px |",
+    "| Erro altimétrico teórico (1σ) | ± "+nf(params.sigmaZ,3)+" m |","",
+    "## 4. Volumetria (cota de referência "+nf(vol.zref,2)+" m)","",
+    "| Grandeza | Valor |","|---|---|",
+    "| Volume de corte | "+nf(vol.corte,2)+" m³ |",
+    "| Volume de aterro | "+nf(vol.aterro,2)+" m³ |",
+    "| Saldo (corte − aterro) | "+nf(vol.liquido,2)+" m³ |",
+    "| Área em corte | "+nf(vol.areaCorte,1)+" m² |",
+    "| Área em aterro | "+nf(vol.areaAterro,1)+" m² |",
+    "| Curvas de nível geradas | "+curvas.length+" cotas |","",
+    "## 5. Controle de qualidade","");
+  L.push("| Verificação | Situação |","|---|---|");
+  for(const q of qc) L.push("| "+q.nome+" | "+q.status+" — "+q.obs+" |");
+  L.push("",
+    "## 6. Memória de cálculo","",
+    "A profundidade de cada pixel decorre da equação fundamental da estereoscopia:","",
+    "    Z = f · B / d","",
+    "com f em pixels, B a base entre as tomadas em metros e d a disparidade em pixels.",
+    "As coordenadas no referencial da câmera resultam de:","",
+    "    X = (u − cx) · Z / f        Y = (v − cy) · Z / f","",
+    "No modo nadir a cota do terreno é obtida por `cota = H − Z`. A propagação do erro",
+    "de correspondência para a altimetria segue:","",
+    "    σZ = Z² · σd / (f · B)","",
+    "o que mostra que o erro cresce com o quadrado da distância e diminui com o aumento",
+    "da base entre as tomadas.","",
+    "## 7. Ressalvas técnicas","",
+    "- O modelo assume par aproximadamente retificado, com eixos ópticos paralelos e deslocamento predominantemente horizontal.",
+    "- Sem pontos de apoio levantados em campo, a escala depende integralmente da base B e da focal informadas.",
+    "- Superfícies homogêneas, vegetação densa, água e sombras produzem vazios ou ruído no modelo.",
+    "- Os volumes calculados têm caráter indicativo e não substituem levantamento topográfico convencional para fins de medição contratual.","");
+  return L.join("\n");
+}
+
+function expProjeto(ctx){
+  return JSON.stringify({
+    formato:"EstereoTerreno Pro", versao:"1.0",
+    gerado:new Date().toISOString(),
+    parametros:ctx.params,
+    georreferencia:ctx.g,
+    disparidade:ctx.dispStats,
+    mdt:{nx:ctx.dem.nx,ny:ctx.dem.ny,cell:ctx.dem.cell,x0:ctx.dem.x0,y0:ctx.dem.y0,
+         z:Array.from(ctx.dem.z,v=>isFinite(v)?+v.toFixed(3):null)},
+    estatisticas:ctx.demStats, volumetria:ctx.vol,
+    controleQualidade:ctx.qc
+  },null,1);
+}
+
+function expPRJ(epsg){
+  return 'PROJCS["'+(epsg||"local")+'",GEOGCS["SIRGAS 2000",DATUM["Sistema_de_Referencia_Geocentrico_para_las_AmericaS_2000",'+
+    'SPHEROID["GRS 1980",6378137,298.257222101]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433]],'+
+    'PROJECTION["Transverse_Mercator"],UNIT["metre",1]]\n';
+}
+
+/* ==========================================================================
+   Controle de qualidade automático
+   ========================================================================== */
+function avaliarQualidade(ctx){
+  const q=[];
+  const cob=ctx.dispStats.cobertura;
+  q.push({nome:"Cobertura do mapa de disparidade",
+    status: cob>0.6?"adequada":(cob>0.3?"limitada":"insuficiente"),
+    obs: nf(cob*100,1)+"% dos pixels correspondidos"});
+  const razao = ctx.params.base/Math.max(1e-6,ctx.params.H);
+  q.push({nome:"Relação base/altura (B/H)",
+    status: (razao>=0.15&&razao<=0.8)?"adequada":(razao<0.15?"baixa":"alta"),
+    obs: nf(razao,3)+" — a faixa recomendada é 0,15 a 0,80"});
+  q.push({nome:"Erro altimétrico teórico",
+    status: ctx.params.sigmaZ<0.5?"adequado":(ctx.params.sigmaZ<2?"moderado":"elevado"),
+    obs:"± "+nf(ctx.params.sigmaZ,3)+" m para σd = 0,5 px"});
+  const amp=ctx.demStats.amplitude;
+  q.push({nome:"Amplitude altimétrica reconstruída",
+    status: amp>0.2?"consistente":"suspeita",
+    obs: nf(amp,2)+" m entre a menor e a maior cota"});
+  const densidade=ctx.nuvem.n/Math.max(1,ctx.demStats.area);
+  q.push({nome:"Densidade de pontos",
+    status: densidade>1?"adequada":(densidade>0.25?"moderada":"baixa"),
+    obs: nf(densidade,2)+" pontos por m²"});
+  q.push({nome:"Apoio de campo",
+    status: ctx.g&&ctx.g.ativo?"declarado":"ausente",
+    obs: ctx.g&&ctx.g.ativo?("origem em "+nf(ctx.g.E0,2)+" / "+nf(ctx.g.N0,2)+" — "+ctx.g.epsg)
+      :"modelo em coordenadas locais; escala dependente de B e f"});
+  return q;
+}
+
+return {clamp,nf,percentile,haversine,focalPx,focoDeEq35,gsd,erroZ,toGray,removeIluminacao,
+  integral,boxSum,boxMean,census5,popcount,createStereoMatcher,matchStereo,medianaDisp,
+  removeSpeckles,estimaFaixa,reconstruir,filtraOutliers,reduzir,fluxoBlocos,ajustaSimilaridade,diagnosticarPar,aplicarSimilaridade,bordasEstaticas,validarGeometria,gridarMDT,preencherVazios,
+  declividade,estatMDT,volumes,curvasNivel,encadear,georref,malhaDoMDT,
+  expPLY,expOBJ,expSTL,expXYZ,expCSV,expASC,expDXF,expGeoJSON,expRelatorio,expProjeto,expPRJ,
+  avaliarQualidade};
+})();
+if(typeof module!=="undefined" && module.exports) module.exports = STEREO;
+if(typeof window!=="undefined") window.STEREO = STEREO;
+</script>
+<script>
+"use strict";
+/* ==========================================================================
+   Camada de aplicação: entrada de imagens, pipeline, gráficos e exportação
+   ========================================================================== */
+const S = STEREO;
+const $ = id => document.getElementById(id);
+const estado = {
+  imgA:null, imgB:null, nomeA:"", nomeB:"", exifA:null, exifB:null,
+  proc:null, res:null, nuvem:null, cores:null, dem:null, demCor:null,
+  curvas:[], vol:null, demStats:null, qc:[], params:null, g:null, slope:null
+};
+
+/* ---------- tema e abas ---------- */
+function aplicarTema(t){
+  document.documentElement.setAttribute("data-theme",t);
+  try{ localStorage.setItem("estereo.tema",t); }catch(e){}
+}
+$("btnTheme").onclick=()=>aplicarTema(document.documentElement.getAttribute("data-theme")==="dark"?"light":"dark");
+try{ const t=localStorage.getItem("estereo.tema"); if(t) aplicarTema(t); }catch(e){}
+
+document.querySelectorAll("nav.tabs button").forEach(b=>{
+  b.onclick=()=>{
+    document.querySelectorAll("nav.tabs button").forEach(x=>x.classList.remove("active"));
+    document.querySelectorAll("section.tab").forEach(x=>x.classList.remove("active"));
+    b.classList.add("active");
+    $("tab-"+b.dataset.tab).classList.add("active");
+    if(b.dataset.tab==="viewer") setTimeout(redimensionarGL,30);
+  };
+});
+function irPara(tab){ document.querySelector('nav.tabs button[data-tab="'+tab+'"]').click(); }
+function msg(el,tipo,texto){ $(el).innerHTML = '<div class="msg '+tipo+'">'+texto+'</div>'; }
+
+/* ==========================================================================
+   Leitor EXIF mínimo (focal, sensor, GPS) — sem bibliotecas
+   ========================================================================== */
+function lerExif(buffer){
+  const dv=new DataView(buffer);
+  if(dv.getUint16(0)!==0xFFD8) return null;
+  let off=2, tam=dv.byteLength;
+  while(off<tam-4){
+    if(dv.getUint16(off)!==0xFFE1){
+      if((dv.getUint16(off)&0xFF00)!==0xFF00) break;
+      off += 2+dv.getUint16(off+2); continue;
+    }
+    const inicio=off+10;
+    if(dv.getUint32(off+4)!==0x45786966) return null;
+    const le = dv.getUint16(inicio)===0x4949;
+    const g16=(p)=>dv.getUint16(p,le), g32=(p)=>dv.getUint32(p,le);
+    const ifd0=inicio+g32(inicio+4);
+    const saida={};
+    function lerIFD(base, destino){
+      const n=g16(base);
+      for(let i=0;i<n;i++){
+        const e=base+2+i*12, tag=g16(e), tipo=g16(e+2), cont=g32(e+4);
+        const tamTipo={1:1,2:1,3:2,4:4,5:8,7:1,9:4,10:8}[tipo]||1;
+        const bytes=tamTipo*cont;
+        const pos=bytes<=4?e+8:inicio+g32(e+8);
+        let v=null;
+        try{
+          if(tipo===2){ v=""; for(let k=0;k<cont-1;k++) v+=String.fromCharCode(dv.getUint8(pos+k)); }
+          else if(tipo===3) v=cont===1?g16(pos):Array.from({length:cont},(_,k)=>g16(pos+2*k));
+          else if(tipo===4) v=cont===1?g32(pos):Array.from({length:cont},(_,k)=>g32(pos+4*k));
+          else if(tipo===5||tipo===10){
+            const r=k=>g32(pos+8*k)/(g32(pos+8*k+4)||1);
+            v=cont===1?r(0):Array.from({length:cont},(_,k)=>r(k));
+          }
+        }catch(err){ v=null; }
+        destino[tag]=v;
+      }
+      return base+2+n*12;
+    }
+    const t0={}; const prox=lerIFD(ifd0,t0);
+    saida.make=t0[0x010F]; saida.model=t0[0x0110];
+    saida.width=t0[0x0100]; saida.height=t0[0x0101];
+    if(t0[0x8769]!==undefined){ const te={}; lerIFD(inicio+t0[0x8769],te);
+      saida.foco=te[0x920A]; saida.eq35=te[0xA405];
+      saida.width=te[0xA002]||saida.width; saida.height=te[0xA003]||saida.height;
+      saida.fpxRes=te[0xA20E]; saida.fpyRes=te[0xA20F]; saida.resUnit=te[0xA210];
+    }
+    if(t0[0x8825]!==undefined){
+      const tg={}; lerIFD(inicio+t0[0x8825],tg);
+      const dms=a=>Array.isArray(a)?a[0]+a[1]/60+a[2]/3600:null;
+      const lat=dms(tg[0x0002]), lon=dms(tg[0x0004]);
+      if(lat!==null&&lon!==null){
+        saida.lat = tg[0x0001]==="S" ? -lat : lat;
+        saida.lon = tg[0x0003]==="W" ? -lon : lon;
+      }
+      if(tg[0x0006]!==undefined) saida.altGPS = (tg[0x0005]===1?-1:1)*tg[0x0006];
+      if(tg[0x000B]!==undefined) saida.precisao = tg[0x000B];
+    }
+    return saida;
+  }
+  return null;
+}
+
+/* ==========================================================================
+   Entrada de imagens
+   ========================================================================== */
+function montarDrop(idDrop, idFile, qual){
+  const d=$(idDrop), f=$(idFile);
+  d.onclick=()=>f.click();
+  d.ondragover=e=>{e.preventDefault(); d.classList.add("over");};
+  d.ondragleave=()=>d.classList.remove("over");
+  d.ondrop=e=>{e.preventDefault(); d.classList.remove("over");
+    if(e.dataTransfer.files[0]) carregarArquivo(e.dataTransfer.files[0],qual);};
+  f.onchange=()=>{ if(f.files[0]) carregarArquivo(f.files[0],qual); };
+}
+montarDrop("dropA","fileA","A"); montarDrop("dropB","fileB","B");
+
+function carregarArquivo(file,qual){
+  const fr=new FileReader();
+  fr.onload=()=>{
+    let exif=null;
+    try{ exif=lerExif(fr.result); }catch(e){ exif=null; }
+    const blob=new Blob([fr.result]);
+    const url=URL.createObjectURL(blob);
+    const img=new Image();
+    img.onload=()=>{
+      estado.demoZ=null; estado.diag=null; estado.ignorarDiag=false;
+      if(qual==="A"){ estado.imgA=img; estado.nomeA=file.name; estado.exifA=exif; }
+      else{ estado.imgB=img; estado.nomeB=file.name; estado.exifB=exif; }
+      mostrarPreview(qual);
+      desenharRoi();
+      aplicarExif();
+      atualizarGeometria();
+      $("statusTag").textContent = (estado.imgA&&estado.imgB)?"pronto para processar":"aguardando a segunda foto";
+      if(estado.imgA&&estado.imgB) $("msgOrder").classList.remove("hide");
+    };
+    img.src=url;
+  };
+  fr.readAsArrayBuffer(file);
+}
+
+function mostrarPreview(qual){
+  const img = qual==="A"?estado.imgA:estado.imgB;
+  const nome = qual==="A"?estado.nomeA:estado.nomeB;
+  const exif = qual==="A"?estado.exifA:estado.exifB;
+  const d=$("drop"+qual);
+  d.innerHTML="";
+  const el=new Image(); el.src=img.src; d.appendChild(el);
+  const linhas=[nome, img.naturalWidth+" × "+img.naturalHeight+" px"];
+  if(exif){
+    if(exif.make||exif.model) linhas.push([exif.make,exif.model].filter(Boolean).join(" ").trim());
+    if(exif.foco) linhas.push("focal "+S.nf(exif.foco,2)+" mm"+(exif.eq35?"  (eq. 35 mm: "+exif.eq35+")":""));
+    if(exif.lat!==undefined) linhas.push("GPS "+exif.lat.toFixed(6)+", "+exif.lon.toFixed(6)+
+      (exif.altGPS!==undefined?"  alt "+S.nf(exif.altGPS,1)+" m":""));
+  } else linhas.push("sem metadados EXIF");
+  $("meta"+qual).textContent=linhas.join("\n");
+}
+
+function aplicarExif(){
+  const e=estado.exifA;
+  if(!e) return;
+  if(e.foco && e.eq35){
+    const sensor = 36*e.foco/e.eq35;
+    $("inFoco").value=e.foco.toFixed(2);
+    $("inSensor").value=sensor.toFixed(2);
+    $("inEq35").value=e.eq35;
+  } else if(e.foco){ $("inFoco").value=e.foco.toFixed(2); }
+  if(e.altGPS!==undefined && estado.exifB && estado.exifB.altGPS!==undefined){
+    const m=(e.altGPS+estado.exifB.altGPS)/2;
+    if(m>2 && m<800) $("inAlt").value=m.toFixed(1);
+  }
+}
+
+$("btnBaseGPS").onclick=()=>{
+  const a=estado.exifA,b=estado.exifB;
+  if(!a||!b||a.lat===undefined||b.lat===undefined){
+    msg("msgGeom","warn","As fotos não possuem coordenadas GPS no EXIF. Informe a base manualmente (distância percorrida entre as duas tomadas)."); return;
+  }
+  const d=S.haversine(a.lat,a.lon,b.lat,b.lon);
+  $("inBase").value=d.toFixed(2);
+  atualizarGeometria();
+  msg("msgGeom","ok","Base calculada pelo GPS: <b>"+S.nf(d,2)+" m</b> entre as duas tomadas.");
+};
+
+$("btnEq35").onclick=()=>{
+  const eq=parseFloat($("inEq35").value), sensor=parseFloat($("inSensor").value);
+  if(eq>0&&sensor>0){ $("inFoco").value=S.focoDeEq35(eq,sensor).toFixed(3); atualizarGeometria(); }
+};
+
+$("btnSwap").onclick=()=>{
+  [estado.imgA,estado.imgB]=[estado.imgB,estado.imgA];
+  [estado.nomeA,estado.nomeB]=[estado.nomeB,estado.nomeA];
+  [estado.exifA,estado.exifB]=[estado.exifB,estado.exifA];
+  if(estado.imgA) mostrarPreview("A"); if(estado.imgB) mostrarPreview("B");
+};
+
+["inBase","inAlt","inFoco","inSensor","inModo","inRes"].forEach(id=>$(id).addEventListener("input",atualizarGeometria));
+
+function atualizarGeometria(){
+  if(!estado.imgA){ $("msgGeom").innerHTML=""; return; }
+  const m=metricasProc();
+  const wOrig=estado.imgA.naturalWidth;
+  const foco=parseFloat($("inFoco").value), sensor=parseFloat($("inSensor").value);
+  const base=parseFloat($("inBase").value), H=parseFloat($("inAlt").value);
+  const val=S.validarGeometria({foco,sensor,base,H});
+  if(!val.valido){
+    $("msgGeom").className="msg err";
+    $("msgGeom").innerHTML="Faltam parâmetros indispensáveis à triangulação: <b>"+val.faltando.join(", ")+
+      "</b>. Sem eles não há como converter disparidade em metros, e o processamento fica bloqueado. "+
+      "Consulte a ficha técnica da câmera ou informe o equivalente 35 mm.";
+    return;
+  }
+  const fpx=S.focalPx(foco,sensor,m.wFull);
+  const g=S.gsd(H,foco,sensor,wOrig);
+  const recorte=(m.roi.x1-m.roi.x0)<0.999||(m.roi.y1-m.roi.y0)<0.999
+    ? " · recorte ativo: "+m.w+" × "+m.h+" px úteis" : "";
+  const dEsp=fpx*base/Math.max(1,H);
+  const sz=S.erroZ(H,0.5,fpx,base);
+  const razao=base/H;
+  let aviso="";
+  if(razao<0.1) aviso=" <b>Atenção:</b> base muito curta para esta altura — o relevo tende a ficar achatado e ruidoso.";
+  else if(razao>0.9) aviso=" <b>Atenção:</b> base muito longa — a sobreposição entre as fotos pode ser insuficiente.";
+  $("msgGeom").className="msg "+(aviso?"warn":"ok");
+  $("msgGeom").innerHTML =
+    "Focal equivalente: <b>"+S.nf(fpx,1)+" px</b> na resolução de processamento · "+
+    "GSD original: <b>"+S.nf(g*100,2)+" cm/px</b> · "+
+    "disparidade esperada no plano do terreno: <b>"+S.nf(dEsp,1)+" px</b> · "+
+    "erro altimétrico teórico (σd = 0,5 px): <b>± "+S.nf(sz,3)+" m</b> · "+
+    "relação B/H: <b>"+S.nf(razao,3)+"</b>"+recorte+"."+aviso;
+  if(estado.demoZ){
+    const dLo=fpx*base/(H-estado.demoZ.zMin), dHi=fpx*base/(H-estado.demoZ.zMax);
+    $("inDmin").value=Math.max(0,Math.floor(Math.min(dLo,dHi)*0.9));
+    $("inDmax").value=Math.ceil(Math.max(dLo,dHi)*1.1);
+  } else if(isFinite(dEsp)&&dEsp>0){
+    const dm=Math.round(dEsp*1.8)+16;
+    if(!$("inDmax").dataset.manual) $("inDmax").value=Math.min(512,Math.max(24,dm));
+  }
+}
+$("inDmax").addEventListener("input",()=>{$("inDmax").dataset.manual="1";});
+
+/* ==========================================================================
+   Preparação das imagens na resolução de processamento
+   ========================================================================== */
+function lerRoi(){
+  const L=parseFloat($("roiL").value)/100, R=parseFloat($("roiR").value)/100;
+  const T=parseFloat($("roiT").value)/100, B=parseFloat($("roiB").value)/100;
+  const x0=S.clamp(Math.min(L,R),0,0.95), x1=S.clamp(Math.max(L,R),0.05,1);
+  const y0=S.clamp(Math.min(T,B),0,0.95), y1=S.clamp(Math.max(T,B),0.05,1);
+  return {x0,x1:Math.max(x1,x0+0.05),y0,y1:Math.max(y1,y0+0.05)};
+}
+
+/* geometria da imagem de processamento levando o recorte em conta.
+   wFull é a largura que a imagem teria SEM recorte, usada para converter
+   a distância focal em pixels; cx e cy são o ponto principal reposicionado. */
+function metricasProc(){
+  if(!estado.imgA) return null;
+  const wProc=parseInt($("inRes").value), roi=lerRoi();
+  const wo=estado.imgA.naturalWidth, ho=estado.imgA.naturalHeight;
+  const sw=wo*(roi.x1-roi.x0), sh=ho*(roi.y1-roi.y0);
+  const esc=wProc/sw;
+  return {esc, wo, ho, roi,
+    sx:wo*roi.x0, sy:ho*roi.y0, sw, sh,
+    w:Math.max(16,Math.round(sw*esc)), h:Math.max(16,Math.round(sh*esc)),
+    wFull:wo*esc, cx:(wo/2-wo*roi.x0)*esc, cy:(ho/2-ho*roi.y0)*esc};
+}
+
+function prepararImagens(){
+  const m=metricasProc();
+  const {w,h}=m;
+  const cv=document.createElement("canvas"); cv.width=w; cv.height=h;
+  const cx=cv.getContext("2d",{willReadFrequently:true});
+  const recorta=(img)=>{
+    cx.clearRect(0,0,w,h);
+    const iw=img.naturalWidth, ih=img.naturalHeight;
+    cx.drawImage(img, iw*m.roi.x0, ih*m.roi.y0, iw*(m.roi.x1-m.roi.x0), ih*(m.roi.y1-m.roi.y0), 0,0,w,h);
+    return cx.getImageData(0,0,w,h).data;
+  };
+  const rgbaL=new Uint8ClampedArray(recorta(estado.imgA));
+  const rgbaR=new Uint8ClampedArray(recorta(estado.imgB));
+  return Object.assign({}, m, {w,h,
+    grayL:S.toGray(rgbaL,w*h), grayR:S.toGray(rgbaR,w*h),
+    rgbaL, rgbaR});
+}
+
+/* ---------- recorte: miniatura, arrasto e detecção automática ---------- */
+function desenharRoi(){
+  const cv=$("cvRoi"), ctx=cv.getContext("2d");
+  if(!ctx) return;
+  try{ ctx.clearRect(0,0,cv.width,cv.height); }catch(e){ return; }
+  const img=estado.imgA;
+  if(!img||!img.naturalWidth||!img.complete) return;
+  const r=Math.min(cv.width/img.naturalWidth, cv.height/img.naturalHeight);
+  const dw=img.naturalWidth*r, dh=img.naturalHeight*r;
+  const ox=(cv.width-dw)/2, oy=(cv.height-dh)/2;
+  try{ ctx.drawImage(img,ox,oy,dw,dh); }catch(e){}
+  const roi=lerRoi();
+  ctx.fillStyle="rgba(0,0,0,.45)";
+  ctx.fillRect(ox,oy,dw,roi.y0*dh);
+  ctx.fillRect(ox,oy+roi.y1*dh,dw,(1-roi.y1)*dh);
+  ctx.fillRect(ox,oy+roi.y0*dh,roi.x0*dw,(roi.y1-roi.y0)*dh);
+  ctx.fillRect(ox+roi.x1*dw,oy+roi.y0*dh,(1-roi.x1)*dw,(roi.y1-roi.y0)*dh);
+  ctx.strokeStyle="#1d6fa5"; ctx.lineWidth=2;
+  ctx.strokeRect(ox+roi.x0*dw,oy+roi.y0*dh,(roi.x1-roi.x0)*dw,(roi.y1-roi.y0)*dh);
+  estado.roiBox={ox,oy,dw,dh};
+}
+["roiL","roiR","roiT","roiB"].forEach(id=>$(id).addEventListener("input",()=>{desenharRoi();atualizarGeometria();}));
+["roiL","roiR","roiT","roiB"].forEach(id=>$(id).addEventListener("change",()=>{estado.diag=null;}));
+$("btnRoiReset").onclick=()=>{
+  $("roiL").value=0; $("roiR").value=100; $("roiT").value=0; $("roiB").value=100;
+  desenharRoi(); atualizarGeometria(); $("roiMsg").innerHTML="";
+};
+$("btnRoiAuto").onclick=()=>{
+  if(!estado.imgA||!estado.imgB){ msg("roiMsg","err","Envie as duas fotos primeiro."); return; }
+  const cv=document.createElement("canvas"); cv.width=320;
+  cv.height=Math.round(320*estado.imgA.naturalHeight/estado.imgA.naturalWidth);
+  const c=cv.getContext("2d",{willReadFrequently:true});
+  c.drawImage(estado.imgA,0,0,cv.width,cv.height);
+  const a=S.toGray(c.getImageData(0,0,cv.width,cv.height).data,cv.width*cv.height);
+  c.clearRect(0,0,cv.width,cv.height);
+  c.drawImage(estado.imgB,0,0,cv.width,cv.height);
+  const b=S.toGray(c.getImageData(0,0,cv.width,cv.height).data,cv.width*cv.height);
+  const r=S.bordasEstaticas(a,b,cv.width,cv.height);
+  if(!r.detectou){ msg("roiMsg","ok","Nenhuma borda estática relevante encontrada: a cena ocupa praticamente todo o quadro."); return; }
+  $("roiL").value=(r.x0*100).toFixed(1); $("roiR").value=(r.x1*100).toFixed(1);
+  $("roiT").value=(r.y0*100).toFixed(1); $("roiB").value=(r.y1*100).toFixed(1);
+  desenharRoi(); atualizarGeometria();
+  msg("roiMsg","ok","Bordas estáticas removidas. A área útil passou a ser "+
+    ((r.x1-r.x0)*100).toFixed(0)+"% da largura e "+((r.y1-r.y0)*100).toFixed(0)+"% da altura do quadro.");
+};
+(function(){
+  const cv=$("cvRoi"); let arrast=false, ix=0, iy=0;
+  const pos=e=>{
+    const b=cv.getBoundingClientRect(), k=estado.roiBox;
+    if(!k) return null;
+    const x=(e.clientX-b.left)*(cv.width/b.width), y=(e.clientY-b.top)*(cv.height/b.height);
+    return {x:S.clamp((x-k.ox)/k.dw,0,1), y:S.clamp((y-k.oy)/k.dh,0,1)};
+  };
+  cv.addEventListener("mousedown",e=>{const p=pos(e); if(!p)return; arrast=true; ix=p.x; iy=p.y;});
+  cv.addEventListener("mousemove",e=>{
+    if(!arrast) return;
+    const p=pos(e); if(!p) return;
+    $("roiL").value=(Math.min(ix,p.x)*100).toFixed(1);
+    $("roiR").value=(Math.max(ix,p.x)*100).toFixed(1);
+    $("roiT").value=(Math.min(iy,p.y)*100).toFixed(1);
+    $("roiB").value=(Math.max(iy,p.y)*100).toFixed(1);
+    desenharRoi();
+  });
+  window.addEventListener("mouseup",()=>{ if(arrast){ arrast=false; atualizarGeometria(); } });
+})();
+
+$("btnAlinhar").onclick=()=>{
+  if(!estado.imgA||!estado.imgB){ msg("procMsg","err","Envie as duas fotos antes de estimar a faixa."); return; }
+  const im=prepararImagens();
+  const f=S.estimaFaixa(im.grayL,im.grayR,im.w,im.h,0.4);
+  $("inDmin").value=f.dmin; $("inDmax").value=f.dmax; $("inDmax").dataset.manual="1";
+  $("inVtol").value=Math.min(4,Math.max(1,Math.abs(Math.round(f.dy))));
+  msg("procMsg","ok","Deslocamento horizontal predominante estimado em <b>"+f.dxGrosso+" px</b> "+
+    "(vertical "+f.dy+" px). Faixa de busca ajustada para <b>"+f.dmin+" a "+f.dmax+" px</b>.");
+};
+
+/* ==========================================================================
+   Diagnóstico do par
+   ========================================================================== */
+function renderDiag(d){
+  if(!d){ $("diagOut").innerHTML=""; return; }
+  const tipo = d.codigo==="adequado"?"ok":(d.codigo==="corrigivel"?"warn":"err");
+  let html='<div class="msg '+tipo+'"><b>'+d.titulo+'</b><br>'+d.texto;
+  if(d.codigo==="inadequado"){
+    html+='<br><br>O que fazer: extraia dois quadros <b>mais próximos no tempo</b> (0,5 a 2 s) '+
+      'de um trecho em que o drone se desloque <b>lateralmente</b>, mantendo altura, direção da câmera e enquadramento. '+
+      'Trechos de avanço frontal ou de giro não servem: neles o deslocamento aparente é radial, e não horizontal, '+
+      'que é a geometria exigida pela correspondência por linhas.';
+  }
+  html+='</div>';
+  if(d.n>=6){
+    html+='<div class="kpis" style="margin-top:12px">'+[
+      kpi("Regiões correspondidas",d.n+" de "+d.total,""),
+      kpi("Deslocamento horizontal",S.nf(d.dxMedio,0),"px"),
+      kpi("Deslocamento vertical",S.nf(d.dyMedio,0),"px"),
+      kpi("Dispersão vertical",S.nf(d.dyDesvio,1),"px"),
+      kpi("Escala entre quadros",S.nf(d.escala,4),""),
+      kpi("Rotação no plano",S.nf(d.rotacao,2),"°"),
+      kpi("Resíduo de similaridade",S.nf(d.residuo,1),"px")
+    ].join("")+'</div>';
+  }
+  $("diagOut").innerHTML=html;
+}
+function diagnosticar(){
+  if(!estado.imgA||!estado.imgB){ msg("diagOut","err","Envie as duas fotos do par."); return null; }
+  const im=prepararImagens();
+  const d=S.diagnosticarPar(im.grayL,im.grayR,im.w,im.h);
+  estado.diag=d; renderDiag(d);
+  if(d.codigo==="corrigivel") $("inPrealinhar").checked=true;
+  return d;
+}
+$("btnDiag").onclick=diagnosticar;
+
+/* ==========================================================================
+   Pipeline principal
+   ========================================================================== */
+let processando=false;
+$("btnProcessar").onclick=()=>{
+  if(processando) return;
+  if(!estado.imgA||!estado.imgB){ msg("procMsg","err","Envie as duas fotos do par estereoscópico."); return; }
+
+  const foco=parseFloat($("inFoco").value), sensor=parseFloat($("inSensor").value);
+  const base=parseFloat($("inBase").value), H=parseFloat($("inAlt").value);
+  const val=S.validarGeometria({foco,sensor,base,H});
+  if(!val.valido){
+    msg("procMsg","err","Processamento bloqueado: falta informar <b>"+val.faltando.join(", ")+
+      "</b> na aba de entrada. Esses valores convertem disparidade em metros; sem eles o modelo não teria escala alguma.");
+    irPara("entrada"); return;
+  }
+  if(estado.imgA.naturalWidth!==estado.imgB.naturalWidth||estado.imgA.naturalHeight!==estado.imgB.naturalHeight){
+    msg("procMsg","warn","As fotos têm dimensões diferentes; a segunda será reamostrada para a mesma grade. Isso pode introduzir distorção de escala.");
+  }
+
+  const d = estado.diag && estado.diagRes===$("inRes").value ? estado.diag : diagnosticar();
+  estado.diagRes=$("inRes").value;
+  if(d && d.codigo==="inadequado" && !estado.ignorarDiag){
+    estado.ignorarDiag=true;
+    $("procMsg").innerHTML='<div class="msg err"><b>'+d.titulo+'</b><br>'+d.texto+
+      '<br><br>Processar assim produziria um modelo sem significado físico. Reveja o par antes de continuar. '+
+      'Se ainda assim quiser ver o resultado, pressione novamente o botão de processar.</div>';
+    irPara("proc"); return;
+  }
+  processarPar();
+};
+
+function processarPar(){
+  processando=true;
+  const t0=performance.now();
+  $("btnProcessar").disabled=true;
+  $("statusTag").textContent="processando…";
+  const im=prepararImagens();
+  let grayR=im.grayR, dmin=parseInt($("inDmin").value), dmax=parseInt($("inDmax").value);
+  im.prealinhado=false;
+  if($("inPrealinhar").checked){
+    const d=estado.diag&&estado.diag.fit ? estado.diag : S.diagnosticarPar(im.grayL,im.grayR,im.w,im.h);
+    if(d&&d.fit){
+      const foco=parseFloat($("inFoco").value), sensor=parseFloat($("inSensor").value);
+      const fpx=S.focalPx(foco,sensor,im.wFull);
+      const d0=fpx*parseFloat($("inBase").value)/parseFloat($("inAlt").value);
+      grayR=S.aplicarSimilaridade(im.grayR,im.w,im.h,d.fit,d0);
+      const amp=Math.max(10,Math.round(d0*0.6));
+      dmin=Math.max(1,Math.round(d0-amp)); dmax=Math.round(d0+amp);
+      $("inDmin").value=dmin; $("inDmax").value=dmax;
+      im.prealinhado=true; im.d0=d0;
+    }
+  }
+  estado.proc=im;
+  const opts={
+    grayL:im.grayL, grayR:grayR, w:im.w, h:im.h,
+    dmin, dmax,
+    win:parseInt($("inJanela").value), vtol:parseInt($("inVtol").value),
+    metric:$("inMetrica").value, uniq:parseFloat($("inUniq").value),
+    lr:parseFloat($("inLR").value), speckle:parseInt($("inSpeckle").value),
+    subpixel:$("inSub").checked, median:$("inMed").checked
+  };
+  const m=S.createStereoMatcher(opts);
+  function ciclo(){
+    const lote=performance.now();
+    let fim=false;
+    while(!fim && performance.now()-lote<60) fim=m.step();
+    $("prog").style.width=(m.progresso*100).toFixed(1)+"%";
+    if(!fim){ setTimeout(ciclo,0); return; }
+    const res=m.finish();
+    estado.res=res;
+    $("prog").style.width="100%";
+    desenharDisparidade(res,im);
+    reconstruirTudo();
+    const dt=(performance.now()-t0)/1000;
+    $("procTime").textContent="concluído em "+S.nf(dt,1)+" s";
+    $("btnProcessar").disabled=false;
+    processando=false;
+    $("statusTag").textContent="modelo gerado";
+    if(res.stats.cobertura<0.25){
+      const d=estado.diag;
+      let causa;
+      if(d&&d.codigo==="inadequado") causa="A causa mais provável já foi apontada no diagnóstico: "+d.texto.toLowerCase();
+      else if(d&&d.dxMedio&&(d.dxMedio<parseInt($("inDmin").value)||d.dxMedio>parseInt($("inDmax").value)))
+        causa="O deslocamento medido entre as fotos ("+S.nf(d.dxMedio,0)+" px) está fora da faixa de disparidade buscada ("+
+          $("inDmin").value+" a "+$("inDmax").value+" px). Use a estimativa automática de faixa.";
+      else causa="Verifique a faixa de disparidade, aumente a janela de agregação para 11 ou 13 px e confirme a ordem das fotos.";
+      msg("procMsg","warn","Cobertura baixa ("+S.nf(res.stats.cobertura*100,1)+"%). "+causa);
+    }
+    else
+      msg("procMsg","ok","Correspondência concluída: <b>"+res.stats.validos.toLocaleString("pt-BR")+"</b> pixels válidos ("+S.nf(res.stats.cobertura*100,1)+"% da imagem).");
+  }
+  setTimeout(ciclo,10);
+}
+
+/* ---------- paleta e desenho do mapa de disparidade ---------- */
+function paletaTurbo(t){
+  t=S.clamp(t,0,1);
+  const r=S.clamp(34+t*(255-34)*1.6-Math.max(0,t-0.75)*380,0,255);
+  const g=S.clamp(20+Math.sin(Math.PI*t)*235,0,255);
+  const b=S.clamp(255-t*430+Math.max(0,0.25-t)*300,0,255);
+  return [r|0,g|0,b|0];
+}
+function desenharDisparidade(res,im){
+  const cv=$("cvDisp"); cv.width=im.w; cv.height=im.h;
+  const ctx=cv.getContext("2d");
+  const id=ctx.createImageData(im.w,im.h);
+  const p5=S.percentile(res.disp,0.02), p95=S.percentile(res.disp,0.98);
+  for(let i=0,j=0;i<im.w*im.h;i++,j+=4){
+    if(res.valid[i]){
+      const t=(res.disp[i]-p5)/Math.max(1e-6,(p95-p5));
+      const c=paletaTurbo(t);
+      id.data[j]=c[0]; id.data[j+1]=c[1]; id.data[j+2]=c[2]; id.data[j+3]=255;
+    } else { id.data[j]=id.data[j+1]=id.data[j+2]=32; id.data[j+3]=255; }
+  }
+  ctx.putImageData(id,0,0);
+  const cr=$("cvRef"); cr.width=im.w; cr.height=im.h;
+  const cr2=cr.getContext("2d");
+  const idr=cr2.createImageData(im.w,im.h);
+  idr.data.set(im.rgbaL); cr2.putImageData(idr,0,0);
+  const st=res.stats;
+  $("dispKpis").innerHTML=[
+    kpi("Pixels válidos",st.validos.toLocaleString("pt-BR"),""),
+    kpi("Cobertura",S.nf(st.cobertura*100,1),"%"),
+    kpi("Disparidade média",S.nf(st.dMedia,2),"px"),
+    kpi("Faixa P05–P95",S.nf(st.dP05,1)+"–"+S.nf(st.dP95,1),"px"),
+    kpi("Disparidade mínima",S.nf(st.dMin,2),"px"),
+    kpi("Disparidade máxima",S.nf(st.dMax,2),"px")
+  ].join("");
+}
+function kpi(l,v,u){ return '<div class="kpi"><div class="l">'+l+'</div><div class="v">'+v+' <span class="u">'+u+'</span></div></div>'; }
+
+/* ==========================================================================
+   Reconstrução, MDT, volumes e curvas
+   ========================================================================== */
+function lerGeo(){
+  const E0=parseFloat($("inE0").value)||0, N0=parseFloat($("inN0").value)||0;
+  const Z0=parseFloat($("inZ0").value)||0, az=parseFloat($("inAz").value);
+  const epsg=$("inEpsg").value.trim();
+  const ativo = !!(E0||N0||Z0||(az!==90&&isFinite(az)));
+  return {ativo,E0,N0,Z0,azimute:isFinite(az)?az:90,epsg:epsg||"local"};
+}
+
+function reconstruirTudo(){
+  const im=estado.proc, res=estado.res;
+  if(!im||!res) return;
+  const foco=parseFloat($("inFoco").value), sensor=parseFloat($("inSensor").value);
+  const base=parseFloat($("inBase").value), H=parseFloat($("inAlt").value);
+  const fpx=S.focalPx(foco,sensor,im.wFull||im.w);
+  const modo=$("inModo").value;
+  let nuvem=S.reconstruir({disp:res.disp,valid:res.valid,w:im.w,h:im.h,fpx,base,H,modo,
+    cx:im.cx, cy:im.cy});
+  if(!nuvem.n){ msg("procMsg","err","Nenhum ponto tridimensional pôde ser gerado. Revise a faixa de disparidade e a ordem das fotos."); return; }
+  nuvem=S.filtraOutliers(nuvem);
+  estado.nuvem=nuvem;
+  estado.cores=Array.from({length:nuvem.n},(_,i)=>{
+    const j=nuvem.idx[i]*4;
+    return [im.rgbaL[j],im.rgbaL[j+1],im.rgbaL[j+2]];
+  });
+  const cell=parseFloat($("inCell").value)||0;
+  const dem=S.gridarMDT(nuvem,cell,360);
+  gridarCores(dem,nuvem,estado.cores);
+  if($("inFill").checked) S.preencherVazios(dem,14);
+  estado.dem=dem;
+  estado.slope=S.declividade(dem);
+  estado.demStats=S.estatMDT(dem);
+  estado.g=lerGeo();
+  const zrefCampo=$("inZref");
+  if(!zrefCampo.dataset.manual) zrefCampo.value=estado.demStats.media.toFixed(2);
+  recalcularVolumes();
+  estado.params={
+    nomeA:estado.nomeA,nomeB:estado.nomeB,wOrig:im.wo,hOrig:im.ho,w:im.w,h:im.h,
+    modo,base,H,foco,sensor,fpx,cell:dem.cell,
+    metric:$("inMetrica").value,win:parseInt($("inJanela").value),
+    dmin:parseInt($("inDmin").value),dmax:parseInt($("inDmax").value),vtol:parseInt($("inVtol").value),
+    gsd:S.gsd(H,foco,sensor,im.wo), recorte:im.roi, prealinhado:!!im.prealinhado,
+    sigmaZ:S.erroZ(H,0.5,fpx,base)
+  };
+  estado.qc=S.avaliarQualidade({dispStats:res.stats,params:estado.params,
+    demStats:estado.demStats,nuvem,g:estado.g});
+  montarResultados();
+  construirGeometriaGL();
+  irPara("viewer");
+}
+
+function gridarCores(dem,nuvem,cores){
+  const n=dem.nx*dem.ny;
+  const r=new Float64Array(n),g=new Float64Array(n),b=new Float64Array(n),c=new Int32Array(n);
+  for(let i=0;i<nuvem.n;i++){
+    const xi=S.clamp(Math.round((nuvem.x[i]-dem.x0)/dem.cell),0,dem.nx-1);
+    const yi=S.clamp(Math.round((nuvem.y[i]-dem.y0)/dem.cell),0,dem.ny-1);
+    const p=yi*dem.nx+xi;
+    r[p]+=cores[i][0]; g[p]+=cores[i][1]; b[p]+=cores[i][2]; c[p]++;
+  }
+  const cor=new Uint8Array(n*3);
+  for(let p=0;p<n;p++){
+    if(c[p]>0){ cor[p*3]=r[p]/c[p]; cor[p*3+1]=g[p]/c[p]; cor[p*3+2]=b[p]/c[p]; }
+    else { cor[p*3]=cor[p*3+1]=cor[p*3+2]=150; }
+  }
+  estado.demCor=cor;
+}
+
+function recalcularVolumes(){
+  if(!estado.dem) return;
+  const zref=parseFloat($("inZref").value)||0;
+  estado.vol=S.volumes(estado.dem,zref);
+  const eq=parseFloat($("inEqd").value)||1;
+  estado.curvas=S.curvasNivel(estado.dem,eq);
+  desenharDEM(); desenharCorteAterro();
+  $("volKpis").innerHTML=[
+    kpi("Volume de corte",S.nf(estado.vol.corte,1),"m³"),
+    kpi("Volume de aterro",S.nf(estado.vol.aterro,1),"m³"),
+    kpi("Saldo",S.nf(estado.vol.liquido,1),"m³"),
+    kpi("Área em corte",S.nf(estado.vol.areaCorte,1),"m²"),
+    kpi("Área em aterro",S.nf(estado.vol.areaAterro,1),"m²"),
+    kpi("Curvas geradas",estado.curvas.length,"cotas")
+  ].join("");
+}
+$("btnVol").onclick=()=>{
+  $("inZref").dataset.manual="1";
+  const cell=parseFloat($("inCell").value)||0;
+  if(estado.nuvem){
+    const dem=S.gridarMDT(estado.nuvem,cell,360);
+    gridarCores(dem,estado.nuvem,estado.cores);
+    if($("inFill").checked) S.preencherVazios(dem,14);
+    estado.dem=dem; estado.slope=S.declividade(dem); estado.demStats=S.estatMDT(dem);
+    if(estado.params) estado.params.cell=dem.cell;
+    construirGeometriaGL();
+  }
+  recalcularVolumes(); montarResultados();
+};
+
+function montarResultados(){
+  const d=estado.demStats, r=estado.res.stats, p=estado.params;
+  $("resKpis").innerHTML=[
+    kpi("Pontos 3D",estado.nuvem.n.toLocaleString("pt-BR"),""),
+    kpi("Área coberta",S.nf(d.area,1),"m²"),
+    kpi("Cota mínima",S.nf(d.min,2),"m"),
+    kpi("Cota máxima",S.nf(d.max,2),"m"),
+    kpi("Amplitude",S.nf(d.amplitude,2),"m"),
+    kpi("Célula do MDT",S.nf(estado.dem.cell,2),"m"),
+    kpi("GSD",S.nf(p.gsd*100,2),"cm/px"),
+    kpi("Erro altimétrico 1σ","± "+S.nf(p.sigmaZ,3),"m"),
+    kpi("Cobertura estéreo",S.nf(r.cobertura*100,1),"%")
+  ].join("");
+  const tb=$("qcTable").querySelector("tbody");
+  tb.innerHTML="<tr><th>Verificação</th><th>Situação</th><th>Observação</th></tr>"+
+    estado.qc.map(q=>{
+      const cor = /adequad|consistente|declarado/.test(q.status)?"var(--ok)":
+                  (/insuficiente|elevado|suspeita|baixa/.test(q.status)?"var(--err)":"var(--warn)");
+      return "<tr><td>"+q.nome+"</td><td style='color:"+cor+";font-weight:600'>"+q.status+"</td><td>"+q.obs+"</td></tr>";
+    }).join("");
+}
+
+/* ---------- mapas 2D do MDT ---------- */
+function corHipso(t){
+  const paleta=[[26,92,140],[46,144,120],[120,180,80],[220,205,110],[190,130,70],[150,95,70],[235,235,235]];
+  t=S.clamp(t,0,1)*(paleta.length-1);
+  const i=Math.floor(t), f=t-i, a=paleta[i], b=paleta[Math.min(paleta.length-1,i+1)];
+  return [a[0]+(b[0]-a[0])*f, a[1]+(b[1]-a[1])*f, a[2]+(b[2]-a[2])*f];
+}
+function desenharDEM(){
+  const dem=estado.dem, st=estado.demStats;
+  if(!dem) return;
+  const cv=$("cvDem"), esc=Math.max(1,Math.floor(520/dem.nx));
+  cv.width=dem.nx*esc; cv.height=dem.ny*esc;
+  const ctx=cv.getContext("2d");
+  const id=ctx.createImageData(dem.nx,dem.ny);
+  for(let y=0;y<dem.ny;y++) for(let x=0;x<dem.nx;x++){
+    const p=y*dem.nx+x, q=((dem.ny-1-y)*dem.nx+x)*4;
+    if(dem.mask[p]){
+      const c=corHipso((dem.z[p]-st.min)/Math.max(1e-6,st.amplitude));
+      id.data[q]=c[0]; id.data[q+1]=c[1]; id.data[q+2]=c[2]; id.data[q+3]=255;
+    } else { id.data[q]=id.data[q+1]=id.data[q+2]=40; id.data[q+3]=255; }
+  }
+  const tmp=document.createElement("canvas"); tmp.width=dem.nx; tmp.height=dem.ny;
+  tmp.getContext("2d").putImageData(id,0,0);
+  ctx.imageSmoothingEnabled=false;
+  ctx.drawImage(tmp,0,0,cv.width,cv.height);
+  ctx.strokeStyle="rgba(20,20,20,.55)"; ctx.lineWidth=1;
+  ctx.font="10px system-ui";
+  for(const c of estado.curvas){
+    for(const linha of c.linhas){
+      ctx.beginPath();
+      linha.forEach((pt,i)=>{
+        const X=(pt[0]-dem.x0)/dem.cell*esc;
+        const Y=cv.height-(pt[1]-dem.y0)/dem.cell*esc;
+        i?ctx.lineTo(X,Y):ctx.moveTo(X,Y);
+      });
+      ctx.stroke();
+    }
+  }
+}
+function desenharCorteAterro(){
+  const dem=estado.dem, vol=estado.vol;
+  if(!dem||!vol) return;
+  const cv=$("cvCut"), esc=Math.max(1,Math.floor(520/dem.nx));
+  cv.width=dem.nx*esc; cv.height=dem.ny*esc;
+  const ctx=cv.getContext("2d");
+  let maxd=0;
+  for(let p=0;p<dem.nx*dem.ny;p++) if(dem.mask[p]) maxd=Math.max(maxd,Math.abs(dem.z[p]-vol.zref));
+  const id=ctx.createImageData(dem.nx,dem.ny);
+  for(let y=0;y<dem.ny;y++) for(let x=0;x<dem.nx;x++){
+    const p=y*dem.nx+x, q=((dem.ny-1-y)*dem.nx+x)*4;
+    if(dem.mask[p]){
+      const d=(dem.z[p]-vol.zref)/Math.max(1e-6,maxd);
+      if(d>0){ id.data[q]=255; id.data[q+1]=255-200*d; id.data[q+2]=255-220*d; }
+      else { id.data[q]=255+220*d; id.data[q+1]=255+160*d; id.data[q+2]=255; }
+      id.data[q+3]=255;
+    } else { id.data[q]=id.data[q+1]=id.data[q+2]=40; id.data[q+3]=255; }
+  }
+  const tmp=document.createElement("canvas"); tmp.width=dem.nx; tmp.height=dem.ny;
+  tmp.getContext("2d").putImageData(id,0,0);
+  ctx.imageSmoothingEnabled=false;
+  ctx.drawImage(tmp,0,0,cv.width,cv.height);
+}
+
+/* ==========================================================================
+   Visualizador 3D — WebGL puro, sem bibliotecas
+   ========================================================================== */
+const GL={ctx:null,prog:null,buf:{},cam:{theta:-0.6,phi:1.0,dist:1,alvo:[0,0,0]},
+  nMesh:0,nPontos:0,nLinhas:0,grade:true,pronto:false,escala:1};
+
+function mat4Mult(a,b){
+  const o=new Float32Array(16);
+  for(let i=0;i<4;i++) for(let j=0;j<4;j++){
+    let s=0; for(let k=0;k<4;k++) s+=a[k*4+j]*b[i*4+k];
+    o[i*4+j]=s;
+  }
+  return o;
+}
+function perspectiva(fov,asp,zn,zf){
+  const f=1/Math.tan(fov/2);
+  return new Float32Array([f/asp,0,0,0, 0,f,0,0, 0,0,(zf+zn)/(zn-zf),-1, 0,0,2*zf*zn/(zn-zf),0]);
+}
+function lookAt(o,c,up){
+  const z=norm([o[0]-c[0],o[1]-c[1],o[2]-c[2]]);
+  const x=norm(cross(up,z)), y=cross(z,x);
+  return new Float32Array([x[0],y[0],z[0],0, x[1],y[1],z[1],0, x[2],y[2],z[2],0,
+    -dot(x,o),-dot(y,o),-dot(z,o),1]);
+}
+const dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
+const cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];
+const norm=a=>{const l=Math.hypot(a[0],a[1],a[2])||1;return [a[0]/l,a[1]/l,a[2]/l];};
+
+const VS=`attribute vec3 aPos; attribute vec3 aCol; attribute vec3 aNor;
+uniform mat4 uMVP; uniform float uExag; uniform float uPt;
+varying vec3 vCol; varying vec3 vNor;
+void main(){
+  vec3 p = vec3(aPos.x, aPos.y, aPos.z*uExag);
+  gl_Position = uMVP*vec4(p,1.0);
+  gl_PointSize = uPt;
+  vCol = aCol; vNor = normalize(vec3(aNor.x, aNor.y, aNor.z/max(uExag,0.001)));
+}`;
+const FS=`precision mediump float;
+varying vec3 vCol; varying vec3 vNor;
+uniform float uLuz;
+void main(){
+  vec3 L = normalize(vec3(0.45,0.35,0.82));
+  float d = max(dot(normalize(vNor),L),0.0);
+  float k = mix(1.0, 0.35+0.75*d, uLuz);
+  gl_FragColor = vec4(vCol*k,1.0);
+}`;
+
+function initGL(){
+  const cv=$("gl");
+  const gl=cv.getContext("webgl",{antialias:true,preserveDrawingBuffer:true});
+  if(!gl){ msg("viewerMsg","err","Este navegador não expõe WebGL. Os cálculos e as exportações continuam disponíveis."); return null; }
+  const comp=(t,s)=>{const sh=gl.createShader(t);gl.shaderSource(sh,s);gl.compileShader(sh);
+    if(!gl.getShaderParameter(sh,gl.COMPILE_STATUS)) console.warn(gl.getShaderInfoLog(sh)); return sh;};
+  const p=gl.createProgram();
+  gl.attachShader(p,comp(gl.VERTEX_SHADER,VS));
+  gl.attachShader(p,comp(gl.FRAGMENT_SHADER,FS));
+  gl.linkProgram(p); gl.useProgram(p);
+  gl.enable(gl.DEPTH_TEST);
+  GL.ctx=gl; GL.prog=p;
+  GL.loc={pos:gl.getAttribLocation(p,"aPos"),col:gl.getAttribLocation(p,"aCol"),
+    nor:gl.getAttribLocation(p,"aNor"),mvp:gl.getUniformLocation(p,"uMVP"),
+    exag:gl.getUniformLocation(p,"uExag"),pt:gl.getUniformLocation(p,"uPt"),
+    luz:gl.getUniformLocation(p,"uLuz")};
+  ["pos","col","nor"].forEach(k=>{ if(GL.loc[k]>=0) gl.enableVertexAttribArray(GL.loc[k]); });
+  montarControles(cv);
+  return gl;
+}
+
+function montarControles(cv){
+  let arrast=false, lx=0, ly=0, shift=false;
+  cv.addEventListener("mousedown",e=>{arrast=true;lx=e.clientX;ly=e.clientY;shift=e.shiftKey;});
+  window.addEventListener("mouseup",()=>arrast=false);
+  window.addEventListener("mousemove",e=>{
+    if(!arrast) return;
+    const dx=e.clientX-lx, dy=e.clientY-ly; lx=e.clientX; ly=e.clientY;
+    if(shift||e.shiftKey){
+      const k=GL.cam.dist*0.0016;
+      GL.cam.alvo[0]-=dx*k*Math.cos(GL.cam.theta);
+      GL.cam.alvo[1]-=dx*k*Math.sin(GL.cam.theta);
+      GL.cam.alvo[2]+=dy*k;
+    } else {
+      GL.cam.theta-=dx*0.007;
+      GL.cam.phi=S.clamp(GL.cam.phi-dy*0.007,0.05,Math.PI/2-0.02);
+    }
+    desenharGL();
+  });
+  cv.addEventListener("wheel",e=>{
+    e.preventDefault();
+    GL.cam.dist*=e.deltaY>0?1.12:0.89;
+    desenharGL();
+  },{passive:false});
+}
+
+function corDeModo(){
+  const dem=estado.dem, st=estado.demStats, modo=$("vColor").value;
+  const n=dem.nx*dem.ny, cor=new Float32Array(n*3);
+  for(let p=0;p<n;p++){
+    let c;
+    if(modo==="photo") c=[estado.demCor[p*3],estado.demCor[p*3+1],estado.demCor[p*3+2]];
+    else if(modo==="hypso") c=corHipso((dem.z[p]-st.min)/Math.max(1e-6,st.amplitude));
+    else {
+      const s=S.clamp((estado.slope[p]||0)/60,0,1);
+      c=[60+195*s, 190-150*s, 90-40*s];
+    }
+    cor[p*3]=c[0]/255; cor[p*3+1]=c[1]/255; cor[p*3+2]=c[2]/255;
+  }
+  return cor;
+}
+
+function construirGeometriaGL(){
+  const gl=GL.ctx||initGL();
+  if(!gl||!estado.dem) return;
+  const dem=estado.dem, st=estado.demStats;
+  const cxm=dem.x0+dem.nx*dem.cell/2, cym=dem.y0+dem.ny*dem.cell/2, czm=st.media;
+  const ext=Math.max(dem.nx*dem.cell,dem.ny*dem.cell);
+  GL.escala=ext;
+  const cor=corDeModo();
+  /* vértices da grade */
+  const n=dem.nx*dem.ny;
+  const pos=new Float32Array(n*3), nor=new Float32Array(n*3), col=new Float32Array(n*3);
+  for(let y=0;y<dem.ny;y++) for(let x=0;x<dem.nx;x++){
+    const p=y*dem.nx+x;
+    pos[p*3]=dem.x0+x*dem.cell-cxm;
+    pos[p*3+1]=dem.y0+y*dem.cell-cym;
+    pos[p*3+2]=(dem.mask[p]?dem.z[p]:st.media)-czm;
+    col[p*3]=cor[p*3]; col[p*3+1]=cor[p*3+1]; col[p*3+2]=cor[p*3+2];
+  }
+  for(let y=0;y<dem.ny;y++) for(let x=0;x<dem.nx;x++){
+    const p=y*dem.nx+x;
+    const zx=(pos[(y*dem.nx+Math.min(dem.nx-1,x+1))*3+2]-pos[(y*dem.nx+Math.max(0,x-1))*3+2]);
+    const zy=(pos[(Math.min(dem.ny-1,y+1)*dem.nx+x)*3+2]-pos[(Math.max(0,y-1)*dem.nx+x)*3+2]);
+    const v=norm([-zx,-zy,2*dem.cell]);
+    nor[p*3]=v[0]; nor[p*3+1]=v[1]; nor[p*3+2]=v[2];
+  }
+  const idx=[];
+  for(let y=0;y<dem.ny-1;y++) for(let x=0;x<dem.nx-1;x++){
+    const a=y*dem.nx+x,b=a+1,c=(y+1)*dem.nx+x+1,d=(y+1)*dem.nx+x;
+    if(!dem.mask[a]||!dem.mask[b]||!dem.mask[c]||!dem.mask[d]) continue;
+    idx.push(a,b,c,a,c,d);
+  }
+  const linhas=[];
+  for(let y=0;y<dem.ny-1;y++) for(let x=0;x<dem.nx-1;x++){
+    const a=y*dem.nx+x,b=a+1,d=(y+1)*dem.nx+x;
+    if(dem.mask[a]&&dem.mask[b]) linhas.push(a,b);
+    if(dem.mask[a]&&dem.mask[d]) linhas.push(a,d);
+  }
+  const g=(dados,tipo)=>{const bf=gl.createBuffer();
+    gl.bindBuffer(tipo||gl.ARRAY_BUFFER,bf);
+    gl.bufferData(tipo||gl.ARRAY_BUFFER,dados,gl.STATIC_DRAW); return bf;};
+  GL.buf.pos=g(pos); GL.buf.col=g(col); GL.buf.nor=g(nor);
+  GL.buf.idx=g(new Uint32Array(idx),gl.ELEMENT_ARRAY_BUFFER);
+  GL.buf.lin=g(new Uint32Array(linhas),gl.ELEMENT_ARRAY_BUFFER);
+  GL.nMesh=idx.length; GL.nLinhas=linhas.length; GL.nPontos=n;
+  GL.ext32 = gl.getExtension("OES_element_index_uint");
+  if(!GL.ext32 && (n>65535)){
+    /* sem índices de 32 bits, reduz a malha para pontos */
+    $("vMode").value="points";
+  }
+  GL.cam.dist=ext*1.4; GL.cam.alvo=[0,0,0];
+  GL.pronto=true;
+  redimensionarGL();
+}
+
+function redimensionarGL(){
+  const gl=GL.ctx; if(!gl) return;
+  const cv=$("gl"), dpr=Math.min(2,window.devicePixelRatio||1);
+  cv.width=cv.clientWidth*dpr; cv.height=520*dpr;
+  gl.viewport(0,0,cv.width,cv.height);
+  desenharGL();
+}
+window.addEventListener("resize",()=>{ if(GL.pronto) redimensionarGL(); });
+
+function desenharGL(){
+  const gl=GL.ctx;
+  if(!gl||!GL.pronto) return;
+  const escuro=document.documentElement.getAttribute("data-theme")==="dark";
+  gl.clearColor(escuro?0.11:0.96, escuro?0.12:0.97, escuro?0.14:0.98, 1);
+  gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
+  const cv=$("gl"), asp=cv.width/Math.max(1,cv.height);
+  const c=GL.cam;
+  const olho=[c.alvo[0]+c.dist*Math.cos(c.phi)*Math.cos(c.theta),
+              c.alvo[1]+c.dist*Math.cos(c.phi)*Math.sin(c.theta),
+              c.alvo[2]+c.dist*Math.sin(c.phi)];
+  const P=perspectiva(50*Math.PI/180,asp,GL.escala*0.005,GL.escala*12);
+  const V=lookAt(olho,c.alvo,[0,0,1]);
+  gl.uniformMatrix4fv(GL.loc.mvp,false,mat4Mult(P,V));
+  gl.uniform1f(GL.loc.exag,parseFloat($("vExag").value));
+  gl.uniform1f(GL.loc.pt,parseFloat($("vPt").value));
+  const modo=$("vMode").value;
+  gl.uniform1f(GL.loc.luz,modo==="mesh"?1:0);
+  const bind=(b,loc)=>{gl.bindBuffer(gl.ARRAY_BUFFER,b);gl.vertexAttribPointer(loc,3,gl.FLOAT,false,0,0);};
+  bind(GL.buf.pos,GL.loc.pos); bind(GL.buf.col,GL.loc.col); bind(GL.buf.nor,GL.loc.nor);
+  if(modo==="mesh" && GL.nMesh){
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,GL.buf.idx);
+    gl.drawElements(gl.TRIANGLES,GL.nMesh,gl.UNSIGNED_INT,0);
+  } else if(modo==="wire" && GL.nLinhas){
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,GL.buf.lin);
+    gl.drawElements(gl.LINES,GL.nLinhas,gl.UNSIGNED_INT,0);
+  } else {
+    gl.drawArrays(gl.POINTS,0,GL.nPontos);
+  }
+  $("glhud").textContent="arraste = orbitar · roda = zoom · shift+arraste = deslocar   |   "+
+    (estado.demStats?("amplitude "+S.nf(estado.demStats.amplitude,2)+" m · célula "+S.nf(estado.dem.cell,2)+" m"):"");
+}
+["vMode","vColor"].forEach(id=>$(id).onchange=()=>{ if(estado.dem){construirGeometriaGL();} });
+$("vExag").oninput=()=>{ $("vExagV").textContent=S.nf(parseFloat($("vExag").value),1)+"×"; desenharGL(); };
+$("vPt").oninput=()=>{ $("vPtV").textContent=$("vPt").value; desenharGL(); };
+$("vTop").onclick=()=>{GL.cam.phi=Math.PI/2-0.03;GL.cam.theta=-Math.PI/2;desenharGL();};
+$("vFront").onclick=()=>{GL.cam.phi=0.08;GL.cam.theta=-Math.PI/2;desenharGL();};
+$("vIso").onclick=()=>{GL.cam.phi=0.75;GL.cam.theta=-0.6;desenharGL();};
+$("vGrid").onclick=()=>{GL.grade=!GL.grade;desenharGL();};
+$("vSnap").onclick=()=>{ desenharGL(); baixar($("gl").toDataURL("image/png"),"vista_3d.png",true); };
+
+/* ==========================================================================
+   Exportação
+   ========================================================================== */
+function baixar(conteudo,nome,ehURL){
+  const a=document.createElement("a");
+  a.download=nome;
+  a.href = ehURL ? conteudo : URL.createObjectURL(new Blob([conteudo],{type:"text/plain;charset=utf-8"}));
+  document.body.appendChild(a); a.click(); a.remove();
+}
+function contexto(){
+  return {params:estado.params, dispStats:estado.res.stats, nuvem:estado.nuvem,
+    dem:estado.dem, demStats:estado.demStats, vol:estado.vol, curvas:estado.curvas,
+    g:estado.g, qc:estado.qc};
+}
+$("expBox").addEventListener("click",e=>{
+  const b=e.target.closest("button[data-exp]");
+  if(!b) return;
+  if(!estado.dem){ msg("expMsg","err","Processe o par estereoscópico antes de exportar."); return; }
+  const tipo=b.dataset.exp, g=estado.g=lerGeo(), ctx=contexto();
+  const base="terreno_"+new Date().toISOString().slice(0,10);
+  try{
+    if(tipo==="ply") baixar(S.expPLY(estado.nuvem,estado.cores,g),base+".ply");
+    else if(tipo==="obj") baixar(S.expOBJ(estado.dem,g),base+".obj");
+    else if(tipo==="stl") baixar(S.expSTL(estado.dem,g),base+".stl");
+    else if(tipo==="xyz") baixar(S.expXYZ(estado.nuvem,g),base+".xyz");
+    else if(tipo==="csv") baixar("\uFEFF"+S.expCSV(estado.nuvem,estado.cores,g),base+".csv");
+    else if(tipo==="asc") baixar(S.expASC(estado.dem,g),base+".asc");
+    else if(tipo==="dxf") baixar(S.expDXF(estado.curvas,g),base+"_curvas.dxf");
+    else if(tipo==="geojson") baixar(S.expGeoJSON(estado.curvas,g),base+"_curvas.geojson");
+    else if(tipo==="json") baixar(S.expProjeto(ctx),base+"_projeto.json");
+    else if(tipo==="md") baixar(S.expRelatorio(ctx),base+"_relatorio.md");
+    else if(tipo==="prj") baixar(S.expPRJ(g.epsg),base+".prj");
+    else if(tipo==="png") baixar($("cvDisp").toDataURL("image/png"),base+"_disparidade.png",true);
+    msg("expMsg","ok","Arquivo <b>"+tipo.toUpperCase()+"</b> gerado.");
+  }catch(err){
+    msg("expMsg","err","Falha ao gerar o arquivo: "+err.message);
+  }
+});
+
+/* ==========================================================================
+   Par sintético de demonstração — terreno conhecido, para validar o fluxo
+   ========================================================================== */
+function ruidoFractal(w,h,semente){
+  let s=semente||1;
+  const rnd=()=>{s=(s*1664525+1013904223)%4294967296; return s/4294967296;};
+  const acc=new Float32Array(w*h);
+  for(let oct=0;oct<5;oct++){
+    const cel=Math.pow(2,5-oct)*3, amp=Math.pow(0.55,oct);
+    const gw=Math.ceil(w/cel)+2, gh=Math.ceil(h/cel)+2;
+    const g=new Float32Array(gw*gh);
+    for(let i=0;i<gw*gh;i++) g[i]=rnd();
+    for(let y=0;y<h;y++) for(let x=0;x<w;x++){
+      const fx=x/cel, fy=y/cel, ix=Math.floor(fx), iy=Math.floor(fy);
+      const tx=fx-ix, ty=fy-iy;
+      const sx=tx*tx*(3-2*tx), sy=ty*ty*(3-2*ty);
+      const a=g[iy*gw+ix],b=g[iy*gw+ix+1],c=g[(iy+1)*gw+ix],d=g[(iy+1)*gw+ix+1];
+      acc[y*w+x]+=amp*((a+(b-a)*sx)+((c+(d-c)*sx)-(a+(b-a)*sx))*sy);
+    }
+  }
+  return acc;
+}
+function gerarParSintetico(){
+  const w=900,h=675, H=45, base=9, foco=6.72, sensor=9.65;
+  const fpx=S.focalPx(foco,sensor,w);
+  const textura=ruidoFractal(w,h,7);
+  const relevo=new Float32Array(w*h);
+  for(let y=0;y<h;y++) for(let x=0;x<w;x++){
+    const u=x/w,v=y/h;
+    let z = 6*Math.exp(-(((u-0.32)**2+(v-0.42)**2)/0.02))
+          + 4*Math.exp(-(((u-0.7)**2+(v-0.65)**2)/0.03))
+          + 3.5*u + 1.2*Math.sin(u*9)*Math.cos(v*7);
+    if(u>0.52&&u<0.72&&v>0.18&&v<0.36) z+=9;            // edificação
+    relevo[y*w+x]=z;
+  }
+  const A=new Uint8ClampedArray(w*h*4), B=new Uint8ClampedArray(w*h*4);
+  const prof=new Float32Array(w*h);
+  for(let i=0;i<w*h;i++){
+    const t=textura[i], z=relevo[i];
+    const tom=40+190*t;
+    const verde = z>8.5 ? 0.55 : 1;
+    A[i*4]=S.clamp(tom*(z>8.5?1.05:0.85),0,255);
+    A[i*4+1]=S.clamp(tom*verde+30,0,255);
+    A[i*4+2]=S.clamp(tom*0.7,0,255);
+    A[i*4+3]=255;
+    prof[i]=H-z;
+  }
+  for(let i=0;i<w*h*4;i++) B[i]=0;
+  const preenchido=new Uint8Array(w*h);
+  const zbuf=new Float32Array(w*h).fill(Infinity);   // profundidade já escrita em cada pixel
+  for(let y=0;y<h;y++) for(let x=0;x<w;x++){
+    const i=y*w+x;
+    const d=fpx*base/prof[i];
+    const xd=Math.round(x-d);
+    if(xd<0||xd>=w) continue;
+    const j=y*w+xd;
+    if(preenchido[j] && prof[i]>=zbuf[j]) continue;  // o mais próximo oclui o mais distante
+    B[j*4]=A[i*4]; B[j*4+1]=A[i*4+1]; B[j*4+2]=A[i*4+2]; B[j*4+3]=255;
+    preenchido[j]=1; zbuf[j]=prof[i];
+  }
+  for(let y=0;y<h;y++) for(let x=1;x<w;x++){
+    const j=y*w+x;
+    if(!preenchido[j]){ const k=y*w+x-1;
+      B[j*4]=B[k*4];B[j*4+1]=B[k*4+1];B[j*4+2]=B[k*4+2];B[j*4+3]=255; }
+  }
+  const mk=(dados)=>{
+    const cv=document.createElement("canvas"); cv.width=w; cv.height=h;
+    const c=cv.getContext("2d"); const id=c.createImageData(w,h);
+    id.data.set(dados); c.putImageData(id,0,0);
+    return cv.toDataURL("image/png");
+  };
+  let zMin=Infinity,zMax=-Infinity;
+  for(let i=0;i<relevo.length;i++){ if(relevo[i]<zMin)zMin=relevo[i]; if(relevo[i]>zMax)zMax=relevo[i]; }
+  return {a:mk(A),b:mk(B),w,h,H,base,foco,sensor,zMin,zMax};
+}
+$("btnDemo").onclick=()=>{
+  const p=gerarParSintetico();
+  let carregadas=0;
+  const fim=()=>{ if(++carregadas===2){
+    mostrarPreview("A"); mostrarPreview("B");
+    $("inBase").value=p.base; $("inAlt").value=p.H;
+    $("inFoco").value=p.foco; $("inSensor").value=p.sensor;
+    $("inModo").value="nadir";
+    estado.demoZ={zMin:p.zMin,zMax:p.zMax};
+    delete $("inDmax").dataset.manual;
+    atualizarGeometria();
+    $("statusTag").textContent="par de demonstração carregado";
+    msg("msgGeom","ok","Par sintético gerado com relevo conhecido (amplitude real de "+
+      S.nf(p.zMax-p.zMin,2)+" m, edificação de 9 m). Use-o para conferir o fluxo e a acurácia do sistema.");
+  }};
+  const ia=new Image(); ia.onload=()=>{estado.imgA=ia;estado.nomeA="demo_esquerda.png";estado.exifA=null;fim();}; ia.src=p.a;
+  const ib=new Image(); ib.onload=()=>{estado.imgB=ib;estado.nomeB="demo_direita.png";estado.exifB=null;fim();}; ib.src=p.b;
+};
+
+$("btnReset").onclick=()=>{ if(confirm("Limpar fotos, parâmetros e resultados?")) location.reload(); };
+
+/* ==========================================================================
+   Manual interativo
+   ========================================================================== */
+const MANUAL=[
+{id:"inicio",t:"Visão geral",c:`
+<h2>Visão geral</h2>
+<p>O EstereoTerreno Pro reconstrói a superfície de um terreno a partir de <b>duas fotografias</b> tomadas de posições distintas. É o mesmo princípio da visão binocular humana: um ponto próximo desloca-se mais entre as duas vistas do que um ponto distante, e esse deslocamento — a <b>disparidade</b> — converte-se diretamente em distância.</p>
+<div class="form">Z = f · B / d</div>
+<p>onde <code>Z</code> é a distância da câmera ao ponto, <code>f</code> a distância focal em pixels, <code>B</code> a base entre as duas tomadas e <code>d</code> a disparidade em pixels.</p>
+<h3>O que o sistema entrega</h3>
+<ul>
+<li>Mapa de disparidade com controle de qualidade por unicidade, consistência esquerda–direita e remoção de manchas.</li>
+<li>Nuvem de pontos métrica e modelo digital do terreno em grade regular.</li>
+<li>Visualizador tridimensional com exagero vertical, textura fotográfica, hipsometria e declividade.</li>
+<li>Volumetria de corte e aterro, curvas de nível e onze formatos de exportação.</li>
+</ul>
+<h3>O que o sistema não é</h3>
+<p>Não substitui a aerofotogrametria com apoio de campo nem o levantamento topográfico convencional para fins de medição contratual. Trata-se de um instrumento de <b>reconhecimento rápido</b>, adequado a estudos preliminares, acompanhamento de obra e verificação de ordem de grandeza.</p>`},
+
+{id:"captura",t:"Como fotografar",c:`
+<h2>Como fotografar o par</h2>
+<ol class="steps">
+<li>Mantenha a <b>mesma altura</b> nas duas tomadas. Variações de altura introduzem escala diferente entre as imagens.</li>
+<li>Desloque-se <b>lateralmente</b>, perpendicular ao eixo óptico, sem girar a câmera. O deslocamento é a base <code>B</code>.</li>
+<li>Garanta <b>sobreposição superior a 60%</b> entre as duas fotos.</li>
+<li>Trave o foco e a exposição. Mudanças de exposição prejudicam a correspondência, ainda que a métrica census reduza bastante esse efeito.</li>
+<li>Evite superfícies sem textura (asfalto novo, laje limpa, água). Sem textura não há correspondência possível.</li>
+<li>Prefira dia claro com nuvens altas: sombras duras criam falsos relevos.</li>
+</ol>
+<h3>Escolha da base</h3>
+<p>A relação entre a base e a altura de voo governa toda a acurácia. A faixa recomendada é:</p>
+<div class="form">0,15 ≤ B/H ≤ 0,80</div>
+<p>Base curta demais achata o relevo e amplifica o ruído; base longa demais reduz a sobreposição e cria oclusões. Para um voo a 40 m, uma base entre 6 e 30 m é adequada.</p>
+<h3>Fotos de janelas de edifício</h3>
+<p>Use o modo <b>oblíquo</b>. Duas janelas do mesmo pavimento, separadas por alguns metros, funcionam bem para terrenos próximos. Meça a distância entre as janelas com trena — essa é a base.</p>`},
+
+{id:"video",t:"Quadros de vídeo",c:`
+<h2>Extrair o par de um vídeo de drone</h2>
+<p>Vídeo de drone é a fonte mais tentadora e a mais traiçoeira. A maior parte de um voo produz quadros <b>inúteis</b> para estereoscopia, e o motivo é geométrico, não de qualidade de imagem.</p>
+<h3>Por que o avanço frontal não serve</h3>
+<p>A correspondência por blocos procura o ponto homólogo <b>ao longo da linha horizontal</b>. Isso só é válido quando a câmera se desloca perpendicularmente ao seu eixo óptico. Quando o drone avança na direção para onde a câmera aponta, o deslocamento aparente passa a ser <b>radial</b>: os pontos se afastam do centro da imagem em todas as direções, e não existe linha alguma sobre a qual buscar. O mesmo vale para giros do drone ou da gimbal.</p>
+<div class="form">deslocamento lateral  →  paralaxe horizontal  →  utilizável
+avanço frontal ou giro →  paralaxe radial     →  inutilizável</div>
+<h3>Como escolher os quadros</h3>
+<ol class="steps">
+<li>Procure um trecho em que o drone se desloque <b>lateralmente</b> (voo de través) ou avance com a câmera apontada para o lado, a 90° da trajetória.</li>
+<li>Extraia dois quadros separados por <b>0,5 a 2 segundos</b>. Intervalos maiores acumulam rotação e mudança de altura.</li>
+<li>Confirme que o enquadramento quase não girou e que a altura não mudou.</li>
+<li>Estime a base: velocidade do drone × intervalo entre os quadros. A 5 m/s e 1 s de intervalo, a base é 5 m.</li>
+<li>Rode o <b>diagnóstico do par</b> antes de processar. Ele mede rotação, escala e dispersão vertical e diz se o par serve.</li>
+</ol>
+<h3>Recorte obrigatório</h3>
+<p>Quadros capturados da tela trazem moldura do reprodutor, barra de progresso, relógio e barra de tarefas. Essas regiões são <b>idênticas nas duas imagens</b> e correspondem perfeitamente na disparidade zero, contaminando as estatísticas e o mapa. Use a detecção automática de bordas estáticas na aba de entrada.</p>
+<h3>Pré-alinhamento</h3>
+<p>Quando o par apresenta apenas rotação moderada ou pequena diferença de escala, o pré-alinhamento estima uma transformação de similaridade e reamostra a segunda foto antes da correspondência, reintroduzindo a disparidade esperada no plano de referência. Ele corrige giro e escala — <b>não corrige avanço frontal</b>, porque esse defeito altera a própria geometria epipolar.</p>`},
+
+{id:"parametros",t:"Parâmetros",c:`
+<h2>Parâmetros de processamento</h2>
+<h3>Resolução de processamento</h3>
+<p>Controla o compromisso entre detalhe e tempo. O custo cresce aproximadamente com o quadrado da largura. Comece em 480 px, confirme que o relevo faz sentido, e só então aumente.</p>
+<h3>Métrica</h3>
+<p><b>Census 5×5</b> compara a ordem relativa de brilho na vizinhança, não os valores absolutos. Por isso tolera diferenças de exposição e sombreamento entre as duas fotos. <b>SAD</b> é mais rápida e adequada a pares tomados com exposição idêntica.</p>
+<h3>Janela de agregação</h3>
+<p>Janelas grandes produzem superfícies suaves e poucos vazios, mas arredondam quinas e bordas de edificações. Janelas pequenas preservam detalhe ao custo de ruído. Entre 7 e 11 px atende à maioria dos casos.</p>
+<h3>Faixa de disparidade</h3>
+<p>Restringir a faixa acelera o processamento e evita falsos positivos. O botão de estimativa automática executa um alinhamento global em baixa resolução e ajusta os limites. A disparidade esperada no plano do terreno aparece no painel de geometria.</p>
+<h3>Tolerância vertical</h3>
+<p>Um par perfeitamente retificado tem disparidade apenas horizontal. Como isso raramente ocorre com fotos de mão ou drone, a busca admite um desvio vertical de ± 1 a 3 px.</p>
+<h3>Unicidade e consistência</h3>
+<p>A <b>unicidade</b> descarta pixels em que o segundo melhor candidato é quase tão bom quanto o melhor — típico de superfícies repetitivas. A <b>consistência esquerda–direita</b> confirma a correspondência no sentido inverso e elimina oclusões.</p>`},
+
+{id:"precisao",t:"Precisão e erros",c:`
+<h2>Precisão e propagação de erros</h2>
+<p>O erro altimétrico decorre diretamente do erro de correspondência:</p>
+<div class="form">σZ = Z² · σd / (f · B)</div>
+<p>Três consequências práticas:</p>
+<ul>
+<li>O erro cresce com o <b>quadrado da distância</b>. Dobrar a altura de voo quadruplica o erro.</li>
+<li>Aumentar a <b>base</b> reduz o erro proporcionalmente — é a variável mais barata de melhorar.</li>
+<li>Aumentar a resolução aumenta <code>f</code> em pixels e reduz o erro na mesma proporção.</li>
+</ul>
+<h3>Ordem de grandeza</h3>
+<p>Com refinamento subpixel, σd fica tipicamente entre 0,3 e 0,8 px em superfícies texturizadas. Sem apoio de campo, espere erro relativo de 3% a 10% na escala absoluta, governado pela incerteza da base e da focal.</p>
+<h3>Como melhorar</h3>
+<ol class="steps">
+<li>Meça a base com trena ou GPS de precisão, não por estimativa.</li>
+<li>Confirme a focal e o tamanho do sensor no manual da câmera; o EXIF frequentemente traz apenas o equivalente 35 mm.</li>
+<li>Levante ao menos duas distâncias conhecidas no terreno e compare com o modelo.</li>
+<li>Aumente a resolução de processamento antes de aumentar a janela.</li>
+</ol>`},
+
+{id:"laboratorio",t:"Laboratório",c:`
+<h2>Laboratório de precisão</h2>
+<p>Estes campos usam exatamente as mesmas funções do motor de cálculo do sistema.</p>
+<div class="grid g3" style="margin:12px 0">
+<div><label class="f">Altura / distância Z (m)</label><input type="number" id="labZ" value="40"></div>
+<div><label class="f">Base B (m)</label><input type="number" id="labB" value="10"></div>
+<div><label class="f">Focal (mm)</label><input type="number" id="labF" value="6.72"></div>
+<div><label class="f">Sensor (mm)</label><input type="number" id="labS" value="9.65"></div>
+<div><label class="f">Largura da imagem (px)</label><input type="number" id="labW" value="4000"></div>
+<div><label class="f">Erro de correspondência σd (px)</label><input type="number" id="labD" value="0.5" step="0.1"></div>
+</div>
+<div class="kpis" id="labOut"></div>`},
+
+{id:"volumes",t:"Volumetria",c:`
+<h2>Volumetria de corte e aterro</h2>
+<p>O modelo digital do terreno é convertido em grade regular de células quadradas. Para cada célula válida calcula-se a diferença entre a cota reconstruída e a cota de referência do projeto:</p>
+<div class="form">V = Σ (z − z_ref) · a²</div>
+<p>Valores positivos compõem o <b>corte</b> (material a remover) e negativos o <b>aterro</b> (material a repor). O saldo indica se a terraplenagem é superavitária ou deficitária em volume.</p>
+<h3>Cuidados</h3>
+<ul>
+<li>Vazios não preenchidos não entram no cômputo e subestimam os volumes. Verifique a cobertura antes de confiar no resultado.</li>
+<li>A vegetação é reconstruída como superfície, não como terreno. Em áreas arborizadas o corte aparece superestimado.</li>
+<li>A célula do MDT define a resolução do volume. Células muito pequenas para a densidade de pontos criam vazios; muito grandes suavizam feições.</li>
+<li>Os volumes são geométricos e não consideram empolamento nem compactação.</li>
+</ul>`},
+
+{id:"exportacao",t:"Exportação",c:`
+<h2>Formatos de saída</h2>
+<table>
+<tr><th>Formato</th><th>Conteúdo</th><th>Destino típico</th></tr>
+<tr><td>PLY</td><td>nuvem de pontos com cor</td><td>CloudCompare, MeshLab</td></tr>
+<tr><td>OBJ</td><td>malha triangular do MDT</td><td>SketchUp, Blender, Rhino</td></tr>
+<tr><td>STL</td><td>malha sólida</td><td>impressão 3D, CAD</td></tr>
+<tr><td>XYZ</td><td>coordenadas puras</td><td>Civil 3D, topografia</td></tr>
+<tr><td>CSV</td><td>planilha com cor</td><td>Excel, análise tabular</td></tr>
+<tr><td>ASC</td><td>grade ESRI do MDT</td><td>QGIS, ArcGIS</td></tr>
+<tr><td>DXF</td><td>curvas de nível 3D</td><td>AutoCAD, BricsCAD</td></tr>
+<tr><td>GeoJSON</td><td>curvas de nível</td><td>web GIS, Leaflet</td></tr>
+<tr><td>JSON</td><td>projeto completo</td><td>integração e auditoria</td></tr>
+<tr><td>PNG</td><td>mapa de disparidade</td><td>documentação</td></tr>
+<tr><td>MD</td><td>relatório com memória de cálculo</td><td>anexo técnico</td></tr>
+</table>
+<h3>Georreferenciamento</h3>
+<p>Informando a coordenada da origem e o azimute do eixo X, todas as saídas passam a usar coordenadas absolutas. O arquivo PRJ acompanha o ASC para que o GIS reconheça o sistema declarado.</p>`},
+
+{id:"solucao",t:"Solução de problemas",c:`
+<h2>Solução de problemas</h2>
+<h3>O relevo aparece invertido</h3>
+<p>As fotos estão trocadas. Use <b>Inverter A ↔ B</b> na aba de entrada e processe novamente.</p>
+<h3>Cobertura muito baixa</h3>
+<p>Rode primeiro o <b>diagnóstico do par</b>: ele separa as duas causas possíveis. Se o par for inadequado, nenhum ajuste de parâmetro resolve — o problema está na geometria de tomada e é preciso escolher outros quadros. Se o par for adequado, verifique nesta ordem: a faixa de disparidade (use a estimativa automática), a textura da superfície e a tolerância vertical. Aumentar a janela de agregação para 11 ou 13 px costuma resolver.</p>
+<h3>Cobertura próxima de zero com disparidades absurdas</h3>
+<p>Sintoma típico de duas causas combinadas: campos de câmera vazios e quadros de vídeo distantes entre si. Sem focal e sensor não há escala; com quadros distantes não há geometria epipolar horizontal. O sistema agora bloqueia o primeiro caso e alerta sobre o segundo antes de processar.</p>
+<h3>Superfície ondulada em terreno plano</h3>
+<p>Sinal de erro de correspondência. Aumente a unicidade, ative a mediana e eleve a resolução de processamento.</p>
+<h3>Escala evidentemente errada</h3>
+<p>A base ou a focal estão incorretas. A escala é diretamente proporcional à base: se o modelo saiu com metade do tamanho real, a base informada é metade da real.</p>
+<h3>Processamento muito lento</h3>
+<p>Reduza a resolução, estreite a faixa de disparidade e zere a tolerância vertical. O custo é proporcional ao produto dos três.</p>`}
+];
+
+function montarManual(){
+  $("manNav").innerHTML=MANUAL.map((m,i)=>'<a href="#" data-m="'+m.id+'"'+(i===0?' class="active"':'')+'>'+m.t+'</a>').join("");
+  abrirManual(MANUAL[0].id);
+  $("manNav").addEventListener("click",e=>{
+    const a=e.target.closest("a[data-m]"); if(!a) return;
+    e.preventDefault(); abrirManual(a.dataset.m);
+  });
+}
+function abrirManual(id){
+  const m=MANUAL.find(x=>x.id===id); if(!m) return;
+  $("manBody").innerHTML=m.c;
+  document.querySelectorAll("#manNav a").forEach(a=>a.classList.toggle("active",a.dataset.m===id));
+  try{ localStorage.setItem("estereo.manual",id); }catch(e){}
+  if(id==="laboratorio") montarLaboratorio();
+}
+function montarLaboratorio(){
+  const calc=()=>{
+    const Z=parseFloat($("labZ").value),B=parseFloat($("labB").value),
+      F=parseFloat($("labF").value),Sw=parseFloat($("labS").value),
+      W=parseFloat($("labW").value),sd=parseFloat($("labD").value);
+    const fpx=S.focalPx(F,Sw,W);
+    const sz=S.erroZ(Z,sd,fpx,B);
+    const g=S.gsd(Z,F,Sw,W);
+    const d=fpx*B/Z;
+    $("labOut").innerHTML=[
+      kpi("Focal em pixels",S.nf(fpx,1),"px"),
+      kpi("Disparidade no plano",S.nf(d,1),"px"),
+      kpi("GSD",S.nf(g*100,2),"cm/px"),
+      kpi("Erro altimétrico 1σ","± "+S.nf(sz,3),"m"),
+      kpi("Relação B/H",S.nf(B/Z,3),""),
+      kpi("Erro relativo",S.nf(sz/Z*100,2),"%")
+    ].join("");
+  };
+  ["labZ","labB","labF","labS","labW","labD"].forEach(id=>$(id).addEventListener("input",calc));
+  calc();
+}
+$("manSearch").addEventListener("input",e=>{
+  const q=e.target.value.trim().toLowerCase();
+  if(!q){ document.querySelectorAll("#manNav a").forEach(a=>a.style.display=""); return; }
+  const achados=MANUAL.filter(m=>(m.t+" "+m.c).toLowerCase().includes(q));
+  document.querySelectorAll("#manNav a").forEach(a=>{
+    a.style.display=achados.some(m=>m.id===a.dataset.m)?"":"none";
+  });
+  if(achados.length){
+    abrirManual(achados[0].id);
+    const re=new RegExp("("+q.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+")","gi");
+    const body=$("manBody");
+    body.innerHTML=body.innerHTML.replace(/>([^<]+)</g,(m,txt)=>">"+txt.replace(re,"<mark>$1</mark>")+"<");
+  }
+});
+montarManual();
+try{ const mid=localStorage.getItem("estereo.manual"); if(mid) abrirManual(mid); }catch(e){}
+atualizarGeometria();
+
+/* ==========================================================================
+   Tela de abertura: animação do princípio estereoscópico e avisos legais
+   ========================================================================== */
+const SPLASH=(function(){
+  const DUR=4000;                     // duração da animação, em milissegundos
+  const el=()=>document.getElementById("splash");
+  let t0=0, raf=0, encerrada=false, terreno=null;
+
+  /* campo de alturas do terreno ilustrativo */
+  function gerarTerreno(nx,ny){
+    const z=new Float32Array(nx*ny);
+    for(let j=0;j<ny;j++) for(let i=0;i<nx;i++){
+      const u=i/(nx-1)*2-1, v=j/(ny-1)*1.5-0.75;
+      let h=0.34*Math.exp(-(((u+0.42)**2+(v+0.18)**2)/0.14))
+           +0.22*Math.exp(-(((u-0.46)**2+(v-0.28)**2)/0.10))
+           +0.10*Math.exp(-(((u-0.05)**2+(v+0.45)**2)/0.05))
+           +0.035*Math.sin(u*6.1)*Math.cos(v*5.3)
+           -0.055*v;
+      z[j*nx+i]=h;
+    }
+    return {z,nx,ny};
+  }
+
+  /* projeção em perspectiva de um ponto do mundo para a tela */
+  function projetar(p,c){
+    const ca=Math.cos(c.ang), sa=Math.sin(c.ang);
+    const X=p[0]*ca-p[1]*sa, Y=p[0]*sa+p[1]*ca;
+    const cp=Math.cos(c.incl), sp=Math.sin(c.incl);
+    const yc=p[2]*cp-Y*sp;
+    const zc=c.dist-(Y*cp+p[2]*sp);
+    if(zc<0.05) return null;
+    return [c.cx+c.f*X/zc, c.cy-c.f*yc/zc, zc];
+  }
+
+  const suave=t=>t<=0?0:t>=1?1:t*t*(3-2*t);
+  const faixa=(t,a,b)=>suave((t-a)/Math.max(1e-6,b-a));
+
+  function paleta(){
+    const escuro=document.documentElement.getAttribute("data-theme")==="dark";
+    return escuro
+      ? {fundo:"#0c0f13", fundo2:"#141a21", malha:"#2f4a5e", linha:"#5aa7dc",
+         alto:"#7fd8bb", baixo:"#2b6ea3", raio:"#e0b15c", texto:"#c9d3dd", ponto:"#eaf2f8"}
+      : {fundo:"#eef2f6", fundo2:"#dde5ec", malha:"#b9c8d6", linha:"#1d6fa5",
+         alto:"#1d9e75", baixo:"#185fa5", raio:"#b07a12", texto:"#4a5765", ponto:"#10344f"};
+  }
+
+  function quadro(ctx,W,Hpx,t){
+    const P=paleta();
+    const tn=Math.max(0,Math.min(1,t));
+    ctx.clearRect(0,0,W,Hpx);
+    const g=ctx.createLinearGradient(0,0,0,Hpx);
+    g.addColorStop(0,P.fundo2); g.addColorStop(1,P.fundo);
+    ctx.fillStyle=g; ctx.fillRect(0,0,W,Hpx);
+
+    if(!terreno) terreno=gerarTerreno(46,34);
+    const {z,nx,ny}=terreno;
+    const esc=Math.min(W,Hpx*1.7);
+    const cam={ang:-0.68+tn*0.72, incl:0.50+0.09*faixa(tn,0.15,1),
+      dist:3.55-0.42*faixa(tn,0.1,1), f:esc*0.88, cx:W*0.5, cy:Hpx*0.50};
+
+    /* o relevo cresce a partir do plano, como se fosse reconstruído */
+    const alturaRel=faixa(tn,0.30,0.88);
+    const pt=(i,j)=>{
+      const u=i/(nx-1)*2-1, v=j/(ny-1)*1.5-0.75;
+      return projetar([u,v,z[j*nx+i]*alturaRel],cam);
+    };
+    const cota=(i,j)=>z[j*nx+i]*alturaRel;
+
+    /* malha: linhas surgindo da frente para o fundo */
+    const revela=faixa(tn,0.06,0.46);
+    ctx.lineWidth=Math.max(1,esc*0.0011);
+    for(let i=0;i<nx;i+=2){
+      if((1-i/(nx-1))>revela+0.12 && (i/(nx-1))>revela+0.12) continue;
+      ctx.beginPath(); let ini2=false;
+      for(let j=0;j<ny;j++){
+        const p=pt(i,j); if(!p){ini2=false;continue;}
+        ini2?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]); ini2=true;
+      }
+      ctx.strokeStyle=P.malha; ctx.globalAlpha=0.34*revela; ctx.stroke();
+    }
+    for(let j=0;j<ny;j++){
+      const ordem=j/(ny-1);
+      const vis=Math.min(1,Math.max(0,(revela-ordem*0.55)*3));
+      if(vis<=0.01) continue;
+      ctx.beginPath(); let ini2=false;
+      for(let i=0;i<nx;i++){
+        const p=pt(i,j); if(!p){ini2=false;continue;}
+        ini2?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]); ini2=true;
+      }
+      let alto=0;
+      for(let i=0;i<nx;i++) alto=Math.max(alto,z[j*nx+i]);
+      ctx.strokeStyle=alto>0.16?P.alto:P.linha;
+      ctx.globalAlpha=(0.30+0.40*faixa(tn,0.55,1))*vis;
+      ctx.stroke();
+    }
+    ctx.globalAlpha=1;
+
+    /* curvas de nível pontilhadas, ao final */
+    const cn=faixa(tn,0.72,1);
+    if(cn>0.01){
+      const r=Math.max(1.1,esc*0.0016);
+      for(let nivel=0.07;nivel<0.34;nivel+=0.055){
+        const alvo=nivel*alturaRel;
+        ctx.beginPath();
+        for(let j=0;j<ny;j++) for(let i=0;i<nx-1;i++){
+          const a=cota(i,j), b=cota(i+1,j);
+          if((a-alvo)*(b-alvo)>=0) continue;
+          const f2=(alvo-a)/((b-a)||1e-6);
+          const pa=pt(i,j), pb=pt(i+1,j);
+          if(!pa||!pb) continue;
+          const x=pa[0]+(pb[0]-pa[0])*f2, y=pa[1]+(pb[1]-pa[1])*f2;
+          ctx.moveTo(x+r,y); ctx.arc(x,y,r,0,Math.PI*2);
+        }
+        ctx.fillStyle=P.alto; ctx.globalAlpha=0.70*cn; ctx.fill();
+      }
+      ctx.globalAlpha=1;
+    }
+
+    /* as duas estações de tomada, a base e os feixes convergentes */
+    const apCam=faixa(tn,0.02,0.16);
+    if(apCam>0.01){
+      const meiaBase=0.52, alturaCam=0.34, recuo=-0.72;
+      const estacoes=[[-meiaBase,recuo,alturaCam],[meiaBase,recuo,alturaCam]];
+      const tela=estacoes.map(e=>projetar(e,cam));
+      const feixe=faixa(tn,0.12,0.50);
+      const desvanece=1-0.72*faixa(tn,0.70,0.96);
+      if(feixe>0.01){
+        ctx.lineWidth=Math.max(1,esc*0.0009);
+        for(let k=0;k<=13;k++){
+          const fr=k/13;
+          const i=Math.round((0.08+0.84*fr)*(nx-1));
+          const j=Math.round((0.30+0.52*(((k*5)%7)/6))*(ny-1));
+          const alvo=pt(i,j); if(!alvo) continue;
+          const av=Math.min(1,Math.max(0,feixe*1.3-fr*0.22));
+          if(av<=0) continue;
+          tela.forEach((e,idx)=>{
+            if(!e) return;
+            ctx.beginPath(); ctx.moveTo(e[0],e[1]);
+            ctx.lineTo(e[0]+(alvo[0]-e[0])*av, e[1]+(alvo[1]-e[1])*av);
+            ctx.strokeStyle=idx===0?P.raio:P.linha;
+            ctx.globalAlpha=0.34*av*desvanece; ctx.stroke();
+          });
+          if(av>0.97){
+            ctx.beginPath();
+            ctx.arc(alvo[0],alvo[1],Math.max(1.8,esc*0.0028),0,Math.PI*2);
+            ctx.fillStyle=P.ponto;
+            ctx.globalAlpha=0.9*faixa(tn,0.26,0.50); ctx.fill();
+          }
+        }
+        ctx.globalAlpha=1;
+      }
+      if(tela[0]&&tela[1]){
+        ctx.beginPath(); ctx.moveTo(tela[0][0],tela[0][1]); ctx.lineTo(tela[1][0],tela[1][1]);
+        ctx.strokeStyle=P.texto; ctx.globalAlpha=0.5*apCam*desvanece;
+        ctx.setLineDash([esc*0.011,esc*0.009]); ctx.lineWidth=Math.max(1,esc*0.0011);
+        ctx.stroke(); ctx.setLineDash([]);
+        ctx.globalAlpha=0.92*apCam*desvanece;
+        ctx.fillStyle=P.texto; ctx.textAlign="center";
+        const fs=Math.max(11,Math.round(esc*0.019));
+        ctx.font="500 "+fs+"px system-ui,sans-serif";
+        ctx.fillText("B", (tela[0][0]+tela[1][0])/2, (tela[0][1]+tela[1][1])/2-fs*0.7);
+        ctx.font="400 "+Math.max(10,Math.round(esc*0.015))+"px system-ui,sans-serif";
+        ctx.fillText("foto A", tela[0][0], tela[0][1]-fs*1.5);
+        ctx.fillText("foto B", tela[1][0], tela[1][1]-fs*1.5);
+      }
+      tela.forEach((e,idx)=>{
+        if(!e) return;
+        const s2=esc*0.016*apCam;
+        ctx.globalAlpha=apCam*desvanece;
+        ctx.fillStyle=idx===0?P.raio:P.linha;
+        ctx.fillRect(e[0]-s2,e[1]-s2*0.68,s2*2,s2*1.36);
+        ctx.beginPath();
+        ctx.moveTo(e[0]-s2*0.46,e[1]+s2*0.68);
+        ctx.lineTo(e[0]+s2*0.46,e[1]+s2*0.68);
+        ctx.lineTo(e[0],e[1]+s2*1.6);
+        ctx.closePath(); ctx.fill();
+      });
+      ctx.globalAlpha=1;
+    }
+    return tn;
+  }
+
+  const FASES=[
+    [0.00,"Aquisição do par estereoscópico"],
+    [0.22,"Correspondência e medida da disparidade"],
+    [0.48,"Triangulação da nuvem de pontos"],
+    [0.72,"Modelo digital e curvas de nível"]
+  ];
+
+  function dimensionar(cv){
+    const dpr=Math.min(3,window.devicePixelRatio||1);   // alta resolução em telas densas
+    const W=cv.clientWidth||window.innerWidth, H=cv.clientHeight||window.innerHeight;
+    cv.width=Math.max(320,Math.round(W*dpr));
+    cv.height=Math.max(240,Math.round(H*dpr));
+    return {W:cv.width,H:cv.height};
+  }
+
+  function animar(ts){
+    if(encerrada) return;
+    const cv=document.getElementById("cvSplash");
+    if(!cv) return;
+    if(!t0) t0=ts;
+    const t=(ts-t0)/DUR;
+    try{
+      const ctx=cv.getContext("2d");
+      if(ctx){
+        if(cv.width<32||Math.abs(cv.clientWidth*(window.devicePixelRatio||1)-cv.width)>64) dimensionar(cv);
+        quadro(ctx,cv.width,cv.height,t);
+      }
+    }catch(e){}
+    const barra=document.querySelector("#splashBarra > i");
+    if(barra) barra.style.width=(Math.min(1,t)*100).toFixed(1)+"%";
+    const fase=document.getElementById("splashFase");
+    if(fase){
+      let nome=FASES[0][1];
+      for(const f of FASES) if(t>=f[0]) nome=f[1];
+      if(fase.textContent!==nome) fase.textContent=nome;
+    }
+    if(t>=1){ mostrarLegal(); return; }
+    raf=requestAnimationFrame(animar);
+  }
+
+  function mostrarLegal(){
+    if(encerrada) return;
+    encerrada=true;
+    if(raf) cancelAnimationFrame(raf);
+    const s=el(); if(!s) return;
+    s.classList.add("fase-legal");
+    const b=document.getElementById("btnAceito");
+    if(b) setTimeout(()=>{ try{ b.focus(); }catch(e){} },120);
+  }
+
+  function fechar(){
+    const s=el(); if(!s) return;
+    try{
+      if(document.getElementById("legalNao") && document.getElementById("legalNao").checked)
+        localStorage.setItem("estereo.abertura","oculta");
+    }catch(e){}
+    s.classList.add("saindo");
+    setTimeout(()=>{ if(s&&s.parentNode) s.parentNode.removeChild(s); },420);
+  }
+
+  let iniciada=false;
+  function iniciar(){
+    if(iniciada) return;           // protege contra dupla inicialização
+    const s=el(); if(!s) return;
+    iniciada=true;
+    let oculta=false;
+    try{ oculta=localStorage.getItem("estereo.abertura")==="oculta"; }catch(e){}
+    if(oculta){ if(s.parentNode) s.parentNode.removeChild(s); return; }
+    const cv=document.getElementById("cvSplash");
+    if(cv) dimensionar(cv);
+    window.addEventListener("resize",()=>{ if(!encerrada&&cv) dimensionar(cv); });
+    s.addEventListener("click",e=>{ if(!encerrada && !e.target.closest("#legal")) mostrarLegal(); });
+    document.addEventListener("keydown",e=>{
+      if(e.key==="Escape" && !encerrada) mostrarLegal();
+      else if(e.key==="Escape" && encerrada) fechar();
+    });
+    const b=document.getElementById("btnAceito");
+    if(b) b.onclick=fechar;
+    raf=requestAnimationFrame(animar);
+  }
+
+  return {iniciar, mostrarLegal, fechar, quadro, gerarTerreno, projetar, dimensionar,
+    get duracao(){return DUR;}, get encerrada(){return encerrada;}};
+})();
+if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",SPLASH.iniciar);
+else SPLASH.iniciar();
+
+/* superfície pública para a bateria de testes automatizados */
+if(typeof window!=="undefined") window.APP={
+  estado, GL, MANUAL, lerExif, prepararImagens, reconstruirTudo, recalcularVolumes,
+  gerarParSintetico, contexto, lerGeo, atualizarGeometria, desenharDisparidade,
+  lerRoi, metricasProc, diagnosticar, renderDiag, desenharRoi, SPLASH,
+  corHipso, paletaTurbo, abrirManual, kpi
+};
+</script>
+</body>
+</html>
