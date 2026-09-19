@@ -244,7 +244,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/navier-stokes/` | 743475 bytes | 738489 caracteres |
 | `/analisador-estrutural-mef/` | 373711 bytes | 370394 caracteres |
 | `/heatflow-pro/` | 674639 bytes | 667480 caracteres |
-| `/dimensionamento-barragens/` | 212448 bytes | 210257 caracteres |
+| `/dimensionamento-barragens/` | 1703432 bytes | 1672816 caracteres |
 | `/estereoterreno-pro/` | 144441 bytes | 143361 caracteres |
 | `/entenda-ia/` | 175035 bytes | 172793 caracteres |
 | `/abc-fiscal/` | 351255 bytes | 349022 caracteres |
@@ -807,18 +807,20 @@ Observacoes:
 Rota: `/dimensionamento-barragens/`  
 Arquivo: `dimensionamento-barragens/index.html`
 
-Ultima inclusao:
+Ultima atualizacao:
 
-- Fonte: `C:\Users\ACER\Documents\Downloads\dimensionamento-barragens (2).html`
-- Data: 18/09/2026
-- Alteracao: inclusao de novo card e publicacao do aplicativo como HTML standalone.
+- Fonte: `C:\Users\ACER\Documents\Downloads\dimensionamento-barragens-v1.3.html`
+- Data: 19/09/2026
+- Versao: 1.3
+- Alteracao: substituicao do aplicativo pela nova versao, preservando a rota, o card e o filtro `Pavimentacao, Saneamento e Infraestrutura`.
 
 Observacoes:
 
 - Aplicativo standalone empacotado em HTML unico.
 - Tela inicial do site aponta para `/dimensionamento-barragens/`.
 - O card foi classificado no filtro `Pavimentacao, Saneamento e Infraestrutura`.
-- Validar apos futuras alteracoes os modelos de barragens de concreto, terra e enrocamento, hidrologia, vertedouro, estabilidade, quantitativos e relatorio.
+- A versao 1.3 acrescenta hidrogramas, percolacao 2D e catalogo SICRO integrado.
+- Validar apos futuras alteracoes os modelos de barragens de concreto, terra e enrocamento, hidrologia, vertedouro, percolacao, estabilidade, orcamento SICRO, quantitativos e relatorio.
 
 ### EstereoTerreno Pro
 
