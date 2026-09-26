@@ -148,6 +148,8 @@ Inventario originalmente verificado em 21/07/2026 e atualizado em 09/09/2026 par
 | 93 / TERRENO 3D | EstereoTerreno Pro | `/estereoterreno-pro/` | `C:\Obras Inteligentes\estereoterreno-pro\index.html` | existe | 200 |
 | 94 / CHUVA | ChuvaRisco Infra | `/chuvarisco-infra/` | `C:\Obras Inteligentes\chuvarisco-infra\index.html` | existe | 200 |
 | 95 / FIT | Calculadora do FIT | `/calculadora-fit/` | `C:\Obras Inteligentes\calculadora-fit\index.html` | existe | 200 |
+| 96 / IVA SICRO | Credito de IVA no SICRO | `/credito-iva-sicro/` | `C:\Obras Inteligentes\credito-iva-sicro\index.html` | existe | 200 |
+| 97 / IVAEQ | IVAeq Pro Servicos | `/ivaeq-pro-servicos/` | `C:\Obras Inteligentes\ivaeq-pro-servicos\index.html` | existe | 200 |
 
 ## Tamanhos verificados
 
@@ -250,6 +252,8 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/estereoterreno-pro/` | 144441 bytes | 143361 caracteres |
 | `/chuvarisco-infra/` | 2879637 bytes | 2876818 caracteres |
 | `/calculadora-fit/` | 900288 bytes | 898588 caracteres |
+| `/credito-iva-sicro/` | 2832042 bytes | 2584265 caracteres |
+| `/ivaeq-pro-servicos/` | 23070329 bytes | 23060308 caracteres |
 | `/entenda-ia/` | 175035 bytes | 172793 caracteres |
 | `/abc-fiscal/` | 351255 bytes | 349022 caracteres |
 
@@ -880,6 +884,44 @@ Observacoes:
 - Tela inicial do site aponta para `/calculadora-fit/`.
 - O card foi classificado no filtro `Orcamento`.
 - Validar apos futuras alteracoes o quadro de DMT, os atrasos A1 e A2, os resultados de custos com e sem FIT, os relatorios e as importacoes.
+
+### Credito de IVA no SICRO
+
+Rota: `/credito-iva-sicro/`
+Arquivo: `credito-iva-sicro/index.html`
+
+Ultima inclusao:
+
+- Fonte: `C:\Crédito IVA - Sicro\index.html`
+- Data: 26/09/2026
+- Versao: 1.0
+- Alteracao: inclusao de novo card e publicacao do aplicativo como HTML standalone.
+
+Observacoes:
+
+- Aplicativo standalone empacotado em HTML unico.
+- Tela inicial do site aponta para `/credito-iva-sicro/`.
+- O card foi classificado no filtro `Orcamento`.
+- Validar apos futuras alteracoes a consulta por insumo e composicao SICRO, a importacao de bases, os cenarios de transicao tributaria, o armazenamento local e as exportacoes.
+
+### IVAeq Pro Servicos
+
+Rota: `/ivaeq-pro-servicos/`
+Arquivo: `ivaeq-pro-servicos/index.html`
+
+Ultima inclusao:
+
+- Fonte: `C:\Crédito IVA - Sicro\IVAeq_Pro_Servicos_v4_4.html`
+- Data: 26/09/2026
+- Versao: 4.4
+- Alteracao: inclusao de novo card e publicacao do aplicativo como HTML standalone.
+
+Observacoes:
+
+- Aplicativo standalone empacotado em HTML unico.
+- Tela inicial do site aponta para `/ivaeq-pro-servicos/`.
+- O card foi classificado no filtro `Orcamento`.
+- Validar apos futuras alteracoes o calculo do IVA equivalente, os impactos no BDI e no saldo contratual, os cenarios de reequilibrio e os relatorios.
 
 ### SolarPro
 
@@ -2490,6 +2532,8 @@ $headers=@{ 'User-Agent'='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
   '/estereoterreno-pro/',
   '/chuvarisco-infra/',
   '/calculadora-fit/',
+  '/credito-iva-sicro/',
+  '/ivaeq-pro-servicos/',
   '/entenda-ia/'
 ) | ForEach-Object {
   $url = "https://www.obrasinteligentes.ia.br$_?v=check"

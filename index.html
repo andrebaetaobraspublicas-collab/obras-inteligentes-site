@@ -540,7 +540,7 @@ body.modal-open{overflow:hidden}
       <button class="filter-btn" type="button" data-filter="Orcamento">Or&ccedil;amento</button>
       <button class="filter-btn" type="button" data-filter="Artigos">Artigos</button>
     </div>
-    <div class="app-filter-status" id="appFilterStatus">95 aplicativos encontrados</div>
+    <div class="app-filter-status" id="appFilterStatus">97 aplicativos encontrados</div>
   </div>
 
   <div class="apps">
@@ -1613,6 +1613,31 @@ body.modal-open{overflow:hidden}
       <div class="meta">Abrir sistema &middot; FIT e SICRO</div>
     </a>
 
+    <a class="app" href="/credito-iva-sicro/" aria-label="Abrir Credito de IVA no SICRO">
+      <span class="arrow">&rarr;</span>
+      <div class="app-num">96 / IVA SICRO</div>
+      <svg class="app-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M11 7h26v34l-5-3-4 3-4-3-4 3-4-3-5 3z"/>
+        <path d="M17 15h14M17 21h14M17 27h7M29 26v8M25 30h8"/>
+      </svg>
+      <h3>Cr&eacute;dito de IVA no SICRO</h3>
+      <p>Consulta e simula&ccedil;&atilde;o de cr&eacute;ditos estimados de IBS e CBS por insumo e composi&ccedil;&atilde;o SICRO, com transi&ccedil;&atilde;o tribut&aacute;ria de 2026 a 2033.</p>
+      <div class="meta">Abrir sistema &middot; IVA e SICRO</div>
+    </a>
+
+    <a class="app" href="/ivaeq-pro-servicos/" aria-label="Abrir IVAeq Pro Servicos - BDI e Reequilibrio">
+      <span class="arrow">&rarr;</span>
+      <div class="app-num">97 / IVAEQ</div>
+      <svg class="app-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M24 7v34M14 12h20M10 37h28"/>
+        <path d="M14 12L8 25h12l-6-13zM34 12l-6 13h12l-6-13z"/>
+        <path d="M8 25c1 4 11 4 12 0M28 25c1 4 11 4 12 0"/>
+      </svg>
+      <h3>IVAeq Pro Servi&ccedil;os</h3>
+      <p>An&aacute;lise do IVA equivalente em servi&ccedil;os, com impactos no BDI, no or&ccedil;amento e no saldo contratual para apoio a estudos de reequil&iacute;brio.</p>
+      <div class="meta">Abrir sistema &middot; BDI e reequil&iacute;brio</div>
+    </a>
+
   </div>
 </section>
 
@@ -1756,6 +1781,8 @@ body.modal-open{overflow:hidden}
         <a href="/estereoterreno-pro/">EstereoTerreno Pro - Reconstru&ccedil;&atilde;o 3D</a>
         <a href="/chuvarisco-infra/">ChuvaRisco Infra - Risco Clim&aacute;tico</a>
         <a href="/calculadora-fit/">Calculadora do FIT - SICRO</a>
+        <a href="/credito-iva-sicro/">Cr&eacute;dito de IVA no SICRO</a>
+        <a href="/ivaeq-pro-servicos/">IVAeq Pro Servi&ccedil;os</a>
         <a href="/canteiro-sicro/">Canteiro de Obras - Sicro</a>
         <a href="/locar-ou-comprar-pro/">Locar ou Comprar Pro</a>
         <a href="/acesscheck/">AcessCheck - Vistoria de Acessibilidade</a>
@@ -1939,7 +1966,9 @@ body.modal-open{overflow:hidden}
     ["/dimensionamento-barragens/", ["Pavimentacao, Saneamento e Infraestrutura", "dimensionamento barragens barragem concreto gravidade terra enrocamento hidrologia vertedouro estabilidade taludes percolacao piping subpressao tombamento deslizamento quantitativos orcamento relatorio infraestrutura saneamento"]],
     ["/estereoterreno-pro/", ["Pavimentacao, Saneamento e Infraestrutura", "estereoterreno pro estereo terreno estereoscopia reconstrução reconstrucao 3d duas fotos fotografias drone topografia fotogrametria modelo digital terreno mdt dem curvas nivel xyz obj csv infraestrutura pavimentacao"]],
     ["/chuvarisco-infra/", ["Riscos", "chuvarisco infra chuva risco riscos climaticos clima precipitacao pluviometria series pluviometricas cronograma prazo custo obras infraestrutura simulacao probabilistica monte carlo sicro fic planejamento orçamento orcamento"]],
-    ["/calculadora-fit/", ["Orcamento", "calculadora fit fator interferencia trafego sicro dmt distancia media transporte atraso a1 a2 custos com sem fit obras rodoviarias orcamento composicoes"]]
+    ["/calculadora-fit/", ["Orcamento", "calculadora fit fator interferencia trafego sicro dmt distancia media transporte atraso a1 a2 custos com sem fit obras rodoviarias orcamento composicoes"]],
+    ["/credito-iva-sicro/", ["Orcamento", "credito iva sicro ibs cbs insumos composicoes infraestrutura reforma tributaria transicao 2026 2033 importacao bases indexeddb orcamento"]],
+    ["/ivaeq-pro-servicos/", ["Orcamento", "ivaeq pro servicos iva equivalente bdi reequilibrio economico financeiro orcamento saldo contratual reforma tributaria ibs cbs"]]
   ]);
 
   const appCards = Array.from(document.querySelectorAll(".apps .app"));
