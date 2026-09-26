@@ -147,9 +147,10 @@ Inventario originalmente verificado em 21/07/2026 e atualizado em 09/09/2026 par
 | 92 / BARRAGENS | Dimensionamento de Barragens | `/dimensionamento-barragens/` | `C:\Obras Inteligentes\dimensionamento-barragens\index.html` | existe | 200 |
 | 93 / TERRENO 3D | EstereoTerreno Pro | `/estereoterreno-pro/` | `C:\Obras Inteligentes\estereoterreno-pro\index.html` | existe | 200 |
 | 94 / CHUVA | ChuvaRisco Infra | `/chuvarisco-infra/` | `C:\Obras Inteligentes\chuvarisco-infra\index.html` | existe | 200 |
-| 95 / FIT | Calculadora do FIT | `/calculadora-fit/` | `C:\Obras Inteligentes\calculadora-fit\index.html` | existe | 200 |
-| 96 / IVA SICRO | Credito de IVA no SICRO | `/credito-iva-sicro/` | `C:\Obras Inteligentes\credito-iva-sicro\index.html` | existe | 200 |
-| 97 / IVAEQ | IVAeq Pro Servicos | `/ivaeq-pro-servicos/` | `C:\Obras Inteligentes\ivaeq-pro-servicos\index.html` | existe | 200 |
+| 95 / FIT 1 | Calculadora do FIT - Opcao 1 | `/calculadora-fit/` | `C:\Obras Inteligentes\calculadora-fit\index.html` | existe | 200 |
+| 96 / FIT 2 | Calculadora do FIT - Opcao 2 | `/calculadora-fit-opcao-2/` | `C:\Obras Inteligentes\calculadora-fit-opcao-2\index.html` | existe | 200 |
+| 97 / IVA SICRO | Credito de IVA no SICRO | `/credito-iva-sicro/` | `C:\Obras Inteligentes\credito-iva-sicro\index.html` | existe | 200 |
+| 98 / IVAEQ | IVAeq Pro Servicos | `/ivaeq-pro-servicos/` | `C:\Obras Inteligentes\ivaeq-pro-servicos\index.html` | existe | 200 |
 
 ## Tamanhos verificados
 
@@ -252,6 +253,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/estereoterreno-pro/` | 144441 bytes | 143361 caracteres |
 | `/chuvarisco-infra/` | 2879637 bytes | 2876818 caracteres |
 | `/calculadora-fit/` | 900288 bytes | 898588 caracteres |
+| `/calculadora-fit-opcao-2/` | 14841494 bytes | 14676979 caracteres |
 | `/credito-iva-sicro/` | 2832042 bytes | 2584265 caracteres |
 | `/ivaeq-pro-servicos/` | 23070329 bytes | 23060308 caracteres |
 | `/entenda-ia/` | 175035 bytes | 172793 caracteres |
@@ -867,7 +869,7 @@ Observacoes:
 - O card foi classificado no filtro `Riscos`.
 - Validar apos futuras alteracoes as series pluviometricas, o cronograma, a simulacao probabilistica, os impactos de prazo e custo, a base SICRO e os relatorios.
 
-### Calculadora do FIT
+### Calculadora do FIT - Opcao 1
 
 Rota: `/calculadora-fit/`
 Arquivo: `calculadora-fit/index.html`
@@ -884,6 +886,25 @@ Observacoes:
 - Tela inicial do site aponta para `/calculadora-fit/`.
 - O card foi classificado no filtro `Orcamento`.
 - Validar apos futuras alteracoes o quadro de DMT, os atrasos A1 e A2, os resultados de custos com e sem FIT, os relatorios e as importacoes.
+
+### Calculadora do FIT - Opcao 2
+
+Rota: `/calculadora-fit-opcao-2/`
+Arquivo: `calculadora-fit-opcao-2/index.html`
+
+Ultima inclusao:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\SICRO_FIT_v1.3.html`
+- Data: 26/09/2026
+- Versao: 1.3
+- Alteracao: inclusao da segunda calculadora de FIT e identificacao visual das duas alternativas como Opcao 1 e Opcao 2.
+
+Observacoes:
+
+- Aplicativo standalone empacotado em HTML unico.
+- Tela inicial do site aponta para `/calculadora-fit-opcao-2/`.
+- O card foi classificado no filtro `Orcamento` e posicionado imediatamente ao lado da Opcao 1.
+- Validar apos futuras alteracoes a planilha orcamentaria, a memoria do FIT por rota, as premissas, as justificativas, o orcamento final e o memorial analitico.
 
 ### Credito de IVA no SICRO
 
@@ -2532,6 +2553,7 @@ $headers=@{ 'User-Agent'='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
   '/estereoterreno-pro/',
   '/chuvarisco-infra/',
   '/calculadora-fit/',
+  '/calculadora-fit-opcao-2/',
   '/credito-iva-sicro/',
   '/ivaeq-pro-servicos/',
   '/entenda-ia/'
