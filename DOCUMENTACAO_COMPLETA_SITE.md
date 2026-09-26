@@ -151,6 +151,7 @@ Inventario originalmente verificado em 21/07/2026 e atualizado em 09/09/2026 par
 | 96 / FIT 2 | Calculadora do FIT - Opcao 2 | `/calculadora-fit-opcao-2/` | `C:\Obras Inteligentes\calculadora-fit-opcao-2\index.html` | existe | 200 |
 | 97 / IVA SICRO | Credito de IVA no SICRO | `/credito-iva-sicro/` | `C:\Obras Inteligentes\credito-iva-sicro\index.html` | existe | 200 |
 | 98 / IVAEQ | IVAeq Pro Servicos | `/ivaeq-pro-servicos/` | `C:\Obras Inteligentes\ivaeq-pro-servicos\index.html` | existe | 200 |
+| 99 / SICRO AL | SICRO AL - Administracao Local | `/sicro-administracao-local/` | `C:\Obras Inteligentes\sicro-administracao-local\index.html` | existe | 200 |
 
 ## Tamanhos verificados
 
@@ -256,6 +257,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/calculadora-fit-opcao-2/` | 14841494 bytes | 14676979 caracteres |
 | `/credito-iva-sicro/` | 2832042 bytes | 2584265 caracteres |
 | `/ivaeq-pro-servicos/` | 23070329 bytes | 23060308 caracteres |
+| `/sicro-administracao-local/` | 18056743 bytes | 17892191 caracteres |
 | `/entenda-ia/` | 175035 bytes | 172793 caracteres |
 | `/abc-fiscal/` | 351255 bytes | 349022 caracteres |
 
@@ -943,6 +945,26 @@ Observacoes:
 - Tela inicial do site aponta para `/ivaeq-pro-servicos/`.
 - O card foi classificado no filtro `Orcamento`.
 - Validar apos futuras alteracoes o calculo do IVA equivalente, os impactos no BDI e no saldo contratual, os cenarios de reequilibrio e os relatorios.
+
+### SICRO AL - Administracao Local
+
+Rota: `/sicro-administracao-local/`
+Arquivo: `sicro-administracao-local/index.html`
+
+Ultima inclusao:
+
+- Fonte: `C:\Users\ACER\Documents\Downloads\SICRO_Administracao_Local_v1.0.html`
+- Data: 26/09/2026
+- Versao: 1.0
+- Alteracao: inclusao de novo card e publicacao do aplicativo como HTML standalone.
+
+Observacoes:
+
+- Aplicativo standalone empacotado em HTML unico.
+- Tela inicial do site aponta para `/sicro-administracao-local/`.
+- O card foi classificado no filtro `Orcamento`.
+- Este modulo e independente dos cards `Administracao Local e Canteiro de Obra` e `Canteiro de Obras - Sicro`, que permanecem inalterados.
+- Validar apos futuras alteracoes a natureza e o porte da obra, o pessoal, os periodos de atuacao, a base de precos, os custos especificos e o orcamento final da administracao local.
 
 ### SolarPro
 
@@ -2556,6 +2578,7 @@ $headers=@{ 'User-Agent'='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
   '/calculadora-fit-opcao-2/',
   '/credito-iva-sicro/',
   '/ivaeq-pro-servicos/',
+  '/sicro-administracao-local/',
   '/entenda-ia/'
 ) | ForEach-Object {
   $url = "https://www.obrasinteligentes.ia.br$_?v=check"
