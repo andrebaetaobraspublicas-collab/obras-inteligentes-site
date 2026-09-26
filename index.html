@@ -540,7 +540,7 @@ body.modal-open{overflow:hidden}
       <button class="filter-btn" type="button" data-filter="Orcamento">Or&ccedil;amento</button>
       <button class="filter-btn" type="button" data-filter="Artigos">Artigos</button>
     </div>
-    <div class="app-filter-status" id="appFilterStatus">94 aplicativos encontrados</div>
+    <div class="app-filter-status" id="appFilterStatus">95 aplicativos encontrados</div>
   </div>
 
   <div class="apps">
@@ -1601,6 +1601,18 @@ body.modal-open{overflow:hidden}
       <div class="meta">Abrir sistema &middot; risco clim&aacute;tico</div>
     </a>
 
+    <a class="app" href="/calculadora-fit/" aria-label="Abrir Calculadora do FIT - Fator de Interferencia de Trafego do SICRO">
+      <span class="arrow">&rarr;</span>
+      <div class="app-num">95 / FIT</div>
+      <svg class="app-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M7 35h34M12 35l5-22h14l5 22M17 13h14M15 22h18M13 29h22"/>
+        <path d="M24 16v3M24 25v2M24 31v2"/>
+      </svg>
+      <h3>Calculadora do FIT</h3>
+      <p>C&aacute;lculo do Fator de Interfer&ecirc;ncia de Tr&aacute;fego do SICRO, com quadro de DMT, atrasos A1 e A2 e compara&ccedil;&atilde;o de custos com e sem FIT.</p>
+      <div class="meta">Abrir sistema &middot; FIT e SICRO</div>
+    </a>
+
   </div>
 </section>
 
@@ -1743,6 +1755,7 @@ body.modal-open{overflow:hidden}
         <a href="/dimensionamento-barragens/">Dimensionamento de Barragens</a>
         <a href="/estereoterreno-pro/">EstereoTerreno Pro - Reconstru&ccedil;&atilde;o 3D</a>
         <a href="/chuvarisco-infra/">ChuvaRisco Infra - Risco Clim&aacute;tico</a>
+        <a href="/calculadora-fit/">Calculadora do FIT - SICRO</a>
         <a href="/canteiro-sicro/">Canteiro de Obras - Sicro</a>
         <a href="/locar-ou-comprar-pro/">Locar ou Comprar Pro</a>
         <a href="/acesscheck/">AcessCheck - Vistoria de Acessibilidade</a>
@@ -1925,7 +1938,8 @@ body.modal-open{overflow:hidden}
     ["/heatflow-pro/", ["Mecanica dos Fluidos e Transferencia de Calor", "heatflow pro heat flow conducao calor transferencia calor simulacao termica termico diferencas finitas conservativas 1d 2d 3d permanente transiente materiais editor geometrico mecanica fluidos"]],
     ["/dimensionamento-barragens/", ["Pavimentacao, Saneamento e Infraestrutura", "dimensionamento barragens barragem concreto gravidade terra enrocamento hidrologia vertedouro estabilidade taludes percolacao piping subpressao tombamento deslizamento quantitativos orcamento relatorio infraestrutura saneamento"]],
     ["/estereoterreno-pro/", ["Pavimentacao, Saneamento e Infraestrutura", "estereoterreno pro estereo terreno estereoscopia reconstrução reconstrucao 3d duas fotos fotografias drone topografia fotogrametria modelo digital terreno mdt dem curvas nivel xyz obj csv infraestrutura pavimentacao"]],
-    ["/chuvarisco-infra/", ["Riscos", "chuvarisco infra chuva risco riscos climaticos clima precipitacao pluviometria series pluviometricas cronograma prazo custo obras infraestrutura simulacao probabilistica monte carlo sicro fic planejamento orçamento orcamento"]]
+    ["/chuvarisco-infra/", ["Riscos", "chuvarisco infra chuva risco riscos climaticos clima precipitacao pluviometria series pluviometricas cronograma prazo custo obras infraestrutura simulacao probabilistica monte carlo sicro fic planejamento orçamento orcamento"]],
+    ["/calculadora-fit/", ["Orcamento", "calculadora fit fator interferencia trafego sicro dmt distancia media transporte atraso a1 a2 custos com sem fit obras rodoviarias orcamento composicoes"]]
   ]);
 
   const appCards = Array.from(document.querySelectorAll(".apps .app"));
