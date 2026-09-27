@@ -2357,6 +2357,8 @@ Backup antes desta alteracao:
 
 Em 27/09/2026, a home recebeu a secao `Livros do autor`, acessivel pelo novo botao da abertura, pelo menu superior e pelo rodape. A secao apresenta sete obras de autoria ou coautoria de Andre Baeta, com capas fornecidas pelo autor, resumos editoriais e links externos de referencia.
 
+As capas estao incorporadas diretamente no `index.html` em formato Base64 para evitar indisponibilidade de arquivos estaticos no Hostinger. Os JPGs originais permanecem preservados em `assets/livros/`.
+
 Capas locais:
 
 - `assets/livros/orcamento-controle-precos.jpg`
