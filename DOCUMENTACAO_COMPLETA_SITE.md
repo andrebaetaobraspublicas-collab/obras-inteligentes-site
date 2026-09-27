@@ -153,7 +153,7 @@ Inventario originalmente verificado em 21/07/2026 e atualizado em 09/09/2026 par
 | 98 / IVAEQ | IVAeq Pro Servicos | `/ivaeq-pro-servicos/` | `C:\Obras Inteligentes\ivaeq-pro-servicos\index.html` | existe | 200 |
 | 99 / SICRO AL | SICRO AL - Administracao Local | `/sicro-administracao-local/` | `C:\Obras Inteligentes\sicro-administracao-local\index.html` | existe | 200 |
 | 100 / PISOS | PisoCalc Pro | `/pisocalc-pro/` | `C:\Obras Inteligentes\pisocalc-pro\index.html` | existe | 200 |
-| 101 / VASOS | VasoCalc PRO | `/vasocalc-pro/` | `C:\Obras Inteligentes\vasocalc-pro\index.html` | existe | pendente de publicacao |
+| 101 / VASOS | VasoCalc PRO | `/vasocalc-pro/` | `C:\Obras Inteligentes\vasocalc-pro\index.html` | existe | 200 |
 
 ## Tamanhos verificados
 
@@ -261,7 +261,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/ivaeq-pro-servicos/` | 23070329 bytes | 23060308 caracteres |
 | `/sicro-administracao-local/` | 18056743 bytes | 17892191 caracteres |
 | `/pisocalc-pro/` | 216905 bytes | 214989 caracteres |
-| `/vasocalc-pro/` | 540402 bytes | pendente de publicacao |
+| `/vasocalc-pro/` | 540402 bytes | 531858 caracteres |
 | `/entenda-ia/` | 175035 bytes | 172793 caracteres |
 | `/abc-fiscal/` | 351255 bytes | 349022 caracteres |
 
