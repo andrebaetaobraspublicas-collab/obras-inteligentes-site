@@ -2353,6 +2353,31 @@ Backup antes desta alteracao:
 
 - `C:\Obras Inteligentes\backups\site-b66b9dd-before-artigos-20260720-071940.zip`
 
+## Livros do autor
+
+Em 27/09/2026, a home recebeu a secao `Livros do autor`, acessivel pelo novo botao da abertura, pelo menu superior e pelo rodape. A secao apresenta sete obras de autoria ou coautoria de Andre Baeta, com capas fornecidas pelo autor, resumos editoriais e links externos de referencia.
+
+Capas locais:
+
+- `assets/livros/orcamento-controle-precos.jpg`
+- `assets/livros/rdc.jpg`
+- `assets/livros/terceirizacao.jpg`
+- `assets/livros/lei-anticorrupcao.jpg`
+- `assets/livros/pareceres-engenharia.jpg`
+- `assets/livros/novo-regime-estatais.jpg`
+- `assets/livros/reforma-tributaria.jpg`
+
+Fontes consultadas para os resumos:
+
+- Instituto de Engenharia: `Orcamento e Controle de Precos de Obras Publicas`.
+- Touche Livros: `Regime Diferenciado de Contratacoes Publicas`.
+- Editora Forum: releases editoriais de `Terceirizacao` e `Novo Regime Juridico das Empresas Estatais`.
+- LEC: descricao de `Lei Anticorrupcao e Temas de Compliance`.
+- Clube de Autores: sinopse de `Pareceres de Engenharia`.
+- Catavento: sinopse de `Reforma Tributaria: Impacto nas Obras Publicas e o Novo BDI`.
+
+Validar apos futuras alteracoes o botao `Livros do autor`, a ancora `#livros`, o carregamento das sete capas, a grade responsiva e os links externos de referencia.
+
 ## Fluxo padrao para atualizar um modulo
 
 1. Verificar o estado do Git:

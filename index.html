@@ -179,6 +179,23 @@ h1 .hl{color:var(--cyan)}
 .post p{color:#aebfcc;font-size:14.5px;flex:1}
 .post .read{font-family:var(--mono);font-size:12px;color:var(--cyan);margin-top:22px}
 
+/* ---------- BOOKS ---------- */
+.books{background:#e8eeea;border-top:1px solid var(--grid);border-bottom:1px solid var(--grid)}
+.books-inner{padding:clamp(72px,10vw,128px) clamp(20px,5vw,64px);max-width:1320px;margin:0 auto}
+.books-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--grid);border:1px solid var(--grid)}
+.book{background:var(--paper);display:flex;flex-direction:column;min-width:0}
+.book-cover{
+  min-height:330px;padding:30px 24px;display:flex;align-items:center;justify-content:center;
+  background:#dde5e0;border-bottom:1px solid var(--grid);
+}
+.book-cover img{display:block;max-width:100%;width:auto;height:270px;object-fit:contain;box-shadow:0 14px 28px rgba(6,26,46,.18)}
+.book-body{padding:28px;display:flex;flex:1;flex-direction:column}
+.book-type{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--cyan);margin-bottom:12px}
+.book h3{font-family:var(--display);font-size:19px;line-height:1.25;color:var(--blueprint);margin-bottom:13px}
+.book p{font-size:14.5px;color:#4f6056;flex:1}
+.book-source{font-family:var(--mono);font-size:11.5px;color:var(--blueprint);margin-top:22px;padding-top:16px;border-top:1px solid var(--grid)}
+.book-source:hover{color:var(--cyan)}
+
 /* ---------- CTA ---------- */
 .final{text-align:center;padding:clamp(80px,11vw,140px) 24px;background:var(--paper)}
 .final h2{font-family:var(--display);font-weight:800;font-size:clamp(30px,5vw,52px);letter-spacing:-.025em;line-height:1.05;max-width:18ch;margin:0 auto 20px}
@@ -228,11 +245,11 @@ body.modal-open{overflow:hidden}
   .hero-grid{grid-template-columns:1fr;gap:40px}
   .hero-art{max-width:380px}
   .nav-links{display:none}
-  .apps,.posts{grid-template-columns:1fr}
+  .apps,.posts,.books-grid{grid-template-columns:1fr}
 }
 @media(min-width:881px) and (max-width:1180px){
   .apps{grid-template-columns:repeat(2,1fr)}
-  .posts{grid-template-columns:repeat(2,1fr)}
+  .posts,.books-grid{grid-template-columns:repeat(2,1fr)}
 }
 @media(min-width:1181px) and (max-width:1499px){
   .apps{grid-template-columns:repeat(4,1fr)}
@@ -447,6 +464,7 @@ body.modal-open{overflow:hidden}
     <div class="nav-links">
       <a href="#aplicativos">Aplicativos</a>
       <a href="#conteudo">Conteúdo</a>
+      <a href="#livros">Livros</a>
       <a href="#sobre">Sobre</a>
     </div>
     <div class="nav-domain">obrasinteligentes.ia.br</div>
@@ -461,6 +479,7 @@ body.modal-open{overflow:hidden}
         <a href="#aplicativos" class="btn btn-primary">Ver aplicativos →</a>
         <a href="#conteudo" class="btn btn-ghost">Ler o conteúdo</a>
         <a href="/entenda-ia/" class="btn btn-ghost">Entenda a IA</a>
+        <a href="#livros" class="btn btn-ghost">Livros do autor</a>
       </div>
     </div>
 
@@ -1704,6 +1723,89 @@ body.modal-open{overflow:hidden}
   </div>
 </section>
 
+<!-- BOOKS -->
+<section class="books" id="livros">
+  <div class="books-inner">
+    <div class="sec-head">
+      <div class="sec-eyebrow">Bibliografia</div>
+      <h2>Livros do autor</h2>
+      <p>Obras de autoria e coautoria de Andr&eacute; Baeta sobre engenharia de custos, contrata&ccedil;&otilde;es p&uacute;blicas, integridade e gest&atilde;o de contratos.</p>
+    </div>
+
+    <div class="books-grid">
+      <article class="book">
+        <div class="book-cover"><img src="assets/livros/orcamento-controle-precos.jpg" alt="Capa do livro Or&ccedil;amento e Controle de Pre&ccedil;os de Obras P&uacute;blicas" loading="lazy"></div>
+        <div class="book-body">
+          <div class="book-type">Autoria</div>
+          <h3>Or&ccedil;amento e Controle de Pre&ccedil;os de Obras P&uacute;blicas</h3>
+          <p>Apresenta conceitos e t&eacute;cnicas para elaborar e auditar or&ccedil;amentos de obras, analisar planilhas, identificar sobrepre&ccedil;o e superfaturamento e avaliar o equil&iacute;brio econ&ocirc;mico-financeiro ap&oacute;s aditivos.</p>
+          <a class="book-source" href="https://www.institutodeengenharia.org.br/site/2012/09/05/livro-novo-na-biblioteca-do-instituto-orcamento-e-controle-de-precos-de-obras-publicas-andre-pachione-baeta-editora-pini-2012/" target="_blank" rel="noopener noreferrer">Refer&ecirc;ncia da obra &nearr;</a>
+        </div>
+      </article>
+
+      <article class="book">
+        <div class="book-cover"><img src="assets/livros/rdc.jpg" alt="Capa do livro Regime Diferenciado de Contrata&ccedil;&otilde;es P&uacute;blicas" loading="lazy"></div>
+        <div class="book-body">
+          <div class="book-type">Autoria</div>
+          <h3>Regime Diferenciado de Contrata&ccedil;&otilde;es P&uacute;blicas</h3>
+          <p>Explica as inova&ccedil;&otilde;es do RDC em rela&ccedil;&atilde;o ao regime tradicional, com &ecirc;nfase nas licita&ccedil;&otilde;es de obras e servi&ccedil;os de engenharia, nas implica&ccedil;&otilde;es t&eacute;cnicas e na execu&ccedil;&atilde;o contratual.</p>
+          <a class="book-source" href="https://www.touchelivros.com.br/regime-diferenciado-de-contratacoes-publicas-2/" target="_blank" rel="noopener noreferrer">Refer&ecirc;ncia da obra &nearr;</a>
+        </div>
+      </article>
+
+      <article class="book">
+        <div class="book-cover"><img src="assets/livros/terceirizacao.jpg" alt="Capa do livro Terceiriza&ccedil;&atilde;o: Legisla&ccedil;&atilde;o, Doutrina e Jurisprud&ecirc;ncia" loading="lazy"></div>
+        <div class="book-body">
+          <div class="book-type">Coautoria</div>
+          <h3>Terceiriza&ccedil;&atilde;o: Legisla&ccedil;&atilde;o, Doutrina e Jurisprud&ecirc;ncia</h3>
+          <p>Re&uacute;ne abordagens de Direito Administrativo, Constitucional e Trabalhista para planejar e gerir a terceiriza&ccedil;&atilde;o no servi&ccedil;o p&uacute;blico, tratando de riscos, resultados, remunera&ccedil;&atilde;o, conta vinculada e gest&atilde;o contratual.</p>
+          <a class="book-source" href="https://loja.editoraforum.com.br/image/catalog/pdf/2018/Abril%20/Release_Terceiriza%C3%A7%C3%A3o2ed.pdf" target="_blank" rel="noopener noreferrer">Refer&ecirc;ncia editorial &nearr;</a>
+        </div>
+      </article>
+
+      <article class="book">
+        <div class="book-cover"><img src="assets/livros/lei-anticorrupcao.jpg" alt="Capa do livro Lei Anticorrup&ccedil;&atilde;o e Temas de Compliance" loading="lazy"></div>
+        <div class="book-body">
+          <div class="book-type">Coautoria</div>
+          <h3>Lei Anticorrup&ccedil;&atilde;o e Temas de Compliance</h3>
+          <p>Apresenta a vis&atilde;o de especialistas sobre a Lei Anticorrup&ccedil;&atilde;o e o compliance, abordando mecanismos de controle, preven&ccedil;&atilde;o e repress&atilde;o &agrave; corrup&ccedil;&atilde;o nos setores p&uacute;blico e corporativo.</p>
+          <a class="book-source" href="https://lec.com.br/listamos-7-livros-de-compliance-incriveis/" target="_blank" rel="noopener noreferrer">Refer&ecirc;ncia da obra &nearr;</a>
+        </div>
+      </article>
+
+      <article class="book">
+        <div class="book-cover"><img src="assets/livros/pareceres-engenharia.jpg" alt="Capa do livro Pareceres de Engenharia: Or&ccedil;amenta&ccedil;&atilde;o de Obras" loading="lazy"></div>
+        <div class="book-body">
+          <div class="book-type">Coautoria</div>
+          <h3>Pareceres de Engenharia: Or&ccedil;amenta&ccedil;&atilde;o de Obras</h3>
+          <p>Re&uacute;ne 24 pareceres de mais de 20 profissionais de Engenharia de Custos e Gest&atilde;o de Projetos, com experi&ecirc;ncias sobre elabora&ccedil;&atilde;o e gest&atilde;o de or&ccedil;amentos adaptadas &agrave; realidade brasileira.</p>
+          <a class="book-source" href="https://clubedeautores.com.br/livro/pareceres-de-engenharia" target="_blank" rel="noopener noreferrer">Refer&ecirc;ncia da obra &nearr;</a>
+        </div>
+      </article>
+
+      <article class="book">
+        <div class="book-cover"><img src="assets/livros/novo-regime-estatais.jpg" alt="Capa do livro Novo Regime Jur&iacute;dico de Licita&ccedil;&otilde;es e Contratos das Empresas Estatais" loading="lazy"></div>
+        <div class="book-body">
+          <div class="book-type">Coautoria</div>
+          <h3>Novo Regime Jur&iacute;dico de Licita&ccedil;&otilde;es e Contratos das Empresas Estatais</h3>
+          <p>Analisa o regime de licita&ccedil;&otilde;es e contratos institu&iacute;do pela Lei n&ordm; 13.303/2016 para empresas estatais, interpretando suas regras &agrave; luz da jurisprud&ecirc;ncia do Tribunal de Contas da Uni&atilde;o.</p>
+          <a class="book-source" href="https://loja.editoraforum.com.br/image/catalog/pdf/2018/Junho%20/RELEASE_Benjamim%20Zymler_NOVO%20REGIME%20JUR%C3%8DDICO.pdf" target="_blank" rel="noopener noreferrer">Refer&ecirc;ncia editorial &nearr;</a>
+        </div>
+      </article>
+
+      <article class="book">
+        <div class="book-cover"><img src="assets/livros/reforma-tributaria.jpg" alt="Capa do livro Reforma Tribut&aacute;ria: Impacto nas Obras P&uacute;blicas e o Novo BDI" loading="lazy"></div>
+        <div class="book-body">
+          <div class="book-type">Coautoria</div>
+          <h3>Reforma Tribut&aacute;ria: Impacto nas Obras P&uacute;blicas e o Novo BDI</h3>
+          <p>Examina como IBS, CBS e a n&atilde;o cumulatividade afetam materiais, m&atilde;o de obra, equipamentos, custos indiretos e contratos, propondo o IVA equivalente e a matriz de creditamento para estimar o novo BDI.</p>
+          <a class="book-source" href="https://cataventobr.com.br/index.php?codigo=9788545011965&amp;opcao=detalhes_produto" target="_blank" rel="noopener noreferrer">Refer&ecirc;ncia da obra &nearr;</a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
 <!-- FINAL CTA -->
 <section class="final" id="sobre">
   <h2>Tecnologia a serviço da boa obra pública.</h2>
@@ -1827,6 +1929,7 @@ body.modal-open{overflow:hidden}
       <div class="foot-col">
         <h4>Sobre</h4>
         <a href="#sobre">O projeto</a>
+        <a href="#livros">Livros do autor</a>
         <a href="#autor" data-modal-open="authorModal">Autor</a>
         <a href="#aviso-legal" data-modal-open="legalModal">Aviso legal</a>
         <a href="https://www.instagram.com/andrebeta.obraspublicas/" target="_blank" rel="noopener noreferrer">Contato</a>
