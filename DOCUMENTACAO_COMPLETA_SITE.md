@@ -34,6 +34,8 @@ C:\Obras Inteligentes\assets\hero-obras-ai-3d.png
 
 Em 30/08/2026, a grade de aplicativos foi ajustada para melhor aproveitamento de telas largas: 5 cards por linha a partir de 1500px, 4 cards em desktops menores, 2 cards em tablets e 1 card em celulares. A home anterior foi salva em `C:\Obras Inteligentes\backups\index-before-5cards-20260830-163133.html`.
 
+Em 27/09/2026, a lista de aplicativos do rodape foi reorganizada em tres colunas nos computadores, duas em telas medias e uma em celulares, reduzindo a rolagem vertical sem remover links.
+
 Em 30/08/2026, o card `ABC Fiscal` foi removido da home, do rodape e dos filtros de busca. O arquivo do aplicativo foi preservado em `C:\Obras Inteligentes\abc-fiscal\index.html`. A home anterior foi salva em `C:\Obras Inteligentes\backups\index-before-remove-abc-fiscal-20260830-1730.html`.
 
 Em 31/08/2026, foi incluido o aplicativo `GRO/PGR Pro` no filtro `Riscos`, publicado em `C:\Obras Inteligentes\gro-pgr-pro\index.html`. A home anterior foi salva em `C:\Obras Inteligentes\backups\index-before-gro-pgr-pro-20260831-221841.html`.
