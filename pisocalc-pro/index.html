@@ -155,6 +155,21 @@ table.tab tr.info td{color:var(--ink-2)}
 .grafico svg{display:block;width:100%;max-width:980px;margin:0 auto;height:auto;min-width:560px}
 .nota{font-size:12.5px;color:var(--ink-2)}
 
+/* ---------- orçamento ---------- */
+.orc-barra{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.orc-barra .bdi{display:flex;align-items:center;gap:6px;font-size:13px;margin-left:auto}
+.orc-barra .bdi .num{width:120px}
+table.orc{font-size:12.5px}
+table.orc td,table.orc th{vertical-align:top}
+table.orc td.cod{white-space:nowrap;font-family:var(--f-mono);font-size:12px}
+table.orc td.desc{min-width:320px}
+table.orc td.desc small{display:block;color:var(--ink-3);font-size:11.5px;margin-top:2px}
+table.orc tr.grupo td{background:var(--surface-3);font-weight:600;text-transform:uppercase;font-size:12px;letter-spacing:.2px}
+table.orc tfoot td{font-weight:700;background:var(--surface-2);border-top:2px solid var(--line)}
+.conf{display:inline-block;margin-left:6px;padding:1px 7px;border-radius:999px;background:var(--warn-soft);color:var(--warn);font-size:11px;font-weight:700;white-space:nowrap;vertical-align:1px}
+.memo li{font-size:12.5px;margin:0 0 8px;color:var(--ink-2)}
+.memo li b{color:var(--ink)}
+
 /* ---------- desenhos ---------- */
 .des-grid{display:grid;grid-template-columns:230px minmax(0,1fr);gap:16px;align-items:start}
 .des-lista{display:grid;gap:6px;position:sticky;top:72px}
@@ -183,6 +198,9 @@ table.tab tr.info td{color:var(--ink-2)}
 .relatorio .aviso-legal{border:1px solid #D5DAD8;background:#FAFAF8;padding:10px 12px;font-size:12px;color:#44505A;margin-top:24px}
 .relatorio .ok{color:#2E7D4F;font-weight:600} .relatorio .erro{color:#B42318;font-weight:600} .relatorio .inf{color:#6B767D}
 .relatorio ol,.relatorio ul{padding-left:20px;margin:6px 0 12px} .relatorio li{margin:3px 0}
+.relatorio .conf{background:#FCEFD9;color:#9A5B06;border-radius:8px;padding:0 5px;font-size:10.5px;font-weight:700;white-space:nowrap}
+.relatorio .grp td{background:#EEF1F0;font-weight:600}
+.relatorio .memo li{font-size:11.5px;color:#44505A}
 
 /* ---------- manual ---------- */
 .man-grid{display:grid;grid-template-columns:280px minmax(0,1fr);gap:18px;align-items:start}
@@ -347,7 +365,7 @@ mark{background:var(--accent-soft);color:inherit;padding:0 1px}
         <h3><span>5.</span>Normas e referências</h3>
         <p>A ferramenta adota critérios inspirados em normas brasileiras e em publicações técnicas internacionais indicadas no manual. Ela não substitui a consulta às versões vigentes desses documentos e não garante a conformidade normativa do projeto.</p>
         <h3><span>6.</span>Quantitativos e custos</h3>
-        <p>Quantidades e custos são estimativos e calculados com preços unitários editáveis, que não representam referência oficial de preços. Não devem ser usados, sem verificação independente, como base de orçamento, contratação ou medição.</p>
+        <p>Quantidades e custos são estimativos. O orçamento usa custos de composições do SINAPI na referência, UF e regime de encargos indicados e, para serviços sem custo nessa referência, preços estimados pelo sistema e identificados como “a confirmar”. Os resultados não devem ser usados, sem verificação independente, como base de orçamento, contratação ou medição.</p>
         <h3><span>7.</span>Ausência de garantia</h3>
         <p>A ferramenta é fornecida no estado em que se encontra, sem garantias de qualquer natureza, expressas ou implícitas, incluindo adequação a uma finalidade específica, ausência de erros ou funcionamento ininterrupto.</p>
         <h3><span>8.</span>Limitação de responsabilidade</h3>
@@ -387,6 +405,7 @@ mark{background:var(--accent-soft);color:inherit;padding:0 1px}
       <button class="aba" role="tab" id="aba-dados" data-aba="dados" aria-selected="true" aria-controls="p-dados">Dados</button>
       <button class="aba" role="tab" id="aba-analise" data-aba="analise" aria-selected="false" aria-controls="p-analise">Análise</button>
       <button class="aba" role="tab" id="aba-desenhos" data-aba="desenhos" aria-selected="false" aria-controls="p-desenhos">Desenhos</button>
+      <button class="aba" role="tab" id="aba-orcamento" data-aba="orcamento" aria-selected="false" aria-controls="p-orcamento">Orçamento</button>
       <button class="aba" role="tab" id="aba-relatorio" data-aba="relatorio" aria-selected="false" aria-controls="p-relatorio">Relatório</button>
       <button class="aba" role="tab" id="aba-manual" data-aba="manual" aria-selected="false" aria-controls="p-manual">Manual</button>
     </nav>
@@ -428,6 +447,8 @@ mark{background:var(--accent-soft);color:inherit;padding:0 1px}
       </div>
     </section>
 
+    <section class="painel" id="p-orcamento" role="tabpanel" aria-labelledby="aba-orcamento"></section>
+
     <section class="painel" id="p-relatorio" role="tabpanel" aria-labelledby="aba-relatorio">
       <div class="rel-barra">
         <button class="btn btn-pri" id="bt-imprimir">Imprimir ou salvar em PDF</button>
@@ -459,8 +480,8 @@ mark{background:var(--accent-soft);color:inherit;padding:0 1px}
 /* ============================================================
    10_dados.js — esquema de entradas, pré-conjuntos e tabelas
    ============================================================ */
-const VERSAO = '1.0.0';
-const VERSAO_TERMO = '1.0';
+const VERSAO = '1.1.0';
+const VERSAO_TERMO = '1.1';
 
 const ehArmado = i => i.sistema === 'tela' || i.sistema === 'estrut';
 
@@ -521,6 +542,7 @@ const ESQUEMA = [
     { id: 'fctModo', r: 'Resistência à tração na flexão', t: 's', d: 'calc', o: [['calc', 'Calcular a partir do fck'], ['ensaio', 'Informar fctM,k de ensaio (NBR 12142)']] },
     { id: 'fctMk', r: 'fctM,k de ensaio', t: 'n', u: 'MPa', d: 4.5, min: 2, max: 8, st: 0.1, v: i => i.fctModo === 'ensaio' },
     { id: 'caa', r: 'Classe de agressividade ambiental', t: 's', d: 'II', o: [['I', 'I, fraca'], ['II', 'II, moderada'], ['III', 'III, forte'], ['IV', 'IV, muito forte']] },
+    { id: 'telaMin', r: 'Tela superior mínima', t: 's', d: 'Q92', o: [['Q61', 'Q-61'], ['Q75', 'Q-75'], ['Q92', 'Q-92'], ['Q113', 'Q-113'], ['Q138', 'Q-138']], v: ehArmado },
     { id: 'cobSup', r: 'Cobrimento da tela superior', t: 'n', u: 'mm', d: 40, min: 15, max: 80, st: 5, v: ehArmado },
     { id: 'cobInf', r: 'Cobrimento da armadura inferior', t: 'n', u: 'mm', d: 40, min: 20, max: 80, st: 5, v: i => i.sistema === 'estrut' },
     { id: 'epsCs', r: 'Retração final estimada εcs', t: 'n', u: '‰', d: 0.35, min: 0.1, max: 1, st: 0.05 },
@@ -544,7 +566,7 @@ const ESQUEMA = [
     { id: 'aspecto', r: 'Relação máxima entre lados da placa', t: 'n', u: '', d: 1.5, min: 1, max: 3, st: 0.05 },
     { id: 'faixa', r: 'Largura máxima da faixa de concretagem', t: 'n', u: 'm', d: 6, min: 2, max: 40, st: 0.5, v: i => i.sistema !== 'prot' },
     { id: 'dowelJS', r: 'Barras de transferência nas juntas serradas', t: 'c', d: true, v: i => i.sistema !== 'prot' },
-    { id: 'selante', r: 'Selante', t: 's', d: 'epoxi', o: [['epoxi', 'Epóxi semirrígido (tráfego de rodas rígidas)'], ['pu', 'Poliuretano (juntas com movimentação)']] }
+    { id: 'selante', r: 'Selante das juntas serradas e de construção', t: 's', d: 'epoxi', o: [['epoxi', 'Epóxi semirrígido (tráfego de rodas rígidas)'], ['pu', 'Poliuretano com tarugo (juntas com movimentação)'], ['silicone', 'Silicone com tarugo']] }
   ]},
   { id: 'pt', t: 'Protensão', v: i => i.sistema === 'prot', campos: [
     { id: 'cord', r: 'Cordoalha', t: 's', d: '12.7', o: [['12.7', 'CP 190 RB φ12,7 mm'], ['15.2', 'CP 190 RB φ15,2 mm']] },
@@ -568,16 +590,30 @@ const ESQUEMA = [
     { id: 'psi1', r: 'ψ1, combinação frequente', t: 'n', u: '', d: 0.7, min: 0.3, max: 1, st: 0.05, v: i => i.sistema === 'estrut' },
     { id: 'wkLim', r: 'Abertura máxima de fissuras wk', t: 'n', u: 'mm', d: 0.3, min: 0.1, max: 0.4, st: 0.05, v: i => i.sistema === 'estrut' }
   ]},
-  { id: 'custo', t: 'Custos unitários de referência', campos: [
-    { id: 'pConc', r: 'Concreto fornecido e lançado', t: 'n', u: 'R$/m³', d: 620, min: 0, max: 5000, st: 10 },
-    { id: 'pTela', r: 'Tela soldada CA-60', t: 'n', u: 'R$/kg', d: 11, min: 0, max: 100, st: 0.1 },
-    { id: 'pCA50', r: 'Barras CA-50', t: 'n', u: 'R$/kg', d: 9.5, min: 0, max: 100, st: 0.1 },
-    { id: 'pDowel', r: 'Barras de transferência instaladas', t: 'n', u: 'R$/kg', d: 14, min: 0, max: 100, st: 0.1 },
-    { id: 'pCord', r: 'Cordoalha engraxada', t: 'n', u: 'R$/kg', d: 18, min: 0, max: 200, st: 0.1, v: i => i.sistema === 'prot' },
-    { id: 'pAnc', r: 'Ancoragem', t: 'n', u: 'R$/un', d: 180, min: 0, max: 2000, st: 1, v: i => i.sistema === 'prot' },
-    { id: 'pJunta', r: 'Junta cortada ou formada e selada', t: 'n', u: 'R$/m', d: 35, min: 0, max: 500, st: 1 },
-    { id: 'perdaC', r: 'Perdas de concreto', t: 'n', u: '%', d: 5, min: 0, max: 30, st: 0.5 },
-    { id: 'perdaA', r: 'Perdas e transpasses do aço', t: 'n', u: '%', d: 10, min: 0, max: 40, st: 0.5 }
+  { id: 'orc', t: 'Orçamento: infraestrutura e serviços', campos: [
+    { id: 'soloSub', r: 'Solo do subleito', t: 's', d: 'argiloso', o: [['argiloso', 'Predominantemente argiloso'], ['arenoso', 'Predominantemente arenoso']] },
+    { id: 'escavar', r: 'Escavar a caixa do piso e levar ao bota-fora', t: 'c', d: true },
+    { id: 'dmtBota', r: 'Distância até o bota-fora', t: 'n', u: 'km', d: 10, min: 0, max: 200, st: 1, v: i => i.escavar },
+    { id: 'dmtSB', r: 'Distância da usina ou jazida da sub-base', t: 'n', u: 'km', d: 20, min: 0, max: 200, st: 1, v: i => i.sb !== 'nenhuma' },
+    { id: 'drenoPerim', r: 'Dreno subsuperficial perimetral', t: 'c', d: true },
+    { id: 'espDreno', r: 'Espaçamento de drenos internos (0 = sem)', t: 'n', u: 'm', d: 0, min: 0, max: 60, st: 1 },
+    { id: 'acab', r: 'Acabamento superficial', t: 's', d: 'polido', o: [['polido', 'Polido com endurecedor mineral'], ['simples', 'Desempenado (incluído na concretagem)']] },
+    { id: 'cura', r: 'Cura química com membrana', t: 'c', d: true },
+    { id: 'forma', r: 'Fôrmas de borda', t: 's', d: 'madeira', o: [['madeira', 'Madeira serrada, 4 utilizações'], ['compensado', 'Compensado resinado, 4 utilizações']] },
+    { id: 'bdi', r: 'BDI', t: 'n', u: '%', d: 0, min: 0, max: 60, st: 0.01 }
+  ]},
+  { id: 'custo', t: 'Preços para a otimização', campos: [
+    { id: 'basePreco', r: 'Base de preços da otimização', t: 's', d: 'sinapi', o: [['sinapi', 'Orçamento SINAPI completo'], ['manual', 'Preços unitários informados']] },
+    { id: 'prefSinapi', r: 'Preferir armaduras com custo no SINAPI', t: 'c', d: true, v: i => i.basePreco === 'sinapi' },
+    { id: 'pConc', r: 'Concreto fornecido e lançado', t: 'n', u: 'R$/m³', d: 620, min: 0, max: 5000, st: 10, v: i => i.basePreco === 'manual' },
+    { id: 'pTela', r: 'Tela soldada CA-60', t: 'n', u: 'R$/kg', d: 11, min: 0, max: 100, st: 0.1, v: i => i.basePreco === 'manual' },
+    { id: 'pCA50', r: 'Barras CA-50', t: 'n', u: 'R$/kg', d: 9.5, min: 0, max: 100, st: 0.1, v: i => i.basePreco === 'manual' },
+    { id: 'pDowel', r: 'Barras de transferência instaladas', t: 'n', u: 'R$/kg', d: 14, min: 0, max: 100, st: 0.1, v: i => i.basePreco === 'manual' },
+    { id: 'pCord', r: 'Cordoalha engraxada e plastificada', t: 'n', u: 'R$/kg', d: 18, min: 0, max: 200, st: 0.1, v: i => i.sistema === 'prot' },
+    { id: 'pAnc', r: 'Kit de ancoragem ativa (materiais)', t: 'n', u: 'R$/un', d: 75, min: 0, max: 2000, st: 1, v: i => i.sistema === 'prot' },
+    { id: 'pJunta', r: 'Junta cortada ou formada e selada', t: 'n', u: 'R$/m', d: 35, min: 0, max: 500, st: 1, v: i => i.basePreco === 'manual' },
+    { id: 'perdaC', r: 'Perdas de concreto', t: 'n', u: '%', d: 5, min: 0, max: 30, st: 0.5, v: i => i.basePreco === 'manual' },
+    { id: 'perdaA', r: 'Perdas e transpasses do aço', t: 'n', u: '%', d: 10, min: 0, max: 40, st: 0.5, v: i => i.basePreco === 'manual' }
   ]}
 ];
 
@@ -618,6 +654,16 @@ const ROTULO_SIS = {
   prot: 'Protendido'
 };
 
+/* ---- 15_sinapi.js ---- */
+/* ============================================================
+   15_sinapi.js — SINAPI 08/2026, SP, composições sem desoneração
+   Gerado por tools/extrair_sinapi.py a partir do arquivo de referência da CAIXA.
+   c: código → [descrição, unidade, custo, grupo]   (custo 0 = sem custo na UF)
+   i: código → [descrição, unidade, preço]          (preço 0 = sem preço)
+   a: código → [[C|I, código do item, coeficiente], ...]  (analítico)
+   ============================================================ */
+const SINAPI = {"ref":"08/2026","emissao":"11/09/2026","uf":"SP","regime":"sem desoneração","c":{"105008":["LOCAÇÃO COM USO EXCLUSIVO DE EQUIPAMENTO TOPOGRÁFICO. AF_03/2024","UN",0.0,"Locação de Obras"],"105136":["LOCAÇÃO DE PONTO PARA REFERÊNCIA TOPOGRÁFICA. AF_03/2024","UN",0.0,"Locação de Obras"],"90781":["TOPOGRAFO COM ENCARGOS COMPLEMENTARES","H",90.03,"Livro SINAPI: Cálculos e Parâmetros"],"88253":["AUXILIAR DE TOPÓGRAFO COM ENCARGOS COMPLEMENTARES","H",44.85,"Livro SINAPI: Cálculos e Parâmetros"],"101126":["ESCAVAÇÃO HORIZONTAL, INCLUINDO CARGA E DESCARGA EM SOLO DE 1A CATEGORIA COM TRATOR DE ESTEIRAS (170HP/LÂMINA: 5,20M3). AF_07/2020","M3",13.58,"Escavação Horizontal"],"95879":["TRANSPORTE COM CAMINHÃO BASCULANTE DE 14 M³, EM VIA URBANA PAVIMENTADA, DMT ATÉ 30 KM (UNIDADE: TXKM). AF_02/2026","TXKM",1.63,"Transporte, Carga e Descarga de Materiais"],"93599":["TRANSPORTE COM CAMINHÃO BASCULANTE DE 14 M³, EM VIA URBANA PAVIMENTADA, ADICIONAL PARA DMT EXCEDENTE A 30 KM (UNIDADE: TXKM). AF_02/2026","TXKM",0.62,"Transporte, Carga e Descarga de Materiais"],"100976":["CARGA, MANOBRA E DESCARGA DE SOLOS E MATERIAIS GRANULARES EM CAMINHÃO BASCULANTE 18 M³ - CARGA COM PÁ CARREGADEIRA (CAÇAMBA DE 1,7 A 2,8 M³ / 128 HP) E DESCARGA LIVRE (UNIDADE: M3). AF_02/2026","M3",8.32,"Transporte, Carga e Descarga de Materiais"],"100995":["CARGA, MANOBRA E DESCARGA DE SOLOS E MATERIAIS GRANULARES EM CAMINHÃO BASCULANTE 14 M³ - CARGA COM ESCAVADEIRA HIDRÁULICA (CAÇAMBA DE 1,20 M³ / 155 HP) E DESCARGA LIVRE (UNIDADE: T). AF_02/2026","T",4.86,"Transporte, Carga e Descarga de Materiais"],"100576":["REGULARIZAÇÃO E COMPACTAÇÃO DE SUBLEITO DE SOLO PREDOMINANTEMENTE ARGILOSO, PARA OBRAS DE CONSTRUÇÃO DE PAVIMENTOS. AF_09/2024","M2",3.21,"Aterros, Bases, Sub bases e Imprimações"],"100577":["REGULARIZAÇÃO E COMPACTAÇÃO DE SUBLEITO DE SOLO PREDOMINANTEMENTE ARENOSO, PARA OBRAS DE CONSTRUÇÃO DE PAVIMENTOS. AF_09/2024","M2",1.62,"Aterros, Bases, Sub bases e Imprimações"],"105727":["CONSTRUÇÃO DE BASE E SUB-BASE PARA PAVIMENTAÇÃO DE BRITA GRADUADA SIMPLES, COM ESPESSURA DE 10 CM - EXCLUSIVE CARGA E TRANSPORTE. AF_09/2024","M3",162.32,"Aterros, Bases, Sub bases e Imprimações"],"96396":["CONSTRUÇÃO DE BASE E SUB-BASE PARA PAVIMENTAÇÃO DE BRITA GRADUADA SIMPLES, COM ESPESSURA DE 15 CM - EXCLUSIVE CARGA E TRANSPORTE. AF_09/2024","M3",158.5,"Aterros, Bases, Sub bases e Imprimações"],"105730":["CONSTRUÇÃO DE BASE E SUB-BASE PARA PAVIMENTAÇÃO DE BRITA GRADUADA SIMPLES, COM ESPESSURA DE 20 CM - EXCLUSIVE CARGA E TRANSPORTE. AF_09/2024","M3",156.54,"Aterros, Bases, Sub bases e Imprimações"],"105732":["CONSTRUÇÃO DE BASE E SUB-BASE PARA PAVIMENTAÇÃO DE BRITA GRADUADA SIMPLES TRATADA COM CIMENTO, COM ESPESSURA DE 10 CM - EXCLUSIVE CARGA E TRANSPORTE. AF_09/2024","M3",224.51,"Aterros, Bases, Sub bases e Imprimações"],"96397":["CONSTRUÇÃO DE BASE E SUB-BASE PARA PAVIMENTAÇÃO DE BRITA GRADUADA SIMPLES TRATADA COM CIMENTO, COM ESPESSURA DE 15 CM - EXCLUSIVE CARGA E TRANSPORTE. AF_09/2024","M3",219.55,"Aterros, Bases, Sub bases e Imprimações"],"105735":["CONSTRUÇÃO DE BASE E SUB-BASE PARA PAVIMENTAÇÃO DE BRITA GRADUADA SIMPLES TRATADA COM CIMENTO, COM ESPESSURA DE 20 CM - EXCLUSIVE CARGA E TRANSPORTE. AF_09/2024","M3",217.04,"Aterros, Bases, Sub bases e Imprimações"],"97087":["CAMADA SEPARADORA PARA EXECUÇÃO DE RADIER, PISO DE CONCRETO OU LAJE SOBRE SOLO, EM LONA PLÁSTICA. AF_07/2026","M2",3.29,"Radier, Piso de Concreto e Laje sobre Solo"],"102666":["DRENO SUBSUPERFICIAL (SEÇÃO 0,40 X 0,40 M), COM TUBO DE PEAD CORRUGADO PERFURADO, DN 100 MM, ENCHIMENTO COM BRITA, ENVOLVIDO COM MANTA GEOTÊXTIL. AF_07/2021","M",60.48,"Drenos"],"102690":["DRENO ESPINHA DE PEIXE (SEÇÃO (0,40 X 0,40 M), COM TUBO DE PEAD CORRUGADO PERFURADO, DN 100 MM, ENCHIMENTO COM BRITA, ENVOLVIDO COM MANTA GEOTÊXTIL, INCLUSIVE CONEXÕES. AF_07/2021","M",68.84,"Drenos"],"99260":["CAIXA ENTERRADA HIDRÁULICA RETANGULAR, EM ALVENARIA COM BLOCOS DE CONCRETO, DIMENSÕES INTERNAS: 0,6X0,6X0,6 M PARA REDE DE DRENAGEM. AF_12/2020","UN",531.84,"Caixas Enterradas"],"97086":["FABRICAÇÃO, MONTAGEM E DESMONTAGEM DE FORMA PARA RADIER, PISO DE CONCRETO OU LAJE SOBRE SOLO, EM MADEIRA SERRADA, 4 UTILIZAÇÕES. AF_07/2026","M2",136.45,"Radier, Piso de Concreto e Laje sobre Solo"],"107283":["FABRICAÇÃO, MONTAGEM E DESMONTAGEM DE FORMA PARA RADIER, PISO DE CONCRETO OU LAJE SOBRE SOLO, EM COMPENSADO RESINADO, 4 UTILIZAÇÕES. AF_07/2026","M2",143.47,"Radier, Piso de Concreto e Laje sobre Solo"],"97088":["ARMAÇÃO PARA EXECUÇÃO DE RADIER, PISO DE CONCRETO OU LAJE SOBRE SOLO, COM USO DE TELA Q-92. AF_07/2026","KG",14.91,"Radier, Piso de Concreto e Laje sobre Solo"],"97089":["ARMAÇÃO PARA EXECUÇÃO DE RADIER, PISO DE CONCRETO OU LAJE SOBRE SOLO, COM USO DE TELA Q-113. AF_07/2026","KG",13.59,"Radier, Piso de Concreto e Laje sobre Solo"],"97090":["ARMAÇÃO PARA EXECUÇÃO DE RADIER, PISO DE CONCRETO OU LAJE SOBRE SOLO, COM USO DE TELA Q-138. AF_07/2026","KG",13.23,"Radier, Piso de Concreto e Laje sobre Solo"],"97091":["ARMAÇÃO PARA EXECUÇÃO DE RADIER, PISO DE CONCRETO OU LAJE SOBRE SOLO, COM USO DE TELA Q-159. AF_07/2026","KG",12.79,"Radier, Piso de Concreto e Laje sobre Solo"],"97092":["ARMAÇÃO PARA EXECUÇÃO DE RADIER, PISO DE CONCRETO OU LAJE SOBRE SOLO, COM USO DE TELA Q-196. AF_07/2026","KG",12.34,"Radier, Piso de Concreto e Laje sobre Solo"],"103053":["ARMAÇÃO PARA EXECUÇÃO DE RADIER, PISO DE CONCRETO OU LAJE SOBRE SOLO, COM USO DE TELA Q-246. AF_07/2026","KG",0.0,"Radier, Piso de Concreto e Laje sobre Solo"],"97093":["ARMAÇÃO PARA EXECUÇÃO DE RADIER, PISO DE CONCRETO OU LAJE SOBRE SOLO, COM USO DE TELA Q-283. AF_07/2026","KG",11.53,"Radier, Piso de Concreto e Laje sobre Solo"],"103054":["ARMAÇÃO PARA EXECUÇÃO DE RADIER, PISO DE CONCRETO OU LAJE SOBRE SOLO, COM USO DE TELA Q-396. AF_07/2026","KG",0.0,"Radier, Piso de Concreto e Laje sobre Solo"],"107278":["ARMAÇÃO PARA EXECUÇÃO DE RADIER, PISO DE CONCRETO OU LAJE SOBRE SOLO, COM USO DE TELA Q-503. AF_07/2026","KG",0.0,"Radier, Piso de Concreto e Laje sobre Solo"],"107279":["ARMAÇÃO PARA EXECUÇÃO DE RADIER, PISO DE CONCRETO OU LAJE SOBRE SOLO, COM USO DE TELA Q-636. AF_07/2026","KG",0.0,"Radier, Piso de Concreto e Laje sobre Solo"],"92769":["ARMAÇÃO DE LAJE DE ESTRUTURA CONVENCIONAL DE CONCRETO ARMADO UTILIZANDO AÇO CA-50 DE 6,3 MM - MONTAGEM. AF_06/2022","KG",12.22,"Armação para Estruturas de Concreto Armado"],"107280":["ARMAÇÃO PARA EXECUÇÃO DE RADIER, PISO DE CONCRETO OU LAJE SOBRE SOLO, COM USO DE VERGALHÃO AÇO CA-50 DE 8,0 MM - MONTAGEM. AF_07/2026","KG",11.46,"Radier, Piso de Concreto e Laje sobre Solo"],"107281":["ARMAÇÃO PARA EXECUÇÃO DE RADIER, PISO DE CONCRETO OU LAJE SOBRE SOLO, COM USO DE VERGALHÃO AÇO CA-50 DE 10,0 MM - MONTAGEM. AF_07/2026","KG",10.28,"Radier, Piso de Concreto e Laje sobre Solo"],"107282":["ARMAÇÃO PARA EXECUÇÃO DE RADIER, PISO DE CONCRETO OU LAJE SOBRE SOLO, COM USO DE VERGALHÃO AÇO CA-50 DE 12,5 MM - MONTAGEM. AF_07/2026","KG",10.48,"Radier, Piso de Concreto e Laje sobre Solo"],"92773":["ARMAÇÃO DE LAJE DE ESTRUTURA CONVENCIONAL DE CONCRETO ARMADO UTILIZANDO AÇO CA-50 DE 16,0 MM - MONTAGEM. AF_06/2022","KG",7.56,"Armação para Estruturas de Concreto Armado"],"92774":["ARMAÇÃO DE LAJE DE ESTRUTURA CONVENCIONAL DE CONCRETO ARMADO UTILIZANDO AÇO CA-50 DE 20,0 MM - MONTAGEM. AF_06/2022","KG",8.65,"Armação para Estruturas de Concreto Armado"],"97116":["BARRAS DE TRANSFERÊNCIA, AÇO CA-25 DE 16,0 MM, PARA EXECUÇÃO DE PAVIMENTO DE CONCRETO - FORNECIMENTO E INSTALAÇÃO. AF_08/2026","KG",25.05,"Pavimento Rígido de Concreto"],"97117":["BARRAS DE TRANSFERÊNCIA, AÇO CA-25 DE 20,0 MM, PARA EXECUÇÃO DE PAVIMENTO DE CONCRETO - FORNECIMENTO E INSTALAÇÃO. AF_08/2026","KG",20.44,"Pavimento Rígido de Concreto"],"97118":["BARRAS DE TRANSFERÊNCIA, AÇO CA-25 DE 25,0 MM, PARA EXECUÇÃO DE PAVIMENTO DE CONCRETO - FORNECIMENTO E INSTALAÇÃO. AF_08/2026","KG",16.21,"Pavimento Rígido de Concreto"],"97119":["BARRAS DE TRANSFERÊNCIA, AÇO CA-25 DE 32,0 MM, PARA EXECUÇÃO DE PAVIMENTO DE CONCRETO - FORNECIMENTO E INSTALAÇÃO. AF_08/2026","KG",13.88,"Pavimento Rígido de Concreto"],"97115":["APLICAÇÃO DE GRAXA EM BARRAS DE TRANSFERÊNCIA PARA EXECUÇÃO DE PAVIMENTO DE CONCRETO. AF_08/2026","KG",55.71,"Pavimento Rígido de Concreto"],"104293":["FORNECIMENTO E INSTALAÇÃO DE CORDOALHA COM 7 FIOS, RESISTÊNCIA À TRAÇÃO DE 190 KGF/MM² E DIÂMETRO NOMINAL DE 12,7 MM, EM LAJE. AF_08/2022","KG",0.0,"Concreto Protendido"],"104295":["FORNECIMENTO E INSTALAÇÃO DE CORDOALHA COM 7 FIOS, RESISTÊNCIA À TRAÇÃO DE 190 KGF/MM² E DIÂMETRO NOMINAL DE 15,2 MM, EM LAJE. AF_08/2022","KG",0.0,"Concreto Protendido"],"104267":["ANCORAGEM ATIVA PARA CORDOALHA COM 7 FIOS E DIÂMETRO NOMINAL DE 12,7 MM. AF_08/2022","UN",0.0,"Concreto Protendido"],"104268":["ANCORAGEM ATIVA PARA CORDOALHA COM 7 FIOS E DIÂMETRO NOMINAL DE 15,2 MM. AF_08/2022","UN",0.0,"Concreto Protendido"],"104265":["ANCORAGEM PASSIVA PARA CORDOALHA COM 7 FIOS E DIÂMETRO NOMINAL DE 12,7 MM. AF_08/2022","UN",0.0,"Concreto Protendido"],"104266":["ANCORAGEM PASSIVA PARA CORDOALHA COM 7 FIOS E DIÂMETRO NOMINAL DE 15,2 MM. AF_08/2022","UN",0.0,"Concreto Protendido"],"107276":["CONCRETAGEM DE RADIER, PISO OU LAJE SOBRE SOLO, FCK 25 MPA - LANÇAMENTO, ADENSAMENTO E ACABAMENTO. AF_07/2026","M3",625.96,"Radier, Piso de Concreto e Laje sobre Solo"],"97096":["CONCRETAGEM DE RADIER, PISO OU LAJE SOBRE SOLO, FCK 30 MPA - LANÇAMENTO, ADENSAMENTO E ACABAMENTO. AF_07/2026","M3",644.36,"Radier, Piso de Concreto e Laje sobre Solo"],"107277":["CONCRETAGEM DE RADIER, PISO OU LAJE SOBRE SOLO, FCK 35 MPA - LANÇAMENTO, ADENSAMENTO E ACABAMENTO. AF_07/2026","M3",662.78,"Radier, Piso de Concreto e Laje sobre Solo"],"97097":["ACABAMENTO POLIDO PARA PISO DE CONCRETO ARMADO DE ALTA RESISTÊNCIA. AF_07/2026","M2",37.67,"Radier, Piso de Concreto e Laje sobre Solo"],"97114":["EXECUÇÃO DE JUNTAS DE CONTRAÇÃO PARA PAVIMENTOS DE CONCRETO. AF_08/2026","M",0.95,"Pavimento Rígido de Concreto"],"98575":["TRATAMENTO DE JUNTA DE DILATACAO, COM TARUGO DE POLIETILENO E SELANTE PU. AF_09/2023","M",83.72,"Impermeabilização, Proteção Mecânica e Tratamento de Junta"],"98577":["TRATAMENTO DE JUNTA SERRADA, COM TARUGO DE POLIETILENO E SELANTE À BASE DE SILICONE. AF_09/2023","M",60.12,"Impermeabilização, Proteção Mecânica e Tratamento de Junta"],"88245":["ARMADOR COM ENCARGOS COMPLEMENTARES","H",36.99,"Livro SINAPI: Cálculos e Parâmetros"],"88238":["AJUDANTE DE ARMADOR COM ENCARGOS COMPLEMENTARES","H",34.64,"Livro SINAPI: Cálculos e Parâmetros"],"88316":["SERVENTE COM ENCARGOS COMPLEMENTARES","H",32.18,"Livro SINAPI: Cálculos e Parâmetros"],"88309":["PEDREIRO COM ENCARGOS COMPLEMENTARES","H",37.26,"Livro SINAPI: Cálculos e Parâmetros"],"88262":["CARPINTEIRO DE FORMAS COM ENCARGOS COMPLEMENTARES","H",36.53,"Livro SINAPI: Cálculos e Parâmetros"],"88239":["AJUDANTE DE CARPINTEIRO COM ENCARGOS COMPLEMENTARES","H",34.27,"Livro SINAPI: Cálculos e Parâmetros"],"103938":["CONJUNTO MACACO HIDRÁULICO E CENTRAL DE BOMBEAMENTO MOTORIZADO 1,8 KW PARA PROTENSÃO DE MONOCABOS PARA CONCRETO PROTENDIDO, ESFORÇO MÁXIMO DE 20 TONELADAS - CHP DIURNO. AF_05/2022","CHP",0.0,"Custos Horários Produtivo e Improdutivo dos Equipamentos"],"103939":["CONJUNTO MACACO HIDRÁULICO E CENTRAL DE BOMBEAMENTO MOTORIZADO 1,8 KW PARA PROTENSÃO DE MONOCABOS PARA CONCRETO PROTENDIDO, ESFORÇO MÁXIMO DE 20 TONELADAS - CHI DIURNO. AF_05/2022","CHI",0.0,"Custos Horários Produtivo e Improdutivo dos Equipamentos"],"103944":["CONJUNTO MACACO HIDRÁULICO E CENTRAL DE BOMBEAMENTO MOTORIZADO 1,8 KW PARA PROTENSÃO DE MONOCABOS PARA CONCRETO PROTENDIDO, ESFORÇO MÁXIMO DE 30 TONELADAS - CHP DIURNO. AF_05/2022","CHP",0.0,"Custos Horários Produtivo e Improdutivo dos Equipamentos"],"103945":["CONJUNTO MACACO HIDRÁULICO E CENTRAL DE BOMBEAMENTO MOTORIZADO 1,8 KW PARA PROTENSÃO DE MONOCABOS PARA CONCRETO PROTENDIDO, ESFORÇO MÁXIMO DE 30 TONELADAS - CHI DIURNO. AF_05/2022","CHI",0.0,"Custos Horários Produtivo e Improdutivo dos Equipamentos"],"90587":["VIBRADOR DE IMERSÃO, DIÂMETRO DE PONTEIRA 45MM, MOTOR ELÉTRICO TRIFÁSICO POTÊNCIA DE 2 CV - CHI DIURNO. AF_06/2015","CHI",0.6,"Custos Horários Produtivo e Improdutivo dos Equipamentos"],"90586":["VIBRADOR DE IMERSÃO, DIÂMETRO DE PONTEIRA 45MM, MOTOR ELÉTRICO TRIFÁSICO POTÊNCIA DE 2 CV - CHP DIURNO. AF_06/2015","CHP",1.43,"Custos Horários Produtivo e Improdutivo dos Equipamentos"]},"i":{"32":["ACO CA-50, 6,3 MM, VERGALHAO","KG",7.06],"134":["GRAUTE CIMENTICIO PARA USO GERAL","KG",1.63],"142":["SELANTE ELASTICO MONOCOMPONENTE A BASE DE POLIURETANO (PU) PARA JUNTAS DIVERSAS","310ML",33.23],"156":["ADESIVO ESTRUTURAL A BASE DE RESINA EPOXI, BICOMPONENTE, FLUIDO","KG",51.36],"568":["CANTONEIRA (ABAS IGUAIS) EM ACO CARBONO, 50,8 MM X 9,53 MM (L X E), 6,99 KG/M","M",62.45],"1330":["CHAPA DE ACO GROSSA, ASTM A36, E = 1/4\" (6,35 MM) 49,79 KG/M2","KG",8.66],"1524":["CONCRETO USINADO BOMBEAVEL, CLASSE DE RESISTENCIA C20, BRITA 0 E 1, SLUMP = 100 +/- 20 MM, COM BOMBEAMENTO (DISPONIBILIZACAO DE BOMBA), SEM O LANCAMENTO (NBR 8953)","M3",520.9],"1525":["CONCRETO USINADO BOMBEAVEL, CLASSE DE RESISTENCIA C30, BRITA 0 E 1, SLUMP = 100 +/- 20 MM, COM BOMBEAMENTO (DISPONIBILIZACAO DE BOMBA), SEM O LANCAMENTO (NBR 8953)","M3",553.97],"1527":["CONCRETO USINADO BOMBEAVEL, CLASSE DE RESISTENCIA C25, BRITA 0 E 1, SLUMP = 100 +/- 20 MM, COM BOMBEAMENTO (DISPONIBILIZACAO DE BOMBA), SEM O LANCAMENTO (NBR 8953)","M3",537.44],"4229":["GRAXA LUBRIFICANTE A BASE DE LITIO, DE MULTIPLAS APLICACOES E CONTENDO ADITIVOS DE EXTREMA PRESSAO (GRAU DE VISCOSIDADE NLGI 2)","KG",48.19],"7155":["TELA DE ACO SOLDADA NERVURADA, CA-60, Q-138, (2,20 KG/M2), DIAMETRO DO FIO = 4,2 MM, LARGURA = 2,45 M, ESPACAMENTO DA MALHA = 10 X 10 CM","M2",16.0],"7156":["TELA DE ACO SOLDADA NERVURADA, CA-60, Q-196, (3,11 KG/M2), DIAMETRO DO FIO = 5,0 MM, LARGURA = 2,45 M, ESPACAMENTO DA MALHA = 10 X 10 CM","M2",22.96],"10917":["TELA DE ACO SOLDADA NERVURADA, CA-60, Q-61, (0,97 KG/M2), DIAMETRO DO FIO = 3,4 MM, LARGURA = 2,45 M, ESPACAMENTO DA MALHA = 15 X 15 CM","M2",6.93],"11145":["CONCRETO USINADO BOMBEAVEL, CLASSE DE RESISTENCIA C35, BRITA 0 E 1, SLUMP = 100 +/- 20 MM, COM BOMBEAMENTO (DISPONIBILIZACAO DE BOMBA), SEM O LANCAMENTO (NBR 8953)","M3",570.51],"21141":["TELA DE ACO SOLDADA NERVURADA, CA-60, Q-92, (1,48 KG/M2), DIAMETRO DO FIO = 4,2 MM, LARGURA = 2,45 X 60 M DE COMPRIMENTO, ESPACAMENTO DA MALHA = 15 X 15 CM","M2",10.73],"34479":["CONCRETO USINADO BOMBEAVEL, CLASSE DE RESISTENCIA C40, BRITA 0 E 1, SLUMP = 100 +/- 20 MM, COM BOMBEAMENTO (DISPONIBILIZACAO DE BOMBA), SEM O LANCAMENTO (NBR 8953)","M3",587.05],"34481":["CONCRETO USINADO BOMBEAVEL, CLASSE DE RESISTENCIA C45, BRITA 0 E 1, SLUMP = 100 +/- 20 MM, COM BOMBEAMENTO (DISPONIBILIZACAO DE BOMBA), SEM O LANCAMENTO (NBR 8953)","M3",613.39],"34483":["CONCRETO USINADO BOMBEAVEL, CLASSE DE RESISTENCIA C50, BRITA 0 E 1, SLUMP = 100 +/- 20 MM, COM BOMBEAMENTO (DISPONIBILIZACAO DE BOMBA), SEM O LANCAMENTO (NBR 8953)","M3",655.37],"38544":["MANTA DE POLIETILENO EXPANDIDO (PEBD) ANTICHAMAS, E = 8 MM","M2",10.79],"39481":["ESPACADOR OU DISTANCIADOR, EM PLASTICO, TIPO APOIO DE CORDOALHA (CARANGUEJO), PARA ARMADURA NEGATIVA E PROTENSAO, COBRIMENTO 50 MM","UN",1.79],"39507":["TELA DE ACO SOLDADA NERVURADA, CA-60, Q-113, (1,8 KG/M2), DIAMETRO DO FIO = 3,8 MM, LARGURA = 2,45 M, ESPACAMENTO DA MALHA = 10 X 10 CM","M2",12.46],"42402":["ACO CA-25, 16,0 MM, BARRA DE TRANSFERENCIA","KG",6.87],"42403":["ACO CA-25, 20,0 MM, BARRA DE TRANSFERENCIA","KG",8.82],"42404":["ACO CA-25, 25,0 MM, BARRA DE TRANSFERENCIA","KG",8.77],"42405":["ACO CA-25, 32,0 MM, BARRA DE TRANSFERENCIA","KG",9.34],"42406":["TELA DE ACO SOLDADA NERVURADA, CA-60, Q-159, (2,52 KG/M2), DIAMETRO DO FIO = 4,5 MM, LARGURA = 2,45 M, ESPACAMENTO DA MALHA = 10 X 10 CM","M2",18.35],"42407":["TRELICA NERVURADA (ESPACADOR), ALTURA = 120,0 MM, DIAMETRO DOS BANZOS INFERIORES E SUPERIOR = 6,0 MM, DIAMETRO DA DIAGONAL = 4,2 MM","M",5.24],"42408":["LONA PLASTICA EXTRA FORTE PRETA, E = 200 MICRA","M2",2.67],"42409":["AGENTE DE CURA, PROTETOR DA EVAPORACAO DA AGUA DE HIDRATACAO DO CONCRETO","KG",11.29],"43127":["TELA DE ACO SOLDADA NERVURADA, CA-60, Q-283 (4,48 KG/M2), DIAMETRO DO FIO = 6,0 MM, LARGURA = 2,45 X 6,00 M DE COMPRIMENTO, ESPACAMENTO DA MALHA = 10 X 10 CM","M2",32.86],"43132":["ARAME RECOZIDO 16 BWG, D = 1,65 MM (0,016 KG/M) OU 18 BWG, D = 1,25 MM (0,01 KG/M)","KG",21.66],"43142":["SELANTE MONOCOMPONENTE A BASE DE SILICONE DE BAIXO MODULO, PARA JUNTAS DE PAVIMENTACAO","L",150.96],"43813":["TELA DE ACO SOLDADA NERVURADA, CA-60, Q-246, (3,91 KG/M2), DIAMETRO DO FIO = 5,6 MM, LARGURA = 2,45 X 6,00 M DE COMPRIMENTO, ESPACAMENTO DA MALHA = 10 X 10 CM","M2",0],"43814":["TELA DE ACO SOLDADA NERVURADA, CA-60, Q-396, (6,28 KG/M2), DIAMETRO DO FIO = 10 MM, LARGURA = 2,45 X 6,00 M DE COMPRIMENTO, ESPACAMENTO DA MALHA = 10 X 10 CM","M2",0],"44073":["TARUGO DELIMITADOR DE PROFUNDIDADE EM ESPUMA DE POLIETILENO DE BAIXA DENSIDADE 10 MM, CINZA","M",0.96],"44074":["PRIMER DE POLIURETANO","L",539.08],"44832":["CORDOALHA ENGRAXADA E PLASTIFICADA PEAD, PARA PROTENSAO, ACO CP 190 RB, DIAMETRO NOMINAL DE 12,70 MM","KG",0],"44833":["CORDOALHA ENGRAXADA E PLASTIFICADA PEAD, PARA PROTENSAO, ACO CP 190 RB, DIAMETRO NOMINAL DE 15,20 MM","KG",0],"44840":["BLOCO DE ANCORAGEM DE FERRO FUNDIDO, PARA CORDOALHA ENGRAXADA E PLASTIFICADA DE DIAMETRO NOMINAL 12,7 MM","UN",0],"44841":["BLOCO DE ANCORAGEM DE FERRO FUNDIDO, PARA CORDOALHA ENGRAXADA E PLASTIFICADA DE DIAMETRO NOMINAL 15,2 MM","UN",0],"44842":["CUNHA DE ACO BIPARTIDA PARA FIXACAO DE CORDOALHA ENGRAXADA E PLASTIFICADA DE DIAMETRO NOMINAL 12,7 MM","UN",0],"44843":["CUNHA DE ACO BIPARTIDA PARA FIXACAO DE CORDOALHA ENGRAXADA E PLASTIFICADA DE DIAMETRO NOMINAL 15,2 MM","UN",0],"44844":["POCKET FORMER PARA ANCORAGEM ATIVA DE PROTENSAO DE CORDOALHA ENGRAXADA E PLASTIFICADA DE DIAMETRO NOMINAL DE 12,7 MM","UN",0],"44845":["POCKET FORMER PARA ANCORAGEM ATIVA DE PROTENSAO DE CORDOALHA ENGRAXADA E PLASTIFICADA DE DIAMETRO NOMINAL DE 15,2 MM","UN",0],"44846":["CAP ABERTO PARA ANCORAGEM ATIVA DE PROTENSAO DE CORDOALHA ENGRAXADA E PLASTIFICADA DE DIAMETRO NOMINAL 12,7 MM","UN",0],"44847":["CAP ABERTO PARA ANCORAGEM ATIVA DE PROTENSAO DE CORDOALHA ENGRAXADA E PLASTIFICADA DE DIAMETRO NOMINAL 15,2 MM","UN",0],"44848":["TUBETE PLASTICO PARA PROTENSAO DE CORDOALHA ENGRAXADA E PLASTIFICADA ATE 15,2 MM","M",0],"44849":["CAP FECHADO PARA PROTENSAO DE CORDOALHA ENGRAXADA E PLASTIFICADA","UN",0],"45152":["LOCACAO DE ESTACAO TOTAL, PRECISAO ANGULAR DE 2 A 5 SEGUNDOS, INCLUINDO ACESSORIOS","H",0],"45755":["TELA DE ACO SOLDADA NERVURADA, CA-60, Q-503, (7,97 KG/M2), DIAMETRO DO FIO = 8,0 MM, LARGURA = 2,45 M, ESPACAMENTO DA MALHA = 10 X 10 CM","M2",0],"45756":["TELA DE ACO SOLDADA NERVURADA, CA-60, Q-636, (10,09 KG/M2), DIAMETRO DO FIO = 9,0 MM, LARGURA = 2,45 M, ESPACAMENTO DA MALHA = 10 X 10 CM","M2",0]},"a":{"104267":[["C",103939,0.06],["C",103938,0.0166],["C",88245,0.4571],["C",88238,0.1847],["I",44849,1.0],["I",44848,0.5],["I",44846,1.0],["I",44844,1.0],["I",44842,1.0],["I",44840,1.0],["I",43132,0.006]],"104268":[["C",103945,0.0952],["C",103944,0.0264],["C",88245,0.475],["C",88238,0.2026],["I",44849,1.0],["I",44848,0.5],["I",44847,1.0],["I",44845,1.0],["I",44843,1.0],["I",44841,1.0],["I",43132,0.006]],"104265":[["C",103939,0.0625],["C",103938,0.0137],["C",88245,0.1647],["I",44849,1.0],["I",44848,0.5],["I",44846,1.0],["I",44842,1.0],["I",44840,1.0],["I",43132,0.006]],"104266":[["C",103945,0.0625],["C",103944,0.0137],["C",88245,0.1647],["I",44849,1.0],["I",44848,0.5],["I",44847,1.0],["I",44843,1.0],["I",44841,1.0],["I",43132,0.006]],"104293":[["C",88245,0.08],["C",88238,0.0422],["I",44832,1.0238],["I",39481,0.8081]],"104295":[["C",88245,0.0576],["C",88238,0.0306],["I",44833,1.0238],["I",39481,0.58]],"98575":[["C",88316,0.2687],["C",88309,1.3276],["I",44074,0.006],["I",44073,1.0],["I",142,0.6452]],"98577":[["C",88316,0.2359],["C",88309,1.1655],["I",44073,1.0],["I",43142,0.054]],"105008":[["C",90781,0.0409],["C",88253,0.0409],["I",45152,0.0409]],"105136":[["C",90781,0.2994],["C",88253,0.2994],["I",45152,0.2994],["I",32,0.0735]],"97119":[["C",88245,0.0959766],["I",42407,0.190084],["I",42405,1.0]],"97090":[["C",88245,0.0356657],["C",88238,0.0142663],["I",43132,0.0120952],["I",42407,0.4545455],["I",7155,0.5497835]],"97092":[["C",88245,0.0292731],["C",88238,0.0117092],["I",43132,0.0120952],["I",42407,0.3215434],["I",7156,0.3889144]],"103053":[["C",88245,0.026111],["C",88238,0.0104444],["I",43813,0.3093411],["I",43132,0.0120952],["I",42407,0.2557545]],"97093":[["C",88245,0.024547],["C",88238,0.0098188],["I",43132,0.0120952],["I",43127,0.269983],["I",42407,0.2232143]],"103054":[["C",88245,0.0214719],["C",88238,0.0085888],["I",43814,0.1925993],["I",43132,0.0120952],["I",42407,0.1592357]],"107278":[["C",88245,0.0198491],["C",88238,0.0079396],["I",45755,0.1517596],["I",43132,0.0120952],["I",42407,0.1254705]],"107279":[["C",88245,0.018582],["C",88238,0.0074328],["I",45756,0.1198735],["I",43132,0.0120952],["I",42407,0.099108]],"97088":[["C",88245,0.0462942],["C",88238,0.0185177],["I",43132,0.0120952],["I",42407,0.6756757],["I",21141,0.8172458]],"97087":[["C",88316,0.0028991],["C",88309,0.0115966],["I",42408,1.04]],"97096":[["C",90587,0.038655],["C",90586,0.0598058],["C",88316,0.3938432],["C",88309,0.3938432],["I",1525,1.11365]]}};
+
 /* ---- 20_motor.js ---- */
 /* ============================================================
    20_motor.js — motor de cálculo (puro, sem acesso ao DOM)
@@ -634,13 +680,14 @@ const MOTOR = (() => {
     ? v.toLocaleString('pt-BR', { minimumFractionDigits: d, maximumFractionDigits: d }) : '—';
 
   /* ---------- catálogos ---------- */
-  const TELAS = [['Q61', 3.4, 150], ['Q75', 3.8, 150], ['Q92', 4.2, 150], ['Q113', 3.8, 100], ['Q138', 4.2, 100],
-    ['Q159', 4.5, 100], ['Q196', 5.0, 100], ['Q246', 5.6, 100], ['Q283', 6.0, 100], ['Q335', 8.0, 150],
-    ['Q396', 7.1, 100], ['Q503', 8.0, 100], ['Q636', 9.0, 100], ['Q785', 10.0, 100]]
-    .map(([cod, phi, s]) => ({
+  /* telas soldadas CA-60: massa nominal de catálogo (kg/m²), a mesma das descrições do SINAPI */
+  const TELAS = [['Q61', 3.4, 150, 0.97], ['Q75', 3.8, 150, 1.21], ['Q92', 4.2, 150, 1.48], ['Q113', 3.8, 100, 1.80], ['Q138', 4.2, 100, 2.20],
+    ['Q159', 4.5, 100, 2.52], ['Q196', 5.0, 100, 3.11], ['Q246', 5.6, 100, 3.91], ['Q283', 6.0, 100, 4.48], ['Q335', 8.0, 150, 5.37],
+    ['Q396', 7.1, 100, 6.28], ['Q503', 8.0, 100, 7.97], ['Q636', 9.0, 100, 10.09], ['Q785', 10.0, 100, 12.46]]
+    .map(([cod, phi, s, kgCat]) => ({
       tipo: 'tela', cod, nome: `${cod} (φ${fmt(phi, 1)} c/ ${fmt(s / 10, 0)} cm)`, phi, s, fyk: 600, eta1: 1.4,
       As: PI * phi * phi / 4 / s,                                // mm²/mm
-      kg: 2 * (1000 / s) * PI * phi * phi / 4 * 1e-6 * 7850       // kg/m² (duas direções)
+      kg: kgCat, kgCat                                           // kg/m² (duas direções, catálogo)
     }));
 
   const BARRAS = [];
@@ -1106,13 +1153,16 @@ const MOTOR = (() => {
     const scpMin = Math.min(dirs.x.scpMin, dirs.y.scpMin);
     if (Math.max(dirs.x.scpMed, dirs.y.scpMed) > 3.5) { ok = false; motivo = 'pré-compressão média acima de 3,5 MPa'; }
     // quantitativos
-    let comp = 0, ancor = 0;
+    let comp = 0, ancor = 0, ativas = 0, passivas = 0, tX = 0, tY = 0;
     J.dxs.forEach(dx => J.dys.forEach(dy => {
       const nX = Math.max(1, Math.round(dy * 1000 / dirs.x.s)), nY = Math.max(1, Math.round(dx * 1000 / dirs.y.s));
       comp += nX * (dx + 0.6) + nY * (dy + 0.6);
       ancor += 2 * (nX + nY);
+      tX += nX; tY += nY;
+      ativas += nX * (dirs.x.pontas === 2 ? 2 : 1) + nY * (dirs.y.pontas === 2 ? 2 : 1);
+      passivas += nX * (dirs.x.pontas === 2 ? 0 : 1) + nY * (dirs.y.pontas === 2 ? 0 : 1);
     }));
-    return { cord: cd, spi, P0, dirs, scpMin, scpMed, ok, motivo, comp, kg: comp * cd.kgm, ancor, relax };
+    return { cord: cd, spi, P0, dirs, scpMin, scpMed, ok, motivo, comp, kg: comp * cd.kgm, ancor, ativas, passivas, nTend: { x: tX, y: tY }, relax };
   }
 
   /* ---------- avaliação de uma espessura ---------- */
@@ -1147,7 +1197,10 @@ const MOTOR = (() => {
     if (sis === 'tela' || sis === 'estrut') {
       const Lp = Math.max(J.maxDx, J.maxDy), W = GAMA_C * h / 1000, fs = 2 / 3 * 600;
       const req = inp.muDrag * Lp * W / (2 * fs * 1000) * 1000; // mm²/mm
-      const esc = TELAS.find(t => t.As >= req) || TELAS[TELAS.length - 1];
+      const iMin = Math.max(0, TELAS.findIndex(t => t.cod === inp.telaMin));
+      const aptas = TELAS.filter((t, i) => i >= iMin && t.As >= req);
+      const ref = ctx.prefSinapi ? aptas.find(t => ORC.temCusto(t)) : null;
+      const esc = ref || aptas[0] || TELAS[TELAS.length - 1];
       r.telaSup = { req, esc, ok: esc.As >= req - 1e-9, Lp, W, fs };
       if (!r.telaSup.ok) { r.ok = false; r.motivos.push('tela superior insuficiente para o comprimento de placa'); }
     }
@@ -1272,17 +1325,22 @@ const MOTOR = (() => {
     q.lona = area * 1.1 * (inp.muBase === 0.5 ? 2 : 1);
     q.subbase = inp.sb !== 'nenhuma' ? area * inp.tsb / 100 : 0;
     r.q = q;
-    const fa = 1 + inp.perdaA / 100;
-    const cst = {
-      conc: q.volPerdas * inp.pConc,
-      aco: (q.kgSup * inp.pTela + q.kgInf * (r.inf && r.inf.esc.tipo === 'barra' ? inp.pCA50 : inp.pTela)) * fa,
-      barras: (r.barras.kg + r.barras.kgPlacas) * inp.pDowel,
-      prot: q.kgCord * inp.pCord * fa + q.ancor * inp.pAnc,
-      juntas: (J.comp.JS + J.comp.JC + J.comp.JD + J.comp.JI) * inp.pJunta
-    };
-    cst.total = cst.conc + cst.aco + cst.barras + cst.prot + cst.juntas;
-    cst.m2 = cst.total / area;
-    r.custo = cst;
+    if (inp.basePreco === 'sinapi' && typeof ORC !== 'undefined' && ORC.disponivel()) {
+      const o = ORC.gerar({ inp, r, C });
+      r.orc = o;
+      r.custo = { base: 'sinapi', partes: o.grupos.map(gr => [gr.t, gr.sub]), total: o.total, m2: o.total / area };
+    } else {
+      const fa = 1 + inp.perdaA / 100;
+      const partes = [
+        ['Concreto', q.volPerdas * inp.pConc],
+        ['Armaduras', (q.kgSup * inp.pTela + q.kgInf * (r.inf && r.inf.esc.tipo === 'barra' ? inp.pCA50 : inp.pTela)) * fa],
+        ['Barras e placas de transferência', (r.barras.kg + r.barras.kgPlacas) * inp.pDowel],
+        ['Protensão', q.kgCord * inp.pCord * fa + q.ancor * inp.pAnc],
+        ['Juntas', (J.comp.JS + J.comp.JC + J.comp.JD + J.comp.JI) * inp.pJunta]
+      ];
+      const total = partes.reduce((a, p) => a + p[1], 0);
+      r.custo = { base: 'manual', partes, total, m2: total / area };
+    }
     return r;
   }
 
@@ -1302,9 +1360,12 @@ const MOTOR = (() => {
     }
     if (inp.lin) C.plin = inp.plin;
     const g = { gG: inp.gG, gQ: inp.gQ, gDyn: inp.gDyn, gC: inp.gC, gS: inp.gS, gP: inp.gP, baseRes: inp.baseRes };
-    const preco = cd => cd.kg * (cd.tipo === 'barra' ? inp.pCA50 : inp.pTela);
-    const candInf = [...TELAS, ...BARRAS].sort((a, b) => preco(a) - preco(b) || a.kg - b.kg);
-    const ctx = { conc, k, C, g, candInf };
+    const sinapi = inp.basePreco === 'sinapi' && typeof ORC !== 'undefined' && ORC.disponivel();
+    const preco = cd => cd.kg * (sinapi ? ORC.precoKg(cd, inp) : (cd.tipo === 'barra' ? inp.pCA50 : inp.pTela));
+    const prefSinapi = sinapi && inp.prefSinapi;
+    const semRef = cd => (prefSinapi && !ORC.temCusto(cd) ? 1 : 0);
+    const candInf = [...TELAS, ...BARRAS].sort((a, b) => semRef(a) - semRef(b) || preco(a) - preco(b) || a.kg - b.kg);
+    const ctx = { conc, k, C, g, candInf, prefSinapi };
 
     const hs = [];
     for (let h = inp.hmin * 10; h <= inp.hmax * 10 + 1e-9; h += 10) hs.push(Math.round(h));
@@ -1338,6 +1399,338 @@ const MOTOR = (() => {
     wInt, wBorda, wCanto, dInt, dBorda, dCanto, Nf, SRadm, kelvin, kelvinTab, momentosPonto, momentoUDL,
     puncao, barraTabela, friberg, layoutJuntas, fissuracao, psi1000, TELAS, BARRAS, CORD, fmt, NU, PI
   };
+})();
+
+/* ---- 25_orcamento.js ---- */
+/* ============================================================
+   25_orcamento.js — orçamento com composições do SINAPI (puro, sem DOM)
+   Fontes de preço de cada item:
+     SINAPI      composição com custo na UF da referência
+     SINAPI_EST  composição existente, sem custo na UF: custo estimado pelo analítico
+                 do SINAPI, com os itens sem preço estimados pelo sistema (a confirmar)
+     EST         serviço sem composição no SINAPI: composição própria estimada (a confirmar)
+   ============================================================ */
+const ORC = (() => {
+  const S = typeof SINAPI !== 'undefined' ? SINAPI : null;
+  const r2 = v => Math.round((v + Number.EPSILON) * 100) / 100;
+  const f2 = v => (Number.isFinite(v) ? v : 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const f4 = v => (Number.isFinite(v) ? v : 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 4 });
+  const custoC = c => (S && S.c[c] ? S.c[c][2] : 0);
+  const precoI = c => (S && S.i[c] ? S.i[c][2] : 0);
+  const descC = c => (S && S.c[c] ? S.c[c][0] : '');
+  const descI = c => (S && S.i[c] ? S.i[c][0] : '');
+  const curta = s => String(s || '').replace(/\s+AF_\d+\/\d+\.?$/, '').toLowerCase().replace(/^\w/, m => m.toUpperCase()).slice(0, 90);
+  const UN = { M2: 'm²', M3: 'm³', KG: 'kg', M: 'm', UN: 'un', TXKM: 't·km', M3XKM: 'm³·km', H: 'h', T: 't' };
+  const un = u => UN[u] || String(u || '').toLowerCase();
+
+  /* telas: código da composição de armação para piso e massa nominal de catálogo (kg/m²) */
+  const TELA_COMP = { Q92: 97088, Q113: 97089, Q138: 97090, Q159: 97091, Q196: 97092, Q246: 103053, Q283: 97093, Q396: 103054, Q503: 107278, Q636: 107279 };
+  const TELA_INS = { Q61: 10917, Q92: 21141, Q113: 39507, Q138: 7155, Q159: 42406, Q196: 7156, Q283: 43127 };
+  const BARRA_COMP = { 6.3: 92769, 8: 107280, 10: 107281, 12.5: 107282, 16: 92773, 20: 92774 };
+  const DOWEL_COMP = { 16: 97116, 20: 97117, 25: 97118, 32: 97119 };
+  const CONC_COMP = { 25: 107276, 30: 97096, 35: 107277 };
+  const CONC_INS = { 20: 1524, 25: 1527, 30: 1525, 35: 11145, 40: 34479, 45: 34481, 50: 34483 };
+
+  function disponivel() { return !!(S && S.c && Object.keys(S.c).length); }
+
+  /* preço médio por kg das telas com preço no SINAPI */
+  function precoKgTela() {
+    let s = 0, n = 0;
+    Object.values(TELA_INS).forEach(c => {
+      const d = descI(c), m = /\((\d+,\d+)\s*KG\/M2\)/i.exec(d);
+      if (m && precoI(c) > 0) { s += precoI(c) / parseFloat(m[1].replace(',', '.')); n++; }
+    });
+    return n ? s / n : 7.25;
+  }
+
+  /* estimativas do sistema para itens sem preço no SINAPI (insumos e equipamentos) */
+  function fallbacks(inp) {
+    const pk = precoKgTela(), pa = inp.pAnc, fb = {};
+    const tela = (c, kg) => { fb[c] = { v: kg * pk, txt: `${f2(kg)} kg/m² × R$ ${f2(pk)}/kg (média das telas com preço no SINAPI)` }; };
+    tela(43813, 3.91); tela(43814, 6.28); tela(45755, 7.97); tela(45756, 10.09);
+    fb[44832] = fb[44833] = { v: inp.pCord, txt: 'preço informado para cordoalha engraxada e plastificada' };
+    const kit = (c, frac, u) => { fb[c] = { v: pa * frac, txt: `${f2(frac * 100)} % do kit de ancoragem informado (R$ ${f2(pa)})${u || ''}` }; };
+    kit(44840, 0.45); kit(44841, 0.45); kit(44842, 0.20); kit(44843, 0.20); kit(44844, 0.15); kit(44845, 0.15);
+    kit(44846, 0.08); kit(44847, 0.08); kit(44849, 0.07); kit(44848, 0.10, ' por metro');
+    [103938, 103944].forEach(c => { fb[c] = { v: 30, txt: 'custo horário produtivo estimado do conjunto de protensão' }; });
+    [103939, 103945].forEach(c => { fb[c] = { v: 12, txt: 'custo horário improdutivo estimado do conjunto de protensão' }; });
+    fb[45152] = { v: 30, txt: 'locação horária estimada de estação total' };
+    fb[45153] = { v: 45, txt: 'locação horária estimada de receptor GNSS' };
+    return fb;
+  }
+
+  /* avalia o analítico de uma composição com os preços da referência e as estimativas */
+  function analitico(cod, fb) {
+    const itens = (S.a && S.a[cod]) || [];
+    let v = 0; const est = [];
+    itens.forEach(([t, c, coef]) => {
+      let p = t === 'C' ? custoC(c) : precoI(c);
+      if (!(p > 0)) {
+        const f = fb[c];
+        p = f ? f.v : 0;
+        est.push(`${curta(t === 'C' ? descC(c) : descI(c))} (${c}), coef. ${f4(coef)}: R$ ${f2(p)}${f ? ', ' + f.txt : ', sem estimativa'}`);
+      }
+      v += coef * p;
+    });
+    return { v, est, ok: itens.length > 0 };
+  }
+
+  /* ---------- composições próprias (serviços sem composição no SINAPI) ---------- */
+  function estConcretagem(fck) {
+    const base = 97096, ins = CONC_INS[fck];
+    const coef = ((S.a[base] || []).find(x => x[1] === 1525) || [0, 0, 1.11365])[2];
+    const resto = custoC(base) - coef * precoI(1525);
+    const v = resto + coef * precoI(ins);
+    return { v, memo: `Por analogia à composição ${base} (C30): parcela de mão de obra e equipamentos R$ ${f2(resto)}/m³ + ${f4(coef)} m³ × R$ ${f2(precoI(ins))} (insumo ${ins}, concreto C${fck} bombeável do SINAPI).` };
+  }
+  function estTela(cd) {
+    const k2 = cd.kgCat, base = k2 < 2 ? 97088 : 97093;
+    const it = S.a[base] || [];
+    const k1 = { 97088: 1.48, 97093: 4.48 }[base];
+    const get = c => (it.find(x => x[1] === c) || [0, 0, 0])[2];
+    const insBase = base === 97088 ? 21141 : 43127;
+    const cT = get(insBase) * k1 / k2, cTr = get(42407) * k1 / k2, cA = get(43132);
+    const esc = Math.pow(k1 / k2, 0.59);
+    const cH = get(88245) * esc, cJ = get(88238) * esc;
+    const pTela = TELA_INS[cd.cod] && precoI(TELA_INS[cd.cod]) > 0 ? precoI(TELA_INS[cd.cod]) : k2 * precoKgTela();
+    const v = cT * pTela + cTr * precoI(42407) + cA * precoI(43132) + cH * custoC(88245) + cJ * custoC(88238);
+    return { v, memo: `Por analogia à composição ${base}: tela ${cd.cod} ${f4(cT)} m²/kg × R$ ${f2(pTela)}${TELA_INS[cd.cod] ? ` (insumo ${TELA_INS[cd.cod]})` : ' (estimado)'} + treliça ${f4(cTr)} m × R$ ${f2(precoI(42407))} + arame ${f4(cA)} kg × R$ ${f2(precoI(43132))} + armador ${f4(cH)} h e ajudante ${f4(cJ)} h (produtividade ajustada pela massa da tela).` };
+  }
+  function estDowel40() {
+    const it = S.a[97119] || [], get = c => (it.find(x => x[1] === c) || [0, 0, 0])[2];
+    const p = precoI(42405), cH = get(88245) * 0.8, cTr = get(42407) * 0.64;
+    const v = p + cH * custoC(88245) + cTr * precoI(42407);
+    return { v, memo: `Por analogia à composição 97119 (φ32): aço CA-25 R$ ${f2(p)}/kg (insumo 42405, sem preço para φ40) + armador ${f4(cH)} h/kg + treliça ${f4(cTr)} m/kg.` };
+  }
+  function estCura() {
+    const v = 0.20 * precoI(42409) + 0.012 * custoC(88316);
+    return { v, memo: `Agente de cura 0,20 kg/m² × R$ ${f2(precoI(42409))} (insumo 42409) + servente 0,012 h/m² × R$ ${f2(custoC(88316))} (88316).` };
+  }
+  function estEpoxi(h) {
+    const corte = Math.ceil(h / 3 / 5) * 5;
+    const mat98577 = precoI(44073) * 1 + precoI(43142) * 0.054;
+    const mo = custoC(98577) - mat98577;
+    const kg = 4 * corte / 1e6 * 1000 * 1.4 * 1.1;
+    const v = mo + kg * precoI(156);
+    return { v, memo: `Mão de obra da composição 98577 R$ ${f2(mo)}/m (sem tarugo e silicone) + epóxi ${f4(kg)} kg/m (junta 4 × ${corte} mm, densidade 1,4, perdas 10 %) × R$ ${f2(precoI(156))} (insumo 156, adesivo epóxi fluido, referência para o semirrígido).` };
+  }
+  function estEnchimentoJI() {
+    const v = 2 * 1.05 * precoI(38544) + 0.06 * custoC(88316);
+    return { v, memo: `Duas camadas de manta de polietileno expandido 8 mm (≈ 15 mm) 2,10 m²/m² × R$ ${f2(precoI(38544))} (insumo 38544) + servente 0,06 h/m² × R$ ${f2(custoC(88316))}.` };
+  }
+  function estNicho() {
+    const v = 2.5 * precoI(134) + 0.08 * custoC(88309) + 0.08 * custoC(88316);
+    return { v, memo: `Graute 2,5 kg × R$ ${f2(precoI(134))} (insumo 134) + pedreiro e servente 0,08 h cada.` };
+  }
+  function estPlacaTransf() {
+    const v = 0.75 * precoI(1330) + 8 + 0.10 * custoC(88245);
+    return { v, memo: `Chapa ASTM A36 6,35 mm 0,75 kg × R$ ${f2(precoI(1330))} (insumo 1330) + luva plástica R$ 8,00 (estimativa) + armador 0,10 h × R$ ${f2(custoC(88245))}.` };
+  }
+  function estPerfilJD() {
+    const v = 2 * precoI(568) + 0.4 * precoI(43054) + 0.35 * custoC(88245) + 0.35 * custoC(88238);
+    return { v, memo: `Duas cantoneiras 50,8 × 9,53 mm × R$ ${f2(precoI(568))}/m (insumo 568) + chumbadores 0,4 kg × R$ ${f2(precoI(43054))} + armador e ajudante 0,35 h cada.` };
+  }
+
+  /* ---------- orçamento ---------- */
+  function gerar(X) {
+    if (!disponivel()) return null;
+    const inp = X.inp, r = X.r, J = r.J;
+    const fb = fallbacks(inp);
+    const A = inp.Lx * inp.Ly, P = 2 * (inp.Lx + inp.Ly), h = r.h / 1000;
+    const tsb = inp.sb !== 'nenhuma' ? inp.tsb / 100 : 0;
+    const grupos = [];
+    let g = null;
+    const grupo = t => { g = { t, itens: [] }; grupos.push(g); };
+    const q2 = v => r2(v);
+    function add(cod, q, o = {}) {
+      q = q2(q); if (!(q > 0)) return;
+      const c = S.c[cod];
+      if (!c) { g.itens.push({ cod: null, desc: o.desc || `Composição ${cod} ausente da base carregada`, un: un(o.un), q, pu: 0, fonte: 'EST', memo: 'Composição não encontrada no arquivo SINAPI carregado.', obs: o.obs || '' }); return; }
+      let pu = c[2], fonte = 'SINAPI', memo = '';
+      if (!(pu > 0)) {
+        const e = analitico(cod, fb);
+        pu = e.v; fonte = 'SINAPI_EST';
+        memo = `Composição ${cod} sem custo em ${S.uf} na referência ${S.ref}; custo pelo analítico do SINAPI com os itens sem preço estimados: ${e.est.join('; ')}.`;
+      }
+      g.itens.push({ cod, desc: c[0], un: un(c[1]), q, pu: r2(pu), fonte, memo, obs: o.obs || '' });
+    }
+    function propria(desc, u, q, est, obs) {
+      q = q2(q); if (!(q > 0)) return;
+      g.itens.push({ cod: null, desc, un: u, q, pu: r2(est.v), fonte: 'EST', memo: est.memo, obs: obs || '' });
+    }
+    function transporte(massa, dmt, obs) {
+      if (!(massa > 0) || !(dmt > 0)) return;
+      add(95879, massa * Math.min(dmt, 30), { obs: `${obs}; DMT ${f2(Math.min(dmt, 30))} km` });
+      if (dmt > 30) add(93599, massa * (dmt - 30), { obs: `${obs}; excedente de ${f2(dmt - 30)} km` });
+    }
+
+    /* 1. serviços preliminares */
+    grupo('Serviços preliminares');
+    add(105136, 2, { obs: 'referências de nível e de alinhamento' });
+    add(105008, (J.nx + 1) * (J.ny + 1) + J.pilares.length, { obs: `cruzamentos de juntas (${(J.nx + 1) * (J.ny + 1)}) e pilares (${J.pilares.length})` });
+
+    /* 2. infraestrutura abaixo do piso */
+    grupo('Infraestrutura abaixo do piso: terraplenagem, subleito e sub-base');
+    if (inp.escavar) {
+      const V = A * (h + tsb);
+      add(101126, V, { obs: `caixa do piso com ${f2((h + tsb) * 100)} cm (concreto${tsb ? ' e sub-base' : ''})` });
+      transporte(V * 1.8, inp.dmtBota, 'bota-fora do material escavado, 1,8 t/m³');
+    }
+    add(inp.soloSub === 'arenoso' ? 100577 : 100576, A);
+    if (tsb) {
+      const t = inp.tsb, gran = inp.sb === 'granular';
+      const cod = gran ? (t <= 12.5 ? 105727 : t <= 17.5 ? 96396 : 105730) : (t <= 12.5 ? 105732 : t <= 17.5 ? 96397 : 105735);
+      add(cod, A * tsb, { obs: t > 20 ? 'executar em camadas de até 20 cm' : `espessura de projeto ${f2(t)} cm` });
+      const dens = gran ? 2.2 : 2.3;
+      add(100995, A * tsb * dens, { obs: `carga da sub-base, ${f2(dens)} t/m³` });
+      transporte(A * tsb * dens, inp.dmtSB, 'transporte da sub-base');
+    }
+    const camadas = inp.muBase === 0.5 ? 2 : inp.muBase === 0.75 ? 1 : 0;
+    add(97087, A * camadas, { obs: camadas === 2 ? 'duas camadas' : '' });
+
+    /* 3. drenagem */
+    grupo('Drenagem');
+    let Ld = 0;
+    if (inp.drenoPerim) { add(102666, P, { obs: 'dreno perimetral' }); Ld += P; }
+    if (inp.espDreno > 0) {
+      const Lm = Math.max(inp.Lx, inp.Ly), Ln = Math.min(inp.Lx, inp.Ly);
+      const n = Math.max(1, Math.ceil(Lm / inp.espDreno) - 1);
+      add(102690, n * Ln, { obs: `${n} linha(s) internas a cada ${f2(inp.espDreno)} m` });
+      Ld += n * Ln;
+    }
+    if (Ld > 0) add(99260, Math.max(2, Math.ceil(Ld / 50)), { obs: 'inspeção e saída dos drenos a cada 50 m' });
+
+    /* 4. fôrmas */
+    grupo('Fôrmas');
+    const perPil = J.pilares.reduce((s, p) => s + p.per, 0);
+    const bordas = P + J.comp.JC + (r.sis === 'prot' ? J.comp.JD : 0) + perPil;
+    add(inp.forma === 'compensado' ? 107283 : 97086, bordas * h, { obs: `bordas de faixas e placas${perPil ? ' e caixas de pilares' : ''}: ${f2(bordas)} m × ${f2(h)} m` });
+
+    /* 5. armaduras */
+    grupo('Armaduras e barras de transferência');
+    const tela = (cd, papel) => {
+      const kg = cd.kgCat * A, cod = TELA_COMP[cd.cod];
+      if (cod) add(cod, kg, { obs: `${papel}: ${f2(cd.kgCat)} kg/m² × ${f2(A)} m²` });
+      else propria(`Armação para execução de piso de concreto sobre solo com uso de tela ${cd.cod.replace('Q', 'Q-')} (composição própria)`, 'kg', kg, estTela(cd), `${papel}: ${f2(cd.kgCat)} kg/m²`);
+    };
+    if (r.telaSup) tela(r.telaSup.esc, 'tela superior');
+    if (r.inf) {
+      if (r.inf.esc.tipo === 'tela') tela(r.inf.esc, 'armadura inferior');
+      else {
+        const cd = r.inf.esc, fl = 1 + 50 * cd.phi / 12000;
+        add(BARRA_COMP[cd.phi], cd.kg * A * fl, { obs: `armadura inferior ${cd.cod} nas duas direções, com transpasses (+${f2((fl - 1) * 100)} %)` });
+      }
+    }
+    const nCirc = J.pilares.filter(p => p.forma === 'circular').length;
+    if (nCirc && r.sis !== 'simples') add(107281, nCirc * 8 * 1.0 * 0.617, { obs: `reforço de 8 barras φ10 L = 1 m por caixa circular (${nCirc})` });
+    if (r.sis !== 'prot' && r.barras.n > 0) {
+      const phi = r.bt.phi, cod = DOWEL_COMP[phi];
+      if (cod) add(cod, r.barras.kg, { obs: `${r.barras.n} barras φ${phi}, L = ${r.bt.L / 10} cm, ${f2(r.barras.kgUn)} kg/un` });
+      else propria(`Barras de transferência, aço CA-25 de ${phi},0 mm, para piso de concreto: fornecimento e instalação (composição própria)`, 'kg', r.barras.kg, estDowel40(), `${r.barras.n} barras`);
+      const kgG = r.barras.n * Math.PI * (phi / 1000) * (r.bt.L / 2000) * 0.0005 * 900;
+      add(97115, kgG, { obs: 'película de 0,5 mm na metade engraxada de cada barra' });
+    }
+
+    /* 6. protensão */
+    if (r.pt) {
+      grupo('Protensão');
+      const d127 = inp.cord === '12.7';
+      add(d127 ? 104293 : 104295, r.pt.kg, { obs: `${f2(r.pt.comp)} m de cordoalha engraxada e plastificada` });
+      add(d127 ? 104267 : 104268, r.pt.ativas, { obs: 'ancoragens ativas' });
+      add(d127 ? 104265 : 104266, r.pt.passivas, { obs: 'ancoragens passivas' });
+      propria('Preenchimento de nicho de ancoragem ativa com graute cimentício (composição própria)', 'un', r.pt.ativas, estNicho());
+      propria('Placa de transferência de carga em junta de dilatação, aço ASTM A36 6,35 mm com luva plástica: fornecimento e instalação (composição própria)', 'un', r.barras.nJD, estPlacaTransf());
+      propria('Proteção de bordas em junta de dilatação com cantoneiras de aço 50,8 × 9,53 mm chumbadas: fornecimento e instalação (composição própria)', 'm', J.comp.JD, estPerfilJD());
+    }
+
+    /* 7. concretagem e acabamento */
+    grupo('Concretagem e acabamento');
+    const fck = inp.fck, cc = CONC_COMP[fck];
+    const volPil = J.pilares.reduce((s, p) => s + ((p.forma === 'circular' ? Math.PI * p.rIso * p.rIso : 2 * p.rIso * p.rIso) - p.bx * p.by) * h, 0);
+    if (cc) add(cc, A * h, { obs: `${f2(A)} m² × ${f2(h)} m (a composição já inclui as perdas do concreto)` });
+    else propria(`Concretagem de piso sobre solo, fck ${fck} MPa: lançamento, adensamento e acabamento (composição própria)`, 'm³', A * h, estConcretagem(fck), `${f2(A)} m² × ${f2(h)} m`);
+    if (volPil > 0) {
+      if (cc) add(cc, volPil, { obs: 'fechamento das caixas de isolamento dos pilares' });
+      else propria(`Concretagem das caixas de isolamento de pilares, fck ${fck} MPa (composição própria)`, 'm³', volPil, estConcretagem(fck));
+    }
+    if (inp.acab === 'polido') add(97097, A, { obs: 'endurecedor mineral e polimento mecânico' });
+    if (inp.cura) propria('Cura química do piso com membrana de cura aplicada por aspersão (composição própria)', 'm²', A, estCura());
+
+    /* 8. juntas */
+    grupo('Juntas');
+    const jsjc = J.comp.JS + J.comp.JC;
+    add(97114, jsjc, { obs: `juntas serradas ${f2(J.comp.JS)} m e reservatório das juntas de construção ${f2(J.comp.JC)} m` });
+    if (jsjc > 0) {
+      if (inp.selante === 'silicone') add(98577, jsjc);
+      else if (inp.selante === 'pu') add(98575, jsjc, { obs: 'selante PU em juntas serradas e de construção' });
+      else propria('Tratamento de junta serrada com selante epóxi semirrígido em toda a profundidade do corte (composição própria)', 'm', jsjc, estEpoxi(r.h));
+    }
+    add(98575, J.comp.JD, { obs: 'juntas de dilatação' });
+    propria('Enchimento de junta de isolamento com material compressível de polietileno expandido, 15 mm (composição própria)', 'm²', J.comp.JI * h, estEnchimentoJI(), `${f2(J.comp.JI)} m × ${f2(h)} m`);
+    add(98575, J.comp.JI, { obs: 'selagem das juntas de isolamento' });
+
+    /* totais */
+    let total = 0, conf = 0, nConf = 0, n = 0;
+    grupos.forEach((gr, i) => {
+      gr.n = i + 1;
+      gr.sub = 0;
+      gr.itens.forEach((it, k) => {
+        it.n = `${i + 1}.${k + 1}`;
+        it.tot = r2(it.q * it.pu);
+        it.conf = it.fonte !== 'SINAPI';
+        gr.sub += it.tot;
+        if (it.conf) { conf += it.tot; nConf++; }
+        n++;
+      });
+      gr.sub = r2(gr.sub);
+      total += gr.sub;
+    });
+    total = r2(total);
+    const bdi = inp.bdi || 0;
+    return {
+      ref: S.ref, emissao: S.emissao, uf: S.uf, regime: S.regime, area: A,
+      grupos: grupos.filter(x => x.itens.length), total, bdi, totalBDI: r2(total * (1 + bdi / 100)),
+      m2: total / A, m2BDI: total * (1 + bdi / 100) / A, nItens: n, nConf, valorConf: r2(conf)
+    };
+  }
+
+  /* CSV (Excel pt-BR: separador ponto e vírgula, vírgula decimal) */
+  function csv(o, cab) {
+    const q = s => '"' + String(s == null ? '' : s).replace(/"/g, '""') + '"';
+    const num = (v, d) => (Number.isFinite(v) ? v.toFixed(d).replace('.', ',') : '');
+    const L = [];
+    (cab || []).forEach(l => L.push(q(l)));
+    L.push(['Item', 'Código SINAPI', 'Descrição', 'Unidade', 'Quantidade', 'Custo unitário (R$)', 'Situação do preço', 'Total (R$)', 'Observação'].map(q).join(';'));
+    o.grupos.forEach(gr => {
+      L.push([gr.n, '', gr.t.toUpperCase(), '', '', '', '', num(gr.sub, 2), ''].map((v, i) => (i === 7 ? v : q(v))).join(';'));
+      gr.itens.forEach(it => {
+        L.push([q(it.n), q(it.cod || ''), q(it.desc), q(it.un), num(it.q, 2), num(it.pu, 2), q(it.conf ? 'a confirmar' : 'SINAPI'), num(it.tot, 2), q(it.obs || '')].join(';'));
+      });
+    });
+    L.push(['', '', q('CUSTO DIRETO TOTAL'), '', '', '', '', num(o.total, 2), ''].join(';'));
+    L.push(['', '', q(`BDI (${num(o.bdi, 2)} %)`), '', '', '', '', num(o.totalBDI - o.total, 2), ''].join(';'));
+    L.push(['', '', q('PREÇO TOTAL COM BDI'), '', '', '', '', num(o.totalBDI, 2), ''].join(';'));
+    return '\uFEFF' + L.join('\r\n') + '\r\n';
+  }
+
+  /* custo por kg de uma armadura do catálogo, para ordenar as alternativas na otimização */
+  function precoKg(cd, inp) {
+    if (cd.tipo === 'tela') {
+      const c = TELA_COMP[cd.cod];
+      if (c) { const v = custoC(c); return v > 0 ? v : analitico(c, fallbacks(inp)).v; }
+      return estTela(cd).v;
+    }
+    const c = BARRA_COMP[cd.phi];
+    return (c ? custoC(c) : 10) * (1 + 50 * cd.phi / 12000);
+  }
+
+  /* a armadura tem composição com custo na referência? */
+  function temCusto(cd) {
+    const c = cd.tipo === 'tela' ? TELA_COMP[cd.cod] : BARRA_COMP[cd.phi];
+    return !!(c && custoC(c) > 0);
+  }
+
+  return { gerar, csv, precoKg, temCusto, disponivel, analitico, fallbacks, estConcretagem, estTela, TELA_COMP, CONC_COMP, DOWEL_COMP, BARRA_COMP };
 })();
 
 /* ---- 30_desenhos.js ---- */
@@ -1518,7 +1911,7 @@ const DES = (() => {
     // legenda
     const lx = 110, ly = H - 138;
     const itens = [];
-    if (J.comp.JS > 0) itens.push([L(0, 0, 34, 0, COR.JS, 1.4, '9 5'), `Junta serrada, corte ${inp.selante === 'pu' ? '5' : '4'} × ${corteJS(r.h)} mm (${fmt(J.comp.JS, 0)} m)`]);
+    if (J.comp.JS > 0) itens.push([L(0, 0, 34, 0, COR.JS, 1.4, '9 5'), `Junta serrada, corte ${inp.selante !== 'epoxi' ? '5' : '4'} × ${corteJS(r.h)} mm (${fmt(J.comp.JS, 0)} m)`]);
     if (J.comp.JC > 0) itens.push([L(0, 0, 34, 0, COR.JC, 2.4), `Junta de construção (${fmt(J.comp.JC, 0)} m)`]);
     if (J.comp.JD > 0) itens.push([L(0, 0, 34, 0, COR.JD, 2.8), `Junta de dilatação (${fmt(J.comp.JD, 0)} m)`]);
     itens.push([L(0, 0, 34, 0, COR.JI, 1.6, '6 3'), `Junta de isolamento (${fmt(J.comp.JI, 0)} m)`]);
@@ -1613,7 +2006,7 @@ const DES = (() => {
     if (r.telaSup) add(x0 + 0.25 * span * s, yTs, [`Tela superior ${r.telaSup.esc.cod}`, `φ${fmt(r.telaSup.esc.phi, 1)} c/ ${r.telaSup.esc.s / 10} cm, CA-60`]);
     if (r.inf) add(x0 + 0.38 * span * s, yTi, [`Armadura inferior ${r.inf.esc.cod}`, r.inf.esc.tipo === 'tela' ? `CA-60, sobre espaçadores` : 'CA-50, duas direções']);
     if (prot) add(x0 + 0.3 * span * s, topo + h / 2 * s, [`Cordoalha engraxada ${r.pt.cord.nome}`, `c/ ${r.pt.dirs.x.s / 10} cm (x) e ${r.pt.dirs.y.s / 10} cm (y), a meia altura`]);
-    if (!prot) add(xc, topo + 2, [`Corte com disco ${inp.selante === 'pu' ? '5' : '4'} × ${corteJS(h)} mm`, inp.selante === 'pu' ? 'Selante PU sobre delimitador' : 'Selante epóxi semirrígido']);
+    if (!prot) add(xc, topo + 2, [`Corte com disco ${inp.selante !== 'epoxi' ? '5' : '4'} × ${corteJS(h)} mm`, inp.selante === 'pu' ? 'Selante PU sobre tarugo' : inp.selante === 'silicone' ? 'Selante de silicone sobre tarugo' : 'Selante epóxi semirrígido']);
     else add(xc, topo + 8, ['Junta de dilatação armada', `abertura prevista ${fmt(r.abertura.dL, 0)} mm`]);
     if (temBarra) add(xc + (prot ? 150 : r.bt.L / 4) * s, topo + h / 2 * s, prot ? ['Placa de transferência', 'aço, espessura conforme fabricante'] : [`Barra de transferência φ${r.bt.phi} CA-25`, `L = ${r.bt.L / 10} cm c/ ${r.bt.s / 10} cm, metade engraxada`]);
     // chamadas inferiores
@@ -1675,8 +2068,8 @@ const DES = (() => {
       const q = quadro(0, 0), x0 = q.x + (q.w - span * sd) / 2, xc = x0 + span * sd / 2, topo = q.y + 70;
       let o = base(q, 'Junta serrada' + (inp.dowelJS && !prot ? ' com barra de transferência' : ''), 'D1');
       o += fundo(q, x0, topo) + laje(q, x0, x0 + span * sd, topo);
-      const wj = Math.max(4, (inp.selante === 'pu' ? 5 : 4) * sd * 2);
-      if (inp.selante === 'pu') {
+      const wj = Math.max(4, (inp.selante !== 'epoxi' ? 5 : 4) * sd * 2);
+      if (inp.selante !== 'epoxi') {
         o += R(xc - wj / 2, topo, wj, cj * sd, { f: '#FFFFFF', c: COR.tinta, w: 0.6 });
         o += R(xc - wj / 2, topo, wj, Math.max(4, 8 * sd), { f: COR.selante });
         o += C(xc, topo + Math.max(4, 8 * sd) + wj / 2, wj / 2, { f: '#6B767D' });
@@ -1689,8 +2082,8 @@ const DES = (() => {
       if (inp.dowelJS) o += barra(xc, topo, r.bt.L, r.bt.phi) + cotaH(xc - r.bt.L * sd / 2, xc + r.bt.L * sd / 2, topo + h * sd + 40, `L = ${r.bt.L / 10} cm`, { min: 10 });
       o += cotaV(topo, topo + cj * sd, xc + 70, `${cj} mm`, { min: 4 }) + cotaV(topo, topo + h * sd, x0 + span * sd + 18, `${fmt(h / 10, 0)} cm`, { min: 10 });
       o += notas(q, [
-        `Corte ${inp.selante === 'pu' ? '5' : '4'} mm × h/3 (${cj} mm), assim que o concreto suportar o disco sem esborcinar.`,
-        inp.selante === 'pu' ? 'Selante de poliuretano sobre cordão delimitador; fator de forma 1:1 a 2:1.' : 'Epóxi semirrígido em toda a profundidade do corte, aplicado o mais tarde possível.',
+        `Corte ${inp.selante !== 'epoxi' ? '5' : '4'} mm × h/3 (${cj} mm), assim que o concreto suportar o disco sem esborcinar.`,
+        inp.selante !== 'epoxi' ? `Selante ${inp.selante === 'pu' ? 'de poliuretano' : 'de silicone'} sobre tarugo delimitador; fator de forma 1:1 a 2:1.` : 'Epóxi semirrígido em toda a profundidade do corte, aplicado o mais tarde possível.',
         r.telaSup ? 'Telas interrompidas 5 cm de cada lado da junta para que a junta funcione.' : 'Concreto simples: a junta induz a fissura de retração no plano do corte.',
         inp.dowelJS ? `Barra φ${r.bt.phi} CA-25 lisa, c/ ${r.bt.s / 10} cm, a meia altura, alinhada ao eixo do piso.` : 'Sem barras: transferência apenas por intertravamento dos agregados.'
       ]);
@@ -2137,7 +2530,7 @@ const UI = (() => {
   const COEF_IDS = ['gG', 'gQ', 'gDyn', 'gC', 'gS', 'gP', 'baseRes'];
   const AC_MAX = { I: 0.65, II: 0.60, III: 0.55, IV: 0.45 };
   let RR = null, aba = 'dados', folha = 'planta', timer = null, aceite = null, aplicando = false;
-  const sujo = { analise: true, desenhos: true, relatorio: true };
+  const sujo = { analise: true, desenhos: true, orcamento: true, relatorio: true };
   const cacheSVG = {};
 
   /* ---------------- utilidades ---------------- */
@@ -2165,6 +2558,12 @@ const UI = (() => {
     const cls = info ? 'inf' : eta > 1 + 1e-9 ? 'exc' : eta > 0.9 ? 'alto' : '';
     return `<div class="uso"><div class="barra"><i class="${cls}" style="width:${p.toFixed(1)}%"></i></div><span>${fmt(eta * 100, 0)} %</span></div>`;
   }
+  function orcamento() {
+    if (!RR) return null;
+    if (!RR._orc) RR._orc = RR.r.orc || (typeof ORC !== 'undefined' && ORC.disponivel() ? ORC.gerar(RR) : null);
+    return RR._orc;
+  }
+  const baseOrc = o => o ? `SINAPI ${o.ref}, ${o.uf}, composições ${o.regime}` : '';
   const kvTab = linhas => `<table class="tab"><tbody>${linhas.map(l => `<tr><td>${l[0]}</td><td class="n">${l[1]}</td></tr>`).join('')}</tbody></table>`;
 
   /* ---------------- formulário ---------------- */
@@ -2259,11 +2658,12 @@ const UI = (() => {
       <div class="status ${st[0]}" id="res-status">${st[1]}</div>
       <div class="res-mini">${DES.mini(RR)}</div>
       <dl class="kv">${kv.map(([a, b]) => `<dt>${esc(a)}</dt><dd>${esc(b)}</dd>`).join('')}</dl>
-      <div class="custo-dest"><span>Custo estimado</span><b>R$ ${fmt(r.custo.m2, 2)}/m²</b></div>
-      <div class="nota" style="text-align:right">total R$ ${fmt(r.custo.total, 0)} em ${fmt(r.q.area, 0)} m²</div>
+      ${(() => { const o = orcamento(); return o ? `<div class="custo-dest"><span>Orçamento, custo direto</span><b>R$ ${fmt(o.m2, 2)}/m²</b></div>
+      <div class="nota" style="text-align:right">total R$ ${fmt(o.total, 0)} em ${fmt(o.area, 0)} m²${o.bdi ? `; com BDI R$ ${fmt(o.totalBDI, 0)}` : ''}<br>${baseOrc(o)}${o.nConf ? `; ${o.nConf} item(ns) a confirmar` : ''}</div>`
+        : `<div class="custo-dest"><span>Custo estimado</span><b>R$ ${fmt(r.custo.m2, 2)}/m²</b></div><div class="nota" style="text-align:right">total R$ ${fmt(r.custo.total, 0)}</div>`; })()}
       ${av.length ? `<ul class="avisos">${av.map(a => `<li class="${a.n}">${esc(a.t)}</li>`).join('')}</ul>` : ''}
       ${RR.avisos.length > 4 ? `<p class="nota">Mais ${RR.avisos.length - 4} aviso(s) na aba Análise.</p>` : ''}
-      <p style="margin:12px 0 0"><button class="btn btn-sm" data-ir="analise">Ver análise completa</button> <button class="btn btn-sm" data-ir="desenhos">Ver desenhos</button></p>`;
+      <p style="margin:12px 0 0"><button class="btn btn-sm" data-ir="analise">Ver análise completa</button> <button class="btn btn-sm" data-ir="desenhos">Ver desenhos</button> <button class="btn btn-sm" data-ir="orcamento">Ver orçamento</button></p>`;
   }
 
   /* ---------------- análise ---------------- */
@@ -2334,7 +2734,7 @@ const UI = (() => {
         <div class="dest"><span>Espessura</span><b>${fmt(r.h / 10, 0)} cm</b><em>${inp.modoH === 'auto' ? 'menor custo entre as viáveis' : 'fixada pelo usuário'}</em></div>
         <div class="dest"><span>Situação</span><b style="color:var(${RR.ok ? '--ok' : '--bad'})">${RR.ok ? 'Atende' : 'Não atende'}</b><em>${gov ? esc(gov.nome) : '—'}</em></div>
         <div class="dest"><span>Utilização máxima</span><b>${fmt(r.etaMax * 100, 0)} %</b><em>${gov ? esc(gov.grupo) : ''}</em></div>
-        <div class="dest"><span>Custo estimado</span><b>R$ ${fmt(cst.m2, 2)}</b><em>por m², total R$ ${fmt(cst.total, 0)}</em></div>
+        <div class="dest"><span>${cst.base === 'sinapi' ? 'Orçamento, custo direto' : 'Custo estimado'}</span><b>R$ ${fmt(cst.m2, 2)}</b><em>por m², total R$ ${fmt(cst.total, 0)}</em></div>
       </div>
       <div class="grade-3">
         <div class="cartao"><h3>Materiais</h3>${kvTab(par)}</div>
@@ -2344,14 +2744,12 @@ const UI = (() => {
       <div class="cartao"><h3>Verificações na espessura adotada</h3>${tabelaVerificacoes(r)}
         <p class="nota" style="margin-top:8px">Capacidade no ELU pelo método de linhas de ruptura (Meyerhof, generalizado no TR-34), com cargas de cálculo. Utilização é a razão entre solicitação e resistência. Linhas informativas não definem a espessura.</p></div>
       <div class="cartao"><h3>Estudo de espessuras</h3><div class="grafico">${DES.estudo(RR)}</div>
-        <p class="nota" style="margin-top:8px">Cada ponto é uma espessura avaliada com juntas, armaduras e barras redimensionadas. ${inp.modoH === 'auto' ? 'A espessura adotada é a de menor custo entre as que atendem a todas as verificações.' : 'Em modo fixado, o gráfico serve de referência para a escolha.'}</p></div>
+        <p class="nota" style="margin-top:8px">Cada ponto é uma espessura avaliada com juntas, armaduras e barras redimensionadas${cst.base === 'sinapi' ? ' e orçada com as composições do SINAPI' : ''}. ${inp.modoH === 'auto' ? 'A espessura adotada é a de menor custo entre as que atendem a todas as verificações.' : 'Em modo fixado, o gráfico serve de referência para a escolha.'}</p></div>
       <div class="grade-3">
         <div class="cartao"><h3>Juntas</h3>${kvTab(jl)}</div>
         <div class="cartao"><h3>Barras de transferência</h3>${kvTab(bl)}</div>
-        <div class="cartao"><h3>Custo estimado</h3>${kvTab([
-          ['Concreto', `R$ ${fmt(cst.conc, 0)}`], ['Armaduras', `R$ ${fmt(cst.aco, 0)}`], ['Barras e placas de transferência', `R$ ${fmt(cst.barras, 0)}`],
-          ['Protensão', `R$ ${fmt(cst.prot, 0)}`], ['Juntas', `R$ ${fmt(cst.juntas, 0)}`], ['<b>Total</b>', `<b>R$ ${fmt(cst.total, 0)}</b>`]])}
-          <p class="nota" style="margin-top:6px">Preços unitários editáveis no grupo “Custos unitários de referência”. Não incluem sub-base, lona, acabamento superficial nem mão de obra de preparo.</p></div>
+        <div class="cartao"><h3>${cst.base === 'sinapi' ? 'Custo por grupo do orçamento' : 'Custo estimado'}</h3>${kvTab(cst.partes.filter(p => p[1] > 0).map(p => [esc(p[0]), `R$ ${fmt(p[1], 0)}`]).concat([['<b>Total</b>', `<b>R$ ${fmt(cst.total, 0)}</b>`]]))}
+          <p class="nota" style="margin-top:6px">${cst.base === 'sinapi' ? `Custo direto do orçamento completo (${esc(baseOrc(r.orc))}), usado também para escolher a espessura. Detalhes na aba Orçamento.` : 'Preços unitários informados no grupo “Preços para a otimização”; não incluem sub-base, lona, drenagem nem acabamento. O orçamento SINAPI completo está na aba Orçamento.'}</p></div>
       </div>
       ${ptHTML}
       <div class="cartao"><h3>Avisos</h3>${RR.avisos.length ? `<ul class="avisos">${RR.avisos.map(a => `<li class="${a.n}">${esc(a.t)}</li>`).join('')}</ul>` : '<p class="nota">Nenhum aviso para os dados atuais.</p>'}</div>`;
@@ -2378,6 +2776,54 @@ const UI = (() => {
     baixar(`${slug(RR.inp.obra)}_${String(i + 1).padStart(2, '0')}_${id}.svg`, '<?xml version="1.0" encoding="UTF-8"?>\n' + svgFolha(id), 'image/svg+xml;charset=utf-8');
   }
 
+  /* ---------------- orçamento ---------------- */
+  function renderOrcamento() {
+    const o = orcamento(), r = RR.r, inp = RR.inp;
+    if (!o) { $('#p-orcamento').innerHTML = '<div class="cartao"><p>Base SINAPI indisponível nesta versão.</p></div>'; sujo.orcamento = false; return; }
+    const pct = o.total ? o.valorConf / o.total * 100 : 0;
+    const linhas = o.grupos.map(gr => `<tr class="grupo"><td>${gr.n}</td><td></td><td colspan="4">${esc(gr.t)}</td><td class="n">${fmt(gr.sub, 2)}</td></tr>${gr.itens.map(it => `<tr>
+        <td>${it.n}</td><td class="cod">${it.cod || '—'}</td>
+        <td class="desc">${esc(it.desc)}${it.obs ? `<small>${esc(it.obs)}</small>` : ''}</td>
+        <td>${esc(it.un)}</td><td class="n">${fmt(it.q, 2)}</td>
+        <td class="n">${fmt(it.pu, 2)}${it.conf ? '<span class="conf" title="Preço estimado pelo sistema">a confirmar</span>' : ''}</td>
+        <td class="n">${fmt(it.tot, 2)}</td></tr>`).join('')}`).join('');
+    const confs = o.grupos.flatMap(gr => gr.itens.filter(it => it.conf));
+    $('#p-orcamento').innerHTML = `
+      <div class="titulo-painel"><h2>Orçamento</h2><span class="sub">${esc(baseOrc(o))}. ${esc(ROTULO_SIS[r.sis])}, h = ${fmt(r.h / 10, 0)} cm, ${fmt(o.area, 2)} m².</span></div>
+      <div class="destaques">
+        <div class="dest"><span>Custo direto</span><b>R$ ${fmt(o.total, 2)}</b><em>R$ ${fmt(o.m2, 2)} por m²</em></div>
+        <div class="dest"><span>Preço com BDI de ${fmt(o.bdi, 2)} %</span><b>R$ ${fmt(o.totalBDI, 2)}</b><em>R$ ${fmt(o.m2BDI, 2)} por m²</em></div>
+        <div class="dest"><span>Itens</span><b>${o.nItens}</b><em>${o.nItens - o.nConf} com custo do SINAPI</em></div>
+        <div class="dest"><span>Itens a confirmar</span><b style="color:var(${o.nConf ? '--warn' : '--ok'})">${o.nConf}</b><em>R$ ${fmt(o.valorConf, 2)} (${fmt(pct, 1)} % do custo direto)</em></div>
+      </div>
+      <div class="cartao">
+        <div class="orc-barra">
+          <button class="btn btn-sm" id="bt-orc-csv">Baixar planilha (CSV)</button>
+          <span class="nota">Abre no Excel com separador ponto e vírgula e vírgula decimal.</span>
+          <label class="bdi">BDI <span class="num"><input type="number" id="orc-bdi" min="0" max="60" step="0.01" value="${o.bdi}" aria-label="BDI em porcentagem"><span class="un">%</span></span></label>
+        </div>
+        <div class="tab-wrap"><table class="tab orc">
+          <thead><tr><th>Item</th><th>Código SINAPI</th><th>Descrição do serviço</th><th>Und.</th><th class="n">Quantidade</th><th class="n">Custo unitário (R$)</th><th class="n">Total (R$)</th></tr></thead>
+          <tbody>${linhas}</tbody>
+          <tfoot><tr><td colspan="6">Custo direto total</td><td class="n">${fmt(o.total, 2)}</td></tr>
+            <tr><td colspan="6">BDI (${fmt(o.bdi, 2)} %)</td><td class="n">${fmt(o.totalBDI - o.total, 2)}</td></tr>
+            <tr><td colspan="6">Preço total com BDI</td><td class="n">${fmt(o.totalBDI, 2)}</td></tr></tfoot>
+        </table></div>
+      </div>
+      ${confs.length ? `<div class="cartao"><h3>Memória das estimativas dos itens a confirmar</h3>
+        <p class="nota">Itens com código SINAPI existem na base, mas estão sem custo em ${esc(o.uf)} nesta referência; o custo foi calculado pelo analítico do SINAPI, estimando apenas os insumos ou equipamentos sem preço. Itens sem código não têm composição no SINAPI e receberam composição própria. Os preços de cordoalha e do kit de ancoragem podem ser editados em “Preços para a otimização”.</p>
+        <ul class="memo">${confs.map(it => `<li><b>${it.n}</b> ${esc(it.memo)}</li>`).join('')}</ul></div>` : ''}
+      <div class="cartao"><h3>Critérios de quantificação</h3>
+        <p class="nota">Áreas e volumes geométricos do piso dimensionado; a composição de concretagem já inclui as perdas do concreto e as de tela incluem transpasses. Transportes em t·km, com densidades de 1,8 t/m³ para o solo escavado e de 2,2 a 2,3 t/m³ para a sub-base, e distâncias informadas em “Orçamento: infraestrutura e serviços”. Fôrmas nas bordas das faixas, no perímetro${r.sis === 'prot' ? ', nas juntas de dilatação' : ''} e nas caixas de pilares. Não estão incluídos mobilização, canteiro, administração local, controle tecnológico, ensaios de placa nem projetos, que devem compor o orçamento da obra ou o BDI.</p></div>`;
+    sujo.orcamento = false;
+  }
+  function baixarCSV() {
+    const o = orcamento(); if (!o) return;
+    const cab = [`Orçamento do piso de concreto — ${RR.inp.obra || 'sem título'}`, `${baseOrc(o)}; emissão ${o.emissao || ''}`, `${ROTULO_SIS[RR.r.sis]}, h = ${fmt(RR.r.h / 10, 0)} cm, área ${fmt(o.area, 2)} m²`, 'Gerado pelo PisoCalc Pro; itens “a confirmar” têm preço estimado pelo sistema', ''];
+    baixar(`${slug(RR.inp.obra)}_orcamento.csv`, ORC.csv(o, cab), 'text/csv;charset=utf-8');
+    toast('Planilha do orçamento baixada.');
+  }
+
   /* ---------------- relatório ---------------- */
   function especificacoes(RR) {
     const r = RR.r, inp = RR.inp, lst = [];
@@ -2389,8 +2835,8 @@ const UI = (() => {
     if (r.inf) lst.push(`Armadura inferior ${r.inf.esc.nome} com cobrimento de ${inp.cobInf} mm sobre espaçadores plásticos.`);
     if (r.pt) lst.push(`Cordoalhas ${r.pt.cord.nome} retas a meia altura, c/ ${fmt(r.pt.dirs.x.s / 10, 0)} cm em x e ${fmt(r.pt.dirs.y.s / 10, 0)} cm em y; protensão parcial nas primeiras 24 h e total com o concreto na resistência especificada para a transferência.`);
     if (r.sis !== 'prot' && r.barras.n) lst.push(`Barras de transferência φ${r.bt.phi} mm CA-25 lisas, L = ${r.bt.L / 10} cm c/ ${r.bt.s / 10} cm, a meia altura, com metade pintada e engraxada, perpendiculares à junta e paralelas à superfície.`);
-    if (r.J.comp.JS > 0) lst.push(`Juntas serradas com ${inp.selante === 'pu' ? '5' : '4'} mm de largura e ${Math.ceil(r.h / 3 / 5) * 5} mm de profundidade, executadas assim que o concreto suportar o disco sem esborcinar.`);
-    lst.push(inp.selante === 'pu' ? 'Selante de poliuretano sobre cordão delimitador, após a estabilização da retração.' : 'Selante epóxi semirrígido em toda a profundidade do corte, aplicado o mais tarde possível (idealmente após 90 dias).');
+    if (r.J.comp.JS > 0) lst.push(`Juntas serradas com ${inp.selante !== 'epoxi' ? '5' : '4'} mm de largura e ${Math.ceil(r.h / 3 / 5) * 5} mm de profundidade, executadas assim que o concreto suportar o disco sem esborcinar.`);
+    lst.push(inp.selante !== 'epoxi' ? `Selante ${inp.selante === 'pu' ? 'de poliuretano' : 'de silicone'} sobre tarugo delimitador de polietileno, após a estabilização da retração.` : 'Selante epóxi semirrígido em toda a profundidade do corte, aplicado o mais tarde possível (idealmente após 90 dias).');
     lst.push('Cura úmida ou com membrana de cura iniciada logo após o acabamento, por pelo menos 7 dias.');
     lst.push('Especificar os índices de planicidade e nivelamento (FF/FL) conforme o uso, com atenção a corredores estreitos.');
     lst.push('Liberação ao tráfego de empilhadeiras somente após o concreto atingir a resistência de projeto.');
@@ -2408,7 +2854,7 @@ const UI = (() => {
     const dados = ESQUEMA.filter(g => g.id !== 'proj' && (!g.v || g.v(inp))).map(g => `<h3>${esc(g.t)}</h3><table><tbody>${linhasGrupo(g)}</tbody></table>`).join('');
     const ver = r.checks.map(c => `<tr><td>${esc(c.grupo)}</td><td>${esc(c.nome)}</td><td class="n">${fmt(c.Ed, c.un === 'mm' ? 2 : c.un === 'σ/fctm,fl' ? 3 : 1)}</td><td class="n">${fmt(c.Rd, c.un === 'mm' ? 2 : c.un === 'σ/fctm,fl' ? 3 : 1)}</td><td>${esc(c.un)}</td><td class="n">${fmt(c.eta * 100, 0)} %</td><td class="${!c.gov ? 'inf' : c.eta <= 1 + 1e-9 ? 'ok' : 'erro'}">${!c.gov ? 'informativo' : c.eta <= 1 + 1e-9 ? 'atende' : 'não atende'}</td></tr>`).join('');
     const quant = [
-      ['Área do piso', `${fmt(q.area, 1)} m²`], ['Concreto (sem perdas)', `${fmt(q.vol, 2)} m³`], ['Concreto com perdas', `${fmt(q.volPerdas, 2)} m³`],
+      ['Área do piso', `${fmt(q.area, 1)} m²`], ['Concreto (sem perdas)', `${fmt(q.vol, 2)} m³`], inp.basePreco === 'manual' ? ['Concreto com perdas', `${fmt(q.volPerdas, 2)} m³`] : null,
       r.telaSup ? ['Tela superior ' + r.telaSup.esc.cod, `${fmt(q.kgSup, 0)} kg`] : null,
       r.inf ? ['Armadura inferior ' + r.inf.esc.cod, `${fmt(q.kgInf, 0)} kg`] : null,
       r.pt ? ['Cordoalhas', `${fmt(r.pt.comp, 0)} m, ${fmt(q.kgCord, 0)} kg`] : null,
@@ -2418,8 +2864,12 @@ const UI = (() => {
       ['Junta serrada', `${fmt(r.J.comp.JS, 1)} m`], ['Junta de construção', `${fmt(r.J.comp.JC, 1)} m`], ['Junta de dilatação', `${fmt(r.J.comp.JD, 1)} m`], ['Junta de isolamento', `${fmt(r.J.comp.JI, 1)} m`],
       ['Lona plástica (com transpasses)', `${fmt(q.lona, 0)} m²`], q.subbase ? ['Sub-base', `${fmt(q.subbase, 1)} m³`] : null
     ].filter(Boolean).map(l => `<tr><td>${esc(l[0])}</td><td class="n">${esc(l[1])}</td></tr>`).join('');
-    const custos = [['Concreto', cst.conc], ['Armaduras', cst.aco], ['Barras e placas de transferência', cst.barras], ['Protensão', cst.prot], ['Juntas', cst.juntas]]
-      .map(l => `<tr><td>${l[0]}</td><td class="n">R$ ${fmt(l[1], 2)}</td><td class="n">R$ ${fmt(l[1] / q.area, 2)}</td></tr>`).join('');
+    const o = orcamento();
+    const orcSec = o ? `<p>Orçamento com ${esc(baseOrc(o))}. Quantidades do piso dimensionado. Itens marcados “a confirmar” não têm composição com custo na referência e foram estimados pelo sistema (memória ao final da tabela).</p>
+      <table><thead><tr><th>Item</th><th>Código</th><th>Descrição</th><th>Und.</th><th>Quant.</th><th>Custo unit. (R$)</th><th>Total (R$)</th></tr></thead><tbody>${o.grupos.map(gr => `<tr class="grp"><td>${gr.n}</td><td></td><td>${esc(gr.t)}</td><td></td><td></td><td></td><td class="n">${fmt(gr.sub, 2)}</td></tr>${gr.itens.map(it => `<tr><td>${it.n}</td><td>${it.cod || '—'}</td><td>${esc(it.desc)}</td><td>${esc(it.un)}</td><td class="n">${fmt(it.q, 2)}</td><td class="n">${fmt(it.pu, 2)}${it.conf ? ' <span class="conf">a confirmar</span>' : ''}</td><td class="n">${fmt(it.tot, 2)}</td></tr>`).join('')}`).join('')}
+      <tr><th colspan="6">Custo direto total</th><th class="n">${fmt(o.total, 2)}</th></tr><tr><td colspan="6">BDI (${fmt(o.bdi, 2)} %)</td><td class="n">${fmt(o.totalBDI - o.total, 2)}</td></tr><tr><th colspan="6">Preço total com BDI</th><th class="n">${fmt(o.totalBDI, 2)}</th></tr></tbody></table>
+      <p>Custo direto de R$ ${fmt(o.m2, 2)}/m²${o.nConf ? `; ${o.nConf} item(ns) a confirmar somam R$ ${fmt(o.valorConf, 2)} (${fmt(o.valorConf / o.total * 100, 1)} % do custo direto)` : ''}.</p>
+      ${o.nConf ? `<h3>Memória das estimativas</h3><ul class="memo">${o.grupos.flatMap(gr => gr.itens.filter(it => it.conf)).map(it => `<li><b>${it.n}</b> ${esc(it.memo)}</li>`).join('')}</ul>` : ''}` : '';
     const ptSec = r.pt ? `<h2>6. Protensão</h2><p>${esc(r.pt.cord.nome)} com σpi = ${fmt(r.pt.spi, 0)} MPa (P0 = ${fmt(r.pt.P0 / 1000, 1)} kN). Perdas por atrito com μ = ${fmt(inp.muPt, 2)} e k = 0,01μ por metro, acomodação de ${fmt(inp.delta, 1)} mm, encurtamento elástico, retração εcs = ${fmt(inp.epsCs, 2)} ‰, fluência φ = ${fmt(inp.phiF, 1)} e relaxação (NBR 6118, ψ1000 × 2,5). Pré-compressão residual reduzida pelo atrito da placa com a base (μ = ${fmt(inp.muBase, 2)}).</p>
       <table><thead><tr><th>Direção</th><th>Placa</th><th>Espaçamento</th><th>σcp mínima</th><th>σcp média</th><th>Perdas totais</th></tr></thead><tbody>${['x', 'y'].map(d => { const D = r.pt.dirs[d]; return `<tr><td>${d}</td><td class="n">${fmt(D.Lp / 1000, 2)} m</td><td class="n">${fmt(D.s / 10, 0)} cm</td><td class="n">${fmt(D.scpMin, 2)} MPa</td><td class="n">${fmt(D.scpMed, 2)} MPa</td><td class="n">${fmt(D.perdaTotal * 100, 1)} %</td></tr>`; }).join('')}</tbody></table>` : '';
     const n0 = r.pt ? 7 : 6;
@@ -2432,7 +2882,7 @@ const UI = (() => {
       <h2>1. Resultado</h2>
       <p>Piso ${esc(ROTULO_SIS[r.sis].toLowerCase())} com espessura de <b>${fmt(r.h / 10, 0)} cm</b> em concreto C${inp.fck}, ${inp.modoH === 'auto' ? `escolhida como a de menor custo entre ${inp.hmin} e ${inp.hmax} cm` : 'fixada pelo usuário'}. Situação: <span class="${RR.ok ? 'ok' : 'erro'}">${RR.ok ? 'todas as verificações atendidas' : 'há verificações não atendidas'}</span>, com utilização máxima de ${fmt(r.etaMax * 100, 0)} %.
       ${r.telaSup ? ` Tela superior ${esc(r.telaSup.esc.nome)}.` : ''}${r.inf ? ` Armadura inferior ${esc(r.inf.esc.nome)}.` : ''}${r.pt ? ` Cordoalhas c/ ${fmt(r.pt.dirs.x.s / 10, 0)} cm em x e ${fmt(r.pt.dirs.y.s / 10, 0)} cm em y, σcp residual mínima de ${fmt(r.pt.scpMin, 2)} MPa.` : ''}
-      ${r.J.nPlacas} placas com dimensão máxima de ${fmt(r.J.maxDx, 2)} × ${fmt(r.J.maxDy, 2)} m. Custo estimado de R$ ${fmt(cst.m2, 2)}/m².</p>
+      ${r.J.nPlacas} placas com dimensão máxima de ${fmt(r.J.maxDx, 2)} × ${fmt(r.J.maxDy, 2)} m. ${o ? `Orçamento de R$ ${fmt(o.total, 2)} em custo direto (R$ ${fmt(o.m2, 2)}/m²).` : `Custo estimado de R$ ${fmt(cst.m2, 2)}/m².`}</p>
       <h2>2. Dados de entrada</h2>${dados}
       <h2>3. Parâmetros de cálculo</h2>
       <table><tbody>
@@ -2449,14 +2899,13 @@ const UI = (() => {
       <p>Placa máxima admitida de ${fmt(r.J.Lmax, 2)} m e relação entre lados até ${fmt(inp.aspecto, 2)}. ${r.J.faixas.length ? `Concretagem em ${r.J.faixas.length} faixas no sentido ${r.J.longX ? 'x' : 'y'}, com juntas de construção entre faixas e juntas serradas nas demais linhas.` : 'Placas protendidas concretadas individualmente, separadas por juntas de dilatação.'} Abertura estimada das juntas de ${fmt(r.abertura.dL, 1)} mm.
       ${r.sis !== 'prot' ? ` Barras de transferência φ${r.bt.phi} mm, L = ${r.bt.L / 10} cm c/ ${r.bt.s / 10} cm${r.fri ? `, com carga na barra crítica de ${fmt(r.fri.Pc / 1000, 2)} kN e tensão de apoio de ${fmt(r.fri.sb, 1)} MPa para limite de ${fmt(r.fri.fb, 1)} MPa (Friberg)` : ''}.` : ''}</p>
       ${ptSec}
-      <h2>${n0}. Quantitativos e custo estimado</h2>
+      <h2>${n0}. Quantitativos</h2>
       <table><tbody>${quant}</tbody></table>
-      <table><thead><tr><th>Item</th><th>Total</th><th>Por m²</th></tr></thead><tbody>${custos}<tr><th>Total</th><th class="n">R$ ${fmt(cst.total, 2)}</th><th class="n">R$ ${fmt(cst.m2, 2)}</th></tr></tbody></table>
-      <p class="inf">Custos com preços unitários de referência editáveis, sem valor oficial. Não incluem sub-base, lona, acabamento superficial nem serviços preliminares.</p>
-      <h2>${n0 + 1}. Especificações construtivas</h2><ol>${especificacoes(RR).map(t => `<li>${esc(t)}</li>`).join('')}</ol>
-      <h2>${n0 + 2}. Avisos</h2>${RR.avisos.length ? `<ul>${RR.avisos.map(a => `<li>${esc(a.t)}</li>`).join('')}</ul>` : '<p>Nenhum aviso.</p>'}
-      <h2>${n0 + 3}. Desenhos</h2>${desenhos}
-      <h2>${n0 + 4}. Métodos e referências</h2>
+      ${o ? `<h2>${n0 + 1}. Orçamento</h2>${orcSec}` : ''}
+      <h2>${n0 + 2}. Especificações construtivas</h2><ol>${especificacoes(RR).map(t => `<li>${esc(t)}</li>`).join('')}</ol>
+      <h2>${n0 + 3}. Avisos</h2>${RR.avisos.length ? `<ul>${RR.avisos.map(a => `<li>${esc(a.t)}</li>`).join('')}</ul>` : '<p>Nenhum aviso.</p>'}
+      <h2>${n0 + 4}. Desenhos</h2>${desenhos}
+      <h2>${n0 + 5}. Métodos e referências</h2>
       <p>Placa sobre fundação de Winkler. ELU por linhas de ruptura (Meyerhof, 1962; TR-34, 4ª ed.), punção conforme TR-34 e EC2, fadiga pelo critério da PCA (1984), tensões e deslocamentos de Westergaard com as correções de Ioannides et al. (1985), momentos de cargas distribuídas por Hetényi (1946), barras de transferência por Friberg (1940), materiais, fissuração e perdas de protensão pela ABNT NBR 6118.</p>
       <div class="aviso-legal">Este documento é um estudo de pré-dimensionamento produzido por ferramenta de apoio e não constitui projeto executivo. Sua utilização em obra depende de verificação, complementação e responsabilidade técnica de profissional legalmente habilitado, com a respectiva ART ou RRT.</div>`;
   }
@@ -2471,6 +2920,7 @@ const UI = (() => {
     if (!RR) return;
     if (aba === 'analise' && sujo.analise) renderAnalise();
     if (aba === 'desenhos' && sujo.desenhos) renderDesenhos();
+    if (aba === 'orcamento' && sujo.orcamento) renderOrcamento();
     if (aba === 'relatorio' && sujo.relatorio) renderRelatorio();
     if (aba === 'manual' && typeof MANUAL !== 'undefined') MANUAL.mostrar();
   }
@@ -2546,6 +2996,11 @@ const UI = (() => {
     $('#bt-svg').addEventListener('click', () => baixarFolha(folha));
     $('#bt-svg-todas').addEventListener('click', () => { folhasAtivas().forEach((F, i) => setTimeout(() => baixarFolha(F.id), i * 400)); toast('Baixando as folhas em SVG.'); });
     $('#bt-imprimir').addEventListener('click', () => { if (sujo.relatorio) renderRelatorio(); window.print(); });
+    $('#p-orcamento').addEventListener('click', e => { if (e.target.closest('#bt-orc-csv')) baixarCSV(); });
+    $('#p-orcamento').addEventListener('change', e => {
+      if (e.target.id !== 'orc-bdi') return;
+      const el = document.getElementById('in-bdi'); el.value = e.target.value; recalcular(); toast('BDI atualizado.');
+    });
     $('#bt-rel-html').addEventListener('click', () => baixar(`${slug(RR.inp.obra)}_memoria.html`, relatorioArquivo(), 'text/html;charset=utf-8'));
     window.addEventListener('beforeprint', () => { if (RR && sujo.relatorio) renderRelatorio(); });
     folha = LS.get(CH.folha, 'planta');
@@ -2554,7 +3009,7 @@ const UI = (() => {
     trocarAba(LS.get(CH.aba, 'dados'));
   }
 
-  return { iniciar, recalcular, trocarAba, definirAceite, carregarProjeto, lerForm, escreverForm, baixar, relatorioArquivo,
+  return { iniciar, recalcular, trocarAba, definirAceite, carregarProjeto, lerForm, escreverForm, baixar, relatorioArquivo, orcamento,
     get RR() { return RR; }, get aba() { return aba; } };
 })();
 
@@ -2582,6 +3037,7 @@ const MANUAL = (() => {
         <li>Acompanhe o painel de resumo, que se atualiza a cada alteração.</li>
         <li>Na aba Análise, confira parâmetros, verificações, estudo de espessuras, juntas, barras e custos.</li>
         <li>Na aba Desenhos, revise e baixe as folhas em SVG, que abrem em navegadores e em programas de desenho vetorial.</li>
+        <li>Na aba Orçamento, confira a planilha com as composições do SINAPI, ajuste o BDI e baixe o CSV.</li>
         <li>Na aba Relatório, imprima ou salve em PDF a memória de cálculo com os desenhos.</li>
       </ol>
       <p>Use Salvar e Abrir, no cabeçalho, para guardar variantes do projeto em arquivo. O botão Restaurar exemplo devolve os valores iniciais.</p>` },
@@ -2663,9 +3119,24 @@ const MANUAL = (() => {
       ${F('Atrito:        P(x) = P0·e^(−k·x),   k = 0,01·μ por metro (cordoalha reta)\nAcomodação:    δ nas cunhas, com perda que se anula a xr = √(δ·Ep·Ap/p)\nEncurtamento:  Δσ = 0,5·αp·σcp\nRetração:      Δσ = εcs·Ep\nFluência:      Δσ = αp·φ·σcp\nRelaxação:     Δσ = 2,5·ψ1000·σp  (ψ1000 da NBR 6118)')}
       <p>Além das perdas, o atrito da placa com a base consome parte da pré-compressão: a tensão residual cai μ·γ·x do bordo para o centro da placa, independentemente da espessura. Por isso, placas longas e bases ásperas exigem mais cordoalhas.</p>
       <p>A pré-compressão necessária é a maior entre o mínimo informado, a exigida pelas verificações de ruptura, a de punção e a de fadiga. O espaçamento das cordoalhas é arredondado para baixo em múltiplos de 5 cm e limitado ao máximo informado. A solução é considerada inviável com espaçamento abaixo de 30 cm ou pré-compressão média acima de 3,5 MPa. Placas acima de 30 m recebem ancoragens ativas nas duas pontas.</p>` },
-    { id: 'otimizacao', t: 'Otimização e custos', h: `
-      <p>No modo “Otimizar”, cada espessura entre a mínima e a máxima pesquisadas, de centímetro em centímetro, é tratada como um projeto completo: juntas, telas, armadura inferior, protensão e barras são redimensionadas e todas as verificações são feitas. Entre as espessuras que atendem, fica a de menor custo por metro quadrado. O gráfico da aba Análise mostra o custo de todas as alternativas.</p>
-      <p>O custo soma concreto com perdas, armaduras com perdas e transpasses, barras e placas de transferência, cordoalhas e ancoragens e o comprimento total de juntas. Os preços unitários são exemplos editáveis e não representam referência oficial. Sub-base, lona, acabamento superficial e serviços preliminares não entram no custo, pois pouco variam entre as alternativas.</p>` },
+    { id: 'otimizacao', t: 'Otimização da espessura', h: `
+      <p>No modo “Otimizar”, cada espessura entre a mínima e a máxima pesquisadas, de centímetro em centímetro, é tratada como um projeto completo: juntas, telas, armadura inferior, protensão e barras são redimensionadas e todas as verificações são feitas. Entre as espessuras que atendem, fica a de menor custo. O gráfico da aba Análise mostra o custo de todas as alternativas.</p>
+      <p>Com a base de preços “Orçamento SINAPI completo” (padrão), o custo de cada alternativa é o custo direto do orçamento completo descrito na seção seguinte, e a escolha da armadura inferior entre telas e barras também usa os custos do SINAPI. Com “Preços unitários informados”, a otimização usa apenas os preços editáveis de concreto, aço, barras, protensão e juntas, e o orçamento SINAPI continua disponível na aba Orçamento para a espessura resultante.</p>` },
+    { id: 'orcamento', t: 'Orçamento com o SINAPI', h: `
+      <p>A aba Orçamento apresenta a planilha do piso dimensionado com as composições de custo unitário do SINAPI, referência de agosto de 2026, estado de São Paulo, encargos sociais sem desoneração da folha (aba CSD do arquivo da CAIXA). Cada linha traz item, código da composição, descrição oficial, unidade, quantidade, custo unitário e total.</p>
+      <table><thead><tr><th>Grupo</th><th>Serviços</th></tr></thead><tbody>
+        <tr><td>Serviços preliminares</td><td>Referências de nível e locação topográfica dos cruzamentos de juntas e pilares</td></tr>
+        <tr><td>Infraestrutura abaixo do piso</td><td>Escavação da caixa com carga, bota-fora, regularização e compactação do subleito, sub-base (BGS ou BGTC por espessura), carga e transporte da sub-base, lona plástica</td></tr>
+        <tr><td>Drenagem</td><td>Dreno subsuperficial perimetral com tubo PEAD, brita e geotêxtil, drenos internos opcionais e caixas de inspeção</td></tr>
+        <tr><td>Fôrmas</td><td>Bordas das faixas, perímetro, juntas de dilatação e caixas de pilares</td></tr>
+        <tr><td>Armaduras</td><td>Telas ou barras CA-50 pelas composições de piso sobre solo, reforço das caixas circulares, barras de transferência e graxa</td></tr>
+        <tr><td>Protensão</td><td>Cordoalha engraxada em laje, ancoragens ativas e passivas, nichos, placas de transferência e proteção de bordas das juntas de dilatação</td></tr>
+        <tr><td>Concretagem e acabamento</td><td>Concretagem por classe de concreto, fechamento das caixas de pilares, acabamento polido com endurecedor e cura química</td></tr>
+        <tr><td>Juntas</td><td>Corte, selagem das juntas serradas e de construção, selagem das juntas de dilatação e de isolamento e material compressível</td></tr>
+      </tbody></table>
+      <p><b>Itens a confirmar.</b> Quando o serviço existe no SINAPI mas a composição está sem custo em São Paulo, o código é mantido e o custo é calculado pelo analítico do próprio SINAPI, estimando apenas os insumos ou equipamentos sem preço. Quando o serviço não tem composição no SINAPI, o item aparece sem código, com composição própria montada com insumos do SINAPI e produtividades de composições análogas. Nos dois casos, o custo unitário vem acompanhado de “a confirmar”, e a memória de cada estimativa aparece abaixo da planilha e no relatório.</p>
+      <p><b>Critérios.</b> Quantidades geométricas; a concretagem do SINAPI já inclui as perdas do concreto e as composições de tela, os transpasses. Transportes em t·km com densidades de 1,8 t/m³ (solo escavado) e 2,2 a 2,3 t/m³ (sub-base). O BDI é informado pelo usuário e aplicado sobre o custo direto. Mobilização, canteiro, administração local, controle tecnológico e ensaios não estão incluídos.</p>
+      <p><b>Atualização.</b> O pacote de fontes traz o script tools/extrair_sinapi.py, que lê um novo arquivo de referência da CAIXA e regenera a base usada pela ferramenta, inclusive para outra UF ou regime de encargos. Depois, basta montar o arquivo novamente.</p>` },
     { id: 'desenhos', t: 'Desenhos e relatório', h: `
       <p>As folhas são geradas em formato A (proporção 1:√2) com carimbo, a partir do resultado atual:</p>
       <ol><li>Planta de juntas, faixas, pilares e barras de transferência, com cotas.</li><li>Seção transversal típica junto à junta, em escala uniforme.</li><li>Detalhes de juntas serrada, de construção ou dilatação, isolamento e caixas de pilares.</li><li>Armação da placa típica com quadro de quantidades.</li><li>Diagramas de momentos em serviço: mapa de Mx, perfil e carga distribuída.</li><li>Protensão: forças e pré-compressão ao longo das cordoalhas (somente no sistema protendido).</li></ol>
