@@ -1,6 +1,6 @@
 # Documentacao completa do site Obras Inteligentes
 
-Atualizado em: 05/08/2026  
+Atualizado em: 27/09/2026
 Dominio publicado: https://www.obrasinteligentes.ia.br/  
 Diretorio local principal: `C:\Obras Inteligentes`  
 Repositorio GitHub: `https://github.com/andrebaetaobraspublicas-collab/obras-inteligentes-site.git`  
@@ -19,7 +19,7 @@ O site `www.obrasinteligentes.ia.br` e uma pagina estatica hospedada na Hostinge
 C:\Obras Inteligentes\index.html
 ```
 
-A tela inicial possui atualmente 79 cards de aplicativos. Cada card aponta para uma rota estatica dentro do dominio. A regra geral e:
+A tela inicial possui atualmente 100 cards de aplicativos. Cada card aponta para uma rota estatica dentro do dominio. A regra geral e:
 
 ```text
 https://www.obrasinteligentes.ia.br/nome-da-rota/
@@ -152,6 +152,7 @@ Inventario originalmente verificado em 21/07/2026 e atualizado em 09/09/2026 par
 | 97 / IVA SICRO | Credito de IVA no SICRO | `/credito-iva-sicro/` | `C:\Obras Inteligentes\credito-iva-sicro\index.html` | existe | 200 |
 | 98 / IVAEQ | IVAeq Pro Servicos | `/ivaeq-pro-servicos/` | `C:\Obras Inteligentes\ivaeq-pro-servicos\index.html` | existe | 200 |
 | 99 / SICRO AL | SICRO AL - Administracao Local | `/sicro-administracao-local/` | `C:\Obras Inteligentes\sicro-administracao-local\index.html` | existe | 200 |
+| 100 / PISOS | PisoCalc Pro | `/pisocalc-pro/` | `C:\Obras Inteligentes\pisocalc-pro\index.html` | existe | pendente de publicacao |
 
 ## Tamanhos verificados
 
@@ -258,6 +259,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/credito-iva-sicro/` | 2832042 bytes | 2584265 caracteres |
 | `/ivaeq-pro-servicos/` | 23070329 bytes | 23060308 caracteres |
 | `/sicro-administracao-local/` | 18056743 bytes | 17892191 caracteres |
+| `/pisocalc-pro/` | 216905 bytes | pendente de publicacao |
 | `/entenda-ia/` | 175035 bytes | 172793 caracteres |
 | `/abc-fiscal/` | 351255 bytes | 349022 caracteres |
 
