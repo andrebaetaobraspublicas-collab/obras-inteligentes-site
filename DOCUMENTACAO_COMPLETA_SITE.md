@@ -263,7 +263,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/ivaeq-pro-servicos/` | 23070329 bytes | 23060308 caracteres |
 | `/sicro-administracao-local/` | 18056743 bytes | 17892191 caracteres |
 | `/pisocalc-pro/` | 275088 bytes | 272326 caracteres |
-| `/vasocalc-pro/` | 540402 bytes | 531858 caracteres |
+| `/vasocalc-pro/` | 638940 bytes | 628657 caracteres |
 | `/entenda-ia/` | 175035 bytes | 172793 caracteres |
 | `/abc-fiscal/` | 351255 bytes | 349022 caracteres |
 
