@@ -158,7 +158,7 @@ Inventario originalmente verificado em 21/07/2026 e atualizado em 09/09/2026 par
 | 99 / SICRO AL | SICRO AL - Administracao Local | `/sicro-administracao-local/` | `C:\Obras Inteligentes\sicro-administracao-local\index.html` | existe | 200 |
 | 100 / PISOS | PisoCalc Pro | `/pisocalc-pro/` | `C:\Obras Inteligentes\pisocalc-pro\index.html` | existe | 200 |
 | 101 / VASOS | VasoCalc PRO | `/vasocalc-pro/` | `C:\Obras Inteligentes\vasocalc-pro\index.html` | existe | 200 |
-| 102 / PERICIA | ObraPericia MP | `/obrapericia-mp/` | `C:\Obras Inteligentes\obrapericia-mp\index.html` | existe | pendente de publicacao |
+| 102 / PERICIA | ObraPericia MP | `/obrapericia-mp/` | `C:\Obras Inteligentes\obrapericia-mp\index.html` | existe | 200 |
 
 ## Tamanhos verificados
 
@@ -267,7 +267,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/sicro-administracao-local/` | 18056743 bytes | 17892191 caracteres |
 | `/pisocalc-pro/` | 275088 bytes | 272326 caracteres |
 | `/vasocalc-pro/` | 768715 bytes | 756786 caracteres |
-| `/obrapericia-mp/` | 735043 bytes | pendente de publicacao |
+| `/obrapericia-mp/` | 735043 bytes | 725495 caracteres |
 | `/entenda-ia/` | 175035 bytes | 172793 caracteres |
 | `/abc-fiscal/` | 351255 bytes | 349022 caracteres |
 
