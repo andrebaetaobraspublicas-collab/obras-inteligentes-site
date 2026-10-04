@@ -13,13 +13,15 @@ Este arquivo registra o estado atual do site, dos aplicativos publicados, da est
 
 ## Resumo do site
 
+Em 04/10/2026, incluido o card 103 `Reajuste PRO`, no filtro existente `Gestao de Obras e de Contratos`, na busca, em Todos e no rodape. Rota: `/reajuste-pro/`; arquivo local: `C:\Obras Inteligentes\reajuste-pro\index.html`. Fonte: `C:\Users\ACER\Documents\Downloads\Reajuste_PRO_v2_0.html`, copiada integralmente, preservando abertura animada, avisos legais e armazenamento local. Apoia reajustamento contratual com indices embarcados, medicoes e memoria de calculo. Backup da home: `backups/index-before-reajuste-pro-20261004.html`. Nao foi criado filtro duplicado.
+
 O site `www.obrasinteligentes.ia.br` e uma pagina estatica hospedada na Hostinger, publicada a partir do repositorio GitHub indicado acima. A tela inicial fica em:
 
 ```text
 C:\Obras Inteligentes\index.html
 ```
 
-A tela inicial possui atualmente 102 cards de aplicativos. Cada card aponta para uma rota estatica dentro do dominio. A regra geral e:
+A tela inicial possui atualmente 103 cards de aplicativos. Cada card aponta para uma rota estatica dentro do dominio. A regra geral e:
 
 ```text
 https://www.obrasinteligentes.ia.br/nome-da-rota/
