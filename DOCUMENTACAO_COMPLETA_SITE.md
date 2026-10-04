@@ -1996,6 +1996,8 @@ Observacoes:
 
 ### OrcamentoForense
 
+Em 04/10/2026, o card foi remanejado do filtro `Orcamento` para `Auditoria de Obras`, exclusivamente. Mantidos o aplicativo, a rota, a busca e a exibicao em `Todos`.
+
 Rota: `/orcamento-forense/`  
 Arquivo: `orcamento-forense/index.html`
 
