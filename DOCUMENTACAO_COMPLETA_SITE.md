@@ -38,6 +38,8 @@ Em 27/09/2026, a lista de aplicativos do rodape foi reorganizada em tres colunas
 
 Em 04/10/2026, foi criado o filtro `Auditoria de Obras` e incluido o aplicativo `ObraPericia MP`, publicado na rota `/obrapericia-mp/`.
 
+Atualizacao de entrada em 04/10/2026: removidas as referencias ao MPMS do aplicativo. A abertura usa `obrapericia-mp/abertura.css` e `abertura.js`, com animacao de quatro segundos e aviso legal com checkbox e aceite obrigatorio a cada acesso. O `boot()` somente inicia apos o aceite; foram preservados o nome da base IndexedDB e os formatos existentes. Os avisos abordam uso demonstrativo, responsabilidade profissional, limites das conclusoes automaticas, garantias e armazenamento local, inclusive a integracao opcional com IA em localhost. Backup anterior: `backups/obrapericia-mp-before-abertura-20261004.html`. Nao publicar esse backup na rota do aplicativo.
+
 Em 30/08/2026, o card `ABC Fiscal` foi removido da home, do rodape e dos filtros de busca. O arquivo do aplicativo foi preservado em `C:\Obras Inteligentes\abc-fiscal\index.html`. A home anterior foi salva em `C:\Obras Inteligentes\backups\index-before-remove-abc-fiscal-20260830-1730.html`.
 
 Em 31/08/2026, foi incluido o aplicativo `GRO/PGR Pro` no filtro `Riscos`, publicado em `C:\Obras Inteligentes\gro-pgr-pro\index.html`. A home anterior foi salva em `C:\Obras Inteligentes\backups\index-before-gro-pgr-pro-20260831-221841.html`.
