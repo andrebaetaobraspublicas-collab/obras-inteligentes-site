@@ -1,6 +1,6 @@
 # Documentacao completa do site Obras Inteligentes
 
-Atualizado em: 27/09/2026
+Atualizado em: 04/10/2026
 Dominio publicado: https://www.obrasinteligentes.ia.br/  
 Diretorio local principal: `C:\Obras Inteligentes`  
 Repositorio GitHub: `https://github.com/andrebaetaobraspublicas-collab/obras-inteligentes-site.git`  
@@ -19,7 +19,7 @@ O site `www.obrasinteligentes.ia.br` e uma pagina estatica hospedada na Hostinge
 C:\Obras Inteligentes\index.html
 ```
 
-A tela inicial possui atualmente 101 cards de aplicativos. Cada card aponta para uma rota estatica dentro do dominio. A regra geral e:
+A tela inicial possui atualmente 102 cards de aplicativos. Cada card aponta para uma rota estatica dentro do dominio. A regra geral e:
 
 ```text
 https://www.obrasinteligentes.ia.br/nome-da-rota/
@@ -35,6 +35,8 @@ C:\Obras Inteligentes\assets\hero-obras-ai-3d.png
 Em 30/08/2026, a grade de aplicativos foi ajustada para melhor aproveitamento de telas largas: 5 cards por linha a partir de 1500px, 4 cards em desktops menores, 2 cards em tablets e 1 card em celulares. A home anterior foi salva em `C:\Obras Inteligentes\backups\index-before-5cards-20260830-163133.html`.
 
 Em 27/09/2026, a lista de aplicativos do rodape foi reorganizada em tres colunas nos computadores, duas em telas medias e uma em celulares, reduzindo a rolagem vertical sem remover links.
+
+Em 04/10/2026, foi criado o filtro `Auditoria de Obras` e incluido o aplicativo `ObraPericia MP`, publicado na rota `/obrapericia-mp/`.
 
 Em 30/08/2026, o card `ABC Fiscal` foi removido da home, do rodape e dos filtros de busca. O arquivo do aplicativo foi preservado em `C:\Obras Inteligentes\abc-fiscal\index.html`. A home anterior foi salva em `C:\Obras Inteligentes\backups\index-before-remove-abc-fiscal-20260830-1730.html`.
 
@@ -156,6 +158,7 @@ Inventario originalmente verificado em 21/07/2026 e atualizado em 09/09/2026 par
 | 99 / SICRO AL | SICRO AL - Administracao Local | `/sicro-administracao-local/` | `C:\Obras Inteligentes\sicro-administracao-local\index.html` | existe | 200 |
 | 100 / PISOS | PisoCalc Pro | `/pisocalc-pro/` | `C:\Obras Inteligentes\pisocalc-pro\index.html` | existe | 200 |
 | 101 / VASOS | VasoCalc PRO | `/vasocalc-pro/` | `C:\Obras Inteligentes\vasocalc-pro\index.html` | existe | 200 |
+| 102 / PERICIA | ObraPericia MP | `/obrapericia-mp/` | `C:\Obras Inteligentes\obrapericia-mp\index.html` | existe | pendente de publicacao |
 
 ## Tamanhos verificados
 
@@ -264,6 +267,7 @@ Estes tamanhos ajudam a identificar se uma rota local foi substituida corretamen
 | `/sicro-administracao-local/` | 18056743 bytes | 17892191 caracteres |
 | `/pisocalc-pro/` | 275088 bytes | 272326 caracteres |
 | `/vasocalc-pro/` | 768715 bytes | 756786 caracteres |
+| `/obrapericia-mp/` | 735043 bytes | pendente de publicacao |
 | `/entenda-ia/` | 175035 bytes | 172793 caracteres |
 | `/abc-fiscal/` | 351255 bytes | 349022 caracteres |
 

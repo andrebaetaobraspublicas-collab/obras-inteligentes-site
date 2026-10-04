@@ -559,6 +559,7 @@ body.modal-open{overflow:hidden}
       <button class="filter-btn" type="button" data-filter="Mecanica dos Fluidos e Transferencia de Calor">Mec&acirc;nica dos Fluidos e Transfer&ecirc;ncia de Calor</button>
       <button class="filter-btn" type="button" data-filter="Equipamentos, Apoios e Montagens">Equipamentos, Apoios e Montagens</button>
       <button class="filter-btn" type="button" data-filter="Gestao de Obras e de Contratos">Gest&atilde;o de Obras e de Contratos</button>
+      <button class="filter-btn" type="button" data-filter="Auditoria de Obras">Auditoria de Obras</button>
       <button class="filter-btn" type="button" data-filter="Manutencao Predial">Manuten&ccedil;&atilde;o Predial</button>
       <button class="filter-btn" type="button" data-filter="Riscos">Riscos</button>
       <button class="filter-btn" type="button" data-filter="Sustentabilidade">Sustentabilidade</button>
@@ -566,7 +567,7 @@ body.modal-open{overflow:hidden}
       <button class="filter-btn" type="button" data-filter="Orcamento">Or&ccedil;amento</button>
       <button class="filter-btn" type="button" data-filter="Artigos">Artigos</button>
     </div>
-    <div class="app-filter-status" id="appFilterStatus">101 aplicativos encontrados</div>
+    <div class="app-filter-status" id="appFilterStatus">102 aplicativos encontrados</div>
   </div>
 
   <div class="apps">
@@ -1714,6 +1715,18 @@ body.modal-open{overflow:hidden}
       <div class="meta">Abrir sistema &middot; vasos de press&atilde;o</div>
     </a>
 
+    <a class="app" href="/obrapericia-mp/" aria-label="Abrir ObraPericia MP - Auditoria e pericia de obras">
+      <span class="arrow">&rarr;</span>
+      <div class="app-num">102 / PER&Iacute;CIA</div>
+      <svg class="app-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9 39V19l15-10 15 10v20H9z"/><path d="M16 39V24h16v15M16 31h16"/>
+        <circle cx="34" cy="13" r="7"/><path d="M39 18l5 5"/><path d="M31 13l2 2 4-5"/>
+      </svg>
+      <h3>ObraPer&iacute;cia MP</h3>
+      <p>Ambiente local para auditoria e per&iacute;cia de obras, com contratos, medi&ccedil;&otilde;es, evid&ecirc;ncias, vistorias, achados, quantifica&ccedil;&atilde;o de dano e relat&oacute;rios t&eacute;cnicos.</p>
+      <div class="meta">Abrir sistema &middot; auditoria de obras</div>
+    </a>
+
   </div>
 </section>
 
@@ -1951,6 +1964,7 @@ body.modal-open{overflow:hidden}
         <a href="/acesscheck/">AcessCheck - Vistoria de Acessibilidade</a>
         <a href="/orcamento-forense/">Or&ccedil;amentoForense - Auditoria Estat&iacute;stica</a>
         <a href="/gro-pgr-pro/">GRO/PGR Pro - Riscos Ocupacionais</a>
+        <a href="/obrapericia-mp/">ObraPer&iacute;cia MP - Auditoria de Obras</a>
       </div>
       <div class="foot-col">
         <h4>Conteúdo</h4>
@@ -2136,7 +2150,8 @@ body.modal-open{overflow:hidden}
     ["/ivaeq-pro-servicos/", ["Orcamento", "ivaeq pro servicos iva equivalente bdi reequilibrio economico financeiro orcamento saldo contratual reforma tributaria ibs cbs"]],
     ["/sicro-administracao-local/", ["Orcamento", "sicro al administracao local orcamento natureza porte obra canteiro pessoal periodos atuacao base precos custos diversos custos especificos projeto dnit"]],
     ["/pisocalc-pro/", ["Estruturas", "pisocalc pro pisos concreto sobre solo simples armado protendido juntas barras transferencia pre dimensionamento memoria calculo estruturas"]],
-    ["/vasocalc-pro/", ["Engenharia Mecanica", "vasocalc pro vaso vasos pressao pre dimensionamento casco tampos bocais espessura pmta asme nr13 animacao 3d projetos engenharia mecanica"]]
+    ["/vasocalc-pro/", ["Engenharia Mecanica", "vasocalc pro vaso vasos pressao pre dimensionamento casco tampos bocais espessura pmta asme nr13 animacao 3d projetos engenharia mecanica"]],
+    ["/obrapericia-mp/", ["Auditoria de Obras", "obrapericia obra pericia auditoria engenharia evidencias medicoes contratos aditivos precos desconto vistorias achados dano parecer relatorios ministerio publico"]]
   ]);
 
   const appCards = Array.from(document.querySelectorAll(".apps .app"));
