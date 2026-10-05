@@ -1,6 +1,6 @@
 # Documentacao completa do site Obras Inteligentes
 
-Atualizado em: 04/10/2026
+Atualizado em: 05/10/2026
 Dominio publicado: https://www.obrasinteligentes.ia.br/  
 Diretorio local principal: `C:\Obras Inteligentes`  
 Repositorio GitHub: `https://github.com/andrebaetaobraspublicas-collab/obras-inteligentes-site.git`  
@@ -13,6 +13,8 @@ Este arquivo registra o estado atual do site, dos aplicativos publicados, da est
 
 ## Resumo do site
 
+Em 05/10/2026, incluido o card 104 `EstruturaCalc PRO 1.8`, no filtro existente `Estruturas`, em Todos, na busca e no rodape. Rota: `/estruturacalc-pro/`; arquivo local: `C:\Obras Inteligentes\estruturacalc-pro\index.html`. Fonte: `C:\Users\ACER\Documents\Downloads\EstruturaCalc_PRO_v1.8.html`, copiada integralmente. Novo aplicativo independente: nao substitui `/estrutural/` nem `/analisador-estrutural-mef/`. Backup da home: `backups/index-before-estruturacalc-pro-20261005.html`. Apoio a concepcao estrutural, cargas, porticos, dimensionamento, fundacoes, quantitativos e relatorios.
+
 Em 04/10/2026, incluido o card 103 `Reajuste PRO`, no filtro existente `Gestao de Obras e de Contratos`, na busca, em Todos e no rodape. Rota: `/reajuste-pro/`; arquivo local: `C:\Obras Inteligentes\reajuste-pro\index.html`. Fonte: `C:\Users\ACER\Documents\Downloads\Reajuste_PRO_v2_0.html`, copiada integralmente, preservando abertura animada, avisos legais e armazenamento local. Apoia reajustamento contratual com indices embarcados, medicoes e memoria de calculo. Backup da home: `backups/index-before-reajuste-pro-20261004.html`. Nao foi criado filtro duplicado.
 
 O site `www.obrasinteligentes.ia.br` e uma pagina estatica hospedada na Hostinger, publicada a partir do repositorio GitHub indicado acima. A tela inicial fica em:
@@ -21,7 +23,7 @@ O site `www.obrasinteligentes.ia.br` e uma pagina estatica hospedada na Hostinge
 C:\Obras Inteligentes\index.html
 ```
 
-A tela inicial possui atualmente 103 cards de aplicativos. Cada card aponta para uma rota estatica dentro do dominio. A regra geral e:
+A tela inicial possui atualmente 104 cards de aplicativos. Cada card aponta para uma rota estatica dentro do dominio. A regra geral e:
 
 ```text
 https://www.obrasinteligentes.ia.br/nome-da-rota/
