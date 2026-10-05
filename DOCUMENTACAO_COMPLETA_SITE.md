@@ -13,6 +13,8 @@ Este arquivo registra o estado atual do site, dos aplicativos publicados, da est
 
 ## Resumo do site
 
+Em 05/10/2026, atualizado `EstruturaCalc PRO` para 1.9 na rota `/estruturacalc-pro/`, copiando integralmente `C:\Users\ACER\Documents\Downloads\EstruturaCalc_PRO_v1.9.html`. Mantidos card 104, filtro Estruturas, busca e rodape; nenhum outro aplicativo alterado. Backup da versao 1.8: `C:\Obras Inteligentes\backups\estruturacalc-pro-before-v19-20261005.html`.
+
 Em 05/10/2026, incluido o card 104 `EstruturaCalc PRO 1.8`, no filtro existente `Estruturas`, em Todos, na busca e no rodape. Rota: `/estruturacalc-pro/`; arquivo local: `C:\Obras Inteligentes\estruturacalc-pro\index.html`. Fonte: `C:\Users\ACER\Documents\Downloads\EstruturaCalc_PRO_v1.8.html`, copiada integralmente. Novo aplicativo independente: nao substitui `/estrutural/` nem `/analisador-estrutural-mef/`. Backup da home: `backups/index-before-estruturacalc-pro-20261005.html`. Apoio a concepcao estrutural, cargas, porticos, dimensionamento, fundacoes, quantitativos e relatorios.
 
 Em 04/10/2026, incluido o card 103 `Reajuste PRO`, no filtro existente `Gestao de Obras e de Contratos`, na busca, em Todos e no rodape. Rota: `/reajuste-pro/`; arquivo local: `C:\Obras Inteligentes\reajuste-pro\index.html`. Fonte: `C:\Users\ACER\Documents\Downloads\Reajuste_PRO_v2_0.html`, copiada integralmente, preservando abertura animada, avisos legais e armazenamento local. Apoia reajustamento contratual com indices embarcados, medicoes e memoria de calculo. Backup da home: `backups/index-before-reajuste-pro-20261004.html`. Nao foi criado filtro duplicado.
