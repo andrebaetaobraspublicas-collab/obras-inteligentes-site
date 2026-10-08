@@ -1888,5 +1888,1799 @@ window.AlvenariaProV14=Object.freeze({version:'1.4',parseDxf:cadParseDxf,analyze
 })();
 
 </script>
+
+<!-- AlvenariaPro v1.5: native offline BIM / IFC4 extension -->
+
+<script>
+/*
+ * AlvenariaPro: dependency-free detail geometry for the IFC adapter.
+ * All coordinates and tolerances use metres. Functions do not mutate inputs.
+ * Rect: {x0,y0,x1,y1}; Box: {x0,y0,z0,x1,y1,z1}.
+ * A returned collection represents a UNION of disjoint closed solids, whose
+ * shared boundaries have zero area/volume. No automatic dimension rounding.
+ * Polygon functions accept a ring, an array of rings (even-odd fill), or
+ * {outer: ring, holes: [ring,...]}; points may be {x,y} or [x,y].
+ * Orthogonal polygon clipping returns several rectangular polygons when
+ * needed, never a spurious bridge between disconnected concave fragments.
+ * CommonJS and browser global are supported; no DOM or project state is used.
+ */
+(function (root, factory) {
+  'use strict';
+  const api = factory();
+  if (typeof module === 'object' && module.exports) module.exports = api;
+  if (root) root.AlvenariaDetailGeometry = api;
+})(typeof globalThis !== 'undefined' ? globalThis : this, function () {
+  'use strict';
+  const EPS = 1e-7;
+
+  function finite(v) { return Number.isFinite(Number(v)); }
+  function rectOK(r, eps = EPS) {
+    return r && ['x0','y0','x1','y1'].every(k => finite(r[k])) &&
+      Number(r.x1) - Number(r.x0) > eps && Number(r.y1) - Number(r.y0) > eps;
+  }
+  function boxOK(b, eps = EPS) {
+    return rectOK(b, eps) && finite(b.z0) && finite(b.z1) && Number(b.z1) - Number(b.z0) > eps;
+  }
+  function rectCopy(r) { return {x0:+r.x0,y0:+r.y0,x1:+r.x1,y1:+r.y1}; }
+  function boxCopy(b) { return {...rectCopy(b),z0:+b.z0,z1:+b.z1}; }
+  function rectArea(r) { return rectOK(r, 0) ? (r.x1-r.x0)*(r.y1-r.y0) : 0; }
+  function boxVolume(b) { return boxOK(b, 0) ? rectArea(b)*(b.z1-b.z0) : 0; }
+  const volumeBox = boxVolume;
+  function sumBoxVolumes(boxes) { return (boxes||[]).reduce((sum,b)=>sum+boxVolume(b),0); }
+  function intersectRect(a, b, eps = EPS) {
+    if (!rectOK(a, eps) || !rectOK(b, eps)) return null;
+    const r = {x0:Math.max(a.x0,b.x0),y0:Math.max(a.y0,b.y0),
+      x1:Math.min(a.x1,b.x1),y1:Math.min(a.y1,b.y1)};
+    return rectOK(r, eps) ? r : null;
+  }
+  function intersectBox(a, b, eps = EPS) {
+    if (!boxOK(a, eps) || !boxOK(b, eps)) return null;
+    const r = intersectRect(a,b,eps);
+    if (!r) return null;
+    const out = {...r,z0:Math.max(a.z0,b.z0),z1:Math.min(a.z1,b.z1)};
+    return boxOK(out,eps) ? out : null;
+  }
+
+  // Exact rectangle difference, represented by at most four rectangles.
+  function subtractRect(subject, cutter, eps = EPS) {
+    if (!rectOK(subject, eps)) return [];
+    const a = rectCopy(subject), i = intersectRect(a,cutter,eps);
+    if (!i) return [a];
+    return [
+      {x0:a.x0,y0:a.y0,x1:a.x1,y1:i.y0},
+      {x0:a.x0,y0:i.y1,x1:a.x1,y1:a.y1},
+      {x0:a.x0,y0:i.y0,x1:i.x0,y1:i.y1},
+      {x0:i.x1,y0:i.y0,x1:a.x1,y1:i.y1}
+    ].filter(r => rectOK(r,eps));
+  }
+
+  // Exact cuboid difference, represented by at most six cuboids. Useful for
+  // openings whose sill/head cut only part of a modular course.
+  function subtractBox(subject, cutter, eps = EPS) {
+    if (!boxOK(subject,eps)) return [];
+    const a = boxCopy(subject), i = intersectBox(a,cutter,eps);
+    if (!i) return [a];
+    return [
+      {x0:a.x0,x1:i.x0,y0:a.y0,y1:a.y1,z0:a.z0,z1:a.z1},
+      {x0:i.x1,x1:a.x1,y0:a.y0,y1:a.y1,z0:a.z0,z1:a.z1},
+      {x0:i.x0,x1:i.x1,y0:a.y0,y1:i.y0,z0:a.z0,z1:a.z1},
+      {x0:i.x0,x1:i.x1,y0:i.y1,y1:a.y1,z0:a.z0,z1:a.z1},
+      {x0:i.x0,x1:i.x1,y0:i.y0,y1:i.y1,z0:a.z0,z1:i.z0},
+      {x0:i.x0,x1:i.x1,y0:i.y0,y1:i.y1,z0:i.z1,z1:a.z1}
+    ].filter(b => boxOK(b,eps));
+  }
+
+  function subtractMany(subjects, cutters, fn, valid, eps, maxFragments) {
+    let fragments = (Array.isArray(subjects) ? subjects : [subjects]).filter(b => valid(b,eps));
+    for (const cut of cutters || []) {
+      if (!valid(cut,eps)) continue;
+      const next = [];
+      for (const fragment of fragments) {
+        next.push(...fn(fragment,cut,eps));
+        if (maxFragments && next.length > maxFragments) {
+          throw new RangeError('Detail geometry exceeded maxFragments; no fragments were silently discarded.');
+        }
+      }
+      fragments = next;
+      if (!fragments.length) break;
+    }
+    return fragments.map(b => valid === boxOK ? boxCopy(b) : rectCopy(b));
+  }
+  function subtractRects(subjects, cutters, eps = EPS, maxFragments = 0) {
+    return subtractMany(subjects,cutters,subtractRect,rectOK,eps,maxFragments);
+  }
+  function subtractBoxes(subjects, cutters, eps = EPS, maxFragments = 0) {
+    return subtractMany(subjects,cutters,subtractBox,boxOK,eps,maxFragments);
+  }
+
+  function uniqueSorted(values, eps) {
+    const out = [];
+    values.slice().sort((a,b)=>a-b).forEach(v => {
+      if (!out.length || v-out[out.length-1]>eps) out.push(v);
+    });
+    return out;
+  }
+  function mergeIntervals(intervals, eps = EPS) {
+    const out = [];
+    intervals.filter(a => a[1]-a[0]>eps).map(a=>[+a[0],+a[1]])
+      .sort((a,b)=>a[0]-b[0]||a[1]-b[1]).forEach(a=>{
+        const previous=out[out.length-1];
+        if (previous && a[0]<=previous[1]+eps) previous[1]=Math.max(previous[1],a[1]);
+        else out.push(a);
+      });
+    return out;
+  }
+  function mergeVerticalBands(rows, eps = EPS) {
+    const out=[];
+    rows.sort((a,b)=>a.y0-b.y0||a.x0-b.x0||a.x1-b.x1).forEach(r=>{
+      const previous=out.find(p=>Math.abs(p.x0-r.x0)<=eps && Math.abs(p.x1-r.x1)<=eps && Math.abs(p.y1-r.y0)<=eps);
+      if (previous) previous.y1=r.y1;
+      else out.push(rectCopy(r));
+    });
+    return out;
+  }
+
+  // A canonical disjoint partition of the union, including coincident inputs.
+  function unionRects(rects, eps = EPS) {
+    const valid=(rects||[]).filter(r=>rectOK(r,eps));
+    const ys=uniqueSorted(valid.flatMap(r=>[+r.y0,+r.y1]),eps), rows=[];
+    for (let k=0;k<ys.length-1;k++) {
+      const y0=ys[k],y1=ys[k+1],ym=(y0+y1)/2;
+      mergeIntervals(valid.filter(r=>ym>r.y0 && ym<r.y1).map(r=>[r.x0,r.x1]),eps)
+        .forEach(([x0,x1])=>rows.push({x0,y0,x1,y1}));
+    }
+    return mergeVerticalBands(rows,eps);
+  }
+
+  function point(p) {
+    const x=Array.isArray(p)?p[0]:p?.x,y=Array.isArray(p)?p[1]:p?.y;
+    if (!finite(x)||!finite(y)) throw new TypeError('Polygon point must contain finite x and y coordinates.');
+    return {x:+x,y:+y};
+  }
+  function isPoint(p) {
+    return Array.isArray(p)?p.length>=2 && finite(p[0]) && finite(p[1]):p && finite(p.x) && finite(p.y);
+  }
+  function normalizedRings(input,eps) {
+    let rings;
+    if (Array.isArray(input)) rings=isPoint(input[0])?[input]:input;
+    else if (input && Array.isArray(input.outer)) rings=[input.outer,...(input.holes||[])];
+    else throw new TypeError('Expected an orthogonal polygon ring or {outer,holes}.');
+    return rings.map(r=>{
+      const p=[];
+      r.map(point).forEach(v=>{
+        const prev=p[p.length-1];
+        if (!prev || Math.hypot(v.x-prev.x,v.y-prev.y)>eps) p.push(v);
+      });
+      if (p.length>1 && Math.hypot(p[0].x-p[p.length-1].x,p[0].y-p[p.length-1].y)<=eps) p.pop();
+      if (p.length<4) throw new RangeError('An orthogonal polygon ring requires at least four distinct vertices.');
+      for (let i=0;i<p.length;i++) {
+        const a=p[i],b=p[(i+1)%p.length];
+        if (Math.abs(a.x-b.x)>eps && Math.abs(a.y-b.y)>eps) {
+          throw new RangeError('Diagonal polygon edge is not supported by the orthogonal detail helper.');
+        }
+      }
+      return p;
+    });
+  }
+
+  function orthogonalPolygonToRects(polygon, eps = EPS) {
+    const rings=normalizedRings(polygon,eps),ys=uniqueSorted(rings.flatMap(r=>r.map(p=>p.y)),eps),rows=[];
+    for (let k=0;k<ys.length-1;k++) {
+      const y0=ys[k],y1=ys[k+1],ym=(y0+y1)/2,xs=[];
+      for (const ring of rings) for (let i=0;i<ring.length;i++) {
+        const a=ring[i],b=ring[(i+1)%ring.length];
+        if (Math.abs(a.x-b.x)<=eps && ym>Math.min(a.y,b.y) && ym<Math.max(a.y,b.y)) xs.push((a.x+b.x)/2);
+      }
+      xs.sort((a,b)=>a-b);
+      if (xs.length%2) throw new RangeError('Polygon has an odd number of scanline crossings.');
+      for (let j=0;j<xs.length;j+=2) if (xs[j+1]-xs[j]>eps) rows.push({x0:xs[j],y0,x1:xs[j+1],y1});
+    }
+    return mergeVerticalBands(rows,eps);
+  }
+  function rectToPolygon(r) {
+    return [{x:r.x0,y:r.y0},{x:r.x1,y:r.y0},{x:r.x1,y:r.y1},{x:r.x0,y:r.y1}];
+  }
+  function clipOrthogonalPolygonToRects(polygon, rectangle, eps = EPS) {
+    return orthogonalPolygonToRects(polygon,eps).map(r=>intersectRect(r,rectangle,eps)).filter(Boolean);
+  }
+  function clipOrthogonalPolygonToBox(polygon, rectangle, eps = EPS) {
+    return clipOrthogonalPolygonToRects(polygon,rectangle,eps).map(rectToPolygon);
+  }
+  function subtractFromOrthogonalPolygon(polygon,cutters,eps=EPS) {
+    return subtractRects(orthogonalPolygonToRects(polygon,eps),cutters,eps).map(rectToPolygon);
+  }
+
+  // Items must provide {id,box,priority?}. Smaller priority wins. This helper
+  // resolves any coincident overlap exactly once. A caller can first resolve
+  // course-specific junction dominance to a deterministic total priority.
+  // All pieces belonging to one original block should keep that source id;
+  // separate geometry fragments do not automatically mean separate blocks.
+  function allocateNonOverlappingBoxes(items, options = {}) {
+    const eps=options.eps??EPS, maxFragments=options.maxFragments||0;
+    const ordered=(items||[]).map((item,i)=>({item,i})).filter(x=>boxOK(x.item.box,eps))
+      .sort((a,b)=>(Number(a.item.priority)||0)-(Number(b.item.priority)||0) || String(a.item.id).localeCompare(String(b.item.id)) || a.i-b.i);
+    const occupied=[],out=[],overlaps=[];
+    for (const {item} of ordered) {
+      let parts=[boxCopy(item.box)];
+      for (const previous of occupied) {
+        if (!intersectBox(item.box,previous.box,eps)) continue;
+        let removed=0;
+        for (const p of parts) removed+=boxVolume(intersectBox(p,previous.box,eps));
+        if (removed<=eps*eps*eps) continue;
+        overlaps.push({loserId:item.id,winnerId:previous.id,volume:removed});
+        parts=subtractBoxes(parts,[previous.box],eps,maxFragments);
+        if (!parts.length) break;
+      }
+      const originalVolume=boxVolume(item.box),retainedVolume=parts.reduce((s,p)=>s+boxVolume(p),0);
+      out.push({...item,parts,originalVolume,retainedVolume,trimmedVolume:Math.max(0,originalVolume-retainedVolume)});
+      occupied.push(...parts.map(box=>({id:item.id,box})));
+    }
+    return {items:out,overlaps};
+  }
+
+  return Object.freeze({EPS,rectOK,boxOK,rectArea,boxVolume,volumeBox,sumBoxVolumes,intersectRect,intersectBox,
+    subtractRect,subtractRects,subtractBox,subtractBoxes,mergeIntervals,unionRects,
+    orthogonalPolygonToRects,rectToPolygon,clipOrthogonalPolygonToRects,
+    clipOrthogonalPolygonToBox,subtractFromOrthogonalPolygon,allocateNonOverlappingBoxes});
+});
+
+</script>
+
+<script>
+/* AlvenariaPro — self-contained IFC4 STEP writer. No network or runtime dependency.
+ * API: IFC4.exportModel(scene) => {text, stats, warnings, ids, typeIds, materialIds}.
+ * Coordinates/lengths are metres, areas m², volumes m³ and mass kg unless a property
+ * explicitly supplies a unit. A product placement is always relative to its storey.
+ * parentKey is semantic decomposition ONLY; it never changes that placement.
+ * Every shape item can supply its own origin:[x,y,z] and angle (radians).
+ * IFC4 schema, general physical model; no certified MVD conformity is claimed.
+ */
+(function (global, factory) {
+  'use strict';
+  var api = factory();
+  if (typeof module === 'object' && module.exports) module.exports = api;
+  if (global) global.IFC4 = api;
+})(typeof globalThis !== 'undefined' ? globalThis : this, function () {
+  'use strict';
+
+  var VERSION = '1.0.0';
+  var ALPHABET = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_$';
+  var ENUMS = {
+    IfcWall: 'MOVABLE PARAPET PARTITIONING PLUMBINGWALL SHEAR SOLIDWALL STANDARD POLYGONAL ELEMENTEDWALL USERDEFINED NOTDEFINED',
+    IfcSlab: 'FLOOR ROOF LANDING BASESLAB USERDEFINED NOTDEFINED',
+    IfcBuildingElementPart: 'INSULATION PRECASTPANEL USERDEFINED NOTDEFINED',
+    IfcBeam: 'BEAM JOIST HOLLOWCORE LINTEL SPANDREL T_BEAM USERDEFINED NOTDEFINED',
+    IfcColumn: 'COLUMN PILASTER USERDEFINED NOTDEFINED',
+    IfcFooting: 'CAISSON_FOUNDATION FOOTING_BEAM PAD_FOOTING PILE_CAP STRIP_FOOTING USERDEFINED NOTDEFINED',
+    IfcBuildingElementProxy: 'COMPLEX ELEMENT PARTIAL PROVISIONFORVOID PROVISIONFORSPACE USERDEFINED NOTDEFINED',
+    IfcReinforcingBar: 'ANCHORING EDGE LIGATURE MAIN PUNCHING RING SHEAR STUD USERDEFINED NOTDEFINED',
+    IfcOpeningElement: 'OPENING RECESS USERDEFINED NOTDEFINED',
+    IfcElementAssembly: 'ACCESSORY_ASSEMBLY ARCH BEAM_GRID BRACED_FRAME GIRDER REINFORCEMENT_UNIT RIGID_FRAME SLAB_FIELD TRUSS USERDEFINED NOTDEFINED',
+    IfcDoor: 'DOOR GATE TRAPDOOR USERDEFINED NOTDEFINED',
+    IfcWindow: 'WINDOW SKYLIGHT LIGHTDOME USERDEFINED NOTDEFINED',
+    IfcGrid: 'RECTANGULAR RADIAL TRIANGULAR IRREGULAR USERDEFINED NOTDEFINED',
+    IfcAnnotation: ''
+  };
+  var QTY = {
+    length: ['IfcQuantityLength', 'IfcLengthMeasure'],
+    area: ['IfcQuantityArea', 'IfcAreaMeasure'],
+    volume: ['IfcQuantityVolume', 'IfcVolumeMeasure'],
+    count: ['IfcQuantityCount', 'IfcCountMeasure'],
+    weight: ['IfcQuantityWeight', 'IfcMassMeasure'],
+    mass: ['IfcQuantityWeight', 'IfcMassMeasure'],
+    time: ['IfcQuantityTime', 'IfcTimeMeasure']
+  };
+  var QSET = {
+    IfcWall: 'Qto_WallBaseQuantities', IfcSlab: 'Qto_SlabBaseQuantities',
+    IfcBeam: 'Qto_BeamBaseQuantities', IfcColumn: 'Qto_ColumnBaseQuantities',
+    IfcFooting: 'Qto_FootingBaseQuantities', IfcReinforcingBar: 'Qto_ReinforcingElementBaseQuantities',
+    IfcDoor: 'Qto_DoorBaseQuantities', IfcWindow: 'Qto_WindowBaseQuantities',
+    IfcBuildingElementPart: 'AlvenariaPro_ComponentQuantities',
+    IfcOpeningElement: 'AlvenariaPro_OpeningQuantities'
+  };
+  var STRING_TYPES = new Set(['IFCTEXT', 'IFCLABEL', 'IFCIDENTIFIER', 'IFCDESCRIPTIVEMEASURE', 'IFCURIREFERENCE', 'IFCDATE', 'IFCDATETIME', 'IFCTIME', 'IFCDURATION']);
+  var NUMERIC_TYPES = new Set([
+    'IFCREAL', 'IFCINTEGER', 'IFCLENGTHMEASURE', 'IFCPOSITIVELENGTHMEASURE', 'IFCNONNEGATIVELENGTHMEASURE',
+    'IFCAREAMEASURE', 'IFCVOLUMEMEASURE', 'IFCMASSMEASURE', 'IFCMASSDENSITYMEASURE', 'IFCTIMEMEASURE',
+    'IFCCOUNTMEASURE', 'IFCRATIOMEASURE', 'IFCPOSITIVERATIOMEASURE', 'IFCNORMALISEDRATIOMEASURE',
+    'IFCPRESSUREMEASURE', 'IFCMODULUSOFELASTICITYMEASURE', 'IFCFORCEMEASURE', 'IFCLINEARFORCEMEASURE',
+    'IFCPLANARFORCEMEASURE', 'IFCTORQUEMEASURE', 'IFCPLANEANGLEMEASURE', 'IFCPOSITIVEPLANEANGLEMEASURE',
+    'IFCVOLUMETRICFLOWRATEMEASURE', 'IFCLINEARVELOCITYMEASURE', 'IFCTHERMODYNAMICTEMPERATUREMEASURE',
+    'IFCTHERMALCONDUCTIVITYMEASURE', 'IFCTHERMALTRANSMITTANCEMEASURE', 'IFCTHERMALRESISTANCEMEASURE',
+    'IFCSPECIFICHEATCAPACITYMEASURE', 'IFCMOMENTOFINERTIAMEASURE', 'IFCSECTIONMODULUSMEASURE',
+    'IFCMONETARYMEASURE', 'IFCPOWERMEASURE', 'IFCENERGYMEASURE', 'IFCFREQUENCYMEASURE'
+  ]);
+  function arr(x) { return Array.isArray(x) ? x : []; }
+  function own(o, key) { return Object.prototype.hasOwnProperty.call(o, key); }
+  function finite(n, label) {
+    if (typeof n !== 'number' || !Number.isFinite(n)) throw new Error('Valor numérico inválido em ' + label + ': ' + String(n));
+    return n;
+  }
+  function real(n) {
+    n = finite(Number(n), 'IFC');
+    if (Object.is(n, -0)) n = 0;
+    var s = n.toPrecision(15).replace(/(?:\.0+|(\.[0-9]*?)0+)($|e)/, '$1$2');
+    var parts = s.toUpperCase().split('E');
+    if (parts[0].indexOf('.') < 0) parts[0] += '.';
+    return parts.join('E');
+  }
+  function positive(n, label) { finite(n, label); if (n <= 0) throw new Error(label + ' deve ser positivo.'); return n; }
+  function optReal(n) { return n === undefined || n === null || n === '' ? '$' : real(n); }
+  function ref(id) { return id ? '#' + id : '$'; }
+  function refs(ids) { return '(' + ids.map(ref).join(',') + ')'; }
+  function optRefs(ids) { return ids && ids.length ? refs(ids) : '$'; }
+  function bool(b) { return b ? '.T.' : '.F.'; }
+  function label(s) { return stepString(s === undefined || s === null ? '' : String(s).slice(0, 255)); }
+  function optString(s) { return s === undefined || s === null || s === '' ? '$' : stepString(s); }
+  function optLabel(s) { return s === undefined || s === null || s === '' ? '$' : label(s); }
+  function enumValue(v, allowed, fallback) {
+    v = String(v || fallback || 'NOTDEFINED').replace(/^\.|\.$/g, '').toUpperCase();
+    if (allowed && allowed.split(' ').indexOf(v) < 0) throw new Error('Valor IFC não reconhecido: ' + v + ' (' + allowed + ')');
+    return '.' + v + '.';
+  }
+  function stepString(value) {
+    // X2 for BMP and X4 for supplementary Unicode characters. Literal apostrophes
+    // and backslashes are doubled, so user text can never inject STEP statements.
+    var s = String(value), out = "'", mode = 0, buffer = '';
+    function flush() { if (buffer) { out += '\\X' + mode + '\\' + buffer + '\\X0\\'; buffer = ''; mode = 0; } }
+    for (var c of s) {
+      var cp = c.codePointAt(0);
+      if (cp >= 32 && cp <= 126) {
+        flush(); out += c === "'" ? "''" : c === '\\' ? '\\\\' : c;
+      } else {
+        if (cp >= 0xD800 && cp <= 0xDFFF) cp = 0xFFFD;
+        var m = cp > 0xFFFF ? 4 : 2;
+        if (mode && mode !== m) flush();
+        mode = m; buffer += cp.toString(16).toUpperCase().padStart(m === 4 ? 8 : 4, '0');
+      }
+    }
+    flush(); return out + "'";
+  }
+  function utf8(s) {
+    var out = [];
+    for (var c of String(s)) {
+      var n = c.codePointAt(0);
+      if (n < 128) out.push(n);
+      else if (n < 2048) out.push(192 | (n >> 6), 128 | (n & 63));
+      else if (n < 65536) out.push(224 | (n >> 12), 128 | ((n >> 6) & 63), 128 | (n & 63));
+      else out.push(240 | (n >> 18), 128 | ((n >> 12) & 63), 128 | ((n >> 6) & 63), 128 | (n & 63));
+    }
+    return out;
+  }
+  function sha1(bytes) {
+    var a = bytes.slice(), len = a.length * 8;
+    a.push(128); while (a.length % 64 !== 56) a.push(0);
+    var hi = Math.floor(len / 4294967296), lo = len >>> 0;
+    for (var i = 3; i >= 0; i--) a.push((hi >>> (i * 8)) & 255);
+    for (i = 3; i >= 0; i--) a.push((lo >>> (i * 8)) & 255);
+    var h = [0x67452301, 0xEFCDAB89, 0x98BADCFE, 0x10325476, 0xC3D2E1F0], w = new Int32Array(80);
+    function rot(n, b) { return (n << b) | (n >>> (32 - b)); }
+    for (var off = 0; off < a.length; off += 64) {
+      for (i = 0; i < 16; i++) w[i] = (a[off + i * 4] << 24) | (a[off + i * 4 + 1] << 16) | (a[off + i * 4 + 2] << 8) | a[off + i * 4 + 3];
+      for (i = 16; i < 80; i++) w[i] = rot(w[i - 3] ^ w[i - 8] ^ w[i - 14] ^ w[i - 16], 1);
+      var aa = h[0], bb = h[1], cc = h[2], dd = h[3], ee = h[4];
+      for (i = 0; i < 80; i++) {
+        var f, k;
+        if (i < 20) { f = (bb & cc) | (~bb & dd); k = 0x5A827999; }
+        else if (i < 40) { f = bb ^ cc ^ dd; k = 0x6ED9EBA1; }
+        else if (i < 60) { f = (bb & cc) | (bb & dd) | (cc & dd); k = 0x8F1BBCDC; }
+        else { f = bb ^ cc ^ dd; k = 0xCA62C1D6; }
+        var t = (rot(aa, 5) + f + ee + k + w[i]) | 0;
+        ee = dd; dd = cc; cc = rot(bb, 30); bb = aa; aa = t;
+      }
+      h[0] = (h[0] + aa) | 0; h[1] = (h[1] + bb) | 0; h[2] = (h[2] + cc) | 0; h[3] = (h[3] + dd) | 0; h[4] = (h[4] + ee) | 0;
+    }
+    var result = [];
+    h.forEach(function (x) { for (var j = 3; j >= 0; j--) result.push((x >>> (j * 8)) & 255); });
+    return result;
+  }
+  function guid(projectKey, sourceKey) {
+    // RFC 4122 version 5, URL namespace, then IFC's 22-character base64 alphabet.
+    var ns = [0x6b, 0xa7, 0xb8, 0x11, 0x9d, 0xad, 0x11, 0xd1, 0x80, 0xb4, 0x00, 0xc0, 0x4f, 0xd4, 0x30, 0xc8];
+    var b = sha1(ns.concat(utf8('AlvenariaPro/IFC4/' + String(projectKey) + '/' + String(sourceKey)))).slice(0, 16);
+    b[6] = (b[6] & 15) | 80; b[8] = (b[8] & 63) | 128;
+    function b64(n, digits) { var s = ''; for (var j = 0; j < digits; j++) { s = ALPHABET[n & 63] + s; n = Math.floor(n / 64); } return s; }
+    var out = b64(b[0], 2);
+    for (var i = 1; i < 16; i += 3) out += b64(b[i] * 65536 + b[i + 1] * 256 + b[i + 2], 4);
+    return out;
+  }
+  function stableStringify(x) {
+    if (x === null || typeof x !== 'object') return JSON.stringify(x);
+    if (Array.isArray(x)) return '[' + x.map(stableStringify).join(',') + ']';
+    return '{' + Object.keys(x).sort().map(function (k) { return JSON.stringify(k) + ':' + stableStringify(x[k]); }).join(',') + '}';
+  }
+  function norm(v) {
+    var n = Math.hypot.apply(Math, v); if (!(n > 1e-12)) throw new Error('Vetor nulo em direção IFC.');
+    return v.map(function (x) { return finite(x, 'direção') / n; });
+  }
+  function vec(v, dim) {
+    v = v || (dim === 2 ? [0, 0] : [0, 0, 0]);
+    return Array.from({ length: dim }, function (_, i) { return finite(Number(v[i] === undefined || v[i] === null ? 0 : v[i]), 'coordenada'); });
+  }
+  function polygon(points, labelText) {
+    var out = [];
+    arr(points).forEach(function (p) { p = vec(p, 2); if (!out.length || Math.hypot(p[0] - out[out.length - 1][0], p[1] - out[out.length - 1][1]) > 1e-10) out.push(p); });
+    if (out.length > 1 && Math.hypot(out[0][0] - out[out.length - 1][0], out[0][1] - out[out.length - 1][1]) < 1e-10) out.pop();
+    if (out.length < 3) throw new Error(labelText + ': polígono com menos de três vértices.');
+    var area = 0; out.forEach(function (p, i) { var q = out[(i + 1) % out.length]; area += p[0] * q[1] - q[0] * p[1]; });
+    if (Math.abs(area) < 1e-12) throw new Error(labelText + ': área nula.');
+    if (area < 0) out.reverse();
+    return out;
+  }
+  function shapeItems(g) { return !g ? [] : Array.isArray(g) ? g : Array.isArray(g.items) ? g.items : [g]; }
+  function lineLength(points) {
+    var sum = 0; for (var i = 1; i < points.length; i++) sum += Math.hypot(points[i][0] - points[i - 1][0], points[i][1] - points[i - 1][1], (points[i][2] || 0) - (points[i - 1][2] || 0)); return sum;
+  }
+  function Writer(scene) {
+    this.scene = scene || {}; this.project = this.scene.project || {};
+    this.key = String(this.project.key || 'alvenariapro-project');
+    this.lines = []; this.warnings = []; this.ids = Object.create(null); this.typeIds = Object.create(null); this.materialIds = Object.create(null);
+    this.entities = Object.create(null); this.points = new Map(); this.directions = new Map(); this.axisCache = new Map();
+    this.materials = new Map(); this.types = new Map(); this.storeys = new Map(); this.products = new Map();
+    this.maps = new Map(); this.styles = new Map(); this.materialGroups = new Map(); this.typeGroups = new Map(); this.layers = new Map(); this.rootGuids = new Set();
+    this.stats = { schema: 'IFC4', elements: 0, storeys: 0, materials: 0, types: 0, propertySets: 0, properties: 0, quantitySets: 0, quantities: 0, solids: 0, mappedInstances: 0, representationMaps: 0, geometryItems: 0, openings: 0, decomposedElements: 0, classes: Object.create(null) };
+  }
+  Writer.prototype.add = function (name) {
+    var params = Array.prototype.slice.call(arguments, 1), id = this.lines.length + 1;
+    this.lines.push('#' + id + '=' + name.toUpperCase() + '(' + params.join(',') + ');');
+    this.entities[name] = (this.entities[name] || 0) + 1; return id;
+  };
+  Writer.prototype.root = function (name, key, title, description) {
+    var params = Array.prototype.slice.call(arguments, 4);
+    var globalId = guid(this.key, key);
+    if (this.rootGuids.has(globalId)) throw new Error('Colisão de identidade IFC: ' + key + '. Renomeie a chave de origem ou o conjunto de propriedades.');
+    this.rootGuids.add(globalId);
+    return this.add.apply(this, [name, stepString(globalId), ref(this.owner), optLabel(title), optString(description)].concat(params));
+  };
+  Writer.prototype.point = function (v) {
+    var key = v.map(real).join(',');
+    if (!this.points.has(key)) this.points.set(key, this.add('IfcCartesianPoint', '(' + key + ')'));
+    return this.points.get(key);
+  };
+  Writer.prototype.direction = function (v) {
+    v = norm(v); var key = v.map(real).join(',');
+    if (!this.directions.has(key)) this.directions.set(key, this.add('IfcDirection', '(' + key + ')'));
+    return this.directions.get(key);
+  };
+  Writer.prototype.axis3 = function (p) {
+    p = p || {}; var origin = vec(p.origin, 3), a = p.angle === undefined ? 0 : finite(p.angle, 'ângulo'), z = p.zAxis || [0, 0, 1], x = p.xAxis || [Math.cos(a), Math.sin(a), 0];
+    var key = stableStringify([origin, x, z]);
+    if (!this.axisCache.has(key)) this.axisCache.set(key, this.add('IfcAxis2Placement3D', ref(this.point(origin)), ref(this.direction(z)), ref(this.direction(x))));
+    return this.axisCache.get(key);
+  };
+  Writer.prototype.placement = function (relativeTo, p) { return this.add('IfcLocalPlacement', ref(relativeTo), ref(this.axis3(p))); };
+  Writer.prototype.polyline = function (points, close, dim) {
+    var self = this, ps = points.map(function (p) { return self.point(vec(p, dim || 3)); });
+    if (close && ps[0] !== ps[ps.length - 1]) ps.push(ps[0]);
+    if (ps.length < 2) throw new Error('Polilinha IFC necessita ao menos dois pontos.');
+    return this.add('IfcPolyline', refs(ps));
+  };
+  Writer.prototype.unit = function (key) {
+    if (!key) return null;
+    key = String(key).replace(/²/g, '2').replace(/³/g, '3');
+    if (this.units[key]) return this.units[key];
+    var specs = {
+      mm: ['LENGTHUNIT', 'MILLI', 'METRE'], cm: ['LENGTHUNIT', 'CENTI', 'METRE'], km: ['LENGTHUNIT', 'KILO', 'METRE'],
+      mm2: ['AREAUNIT', 'MILLI', 'SQUARE_METRE'], cm2: ['AREAUNIT', 'CENTI', 'SQUARE_METRE'],
+      mm3: ['VOLUMEUNIT', 'MILLI', 'CUBIC_METRE'], cm3: ['VOLUMEUNIT', 'CENTI', 'CUBIC_METRE'],
+      kN: ['FORCEUNIT', 'KILO', 'NEWTON'], kPa: ['PRESSUREUNIT', 'KILO', 'PASCAL'], MPa: ['PRESSUREUNIT', 'MEGA', 'PASCAL'],
+      g: ['MASSUNIT', null, 'GRAM'], ms: ['TIMEUNIT', 'MILLI', 'SECOND']
+    };
+    if (!specs[key]) throw new Error('Unidade IFC não suportada: ' + key + '. Use valores SI ou propriedade textual com unidade.');
+    var spec = specs[key]; return this.units[key] = this.add('IfcSIUnit', '*', '.' + spec[0] + '.', spec[1] ? '.' + spec[1] + '.' : '$', '.' + spec[2] + '.');
+  };
+  Writer.prototype.property = function (name, data) {
+    if (data === null || data === undefined) return null;
+    var d = data && typeof data === 'object' && !Array.isArray(data) && own(data, 'value') ? data : { value: data };
+    if (d.value === null || d.value === undefined) return null;
+    var value = d.value, type = String(d.type || (typeof value === 'boolean' ? 'IfcBoolean' : typeof value === 'number' ? 'IfcReal' : 'IfcText')).toUpperCase(), encoded;
+    if (STRING_TYPES.has(type)) {
+      if (typeof value === 'object') value = stableStringify(value);
+      encoded = type + '(' + ((type === 'IFCLABEL' || type === 'IFCIDENTIFIER') ? label(value) : stepString(value)) + ')';
+    } else if (type === 'IFCBOOLEAN') encoded = type + '(' + bool(value === true || value === 1 || value === 'true') + ')';
+    else if (type === 'IFCLOGICAL') encoded = type + '(' + (value === null || value === 'UNKNOWN' || value === 'U' ? '.U.' : bool(!!value)) + ')';
+    else if (NUMERIC_TYPES.has(type)) {
+      finite(Number(value), 'propriedade ' + name);
+      if (type === 'IFCINTEGER' && !Number.isInteger(Number(value))) throw new Error('Propriedade inteira com fração: ' + name);
+      if ((type.indexOf('POSITIVE') >= 0 && type.indexOf('NONNEGATIVE') < 0) && Number(value) <= 0) throw new Error('Propriedade positiva inválida: ' + name);
+      if (type === 'IFCNORMALISEDRATIOMEASURE' && (Number(value) < 0 || Number(value) > 1)) throw new Error('Razão normalizada fora de 0–1: ' + name);
+      encoded = type + '(' + (type === 'IFCINTEGER' ? String(Number(value)) : real(value)) + ')';
+    } else throw new Error('Tipo de propriedade IFC não suportado: ' + type + ' (' + name + ')');
+    this.stats.properties++;
+    return this.add('IfcPropertySingleValue', label(name), optString(d.description), encoded, ref(this.unit(d.unit)));
+  };
+  Writer.prototype.pset = function (scope, name, values) {
+    var self = this, props = [];
+    Object.keys(values || {}).forEach(function (k) { var p = self.property(k, values[k]); if (p) props.push(p); });
+    if (!props.length) return null;
+    this.stats.propertySets++;
+    return this.root('IfcPropertySet', scope + '/pset/' + name, name, null, refs(props));
+  };
+  Writer.prototype.attachPsets = function (object, scope, psets) {
+    var self = this;
+    Object.keys(psets || {}).forEach(function (name) {
+      var pset = self.pset(scope, name, psets[name]);
+      if (pset) self.root('IfcRelDefinesByProperties', scope + '/relpset/' + name, null, null, refs([object]), ref(pset));
+    });
+  };
+  Writer.prototype.attachQuantities = function (object, element) {
+    var self = this, grouped = new Map();
+    arr(element.quantities).forEach(function (q) {
+      if (q.value === undefined || q.value === null) return;
+      var type = String(q.type || 'count').toLowerCase(), spec = QTY[type];
+      if (!spec) throw new Error('Tipo de quantidade não suportado: ' + type);
+      finite(Number(q.value), 'quantidade ' + q.name);
+      if (Number(q.value) < 0) throw new Error('Quantidade negativa: ' + q.name);
+      var id = self.add(spec[0], label(q.name), optString(q.description), ref(self.unit(q.unit)), real(q.value), optString(q.formula));
+      var name = q.set || element.quantitySet || QSET[element.ifcClass] || 'AlvenariaPro_BaseQuantities';
+      if (!grouped.has(name)) grouped.set(name, []);
+      grouped.get(name).push(id); self.stats.quantities++;
+    });
+    grouped.forEach(function (qs, name) {
+      var qset = self.root('IfcElementQuantity', 'element/' + element.key + '/qto/' + name, name, null, optLabel(element.measurementMethod || 'Quantidades do modelo geométrico em unidades SI'), refs(qs));
+      self.root('IfcRelDefinesByProperties', 'element/' + element.key + '/relqto/' + name, null, null, refs([object]), ref(qset));
+      self.stats.quantitySets++;
+    });
+  };
+  Writer.prototype.init = function () {
+    var p = this.project, time = p.createdAt ? new Date(p.createdAt) : new Date();
+    if (!Number.isFinite(time.getTime())) throw new Error('Data de exportação inválida.');
+    this.timestamp = time.toISOString().replace(/\.\d{3}Z$/, 'Z');
+    var org = this.add('IfcOrganization', '$', label(p.organization || 'AlvenariaPro'), '$', '$', '$');
+    var person = this.add('IfcPerson', '$', '$', optLabel(p.author || 'Usuário AlvenariaPro'), '$', '$', '$', '$', '$');
+    var user = this.add('IfcPersonAndOrganization', ref(person), ref(org), '$');
+    var app = this.add('IfcApplication', ref(org), label(p.applicationVersion || VERSION), label(p.application || 'AlvenariaPro'), label('AlvenariaPro_IFC'));
+    var seconds = String(Math.floor(time.getTime() / 1000));
+    this.owner = this.add('IfcOwnerHistory', ref(user), ref(app), '$', '.ADDED.', seconds, ref(user), ref(app), seconds);
+    this.zeroAxis = this.axis3(); this.zdir = this.direction([0, 0, 1]);
+    var north = p.trueNorth === undefined || p.trueNorth === null ? null : this.direction([Math.sin(Number(p.trueNorth)), Math.cos(Number(p.trueNorth))]);
+    this.context = this.add('IfcGeometricRepresentationContext', '$', label('Model'), '3', '0.000001', ref(this.zeroAxis), ref(north));
+    this.bodyContext = this.add('IfcGeometricRepresentationSubContext', label('Body'), label('Model'), '*', '*', '*', '*', ref(this.context), '$', '.MODEL_VIEW.', '$');
+    this.axisContext = this.add('IfcGeometricRepresentationSubContext', label('Axis'), label('Model'), '*', '*', '*', '*', ref(this.context), '$', '.GRAPH_VIEW.', '$');
+    this.units = Object.create(null);
+    var self = this, unitSpecs = [
+      ['m', 'LENGTHUNIT', null, 'METRE'], ['m2', 'AREAUNIT', null, 'SQUARE_METRE'], ['m3', 'VOLUMEUNIT', null, 'CUBIC_METRE'],
+      ['kg', 'MASSUNIT', 'KILO', 'GRAM'], ['s', 'TIMEUNIT', null, 'SECOND'], ['rad', 'PLANEANGLEUNIT', null, 'RADIAN'],
+      ['N', 'FORCEUNIT', null, 'NEWTON'], ['Pa', 'PRESSUREUNIT', null, 'PASCAL']
+    ];
+    unitSpecs.forEach(function (u) { self.units[u[0]] = self.add('IfcSIUnit', '*', '.' + u[1] + '.', u[2] ? '.' + u[2] + '.' : '$', '.' + u[3] + '.'); });
+    var unitIds = Object.keys(this.units).map(function (k) { return self.units[k]; });
+    if (p.currency) { this.units[p.currency] = this.add('IfcMonetaryUnit', label(p.currency)); unitIds.push(this.units[p.currency]); }
+    this.unitAssignment = this.add('IfcUnitAssignment', refs(unitIds));
+    this.projectId = this.root('IfcProject', 'project', p.name || 'Projeto de alvenaria', p.description, optLabel(p.objectType), optLabel(p.longName), optLabel(p.phase), refs([this.context]), ref(this.unitAssignment));
+    this.attachPsets(this.projectId, 'project', p.psets);
+    var site = this.scene.site || {}, building = this.scene.building || {};
+    this.sitePlacement = this.placement(null, site.placement);
+    function compoundAngle(n) {
+      if (n === undefined || n === null) return '$'; finite(Number(n), 'latitude/longitude');
+      var sign = Number(n) < 0 ? -1 : 1, abs = Math.abs(Number(n)), d = Math.floor(abs), m = Math.floor((abs - d) * 60), sec = ((abs - d) * 60 - m) * 60, seconds = Math.floor(sec), micros = Math.round((sec - seconds) * 1e6);
+      if (micros === 1000000) { micros = 0; seconds++; } if (seconds === 60) { seconds = 0; m++; } if (m === 60) { m = 0; d++; }
+      return '(' + [d, m, seconds, micros].map(function (x) { return String(sign * x); }).join(',') + ')';
+    }
+    this.siteId = this.root('IfcSite', 'site', site.name || 'Local do empreendimento', site.description, optLabel(site.objectType), ref(this.sitePlacement), '$', optLabel(site.longName), '.ELEMENT.', compoundAngle(site.latitude), compoundAngle(site.longitude), optReal(site.elevation), optLabel(site.landTitleNumber), '$');
+    this.root('IfcRelAggregates', 'project/site', null, null, ref(this.projectId), refs([this.siteId]));
+    this.buildingPlacement = this.placement(this.sitePlacement, building.placement);
+    this.buildingId = this.root('IfcBuilding', 'building', building.name || p.name || 'Edificação', building.description, optLabel(building.objectType), ref(this.buildingPlacement), '$', optLabel(building.longName), '.ELEMENT.', optReal(building.elevationOfRefHeight), optReal(building.elevationOfTerrain), '$');
+    this.root('IfcRelAggregates', 'site/building', null, null, ref(this.siteId), refs([this.buildingId]));
+    this.attachPsets(this.siteId, 'site', site.psets); this.attachPsets(this.buildingId, 'building', building.psets);
+    var storeys = arr(this.scene.storeys);
+    if (!storeys.length) storeys = [{ key: 'default', name: 'Pavimento', elevation: 0 }];
+    storeys.forEach(function (s, i) {
+      var key = String(s.key === undefined ? i : s.key); if (self.storeys.has(key)) throw new Error('Chave duplicada de pavimento: ' + key);
+      var elevation = s.elevation === undefined ? 0 : finite(Number(s.elevation), 'cota do pavimento');
+      var placement = self.placement(self.buildingPlacement, { origin: [0, 0, elevation] });
+      var id = self.root('IfcBuildingStorey', 'storey/' + key, s.name || 'Pavimento ' + (i + 1), s.description, optLabel(s.objectType), ref(placement), '$', optLabel(s.longName), '.ELEMENT.', real(elevation));
+      self.storeys.set(key, { id: id, placement: placement, data: s });
+      self.attachPsets(id, 'storey/' + key, s.psets); self.stats.storeys++;
+    });
+    this.root('IfcRelAggregates', 'building/storeys', null, null, ref(this.buildingId), refs(Array.from(this.storeys.values()).map(function (x) { return x.id; })));
+    if (this.scene.georeferencing) this.georeferencing(this.scene.georeferencing);
+  };
+  Writer.prototype.georeferencing = function (g) {
+    // Explicit user/source survey data only. Local object coordinates are retained.
+    if (!g.crsName) throw new Error('Georreferenciamento exige crsName.');
+    var crs = this.add('IfcProjectedCRS', label(g.crsName), optString(g.description), optLabel(g.geodeticDatum), optLabel(g.verticalDatum), optLabel(g.mapProjection), optLabel(g.mapZone), ref(this.units.m));
+    this.add('IfcMapConversion', ref(this.context), ref(crs), real(finite(g.eastings, 'Eastings')), real(finite(g.northings, 'Northings')), real(finite(g.orthogonalHeight, 'OrthogonalHeight')), optReal(g.xAxisAbscissa), optReal(g.xAxisOrdinate), optReal(g.scale));
+  };
+  Writer.prototype.style = function (color, transparency, curve) {
+    color = color || [0.68, 0.70, 0.72];
+    var rgb = color.map(function (v) { return Math.max(0, Math.min(1, finite(Number(v), 'cor'))); });
+    var t = transparency === undefined ? 0 : Math.max(0, Math.min(1, Number(transparency)));
+    var key = stableStringify([rgb, t, !!curve]);
+    if (this.styles.has(key)) return this.styles.get(key);
+    var c = this.add('IfcColourRgb', '$', real(rgb[0]), real(rgb[1]), real(rgb[2])), style;
+    if (curve) style = this.add('IfcCurveStyle', label('Eixos'), '$', 'IFCPOSITIVELENGTHMEASURE(0.001)', ref(c), '.T.');
+    else {
+      var render = this.add('IfcSurfaceStyleRendering', ref(c), real(t), '$', '$', '$', '$', '$', '$', '.NOTDEFINED.');
+      style = this.add('IfcSurfaceStyle', '$', '.BOTH.', refs([render]));
+    }
+    this.styles.set(key, style); return style;
+  };
+  Writer.prototype.makeMaterials = function () {
+    var self = this;
+    arr(this.scene.materials).forEach(function (m, i) {
+      var key = String(m.key === undefined ? i : m.key); if (self.materials.has(key)) throw new Error('Chave duplicada de material: ' + key);
+      var id = self.add('IfcMaterial', label(m.name || key), optString(m.description), optLabel(m.category));
+      self.materials.set(key, { id: id, data: m }); self.materialIds[key] = id; self.stats.materials++;
+      var psets = Object.assign({}, m.psets || {});
+      if (m.density !== undefined && m.density !== null) psets.Pset_MaterialCommon = Object.assign({}, psets.Pset_MaterialCommon || {}, { MassDensity: { type: 'IfcMassDensityMeasure', value: finite(Number(m.density), 'densidade') } });
+      Object.keys(psets).forEach(function (name) {
+        var properties = Object.keys(psets[name]).map(function (p) { return self.property(p, psets[name][p]); }).filter(Boolean);
+        if (properties.length) { self.add('IfcMaterialProperties', label(name), '$', refs(properties), ref(id)); self.stats.propertySets++; }
+      });
+    });
+  };
+  Writer.prototype.associateMaterial = function (object, materialKey) {
+    if (materialKey === undefined || materialKey === null) return;
+    materialKey = String(materialKey);
+    if (!this.materials.has(materialKey)) throw new Error('Material inexistente: ' + materialKey);
+    if (!this.materialGroups.has(materialKey)) this.materialGroups.set(materialKey, new Set());
+    this.materialGroups.get(materialKey).add(object);
+  };
+  Writer.prototype.makeTypes = function () {
+    var self = this;
+    arr(this.scene.types).forEach(function (t, i) {
+      var key = String(t.key === undefined ? i : t.key); if (self.types.has(key)) throw new Error('Chave duplicada de tipo: ' + key);
+      var cls = String(t.ifcClass || 'IfcBuildingElementPartType').replace(/Type$/, '');
+      if (!own(ENUMS, cls) || ['IfcOpeningElement', 'IfcGrid', 'IfcAnnotation'].indexOf(cls) >= 0) throw new Error('Classe IFC de tipo não suportada: ' + cls);
+      var psets = [];
+      Object.keys(t.psets || {}).forEach(function (name) { var ps = self.pset('type/' + key, name, t.psets[name]); if (ps) psets.push(ps); });
+      var predefined = enumValue(t.predefinedType, ENUMS[cls]);
+      var params = [optString(t.applicableOccurrence), optRefs(psets), '$', optLabel(t.tag || key), optLabel(t.elementType || t.objectType || t.name || (predefined === '.USERDEFINED.' ? key : null)), predefined];
+      if (cls === 'IfcReinforcingBar') {
+        var diameter = t.nominalDiameter === undefined ? t.diameter : t.nominalDiameter;
+        params = params.concat([optReal(diameter), optReal(t.crossSectionArea === undefined && diameter ? Math.PI * diameter * diameter / 4 : t.crossSectionArea), optReal(t.barLength), t.barSurface ? enumValue(t.barSurface, 'PLAIN TEXTURED') : '$', optLabel(t.bendingShapeCode), '$']);
+      } else if (cls === 'IfcDoor') params = params.concat([enumValue(t.operationType, null, 'NOTDEFINED'), '.F.', optLabel(t.userDefinedOperationType)]);
+      else if (cls === 'IfcWindow') params = params.concat([enumValue(t.partitioningType, null, 'NOTDEFINED'), '.F.', optLabel(t.userDefinedPartitioningType)]);
+      var id = self.root.apply(self, [cls + 'Type', 'type/' + key, t.name || key, t.description].concat(params));
+      self.types.set(key, { id: id, ifcClass: cls, data: t }); self.typeIds[key] = { entityId: id, globalId: guid(self.key, 'type/' + key), ifcClass: cls + 'Type' };
+      self.associateMaterial(id, t.materialKey); self.stats.types++;
+    });
+    if (this.types.size) this.root('IfcRelDeclares', 'project/types', null, null, ref(this.projectId), refs(Array.from(this.types.values()).map(function (x) { return x.id; })));
+  };
+  Writer.prototype.shapeItem = function (g) {
+    var kind = g.kind || 'box', item, type = 'SweptSolid', self = this;
+    if (kind === 'box' || kind === 'extrusion' || kind === 'cylinder') {
+      var height = positive(Number(g.height), 'Altura de extrusão'), profile;
+      if (kind === 'box') {
+        var width = positive(Number(g.width), 'Largura'), depth = positive(Number(g.depth), 'Espessura');
+        var centre = this.add('IfcAxis2Placement2D', ref(this.point([width / 2, depth / 2])), '$');
+        profile = this.add('IfcRectangleProfileDef', '.AREA.', '$', ref(centre), real(width), real(depth));
+      } else if (kind === 'cylinder') {
+        profile = this.add('IfcCircleProfileDef', '.AREA.', '$', '$', real(positive(Number(g.radius), 'Raio')));
+      } else {
+        var outer = this.polyline(polygon(g.outer || g.points, 'Perfil exterior'), true, 2);
+        var holes = arr(g.holes).map(function (p) { return self.polyline(polygon(p, 'Furo do perfil').reverse(), true, 2); });
+        profile = holes.length ? this.add('IfcArbitraryProfileDefWithVoids', '.AREA.', '$', ref(outer), refs(holes)) : this.add('IfcArbitraryClosedProfileDef', '.AREA.', '$', ref(outer));
+      }
+      item = this.add('IfcExtrudedAreaSolid', ref(profile), ref(this.axis3(g)), ref(this.zdir), real(height)); this.stats.solids++;
+    } else if (kind === 'sweptDisk' || kind === 'polyline') {
+      var origin = vec(g.origin, 3), a = Number(g.angle || 0), co = Math.cos(a), si = Math.sin(a);
+      var points = arr(g.points).map(function (p) { p = vec(p, 3); return [origin[0] + co * p[0] - si * p[1], origin[1] + si * p[0] + co * p[1], origin[2] + p[2]]; });
+      points = points.filter(function (p, i) { return i === 0 || Math.hypot(p[0] - points[i - 1][0], p[1] - points[i - 1][1], p[2] - points[i - 1][2]) > 1e-10; });
+      if (points.length < 2) throw new Error('Trajetória de barra/eixo vazia.');
+      if (kind === 'sweptDisk') {
+        var isClosed = Math.hypot(points[0][0] - points[points.length - 1][0], points[0][1] - points[points.length - 1][1], points[0][2] - points[points.length - 1][2]) < 1e-10;
+        if (g.closed || isClosed) {
+          if (isClosed) points.pop();
+          if (points.length < 3) throw new Error('Barra fechada sem três vértices distintos.');
+          // A seam at a sharp corner can make otherwise valid closed sweeps fail
+          // in downstream kernels. Relocate it to the midpoint of the longest
+          // straight segment. The centreline, bend corners and dimensions remain
+          // exactly the same; no assumed bend radius or artificial gap is added.
+          var edge = 0, longest = -1;
+          points.forEach(function (p, i) { var q = points[(i + 1) % points.length], distance = Math.hypot(p[0] - q[0], p[1] - q[1], p[2] - q[2]); if (distance > longest) { longest = distance; edge = i; } });
+          var next = points[(edge + 1) % points.length], midpoint = points[edge].map(function (v, i) { return (v + next[i]) / 2; });
+          var rotated = [midpoint];
+          for (var pi = 1; pi <= points.length; pi++) rotated.push(points[(edge + pi) % points.length]);
+          rotated.push(midpoint); points = rotated;
+        }
+      }
+      var curve = this.polyline(points, !!g.closed, 3);
+      if (kind === 'polyline') { item = curve; type = 'Curve3D'; }
+      else {
+        var radius = positive(Number(g.radius), 'Raio da barra');
+        if (g.innerRadius && !(g.innerRadius > 0 && g.innerRadius < radius)) throw new Error('Raio interno inválido.');
+        item = this.add('IfcSweptDiskSolid', ref(curve), real(radius), g.innerRadius ? real(g.innerRadius) : '$', '$', '$'); type = 'AdvancedSweptSolid'; this.stats.solids++;
+      }
+    } else if (kind === 'mesh') {
+      var meshOrigin = vec(g.origin, 3), meshAngle = Number(g.angle || 0), mc = Math.cos(meshAngle), ms = Math.sin(meshAngle);
+      var vertices = arr(g.vertices).map(function (p) { p = vec(p, 3); return [meshOrigin[0] + mc * p[0] - ms * p[1], meshOrigin[1] + ms * p[0] + mc * p[1], meshOrigin[2] + p[2]]; });
+      if (vertices.length < 3) throw new Error('Malha sem vértices suficientes.');
+      var faces = arr(g.faces).map(function (face) {
+        if (face.length !== 3 || face.some(function (n) { return !Number.isInteger(n) || n < 0 || n >= vertices.length; })) throw new Error('Malha IFC exige triângulos com índices iniciando em zero.');
+        return '(' + face.map(function (n) { return n + 1; }).join(',') + ')';
+      });
+      if (!faces.length) throw new Error('Malha sem faces.');
+      var list = this.add('IfcCartesianPointList3D', '(' + vertices.map(function (p) { return '(' + p.map(real).join(',') + ')'; }).join(',') + ')');
+      item = this.add('IfcTriangulatedFaceSet', ref(list), '$', g.closed === undefined ? '$' : bool(g.closed), '(' + faces.join(',') + ')', '$'); type = 'Tessellation';
+    } else if (kind === 'difference') {
+      var base = this.shapeItem(g.base);
+      arr(g.subtract).forEach(function (cut) {
+        var part = self.shapeItem(cut);
+        if (base.type === 'Curve3D' || part.type === 'Curve3D' || base.type === 'Tessellation' || part.type === 'Tessellation') throw new Error('Diferença booleana exige sólidos IFC.');
+        base = { id: self.add('IfcBooleanResult', '.DIFFERENCE.', ref(base.id), ref(part.id)), type: 'CSG' };
+      });
+      return arr(g.subtract).length ? { id: this.add('IfcCsgSolid', ref(base.id)), type: 'CSG' } : base;
+    } else throw new Error('Geometria IFC não suportada: ' + kind);
+    this.stats.geometryItems++; return { id: item, type: type };
+  };
+  Writer.prototype.productShape = function (element, material) {
+    var geometries = shapeItems(element.geometry); if (!geometries.length) return null;
+    var isCurve = geometries.every(function (x) { return x.kind === 'polyline'; });
+    var color = element.color || (material && material.data.color), transparency = element.transparency === undefined && material ? material.data.transparency : element.transparency;
+    var self = this, mapKey = element.geometryKey === undefined || element.geometryKey === null ? null : String(element.geometryKey), styleId = this.style(color, transparency, isCurve);
+    // Include complete shape and style content, guarding against callers accidentally
+    // reusing a geometry key for a different block cut, hole, material or colour.
+    var cacheKey = mapKey === null ? null : mapKey + '|' + stableStringify([element.geometry, color, transparency]);
+    var sourceRep, records;
+    if (cacheKey && this.maps.has(cacheKey)) {
+      var mapped = this.maps.get(cacheKey);
+      var mappedItem = this.add('IfcMappedItem', ref(mapped.map), ref(this.identityTransform));
+      var mappedRep = this.add('IfcShapeRepresentation', ref(isCurve ? this.axisContext : this.bodyContext), label(isCurve ? 'Axis' : 'Body'), label('MappedRepresentation'), refs([mappedItem]));
+      this.stats.mappedInstances++; this.assignLayer(element, mappedRep);
+      return this.add('IfcProductDefinitionShape', '$', '$', refs([mappedRep]));
+    }
+    records = geometries.map(function (g) {
+      var result = self.shapeItem(g);
+      self.add('IfcStyledItem', ref(result.id), refs([styleId]), '$'); return result;
+    });
+    var types = new Set(records.map(function (x) { return x.type; }));
+    if (types.size > 1 && types.has('Curve3D')) throw new Error('Separe eixos/polilinhas e sólidos físicos em elementos distintos.');
+    var repType = types.size === 1 ? records[0].type : types.has('Tessellation') ? 'SurfaceOrSolidModel' : 'SolidModel';
+    var items = records.map(function (x) { return x.id; });
+    sourceRep = this.add('IfcShapeRepresentation', ref(isCurve ? this.axisContext : this.bodyContext), label(isCurve ? 'Axis' : 'Body'), label(repType), refs(items));
+    var finalRep = sourceRep;
+    // IFC's reinforcing-bar representation concept uses a mapped AdvancedSweptSolid.
+    // Generate a map for bars even when the caller does not ask to share geometry.
+    if (cacheKey || element.ifcClass === 'IfcReinforcingBar') {
+      if (!this.identityTransform) this.identityTransform = this.add('IfcCartesianTransformationOperator3D', '$', '$', ref(this.point([0, 0, 0])), '1.', '$');
+      var map = this.add('IfcRepresentationMap', ref(this.zeroAxis), ref(sourceRep));
+      if (cacheKey) this.maps.set(cacheKey, { map: map });
+      var mappedOne = this.add('IfcMappedItem', ref(map), ref(this.identityTransform));
+      finalRep = this.add('IfcShapeRepresentation', ref(isCurve ? this.axisContext : this.bodyContext), label(isCurve ? 'Axis' : 'Body'), label('MappedRepresentation'), refs([mappedOne]));
+      this.stats.mappedInstances++; this.stats.representationMaps++;
+    }
+    this.assignLayer(element, finalRep);
+    return this.add('IfcProductDefinitionShape', '$', '$', refs([finalRep]));
+  };
+  Writer.prototype.assignLayer = function (element, rep) {
+    var layer = String(element.layer || element.ifcClass);
+    if (!this.layers.has(layer)) this.layers.set(layer, new Set());
+    this.layers.get(layer).add(rep);
+  };
+  Writer.prototype.makeProducts = function () {
+    var self = this, inputs = arr(this.scene.elements), defaultStorey = this.storeys.keys().next().value;
+    inputs.forEach(function (source, i) {
+      var e = Object.assign({}, source), key = String(e.key === undefined ? i : e.key), cls = e.ifcClass || 'IfcBuildingElementPart';
+      e.key = key; e.ifcClass = cls;
+      if (self.products.has(key)) throw new Error('Chave duplicada de elemento: ' + key);
+      if (!own(ENUMS, cls)) throw new Error('Classe IFC não suportada: ' + cls);
+      var storeyKey = String(e.storeyKey === undefined ? defaultStorey : e.storeyKey), storey = self.storeys.get(storeyKey);
+      if (!storey) throw new Error('Pavimento inexistente para ' + key + ': ' + storeyKey);
+      var material = e.materialKey === undefined ? null : self.materials.get(String(e.materialKey));
+      if (e.materialKey !== undefined && !material) throw new Error('Material inexistente para ' + key + ': ' + e.materialKey);
+      var placement = self.placement(storey.placement, e.placement), representation = self.productShape(e, material);
+      var pre = cls === 'IfcAnnotation' ? null : enumValue(e.predefinedType, ENUMS[cls], cls === 'IfcOpeningElement' ? 'OPENING' : 'NOTDEFINED');
+      var objectType = e.objectType || (pre === '.USERDEFINED.' ? e.name || key : null);
+      var params = [optLabel(objectType), ref(placement), ref(representation)];
+      if (cls === 'IfcGrid') {
+        var axes = e.gridAxes || {};
+        function axisList(list, required) {
+          var ids = arr(list).map(function (a) {
+            if (arr(a.points).length < 2) throw new Error('Eixo de grade sem dois pontos: ' + a.tag);
+            return self.add('IfcGridAxis', optLabel(a.tag), ref(self.polyline(a.points, false, 2)), a.sameSense === false ? '.F.' : '.T.');
+          });
+          if (required && !ids.length) throw new Error('IfcGrid exige eixos U e V.');
+          return optRefs(ids);
+        }
+        params = params.concat([axisList(axes.u, true), axisList(axes.v, true), axisList(axes.w, false), pre]);
+      } else if (cls !== 'IfcAnnotation') {
+        params.push(optString(e.tag || key));
+        if (cls === 'IfcReinforcingBar') {
+          var gs = shapeItems(e.geometry), first = gs[0], diameter = e.nominalDiameter === undefined ? e.diameter === undefined ? first && first.kind === 'sweptDisk' ? Number(first.radius) * 2 : null : e.diameter : e.nominalDiameter;
+          var length = e.barLength === undefined && first && first.kind === 'sweptDisk' ? gs.filter(function (g) { return g.kind === 'sweptDisk'; }).reduce(function (sum, g) { return sum + lineLength(g.points) + (g.closed && g.points.length > 1 ? lineLength([g.points[g.points.length - 1], g.points[0]]) : 0); }, 0) : e.barLength;
+          params = params.concat([optLabel(e.steelGrade), optReal(diameter), optReal(e.crossSectionArea === undefined && diameter ? Math.PI * diameter * diameter / 4 : e.crossSectionArea), optReal(length), pre, e.barSurface ? enumValue(e.barSurface, 'PLAIN TEXTURED') : '$']);
+        } else if (cls === 'IfcElementAssembly') params = params.concat([enumValue(e.assemblyPlace, 'SITE FACTORY NOTDEFINED', 'SITE'), pre]);
+        else if (cls === 'IfcDoor') params = params.concat([optReal(e.overallHeight), optReal(e.overallWidth), pre, e.operationType ? enumValue(e.operationType) : '$', optLabel(e.userDefinedOperationType)]);
+        else if (cls === 'IfcWindow') params = params.concat([optReal(e.overallHeight), optReal(e.overallWidth), pre, e.partitioningType ? enumValue(e.partitioningType) : '$', optLabel(e.userDefinedPartitioningType)]);
+        else params.push(pre);
+      }
+      var id = self.root.apply(self, [cls, 'element/' + key, e.name || key, e.description].concat(params));
+      var record = { id: id, placement: placement, storeyKey: storeyKey, data: e, ifcClass: cls };
+      self.products.set(key, record); self.ids[key] = { entityId: id, globalId: guid(self.key, 'element/' + key), ifcClass: cls };
+      self.stats.elements++; self.stats.classes[cls] = (self.stats.classes[cls] || 0) + 1;
+      self.attachPsets(id, 'element/' + key, e.psets); self.attachQuantities(id, e);
+      // IFC4 material associations accept physical IfcElement occurrences and
+      // their element types. Grid and Annotation are IfcProduct references;
+      // their materialKey selects display colour only, never a material relation.
+      if (cls !== 'IfcGrid' && cls !== 'IfcAnnotation') self.associateMaterial(id, e.materialKey);
+      if (e.typeKey !== undefined && e.typeKey !== null) {
+        var tkey = String(e.typeKey), t = self.types.get(tkey);
+        if (!t) throw new Error('Tipo inexistente: ' + tkey);
+        if (t.ifcClass !== cls) throw new Error('Tipo ' + tkey + ' incompatível com ' + cls);
+        if (!self.typeGroups.has(tkey)) self.typeGroups.set(tkey, []); self.typeGroups.get(tkey).push(id);
+      }
+    });
+  };
+  Writer.prototype.relationships = function () {
+    var self = this, contained = new Map(), parents = new Map();
+    this.products.forEach(function (p, key) {
+      var e = p.data;
+      if (p.ifcClass === 'IfcOpeningElement') {
+        if (e.hostKey === undefined || !self.products.has(String(e.hostKey))) throw new Error('Abertura ' + key + ' sem parede/elemento hospedeiro válido.');
+        var host = self.products.get(String(e.hostKey));
+        if (['IfcAnnotation', 'IfcGrid', 'IfcOpeningElement'].indexOf(host.ifcClass) >= 0) throw new Error('Hospedeiro inválido para abertura ' + key);
+        self.root('IfcRelVoidsElement', 'opening/' + key + '/void', null, null, ref(host.id), ref(p.id)); self.stats.openings++;
+        if (e.fillKey !== undefined && e.fillKey !== null) {
+          var fill = self.products.get(String(e.fillKey));
+          if (!fill || ['IfcAnnotation', 'IfcGrid', 'IfcOpeningElement'].indexOf(fill.ifcClass) >= 0) throw new Error('Elemento de preenchimento inválido para abertura ' + key);
+          self.root('IfcRelFillsElement', 'opening/' + key + '/fill', null, null, ref(p.id), ref(fill.id));
+        }
+      } else if (e.parentKey !== undefined && e.parentKey !== null) {
+        var parentKey = String(e.parentKey), parent = self.products.get(parentKey);
+        if (!parent || parentKey === key || parent.ifcClass === 'IfcOpeningElement') throw new Error('Agregação inválida em ' + key + ': ' + parentKey);
+        var path = new Set([key]), cur = parent;
+        while (cur) {
+          if (path.has(cur.data.key)) throw new Error('Ciclo de agregação em ' + key);
+          path.add(cur.data.key); cur = cur.data.parentKey === undefined ? null : self.products.get(String(cur.data.parentKey));
+        }
+        if (!parents.has(parentKey)) parents.set(parentKey, []); parents.get(parentKey).push(p.id); self.stats.decomposedElements++;
+      } else {
+        if (!contained.has(p.storeyKey)) contained.set(p.storeyKey, []); contained.get(p.storeyKey).push(p.id);
+      }
+    });
+    parents.forEach(function (children, key) { self.root('IfcRelAggregates', 'element/' + key + '/children', null, null, ref(self.products.get(key).id), refs(children)); });
+    contained.forEach(function (products, key) { self.root('IfcRelContainedInSpatialStructure', 'storey/' + key + '/contained', null, null, refs(products), ref(self.storeys.get(key).id)); });
+    this.materialGroups.forEach(function (objects, key) { self.root('IfcRelAssociatesMaterial', 'material/' + key + '/association', null, null, refs(Array.from(objects)), ref(self.materials.get(key).id)); });
+    this.typeGroups.forEach(function (objects, key) { self.root('IfcRelDefinesByType', 'type/' + key + '/occurrences', null, null, refs(objects), ref(self.types.get(key).id)); });
+    this.layers.forEach(function (items, name) { self.add('IfcPresentationLayerAssignment', label(name), '$', refs(Array.from(items)), optString(name)); });
+  };
+  Writer.prototype.run = function () {
+    this.init(); this.makeMaterials(); this.makeTypes(); this.makeProducts(); this.relationships();
+    var p = this.project;
+    var header = [
+      'ISO-10303-21;', 'HEADER;',
+      "FILE_DESCRIPTION(('AlvenariaPro IFC4 physical model'),'2;1');",
+      'FILE_NAME(' + stepString(p.fileName || 'AlvenariaPro.ifc') + ',' + stepString(this.timestamp) + ',(' + label(p.author || 'Usuário AlvenariaPro') + '),(' + label(p.organization || 'AlvenariaPro') + '),' + label('AlvenariaPro IFC4 Writer ' + VERSION) + ',' + label(p.application || 'AlvenariaPro') + ',' + stepString(p.authorization || '') + ');',
+      "FILE_SCHEMA(('IFC4'));", 'ENDSEC;', 'DATA;'
+    ];
+    var text = header.concat(this.lines, ['ENDSEC;', 'END-ISO-10303-21;', '']).join('\n');
+    this.stats.entityCount = this.lines.length; this.stats.bytes = text.length; this.stats.entityClasses = this.entities;
+    return { text: text, stats: this.stats, warnings: this.warnings, ids: this.ids, typeIds: this.typeIds, materialIds: this.materialIds, projectGlobalId: guid(this.key, 'project') };
+  };
+  function exportModel(scene) { return new Writer(scene).run(); }
+  return { version: VERSION, exportModel: exportModel, guid: guid, stepString: stepString };
+});
+
+</script>
+
+<script>
+/* AlvenariaPro v1.5 — adapter between the existing engineering model and IFC4.
+ * No change to design loads, dimensions, selected reinforcement or calculation settings.
+ * Every geometric convention introduced here is recorded in IFC properties/diagnostics.
+ */
+(function(global){
+'use strict';
+const G=global.AlvenariaDetailGeometry, EPS=1e-7;
+const defaults=Object.freeze({detail:'detailed',floorId:'',wallId:'',includeMortar:true,includeGrout:true,includeRebar:true,includeBeams:true,includeSlabs:true,includeAxes:true,includeResults:true,hollowBlocks:true,cover:.025,slabPosition:'top',slabOffset:0,steelDensity:7850,maxElements:120000});
+const number=v=>{const x=Number(v);return Number.isFinite(x)?x:0;};
+const bound=(x,a,b)=>Math.min(b,Math.max(a,x));
+const round=x=>Math.round(x*1e9)/1e9;
+const clone=x=>JSON.parse(JSON.stringify(x));
+const len=v=>({type:'IfcLengthMeasure',value:round(v)});
+const area=v=>({type:'IfcAreaMeasure',value:v});
+const textValue=v=>({type:'IfcText',value:String(v===undefined?'':v)});
+const safe=v=>typeof v==='number'&&!Number.isFinite(v)?(v===Infinity?'Infinito / não atende':v===-Infinity?'-Infinito':'Indefinido'):v;
+const scalar=(obj,exclude=[])=>Object.fromEntries(Object.entries(obj||{}).filter(([k,v])=>!exclude.includes(k)&&v!==undefined&&v!==null&&['string','number','boolean'].includes(typeof v)).map(([k,v])=>[k,safe(v)]));
+const rect=(x0,x1,y0,y1,z0,z1)=>({x0,x1,y0,y1,z0,z1});
+const boxItems=boxes=>({items:boxes.filter(b=>G.boxVolume(b)>EPS*EPS).map(b=>({kind:'box',origin:[round(b.x0),round(b.y0),round(b.z0)],width:round(b.x1-b.x0),depth:round(b.y1-b.y0),height:round(b.z1-b.z0)}))});
+const qty=(name,type,value)=>({name,type,value:round(value)});
+const sumVolume=boxes=>G.sumBoxVolumes(boxes);
+const wallPlacement=w=>({origin:[number(w.x),number(w.y),0],angle:w.dir==='Y'?Math.PI/2:0});
+function toWorld(w,b){return w.dir==='Y'?rect(number(w.x)-b.y1,number(w.x)-b.y0,number(w.y)+b.x0,number(w.y)+b.x1,b.z0,b.z1):rect(number(w.x)+b.x0,number(w.x)+b.x1,number(w.y)+b.y0,number(w.y)+b.y1,b.z0,b.z1);}
+function toLocal(w,b){return w.dir==='Y'?rect(b.y0-number(w.y),b.y1-number(w.y),number(w.x)-b.x1,number(w.x)-b.x0,b.z0,b.z1):rect(b.x0-number(w.x),b.x1-number(w.x),b.y0-number(w.y),b.y1-number(w.y),b.z0,b.z1);}
+function bbox(boxes){return boxes.length?{x0:Math.min(...boxes.map(b=>b.x0)),x1:Math.max(...boxes.map(b=>b.x1)),y0:Math.min(...boxes.map(b=>b.y0)),y1:Math.max(...boxes.map(b=>b.y1)),z0:Math.min(...boxes.map(b=>b.z0)),z1:Math.max(...boxes.map(b=>b.z1))}:null;}
+function polygonArea(p){return Math.abs(p.reduce((s,a,i)=>{const b=p[(i+1)%p.length];return s+a[0]*b[1]-a[1]*b[0];},0))/2;}
+function properIntersect(a,b,c,d){
+ const cross=(p,q,r)=>(q[0]-p[0])*(r[1]-p[1])-(q[1]-p[1])*(r[0]-p[0]);
+ const on=(p,q,r)=>Math.abs(cross(p,q,r))<EPS&&r[0]>=Math.min(p[0],q[0])-EPS&&r[0]<=Math.max(p[0],q[0])+EPS&&r[1]>=Math.min(p[1],q[1])-EPS&&r[1]<=Math.max(p[1],q[1])+EPS;
+ const a1=cross(a,b,c),a2=cross(a,b,d),b1=cross(c,d,a),b2=cross(c,d,b);
+ return (a1*a2<-EPS*EPS&&b1*b2<-EPS*EPS)||on(a,b,c)||on(a,b,d)||on(c,d,a)||on(c,d,b);
+}
+function polygonCheck(points){
+ let p=(points||[]).map(v=>[Number(Array.isArray(v)?v[0]:v.x),Number(Array.isArray(v)?v[1]:v.y)]);
+ if(p.some(a=>a.some(v=>!Number.isFinite(v))))return {error:'vértice sem coordenadas válidas'};
+ p=p.filter((a,i)=>!i||Math.hypot(a[0]-p[i-1][0],a[1]-p[i-1][1])>EPS);
+ if(p.length>2&&Math.hypot(p[0][0]-p[p.length-1][0],p[0][1]-p[p.length-1][1])<EPS)p.pop();
+ if(p.length<3)return {error:'menos de três vértices distintos'};
+ for(let i=0;i<p.length;i++)for(let j=i+1;j<p.length;j++){if(j===i+1||i===0&&j===p.length-1)continue;if(properIntersect(p[i],p[(i+1)%p.length],p[j],p[(j+1)%p.length]))return {error:'polígono com cruzamento ou contato entre arestas não adjacentes'};}
+ if(polygonArea(p)<EPS)return {error:'área nula'};
+ return {points:p,area:polygonArea(p)};
+}
+function normalized(input={}){
+ const o=Object.assign({},defaults,input);
+ o.detail=o.detail==='coordination'?'coordination':'detailed';
+ o.cover=Number(o.cover);o.slabOffset=Number(o.slabOffset);o.steelDensity=Number(o.steelDensity);
+ if(!Number.isFinite(o.cover)||o.cover<0||o.cover>.1)throw new Error('O cobrimento de representação deve estar entre 0 e 100 mm.');
+ if(!Number.isFinite(o.slabOffset)||Math.abs(o.slabOffset)>1000)throw new Error('Informe um deslocamento vertical válido para as lajes.');
+ if(!(o.steelDensity>0&&o.steelDensity<50000))throw new Error('Informe uma massa específica válida para o aço.');
+ o.maxElements=Math.min(200000,Math.max(1000,number(o.maxElements)||120000));
+ o.slabPosition=o.slabPosition==='level'?'level':'top';
+ return o;
+}
+function sourceFingerprint(){
+ const data={};['project','settings','blocks','materials','floors','walls','openings','bondBeams','slabs','cadAxes','cadDimensions','cadImports'].forEach(k=>data[k]=state[k]);
+ data.jointPhases=state.modulation?.jointPhases;return global.IFC4.guid('AlvenariaPro-state',JSON.stringify(data));
+}
+function collectValidation(o){
+ const d=[],add=(severity,code,message,sourceId='')=>d.push({severity,code,message,sourceId});
+ const floors=new Map((state.floors||[]).map(f=>[f.id,f]));
+ const ws=(state.walls||[]).filter(w=>(!o.floorId||w.floorId===o.floorId)&&(!o.wallId||w.id===o.wallId));
+ const ss=o.includeSlabs?(state.slabs||[]).filter(s=>(!o.floorId||s.floorId===o.floorId)&&!o.wallId):[];
+ if(!ws.length&&!ss.length)add('error','EMPTY','O escopo selecionado não contém paredes ou lajes para exportar.');
+ if(o.floorId&&!floors.has(o.floorId))add('error','FLOOR','O pavimento selecionado não existe no projeto.');
+ const ids=new Set();
+ for(const f of state.floors||[]){if(!f.id||ids.has('f/'+f.id))add('error','DUPLICATE_ID','Pavimento com identificador ausente ou repetido.',f.id);ids.add('f/'+f.id);if(!Number.isFinite(Number(f.level)))add('error','FLOOR_LEVEL','O pavimento '+f.name+' não tem nível válido.',f.id);if(number(f.repetitions)>1)add('info','REPETITIONS',f.name+': o fator de repetição '+f.repetitions+' permanece como informação de cálculo; a geometria representa apenas o pavimento cadastrado.',f.id);}
+ let estimate=0;
+ for(const w of ws){
+  if(!w.id||ids.has('w/'+w.id))add('error','DUPLICATE_ID','Parede com identificador ausente ou repetido.',w.id);ids.add('w/'+w.id);
+  if(!floors.has(w.floorId))add('error','ORPHAN_WALL',w.label+': pavimento inexistente.',w.id);
+  if(!['X','Y'].includes(w.dir))add('error','WALL_DIRECTION',w.label+': direção diferente de X ou Y não suportada pelo modelo original.',w.id);
+  for(const k of ['length','thickness','height'])if(!Number.isFinite(Number(w[k]))||Number(w[k])<=EPS)add('error','WALL_SIZE',w.label+': '+k+' deve ser positivo.',w.id);
+  for(const k of ['x','y'])if(!Number.isFinite(Number(w[k])))add('error','WALL_COORD',w.label+': coordenada '+k+' inválida.',w.id);
+  const b=(state.blocks||[]).find(b=>b.id===w.blockId);
+  if(!b)add('error','BLOCK_MISSING',w.label+': bloco da biblioteca não encontrado.',w.id);
+  else if(!(number(b.length)>0&&number(b.height)>0&&number(b.width)>0))add('error','BLOCK_SIZE',w.label+': dimensões de bloco inválidas.',w.id);
+  else {
+   const M=number(b.length)/100+number(state.settings.modHeadJoint),V=number(b.height)/100+number(state.settings.modBedJoint);
+   if(number(state.settings.modHeadJoint)<0||number(state.settings.modBedJoint)<0||M<=0||V<=0)add('error','JOINT_SIZE','As espessuras de junta precisam ser não negativas.',w.id);
+   estimate+=Math.ceil(number(w.length)/M+1)*Math.ceil(number(w.height)/V);
+  }
+ }
+ for(const s of ss){if(!s.id||ids.has('s/'+s.id))add('error','DUPLICATE_ID','Laje com identificador ausente ou repetido.',s.id);ids.add('s/'+s.id);if(!floors.has(s.floorId))add('error','ORPHAN_SLAB',s.label+': pavimento inexistente.',s.id);const p=polygonCheck(s.points);if(p.error)add('error','SLAB_POLYGON',s.label+': '+p.error+'.',s.id);if(!(Number(s.thickness)>EPS))add('error','SLAB_SIZE',s.label+': espessura deve ser positiva.',s.id);}
+ if(o.detail==='detailed'&&estimate>o.maxElements*.82)add('error','MODEL_SIZE','O escopo exige aproximadamente '+Math.round(estimate).toLocaleString('pt-BR')+' módulos de blocos. Exporte um pavimento por vez ou use o modo de coordenação.');
+ return {diagnostics:d,walls:ws,slabs:ss,estimate};
+}
+function beamSpecs(r){
+ const w=r.w,t=number(w.thickness),out=[];
+ for(const b of r.bondBeams||[])out.push({key:'beam/'+w.id+'/'+b.id,name:b.label+' — '+w.label,kind:'cinta',x0:0,x1:number(w.length),z0:number(b.elevation),z1:number(b.elevation)+number(b.h),width:number(b.t),barQty:number(b.barQty),barDia:number(b.barDia),stirrupDia:number(b.stirrupDia),stirrupSpacing:number(b.stirrupSpacing),lap:number(b.lapLength),grouted:!!b.grouted,source:b,sourceId:b.id,predefinedType:'BEAM'});
+ for(const op of r.local?.openings||[]){
+  out.push({key:'lintel/'+op.instanceKey,name:'Verga '+op.label+' — '+w.label,kind:'verga',x0:Math.max(0,op.start-number(op.bearingLeft)),x1:Math.min(number(w.length),op.end+number(op.bearingRight)),z0:op.top,z1:op.top+op.h,width:t,barQty:op.lintelQty,barDia:op.lintelDia,stirrupDia:0,stirrupSpacing:0,lap:.4,grouted:true,source:op,sourceId:op.sourceId,predefinedType:'LINTEL'});
+  if(op.requiresCounter&&op.counterLintel)out.push({key:'counter/'+op.instanceKey,name:'Contraverga '+op.label+' — '+w.label,kind:'contraverga',x0:Math.max(0,op.start-number(op.counterExtension)),x1:Math.min(number(w.length),op.end+number(op.counterExtension)),z0:Math.max(0,op.sill-number(op.counterHeight)),z1:op.sill,width:t,barQty:op.counterQty,barDia:op.counterDia,stirrupDia:0,stirrupSpacing:0,lap:.4,grouted:true,source:op,sourceId:op.sourceId,predefinedType:'USERDEFINED'});
+ }
+ return out.filter(b=>b.x1-b.x0>EPS&&b.z1-b.z0>EPS&&b.width>EPS);
+}
+function coreGeometry(r){
+ const re=r.reinforcement,t=number(r.w.thickness),pitch=re.g.pitch;
+ const outerArea=t*pitch*bound(1-number(r.b.netRatio||.5),.1,.9);
+ const side=Math.min(.02,t*.18),depth=Math.max(.005,t-2*side);
+ const width=Math.min(pitch*.85,outerArea/depth);
+ const innerDepth=Math.min(depth,outerArea/width);
+ const actualArea=width*innerDepth,scale=Math.min(1,Math.sqrt(Math.max(0,re.cellVoidArea)/actualArea));
+ return {width,depth:innerDepth,area:actualArea,targetArea:outerArea,groutWidth:width*scale,groutDepth:innerDepth*scale,groutArea:actualArea*scale*scale,pitch};
+}
+function sourcePset(kind,id,w,extra={}){
+ return Object.assign({Sistema:'AlvenariaPro',Versao:'1.5',Categoria:kind,IdOrigem:String(id),Parede:w?.label||'',IdParede:w?.id||'',Geometria:'Representação do projeto com convenções paramétricas declaradas'},extra);
+}
+function materialPsets(b){return {AlvenariaPro_Catalogo:Object.assign(scalar(b),{UnidadeDimensoes:'cm',UnidadeResistencias:'MPa',UnidadePesoEspecifico:'kN/m³',Observacao:'Propriedades de biblioteca; furos e septos de fabricante não cadastrados.'})};}
+async function buildScene(input={}){
+ const o=normalized(input),check=collectValidation(o);
+ if(check.diagnostics.some(x=>x.severity==='error')){const error=new Error(check.diagnostics.filter(x=>x.severity==='error').map(x=>x.message).join('\n'));error.diagnostics=check.diagnostics;throw error;}
+ const start=performance.now(),projectKey=state.bim?.projectId||'legacy/'+state.project.name,diagnostics=check.diagnostics.slice();
+ const addIssue=(severity,code,message,sourceId='')=>{if(!diagnostics.some(x=>x.code===code&&x.sourceId===sourceId&&x.message===message))diagnostics.push({severity,code,message,sourceId});};
+ const calc=calculateAll();
+ global.AlvenariaProV13.invalidateModulation();
+ const modulation=global.AlvenariaProV13.analyzeModulation();
+ const results=new Map(calc.results.map(r=>[r.w.id,r]));
+ const selectedFloors=(state.floors||[]).filter(f=>(!o.floorId||f.id===o.floorId)&&(!o.wallId||check.walls.some(w=>w.floorId===f.id)));
+ const scene={project:{key:projectKey,name:state.project.name||'Projeto de alvenaria',description:state.project.notes||'',author:state.project.engineer||'',organization:state.project.client||'',createdAt:new Date().toISOString(),application:'AlvenariaPro',applicationVersion:'1.5',version:'1.5',psets:{
+  AlvenariaPro_Projeto:Object.assign(scalar(state.project),{Unidades:'Geometria m; áreas m²; volumes m³; aço em kg. Propriedades com sufixos MPa, kN e mm² preservam as unidades indicadas.'}),
+  AlvenariaPro_Parametros:scalar(state.settings),
+  AlvenariaPro_Exportacao:{Versao:'1.5',Formato:'IFC4 STEP',Detalhamento:o.detail,IdentidadeEstavel:projectKey,CobrimentoDeRepresentacao:len(o.cover),FurosDosBlocos:o.hollowBlocks?'Células retangulares equivalentes à área líquida; geometria genérica':'Envoltórias externas; interiores simplificados',Juntas:'Verticais centradas na malha modular; horizontais na base de cada fiada',Armaduras:'Barras fornecidas/automáticas do cálculo; emendas e ancoragens extras conservadas em propriedades. Dobras de estribos paramétricas.',CotasDasLajes:o.slabPosition==='top'?'Face superior no nível do pavimento + pé-direito + deslocamento':'Face superior no nível do pavimento + deslocamento',DeslocamentoLajes:len(o.slabOffset),SistemaCoordenadas:'Local do projeto; X/Y do editor, Z pelos níveis cadastrados; sem georreferenciamento cadastrado',Quantidades:'Quantitativos geométricos sem perdas; estimativas originais com perdas em propriedades separadas. Não somar volumes de conjuntos e componentes.',Escopo:'Alvenaria estrutural e lajes cadastradas; elementos de arquitetura, instalações e fundações dependem de cadastro próprio.'}
+ }},site:{name:state.project.location||'Local do empreendimento',description:state.project.location||''},building:{name:state.project.name||'Edificação',psets:{AlvenariaPro_Edificio:{Sistema:state.project.system||'',Revisao:state.project.revision||'',Responsavel:state.project.engineer||'',RegistroProfissional:state.project.crea||'',ART_RRT:state.project.art||''}}},storeys:selectedFloors.map(f=>({key:f.id,name:f.name,elevation:number(f.level),description:f.notes||'',psets:{AlvenariaPro_Pavimento:Object.assign(scalar(f),{AlturaLivre:len(number(f.height)),RepeticoesAplicadasNaGeometria:1})}})),materials:[],types:[],elements:[],diagnostics,modelOptions:clone(o),sourceFingerprint:sourceFingerprint()};
+ const materialKeys=new Set(),typeKeys=new Set(),elementKeys=new Set(),volumeTotals={},countTotals={};
+ const usedBlocks=[...new Set(check.walls.map(w=>w.blockId))];
+ for(const key of usedBlocks){const b=(state.blocks||[]).find(x=>x.id===key);scene.materials.push({key:'masonry/'+key,name:b.name,category:b.material==='ceramico'?'Cerâmica':'Concreto de bloco',color:b.material==='ceramico'?[.76,.36,.19]:[.70,.73,.72],psets:materialPsets(b)});materialKeys.add(key);}
+ scene.materials.push({key:'mortar',name:state.materials.mortarDesc||'Argamassa',category:'Argamassa',color:[.80,.77,.65],psets:{AlvenariaPro_Argamassa:{Resistencia_MPa:number(state.materials.mortarStrength),Consumo_m3_por_m2:number(state.materials.mortarConsumption)}}},{key:'grout',name:state.materials.groutDesc||'Graute',category:'Graute',color:[.13,.60,.56],psets:{AlvenariaPro_Graute:{Resistencia_MPa:number(state.materials.groutStrength),PesoEspecifico_kN_m3:number(state.materials.groutDensity),Secao:'Equivalente ao cadastro e aos fatores paramétricos de cálculo'}}},{key:'steel',name:'Aço de armadura — fyk '+number(state.materials.steelFyk)+' MPa',category:'Aço',color:[.78,.20,.16],density:o.steelDensity,psets:{AlvenariaPro_Aco:{Fyk_MPa:number(state.materials.steelFyk),GammaS:number(state.materials.steelGamma),MassaEspecificaAdotada_kg_m3:o.steelDensity}}},{key:'slab',name:'Material da laje — especificação não cadastrada',category:'Material não especificado',color:[.48,.57,.66],psets:{AlvenariaPro_Material:{Situacao:'O cadastro de lajes contém geometria e cargas; classe de concreto e armaduras não foram informadas.'}}},{key:'axis',name:'Referência CAD',category:'Referência',color:[.22,.38,.69]});
+ function addType(t){if(!typeKeys.has(t.key)){typeKeys.add(t.key);scene.types.push(t);}return t.key;}
+ function push(e){if(elementKeys.has(e.key))throw new Error('Identificador de elemento BIM duplicado: '+e.key);if(scene.elements.length>=o.maxElements)throw new Error('O modelo excede '+o.maxElements.toLocaleString('pt-BR')+' elementos. Exporte por pavimento ou em modo de coordenação.');elementKeys.add(e.key);scene.elements.push(e);countTotals[e.category]=(countTotals[e.category]||0)+1;const v=(e.quantities||[]).find(x=>x.name==='NetVolume');if(v&&e.ifcClass!=='IfcWall')volumeTotals[e.category]=(volumeTotals[e.category]||0)+v.value;return e;}
+ function physical(key,name,category,w,boxes,props,materialKey,parentKey,ifcClass='IfcBuildingElementPart',typeKey=''){
+  if(!boxes.length||sumVolume(boxes)<1e-12)return null;
+  const bounds=bbox(boxes),e={key,name,ifcClass,objectType:category==='blocks'?'Unidade de alvenaria':category==='mortar'?'Junta de argamassa':'Célula ou trecho de graute',predefinedType:'USERDEFINED',storeyKey:w.floorId,parentKey,placement:wallPlacement(w),geometry:boxItems(boxes),category,materialKey,psets:props,quantities:[qty('NetVolume','volume',sumVolume(boxes)),qty('Length','length',bounds.x1-bounds.x0),qty('Width','length',bounds.y1-bounds.y0),qty('Height','length',bounds.z1-bounds.z0)]};
+  if(typeKey)e.typeKey=typeKey;
+  if(category==='blocks'){
+   const ox=bounds.x0,oy=bounds.y0,oz=bounds.z0,p=wallPlacement(w),c=Math.cos(p.angle),s=Math.sin(p.angle);
+   e.placement={origin:[p.origin[0]+ox*c-oy*s,p.origin[1]+ox*s+oy*c,oz],angle:p.angle};
+   e.geometry=boxItems(boxes.map(b=>rect(b.x0-ox,b.x1-ox,b.y0-oy,b.y1-oy,b.z0-oz,b.z1-oz)));
+   e.geometryKey='block/'+typeKey;
+  }
+  return push(e);
+ }
+ function rebar(key,name,w,parent,points,dia,role,psets,spacing){
+  const radius=number(dia)/2000;if(!(radius>0)||points.length<2)return null;
+  const length=points.slice(1).reduce((a,p,i)=>a+Math.hypot(p[0]-points[i][0],p[1]-points[i][1],p[2]-points[i][2]),0);
+  if(length<EPS)return null;
+  const typeKey=addType({key:'bar/'+dia+'/'+role,ifcClass:'IfcReinforcingBarType',name:'Ø '+dia+' mm — '+role,predefinedType:role,nominalDiameter:radius*2,barSurface:'TEXTURED',materialKey:'steel',psets:{Pset_ReinforcingBarCommon:{NominalDiameter:len(radius*2)},AlvenariaPro_Aco:{Fyk_MPa:number(state.materials.steelFyk)}}});
+  return push({key,name,ifcClass:'IfcReinforcingBar',objectType:'Armadura parametrizada',predefinedType:role,storeyKey:w.floorId,parentKey:parent,placement:wallPlacement(w),geometry:{kind:'sweptDisk',points:points.map(p=>p.map(round)),radius},category:'steel',materialKey:'steel',typeKey,nominalDiameter:radius*2,barLength:length,steelGrade:'fyk '+number(state.materials.steelFyk)+' MPa',barSurface:'TEXTURED',psets:Object.assign({Pset_ReinforcingBarCommon:Object.assign({Reference:name,NominalDiameter:len(radius*2),BarLength:len(length)},spacing>0?{BarSpacing:len(spacing)}:{}),AlvenariaPro_Rastreabilidade:sourcePset('Armadura',key,w,{Geometria:'Eixo parametrizado; detalhamento executivo de ancoragens, emendas e dobras não fornecido pelo cadastro.'})},psets),quantities:[qty('Length','length',length),qty('CrossSectionArea','area',Math.PI*radius*radius),qty('NetVolume','volume',length*Math.PI*radius*radius),qty('Weight','weight',length*Math.PI*radius*radius*o.steelDensity)]});
+ }
+ const detail=o.detail==='detailed',wallData=new Map();
+ for(const r of calc.results){const w=r.w,t=number(w.thickness),seg=r.local.seg;wallData.set(w.id,{r,w,t,seg,body:seg.bands.flatMap(b=>b.solids.map(s=>rect(s[0],s[1],-t/2,t/2,b.y0,b.y1))),world:toWorld(w,rect(0,number(w.length),-t/2,t/2,0,number(w.height)))});}
+ const allConnections=modulation.connections||[],cutsCache=new Map();
+ function ownershipCuts(w,c){
+  const cacheKey=w.id+'/'+c.number;if(cutsCache.has(cacheKey))return cutsCache.get(cacheKey);
+  const own=wallData.get(w.id),cuts=[];
+  for(const other of wallData.values()){
+   if(other.w.id===w.id||other.w.floorId!==w.floorId)continue;
+   const intersection=G.intersectBox(own.world,other.world);if(!intersection)continue;
+   const connections=allConnections.filter(co=>co.floorId===w.floorId&&co.walls.some(x=>x.id===w.id)&&co.walls.some(x=>x.id===other.w.id));
+   const co=connections.find(x=>['L','T','X'].includes(x.type))||connections[0];
+   let winner;
+   if(co&&['L','T','X'].includes(co.type)){
+    const modules=co.walls.map(x=>modulation.wallMap.get(x.id)?.V||0),compatible=modules.every(v=>Math.abs(v-modules[0])<EPS);
+    if(compatible){const flip=number(state.modulation?.jointPhases?.[co.id])%2,ordered=co.walls.slice(),ix=(c.courseIndex+flip)%ordered.length;const priorities=ordered.slice(ix).concat(ordered.slice(0,ix)).map(x=>x.id);winner=priorities.indexOf(w.id)<priorities.indexOf(other.w.id)?w.id:other.w.id;}
+    else {winner=[w.id,other.w.id].sort()[0];addIssue('warning','MIXED_COURSES','Encontro '+co.walls.map(x=>x.label).join(' × ')+': módulos verticais diferentes. O IFC usa prioridade fixa por identificador para conservar a união e evitar sobreposições; a amarração exige compatibilização.',co.id);}
+   }
+   else winner=[w.id,other.w.id].sort()[0];
+   if(winner===w.id)continue;
+   for(const ob of other.body){const local=toLocal(w,toWorld(other.w,ob));const clip=G.intersectBox(local,rect(0,number(w.length),-own.t/2,own.t/2,c.y0,c.y1));if(clip)cuts.push(clip);}
+  }
+  cutsCache.set(cacheKey,cuts);return cuts;
+ }
+ for(let wi=0;wi<check.walls.length;wi++){
+  const w=check.walls[wi],r=results.get(w.id),a=modulation.wallMap.get(w.id),wd=wallData.get(w.id),re=r.reinforcement,L=number(w.length),H=number(w.height),t=number(w.thickness),wallKey='wall/'+w.id;
+  if(!r||!a)throw new Error('Os dados de cálculo/modulação de '+w.label+' não estão disponíveis.');
+  const openingCuts=r.local.seg.instances.filter(p=>p.end-p.start>EPS).map(p=>rect(p.start,p.end,-t,t,p.sill,p.top));
+  const allOwnership=a.courses.flatMap(c=>ownershipCuts(w,c)),beamList=beamSpecs(r),core=coreGeometry(r);
+  const cells=re.g.centers.map(x=>rect(Math.max(0,x-core.width/2),Math.min(L,x+core.width/2),-core.depth/2,core.depth/2,0,H));
+  const channelCores=beamList.map(b=>{
+   const bh=b.z1-b.z0,side=Math.min(.02,b.width*.20),innerWidth=Math.max(.005,b.width-2*side),innerHeight=Math.min(Math.max(.005,bh-.01),b.width*bh*bound(number(state.settings.groutVolumeFactor),.05,.95)/innerWidth);
+   b.core=rect(b.x0,b.x1,-innerWidth/2,innerWidth/2,b.z1-innerHeight,b.z1);
+   return b.core;
+  });
+  const wallType=addType({key:'wall-type/'+w.blockId+'/'+t,ifcClass:'IfcWallType',name:'Alvenaria estrutural '+Math.round(t*1000)+' mm — '+r.b.name,predefinedType:detail?'ELEMENTEDWALL':'STANDARD',materialKey:'masonry/'+w.blockId,psets:{Pset_WallCommon:{LoadBearing:true},AlvenariaPro_TipoParede:{Espessura:len(t),Bloco:r.b.name}}});
+  const q=quantityForResult(r);
+  const props={Pset_WallCommon:{Reference:w.label,LoadBearing:true},AlvenariaPro_Rastreabilidade:sourcePset('Parede',w.id,w,{Prumada:w.stackKey||'',Grupo:w.group||'',CadastroVersao:'1.4/1.5'}),AlvenariaPro_Geometria:{X:len(number(w.x)),Y:len(number(w.y)),Comprimento:len(L),Altura:len(H),Espessura:len(t),AreaBruta:area(r.o.faceGross),AreaLiquida:area(r.o.faceNet),VolumeEnvoltoria_m3:r.o.vol,BlocoDoCadastro:w.blockId,Observacoes:w.notes||''},AlvenariaPro_Modulacao:Object.assign(scalar(w.modulation||{}),{Fiadas:a.coursesCount,ModuloHorizontal:len(a.M),ModuloVertical:len(a.V),IndiceQualidade:a.score,Status:a.status,Diagnosticos:textValue(a.issues.map(x=>x.text).join('\n'))})};
+  if(o.includeResults){props.AlvenariaPro_Resultados=Object.assign(scalar(r),{Unidades:'Nd/Nrd/Gacc/Qacc/Vd/Vrd em kN; M1/M2/Md em kN.m; tensões/fd/fk/E em MPa; As em mm²',Advertencias:textValue((r.warnings||[]).join('\n'))});props.AlvenariaPro_Carregamentos=Object.assign(scalar(w,['id','label','floorId','blockId','group','stackKey','x','y','dir','length','height','thickness','notes']),{Unidades:'Cargas de área em kN/m²; cargas totais kN; momentos kN.m; áreas m²; diâmetros mm',GkProprio_kN:r.o.G,QkProprio_kN:r.o.Q,GkAcumulado_kN:r.Gacc,QkAcumulado_kN:r.Qacc});props.AlvenariaPro_Armadura=Object.assign(scalar(re),{Configuracao:textValue(JSON.stringify(re.d)),PosicoesVerticais_m:textValue(re.positions.map(p=>p.x).join('; ')),CelulasGrauteadas_m:textValue(re.groutedCells.map(p=>p.x).join('; ')),Unidades:'áreas de aço mm²; comprimentos m; diâmetros mm; massas kg; solicitações kN/kN.m'});props.AlvenariaPro_QuantitativosDoMotor=Object.assign(scalar(q),{Natureza:'Estimativa original do aplicativo, incluindo fatores, emendas, perdas e sobreposições; distinta da geometria IFC',Unidades:'áreas m², volumes m³, massas kg, comprimentos m, blocos un'});}
+  const wall=push({key:wallKey,name:w.label+' — '+r.f.name,ifcClass:'IfcWall',predefinedType:detail?'ELEMENTEDWALL':'STANDARD',storeyKey:w.floorId,placement:wallPlacement(w),geometry:null,category:'walls',materialKey:'masonry/'+w.blockId,typeKey:wallType,psets:props,quantities:[qty('Length','length',L),qty('Width','length',t),qty('Height','length',H),qty('GrossSideArea','area',r.o.faceGross),qty('NetSideArea','area',r.o.faceNet)]});
+  if(r.status!=='ATENDE')addIssue('warning','DESIGN_STATUS',w.label+' — '+r.f.name+': '+r.status+'. O IFC conserva a situação calculada; a exportação não aprova o dimensionamento.',w.id);
+  if(a.issues.some(i=>i.level==='critical'))addIssue('warning','MODULATION',w.label+': '+a.issues.filter(i=>i.level==='critical').length+' ocorrência(s) crítica(s) de modulação conservadas nas propriedades.',w.id);
+  if(allOwnership.length)addIssue('info','JUNCTION',w.label+': peças e materiais recortados nos encontros segundo a alternância das fiadas; cortes de encaixe são paramétricos.',w.id);
+  if(Math.abs(t-number(r.b.width)/100)>.001)addIssue('warning','WIDTH_MISMATCH',w.label+': a espessura da parede difere da largura do bloco. A geometria segue a parede e registra a dimensão do catálogo.',w.id);
+  if(Math.abs(number(state.settings.modHeadJoint)-.01)>.0001||number(w.modulation?.baseOffset)>EPS)addIssue('warning','CELL_GRID',w.label+': a malha teórica de células do motor não acompanha integralmente o deslocamento/junta da paginação. Compatibilize os vazios do fabricante.',w.id);
+  for(const p of r.local.seg.instances){
+   const width=p.rawEnd-p.rawStart;
+   push({key:'opening/'+p.instanceKey,name:p.label+' — '+w.label,ifcClass:'IfcOpeningElement',predefinedType:'OPENING',storeyKey:w.floorId,hostKey:wallKey,placement:wallPlacement(w),geometry:{kind:'box',origin:[p.rawStart,-t/2,p.sill],width,depth:t,height:p.height},category:'openings',psets:{AlvenariaPro_Abertura:Object.assign(scalar(p),{Parede:w.label,Unidades:'m',Tratamento:'Vão real; portas, folhas, vidros e caixilhos não cadastrados não foram inventados.'})},quantities:[qty('Width','length',width),qty('Height','length',p.height),qty('Area','area',width*p.height)]});
+   if(p.outOfBounds)addIssue('warning','OPENING_BOUNDS',p.label+' — '+w.label+': abertura ultrapassa os limites da parede; o vão conserva a dimensão cadastrada e o corte usa sua interseção.',p.sourceId);
+  }
+  let blockCount=0;
+  if(detail){
+   for(const c of a.courses){
+    const grid=[0,...c.grid,L],joint=Math.min(number(state.settings.modHeadJoint),a.M*.45),bed=Math.min(number(state.settings.modBedJoint),c.height);
+    const owners=ownershipCuts(w,c),cutCommon=openingCuts.concat(owners),jointBoxes=[];
+    if(bed>EPS)jointBoxes.push(rect(0,L,-t/2,t/2,c.y0,c.y0+bed));
+    for(let gi=0;gi<grid.length-1;gi++){
+     const x0=grid[gi]+joint/2,x1=grid[gi+1]-joint/2,z0=c.y0+bed,z1=c.y1;
+     if(joint>EPS){if(gi===0)jointBoxes.push(rect(0,joint/2,-t/2,t/2,z0,z1));jointBoxes.push(rect(grid[gi+1]-joint/2,Math.min(L,grid[gi+1]+joint/2),-t/2,t/2,z0,z1));}
+     if(x1-x0<=EPS||z1-z0<=EPS)continue;
+     const envelope=rect(x0,x1,-t/2,t/2,z0,z1);
+     let solids=G.subtractBoxes([envelope],cutCommon);if(!solids.length)continue;
+     const beforeVoids=sumVolume(solids),usedChannels=beamList.filter(b=>G.intersectBox(envelope,rect(b.x0,b.x1,-b.width/2,b.width/2,b.z0,b.z1)));
+     const nearCells=cells.filter(v=>G.intersectBox(envelope,v));
+     if(o.hollowBlocks)solids=G.subtractBoxes(solids,nearCells);
+     else if(o.includeGrout)solids=G.subtractBoxes(solids,re.groutedCells.map(p=>rect(p.x-core.groutWidth/2,p.x+core.groutWidth/2,-core.groutDepth/2,core.groutDepth/2,0,H)));
+     solids=G.subtractBoxes(solids,channelCores.filter(v=>G.intersectBox(envelope,v)));
+     const length=grid[gi+1]-grid[gi],ratio=length/a.M,baseType=Math.abs(ratio-1)<.04?'Inteiro':Math.abs(ratio-.5)<.04?'Meio':Math.abs(ratio-.75)<.04?'Três quartos':Math.abs(ratio-.25)<.04?'Um quarto':length<number(state.settings.modMinPiece)?'Corte crítico':'Compensador / corte';
+     const isCut=beforeVoids<G.boxVolume(envelope)-1e-8,typeName=usedChannels.length?'Canaleta / peça de transição':baseType;
+     const typeKey=addType({key:'block/'+w.blockId+'/'+typeName+'/'+round(length),ifcClass:'IfcBuildingElementPartType',name:typeName+' — '+r.b.name,predefinedType:'USERDEFINED',materialKey:'masonry/'+w.blockId,objectType:'Bloco de alvenaria',psets:materialPsets(r.b)});
+     const p=physical('block/'+w.id+'/'+c.number+'/'+gi,w.label+' F'+String(c.number).padStart(2,'0')+' B'+String(gi+1).padStart(3,'0'),'blocks',w,solids,{AlvenariaPro_Bloco:{IdModulo:w.id+'/'+c.number+'/'+gi,Fiada:c.number,IndiceNoModulo:gi+1,Tipo:typeName,TipoBase:baseType,InicioModular:len(grid[gi]),FimModular:len(grid[gi+1]),ComprimentoModular:len(length),BaseDaFiada:len(c.y0),TopoDaFiada:len(c.y1),JuntaVertical:len(joint),JuntaHorizontal:len(bed),RecortadoEmVaoOuEncontro:isCut,FragmentosSolidos:solids.length,AssociacaoACintasVergas:textValue(usedChannels.map(b=>b.name).join('; ')),VolumeAntesDosVazios_m3:beforeVoids,GeometriaInterna:o.hollowBlocks?'Células equivalentes retangulares; septos e canaleta genéricos':'Envoltória simplificada com alojamento para graute exportado'},AlvenariaPro_Rastreabilidade:sourcePset('Bloco',w.id+'/'+c.number+'/'+gi,w,{Fonte:'Malha da modulação atual; recortes tridimensionais exatos nos vãos',Unidades:'m, m³'})},'masonry/'+w.blockId,wallKey,'IfcBuildingElementPart',typeKey);
+     if(p){blockCount++;p.quantities.push(qty('Count','count',1));}
+    }
+    if(o.includeMortar){
+     let mortar=G.subtractBoxes(jointBoxes.filter(b=>G.boxVolume(b)>0),cutCommon);
+     if(o.hollowBlocks)mortar=G.subtractBoxes(mortar,cells);
+     else if(o.includeGrout)mortar=G.subtractBoxes(mortar,re.groutedCells.map(p=>rect(p.x-core.groutWidth/2,p.x+core.groutWidth/2,-core.groutDepth/2,core.groutDepth/2,0,H)));
+     mortar=G.subtractBoxes(mortar,channelCores);
+     physical('mortar/'+w.id+'/'+c.number,'Juntas — '+w.label+' — fiada '+c.number,'mortar',w,mortar,{AlvenariaPro_Juntas:{Fiada:c.number,JuntaVertical:len(joint),JuntaHorizontal:len(bed),Criterio:'Juntas geométricas, com recortes de vãos, células e encontros; volume sem perdas',VolumeEstimadoMotor_m3:q.mortar},AlvenariaPro_Rastreabilidade:sourcePset('Argamassa',w.id+'/'+c.number,w)},'mortar',wallKey);
+    }
+   }
+   wall.psets.AlvenariaPro_Modulacao.ModulosFisicosNoIFC=blockCount;
+   wall.psets.AlvenariaPro_Modulacao.PecasNaPaginacaoOriginal=a.counts.total;
+   wall.psets.AlvenariaPro_Modulacao.DiferencaDeContagem='Cada módulo remanescente é um elemento IFC; recortes parciais junto a vergas/peitoris podem diferir da supressão de fiada inteira do desenho 2D.';
+  }
+  const groutVolumes=[];
+  if(o.includeGrout){
+   for(const cell of re.groutedCells){
+    const b=rect(Math.max(0,cell.x-core.groutWidth/2),Math.min(L,cell.x+core.groutWidth/2),-core.groutDepth/2,core.groutDepth/2,0,H);
+    const boxes=G.subtractBoxes([b],openingCuts.concat(allOwnership,o.includeBeams?channelCores:[]));
+    const e=physical('grout/'+w.id+'/'+cell.index,'Graute — '+w.label+' — célula '+(cell.index+1),'grout',w,boxes,{AlvenariaPro_Graute:{Celula:cell.index+1,EixoLocal:len(cell.x),SecaoEfetivaMotor_m2:re.cellVoidArea,SecaoEquivalenteGeometrica_m2:core.groutArea,VolumeEstimadoParede_m3:re.groutVolume,Origem:'Células selecionadas pelo motor; recorte por vãos, encontros e graute de cintas/vergas',FormaDaCelula:'Retangular equivalente, sem catálogo de fabricante'},AlvenariaPro_Rastreabilidade:sourcePset('Graute vertical',cell.index,w)},'grout',wallKey);
+    if(e)groutVolumes.push(...boxes);
+   }
+  }
+  if(o.includeBeams){
+   const placedCores=[];
+   for(const b of beamList){
+    const beamProps={AlvenariaPro_ElementoLocal:Object.assign(scalar(b.source),{Tipo:b.kind,Comprimento:len(b.x1-b.x0),CotaBase:len(b.z0),CotaTopo:len(b.z1),Largura:len(b.width),Geometria:'Canaleta compartilhada com paginação; graute e barras como componentes. Ganchos e emendas adicionais somente como informação.'}),AlvenariaPro_Rastreabilidade:sourcePset(b.kind,b.sourceId,w)};
+    const beam=push({key:b.key,name:b.name,ifcClass:'IfcBeam',objectType:b.kind,predefinedType:b.predefinedType,storeyKey:w.floorId,parentKey:wallKey,placement:wallPlacement(w),geometry:null,category:'beams',materialKey:'grout',psets:beamProps,quantities:[qty('Length','length',b.x1-b.x0),qty('Width','length',b.width),qty('Height','length',b.z1-b.z0)]});
+    if(b.z0<0||b.z1>H+.001||b.width>t+.001)addIssue('warning','BEAM_BOUNDS',b.name+': dimensão cadastrada ultrapassa a envoltória da parede; confira o detalhe.',b.key);
+    const beamCore=G.subtractBoxes([b.core],openingCuts.concat(allOwnership));
+    const overlap=sumVolume(beamCore)-sumVolume(G.subtractBoxes(beamCore,placedCores));
+    if(overlap>1e-8)addIssue('warning','BEAM_OVERLAP',b.name+': sobreposição de regiões de cintas/vergas; graute comum contado uma vez, armaduras preservadas conforme cada cadastro.',b.key);
+    if(o.includeGrout&&b.grouted){const boxes=G.subtractBoxes(beamCore,placedCores);physical(b.key+'/grout','Graute — '+b.name,'grout',w,boxes,{AlvenariaPro_Graute:{Origem:b.kind,VolumeEstimadoMotor_m3:number(b.source.grout||0),TipoDeSecao:'Canaleta U equivalente; área nominal compatível com fator de graute do motor, limitada pelo espaço disponível'},AlvenariaPro_Rastreabilidade:sourcePset('Graute de '+b.kind,b.sourceId,w)},'grout',b.key);placedCores.push(...boxes);groutVolumes.push(...boxes);}
+    if(o.includeRebar){
+     const br=number(b.barDia)/2000,cover=o.cover,freeY=b.width/2-cover-br,zBottom=b.z0+cover+br,zTop=b.z1-cover-br;
+     if(b.barQty>0&&br>0){
+      if(freeY<=0||zTop<zBottom)addIssue('warning','BAR_FIT',b.name+': o cobrimento de representação não acomoda a seção; barras longitudinais mantidas no eixo da seção, com pendência registrada.',b.key);
+      const rows=b.barQty>2?2:1,bottomCount=Math.ceil(b.barQty/rows);
+      for(let bi=0;bi<b.barQty;bi++){const row=Math.floor(bi/bottomCount),count=row===0?bottomCount:b.barQty-bottomCount,localIndex=bi%bottomCount,y=count<=1?0:(-1+2*localIndex/(count-1))*Math.max(0,freeY),z=zTop>=zBottom?(row===0?zBottom:zTop):(b.z0+b.z1)/2;const segments=intervalsAt(r,b.x0+cover,b.x1-cover,z,openingCuts);segments.forEach((s,si)=>rebar(b.key+'/bar/'+bi+'/'+si,'Longitudinal '+(bi+1)+' — '+b.name,w,b.key,[[s[0],y,z],[s[1],y,z]],b.barDia,'MAIN',{AlvenariaPro_Comprimentos:{EmendaOuAcrescimoDoMotor:len(b.lap),AcrescimoGeometrizado:false,Arranjo:'Distribuição paramétrica em uma ou duas camadas; posição não especificada no cadastro original'}}));}
+     }
+     if(b.stirrupDia>0&&b.stirrupSpacing>0){
+      const sr=b.stirrupDia/2000,hy=b.width/2-cover-sr,hz=(b.z1-b.z0)/2-cover-sr,mid=(b.z0+b.z1)/2;
+      if(hy<=sr||hz<=sr)addIssue('warning','STIRRUP_FIT',b.name+': seção/cobrimento incompatível com estribo; elemento geométrico omitido e pendência registrada.',b.key);
+      else {const count=Math.max(2,Math.ceil((b.x1-b.x0)/b.stirrupSpacing)+1),first=b.x0+cover+sr,last=b.x1-cover-sr;for(let si=0;si<count;si++){const x=first+(last-first)*si/(count-1);if(openingCuts.some(v=>x>v.x0&&x<v.x1&&mid>v.z0&&mid<v.z1))continue;const pts=roundedStirrup(x,hy,hz,mid,Math.min(sr*5,hy*.45,hz*.45));rebar(b.key+'/stirrup/'+si,'Estribo '+(si+1)+' — '+b.name,w,b.key,pts,b.stirrupDia,'LIGATURE',{AlvenariaPro_Estribo:{CobrimentoDeRepresentacao:len(cover),RaioDeDobraDoEixo:len(Math.min(sr*5,hy*.45,hz*.45)),Forma:'Retângulo fechado com cantos arredondados; ganchos extras não localizados pelo cadastro',GanchoDoQuantitativoOriginal:len(number(state.settings.bondBeamHookLength)),ComprimentoEstimadoMotor:len(number(b.source.stirrupLength))}},(last-first)/(count-1));}}
+     }
+    }
+   }
+  }
+  if(o.includeRebar){
+   if(re.d.reinforcementMode!=='none'&&re.AsProv>0&&re.vertDia>0){
+    const barRadius=re.vertDia/2000,available=Math.max(0,core.groutDepth/2-barRadius-.007);
+    for(const p of re.positions)for(let bi=0;bi<re.d.barsPerCell;bi++){
+     const y=re.d.barsPerCell<=1?0:(-1+2*bi/(re.d.barsPerCell-1))*Math.min(available,.018*(re.d.barsPerCell-1)/2);
+     const z0=Math.min(o.cover,H/3),z1=H-Math.min(o.cover,H/3);
+     const zIntervals=verticalIntervals(p.x,z0,z1,openingCuts);
+     zIntervals.forEach((zi,ii)=>rebar('rebar/vertical/'+w.id+'/'+p.index+'/'+bi+'/'+ii,'Vertical — '+w.label+' — célula '+(p.index+1)+' barra '+(bi+1),w,wallKey,[[p.x,y,zi[0]],[p.x,y,zi[1]]],re.vertDia,'MAIN',{AlvenariaPro_ArmaduraVertical:{Celula:p.index+1,BarrasNaCelula:re.d.barsPerCell,Modo:re.d.reinforcementMode,AsFornecidaParede_mm2:re.AsProv,AsRequeridaParede_mm2:safe(re.AsReq),EmendaInformada:len(re.d.lapLength),AncoragemInformada:len(re.d.anchorLength),AcrescimosGeometrizados:false,ComprimentoEstimadoMotorPorBarra:len(H+re.d.lapLength+re.d.anchorLength)}}));
+    }
+   }
+   if(re.nHorizontal>0&&re.AshProvPerM>0&&re.horDia>0){
+    const radius=re.horDia/2000,j=number(state.settings.modBedJoint);
+    for(let hi=0;hi<re.nHorizontal;hi++){
+     const reference=hi*re.horSpacing,z=bound(reference+j/2,radius,H-radius),segments=intervalsAt(r,0,L,z,openingCuts);
+     if(j>0&&2*radius>j+.0001)addIssue('warning','JOINT_BAR_FIT',w.label+': diâmetro da barra horizontal maior que a junta de assentamento; posição e dimensões conservadas para revisão.',w.id);
+     for(let bi=0;bi<re.horBars;bi++){const y=re.horBars<=1?0:(-1+2*bi/(re.horBars-1))*Math.max(0,t/2-o.cover-radius);segments.forEach((s,si)=>rebar('rebar/horizontal/'+w.id+'/'+hi+'/'+bi+'/'+si,'Horizontal — '+w.label+' — nível '+(hi+1),w,wallKey,[[s[0],y,z],[s[1],y,z]],re.horDia,'SHEAR',{AlvenariaPro_ArmaduraHorizontal:{Nivel:hi+1,CotaDeReferencia:len(reference),CotaGeometrica:len(z),Espacamento:len(re.horSpacing),BarrasPorNivel:re.horBars,AcrescimoDoMotor:len(.30),AcrescimoGeometrizado:false,Convencao:'Eixo no centro da junta inferior quando coincidente com a malha; corte nos vãos reais.'}},re.horSpacing));}
+    }
+   }
+  }
+  if(!detail){
+   const body=G.subtractBoxes(wd.body,allOwnership.concat(groutVolumes));
+   wall.geometry=boxItems(body);wall.quantities.push(qty('NetVolume','volume',sumVolume(body)));
+   wall.psets.AlvenariaPro_Geometria.TipoDeCorpo='Envoltória de coordenação; deduz vãos, encontros e graute exportado. Furos internos dos blocos não detalhados.';
+  }
+  if(wi%3===2)await new Promise(resolve=>setTimeout(resolve,0));
+ }
+ for(const s of check.slabs){
+  const floor=selectedFloors.find(f=>f.key===s.floorId)||state.floors.find(f=>f.id===s.floorId),p=polygonCheck(s.points),h=number(s.thickness);
+  const offset=Number.isFinite(Number(s.bimElevation))?Number(s.bimElevation):(o.slabPosition==='top'?number(floor.height):0)+o.slabOffset;
+  const key='slab/'+s.id;
+  push({key,name:s.label,ifcClass:'IfcSlab',predefinedType:'FLOOR',storeyKey:s.floorId,placement:{origin:[0,0,offset-h],angle:0},geometry:{kind:'extrusion',outer:p.points,height:h},category:'slabs',materialKey:'slab',psets:{Pset_SlabCommon:{Reference:s.label,LoadBearing:true},AlvenariaPro_Laje:Object.assign(scalar(s),{Area_m2:p.area,CotaSuperiorRelativa:len(offset),CotaInferiorRelativa:len(offset-h),CriterioDeCota:Number.isFinite(Number(s.bimElevation))?'Cota BIM individual':'Convenção global de exportação; o cadastro CAD não possuía cota vertical',Material:'Não especificado no cadastro',Armadura:'Não dimensionada/cadastrada no sistema',Cargas:'gk e qk em kN/m²; loadMode conserva o cadastro',Vertices:textValue(JSON.stringify(p.points))}),AlvenariaPro_Rastreabilidade:sourcePset('Laje',s.id,null)},quantities:[qty('Depth','length',h),qty('GrossArea','area',p.area),qty('NetArea','area',p.area),qty('GrossVolume','volume',p.area*h),qty('NetVolume','volume',p.area*h)]});
+  addIssue('info','SLAB_DATUM',s.label+': face superior a '+round(offset)+' m do nível do pavimento; material e armadura não cadastrados.',s.id);
+ }
+ if(o.includeAxes&&!o.wallId){
+  for(const f of selectedFloors){
+   const axes=(state.cadAxes||[]).filter(a=>a.floorId===f.id&&a.p1&&a.p2);
+   const valid=axes.filter(a=>Math.hypot(number(a.p2.x)-number(a.p1.x),number(a.p2.y)-number(a.p1.y))>EPS);
+   const u=valid.filter(a=>Math.abs(number(a.p2.x)-number(a.p1.x))>=Math.abs(number(a.p2.y)-number(a.p1.y))),v=valid.filter(a=>!u.includes(a));
+   const axisData=a=>({tag:a.label||a.id,points:[[number(a.p1.x),number(a.p1.y),0],[number(a.p2.x),number(a.p2.y),0]]});
+   if(u.length&&v.length)push({key:'grid/'+f.id,name:'Eixos — '+f.name,ifcClass:'IfcGrid',predefinedType:'RECTANGULAR',storeyKey:f.id,placement:{origin:[0,0,0]},gridAxes:{u:u.map(axisData),v:v.map(axisData)},geometry:{items:valid.map(a=>({kind:'polyline',points:axisData(a).points}))},category:'axes',materialKey:'axis',psets:{AlvenariaPro_Eixos:{Origem:'Eixos cadastrados no editor CAD',Identificadores:textValue(valid.map(a=>a.id+': '+a.label).join('; '))}}});
+   else for(const a of valid)push({key:'axis/'+a.id,name:'Eixo '+a.label,ifcClass:'IfcAnnotation',storeyKey:f.id,placement:{origin:[0,0,0]},geometry:{kind:'polyline',points:axisData(a).points},category:'axes',materialKey:'axis',psets:{AlvenariaPro_Referencia:{IdOrigem:a.id,Tipo:'Eixo isolado',Observacoes:a.notes||''}}});
+   for(const d of (state.cadDimensions||[]).filter(d=>d.floorId===f.id&&d.p1&&d.p2)){const l=Math.hypot(number(d.p2.x)-number(d.p1.x),number(d.p2.y)-number(d.p1.y));if(l>EPS)push({key:'dimension/'+d.id,name:d.text||'Cota '+round(l)+' m',ifcClass:'IfcAnnotation',storeyKey:f.id,placement:{origin:[0,0,0]},geometry:{kind:'polyline',points:[[number(d.p1.x),number(d.p1.y),0],[number(d.p2.x),number(d.p2.y),0]]},category:'axes',materialKey:'axis',psets:{AlvenariaPro_Cota:{IdOrigem:d.id,Texto:d.text||'',Distancia:len(l),Observacoes:d.notes||'',Representacao:'Segmento de referência; texto completo em propriedades.'}}});}
+  }
+ }
+ const imports=(state.cadImports||[]).map(x=>scalar(x));if(imports.length)scene.project.psets.AlvenariaPro_Importacoes={Registros:textValue(JSON.stringify(imports)),Tratamento:'Somente objetos convertidos em paredes/lajes e eixos cadastrados entram como modelo físico. PDFs e traços auxiliares permanecem no projeto de origem.'};
+ addIssue('info','PARAMETRIC','Furos, septos, canaletas, cobrimentos e distribuição de barras na seção são representações paramétricas. O cadastro não contém catálogo de fabricante nem detalhamento completo de fabricação.');
+ addIssue('info','QUANTITIES','Volumes geométricos deduzem vãos e interseções, sem perdas; quantidades do motor permanecem nas propriedades originais. Volumes de concreto/graute não deduzem o volume das armaduras.');
+ if(!o.hollowBlocks&&detail)addIssue('info','SOLID_BLOCKS','Blocos exportados por envoltória simplificada; cavidades para o graute selecionado são preservadas para evitar corpos duplicados.');
+ const summary={elements:scene.elements.length,storeys:scene.storeys.length,walls:check.walls.length,blocks:countTotals.blocks||0,mortar:countTotals.mortar||0,grout:countTotals.grout||0,reinforcingBars:countTotals.steel||0,beams:countTotals.beams||0,slabs:countTotals.slabs||0,openings:scene.elements.filter(e=>e.ifcClass==='IfcOpeningElement').length,axes:countTotals.axes||0,volumes:volumeTotals,diagnostics:diagnostics.length,warnings:diagnostics.filter(d=>d.severity==='warning').length,buildMs:Math.round(performance.now()-start)};
+ scene.summary=summary;
+ scene.project.psets.AlvenariaPro_Exportacao.Elementos=scene.elements.length;
+ scene.project.psets.AlvenariaPro_Diagnosticos={Quantidade:diagnostics.length,Registros:textValue(diagnostics.map(d=>d.severity.toUpperCase()+' | '+d.sourceId+' | '+d.message).join('\n'))};
+ return scene;
+}
+function intervalsAt(r,x0,x1,z,openingCuts){
+ if(x1-x0<=EPS)return [];
+ let spans=[[x0,x1]];
+ for(const c of openingCuts){if(z<c.z0-EPS||z>c.z1+EPS)continue;spans=spans.flatMap(s=>{if(c.x1<=s[0]+EPS||c.x0>=s[1]-EPS)return [s];const out=[];if(c.x0>s[0]+EPS)out.push([s[0],Math.min(c.x0,s[1])]);if(c.x1<s[1]-EPS)out.push([Math.max(c.x1,s[0]),s[1]]);return out;});}
+ return spans;
+}
+function verticalIntervals(x,z0,z1,cuts){
+ let spans=[[z0,z1]];
+ for(const c of cuts){if(x<c.x0-EPS||x>c.x1+EPS)continue;spans=spans.flatMap(s=>{if(c.z1<=s[0]+EPS||c.z0>=s[1]-EPS)return [s];const out=[];if(c.z0>s[0]+EPS)out.push([s[0],Math.min(c.z0,s[1])]);if(c.z1<s[1]-EPS)out.push([Math.max(c.z1,s[0]),s[1]]);return out;});}
+ return spans;
+}
+function roundedStirrup(x,hy,hz,mid,r){
+ const points=[],corners=[[hy-r,hz-r,0],[ -hy+r,hz-r,90],[-hy+r,-hz+r,180],[hy-r,-hz+r,270]];
+ for(const [cy,cz,start]of corners)for(let i=0;i<=4;i++){const a=(start+i*22.5)*Math.PI/180;points.push([x,cy+r*Math.cos(a),mid+cz+r*Math.sin(a)]);}
+ points.push(points[0].slice());return points;
+}
+global.AlvenariaBimModel=Object.freeze({version:'1.5',defaults,normalizeOptions:normalized,buildScene,validate:input=>collectValidation(normalized(input)),sourceFingerprint,polygonCheck});
+})(globalThis);
+
+
+</script>
+
+<script>
+/* AlvenariaPro BIM preview: Canvas 2D, no external dependencies.
+ * Placement.angle is in radians. Every element placement is relative to its
+ * storey, never to parentKey. Geometry origins accumulate within item groups.
+ * Orthographic software depth renderer; full geometry at rest and explicit
+ * per-component envelopes during movement. No source scene mutation.
+ */
+(function(root,factory){
+  'use strict';
+  const Preview=factory();
+  if(typeof module==='object'&&module.exports)module.exports=Preview;
+  if(root)root.AlvenariaBimPreview=Preview;
+})(typeof globalThis!=='undefined'?globalThis:this,function(){
+  'use strict';
+  const EPS=1e-7,TAU=Math.PI*2;
+  const COLORS={blocks:[.76,.56,.34],mortar:[.72,.72,.68],grout:[.22,.49,.45],steel:[.71,.18,.23],slabs:[.48,.61,.68],walls:[.75,.59,.40],axes:[.25,.40,.57]};
+  const now=()=>typeof performance!=='undefined'?performance.now():Date.now();
+  const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+  const num=(v,d=0)=>Number.isFinite(Number(v))?Number(v):d;
+  const v3=v=>[num(v?.[0]),num(v?.[1]),num(v?.[2])];
+  const add=(a,b)=>[a[0]+b[0],a[1]+b[1],a[2]+b[2]];
+  const dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
+  const emptyBounds=()=>({min:[Infinity,Infinity,Infinity],max:[-Infinity,-Infinity,-Infinity]});
+  function extend(b,p,r=0){for(let k=0;k<3;k++){b.min[k]=Math.min(b.min[k],p[k]-r);b.max[k]=Math.max(b.max[k],p[k]+r);}return b;}
+  const validBounds=b=>b&&b.min.every(Number.isFinite)&&b.max.every(Number.isFinite);
+  function color(input,fallback){
+    const c=Array.isArray(input)&&input.length>=3?input:fallback;
+    const d=Math.max(...c)>1?255:1;
+    return c.slice(0,3).map(v=>clamp(num(v)/d,0,1));
+  }
+  const rgb=(c,light=1)=>`rgb(${c.map(v=>Math.round(clamp(v*light,0,1)*255)).join(',')})`;
+  function signedArea(r){let s=0;for(let i=0;i<r.length;i++){const a=r[i],b=r[(i+1)%r.length];s+=a[0]*b[1]-b[0]*a[1];}return s/2;}
+  function ring(input,ccw){
+    const out=[];
+    for(const v of input||[]){const p=Array.isArray(v)?[num(v[0]),num(v[1])]:[num(v.x),num(v.y)];const q=out[out.length-1];if(!q||Math.hypot(q[0]-p[0],q[1]-p[1])>EPS)out.push(p);}
+    if(out.length>1&&Math.hypot(out[0][0]-out[out.length-1][0],out[0][1]-out[out.length-1][1])<=EPS)out.pop();
+    if(out.length>=3&&((signedArea(out)>0)!==ccw))out.reverse();
+    return out;
+  }
+  function pointInRing(x,y,points){let inside=false;for(let i=0,j=points.length-1;i<points.length;j=i++){const a=points[i],b=points[j];if((a[1]>y)!==(b[1]>y)&&x<(b[0]-a[0])*(y-a[1])/(b[1]-a[1])+a[0])inside=!inside;}return inside;}
+  function insideRings(x,y,rings){let inside=false;for(const r of rings)if(pointInRing(x,y,r))inside=!inside;return inside;}
+  function capTileIntersects(tile,rings){
+    const [x0,y0,x1,y1]=tile;
+    if([[x0,y0],[x1,y0],[x1,y1],[x0,y1]].some(p=>insideRings(p[0],p[1],rings)))return true;
+    for(const ring of rings)for(let i=0;i<ring.length;i++){
+      const a=ring[i],b=ring[(i+1)%ring.length];if(a[0]>=x0-EPS&&a[0]<=x1+EPS&&a[1]>=y0-EPS&&a[1]<=y1+EPS)return true;
+      const dx=b[0]-a[0],dy=b[1]-a[1],ps=[-dx,dx,-dy,dy],qs=[a[0]-x0,x1-a[0],a[1]-y0,y1-a[1]];let lo=0,hi=1,ok=true;
+      for(let k=0;k<4;k++){if(Math.abs(ps[k])<EPS){if(qs[k]<0){ok=false;break;}}else{const t=qs[k]/ps[k];if(ps[k]<0)lo=Math.max(lo,t);else hi=Math.min(hi,t);if(lo>hi){ok=false;break;}}}
+      if(ok)return true;
+    }
+    return false;
+  }
+  function segmentDistance(x,y,a,b){const dx=b[0]-a[0],dy=b[1]-a[1],dd=dx*dx+dy*dy;const t=dd?clamp(((x-a[0])*dx+(y-a[1])*dy)/dd,0,1):0;return Math.hypot(x-a[0]-t*dx,y-a[1]-t*dy);}
+
+  class AlvenariaBimPreview {
+    constructor(canvas,{onSelect,onStats}={}){
+      if(!canvas||typeof canvas.getContext!=='function')throw new TypeError('AlvenariaBimPreview requires a canvas.');
+      this.canvas=canvas;this.ctx=canvas.getContext('2d');if(!this.ctx)throw new Error('Canvas 2D is unavailable.');
+      this.onSelect=typeof onSelect==='function'?onSelect:()=>{};this.onStats=typeof onStats==='function'?onStats:()=>{};
+      this.scene={storeys:[],elements:[],materials:[]};this.primitives=[];this._movementPrimitives=[];this.visibility={};this.floorKey='';this.cut=null;
+      this.selectedKey=null;this.azimuth=-Math.PI/4;this.elevation=Math.atan(1/Math.sqrt(2));this.target=[0,0,0];this.pan=[0,0];this.scale=50;
+      this.width=800;this.height=500;this.dpr=1;this._commands=[];this._listeners=[];this._disposed=false;this._raf=null;this._drag=null;this._bounds=emptyBounds();
+      this._requestAnimation=typeof requestAnimationFrame==='function'?requestAnimationFrame.bind(globalThis):fn=>setTimeout(()=>fn(now()),16);
+      this._cancelAnimation=typeof cancelAnimationFrame==='function'?cancelAnimationFrame.bind(globalThis):clearTimeout;
+      this._ownerElements=[null];this._ownerByKey=new Map();this._depthBuffer=null;this._ownerBuffer=null;this._rasterImage=null;
+      if(canvas.style){canvas.style.touchAction='none';canvas.style.cursor='grab';}
+      this._bind();this._resize();
+      if(typeof ResizeObserver!=='undefined'){this._observer=new ResizeObserver(()=>{this._resize();this._request();});this._observer.observe(canvas);}
+      this._request();
+    }
+
+    setScene(scene){
+      this.scene=scene||{storeys:[],elements:[],materials:[]};this.primitives=[];
+      const storeys=new Map((this.scene.storeys||[]).map(s=>[String(s.key),num(s.elevation)]));
+      const materials=new Map((this.scene.materials||[]).map(m=>[String(m.key),m]));
+      const elements=this.scene.elements||[];
+      this._elementMap=new Map(elements.map(e=>[String(e.key),e]));
+      this._ownerElements=[null,...elements];this._ownerByKey=new Map(elements.map((e,i)=>[String(e.key),i+1]));
+      for(const element of elements){
+        if(!element.geometry)continue;
+        const placement=element.placement||{},origin=v3(placement.origin),angle=num(placement.angle),co=Math.cos(angle),si=Math.sin(angle),base=storeys.get(String(element.storeyKey))||0;
+        const transform=p=>[origin[0]+co*p[0]-si*p[1],origin[1]+si*p[0]+co*p[1],base+origin[2]+p[2]];
+        const category=element.category||'walls';
+        const addGeometry=(g,inherited=[0,0,0],inheritedMaterial=null)=>{
+          if(!g)return;
+          const offset=add(inherited,v3(g.origin));
+          const materialRef=g.materialKey??g.material??inheritedMaterial??element.materialKey??element.material;
+          const material=typeof materialRef==='object'?materialRef:materials.get(String(materialRef));
+          const c=color(g.color||material?.color||element.color,COLORS[category]||COLORS.walls);
+          if(Array.isArray(g.items)){g.items.forEach(child=>addGeometry(child,offset,materialRef));return;}
+          const common={element,key:String(element.key),owner:this._ownerByKey.get(String(element.key))||0,storeyKey:String(element.storeyKey??''),category,color:c,opacity:clamp(num(g.opacity??material?.opacity??element.opacity,1),.08,1)};
+          if(g.kind==='box'){
+            const w=num(g.width),d=num(g.depth),h=num(g.height);if(w<=EPS||d<=EPS||h<=EPS)return;
+            const footprint=[[0,0],[w,0],[w,d],[0,d]].map(p=>transform([offset[0]+p[0],offset[1]+p[1],offset[2]]));
+            const z0=footprint[0][2],z1=z0+h,bounds=emptyBounds();
+            footprint.forEach(p=>{extend(bounds,p);extend(bounds,[p[0],p[1],z1]);});
+            this.primitives.push({...common,kind:'solid',rings:[footprint.map(p=>[p[0],p[1]])],z0,z1,bounds,box:true});
+          }else if(g.kind==='extrusion'){
+            const h=num(g.height);if(h<=EPS)return;
+            const local=[ring(g.outer,true),...(g.holes||[]).map(r=>ring(r,false))];if(local[0].length<3)return;
+            const rings=local.filter(r=>r.length>=3).map(r=>r.map(p=>transform([offset[0]+p[0],offset[1]+p[1],offset[2]]).slice(0,2)));
+            const z0=transform(offset)[2],z1=z0+h,bounds=emptyBounds();
+            rings[0].forEach(p=>{extend(bounds,[p[0],p[1],z0]);extend(bounds,[p[0],p[1],z1]);});
+            this.primitives.push({...common,kind:'solid',rings,z0,z1,bounds,box:false});
+          }else if(g.kind==='sweptDisk'||g.kind==='polyline'){
+            const points=(g.points||[]).map(p=>transform(add(offset,v3(p))));if(points.length<2)return;
+            const radius=g.kind==='sweptDisk'?Math.max(EPS,num(g.radius,.003)):0,bounds=emptyBounds();
+            points.forEach(p=>extend(bounds,p,radius));
+            this.primitives.push({...common,kind:'line',points,radius,bounds,bar:g.kind==='sweptDisk'});
+          }
+        };
+        addGeometry(element.geometry);
+      }
+      // Temporary movement representation: one existing component envelope,
+      // independent of the number of solid fragments used by its IFC body.
+      // This cache does not modify the scene or its detailed primitives.
+      const movement=new Map();
+      for(const p of this.primitives){
+        if(p.kind==='line'&&!p.bar)continue;
+        let group=movement.get(p.key);if(!group){group={p,bounds:emptyBounds()};movement.set(p.key,group);}
+        extend(group.bounds,p.bounds.min);extend(group.bounds,p.bounds.max);
+      }
+      this._movementPrimitives=[];
+      for(const {p,bounds} of movement.values()){
+        const [x0,y0,z0]=bounds.min,[x1,y1,z1]=bounds.max;if(x1-x0<=EPS||y1-y0<=EPS||z1-z0<=EPS)continue;
+        this._movementPrimitives.push({...p,kind:'solid',rings:[[[x0,y0],[x1,y0],[x1,y1],[x0,y1]]],z0,z1,bounds,box:true,approximate:true});
+      }
+      this._bounds=this._visibleBounds();
+      if(this.selectedKey&&!this._elementMap.has(this.selectedKey)){this.selectedKey=null;this._notifySelect(null);}
+      this.fit();return this;
+    }
+    setVisibility(category,visible){this.visibility[category]=!!visible;if(!visible&&this._elementMap?.get(this.selectedKey)?.category===category)this.select(null);this._request();return this;}
+    setFloor(storeyKey){this.floorKey=String(storeyKey??'');if(this.selectedKey&&this.floorKey&&String(this._elementMap?.get(this.selectedKey)?.storeyKey)!==this.floorKey)this.select(null);this._request();return this;}
+    setCut(zGlobal){this.cut=zGlobal===null||zGlobal===undefined||zGlobal===''?null:Number.isFinite(Number(zGlobal))?Number(zGlobal):null;this._request();return this;}
+    select(key){const element=key===null?null:this._elementMap?.get(String(key))||null;this.selectedKey=element?String(element.key):null;this._notifySelect(element);this._request();return this;}
+    preset(name){
+      if(name==='top'){this.azimuth=-Math.PI/2;this.elevation=Math.PI/2;}
+      else if(name==='front'){this.azimuth=-Math.PI/2;this.elevation=0;}
+      else{this.azimuth=-Math.PI/4;this.elevation=Math.atan(1/Math.sqrt(2));}
+      this.fit();return this;
+    }
+    fit(){
+      this._resize();const b=this._visibleBounds();this._bounds=b;
+      if(!validBounds(b)){this._request();return this;}
+      this.target=b.min.map((v,i)=>(v+b.max[i])/2);this.pan=[0,0];
+      const camera=this._camera(),xs=[],ys=[];
+      for(const x of [b.min[0],b.max[0]])for(const y of [b.min[1],b.max[1]])for(const z of [b.min[2],b.max[2]]){const p=[x-this.target[0],y-this.target[1],z-this.target[2]];xs.push(dot(p,camera.right));ys.push(dot(p,camera.up));}
+      const dx=Math.max(.01,Math.max(...xs)-Math.min(...xs)),dy=Math.max(.01,Math.max(...ys)-Math.min(...ys));
+      this.scale=clamp(Math.min(Math.max(60,this.width-96)/dx,Math.max(60,this.height-112)/dy),.02,50000);
+      this._request();return this;
+    }
+    resize(){this._resize();this._request();return this;}
+    dispose(){
+      this._disposed=true;if(this._raf!==null)this._cancelAnimation(this._raf);this._raf=null;
+      this._observer?.disconnect();this._listeners.forEach(([target,type,fn,opts])=>target.removeEventListener(type,fn,opts));this._listeners=[];
+      this.primitives=[];this._movementPrimitives=[];this._commands=[];this._drag=null;if(this.canvas.style)this.canvas.style.cursor='';
+      this._depthBuffer=null;this._ownerBuffer=null;this._rasterImage=null;this._ownerElements=[];
+    }
+
+    _camera(){
+      const c=Math.cos(this.azimuth),s=Math.sin(this.azimuth),ce=Math.cos(this.elevation),se=Math.sin(this.elevation);
+      return {eye:[c*ce,s*ce,se],right:[-s,c,0],up:[-c*se,-s*se,ce]};
+    }
+    _project(p,camera){const d=[p[0]-this.target[0],p[1]-this.target[1],p[2]-this.target[2]];return [this.width/2+this.pan[0]+dot(d,camera.right)*this.scale,this.height/2+this.pan[1]-dot(d,camera.up)*this.scale,dot(d,camera.eye)];}
+    _isVisible(p){return this.visibility[p.category]!==false&&(!this.floorKey||p.storeyKey===this.floorKey)&&(this.cut===null||p.bounds.min[2]<this.cut+EPS);}
+    _visibleBounds(){
+      const b=emptyBounds();for(const p of this.primitives){if(!this._isVisible(p))continue;extend(b,p.bounds.min);const max=p.bounds.max.slice();if(this.cut!==null)max[2]=Math.min(max[2],this.cut);extend(b,max);}return b;
+    }
+    _resize(){
+      const r=typeof this.canvas.getBoundingClientRect==='function'?this.canvas.getBoundingClientRect():null;
+      this.width=Math.max(120,num(r?.width||this.canvas.clientWidth||this.width,800));this.height=Math.max(100,num(r?.height||this.canvas.clientHeight||this.height,500));
+      this.dpr=clamp(typeof devicePixelRatio==='number'?devicePixelRatio:1,1,2);
+      const w=Math.round(this.width*this.dpr),h=Math.round(this.height*this.dpr);if(this.canvas.width!==w)this.canvas.width=w;if(this.canvas.height!==h)this.canvas.height=h;
+    }
+    _request(){if(this._disposed||this._raf!==null)return;this._raf=this._requestAnimation(()=>{this._raf=null;if(!this._disposed)this.render();});}
+    _notifySelect(element){try{this.onSelect(element);}catch(err){if(typeof console!=='undefined')console.warn('BIM preview selection callback:',err);}}
+    _bind(){
+      const bind=(target,type,fn,opts)=>{if(!target?.addEventListener)return;target.addEventListener(type,fn,opts);this._listeners.push([target,type,fn,opts]);};
+      const position=ev=>{const r=this.canvas.getBoundingClientRect();return [ev.clientX-r.left,ev.clientY-r.top];};
+      bind(this.canvas,'pointerdown',ev=>{if(ev.button!==0&&ev.button!==1&&ev.button!==2)return;const p=position(ev);this._drag={id:ev.pointerId,start:p,last:p,moved:false,pan:ev.shiftKey||ev.button!==0};this.canvas.setPointerCapture?.(ev.pointerId);if(this.canvas.style)this.canvas.style.cursor=this._drag.pan?'move':'grabbing';ev.preventDefault();});
+      bind(this.canvas,'pointermove',ev=>{const d=this._drag;if(!d||d.id!==ev.pointerId)return;const p=position(ev),dx=p[0]-d.last[0],dy=p[1]-d.last[1];if(Math.hypot(p[0]-d.start[0],p[1]-d.start[1])>3)d.moved=true;if(d.moved){if(d.pan||ev.shiftKey){this.pan[0]+=dx;this.pan[1]+=dy;}else{this.azimuth=(this.azimuth-dx*.008)%TAU;this.elevation=clamp(this.elevation+dy*.008,0,Math.PI/2);}this._request();}d.last=p;ev.preventDefault();});
+      const pointerup=ev=>{const d=this._drag;if(!d||d.id!==ev.pointerId)return;this._drag=null;try{this.canvas.releasePointerCapture?.(ev.pointerId);}catch(e){}if(this.canvas.style)this.canvas.style.cursor='grab';if(!d.moved&&!d.pan){const p=position(ev),element=this._hitTest(p[0],p[1]);this.selectedKey=element?String(element.key):null;this._notifySelect(element);}this._request();};
+      bind(this.canvas,'pointerup',pointerup);bind(this.canvas,'pointercancel',ev=>{if(this._drag?.id===ev.pointerId){this._drag=null;if(this.canvas.style)this.canvas.style.cursor='grab';this._request();}});
+      bind(this.canvas,'wheel',ev=>{ev.preventDefault();const p=position(ev),factor=Math.exp(-clamp(ev.deltaY,-350,350)*.0015),old=this.scale;this.scale=clamp(this.scale*factor,.02,50000);const f=this.scale/old;this.pan=[p[0]-this.width/2-(p[0]-this.width/2-this.pan[0])*f,p[1]-this.height/2-(p[1]-this.height/2-this.pan[1])*f];this._request();},{passive:false});
+      bind(this.canvas,'contextmenu',ev=>ev.preventDefault());bind(this.canvas,'dblclick',ev=>{ev.preventDefault();this.fit();});
+      if(typeof window!=='undefined')bind(window,'resize',()=>{this._resize();this._request();});
+    }
+
+    _face(primitive,rings,normal,camera,commands,section=false,clip=null,noEdges=false){
+      if(dot(normal,camera.eye)<=1e-8)return;
+      const projected=rings.map(r=>r.map(p=>this._project(p,camera))),clipRing=clip?clip.map(p=>this._project(p,camera)):null,outer=clipRing||projected[0];if(outer.length<3)return;
+      let x0=Infinity,y0=Infinity,x1=-Infinity,y1=-Infinity,depth=0;
+      for(const p of outer){x0=Math.min(x0,p[0]);x1=Math.max(x1,p[0]);y0=Math.min(y0,p[1]);y1=Math.max(y1,p[1]);depth+=p[2];}
+      if(x1<-3||y1<-3||x0>this.width+3||y0>this.height+3)return;
+      if((x1-x0)*(y1-y0)<.12&&primitive.key!==this.selectedKey)return;
+      const light=.56+.40*Math.max(0,dot(normal,[.22,-.38,.898]));
+      commands.push({kind:'face',primitive,rings:projected,clipRing,noEdges,bbox:[x0,y0,x1,y1],depth:depth/outer.length,color:rgb(primitive.color,section?Math.min(1.12,light+.08):light),section});
+    }
+    _cap(p,z,camera,commands,section){
+      if(camera.eye[2]<=1e-8)return;
+      const top=p.rings.map(r=>r.map(v=>[v[0],v[1],z]));
+      if(this._useDepthBuffer){this._face(p,top,[0,0,1],camera,commands,section);return;}
+      if(p.box){
+        const r=p.rings[0],a=r[0],u=[r[1][0]-a[0],r[1][1]-a[1]],v=[r[3][0]-a[0],r[3][1]-a[1]],nx=Math.min(120,Math.max(1,Math.ceil(Math.hypot(...u)/.45))),ny=Math.min(120,Math.max(1,Math.ceil(Math.hypot(...v)/.45)));
+        if(nx===1&&ny===1){this._face(p,top,[0,0,1],camera,commands,section);return;}
+        const point=(i,j)=>[a[0]+u[0]*i/nx+v[0]*j/ny,a[1]+u[1]*i/nx+v[1]*j/ny,z];
+        for(let i=0;i<nx;i++)for(let j=0;j<ny;j++)this._face(p,top,[0,0,1],camera,commands,section,[point(i,j),point(i+1,j),point(i+1,j+1),point(i,j+1)]);
+      }else{
+        const b=p.bounds,dx=b.max[0]-b.min[0],dy=b.max[1]-b.min[1],nx=Math.min(120,Math.max(1,Math.ceil(dx/.50))),ny=Math.min(120,Math.max(1,Math.ceil(dy/.50)));
+        if(nx===1&&ny===1){this._face(p,top,[0,0,1],camera,commands,section);return;}
+        for(let i=0;i<nx;i++)for(let j=0;j<ny;j++){
+          const x0=b.min[0]+i*dx/nx,x1=b.min[0]+(i+1)*dx/nx,y0=b.min[1]+j*dy/ny,y1=b.min[1]+(j+1)*dy/ny;
+          if(capTileIntersects([x0,y0,x1,y1],p.rings))this._face(p,top,[0,0,1],camera,commands,section,[[x0,y0,z],[x1,y0,z],[x1,y1,z],[x0,y1,z]]);
+        }
+      }
+    }
+    _solid(p,camera,commands){
+      const z0=p.z0,z1=this.cut===null?p.z1:Math.min(p.z1,this.cut);if(z1-z0<=EPS)return;
+      this._cap(p,z1,camera,commands,this.cut!==null&&this.cut<p.z1-EPS);
+      if(camera.eye[2]<-1e-8)this._face(p,p.rings.map(r=>r.map(v=>[v[0],v[1],z0]).reverse()),[0,0,-1],camera,commands);
+      for(const r of p.rings)for(let i=0;i<r.length;i++){
+        const a=r[i],b=r[(i+1)%r.length],dx=b[0]-a[0],dy=b[1]-a[1],len=Math.hypot(dx,dy);if(len<=EPS)continue;
+        const normal=[dy/len,-dx/len,0];if(dot(normal,camera.eye)<=1e-8)continue;
+        const nx=this._useDepthBuffer?1:Math.min(300,Math.max(1,Math.ceil(len/.40))),nz=this._useDepthBuffer?1:Math.min(300,Math.max(1,Math.ceil((z1-z0)/.20))),noEdges=nx>1||nz>1;
+        for(let x=0;x<nx;x++)for(let z=0;z<nz;z++){
+          const aa=[a[0]+dx*x/nx,a[1]+dy*x/nx],bb=[a[0]+dx*(x+1)/nx,a[1]+dy*(x+1)/nx],lo=z0+(z1-z0)*z/nz,hi=z0+(z1-z0)*(z+1)/nz;
+          this._face(p,[[[aa[0],aa[1],lo],[bb[0],bb[1],lo],[bb[0],bb[1],hi],[aa[0],aa[1],hi]]],normal,camera,commands,false,null,noEdges);
+        }
+      }
+    }
+    _line(p,camera,commands){
+      for(let i=0;i<p.points.length-1;i++){
+        let a=p.points[i],b=p.points[i+1];
+        if(this.cut!==null){if(a[2]>this.cut&&b[2]>this.cut)continue;if((a[2]>this.cut)!==(b[2]>this.cut)){const t=(this.cut-a[2])/(b[2]-a[2]),q=a.map((v,k)=>v+t*(b[k]-v));if(a[2]>this.cut)a=q;else b=q;}}
+        const len=Math.hypot(b[0]-a[0],b[1]-a[1],b[2]-a[2]);
+        const divisions=p.bar?Math.min(160,Math.max(1,Math.ceil(len/.40))):1;
+        for(let j=0;j<divisions;j++){
+          const aa=a.map((v,k)=>v+(b[k]-v)*j/divisions),bb=a.map((v,k)=>v+(b[k]-v)*(j+1)/divisions),s1=this._project(aa,camera),s2=this._project(bb,camera),width=p.bar?Math.max(.8,2*p.radius*this.scale):1.1;
+          const x0=Math.min(s1[0],s2[0])-width,y0=Math.min(s1[1],s2[1])-width,x1=Math.max(s1[0],s2[0])+width,y1=Math.max(s1[1],s2[1])+width;
+          if(x1<0||y1<0||x0>this.width||y0>this.height)continue;
+          const disc=Math.hypot(s1[0]-s2[0],s1[1]-s2[1])<.6;
+          commands.push({kind:'line',primitive:p,points:[s1,s2],bbox:[x0,y0,x1,y1],depth:(disc?Math.max(s1[2],s2[2]):(s1[2]+s2[2])/2)+p.radius,width,disc,color:rgb(p.color)});
+        }
+      }
+    }
+    _traceRings(rings){const c=this.ctx;c.beginPath();for(const r of rings){if(!r.length)continue;c.moveTo(r[0][0],r[0][1]);for(let i=1;i<r.length;i++)c.lineTo(r[i][0],r[i][1]);c.closePath();}}
+    _drawCommand(command,edges){
+      const c=this.ctx,p=command.primitive,selected=p.key===this.selectedKey;c.globalAlpha=p.opacity;
+      if(command.kind==='face'){
+        if(command.clipRing){c.save();this._traceRings([command.clipRing]);c.clip();}
+        this._traceRings(command.rings);c.fillStyle=command.color;c.fill('evenodd');
+        if(selected||edges&&!command.noEdges){c.strokeStyle=selected?'#ffd465':'rgba(35,46,48,.24)';c.lineWidth=selected?2.1:.45;c.stroke();}
+        if(command.clipRing)c.restore();
+      }else{
+        const [a,b]=command.points;c.strokeStyle=selected?'#ffd465':command.color;c.fillStyle=c.strokeStyle;c.lineWidth=command.width+(selected?1.4:0);c.lineCap='round';
+        if(command.disc){c.beginPath();c.arc(b[0],b[1],c.lineWidth/2,0,TAU);c.fill();}
+        else{c.beginPath();c.moveTo(a[0],a[1]);c.lineTo(b[0],b[1]);c.stroke();}
+      }
+      c.globalAlpha=1;
+    }
+    _hitTest(x,y){
+      if(this._lastDepthFrame&&this._ownerBuffer){const px=clamp(Math.floor(x*this.dpr),0,this.canvas.width-1),py=clamp(Math.floor(y*this.dpr),0,this.canvas.height-1),owner=this._ownerBuffer[py*this.canvas.width+px];if(owner)return this._ownerElements[owner]||null;return null;}
+      for(let i=this._commands.length-1;i>=0;i--){const command=this._commands[i],b=command.bbox,tol=command.kind==='line'?4:0;if(x<b[0]-tol||x>b[2]+tol||y<b[1]-tol||y>b[3]+tol)continue;
+        if(command.kind==='line'){if(segmentDistance(x,y,...command.points)<=Math.max(4,command.width/2+2))return command.primitive.element;}
+        else{if(command.clipRing&&!pointInRing(x,y,command.clipRing))continue;let inside=false;for(const r of command.rings)if(pointInRing(x,y,r))inside=!inside;if(inside)return command.primitive.element;}
+      }
+      return null;
+    }
+
+    // Scanline rasterization in a software depth buffer. It removes the
+    // painter-order ambiguity of long grout/bar/slab faces while preserving
+    // concave cap rings and holes with the same even-odd rule used by Canvas.
+    // During dragging this rasterizer receives component envelopes; at rest
+    // it always receives the full, unmodified geometric detail.
+    _rasterize(commands,edges,camera){
+      const W=this.canvas.width,H=this.canvas.height,count=W*H,dpr=this.dpr;
+      if(!this._depthBuffer||this._depthBuffer.length!==count){this._depthBuffer=new Float32Array(count);this._ownerBuffer=new Uint32Array(count);this._rasterImage=this.ctx.createImageData(W,H);}
+      const depth=this._depthBuffer,owners=this._ownerBuffer,image=this._rasterImage,data=image.data;
+      depth.fill(-Infinity);owners.fill(0);
+      for(let y=0;y<H;y++){const f=y/Math.max(1,H-1),r=Math.round(245-13*f),g=Math.round(249-10*f),b=Math.round(250-9*f);for(let x=0,i=y*W*4;x<W;x++,i+=4){data[i]=r;data[i+1]=g;data[i+2]=b;data[i+3]=255;}}
+      const colors=new Map(),colorOf=value=>{let c=colors.get(value);if(!c){c=(value.match(/[\d.]+/g)||[150,150,150]).slice(0,3).map(Number);colors.set(value,c);}return c;};
+      const paint=(index,z,rgb,owner,opacity)=>{
+        if(z<depth[index]-1e-6)return;
+        depth[index]=z;owners[index]=owner;const i=index*4;
+        if(opacity>=.999){data[i]=rgb[0];data[i+1]=rgb[1];data[i+2]=rgb[2];}
+        else{const k=1-opacity;data[i]=rgb[0]*opacity+data[i]*k;data[i+1]=rgb[1]*opacity+data[i+1]*k;data[i+2]=rgb[2]*opacity+data[i+2]*k;}
+      };
+      for(const command of commands){
+        const p=command.primitive,c=colorOf(command.color),owner=p.owner,opacity=p.opacity;
+        if(command.kind==='face'){
+          const rings=command.rings.map(r=>r.map(v=>[v[0]*dpr,v[1]*dpr,v[2]])),outer=rings[0],a=outer[0];let bx=null,cx=null,det=0;
+          for(let i=1;i<outer.length-1;i++){const b=outer[i],cc=outer[i+1],d=(b[0]-a[0])*(cc[1]-a[1])-(cc[0]-a[0])*(b[1]-a[1]);if(Math.abs(d)>1e-8){bx=b;cx=cc;det=d;break;}}
+          if(!bx)continue;
+          const dzdx=((bx[2]-a[2])*(cx[1]-a[1])-(cx[2]-a[2])*(bx[1]-a[1]))/det,dzdy=((bx[0]-a[0])*(cx[2]-a[2])-(cx[0]-a[0])*(bx[2]-a[2]))/det,kz=a[2]-dzdx*a[0]-dzdy*a[1];
+          const y0=Math.max(0,Math.ceil(command.bbox[1]*dpr-.5)),y1=Math.min(H-1,Math.floor(command.bbox[3]*dpr-.5)),ringEdges=[];
+          for(const r of rings)for(let i=0;i<r.length;i++){let aa=r[i],bb=r[(i+1)%r.length];if(Math.abs(aa[1]-bb[1])<1e-8)continue;if(aa[1]>bb[1])[aa,bb]=[bb,aa];ringEdges.push([aa[1],bb[1],aa[0],(bb[0]-aa[0])/(bb[1]-aa[1])]);}
+          for(let y=y0;y<=y1;y++){
+            const yy=y+.5,xs=[];for(const e of ringEdges)if(yy>=e[0]&&yy<e[1])xs.push(e[2]+(yy-e[0])*e[3]);xs.sort((a,b)=>a-b);
+            for(let j=0;j+1<xs.length;j+=2){const x0=Math.max(0,Math.ceil(xs[j]-.5)),x1=Math.min(W-1,Math.floor(xs[j+1]-.5));let z=kz+dzdy*yy+dzdx*(x0+.5),index=y*W+x0;
+              for(let x=x0;x<=x1;x++,index++,z+=dzdx)paint(index,z,c,owner,opacity);
+            }
+          }
+        }else{
+          const aa=command.points[0],bb=command.points[1],ax=aa[0]*dpr,ay=aa[1]*dpr,bx=bb[0]*dpr,by=bb[1]*dpr,dx=bx-ax,dy=by-ay,len2=dx*dx+dy*dy,r=Math.max(.45,command.width*dpr/2),r2=r*r;
+          const x0=Math.max(0,Math.floor(Math.min(ax,bx)-r)),x1=Math.min(W-1,Math.ceil(Math.max(ax,bx)+r)),y0=Math.max(0,Math.floor(Math.min(ay,by)-r)),y1=Math.min(H-1,Math.ceil(Math.max(ay,by)+r));
+          for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++){
+            const xx=x+.5,yy=y+.5,t=len2>1e-6?clamp(((xx-ax)*dx+(yy-ay)*dy)/len2,0,1):(bb[2]>=aa[2]?1:0),ex=xx-ax-t*dx,ey=yy-ay-t*dy,d2=ex*ex+ey*ey;if(d2>r2)continue;
+            let z=aa[2]+t*(bb[2]-aa[2]);if(p.bar)z+=Math.sqrt(Math.max(0,r2-d2))/(this.scale*dpr);
+            if(this.cut!==null&&camera.eye[2]>1e-8){const up=-(yy/dpr-this.height/2-this.pan[1])/this.scale;z=Math.min(z,(this.cut-this.target[2]-camera.up[2]*up)/camera.eye[2]);}
+            paint(y*W+x,z,c,owner,opacity);
+          }
+        }
+      }
+      const selectedOwner=this.selectedKey?this._ownerByKey.get(this.selectedKey):0;
+      if(edges||selectedOwner){
+        const lineOwner=new Uint8Array(this._ownerElements.length);this._ownerElements.forEach((e,i)=>{if(e&&(e.category==='steel'||e.category==='axes'))lineOwner[i]=1;});
+        for(let y=1;y<H-1;y++)for(let x=1,index=y*W+1;x<W-1;x++,index++){
+          const owner=owners[index];if(!owner||owner!==selectedOwner&&(!edges||lineOwner[owner]))continue;
+          if(owners[index-1]===owner&&owners[index+1]===owner&&owners[index-W]===owner&&owners[index+W]===owner)continue;
+          const i=index*4;if(owner===selectedOwner){data[i]=255;data[i+1]=212;data[i+2]=101;}
+          else{data[i]=data[i]*.76+35*.24;data[i+1]=data[i+1]*.76+46*.24;data[i+2]=data[i+2]*.76+48*.24;}
+        }
+      }
+      this.ctx.putImageData(image,0,0);this._lastDepthFrame=true;
+    }
+
+    _decorations(camera,empty){
+      const c=this.ctx,W=this.width,H=this.height;
+      c.globalAlpha=1;c.font='12px system-ui, -apple-system, Segoe UI, sans-serif';c.textBaseline='middle';
+      if(empty){c.textAlign='center';c.fillStyle='#526c76';c.font='600 16px system-ui, sans-serif';c.fillText(this.primitives.length?'Nenhuma geometria visível com estes filtros':'O modelo BIM aparecerá aqui',W/2,H/2-12);c.font='12px system-ui, sans-serif';c.fillStyle='#819399';c.fillText(this.primitives.length?'Ajuste o pavimento, as categorias ou a altura de corte.':'Gere o modelo para visualizar paredes, peças e armaduras.',W/2,H/2+14);}
+      else{
+        c.textAlign='left';c.fillStyle='rgba(248,251,252,.90)';c.fillRect(14,12,Math.min(W-28,340),27);c.fillStyle='#526870';c.font='11px system-ui, sans-serif';
+        const cutLabel=this._drag?'Prévia simplificada durante movimento':this.cut===null?'Modelo completo':`Corte Z ≤ ${this.cut.toLocaleString('pt-BR',{maximumFractionDigits:3})} m`;
+        c.fillText(cutLabel,23,26);
+        const raw=90/this.scale,power=Math.pow(10,Math.floor(Math.log10(Math.max(1e-10,raw)))),mantissa=raw/power,nice=(mantissa>=5?5:mantissa>=2?2:1)*power,len=nice*this.scale;
+        if(len>8&&len<W/2){c.strokeStyle='#5d7078';c.lineWidth=1.4;c.beginPath();c.moveTo(24,H-31);c.lineTo(24+len,H-31);c.moveTo(24,H-35);c.lineTo(24,H-27);c.moveTo(24+len,H-35);c.lineTo(24+len,H-27);c.stroke();c.fillStyle='#536871';c.fillText(`${Number(nice.toPrecision(6)).toLocaleString('pt-BR',{maximumFractionDigits:4})} m`,24,H-17);}
+      }
+      const cx=W-59,cy=H-54;c.fillStyle='rgba(247,250,251,.94)';c.beginPath();c.arc(cx,cy,40,0,TAU);c.fill();
+      const axes=[{v:[1,0,0],name:'X',color:'#c44946'},{v:[0,1,0],name:'Y',color:'#328764'},{v:[0,0,1],name:'Z',color:'#3478b6'}].sort((a,b)=>dot(a.v,camera.eye)-dot(b.v,camera.eye));
+      for(const a of axes){const dx=dot(a.v,camera.right)*27,dy=-dot(a.v,camera.up)*27;c.strokeStyle=a.color;c.fillStyle=a.color;c.lineWidth=1.8;c.beginPath();c.moveTo(cx,cy);c.lineTo(cx+dx,cy+dy);c.stroke();if(Math.hypot(dx,dy)<2){c.beginPath();c.arc(cx,cy,3.2,0,TAU);c.fill();}c.font='700 11px system-ui, sans-serif';c.textAlign='center';c.fillText(a.name,cx+dx*1.25+(Math.abs(dx)<2?8:0),cy+dy*1.25+(Math.hypot(dx,dy)<2?10:0));}
+      c.textAlign='left';c.textBaseline='alphabetic';
+    }
+    render(){
+      if(this._disposed)return;
+      const start=now();this._resize();const c=this.ctx,camera=this._camera(),commands=[],visibleElements=new Set();let primitives=0;
+      this._useDepthBuffer=typeof c.createImageData==='function'&&typeof c.putImageData==='function';this._lastDepthFrame=false;
+      c.setTransform(this.dpr,0,0,this.dpr,0,0);c.clearRect(0,0,this.width,this.height);
+      const gradient=c.createLinearGradient(0,0,0,this.height);gradient.addColorStop(0,'#f5f9fa');gradient.addColorStop(1,'#e8eff1');c.fillStyle=gradient;c.fillRect(0,0,this.width,this.height);
+      const framePrimitives=this._drag?this._movementPrimitives:this.primitives;
+      for(const primitive of framePrimitives){if(!this._isVisible(primitive))continue;const count=commands.length;if(primitive.kind==='solid')this._solid(primitive,camera,commands);else this._line(primitive,camera,commands);if(commands.length>count){visibleElements.add(primitive.key);primitives++;}}
+      commands.sort((a,b)=>a.depth-b.depth||(a.kind==='face'?0:1)-(b.kind==='face'?0:1));
+      const fast=!!this._drag||commands.length>18000,edges=!fast;
+      if(this._useDepthBuffer)this._rasterize(commands,edges,camera);else for(const command of commands)this._drawCommand(command,edges);
+      this._commands=commands;this._decorations(camera,commands.length===0);
+      const bounds=this._visibleBounds();
+      const stats={elements:visibleElements.size,totalElements:(this.scene.elements||[]).length,primitives,faces:commands.filter(x=>x.kind==='face').length,lines:commands.filter(x=>x.kind==='line').length,renderMs:Math.round((now()-start)*10)/10,selectedKey:this.selectedKey,cut:this.cut,zMin:validBounds(bounds)?bounds.min[2]:null,zMax:validBounds(bounds)?bounds.max[2]:null,mode:fast?'fast':'detail',renderer:this._useDepthBuffer?'depth-buffer':'painter',simplified:!!this._drag};
+      this.lastStats=stats;try{this.onStats(stats);}catch(err){if(typeof console!=='undefined')console.warn('BIM preview statistics callback:',err);}return stats;
+    }
+  }
+  return AlvenariaBimPreview;
+});
+
+</script>
+
+<script>
+/* AlvenariaPro v1.5 — offline BIM workspace and export workflow. */
+(function(global){
+'use strict';
+const Model=global.AlvenariaBimModel;
+const $b=id=>document.getElementById(id);
+const html=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmtB=(v,d=0)=>Number(v||0).toLocaleString('pt-BR',{maximumFractionDigits:d});
+const categories={walls:'Paredes',blocks:'Blocos e canaletas',mortar:'Juntas de argamassa',grout:'Graute',steel:'Armaduras',slabs:'Lajes',axes:'Eixos e cotas'};
+const newId=()=>global.crypto?.randomUUID?.()||'bim-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2)+Math.random().toString(36).slice(2);
+function enrich(s){
+ const previous=s.bim&&typeof s.bim==='object'?s.bim:{};
+ let options;try{options=Model.normalizeOptions(previous.options||{});}catch(e){options=Object.assign({},Model.defaults);}
+ s.bim={...previous,projectId:previous.projectId||newId(),options};s.version='1.5';return s;
+}
+const oldBase=baseState; baseState=function(){return enrich(oldBase());};
+const oldMigrate=migrate; migrate=function(s){return enrich(oldMigrate(s));};
+state=enrich(state);
+const oldSave=saveState; saveState=function(show=false){enrich(state);const result=oldSave(show);state.version='1.5';try{localStorage.setItem(APP_KEY,JSON.stringify(state));}catch(e){}return result;};
+const css=document.createElement('style');
+css.textContent=[
+'.bim-hero{background:linear-gradient(115deg,#103f43,#0c706c);color:white;border:0;position:relative;overflow:hidden}.bim-hero h3{font-size:20px;margin-bottom:7px}.bim-hero p{margin:0;line-height:1.6;max-width:870px;color:#d4eeeb;font-size:13px}.bim-hero .badge{background:#ffffff20;color:white;margin-bottom:12px}.bim-hero .bim-version{position:absolute;right:22px;top:24px;font-size:32px;font-weight:850;opacity:.16}',
+'.bim-options{margin:16px 0}.bim-options .field input[type=checkbox]{width:17px;height:17px}.bim-options .field .check-line{font-size:12px;min-height:32px;font-weight:650;text-transform:none;letter-spacing:0}.bim-checks{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px 14px}.bim-checks label{display:flex;gap:7px;align-items:center;font-size:12px;min-height:30px}.bim-checks input{accent-color:var(--brand);width:16px;height:16px}.bim-advanced{margin-top:15px;border-top:1px solid var(--line);padding-top:12px}.bim-advanced summary{font-size:12px;font-weight:800;cursor:pointer;margin-bottom:10px}',
+'.bim-metrics{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin:16px 0}.bim-metric{background:white;border:1px solid var(--line);border-radius:12px;padding:12px}.bim-metric b{display:block;color:#145b5a;font-size:23px;margin-bottom:2px}.bim-metric span{font-size:11px;color:var(--muted)}',
+'.bim-layout{display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:14px;align-items:start}.bim-view-card{padding:0;overflow:hidden}.bim-view-toolbar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:12px;border-bottom:1px solid var(--line);background:#fbfdfe}.bim-view-toolbar select{max-width:195px;border:1px solid var(--line);border-radius:8px;padding:6px;font-size:11px}.bim-view-toolbar .btn{font-size:11px;min-height:30px;padding:6px 9px}.bim-canvas-wrap{height:590px;min-height:350px;position:relative;background:#f3f7f8}.bim-canvas{display:block;width:100%;height:100%;touch-action:none;outline:none}.bim-preview-caption{padding:10px 14px;border-top:1px solid var(--line);font-size:10px;line-height:1.5;color:var(--muted)}.bim-preview-caption strong{color:#38575e}.bim-cutbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:9px 14px;border-top:1px solid var(--line);font-size:11px}.bim-cutbar input[type=range]{flex:1;min-width:80px;accent-color:var(--brand)}.bim-cutbar label{display:flex;gap:6px;align-items:center}.bim-cutbar output{min-width:75px;text-align:right;font-variant-numeric:tabular-nums}.bim-cutbar input[type=checkbox]{accent-color:var(--brand)}',
+'.bim-layer-list{display:grid;gap:5px;margin-bottom:16px}.bim-layer-list label{display:flex;gap:8px;align-items:center;font-size:12px;padding:4px 0}.bim-layer-list input{accent-color:var(--brand)}.bim-layer-dot{width:11px;height:11px;border-radius:3px;display:inline-block}.bim-inspector{overflow-wrap:anywhere}.bim-inspector h4{margin:12px 0 7px;font-size:14px}.bim-inspector table{border-collapse:collapse;width:100%;font-size:10px}.bim-inspector th,.bim-inspector td{padding:6px 0;text-align:left;vertical-align:top;border-bottom:1px solid #e5edef}.bim-inspector th{width:47%;padding-right:8px;color:var(--muted);font-weight:600}.bim-inspector td{max-width:140px}.bim-inspector details{border-top:1px solid var(--line);margin-top:10px;padding-top:10px}.bim-inspector summary{font-size:11px;font-weight:750;cursor:pointer}.bim-inspector pre{white-space:pre-wrap;font-size:9px;background:#f4f8f9;padding:8px;border-radius:8px;max-height:210px;overflow:auto}.bim-inspector .bim-id{font:9px ui-monospace,monospace;display:block;padding:7px;background:#edf4f5;border-radius:7px;margin-top:7px}.bim-inspector-scroll{max-height:410px;overflow:auto}',
+'.bim-status{margin-top:12px;font-size:12px;line-height:1.6;padding:11px 13px;background:#eef7f4;border:1px solid #c3e2d5;border-radius:10px}.bim-status[data-error=true]{background:#fff1f1;border-color:#ecc8c8;color:#942e37}.bim-status:empty{display:none}.bim-diagnostics{margin-top:16px}.bim-diagnostic{font-size:12px;line-height:1.5;padding:9px 12px;border-left:3px solid #71a9a4;background:#f3f8f8;margin:7px 0;border-radius:0 8px 8px 0}.bim-diagnostic.warning{border-left-color:#d6992d;background:#fff7e8}.bim-diagnostic.error{border-left-color:#c34950;background:#fff0f1}.bim-diagnostic small{display:block;color:#738187;margin-top:3px}.bim-diag-list{max-height:340px;overflow:auto}.bim-help{margin-top:16px}.bim-help p,.bim-help li{font-size:12px;line-height:1.65;color:#536871}.bim-help ul{padding-left:20px}.bim-help h4{color:#214d52}.bim-table-small{font-size:11px;width:100%;border-collapse:collapse}.bim-table-small th,.bim-table-small td{padding:7px;text-align:left;border-bottom:1px solid var(--line)}.bim-table-small input{max-width:145px;border:1px solid var(--line);border-radius:7px;padding:7px}.bim-busy-dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:#1aa89d;animation:bimPulse .9s infinite;margin-right:8px}@keyframes bimPulse{50%{opacity:.25}}',
+'@media(max-width:1150px){.bim-layout{grid-template-columns:minmax(0,1fr) 245px}.bim-canvas-wrap{height:530px}.bim-checks{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:850px){.bim-layout{grid-template-columns:1fr}.bim-inspector-scroll{max-height:360px}.bim-layer-list{grid-template-columns:repeat(2,minmax(0,1fr))}.bim-metrics{grid-template-columns:repeat(3,minmax(0,1fr))}.bim-canvas-wrap{height:470px}.bim-checks{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:480px){.bim-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.bim-canvas-wrap{height:380px}.bim-options .btn{width:100%}.bim-hero .bim-version{display:none}}'
+].join('\n');
+document.head.append(css);
+const page=document.createElement('section');page.id='page-bim';page.className='page';
+page.innerHTML=
+'<div class="page-head"><div><h2>Modelo BIM e exportação IFC</h2><p>Da geometria do projeto a um modelo aberto, com componentes, materiais e informações de cálculo.</p></div><div class="page-actions"><button class="btn" id="bimRefresh">↻ Atualizar prévia</button><button class="btn secondary" id="bimPackage">Pacote técnico ZIP</button><button class="btn primary" id="bimExport">↓ Baixar IFC</button></div></div>'+
+'<div class="card bim-hero"><span class="badge">IFC4 • funcionamento local</span><h3>Um modelo que acompanha o seu projeto</h3><p>Exporte a paginação em blocos e canaletas, os vãos, as células de graute, as barras e as lajes cadastradas. Cada componente mantém sua origem e suas propriedades. A prévia abaixo permite conferir a geometria e consultar os elementos.</p><span class="bim-version">BIM 1.5</span></div>'+
+'<div class="card bim-options"><div class="form-grid">'+
+'<div class="field w4"><label for="bimDetail">Detalhamento da exportação</label><select id="bimDetail"><option value="detailed">Detalhado — blocos, juntas e componentes</option><option value="coordination">Coordenação — corpos simplificados de paredes</option></select><div class="hint">O modo detalhado gera um arquivo maior e permite selecionar cada módulo de bloco.</div></div>'+
+'<div class="field w4"><label for="bimFloor">Pavimentos a exportar</label><select id="bimFloor"></select><div class="hint">Filtre o escopo para inspecionar ou exportar projetos grandes por partes.</div></div>'+
+'<div class="field w4"><label for="bimWall">Parede a exportar</label><select id="bimWall"></select><div class="hint">Ao escolher uma parede, o IFC contém seus componentes; lajes e eixos ficam fora desse recorte.</div></div>'+
+'<div class="field w12"><label>Componentes e informações</label><div class="bim-checks">'+
+[['includeMortar','Juntas de argamassa'],['includeGrout','Graute'],['includeRebar','Barras e estribos'],['includeBeams','Cintas, vergas e contravergas'],['includeSlabs','Lajes cadastradas'],['includeAxes','Eixos e cotas CAD'],['includeResults','Resultados e quantitativos do motor'],['hollowBlocks','Células e canaletas equivalentes']].map(([key,label])=>'<label><input type="checkbox" id="bimOpt_'+key+'" data-bim-option="'+key+'">'+label+'</label>').join('')+'</div></div></div>'+
+'<details class="bim-advanced"><summary>Convenções geométricas e cotas das lajes</summary><div class="notice">O cadastro original não define o desenho dos furos de fabricante, o cobrimento nem a cota vertical das lajes. As escolhas abaixo ficam registradas nas propriedades do IFC. Emendas, ancoragens e ganchos sem posição definida permanecem como informação.</div><div class="form-grid" style="margin-top:12px">'+
+'<div class="field w3"><label for="bimCover">Cobrimento de representação (mm)</label><input id="bimCover" type="number" min="0" max="100" step="1"><div class="hint">Convenção para posicionamento. Não altera o dimensionamento.</div></div>'+
+'<div class="field w3"><label for="bimSlabPosition">Face superior das lajes</label><select id="bimSlabPosition"><option value="top">No topo do pé-direito</option><option value="level">No nível do pavimento</option></select></div>'+
+'<div class="field w3"><label for="bimSlabOffset">Deslocamento adicional (m)</label><input id="bimSlabOffset" type="number" step="0.01"></div>'+
+'<div class="field w3"><label for="bimSteelDensity">Massa específica do aço (kg/m³)</label><input id="bimSteelDensity" type="number" min="1" max="50000" step="10"></div>'+
+'<div class="field w12"><div id="bimSlabDatums"></div></div></div></details></div>'+
+'<div class="bim-metrics" id="bimMetrics"><div class="bim-metric"><b>—</b><span>Carregue a prévia</span></div></div>'+
+'<div class="bim-layout"><div class="card bim-view-card"><div class="bim-view-toolbar"><button class="btn small" data-bim-view="iso">Isométrica</button><button class="btn small" data-bim-view="top">Planta</button><button class="btn small" data-bim-view="front">Elevação</button><button class="btn small" id="bimFit">Enquadrar</button><select id="bimViewFloor" aria-label="Pavimento visível na prévia"><option value="">Todos na prévia</option></select></div><div class="bim-canvas-wrap"><canvas id="bimCanvas" class="bim-canvas" tabindex="0" aria-label="Prévia tridimensional interativa do modelo BIM"></canvas></div><div class="bim-cutbar"><label><input id="bimCutEnable" type="checkbox">Corte horizontal</label><input id="bimCut" type="range" min="0" max="10" step="0.01" value="10" aria-label="Cota global de corte"><output id="bimCutValue">Sem corte</output></div><div class="bim-preview-caption"><strong>Arraste</strong> para girar • <strong>Roda do mouse</strong> para ampliar • <strong>Shift + arraste</strong> para mover • <strong>Clique</strong> para consultar.<br>Camadas, vista e corte alteram apenas a prévia. O IFC inclui todo o escopo escolhido acima. <span id="bimRenderStats"></span></div></div>'+
+'<div class="card bim-inspector"><h3>Visibilidade na prévia</h3><div class="bim-layer-list">'+Object.entries(categories).map(([key,label])=>'<label><input type="checkbox" data-bim-layer="'+key+'" checked>'+label+'</label>').join('')+'</div><h3>Elemento selecionado</h3><div id="bimSelection" class="bim-inspector-scroll"><div class="notice">Clique em um componente do modelo para consultar identificação, dimensões, origem e demais propriedades.</div></div></div></div>'+
+'<div id="bimStatus" class="bim-status" role="status" aria-live="polite"></div>'+
+'<div class="card bim-diagnostics"><div style="display:flex;gap:10px;align-items:center;justify-content:space-between"><h3 style="margin-bottom:0">Cobertura e ocorrências do modelo</h3><button class="btn small" id="bimInventory">Inventário CSV</button></div><p class="card-sub" style="margin-top:8px">As ocorrências registram limitações dos dados e situações que devem ser conferidas no projeto. Elas também acompanham o IFC e o pacote técnico.</p><div id="bimDiagnostics" class="bim-diag-list"><div class="empty">A análise será exibida com a prévia.</div></div></div>'+
+'<div class="card bim-help"><h3>O que acompanha a exportação</h3><div class="grid grid-2"><div><h4>Objetos e informação</h4><ul><li>Estrutura de projeto, local, edificação e pavimentos, com níveis e identificadores estáveis.</li><li>Paredes, aberturas, blocos/canaletas, argamassa, graute, cintas, vergas, contravergas, barras, estribos, lajes e referências CAD, conforme o cadastro e as opções.</li><li>Materiais, dimensões, tipos, fiadas, prumadas, cargas, esforços, índices de utilização e resultados do motor.</li><li>Quantidades geométricas sem perdas e estimativas de orçamento identificadas separadamente.</li></ul></div><div><h4>Leitura e continuidade</h4><ul><li>Abra o arquivo .ifc em um aplicativo que leia IFC4. A organização e a aparência podem variar conforme o leitor.</li><li>O ZIP reúne IFC, inventário CSV, diagnóstico JSON, dados completos do projeto e guia de leitura.</li><li>Para continuar editando no AlvenariaPro, use o JSON do projeto. O IFC exportado não é uma importação editável para este sistema.</li><li>As repetições usadas nas cargas não criam pavimentos físicos adicionais. A geometria inclui os níveis efetivamente cadastrados.</li></ul></div></div></div>';
+document.querySelector('.content').append(page);
+const nav=document.createElement('button');nav.className='nav-btn';nav.dataset.page='bim';nav.innerHTML='<span class="nav-icon">◈</span>Modelo BIM / IFC <span class="nav-badge">v1.5</span>';nav.onclick=()=>navigate('bim');
+document.querySelector('.nav-btn[data-page="modulation"]').insertAdjacentElement('afterend',nav);
+for(const pid of ['cad','report']){
+ const actions=document.querySelector('#page-'+pid+' .page-actions');
+ if(actions){const b=document.createElement('button');b.className='btn secondary';b.textContent='◈ Modelo BIM / IFC';b.onclick=()=>navigate('bim');actions.append(b);}
+}
+const manual=document.querySelector('#page-manual');
+if(manual){const card=document.createElement('div');card.className='card bim-help';card.innerHTML='<h3>Modelo BIM e IFC — versão 1.5</h3><p>No menu <strong>Modelo BIM / IFC</strong>, escolha o detalhamento e o escopo. Use <strong>Atualizar prévia</strong> para inspecionar o modelo, depois <strong>Baixar IFC</strong> ou <strong>Pacote técnico ZIP</strong>. O arquivo é gerado localmente e conserva as informações do projeto. Nas convenções geométricas, confira as cotas das lajes e o cobrimento de representação.</p><p>No modo detalhado, a parede organiza seus blocos e demais componentes sem um segundo corpo maciço sobreposto. Vazios, encontros e regiões grauteadas são recortados geometricamente. Os detalhes internos dos blocos e os arranjos sem cadastro executivo são identificados como paramétricos. Quantidades do cálculo e da geometria permanecem distintas.</p>';manual.append(card);}
+let preview=null,lastScene=null,lastResult=null,busy=false,sceneSignature='',prepareToken=0;
+function signature(options){return Model.sourceFingerprint()+'|'+JSON.stringify(options);}
+function options(){return Object.assign({},Model.defaults,state.bim.options);}
+function setStatus(message,error=false){const el=$b('bimStatus');el.textContent=message;el.dataset.error=String(error);}
+function toggleBusy(value,caption){busy=value;['bimExport','bimPackage','bimRefresh','bimInventory'].forEach(id=>$b(id).disabled=value);$b('bimExport').textContent=value?'Preparando…':'↓ Baixar IFC';$b('bimRefresh').textContent=value?'Atualizando…':'↻ Atualizar prévia';page.setAttribute('aria-busy',String(value));if(value)setStatus(caption||'Preparando o modelo…');}
+function syncControls(){
+ const o=options();
+ $b('bimDetail').value=o.detail;
+ const currentFloor=o.floorId;
+ $b('bimFloor').innerHTML='<option value="">Todos os pavimentos</option>'+floorsAsc().map(f=>'<option value="'+html(f.id)+'">'+html(f.name)+' · nível '+fmtB(f.level,2)+' m</option>').join('');
+ $b('bimFloor').value=currentFloor;
+ $b('bimWall').innerHTML='<option value="">Todas as paredes</option>'+(state.walls||[]).filter(w=>!o.floorId||w.floorId===o.floorId).map(w=>'<option value="'+html(w.id)+'">'+html(w.label+' — '+(getFloor(w.floorId)?.name||''))+'</option>').join('');
+ $b('bimWall').value=o.wallId;
+ for(const [key,value]of Object.entries(o)){const el=$b('bimOpt_'+key);if(el)el.checked=!!value;}
+ $b('bimCover').value=Math.round(o.cover*1000*100)/100;$b('bimSlabPosition').value=o.slabPosition;$b('bimSlabOffset').value=o.slabOffset;$b('bimSteelDensity').value=o.steelDensity;
+ $b('bimOpt_includeMortar').disabled=o.detail!=='detailed';$b('bimOpt_hollowBlocks').disabled=o.detail!=='detailed';
+ renderSlabDatums();
+}
+function renderSlabDatums(){
+ const ss=(state.slabs||[]).filter(s=>!state.bim.options.floorId||s.floorId===state.bim.options.floorId),o=options();
+ if(!ss.length){$b('bimSlabDatums').innerHTML='<div class="compact-note">Nenhuma laje cadastrada neste escopo. As lajes desenhadas no editor CAD ficam disponíveis aqui.</div>';return;}
+ $b('bimSlabDatums').innerHTML='<div class="table-wrap"><table class="bim-table-small"><thead><tr><th>Laje / pavimento</th><th>Face superior acima do nível do pavimento (m)</th><th>Convenção</th></tr></thead><tbody>'+ss.map(s=>{const f=getFloor(s.floorId),over=Number.isFinite(Number(s.bimElevation)),value=over?Number(s.bimElevation):(o.slabPosition==='top'?Number(f?.height||0):0)+o.slabOffset;return '<tr><td>'+html(s.label+' — '+(f?.name||''))+'</td><td><input type="number" step="0.01" data-bim-slab="'+html(s.id)+'" value="'+value+'" aria-label="Cota da laje '+html(s.label)+'"></td><td>'+html(over?'Cota individual':'Convenção global')+' <button class="btn small" data-bim-slab-reset="'+html(s.id)+'">Usar global</button></td></tr>';}).join('')+'</tbody></table></div>';
+ $b('bimSlabDatums').querySelectorAll('[data-bim-slab]').forEach(el=>el.onchange=()=>{const s=state.slabs.find(s=>s.id===el.dataset.bimSlab),v=Number(el.value);if(!s||!Number.isFinite(v))return;s.bimElevation=v;saveState(false);invalidate('Cota individual atualizada. Atualize a prévia para conferir.');renderSlabDatums();});
+ $b('bimSlabDatums').querySelectorAll('[data-bim-slab-reset]').forEach(el=>el.onclick=()=>{const s=state.slabs.find(s=>s.id===el.dataset.bimSlabReset);if(s)delete s.bimElevation;saveState(false);invalidate('A laje voltou a usar a convenção global.');renderSlabDatums();});
+}
+function readControls(){
+ const o=options();o.detail=$b('bimDetail').value;o.floorId=$b('bimFloor').value;o.wallId=$b('bimWall').value;
+ for(const el of page.querySelectorAll('[data-bim-option]'))o[el.dataset.bimOption]=el.checked;
+ o.cover=Number($b('bimCover').value)/1000;o.slabPosition=$b('bimSlabPosition').value;o.slabOffset=Number($b('bimSlabOffset').value);o.steelDensity=Number($b('bimSteelDensity').value);
+ return Model.normalizeOptions(o);
+}
+function invalidate(message){sceneSignature='';lastResult=null;if(lastScene&&message)setStatus(message);}
+function controlsChanged(ev){
+ if(busy)return;
+ try{const o=readControls();if(ev?.target?.id==='bimFloor')o.wallId='';state.bim.options=o;saveState(false);syncControls();invalidate('Opções atualizadas. A próxima prévia e exportação usarão esta configuração.');}
+ catch(e){setStatus(e.message,true);}
+}
+for(const el of page.querySelectorAll('.bim-options input:not([data-bim-slab]),.bim-options select'))el.addEventListener('change',controlsChanged);
+function selectElement(e){
+ if(!e){$b('bimSelection').innerHTML='<div class="notice">Selecione um componente na prévia.</div>';return;}
+ const id=global.IFC4.guid(lastScene?.project.key||state.bim.projectId,'element/'+e.key),quantities=e.quantities||[];
+ const rows=quantities.map(q=>'<tr><th>'+html(q.name)+'</th><td>'+fmtB(q.value,6)+' '+html(({length:'m',area:'m²',volume:'m³',weight:'kg',count:'un'})[q.type]||'')+'</td></tr>').join('');
+ $b('bimSelection').innerHTML='<h4>'+html(e.name)+'</h4><div class="badge info">'+html(e.ifcClass)+'</div><code class="bim-id">'+html(id)+'</code><table><tr><th>Pavimento</th><td>'+html(lastScene?.storeys.find(s=>s.key===e.storeyKey)?.name||'')+'</td></tr><tr><th>Origem</th><td>'+html(e.key)+'</td></tr>'+rows+'</table>'+Object.entries(e.psets||{}).map(([name,props])=>'<details><summary>'+html(name.replace(/^AlvenariaPro_/,'').replace(/_/g,' '))+'</summary><table>'+Object.entries(props).map(([key,value])=>{const val=value&&typeof value==='object'&&'value'in value?value.value:value;return '<tr><th>'+html(key)+'</th><td>'+html(typeof val==='number'?fmtB(val,6):val)+'</td></tr>';}).join('')+'</table></details>').join('');
+}
+function previewReady(){
+ if(preview)return preview;
+ if(!global.AlvenariaBimPreview)throw new Error('Módulo de prévia 3D indisponível.');
+ preview=new global.AlvenariaBimPreview($b('bimCanvas'),{onSelect:selectElement,onStats:stats=>{$b('bimRenderStats').textContent=stats.elements!==undefined?'Visíveis: '+fmtB(stats.elements)+' componentes.':'';}});
+ preview.setVisibility('openings',false);preview.setVisibility('beams',false);
+ return preview;
+}
+function showScene(scene){
+ lastScene=scene;lastResult=null;sceneSignature=signature(scene.modelOptions);
+ const s=scene.summary,metrics=[['Elementos IFC',s.elements],['Blocos e canaletas',s.blocks],['Barras e estribos',s.reinforcingBars],['Pavimentos',s.storeys],['Ocorrências de revisão',s.warnings]];
+ $b('bimMetrics').innerHTML=metrics.map(([label,value])=>'<div class="bim-metric"><b>'+fmtB(value)+'</b><span>'+label+'</span></div>').join('');
+ const old=$b('bimViewFloor').value;
+ $b('bimViewFloor').innerHTML='<option value="">Todos na prévia</option>'+scene.storeys.map(f=>'<option value="'+html(f.key)+'">'+html(f.name)+'</option>').join('');
+ if(scene.storeys.some(f=>f.key===old))$b('bimViewFloor').value=old;
+ const p=previewReady();p.setScene(scene);p.setFloor($b('bimViewFloor').value);
+ for(const el of page.querySelectorAll('[data-bim-layer]'))p.setVisibility(el.dataset.bimLayer,el.checked);
+ const min=Math.min(...scene.storeys.map(f=>f.elevation),0),max=Math.max(...scene.storeys.map(f=>f.elevation+Number(getFloor(f.key)?.height||3)),1);
+ $b('bimCut').min=min;$b('bimCut').max=max+.2;$b('bimCut').value=max+.2;$b('bimCutEnable').checked=false;p.setCut(null);$b('bimCutValue').textContent='Sem corte';
+ renderDiagnostics(scene.diagnostics);selectElement(null);
+ setStatus('Modelo atualizado: '+fmtB(s.elements)+' elementos, '+fmtB(s.openings)+' vãos, '+fmtB(s.grout)+' trechos de graute e '+fmtB(s.beams)+' cintas/vergas/contravergas. Dados de cálculo preservados.');
+}
+function renderDiagnostics(ds){$b('bimDiagnostics').innerHTML=ds.length?ds.map(d=>'<div class="bim-diagnostic '+html(d.severity)+'">'+html(d.message)+(d.sourceId?'<small>Origem: '+html(d.sourceId)+'</small>':'')+'</div>').join(''):'<div class="notice">Nenhuma ocorrência identificada no escopo.</div>';}
+async function prepare(force=false){
+ const o=readControls(),sig=signature(o);
+ if(!force&&lastScene&&sceneSignature===sig)return lastScene;
+ const token=++prepareToken;
+ const scene=await Model.buildScene(o);
+ if(token!==prepareToken)throw new Error('Uma nova preparação substituiu esta solicitação.');
+ showScene(scene);return scene;
+}
+function fileStem(scene){
+ const name=String(scene?.project?.name||state.project.name||'Projeto').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z0-9_-]+/g,'_').replace(/^_+|_+$/g,'').slice(0,80)||'Projeto';
+ const rev=String(state.project.revision||'R00').replace(/[^a-zA-Z0-9_-]/g,'');
+ const scope=scene?.modelOptions.floorId?'_'+String(getFloor(scene.modelOptions.floorId)?.name||scene.modelOptions.floorId).replace(/[^a-zA-Z0-9_-]/g,'_'):'';
+ return name+'_'+rev+scope+'_'+(scene?.modelOptions.detail==='coordination'?'Coordenacao':'Detalhado');
+}
+function downloadBlob(name,blob){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);}
+function csvFor(scene,ids={}){
+ const escCsv=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
+ const rows=[['GlobalId','Classe_IFC','Nome','Categoria','Pavimento','Chave_origem','Conjunto_pai','Material','Volume_geometrico_m3','Comprimento_m','Massa_kg','Propriedades_JSON']];
+ for(const e of scene.elements){const qs=e.quantities||[],find=n=>qs.find(q=>q.name===n)?.value??'',mat=scene.materials.find(m=>m.key===e.materialKey)?.name||'';rows.push([ids[e.key]?.globalId||global.IFC4.guid(scene.project.key,'element/'+e.key),e.ifcClass,e.name,e.category,scene.storeys.find(s=>s.key===e.storeyKey)?.name||'',e.key,e.parentKey||e.hostKey||'',mat,find('NetVolume'),find('Length'),find('Weight'),JSON.stringify(e.psets||{})]);}
+ return '\ufeff'+rows.map(r=>r.map(escCsv).join(';')).join('\r\n');
+}
+function reportFor(scene,result){
+ return {application:'AlvenariaPro',version:'1.5',schema:'IFC4',project:state.project.name,revision:state.project.revision,generatedAt:scene.project.createdAt,options:scene.modelOptions,summary:scene.summary,ifcStatistics:result?.stats||null,sourceFingerprint:scene.sourceFingerprint,diagnostics:scene.diagnostics,writerWarnings:result?.warnings||[],conventions:scene.project.psets.AlvenariaPro_Exportacao,quantityRule:'As quantidades geométricas não incluem perdas nem acréscimos sem localização. Não somar conjuntos e componentes. As propriedades QuantitativosDoMotor conservam as estimativas originais.',attachments:'Bases PDF externas não são embutidas no IFC ou no JSON de projeto; conserve os arquivos de origem.',elements:scene.elements.map(e=>({key:e.key,globalId:result?.ids?.[e.key]?.globalId||global.IFC4.guid(scene.project.key,'element/'+e.key),name:e.name,ifcClass:e.ifcClass,parentKey:e.parentKey||'',hostKey:e.hostKey||'',storeyKey:e.storeyKey,category:e.category,quantities:e.quantities||[]}))};
+}
+const crcTable=(()=>{const a=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let j=0;j<8;j++)c=c&1?0xEDB88320^(c>>>1):c>>>1;a[n]=c>>>0;}return a;})();
+function crc32(data){let c=0xffffffff;for(const x of data)c=crcTable[(c^x)&255]^(c>>>8);return (c^0xffffffff)>>>0;}
+function zipBlob(files){
+ const encoder=new TextEncoder(),local=[],central=[];let offset=0;const date=new Date(),time=(date.getHours()<<11)|(date.getMinutes()<<5)|(date.getSeconds()>>1),dosDate=((Math.max(1980,date.getFullYear())-1980)<<9)|((date.getMonth()+1)<<5)|date.getDate();
+ for(const f of files){
+  const name=encoder.encode(f.name),data=typeof f.data==='string'?encoder.encode(f.data):f.data,crc=crc32(data),h=new Uint8Array(30),v=new DataView(h.buffer);
+  v.setUint32(0,0x04034b50,true);v.setUint16(4,20,true);v.setUint16(6,0x0800,true);v.setUint16(10,time,true);v.setUint16(12,dosDate,true);v.setUint32(14,crc,true);v.setUint32(18,data.length,true);v.setUint32(22,data.length,true);v.setUint16(26,name.length,true);
+  local.push(h,name,data);
+  const c=new Uint8Array(46),cv=new DataView(c.buffer);cv.setUint32(0,0x02014b50,true);cv.setUint16(4,20,true);cv.setUint16(6,20,true);cv.setUint16(8,0x0800,true);cv.setUint16(12,time,true);cv.setUint16(14,dosDate,true);cv.setUint32(16,crc,true);cv.setUint32(20,data.length,true);cv.setUint32(24,data.length,true);cv.setUint16(28,name.length,true);cv.setUint32(42,offset,true);central.push(c,name);offset+=h.length+name.length+data.length;
+ }
+ const centralLength=central.reduce((s,a)=>s+a.length,0),end=new Uint8Array(22),ev=new DataView(end.buffer);ev.setUint32(0,0x06054b50,true);ev.setUint16(8,files.length,true);ev.setUint16(10,files.length,true);ev.setUint32(12,centralLength,true);ev.setUint32(16,offset,true);
+ return new Blob([...local,...central,end],{type:'application/zip'});
+}
+function readmeFor(scene){
+ return 'ALVENARIAPRO v1.5 — MODELO BIM / IFC\n\n'+
+ 'Projeto: '+scene.project.name+'\nRevisão: '+(state.project.revision||'')+'\nGerado em: '+scene.project.createdAt+'\nFormato: IFC4 STEP, unidades geométricas em metros.\n\n'+
+ 'ARQUIVOS\nModelo.ifc: modelo físico e suas propriedades.\nInventario.csv: GlobalIds, componentes e quantidades, com propriedades completas.\nDiagnostico.json: cobertura, convenções, ocorrências e inventário do modelo.\nProjeto_AlvenariaPro.json: dados completos do projeto para importar no AlvenariaPro.\nLEIA-ME.txt: este guia.\n\n'+
+ 'COMO USAR\nAbra Modelo.ifc em um visualizador/editor compatível com IFC4. Expanda Edificação > Pavimentos > Paredes para localizar componentes. No modo detalhado, a parede organiza seus filhos sem corpo maciço duplicado. Se o leitor ocultar componentes, habilite IfcBuildingElementPart e IfcReinforcingBar.\n\n'+
+ 'CONTINUIDADE\nPara continuar o projeto, importe Projeto_AlvenariaPro.json no menu Dados do projeto. Preserve PDFs de origem separadamente; o cadastro e seus metadados são conservados, mas os binários de bases PDF não são embutidos neste pacote.\n\n'+
+ 'GEOMETRIA E INFORMAÇÃO\nParedes e aberturas seguem as coordenadas cadastradas. Blocos são derivados da malha de fiadas com juntas e cortes reais. Furos, septos, canaletas e disposição das barras na seção são equivalentes paramétricos, pois não há catálogo de fabricação. As lajes usam a convenção de cota registrada na exportação ou a cota individual informada. Não são criados caixilhos, portas, vidros, fundações, instalações ou armaduras de laje sem cadastro.\n\n'+
+ 'ARMADURAS\nOs diâmetros e números de barras seguem os resultados ativos do motor. Cobrimento e arranjo transversal são convenções de representação. As barras têm comprimento geométrico útil; transpasse, ancoragem e ganchos genéricos não localizados ficam em propriedades, sem fabricar um detalhe executivo. Estribos usam cantos arredondados paramétricos. A representação não valida o projeto estrutural.\n\n'+
+ 'QUANTIDADES\nNetVolume, Length e Weight dos componentes representam a geometria exportada, sem perdas. As estimativas originais de graute, argamassa, blocos e aço são guardadas separadamente em AlvenariaPro_QuantitativosDoMotor. As quantidades podem diferir devido a vãos, juntas, encontros, número de módulos e acréscimos sem posição. Volumes de concreto/graute não descontam a ocupação por aço. Não some quantidades de conjuntos e componentes.\n\n'+
+ 'IDENTIFICADORES E REVISÕES\nOs GlobalIds são estáveis para a mesma identidade de projeto e chave de elemento. Mantêm-se ao salvar, exportar novamente e importar o JSON do mesmo projeto. Alterações de paginação podem criar/remover chaves de componentes.\n\n'+
+ 'PADRÃO\nModelo físico no esquema IFC4, com organização espacial, relações de composição, aberturas, tipos, materiais, propriedades e quantidades. Não se declara certificação buildingSMART ou conformidade com um MVD específico.\n\n'+
+ 'OCORRÊNCIAS\n'+scene.diagnostics.map(d=>d.severity.toUpperCase()+': '+d.message).join('\n');
+}
+async function generate(optionsArg={}){
+ const merged=Object.assign({},options(),optionsArg),scene=await Model.buildScene(merged),result=global.IFC4.exportModel(scene);result.scene=scene;result.diagnostics=scene.diagnostics;
+ if(optionsArg.download===true)downloadBlob(fileStem(scene)+'.ifc',new Blob([result.text],{type:'application/x-step;charset=utf-8'}));return result;
+}
+async function onAction(kind){
+ if(busy)return;
+ toggleBusy(true,kind==='preview'?'Construindo a prévia do projeto…':'Preparando o modelo e suas informações…');
+ await new Promise(resolve=>setTimeout(resolve,25));
+ try{
+  const scene=await prepare(kind==='preview');
+  if(kind==='preview')return;
+  if(kind==='inventory'){downloadBlob(fileStem(scene)+'_Inventario.csv',new Blob([csvFor(scene,lastResult?.ids)],{type:'text/csv;charset=utf-8'}));setStatus('Inventário CSV gerado com identificadores, classes, materiais, quantidades e propriedades.');return;}
+  setStatus('Escrevendo o arquivo IFC4…');await new Promise(resolve=>setTimeout(resolve,25));
+  const result=global.IFC4.exportModel(scene);lastResult=result;
+  if(result.warnings?.length)renderDiagnostics(scene.diagnostics.concat(result.warnings.map(message=>({severity:'warning',message}))));
+  if(kind==='ifc')downloadBlob(fileStem(scene)+'.ifc',new Blob([result.text],{type:'application/x-step;charset=utf-8'}));
+  else {
+   const report=reportFor(scene,result),files=[{name:'Modelo.ifc',data:result.text},{name:'Inventario.csv',data:csvFor(scene,result.ids)},{name:'Diagnostico.json',data:JSON.stringify(report,null,2)},{name:'Projeto_AlvenariaPro.json',data:JSON.stringify(state,null,2)},{name:'LEIA-ME.txt',data:readmeFor(scene)}];
+   downloadBlob(fileStem(scene)+'_Pacote_BIM.zip',zipBlob(files));
+  }
+  const size=new TextEncoder().encode(result.text).length/1024/1024;
+  setStatus((kind==='ifc'?'IFC gerado':'Pacote técnico gerado')+': '+fmtB(scene.elements.length)+' elementos; '+fmtB(result.stats.properties)+' propriedades; IFC com '+fmtB(size,2)+' MB. '+scene.summary.warnings+' ocorrência(s) de revisão registradas.');
+ }catch(e){console.error('Exportação BIM:',e);setStatus(e.message||String(e),true);if(e.diagnostics)renderDiagnostics(e.diagnostics);}
+ finally{toggleBusy(false);}
+}
+$b('bimRefresh').onclick=()=>onAction('preview');$b('bimExport').onclick=()=>onAction('ifc');$b('bimPackage').onclick=()=>onAction('zip');$b('bimInventory').onclick=()=>onAction('inventory');
+for(const el of page.querySelectorAll('[data-bim-view]'))el.onclick=()=>{if(preview)preview.preset(el.dataset.bimView);};
+$b('bimFit').onclick=()=>preview?.fit();$b('bimViewFloor').onchange=()=>{if(preview){preview.setFloor($b('bimViewFloor').value);preview.fit();}};
+for(const el of page.querySelectorAll('[data-bim-layer]'))el.onchange=()=>preview?.setVisibility(el.dataset.bimLayer,el.checked);
+function updateCut(){const cut=$b('bimCutEnable').checked?Number($b('bimCut').value):null;preview?.setCut(cut);$b('bimCutValue').textContent=cut===null?'Sem corte':fmtB(cut,2)+' m (Z)';}
+$b('bimCut').oninput=()=>{$b('bimCutEnable').checked=true;updateCut();};$b('bimCutEnable').onchange=updateCut;
+const oldNavigate=navigate;navigate=function(name){oldNavigate(name);if(name==='bim'){syncControls();if(lastScene&&sceneSignature===signature(options())){preview?.fit();}else if(!busy)setTimeout(()=>onAction('preview'),40);}};
+const oldRender=renderAll;renderAll=function(){oldRender();document.title='AlvenariaPro v1.5 — Alvenaria estrutural e modelos BIM IFC';const small=document.querySelector('.brand small');if(small)small.textContent='v1.5 • projeto estrutural, CAD e modelos BIM IFC';if(currentPage==='bim'){syncControls();invalidate('O projeto foi atualizado. Gere novamente a prévia ou exporte o modelo atual.');}};
+syncControls();
+document.title='AlvenariaPro v1.5 — Alvenaria estrutural e modelos BIM IFC';
+const version=document.querySelector('.brand small');if(version)version.textContent='v1.5 • projeto estrutural, CAD e modelos BIM IFC';
+saveState(false);
+global.AlvenariaProBIM=Object.freeze({version:'1.5',defaults:Model.defaults,buildScene:opts=>Model.buildScene(Object.assign({},options(),opts||{})),exportIFC:generate,validate:opts=>Model.validate(Object.assign({},options(),opts||{})),getOptions:()=>cloneOptions(),setOptions:opts=>{state.bim.options=Model.normalizeOptions(Object.assign({},options(),opts));saveState(false);syncControls();invalidate();return cloneOptions();},getLastScene:()=>lastScene,getLastResult:()=>lastResult,inventoryCSV:csvFor,diagnosticReport:reportFor,readme:readmeFor,zip:zipBlob,refresh:()=>onAction('preview'),open:()=>navigate('bim'),sourceFingerprint:Model.sourceFingerprint});
+function cloneOptions(){return JSON.parse(JSON.stringify(options()));}
+})(globalThis);
+
+
+</script>
 </body>
 </html>

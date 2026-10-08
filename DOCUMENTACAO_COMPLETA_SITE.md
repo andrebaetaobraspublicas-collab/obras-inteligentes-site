@@ -1,6 +1,6 @@
 # Documentacao completa do site Obras Inteligentes
 
-Atualizado em: 05/10/2026
+Atualizado em: 07/10/2026
 Dominio publicado: https://www.obrasinteligentes.ia.br/  
 Diretorio local principal: `C:\Obras Inteligentes`  
 Repositorio GitHub: `https://github.com/andrebaetaobraspublicas-collab/obras-inteligentes-site.git`  
@@ -12,6 +12,8 @@ Ultimo commit base verificado nesta documentacao: `c2d2bf7` - `Documenta site Ob
 Este arquivo registra o estado atual do site, dos aplicativos publicados, da estrutura local e do fluxo de publicacao. Ele deve ser lido por qualquer novo prompt/atendimento antes de continuar alteracoes no site.
 
 ## Resumo do site
+
+Em 07/10/2026, atualizado `/alvenariapro/` com a fonte integral `C:\Users\ACER\Documents\Downloads\AlvenariaPro_v1_5_BIM_IFC.html` (versao 1.5 BIM/IFC). Tambem conferido e copiado `/estruturacalc-pro/` a partir de `C:\Users\ACER\Documents\Downloads\EstruturaCalc_PRO_v1.9.html`: o anexo e identico a versao 1.9 existente, sem mudanca de conteudo. Preservados ambos cards, rotas e filtro Estruturas. Backups anteriores: `backups/alvenariapro-before-v15-bim-ifc-20261007.html` e `backups/estruturacalc-pro-before-update-20261007.html`. Nenhum outro modulo alterado.
 
 Em 05/10/2026, atualizado `EstruturaCalc PRO` para 1.9 na rota `/estruturacalc-pro/`, copiando integralmente `C:\Users\ACER\Documents\Downloads\EstruturaCalc_PRO_v1.9.html`. Mantidos card 104, filtro Estruturas, busca e rodape; nenhum outro aplicativo alterado. Backup da versao 1.8: `C:\Obras Inteligentes\backups\estruturacalc-pro-before-v19-20261005.html`.
 
