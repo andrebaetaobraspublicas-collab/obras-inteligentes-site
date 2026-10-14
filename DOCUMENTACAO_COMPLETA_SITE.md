@@ -13,6 +13,8 @@ Este arquivo registra o estado atual do site, dos aplicativos publicados, da est
 
 ## Resumo do site
 
+Em 14/10/2026, atualizado `HidroSan Pro BIM` para 2.2, na rota `/hidrosan-pro/`, copiando integralmente `C:\Users\ACER\Documents\Downloads\HidroSan_Pro_BIM_v2_2.html` para `hidrosan-pro/index.html`. Mantidos card 52, menu, busca e rodape. Backup da versao 2.1 em `backups/hidrosan-pro-before-bim-v22-<data-hora>.html`. Nenhum outro aplicativo alterado.
+
 Em 14/10/2026, incluidos dois aplicativos independentes no filtro existente `Gestao de Obras e de Contratos`, em Todos, na busca e no rodape: card 105 `ObraCheck Planejamento`, rota `/obracheck-planejamento/`, fonte `C:\Users\ACER\Documents\Downloads\ObraCheck_Planejamento (4).html`; e card 106 `ObraCheck Fiscalizacao`, rota `/obracheck-fiscalizacao/`, fonte `C:\Users\ACER\Documents\Downloads\ObraCheck_Fiscalizacao (1).html`. Copias integrais em `index.html` das respectivas pastas locais. Backup da home anterior em `backups/index-before-obracheck-<data-hora>.html`. Nao substituem os aplicativos de fiscalizacao ou planejamento existentes.
 
 Em 14/10/2026, atualizado `HidroSan Pro` para BIM 2.1, na rota `/hidrosan-pro/`, com copia integral de `C:\Users\ACER\Documents\Downloads\HidroSan_Pro_BIM_v2_1.html` para `C:\Obras Inteligentes\hidrosan-pro\index.html`. Mantidos card 52, endereco, busca, rodape e filtro `Instalacoes Hidrosanitarias e de Incendio`. Backup anterior salvo em `backups/hidrosan-pro-before-bim-v21-<data-hora>.html`. Nenhum outro aplicativo alterado.
