@@ -1,6 +1,6 @@
 # Documentacao completa do site Obras Inteligentes
 
-Atualizado em: 14/10/2026
+Atualizado em: 15/10/2026
 Dominio publicado: https://www.obrasinteligentes.ia.br/  
 Diretorio local principal: `C:\Obras Inteligentes`  
 Repositorio GitHub: `https://github.com/andrebaetaobraspublicas-collab/obras-inteligentes-site.git`  
@@ -12,6 +12,8 @@ Ultimo commit base verificado nesta documentacao: `c2d2bf7` - `Documenta site Ob
 Este arquivo registra o estado atual do site, dos aplicativos publicados, da estrutura local e do fluxo de publicacao. Ele deve ser lido por qualquer novo prompt/atendimento antes de continuar alteracoes no site.
 
 ## Resumo do site
+
+Em 15/10/2026, atualizado `IncendioCalc` para PRO BIM 2.1, na rota `/incendiocalc/`, com copia integral de `C:\Users\ACER\Documents\Downloads\IncendioCalc_PRO_BIM_v2_1.html` para `incendiocalc/index.html`. Mantidos card, endereco, busca, rodape e filtro `Instalacoes Hidrosanitarias e de Incendio`. Backup anterior em `backups/incendiocalc-before-pro-bim-v21-<data-hora>.html`. Nenhum outro aplicativo alterado.
 
 Em 14/10/2026, atualizado `HidroSan Pro BIM` para 2.2, na rota `/hidrosan-pro/`, copiando integralmente `C:\Users\ACER\Documents\Downloads\HidroSan_Pro_BIM_v2_2.html` para `hidrosan-pro/index.html`. Mantidos card 52, menu, busca e rodape. Backup da versao 2.1 em `backups/hidrosan-pro-before-bim-v22-<data-hora>.html`. Nenhum outro aplicativo alterado.
 
