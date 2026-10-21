@@ -13,6 +13,8 @@ Este arquivo registra o estado atual do site, dos aplicativos publicados, da est
 
 ## Resumo do site
 
+Em 21/10/2026, atualizado `PrecoIVA Pro` na rota `/precoiva-pro/`, com copia integral de `C:\Users\ACER\Documents\Downloads\PreçoIVA Pro (1).html` para `precoiva-pro/index.html`. Preservados card 108, filtro Orcamento, busca, rodape e os demais aplicativos. Backup anterior em `backups/precoiva-pro-before-update-<data-hora>.html`.
+
 Em 21/10/2026, incluido o card 108 `PrecoIVA Pro` no filtro existente `Orcamento`, em Todos, na busca e no rodape. Rota: `/precoiva-pro/`; arquivo local: `C:\Obras Inteligentes\precoiva-pro\index.html`. Fonte integral: `C:\Users\ACER\Documents\Downloads\PreçoIVA Pro.html`. Simula preco de revenda de mercadorias em 2027 com ICMS, IBS, CBS e memoria de calculo. Preservados manual, avisos legais e premissas do arquivo enviado. O anexo utiliza fontes do Google Fonts; nao tem scripts externos. Backup da home em `backups/index-before-precoiva-pro-<data-hora>.html`. Nao substitui outros aplicativos de IVA.
 
 Em 16/10/2026, incluido o card 107 `EscalaCalc PRO 2.0` no filtro `Orcamento`, em Todos, na busca e no rodape. Rota: `/escalacalc-pro/`; arquivo local: `C:\Obras Inteligentes\escalacalc-pro\index.html`. Fonte integral: `C:\Users\ACER\Documents\Downloads\EscalaCalc_PRO_v2_0.html`. Simula impactos economicos de jornadas, custos por empregado, horas efetivas, capacidade e reposicao de equipe. Preservadas as premissas, os avisos e o armazenamento local do anexo. Backup da home em `backups/index-before-escalacalc-pro-<data-hora>.html`. Nao substitui outros aplicativos.

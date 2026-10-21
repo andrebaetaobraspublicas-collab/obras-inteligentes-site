@@ -30,29 +30,30 @@
   color-scheme:dark;
 }
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.5;
-  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));padding-block:24px 48px}
-.wrap{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
-header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px;border-bottom:2px solid var(--ink);padding-bottom:14px}
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));padding-block:14px 28px}
+.wrap{max-width:1640px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px;border-bottom:2px solid var(--ink);padding-bottom:10px}
 header h1{font-family:var(--f-display);font-weight:800;font-size:clamp(1.6rem,3.4vw,2.3rem);letter-spacing:-.01em;margin:0;line-height:1.1;text-wrap:balance}
 header p{margin:4px 0 0;color:var(--muted);max-width:62ch}
 .tag{font-family:var(--f-mono);font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);padding:4px 8px;border-radius:4px;white-space:nowrap}
-.grid{display:grid;grid-template-columns:minmax(0,400px) minmax(0,1fr);gap:24px;align-items:start}
+.grid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:16px;align-items:start}
 @media (max-width:880px){.grid{grid-template-columns:minmax(0,1fr)}}
 
 /* Formulário */
-form{background:var(--sheet);border:1px solid var(--line);border-radius:10px;padding:20px;display:flex;flex-direction:column;gap:22px}
+form{background:var(--sheet);border:1px solid var(--line);border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:16px}
 fieldset{border:0;margin:0;padding:0;display:flex;flex-direction:column;gap:10px;min-width:0}
 legend{font-family:var(--f-display);font-weight:700;font-size:1.02rem;margin-bottom:8px;padding:0;display:flex;gap:8px;align-items:baseline}
 legend .q{font-family:var(--f-mono);font-size:.72rem;color:var(--accent);font-weight:600}
-.opts{display:flex;flex-direction:column;gap:8px}
-.opt{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:8px;padding:10px 12px;cursor:pointer;background:var(--field);transition:border-color .15s, background .15s}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px}
+.opt{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:8px;padding:8px 10px;cursor:pointer;background:var(--field);transition:border-color .15s, background .15s}
 .opt input{margin-top:4px;accent-color:var(--accent)}
 .opt b{display:block;font-weight:600;line-height:1.3}
 .opt span{display:block;color:var(--muted);font-size:.88rem;line-height:1.35}
 .opt:has(input:checked){border-color:var(--accent);background:var(--accent-soft)}
 .opt:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:2px}
-.row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
 .row3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
 .row3 > [hidden]{display:none!important}
 @media (max-width:420px){.row3{grid-template-columns:minmax(0,1fr)}}
@@ -84,7 +85,7 @@ button.primary{background:var(--accent);color:var(--accent-ink);border-color:var
 
 /* Resultado */
 .out{display:flex;flex-direction:column;gap:20px;min-width:0}
-.hero{background:var(--sheet);border:1px solid var(--line);border-top:4px solid var(--accent);border-radius:10px;padding:20px 22px;display:flex;flex-direction:column;gap:14px}
+.hero{background:var(--sheet);border:1px solid var(--line);border-top:4px solid var(--accent);border-radius:10px;padding:16px 18px;display:flex;flex-direction:column;gap:12px}
 .hero .lbl{font-family:var(--f-mono);font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .price{font-family:var(--f-display);font-weight:800;font-size:clamp(2.6rem,7vw,3.8rem);line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
 .price small{font-family:var(--f-body);font-weight:500;font-size:1rem;color:var(--muted);letter-spacing:0;margin-left:6px}
@@ -107,7 +108,7 @@ button.primary{background:var(--accent);color:var(--accent-ink);border-color:var
 .memo-h{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;padding:14px 20px;border-bottom:1px dashed var(--line)}
 .memo-h h2{font-family:var(--f-display);font-weight:700;font-size:1.2rem;margin:0}
 .memo-h p{margin:2px 0 0;color:var(--muted);font-size:.85rem}
-.step{padding:18px 20px;border-bottom:1px dashed var(--line);display:flex;flex-direction:column;gap:10px}
+.step{padding:14px 18px;border-bottom:1px dashed var(--line);display:flex;flex-direction:column;gap:8px}
 .step:last-child{border-bottom:0}
 .step h3{margin:0;font-family:var(--f-display);font-weight:700;font-size:1.02rem;display:flex;gap:10px;align-items:baseline;text-wrap:balance}
 .step h3 .n{font-family:var(--f-mono);font-size:.78rem;color:var(--accent-ink);background:var(--accent);border-radius:4px;padding:1px 7px;font-weight:600}
@@ -149,7 +150,7 @@ legend{width:100%}
   .toc a.on{border-color:var(--accent);background:var(--accent-soft)}
 }
 .man-body{display:flex;flex-direction:column;gap:20px;min-width:0}
-.msec{background:var(--sheet);border:1px solid var(--line);border-radius:10px;padding:22px 24px;display:flex;flex-direction:column;gap:12px;scroll-margin-top:16px;min-width:0}
+.msec{background:var(--sheet);border:1px solid var(--line);border-radius:10px;padding:18px 20px;display:flex;flex-direction:column;gap:12px;scroll-margin-top:16px;min-width:0}
 @media (max-width:520px){.msec{padding:18px 16px}}
 .msec h2{font-family:var(--f-display);font-weight:800;font-size:1.45rem;margin:0;letter-spacing:-.01em;text-wrap:balance}
 .msec h3{font-family:var(--f-display);font-weight:700;font-size:1.05rem;margin:10px 0 0;text-wrap:balance}
@@ -234,33 +235,64 @@ ol.timeline li span{font-size:.86rem;color:var(--muted)}
 
 /* Abertura (3 s) */
 html.locked, html.locked body{overflow:hidden}
-.splash{position:fixed;inset:0;z-index:60;background:var(--paper);display:flex;align-items:center;justify-content:center;
+/* A abertura tem visual escuro próprio nos dois temas (escolha deliberada).
+   Roteiro de 3 s: os cinco tributos antigos caem na tela (0–0,9 s), colapsam no centro (0,95–1,4 s),
+   uma onda de choque marca a troca (1,3 s), IBS e CBS entram com impacto (1,4–1,8 s) e a marca se revela (1,9–2,5 s). */
+:root{--sp-bg:#07130E;--sp-fg:#E8F0EC;--sp-muted:#8FA39A;--sp-line:rgba(232,240,236,.26);--sp-chip:rgba(232,240,236,.06);--sp-acc:#4EC79B;--sp-acc2:#7FAEDF}
+.splash{position:fixed;inset:0;z-index:60;background:var(--sp-bg);color:var(--sp-fg);display:flex;align-items:center;justify-content:center;overflow:hidden;
   padding:calc(env(safe-area-inset-top, 0px) + 24px) max(16px, env(safe-area-inset-right, 0px)) calc(env(safe-area-inset-bottom, 0px) + 24px) max(16px, env(safe-area-inset-left, 0px));
   transition:opacity .35s ease}
+.splash::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background-image:linear-gradient(var(--sp-chip) 1px, transparent 1px),linear-gradient(90deg, var(--sp-chip) 1px, transparent 1px);background-size:32px 32px;
+  -webkit-mask-image:radial-gradient(circle at 50% 45%, #000 0, transparent 70%);mask-image:radial-gradient(circle at 50% 45%, #000 0, transparent 70%)}
+.splash::after{content:"";position:absolute;left:50%;top:42%;width:120vmax;height:120vmax;margin:-60vmax 0 0 -60vmax;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle, rgba(78,199,155,.22) 0, rgba(78,199,155,0) 45%);opacity:0;animation:glow 1.4s ease-out 1.3s forwards}
 .splash.out{opacity:0;pointer-events:none}
-.sp-in{width:min(520px,100%);display:flex;flex-direction:column;gap:18px;align-items:flex-start}
-.sp-bar{display:flex;width:100%;height:22px;border-radius:4px;overflow:hidden;background:var(--line)}
-.sp-bar i{display:block;height:100%;width:0;animation:grow .55s cubic-bezier(.2,.7,.2,1) forwards}
-.sp-bar i:nth-child(1){--w:64%;background:var(--seg-cost);animation-delay:.15s}
-.sp-bar i:nth-child(2){--w:12.8%;background:var(--seg-profit);animation-delay:.55s}
-.sp-bar i:nth-child(3){--w:18.4%;background:var(--seg-icms);animation-delay:.9s}
-.sp-bar i:nth-child(4){--w:4.8%;background:var(--seg-iva);animation-delay:1.2s}
-@keyframes grow{to{width:var(--w)}}
-.sp-legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-family:var(--f-mono);font-size:.74rem;color:var(--muted);opacity:0;animation:fade .4s ease 1.45s forwards}
-.sp-legend span{display:inline-flex;align-items:center;gap:5px}
-.sp-legend i{width:8px;height:8px;border-radius:2px;display:inline-block}
-.sp-name{font-family:var(--f-display);font-weight:800;font-size:clamp(2.6rem,9vw,4.2rem);line-height:1;letter-spacing:-.02em;margin:0;opacity:0;transform:translateY(10px);animation:rise .6s ease 1.55s forwards}
-.sp-tag{margin:0;color:var(--muted);font-size:1.05rem;opacity:0;animation:fade .5s ease 1.95s forwards;max-width:40ch}
-.sp-price{font-family:var(--f-mono);font-size:1rem;color:var(--ink);font-variant-numeric:tabular-nums}
-.sp-price b{font-weight:600}
-.sp-prog{width:100%;height:2px;background:var(--line);overflow:hidden;border-radius:2px}
-.sp-prog i{display:block;height:100%;width:0;background:var(--accent);animation:prog 3s linear forwards}
-.sp-skip{align-self:flex-end;font-size:.82rem;padding:5px 12px;opacity:.8}
+.sp-in{position:relative;z-index:1;width:min(620px,100%);display:flex;flex-direction:column;gap:14px;align-items:center;text-align:center}
+.sp-stage{position:relative;width:100%;height:150px;animation:shake .3s ease 1.8s}
+.sp-old{position:absolute;left:50%;top:50%;--u:min(4.6px,.95vw);transform:translate(calc(var(--x)*var(--u)),calc(var(--y)*var(--u)));
+  animation:conv .45s cubic-bezier(.55,0,.85,.25) .95s forwards}
+.sp-old b{display:block;transform:translate(-50%,-50%) rotate(var(--r));font-family:var(--f-mono);font-weight:600;font-size:clamp(.85rem,2.4vw,1.05rem);
+  color:var(--sp-fg);border:1.5px solid var(--sp-line);background:var(--sp-chip);padding:6px 12px;border-radius:6px;white-space:nowrap;opacity:0;
+  animation:drop .4s cubic-bezier(.2,.9,.3,1.35) var(--d) forwards}
+.sp-ring,.sp-flash{position:absolute;left:50%;top:50%;width:64px;height:64px;margin:-32px 0 0 -32px;border-radius:50%;opacity:0;pointer-events:none}
+.sp-ring{border:3px solid var(--sp-acc);animation:ring .75s ease-out 1.32s forwards}
+.sp-ring.r2{border-color:var(--sp-acc2);animation-delay:1.42s}
+.sp-flash{background:radial-gradient(circle, #fff 0, var(--sp-acc) 40%, transparent 70%);animation:flash .5s ease-out 1.3s forwards}
+.sp-new{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;align-items:center;gap:12px}
+.sp-new b{font-family:var(--f-display);font-weight:800;font-size:clamp(2.1rem,8vw,3.3rem);line-height:1;padding:10px 18px;border-radius:8px;color:var(--sp-bg);opacity:0}
+.sp-new .l{background:var(--sp-acc);animation:slamL .42s cubic-bezier(.2,.9,.25,1.25) 1.4s forwards}
+.sp-new .r{background:var(--sp-acc2);animation:slamR .42s cubic-bezier(.2,.9,.25,1.25) 1.48s forwards}
+.sp-new i{font-style:normal;font-family:var(--f-display);font-weight:800;font-size:clamp(1.4rem,4vw,2rem);color:var(--sp-fg);opacity:0;animation:fade .2s ease 1.75s forwards}
+.sp-kicker{margin:0;font-family:var(--f-mono);font-size:.76rem;letter-spacing:.14em;text-transform:uppercase;color:var(--sp-muted);opacity:0;animation:fade .4s ease 1.75s forwards}
+.sp-name{font-family:var(--f-display);font-weight:800;font-size:clamp(2.6rem,9vw,4.4rem);line-height:1;letter-spacing:-.02em;margin:0;color:var(--sp-fg);
+  clip-path:inset(0 100% 0 0);animation:wipe .55s cubic-bezier(.7,0,.2,1) 1.9s forwards}
+.splash .pro{background:var(--sp-acc);color:var(--sp-bg)}
+.sp-tag{margin:0;color:var(--sp-muted);font-size:1.05rem;opacity:0;animation:fade .5s ease 2.3s forwards;max-width:44ch}
+.sp-prog{width:min(320px,100%);height:2px;background:var(--sp-line);overflow:hidden;border-radius:2px;margin-top:6px}
+.sp-prog i{display:block;height:100%;width:0;background:var(--sp-acc);animation:prog 3s linear forwards}
+.sp-skip{position:absolute;right:max(16px, env(safe-area-inset-right, 0px));bottom:calc(env(safe-area-inset-bottom, 0px) + 16px);z-index:2;
+  font-size:.82rem;padding:6px 14px;background:transparent;color:var(--sp-muted);border-color:var(--sp-line)}
+.sp-skip:hover{color:var(--sp-fg);border-color:var(--sp-fg)}
+.sp-skip:focus-visible{outline:2px solid var(--sp-acc);outline-offset:2px}
+@keyframes drop{from{opacity:0;transform:translate(-50%,-160%) rotate(calc(var(--r)*-2)) scale(.8)}to{opacity:1;transform:translate(-50%,-50%) rotate(var(--r))}}
+@keyframes conv{to{transform:translate(0,0) scale(.2);opacity:0}}
+@keyframes ring{0%{opacity:1;transform:scale(.2)}100%{opacity:0;transform:scale(8)}}
+@keyframes flash{0%{opacity:0;transform:scale(.2)}30%{opacity:.95}100%{opacity:0;transform:scale(3.2)}}
+@keyframes slamL{from{opacity:0;transform:translateX(-90px) scale(1.5)}to{opacity:1;transform:none}}
+@keyframes slamR{from{opacity:0;transform:translateX(90px) scale(1.5)}to{opacity:1;transform:none}}
+@keyframes shake{0%,100%{transform:none}25%{transform:translateX(-5px)}50%{transform:translateX(4px)}75%{transform:translateX(-2px)}}
+@keyframes wipe{to{clip-path:inset(0 0 0 0)}}
+@keyframes glow{0%{opacity:0;transform:scale(.3)}40%{opacity:1}100%{opacity:.55;transform:scale(1)}}
 @keyframes rise{to{opacity:1;transform:none}}
 @keyframes fade{to{opacity:1}}
 @keyframes prog{to{width:100%}}
 @media (prefers-reduced-motion: reduce){
-  .sp-bar i{animation:none;width:var(--w)} .sp-legend,.sp-name,.sp-tag{animation:none;opacity:1;transform:none} .sp-prog i{animation:none;width:100%}
+  .sp-old,.sp-ring,.sp-flash{display:none}
+  .sp-stage,.splash::after{animation:none}
+  .sp-new b,.sp-new i,.sp-kicker,.sp-tag{animation:none;opacity:1;transform:none}
+  .sp-name{animation:none;clip-path:none}
+  .sp-prog i{animation:none;width:100%}
 }
 
 /* Avisos legais */
@@ -284,19 +316,23 @@ footer button.link{border:0;background:none;padding:0;color:var(--accent);font-w
 
 <div class="splash" id="splash">
   <div class="sp-in">
-    <div class="sp-bar" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
-    <div class="sp-legend" aria-hidden="true">
-      <span><i style="background:var(--seg-cost)"></i>custo</span>
-      <span><i style="background:var(--seg-profit)"></i>lucro</span>
-      <span><i style="background:var(--seg-icms)"></i>ICMS</span>
-      <span><i style="background:var(--seg-iva)"></i>IBS + CBS</span>
+    <div class="sp-stage" aria-hidden="true">
+      <span class="sp-old" style="--x:-38;--y:-13;--r:-8deg;--d:.05s"><b>PIS</b></span>
+      <span class="sp-old" style="--x:-19;--y:11;--r:5deg;--d:.18s"><b>Cofins</b></span>
+      <span class="sp-old" style="--x:0;--y:-15;--r:-3deg;--d:.31s"><b>IPI</b></span>
+      <span class="sp-old" style="--x:19;--y:11;--r:6deg;--d:.44s"><b>ICMS</b></span>
+      <span class="sp-old" style="--x:38;--y:-12;--r:-6deg;--d:.57s"><b>ISS</b></span>
+      <span class="sp-flash"></span>
+      <span class="sp-ring"></span>
+      <span class="sp-ring r2"></span>
+      <div class="sp-new"><b class="l">IBS</b><i>+</i><b class="r">CBS</b></div>
     </div>
+    <p class="sp-kicker">Reforma tributária do consumo</p>
     <p class="sp-name brand">PreçoIVA <span class="pro">PRO</span></p>
     <p class="sp-tag">Preço de revenda na reforma tributária, com a conta explicada passo a passo.</p>
-    <div class="sp-price" aria-hidden="true">Preço de venda: <b id="sp-num">R$ 0,00</b></div>
     <div class="sp-prog" aria-hidden="true"><i></i></div>
-    <button type="button" class="sp-skip" id="sp-skip">Pular</button>
   </div>
+  <button type="button" class="sp-skip" id="sp-skip">Pular</button>
 </div>
 
 <div class="legal" id="legal" role="dialog" aria-modal="true" aria-labelledby="lg-title" hidden>
@@ -379,7 +415,7 @@ footer button.link{border:0;background:none;padding:0;color:var(--accent);font-w
       </fieldset>
 
       <fieldset>
-        <legend><span class="q">3</span> O que diz a nota de compra?</legend>
+        <legend><span class="q">3</span> O que diz a nota fiscal de compra (entrada da mercadoria no estabelecimento)?</legend>
         <div class="fld">
           <label for="nota">Valor total pago por unidade</label>
           <div class="inp"><span class="u">R$</span><input id="nota" inputmode="decimal" autocomplete="off"></div>
@@ -463,7 +499,7 @@ footer button.link{border:0;background:none;padding:0;color:var(--accent);font-w
           <label class="switch"><input type="checkbox" id="lucroFixoOn"> Formar o preço por lucro fixo em R$</label>
           <div class="fld" id="fld-lucroFixo" hidden>
             <label for="lucroFixo">Lucro por unidade</label>
-            <div class="inp"><span class="u">R$</span><input id="lucroFixo" inputmode="decimal" autocomplete="off" value="6,4042"></div>
+            <div class="inp"><span class="u">R$</span><input id="lucroFixo" inputmode="decimal" autocomplete="off" value="6,40"></div>
             <small>Substitui a margem percentual.</small>
           </div>
         </div>
@@ -530,7 +566,7 @@ footer button.link{border:0;background:none;padding:0;color:var(--accent);font-w
           </div>
 
           <div class="qcard" id="m-p3">
-            <div class="qh"><span class="n">3</span><h3>O que diz a nota de compra?</h3><button type="button" class="go" data-go="2">Ver na calculadora</button></div>
+            <div class="qh"><span class="n">3</span><h3>O que diz a nota fiscal de compra (entrada da mercadoria no estabelecimento)?</h3><button type="button" class="go" data-go="2">Ver na calculadora</button></div>
             <div class="tbl"><table class="mt">
               <thead><tr><th>Campo</th><th>O que digitar</th><th>Aparece quando</th></tr></thead>
               <tbody>
@@ -627,7 +663,7 @@ footer button.link{border:0;background:none;padding:0;color:var(--accent);font-w
           <div class="lab" id="lab-dentro">
             <div class="lab-h">Experimente: por dentro × por fora</div>
             <div class="lab-in">
-              <div class="fld"><label for="ld-e">Valor sem tributos</label><div class="inp"><span class="u">R$</span><input id="ld-e" inputmode="decimal" value="38,425"></div></div>
+              <div class="fld"><label for="ld-e">Valor sem tributos</label><div class="inp"><span class="u">R$</span><input id="ld-e" inputmode="decimal" value="38,43"></div></div>
               <div class="fld"><label for="ld-a">Alíquota</label><div class="inp"><input id="ld-a" inputmode="decimal" value="19,5"><span class="u">%</span></div></div>
             </div>
             <div class="lab-out" id="ld-out"></div>
@@ -687,7 +723,7 @@ footer button.link{border:0;background:none;padding:0;color:var(--accent);font-w
           <div class="lab" id="lab-neutro">
             <div class="lab-h">Experimente: o PIS/Cofins do fornecedor</div>
             <div class="lab-in">
-              <div class="fld"><label for="ln-v">Valor do fabricante sem tributos</label><div class="inp"><span class="u">R$</span><input id="ln-v" inputmode="decimal" value="32,0208"></div></div>
+              <div class="fld"><label for="ln-v">Valor do fabricante sem tributos</label><div class="inp"><span class="u">R$</span><input id="ln-v" inputmode="decimal" value="32,02"></div></div>
               <div class="fld"><label for="ln-pc">PIS/Cofins embutido pelo fornecedor em 2026</label><div class="inp"><input id="ln-pc" inputmode="decimal" value="9,25"><span class="u">%</span></div></div>
             </div>
             <div class="lab-out" id="ln-out"></div>
@@ -723,15 +759,15 @@ footer button.link{border:0;background:none;padding:0;color:var(--accent);font-w
         <!-- 7 -->
         <article class="msec" id="m-exemplos">
           <h2>Exemplos para carregar</h2>
-          <p>Saco de cimento com o mesmo valor do fabricante (R$ 32,0208), margem de 20%, ICMS de 19,5%, CBS de 8,9%, IBS de 0,1% e venda à administração pública com redutor de 30%. Clique em <b>Carregar</b> para ver o caso na calculadora, com a memória completa.</p>
+          <p>Saco de cimento com o mesmo valor do fabricante (R$ 32,02), margem de 20%, ICMS de 19,5%, CBS de 8,9%, IBS de 0,1% e venda à administração pública com redutor de 30%. Clique em <b>Carregar</b> para ver o caso na calculadora, com a memória completa.</p>
           <div class="cases">
             <div class="case"><span class="cl">A</span><div><b>Estoque, Lucro Presumido em 2026</b><span>Regime regular · crédito presumido</span></div><b class="cp">R$ 50,15</b><button type="button" data-case="A">Carregar</button></div>
             <div class="case"><span class="cl">B</span><div><b>Compra em 2027</b><span>Regime regular · créditos da nota</span></div><b class="cp">R$ 50,15</b><button type="button" data-case="B">Carregar</button></div>
             <div class="case"><span class="cl">C</span><div><b>Estoque, Lucro Real em 2026</b><span>Regime regular · PIS/Cofins já creditado</span></div><b class="cp">R$ 50,15</b><button type="button" data-case="C">Carregar</button></div>
             <div class="case"><span class="cl">D</span><div><b>Compra em 2027, Simples</b><span>IBS/CBS no DAS de 8%</span></div><b class="cp">R$ 55,64</b><button type="button" data-case="D">Carregar</button></div>
-            <div class="case"><span class="cl">E</span><div><b>Compra em 2027, Simples</b><span>IBS/CBS por fora · DAS de 5%</span></div><b class="cp">R$ 53,41</b><button type="button" data-case="E">Carregar</button></div>
+            <div class="case"><span class="cl">E</span><div><b>Compra em 2027, Simples</b><span>IBS/CBS por fora · DAS de 5%</span></div><b class="cp">R$ 53,42</b><button type="button" data-case="E">Carregar</button></div>
           </div>
-          <p>A, B e C chegam ao mesmo preço porque o custo líquido é o mesmo (R$ 32,0208). Em D e E, o comerciante do Simples não recupera o ICMS da compra (nem o IBS/CBS, em D), então o custo e o preço sobem.</p>
+          <p>A, B e C chegam ao mesmo preço porque o custo líquido é o mesmo (R$ 32,02). Em D e E, o comerciante do Simples não recupera o ICMS da compra (nem o IBS/CBS, em D), então o custo e o preço sobem.</p>
           <p class="small">No caso A, a carga desta venda sai negativa (−0,16%): a nota de 2026 trazia ICMS e PIS/Cofins maiores, que voltam agora como crédito. No caso C, a carga parece alta (6,34%) porque o crédito de PIS/Cofins dessa compra foi aproveitado em 2026, fora da apuração de 2027.</p>
         </article>
 
@@ -772,8 +808,8 @@ footer button.link{border:0;background:none;padding:0;color:var(--accent);font-w
 (function(){
 const $ = id => document.getElementById(id);
 const EX = {
-  estoque:{nota:'43,8318', icmsC:'8,5472', ibsC:'0,0000', cbsC:'0,0000'},
-  compra:{nota:'42,6593', icmsC:'7,7566', ibsC:'0,0320', cbsC:'2,8499'}
+  estoque:{nota:'43,83', icmsC:'8,55', ibsC:'0,00', cbsC:'0,00'},
+  compra:{nota:'42,66', icmsC:'7,76', ibsC:'0,03', cbsC:'2,85'}
 };
 let pristine = true;
 
@@ -784,8 +820,9 @@ function num(id){
   return parseFloat(s);
 }
 const nf = d => new Intl.NumberFormat('pt-BR',{minimumFractionDigits:d, maximumFractionDigits:d});
-const f4 = x => nf(4).format(x), f2 = x => nf(2).format(x);
-const R4 = x => 'R$ ' + f4(x), R2 = x => 'R$ ' + f2(x);
+// Valores em reais: sempre duas casas decimais
+const c2 = x => Math.round((x + (x >= 0 ? Number.EPSILON : -Number.EPSILON)) * 100) / 100;
+const f2 = x => nf(2).format(c2(x)), R2 = x => 'R$ ' + f2(x);
 const P = x => new Intl.NumberFormat('pt-BR',{maximumFractionDigits:2}).format(x*100) + '%';
 const radio = n => document.querySelector('input[name="'+n+'"]:checked').value;
 
@@ -805,9 +842,9 @@ function fillFromRates(){
   let V, icms;
   if(s.icmsOnIva){ V = N*(1-ic)/(1+cb+ib); icms = N*ic; }
   else { V = N/(1/(1-ic)+cb+ib); icms = V*ic/(1-ic); }
-  $('icmsC').value = f4(icms);
-  $('ibsC').value = f4(V*ib);
-  $('cbsC').value = f4(V*cb);
+  $('icmsC').value = f2(icms);
+  $('ibsC').value = f2(V*ib);
+  $('cbsC').value = f2(V*cb);
   pristine = false;
   hint.hidden = false;
   hint.textContent = 'Valores estimados: ICMS de '+P(ic)+(usaIva?', CBS de '+P(cb)+' e IBS de '+P(ib)+' (alíquotas cheias, sem redutor)':'')+'. Confira com a nota real.';
@@ -864,47 +901,51 @@ function compute(s, v){
   if(v.das && s.das>=1) return {error:'A alíquota do DAS precisa ser menor que 100%.'};
   if(v.red && s.red>1) return {error:'O redutor não pode passar de 100%.'};
 
+  // Todos os valores em reais são arredondados a centavos em cada etapa,
+  // e cada total é a soma das parcelas já arredondadas: a memória fecha ao centavo.
   const r = {s, v};
-  r.credICMS = v.icmsC ? s.icmsC : 0;
-  r.credIBS = v.ibsC ? s.ibsC : 0;
-  r.credCBS = v.ibsC ? s.cbsC : 0;
-  r.custoAq = s.nota - r.credICMS;
-  r.credPC = (s.orig==='estoque' && s.r26==='naocum') ? s.pc26 * r.custoAq : 0;
-  r.presNom = v.pres ? 0.0925 * r.custoAq : 0;
-  r.presUse = r.presNom * s.k;
-  r.C = s.nota - r.credICMS - r.credIBS - r.credCBS - r.credPC - r.presUse;
+  const nota = c2(s.nota);
+  r.nota = nota;
+  r.credICMS = v.icmsC ? c2(s.icmsC) : 0;
+  r.credIBS = v.ibsC ? c2(s.ibsC) : 0;
+  r.credCBS = v.ibsC ? c2(s.cbsC) : 0;
+  r.custoAq = c2(nota - r.credICMS);
+  r.credPC = (s.orig==='estoque' && s.r26==='naocum') ? c2(s.pc26 * r.custoAq) : 0;
+  r.presNom = v.pres ? c2(0.0925 * r.custoAq) : 0;
+  r.presUse = c2(r.presNom * s.k);
+  r.C = c2(nota - r.credICMS - r.credIBS - r.credCBS - r.credPC - r.presUse);
   if(!(r.C > 0)) return {error:'Os créditos ficaram maiores que o valor da nota. Confira os valores digitados.'};
-  r.lucro = s.lf ? s.L : r.C * s.m;
-  r.E = r.C + r.lucro;
+  r.lucro = s.lf ? c2(s.L) : c2(r.C * s.m);
+  r.E = c2(r.C + r.lucro);
   r.f = v.red ? (1 - s.red) : 1;
   r.icmsV = 0; r.dasV = 0; r.cbsD = 0; r.ibsD = 0;
   if(s.r27==='regular'){
-    r.cbsD = r.E * s.cbs * r.f; r.ibsD = r.E * s.ibs * r.f;
-    r.icmsBase = s.icmsOnIva ? r.E + r.cbsD + r.ibsD : r.E;
-    r.icmsV = r.icmsBase * s.iV / (1 - s.iV);
-    r.Pf = r.E + r.icmsV + r.cbsD + r.ibsD;
+    r.cbsD = c2(r.E * s.cbs * r.f); r.ibsD = c2(r.E * s.ibs * r.f);
+    r.icmsBase = s.icmsOnIva ? c2(r.E + r.cbsD + r.ibsD) : r.E;
+    r.icmsV = c2(r.icmsBase * s.iV / (1 - s.iV));
+    r.Pf = c2(r.E + r.icmsV + r.cbsD + r.ibsD);
   } else if(s.r27==='hibrido'){
-    r.S = r.E / (1 - s.das); r.dasV = r.S - r.E;
-    r.cbsD = r.S * s.cbs * r.f; r.ibsD = r.S * s.ibs * r.f;
-    r.Pf = r.S + r.cbsD + r.ibsD;
+    r.dasV = c2(r.E / (1 - s.das) - r.E); r.S = c2(r.E + r.dasV);
+    r.cbsD = c2(r.S * s.cbs * r.f); r.ibsD = c2(r.S * s.ibs * r.f);
+    r.Pf = c2(r.S + r.cbsD + r.ibsD);
   } else {
-    r.Pf = r.E / (1 - s.das); r.dasV = r.Pf - r.E;
+    r.dasV = c2(r.E / (1 - s.das) - r.E); r.Pf = c2(r.E + r.dasV);
   }
-  r.iva = r.cbsD + r.ibsD;
-  r.icmsLiq = s.r27==='regular' ? r.icmsV - r.credICMS : 0;
-  r.cbsLiq = r.cbsD - r.credCBS - r.presUse;
-  r.ibsLiq = r.ibsD - r.credIBS;
-  r.ivaLiq = r.cbsLiq + r.ibsLiq;
-  r.trib = r.icmsLiq + r.ivaLiq + r.dasV;
+  r.iva = c2(r.cbsD + r.ibsD);
+  r.icmsLiq = s.r27==='regular' ? c2(r.icmsV - r.credICMS) : 0;
+  r.cbsLiq = c2(r.cbsD - r.credCBS - r.presUse);
+  r.ibsLiq = c2(r.ibsD - r.credIBS);
+  r.ivaLiq = c2(r.cbsLiq + r.ibsLiq);
+  r.trib = c2(r.icmsLiq + r.ivaLiq + r.dasV);
   r.carga = r.trib / r.Pf;
   // comparação com 2026 (estoque, regime regular nos dois anos)
   if(s.orig==='estoque' && s.r26!=='simples' && s.r27==='regular'){
-    r.C26 = r.custoAq - r.credPC;
-    r.E26 = s.lf ? r.C26 + s.L : r.C26 * (1 + s.m);
-    r.den26 = 1 - s.iV - s.pc26 * (1 - s.iV);
-    r.P26 = r.E26 / r.den26;
-    r.icms26 = r.P26 * s.iV;
-    r.pcV26 = s.pc26 * (r.P26 - r.icms26);
+    r.C26 = c2(r.custoAq - r.credPC);
+    r.E26 = s.lf ? c2(r.C26 + c2(s.L)) : c2(r.C26 * (1 + s.m));
+    const den = 1 - s.iV - s.pc26 * (1 - s.iV), Pbruto = r.E26 / den;
+    r.icms26 = c2(Pbruto * s.iV);
+    r.pcV26 = c2(s.pc26 * (Pbruto - Pbruto * s.iV));
+    r.P26 = c2(r.E26 + r.icms26 + r.pcV26);
     r.var = r.Pf / r.P26 - 1;
   }
   return r;
@@ -913,13 +954,13 @@ function compute(s, v){
 function buildSteps(r){
   const s = r.s, v = r.v, st = [];
   // 1. custo
-  const rows1 = [['Valor total pago na nota', 'preço da compra, com tributos', R4(s.nota), '']];
-  if(r.credICMS>0) rows1.push(['(−) Crédito de ICMS da compra', 'volta como crédito no ICMS da venda', R4(r.credICMS), 'minus']);
-  if(r.credCBS>0) rows1.push(['(−) Crédito de CBS da compra', 'destacada na nota; volta como crédito', R4(r.credCBS), 'minus']);
-  if(r.credIBS>0) rows1.push(['(−) Crédito de IBS da compra', 'destacado na nota; volta como crédito', R4(r.credIBS), 'minus']);
-  if(r.credPC>0) rows1.push(['(−) Crédito de PIS/Cofins já apropriado em 2026', P(s.pc26)+' × '+f4(r.custoAq)+' (nota − ICMS)', R4(r.credPC), 'minus']);
-  if(v.pres) rows1.push(['(−) Crédito presumido de CBS sobre o estoque', '9,25% × '+f4(r.custoAq)+(s.k<1?' × '+P(s.k)+' aproveitável':'')+' (art. 381)', R4(r.presUse), 'minus']);
-  rows1.push(['= Custo líquido da mercadoria', 'o que sobra depois dos créditos', R4(r.C), 'total']);
+  const rows1 = [['Valor total pago na nota fiscal', 'preço da compra, com tributos', R2(r.nota), '']];
+  if(r.credICMS>0) rows1.push(['(−) Crédito de ICMS da compra', 'volta como crédito no ICMS da venda', R2(r.credICMS), 'minus']);
+  if(r.credCBS>0) rows1.push(['(−) Crédito de CBS da compra', 'destacada na nota; volta como crédito', R2(r.credCBS), 'minus']);
+  if(r.credIBS>0) rows1.push(['(−) Crédito de IBS da compra', 'destacado na nota; volta como crédito', R2(r.credIBS), 'minus']);
+  if(r.credPC>0) rows1.push(['(−) Crédito de PIS/Cofins já apropriado em 2026', P(s.pc26)+' × '+f2(r.custoAq)+' (nota − ICMS)', R2(r.credPC), 'minus']);
+  if(v.pres) rows1.push(['(−) Crédito presumido de CBS sobre o estoque', '9,25% × '+f2(r.custoAq)+(s.k<1?' × '+P(s.k)+' aproveitável':'')+' (art. 381)', R2(r.presUse), 'minus']);
+  rows1.push(['= Custo líquido da mercadoria', 'o que sobra depois dos créditos', R2(r.C), 'total']);
   const n1 = [];
   if(s.r27==='puro') n1.push('No Simples com IBS/CBS no DAS não há crédito na compra: o valor inteiro da nota é custo.');
   else if(s.r27==='hibrido' && s.orig==='compra') n1.push('No Simples, o ICMS da compra não gera crédito e fica no custo. O IBS/CBS destacado gera crédito, porque você optou por recolhê-los por fora.');
@@ -929,70 +970,70 @@ function buildSteps(r){
 
   // 2. margem
   st.push({t:'Sua margem', lead: s.lf ? 'O lucro fixo por unidade é somado ao custo líquido. O resultado é o valor da venda antes dos tributos.' : 'A margem é aplicada sobre o custo líquido. O resultado é o valor da venda antes dos tributos.', rows:[
-    ['Custo líquido', '', R4(r.C), ''],
-    ['(+) Lucro', s.lf ? 'valor fixo informado ('+P(r.lucro/r.C)+' sobre o custo)' : f4(r.C)+' × '+P(s.m), R4(r.lucro), ''],
-    ['= Valor da venda sem tributos', s.lf ? f4(r.C)+' + '+f4(r.lucro) : f4(r.C)+' × '+nf(2).format(1+s.m), R4(r.E), 'total']
+    ['Custo líquido', '', R2(r.C), ''],
+    ['(+) Lucro', s.lf ? 'valor fixo informado ('+P(r.lucro/r.C)+' sobre o custo)' : f2(r.C)+' × '+P(s.m), R2(r.lucro), ''],
+    ['= Valor da venda sem tributos', s.lf ? f2(r.C)+' + '+f2(r.lucro) : f2(r.C)+' × '+nf(2).format(1+s.m), R2(r.E), 'total']
   ], notes:[]});
 
   // 3. tributos
-  const rows3 = [['Valor da venda sem tributos', '', R4(r.E), '']];
+  const rows3 = [['Valor da venda sem tributos', '', R2(r.E), '']];
   const n3 = [];
   const red = v.red ? ' × (1 − '+P(s.red)+')' : '';
   if(s.r27==='regular'){
-    rows3.push(['(+) CBS', f4(r.E)+' × '+P(s.cbs)+red, R4(r.cbsD), '']);
-    rows3.push(['(+) IBS', f4(r.E)+' × '+P(s.ibs)+red, R4(r.ibsD), '']);
-    rows3.push(['(+) ICMS por dentro', (s.icmsOnIva ? '('+f4(r.E)+' + CBS + IBS)' : f4(r.E))+' × '+P(s.iV)+' ÷ '+P(1-s.iV), R4(r.icmsV), '']);
+    rows3.push(['(+) CBS', f2(r.E)+' × '+P(s.cbs)+red, R2(r.cbsD), '']);
+    rows3.push(['(+) IBS', f2(r.E)+' × '+P(s.ibs)+red, R2(r.ibsD), '']);
+    rows3.push(['(+) ICMS por dentro', (s.icmsOnIva ? '('+f2(r.E)+' + CBS + IBS)' : f2(r.E))+' × '+P(s.iV)+' ÷ '+P(1-s.iV), R2(r.icmsV), '']);
     n3.push(s.icmsOnIva
       ? 'Premissa avançada ligada: o ICMS é calculado por dentro sobre o valor da venda somado à CBS e ao IBS.'
       : 'O ICMS é calculado "por dentro": ele faz parte da própria base. IBS e CBS são calculados "por fora", sobre o valor sem tributos.');
   } else if(s.r27==='hibrido'){
-    rows3.push(['(+) DAS por dentro', f4(r.E)+' ÷ '+P(1-s.das)+' − '+f4(r.E), R4(r.dasV), '']);
-    rows3.push(['(+) CBS', f4(r.S)+' × '+P(s.cbs)+red, R4(r.cbsD), '']);
-    rows3.push(['(+) IBS', f4(r.S)+' × '+P(s.ibs)+red, R4(r.ibsD), '']);
+    rows3.push(['(+) DAS por dentro', f2(r.E)+' ÷ '+P(1-s.das)+' − '+f2(r.E), R2(r.dasV), '']);
+    rows3.push(['(+) CBS', f2(r.S)+' × '+P(s.cbs)+red, R2(r.cbsD), '']);
+    rows3.push(['(+) IBS', f2(r.S)+' × '+P(s.ibs)+red, R2(r.ibsD), '']);
     n3.push('O DAS incide sobre o preço. IBS e CBS são calculados por fora, sobre o preço sem eles (que já contém o DAS).');
   } else {
-    rows3.push(['(+) DAS por dentro', f4(r.E)+' ÷ '+P(1-s.das)+' − '+f4(r.E), R4(r.dasV), '']);
+    rows3.push(['(+) DAS por dentro', f2(r.E)+' ÷ '+P(1-s.das)+' − '+f2(r.E), R2(r.dasV), '']);
     n3.push('No Simples com IBS/CBS no DAS, a alíquota efetiva já inclui IBS e CBS. Esta calculadora não aplica o redutor de compras governamentais ao DAS.');
   }
   if(v.red) n3.push('O redutor de compras governamentais de '+P(s.red)+' reduz IBS e CBS da venda: a alíquota conjunta cai de '+P(s.cbs+s.ibs)+' para '+P((s.cbs+s.ibs)*r.f)+'.');
-  rows3.push(['= Preço final de venda', 'soma das linhas acima', R4(r.Pf), 'total']);
+  rows3.push(['= Preço final de venda', 'soma das linhas acima', R2(r.Pf), 'total']);
   st.push({t:'Tributos da venda e preço final', lead:'Sobre o valor sem tributos entram os tributos que você cobra do cliente.', rows:rows3, notes:n3});
 
   // 4. apuração
   const rows4 = [];
   if(s.r27==='regular'){
-    rows4.push(['ICMS da venda (débito)', '', R4(r.icmsV), '']);
-    if(r.credICMS>0) rows4.push(['(−) Crédito de ICMS da compra', '', R4(r.credICMS), 'minus']);
-    rows4.push(['= ICMS a recolher', '', R4(r.icmsLiq), 'total']);
+    rows4.push(['ICMS da venda (débito)', '', R2(r.icmsV), '']);
+    if(r.credICMS>0) rows4.push(['(−) Crédito de ICMS da compra', '', R2(r.credICMS), 'minus']);
+    rows4.push(['= ICMS a recolher', '', R2(r.icmsLiq), 'total']);
   }
-  if(s.r27!=='regular') rows4.push(['DAS', '', R4(r.dasV), '']);
+  if(s.r27!=='regular') rows4.push(['DAS', '', R2(r.dasV), '']);
   if(s.r27!=='puro'){
-    rows4.push(['CBS da venda (débito)', '', R4(r.cbsD), '']);
-    if(r.credCBS>0) rows4.push(['(−) Crédito de CBS da compra', '', R4(r.credCBS), 'minus']);
-    if(r.presUse>0) rows4.push(['(−) Crédito presumido de CBS', 'parcela considerada nesta venda', R4(r.presUse), 'minus']);
-    rows4.push([r.cbsLiq<0?'= Saldo credor de CBS':'= CBS a recolher', r.cbsLiq<0?'fica para as próximas apurações':'', R4(r.cbsLiq), 'total']);
-    rows4.push(['IBS da venda (débito)', '', R4(r.ibsD), '']);
-    if(r.credIBS>0) rows4.push(['(−) Crédito de IBS da compra', '', R4(r.credIBS), 'minus']);
-    rows4.push([r.ibsLiq<0?'= Saldo credor de IBS':'= IBS a recolher', r.ibsLiq<0?'fica para as próximas apurações':'', R4(r.ibsLiq), 'total']);
+    rows4.push(['CBS da venda (débito)', '', R2(r.cbsD), '']);
+    if(r.credCBS>0) rows4.push(['(−) Crédito de CBS da compra', '', R2(r.credCBS), 'minus']);
+    if(r.presUse>0) rows4.push(['(−) Crédito presumido de CBS', 'parcela considerada nesta venda', R2(r.presUse), 'minus']);
+    rows4.push([r.cbsLiq<0?'= Saldo credor de CBS':'= CBS a recolher', r.cbsLiq<0?'fica para as próximas apurações':'', R2(r.cbsLiq), 'total']);
+    rows4.push(['IBS da venda (débito)', '', R2(r.ibsD), '']);
+    if(r.credIBS>0) rows4.push(['(−) Crédito de IBS da compra', '', R2(r.credIBS), 'minus']);
+    rows4.push([r.ibsLiq<0?'= Saldo credor de IBS':'= IBS a recolher', r.ibsLiq<0?'fica para as próximas apurações':'', R2(r.ibsLiq), 'total']);
   }
-  rows4.push(['Tributos líquidos desta venda', 'soma dos saldos acima', R4(r.trib), 'total']);
-  rows4.push(['Carga tributária líquida', f4(r.trib)+' ÷ '+f4(r.Pf), P(r.carga), '']);
+  rows4.push(['Tributos líquidos desta venda', 'soma dos saldos acima', R2(r.trib), 'total']);
+  rows4.push(['Carga tributária líquida', f2(r.trib)+' ÷ '+f2(r.Pf), P(r.carga), '']);
   const n4 = [];
   if(r.cbsLiq<0 || r.ibsLiq<0) n4.push('Saldo credor de CBS ou IBS não abate ICMS nem DAS, e o de um não abate o outro. Ele compensa o mesmo tributo em vendas futuras ou pode ser ressarcido (exceto a parte do crédito presumido). A carga acima supõe uso integral, sem custo financeiro.');
   const cbsDisp = r.cbsD - r.credCBS;
-  if(r.presUse > Math.max(0, cbsDisp)) n4.push('O crédito presumido ('+R4(r.presUse)+') é maior que a CBS que sobra nesta venda ('+R4(Math.max(0,cbsDisp))+'). A diferença só pode abater CBS de vendas futuras e não é ressarcida.');
+  if(r.presUse > Math.max(0, cbsDisp)) n4.push('O crédito presumido ('+R2(r.presUse)+') é maior que a CBS que sobra nesta venda ('+R2(Math.max(0,cbsDisp))+'). A diferença só pode abater CBS de vendas futuras e não é ressarcida.');
   if(r.trib<0) n4.push('A carga ficou negativa porque os créditos desta mercadoria superam os débitos desta venda. Isso é comum no estoque de 2026: a nota antiga trazia ICMS e PIS/Cofins maiores, que agora voltam como crédito.');
   st.push({t:'Quanto de tributo você recolhe', lead:'Débitos da venda menos os créditos da compra.', rows:rows4, notes:n4});
 
   // 5. comparação 2026
   if(r.P26){
     st.push({t:'Comparação: vender este estoque em 2026', lead:'Mesmo estoque e mesma margem, com as regras de 2026.', rows:[
-      ['Custo em 2026', r.credPC>0?'nota − ICMS − PIS/Cofins':'nota − ICMS (sem crédito de PIS/Cofins)', R4(r.C26), ''],
-      ['Valor da venda sem tributos', s.lf ? f4(r.C26)+' + '+f4(s.L) : f4(r.C26)+' × '+nf(2).format(1+s.m), R4(r.E26), ''],
-      ['ICMS', f4(r.P26)+' × '+P(s.iV), R4(r.icms26), ''],
-      ['PIS + Cofins', P(s.pc26)+' × ('+f4(r.P26)+' − '+f4(r.icms26)+')', R4(r.pcV26), ''],
-      ['= Preço em 2026', f4(r.E26)+' ÷ '+nf(4).format(r.den26), R4(r.P26), 'total'],
-      ['Variação para 2027', f4(r.Pf)+' ÷ '+f4(r.P26)+' − 1', (r.var>0?'+':'')+P(r.var), '']
+      ['Custo em 2026', r.credPC>0?'nota − ICMS − PIS/Cofins':'nota − ICMS (sem crédito de PIS/Cofins)', R2(r.C26), ''],
+      ['Valor da venda sem tributos', s.lf ? f2(r.C26)+' + '+f2(s.L) : f2(r.C26)+' × '+nf(2).format(1+s.m), R2(r.E26), ''],
+      ['(+) ICMS por dentro', P(s.iV)+' do preço de 2026', R2(r.icms26), ''],
+      ['(+) PIS + Cofins por dentro', P(s.pc26)+' do preço de 2026 sem o ICMS', R2(r.pcV26), ''],
+      ['= Preço em 2026', 'soma das linhas acima', R2(r.P26), 'total'],
+      ['Variação para 2027', f2(r.Pf)+' ÷ '+f2(r.P26)+' − 1', (r.var>0?'+':'')+P(r.var), '']
     ], notes:['Em 2026, ICMS e PIS/Cofins eram calculados por dentro, e o ICMS ficava fora da base do PIS/Cofins (Tema 69 do STF).']});
   }
   return st;
@@ -1002,10 +1043,10 @@ function premissas(r){
   const s = r.s, v = r.v, L = [];
   L.push(['Valores por unidade. O lucro é calculado antes do IRPJ e da CSLL'+(s.r27!=='regular'?' (no Simples, esses tributos já estão no DAS)':'')+'.', '']);
   if(s.r27==='regular') L.push([s.icmsOnIva ? 'Premissa avançada: o ICMS incide sobre IBS e CBS. IBS e CBS continuam calculados sem o ICMS na base.' : 'ICMS e IBS/CBS não incidem um sobre o outro. Confirme essa premissa para a sua operação.', '']);
-  if(s.lf) L.push(['Preço formado por lucro fixo de '+R4(s.L)+' por unidade. Em revisão de preços com a administração, a margem sobre o custo líquido costuma ser o critério mais coerente (art. 134 da Lei 14.133/2021).', '']);
+  if(s.lf) L.push(['Preço formado por lucro fixo de '+R2(s.L)+' por unidade. Em revisão de preços com a administração, a margem sobre o custo líquido costuma ser o critério mais coerente (art. 134 da Lei 14.133/2021).', '']);
   if(v.pres){
     L.push(['Crédito presumido (art. 381 da LC 214/2025): exige regime regular da CBS em 2027 e PIS/Cofins cumulativo em 31/12/2026. O inventário é feito em 31/12/2026, a apropriação vai até 30/06/2027 e o uso é em 12 parcelas mensais, só contra CBS e sem ressarcimento. O direito se extingue em 5 anos.', '']);
-    if(s.k<1) L.push(['Você considerou aproveitar só '+P(s.k)+' do crédito presumido ('+R4(r.presNom)+' no total).', '']);
+    if(s.k<1) L.push(['Você considerou aproveitar só '+P(s.k)+' do crédito presumido ('+R2(r.presNom)+' no total).', '']);
   }
   if(s.orig==='estoque' && s.r26==='cumulativo' && s.r27==='puro') L.push(['No Simples com IBS/CBS no DAS não há crédito presumido sobre o estoque, porque o art. 381 exige o regime regular da CBS.', 'alert']);
   if(s.orig==='estoque' && s.r26==='simples') L.push(['O crédito presumido alcança quem estava no PIS/Cofins cumulativo em 31/12/2026. A calculadora não aplica crédito ao estoque de empresa do Simples. Confirme com seu contador.', 'alert']);
@@ -1156,11 +1197,11 @@ const kv = (k,v) => '<div class="kv"><span>'+k+'</span><b>'+v+'</b></div>';
 function labDentro(){
   const E = num('ld-e'), a = num('ld-a')/100, out = $('ld-out');
   if(!(E>0) || !(a>=0 && a<1)){ out.innerHTML = '<div class="box full warn">Informe um valor positivo e uma alíquota entre 0 e 100%.</div>'; return; }
-  const tD = E*a/(1-a), pD = E/(1-a), tF = E*a, pF = E*(1+a);
+  const E2 = c2(E), tD = c2(E2*a/(1-a)), pD = c2(E2 + tD), tF = c2(E2*a), pF = c2(E2 + tF);
   out.innerHTML =
-    '<div class="box"><h4>Por dentro (ICMS)</h4>'+kv('Tributo', R4(tD))+kv('Preço', R4(pD))+kv('Peso no preço', P(tD/pD))+kv('Sobre o valor sem tributos', P(tD/E))+'</div>'+
-    '<div class="box"><h4>Por fora (IBS e CBS)</h4>'+kv('Tributo', R4(tF))+kv('Preço', R4(pF))+kv('Peso no preço', P(tF/pF))+kv('Sobre o valor sem tributos', P(a))+'</div>'+
-    '<div class="box full">Com a mesma alíquota nominal de '+P(a)+', o tributo por dentro custa '+R4(tD-tF)+' a mais, porque incide sobre ele mesmo. Por dentro, a alíquota é o peso no preço; por fora, é o percentual sobre o valor sem tributos.</div>';
+    '<div class="box"><h4>Por dentro (ICMS)</h4>'+kv('Tributo', R2(tD))+kv('Preço', R2(pD))+kv('Peso no preço', P(a))+kv('Sobre o valor sem tributos', P(a/(1-a)))+'</div>'+
+    '<div class="box"><h4>Por fora (IBS e CBS)</h4>'+kv('Tributo', R2(tF))+kv('Preço', R2(pF))+kv('Peso no preço', P(a/(1+a)))+kv('Sobre o valor sem tributos', P(a))+'</div>'+
+    '<div class="box full">Com a mesma alíquota nominal de '+P(a)+', o tributo por dentro custa '+R2(tD-tF)+' a mais, porque incide sobre ele mesmo. Por dentro, a alíquota é o peso no preço; por fora, é o percentual sobre o valor sem tributos.</div>';
 }
 ['ld-e','ld-a'].forEach(id=>$(id).addEventListener('input', labDentro));
 
@@ -1185,16 +1226,16 @@ function labEleg(){
 function labNeutro(){
   const V = num('ln-v'), pc = num('ln-pc')/100, out = $('ln-out'), i = 0.195, iva = 0.09;
   if(!(V>0) || !(pc>=0 && pc<1)){ out.innerHTML = '<div class="box full warn">Informe um valor positivo e um percentual válido.</div>'; return; }
-  const X = V/(1-pc), icms26 = X*i/(1-i), nota26 = X + icms26, pres = 0.0925*X, c26 = X - pres;
-  const icms27 = V*i/(1-i), iva27 = V*iva, nota27 = V + icms27 + iva27, c27 = V;
+  const V2 = c2(V), X = c2(V2/(1-pc)), icms26 = c2(X*i/(1-i)), nota26 = c2(X + icms26), pres = c2(0.0925*X), c26 = c2(X - pres);
+  const icms27 = c2(V2*i/(1-i)), iva27 = c2(V2*iva), nota27 = c2(V2 + icms27 + iva27), c27 = V2;
   const d = c26 - c27;
   let msg;
   if(Math.abs(d) < 0.005) msg = '<span class="ok">Custos iguais.</span> O crédito presumido só devolve o PIS/Cofins que o fornecedor embutiu em 2026.';
-  else if(d < 0) msg = '<span class="warn">O estoque parece '+R4(-d)+' mais barato.</span> Esse "ganho" aparece porque o crédito de 9,25% é maior que o PIS/Cofins realmente embutido na nota de 2026.';
-  else msg = '<span class="warn">O estoque fica '+R4(d)+' mais caro.</span> O crédito de 9,25% não cobre todo o PIS/Cofins embutido pelo fornecedor.';
+  else if(d < 0) msg = '<span class="warn">O estoque parece '+R2(-d)+' mais barato.</span> Esse "ganho" aparece porque o crédito de 9,25% é maior que o PIS/Cofins realmente embutido na nota de 2026.';
+  else msg = '<span class="warn">O estoque fica '+R2(d)+' mais caro.</span> O crédito de 9,25% não cobre todo o PIS/Cofins embutido pelo fornecedor.';
   out.innerHTML =
-    '<div class="box"><h4>Estoque comprado em 2026</h4>'+kv('Nota', R4(nota26))+kv('(−) ICMS', R4(icms26))+kv('(−) Presumido 9,25%', R4(pres))+kv('Custo líquido', R4(c26))+'</div>'+
-    '<div class="box"><h4>Compra em 2027</h4>'+kv('Nota', R4(nota27))+kv('(−) ICMS', R4(icms27))+kv('(−) IBS + CBS', R4(iva27))+kv('Custo líquido', R4(c27))+'</div>'+
+    '<div class="box"><h4>Estoque comprado em 2026</h4>'+kv('Nota', R2(nota26))+kv('(−) ICMS', R2(icms26))+kv('(−) Presumido 9,25%', R2(pres))+kv('Custo líquido', R2(c26))+'</div>'+
+    '<div class="box"><h4>Compra em 2027</h4>'+kv('Nota', R2(nota27))+kv('(−) ICMS', R2(icms27))+kv('(−) IBS + CBS', R2(iva27))+kv('Custo líquido', R2(c27))+'</div>'+
     '<div class="box full">'+msg+'</div>';
 }
 ['ln-v','ln-pc'].forEach(id=>$(id).addEventListener('input', labNeutro));
@@ -1210,7 +1251,7 @@ const QUIZ = [
   {q:'Uma empresa do Lucro Real em 2026 tem crédito presumido sobre o estoque?', o:['Sim, de 9,25%','Não, o crédito de PIS/Cofins dessa compra já foi aproveitado em 2026'], c:1,
    e:'O crédito presumido é para quem estava no regime cumulativo. No Lucro Real, o crédito já saiu do custo em 2026; saldos não usados seguem o art. 378.'},
   {q:'No exemplo do cimento, por que o estoque de 2026 e a compra de 2027 chegam ao mesmo preço?', o:['O crédito presumido devolve o PIS/Cofins que o fornecedor embutiu em 2026','A CBS de 2027 é igual ao PIS/Cofins de 2026'], c:0,
-   e:'Com o estoque valorado com o PIS/Cofins do fornecedor, o custo líquido fica em R$ 32,0208 nos dois casos. Veja o laboratório da seção Estoque de 2026.'}
+   e:'Com o estoque valorado com o PIS/Cofins do fornecedor, o custo líquido fica em R$ 32,02 nos dois casos. Veja o laboratório da seção Estoque de 2026.'}
 ];
 function renderQuiz(){
   const box = $('quiz');
@@ -1276,17 +1317,6 @@ function endSplash(){
 }
 root.classList.add('locked');
 $('sp-skip').addEventListener('click', endSplash);
-// contador do preço no ritmo da animação: de 0 até o preço do exemplo
-(function(){
-  const target = 50.15, t0 = performance.now(), el = $('sp-num'), d0 = reduce ? 0 : 400, dur = reduce ? 1 : 1800;
-  function tick(now){
-    const p = Math.min(1, Math.max(0, (now - t0 - d0) / dur)), e = 1 - Math.pow(1 - p, 3);
-    el.textContent = R2(target * e);
-    if(p < 1 && !splashDone) requestAnimationFrame(tick);
-    else el.textContent = R2(target);
-  }
-  requestAnimationFrame(tick);
-})();
 setTimeout(endSplash, 3000);
 })();
 </script>
