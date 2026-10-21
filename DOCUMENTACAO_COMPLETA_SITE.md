@@ -1,6 +1,6 @@
 # Documentacao completa do site Obras Inteligentes
 
-Atualizado em: 16/10/2026
+Atualizado em: 21/10/2026
 Dominio publicado: https://www.obrasinteligentes.ia.br/  
 Diretorio local principal: `C:\Obras Inteligentes`  
 Repositorio GitHub: `https://github.com/andrebaetaobraspublicas-collab/obras-inteligentes-site.git`  
@@ -12,6 +12,8 @@ Ultimo commit base verificado nesta documentacao: `c2d2bf7` - `Documenta site Ob
 Este arquivo registra o estado atual do site, dos aplicativos publicados, da estrutura local e do fluxo de publicacao. Ele deve ser lido por qualquer novo prompt/atendimento antes de continuar alteracoes no site.
 
 ## Resumo do site
+
+Em 21/10/2026, incluido o card 108 `PrecoIVA Pro` no filtro existente `Orcamento`, em Todos, na busca e no rodape. Rota: `/precoiva-pro/`; arquivo local: `C:\Obras Inteligentes\precoiva-pro\index.html`. Fonte integral: `C:\Users\ACER\Documents\Downloads\PreçoIVA Pro.html`. Simula preco de revenda de mercadorias em 2027 com ICMS, IBS, CBS e memoria de calculo. Preservados manual, avisos legais e premissas do arquivo enviado. O anexo utiliza fontes do Google Fonts; nao tem scripts externos. Backup da home em `backups/index-before-precoiva-pro-<data-hora>.html`. Nao substitui outros aplicativos de IVA.
 
 Em 16/10/2026, incluido o card 107 `EscalaCalc PRO 2.0` no filtro `Orcamento`, em Todos, na busca e no rodape. Rota: `/escalacalc-pro/`; arquivo local: `C:\Obras Inteligentes\escalacalc-pro\index.html`. Fonte integral: `C:\Users\ACER\Documents\Downloads\EscalaCalc_PRO_v2_0.html`. Simula impactos economicos de jornadas, custos por empregado, horas efetivas, capacidade e reposicao de equipe. Preservadas as premissas, os avisos e o armazenamento local do anexo. Backup da home em `backups/index-before-escalacalc-pro-<data-hora>.html`. Nao substitui outros aplicativos.
 
@@ -37,7 +39,7 @@ O site `www.obrasinteligentes.ia.br` e uma pagina estatica hospedada na Hostinge
 C:\Obras Inteligentes\index.html
 ```
 
-A tela inicial possui atualmente 107 cards de aplicativos. Cada card aponta para uma rota estatica dentro do dominio. A regra geral e:
+A tela inicial possui atualmente 108 cards de aplicativos. Cada card aponta para uma rota estatica dentro do dominio. A regra geral e:
 
 ```text
 https://www.obrasinteligentes.ia.br/nome-da-rota/
