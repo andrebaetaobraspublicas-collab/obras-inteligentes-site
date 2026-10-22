@@ -13,6 +13,8 @@ Este arquivo registra o estado atual do site, dos aplicativos publicados, da est
 
 ## Resumo do site
 
+Em 21/10/2026, atualizado `PrecoIVA Pro` com a fonte integral `C:\Users\ACER\Documents\Downloads\PreçoIVA Pro (4).html`, na rota `/precoiva-pro/`. Mantidos card 108, filtro Orcamento, busca e rodape. Backup anterior: `backups/precoiva-pro-before-anexo4-20261021-222033.html`. Nenhum outro aplicativo alterado.
+
 Em 21/10/2026, atualizado novamente `PrecoIVA Pro` com a fonte integral `C:\Users\ACER\Documents\Downloads\PreçoIVA Pro (3).html`, na rota `/precoiva-pro/`. Mantidos card 108, menu Orcamento, busca e rodape. Backup anterior: `backups/precoiva-pro-before-anexo3-20261021-213223.html`. Nenhum outro aplicativo alterado.
 
 Em 21/10/2026, atualizado `PrecoIVA Pro` na rota `/precoiva-pro/`, com copia integral de `C:\Users\ACER\Documents\Downloads\PreçoIVA Pro (1).html` para `precoiva-pro/index.html`. Preservados card 108, filtro Orcamento, busca, rodape e os demais aplicativos. Backup anterior em `backups/precoiva-pro-before-update-<data-hora>.html`.

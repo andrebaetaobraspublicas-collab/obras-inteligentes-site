@@ -373,6 +373,15 @@ table.ct .c-act button{padding:4px 9px;font-size:.8rem}
 .bd.bad{background:var(--warn-soft);color:var(--neg)}
 .bd.info{background:var(--field);color:var(--muted);border-color:var(--line)}
 .cv-out{grid-template-columns:minmax(0,5fr) minmax(0,6fr)}
+.edit{background:var(--sheet);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+.edit h3{margin:0;font-family:var(--f-display);font-weight:700;font-size:1rem}
+.edit .cgrid{grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}
+.edit textarea{width:100%;min-height:64px;font-family:var(--f-body);font-size:.92rem;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--field);color:var(--ink);resize:vertical}
+.edit textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+.edit.warn{border-left-color:var(--warn)}
+.basis{border-radius:8px;padding:10px 12px;font-size:.93rem;background:var(--field);border:1px solid var(--line)}
+.basis b.t{display:block;font-family:var(--f-display);margin-bottom:2px}
+.na{font-family:var(--f-display);font-weight:800;font-size:clamp(1.6rem,4vw,2.2rem);line-height:1.1;color:var(--warn)}
 @media (max-width:880px){.cv-out{grid-template-columns:minmax(0,1fr)}}
 .cv-list{display:flex;flex-wrap:wrap;gap:6px;font-family:var(--f-mono);font-size:.85rem}
 .cv-list span{border:1px solid var(--line);border-radius:4px;padding:2px 7px}
@@ -569,6 +578,8 @@ table.ct .c-act button{padding:4px 9px;font-size:.8rem}
           </div>
           <label class="switch"><input type="checkbox" id="icmsOnIva"> O ICMS incide sobre IBS e CBS</label>
           <small style="color:var(--muted);margin-top:-6px">Desligado: um tributo não entra na base do outro.</small>
+          <label class="switch"><input type="checkbox" id="redSN"> Aplicar o redutor governamental ao Simples (exige justificativa)</label>
+          <small style="color:var(--muted);margin-top:-6px">Desligado: o art. 472 da LC 214/2025, com a redação da LC 227/2026, exclui do redutor as aquisições sujeitas ao Simples Nacional e ao MEI.</small>
           <label class="switch"><input type="checkbox" id="lucroFixoOn"> Formar o preço por lucro fixo em R$</label>
           <div class="fld" id="fld-lucroFixo" hidden>
             <label for="lucroFixo">Lucro por unidade</label>
@@ -593,6 +604,7 @@ table.ct .c-act button{padding:4px 9px;font-size:.8rem}
           <div class="cgrid">
             <div class="fld span2"><label for="cv-item">Item pesquisado</label><div class="inp"><input id="cv-item" autocomplete="off" style="text-align:left;font-family:var(--f-body)"></div></div>
             <div class="fld"><label for="cv-un">Unidade</label><div class="inp"><input id="cv-un" autocomplete="off" style="text-align:left;font-family:var(--f-body)"></div></div>
+            <div class="fld"><label for="cv-pesq">Data da pesquisa de preços</label><div class="inp"><input id="cv-pesq" type="date"></div></div>
             <div class="fld"><label for="cv-edital">Divulgação do edital</label><div class="inp"><input id="cv-edital" type="date"></div></div>
             <div class="fld"><label for="cv-icms">ICMS da UF de entrega</label><div class="inp"><input id="cv-icms" inputmode="decimal" autocomplete="off"><span class="u">%</span></div></div>
             <div class="fld"><label for="cv-cbs">CBS</label><div class="inp"><input id="cv-cbs" inputmode="decimal" autocomplete="off"><span class="u">%</span></div></div>
@@ -611,7 +623,15 @@ table.ct .c-act button{padding:4px 9px;font-size:.8rem}
                 <option value="10">Serviço com predominância de mão de obra</option>
                 <option value="x">Personalizado</option>
               </select></div>
-            <div class="fld"><label for="cv-alfa">Custo em insumos tributados (α)</label><div class="inp"><input id="cv-alfa" inputmode="decimal" autocomplete="off"><span class="u">%</span></div></div>
+            <div class="fld"><label for="cv-alfa">α do Lucro Presumido</label><div class="inp"><input id="cv-alfa" inputmode="decimal" autocomplete="off"><span class="u">%</span></div></div>
+            <div class="fld"><label for="cv-alfaR">α do Lucro Real</label><div class="inp"><input id="cv-alfaR" inputmode="decimal" autocomplete="off"><span class="u">%</span></div></div>
+            <div class="fld span2"><label for="cv-ni">Regime não informado: cenário adotado</label>
+              <select id="cv-ni" class="sel">
+                <option value="real">Lucro Real (não depende de α)</option>
+                <option value="pres">Lucro Presumido</option>
+                <option value="simp">Simples Nacional</option>
+                <option value="avg">Média de Presumido e Real</option>
+              </select></div>
             <div class="fld"><label for="cv-crit">Preço de referência</label>
               <select id="cv-crit" class="sel"><option value="med">Mediana</option><option value="avg">Média</option><option value="min">Menor preço</option></select></div>
             <div class="fld"><label for="cv-idx">Atualização: índice anual</label><div class="inp"><input id="cv-idx" inputmode="decimal" autocomplete="off"><span class="u">% a.a.</span></div></div>
@@ -650,19 +670,19 @@ table.ct .c-act button{padding:4px 9px;font-size:.8rem}
           </table>
         </div>
         <p class="hint" id="cv-empty" hidden>Nenhuma cotação. Use "Adicionar cotação" ou "Restaurar exemplo".</p>
-        <p class="hint">Clique em uma linha para ver a memória de cálculo dela. Cotações vencidas não entram no preço de referência; cotações sinalizadas entram até você desmarcar "Usar", após a análise crítica.</p>
+        <p class="hint">Clique em uma linha para ver a memória de cálculo e os ajustes dela (resíduo informado e justificativa de prazo). Cotações vencidas só entram no preço de referência com justificativa; cotações sinalizadas entram até você desmarcar "Usar", após a análise crítica.</p>
       </section>
 
       <div class="grid cv-out">
         <div class="out" id="cv-sum" aria-live="polite"></div>
-        <div class="out" id="cv-memo"></div>
+        <div class="out"><div id="cv-edit"></div><div id="cv-memo"></div></div>
       </div>
     </div>
   </section>
 
   <section id="view-ata" class="view" role="tabpanel" aria-labelledby="tab-ata" hidden>
     <div class="conv">
-      <p class="conv-lead">Revise os preços registrados de uma ata vigente em 2026 que continuará a ser executada em 2027. Cada item perde os tributos de 2026 e o resíduo de PIS/Cofins e recebe os tributos de 2027; o impacto é calculado sobre o saldo a executar. <button type="button" class="link" id="ar-help">Como funciona</button></p>
+      <p class="conv-lead">Estime o impacto tributário da reforma nos preços registrados de uma ata vigente em 2026 que continuará a ser executada em 2027. Cada item perde os tributos de 2026 e o resíduo de PIS/Cofins e recebe os tributos de 2027; o impacto é calculado sobre o saldo a executar, e o fundamento legal depende da data da proposta. <button type="button" class="link" id="ar-help">Como funciona</button></p>
 
       <form id="af" class="cpar" novalidate>
         <fieldset>
@@ -695,7 +715,8 @@ table.ct .c-act button{padding:4px 9px;font-size:.8rem}
                 <option value="30">Serviço com fornecimento de materiais</option>
                 <option value="10">Serviço com predominância de mão de obra</option>
               </select></div>
-            <div class="fld"><label for="ar-alfa">α padrão dos itens</label><div class="inp"><input id="ar-alfa" inputmode="decimal" autocomplete="off"><span class="u">%</span></div></div>
+            <div class="fld"><label for="ar-alfa">α padrão (Presumido e Simples)</label><div class="inp"><input id="ar-alfa" inputmode="decimal" autocomplete="off"><span class="u">%</span></div></div>
+            <div class="fld"><label for="ar-alfaR">α padrão do Lucro Real</label><div class="inp"><input id="ar-alfaR" inputmode="decimal" autocomplete="off"><span class="u">%</span></div></div>
           </div>
           <details class="adv" id="ar-adv">
             <summary>Premissas avançadas</summary>
@@ -706,6 +727,7 @@ table.ct .c-act button{padding:4px 9px;font-size:.8rem}
               <div class="fld"><label for="ar-d26">DAS efetivo 2026</label><div class="inp"><input id="ar-d26" inputmode="decimal" autocomplete="off"><span class="u">%</span></div></div>
               <div class="fld"><label for="ar-d27">DAS efetivo 2027 (com IBS/CBS)</label><div class="inp"><input id="ar-d27" inputmode="decimal" autocomplete="off"><span class="u">%</span></div></div>
               <div class="fld"><label for="ar-d27h">DAS efetivo 2027 (sem IBS/CBS)</label><div class="inp"><input id="ar-d27h" inputmode="decimal" autocomplete="off"><span class="u">%</span></div></div>
+              <label class="switch span2" style="grid-column:1/-1"><input type="checkbox" id="ar-redSN"> Aplicar o redutor governamental ao Simples com IBS/CBS por fora (exige justificativa)</label>
             </div>
           </details>
         </fieldset>
@@ -716,7 +738,8 @@ table.ct .c-act button{padding:4px 9px;font-size:.8rem}
           <h2><span class="q">3</span> Itens registrados</h2>
           <div class="btns">
             <button type="button" class="primary" id="ar-add">Adicionar item</button>
-            <button type="button" id="ar-ex">Restaurar exemplo</button>
+            <button type="button" id="ar-ex">Exemplo: proposta de 2026</button>
+            <button type="button" id="ar-ex24">Exemplo: proposta de 2024</button>
             <button type="button" id="ar-clear">Limpar tabela</button>
           </div>
         </div>
@@ -730,13 +753,13 @@ table.ct .c-act button{padding:4px 9px;font-size:.8rem}
             <tbody id="ar-rows"></tbody>
           </table>
         </div>
-        <p class="hint" id="ar-empty" hidden>Nenhum item. Use "Adicionar item" ou "Restaurar exemplo".</p>
-        <p class="hint">Saldo 2027 é a quantidade ainda a fornecer a partir do início dos efeitos. ICMS e α em branco usam o padrão das premissas, mostrado em cinza. Clique em um item para ver a memória de cálculo dele.</p>
+        <p class="hint" id="ar-empty" hidden>Nenhum item. Use "Adicionar item" ou um dos exemplos.</p>
+        <p class="hint">Saldo 2027 é a quantidade ainda a fornecer a partir do início dos efeitos. ICMS e α em branco usam o padrão das premissas, mostrado em cinza. Clique em um item para ver a memória de cálculo e informar o resíduo demonstrado pelo fornecedor.</p>
       </section>
 
       <div class="grid cv-out">
         <div class="out" id="ar-sum" aria-live="polite"></div>
-        <div class="out" id="ar-memo"></div>
+        <div class="out"><div id="ar-edit"></div><div id="ar-memo"></div></div>
       </div>
     </div>
   </section>
@@ -818,7 +841,7 @@ table.ct .c-act button{padding:4px 9px;font-size:.8rem}
               <dt>ICMS na venda</dt><dd>Alíquota da sua operação (só no regime regular).</dd>
               <dt>Alíquota efetiva do DAS</dt><dd>No Simples. No modelo com IBS/CBS por fora, informe a alíquota sem IBS e CBS.</dd>
               <dt>CBS e IBS</dt><dd>Alíquotas cheias do ano da venda. Em 2027, a CBS é quase integral e o IBS é simbólico (0,1%).</dd>
-              <dt>Venda para a administração pública</dt><dd>Liga o redutor de compras governamentais, que reduz as alíquotas de IBS e CBS da venda.</dd>
+              <dt>Venda para a administração pública</dt><dd>Liga o redutor de compras governamentais, que reduz as alíquotas de IBS e CBS da venda. Ele não se aplica a empresas do Simples (art. 472 da LC 214/2025, com a redação da LC 227/2026).</dd>
             </dl>
           </div>
 
@@ -907,7 +930,8 @@ table.ct .c-act button{padding:4px 9px;font-size:.8rem}
           <div class="fx">P = <span class="frac"><span>E</span><span>1 − d</span></span></div>
           <p><b>IBS/CBS por fora:</b> o DAS (sem IBS e CBS) incide primeiro, por dentro; IBS e CBS vêm por fora, sobre esse valor.</p>
           <div class="fx">S = <span class="frac"><span>E</span><span>1 − d</span></span> &nbsp;&nbsp; P = S × [ 1 + (c + b) × (1 − r) ]</div>
-          <p class="small">O preço seria o mesmo com o DAS calculado sobre o preço com IBS e CBS; a ordem muda só a divisão entre DAS e IBS/CBS. A calculadora adota a ordem acima porque IBS e CBS cobrados por fora não deveriam compor a receita do Simples. No Simples com IBS/CBS no DAS, o redutor de compras governamentais não é aplicado.</p>
+          <p class="small">O preço seria o mesmo com o DAS calculado sobre o preço com IBS e CBS; a ordem muda só a divisão entre DAS e IBS/CBS. A calculadora adota a ordem acima porque IBS e CBS cobrados por fora não deveriam compor a receita do Simples. O redutor de compras governamentais não é aplicado ao Simples, em nenhum dos dois modelos: o art. 472 da LC 214/2025, com a redação da LC 227/2026, exclui as aquisições sujeitas ao Simples Nacional e ao MEI. As premissas avançadas têm uma opção para aplicá-lo mediante justificativa.</p>
+          <p class="callout">Exceções do redutor (art. 472, parágrafo único): aquisições do Simples Nacional e do MEI; compras presenciais com dispensa de licitação; e operações com alíquotas nacionalmente uniformes de regimes específicos. Confira se a sua venda se enquadra antes de aplicar o redutor.</p>
 
           <h3>5. Apuração</h3>
           <ul>
@@ -950,8 +974,12 @@ table.ct .c-act button{padding:4px 9px;font-size:.8rem}
             <li>Devoluções de itens do estoque exigem estorno do crédito.</li>
           </ul>
 
-          <h3>Por que o crédito presumido é neutro, e não um ganho</h3>
-          <p>O preço que o fornecedor cobrou em 2026 já trazia o PIS/Cofins dele. O crédito de 9,25% devolve esse valor. Com o estoque bem valorado, o custo líquido do estoque antigo fica igual ao de uma compra feita em 2027.</p>
+          <h3>Quando o crédito presumido é neutro</h3>
+          <p>O crédito presumido é neutro em duas condições: a mercadoria veio de um fornecedor não cumulativo, que embutiu 9,25% de PIS/Cofins no preço, e o crédito é usado por inteiro. Nesse caso, o crédito de 9,25% devolve exatamente o tributo embutido, e o custo líquido do estoque antigo fica igual ao de uma compra feita em 2027.</p>
+          <ul>
+            <li><b>Compra de fornecedor cumulativo ou do Simples:</b> o tributo embutido é menor que 9,25%, e o crédito presumido gera um ganho real de transição.</li>
+            <li><b>Crédito não absorvido:</b> se a CBS a pagar não absorver as 12 parcelas no prazo de cinco anos, a parte não usada vira custo, e o estoque antigo fica mais caro. O mesmo vale, em menor grau, para o custo financeiro do parcelamento.</li>
+          </ul>
 
           <div class="lab" id="lab-neutro">
             <div class="lab-h">Experimente: o PIS/Cofins do fornecedor</div>
@@ -960,7 +988,7 @@ table.ct .c-act button{padding:4px 9px;font-size:.8rem}
               <div class="fld"><label for="ln-pc">PIS/Cofins embutido pelo fornecedor em 2026</label><div class="inp"><input id="ln-pc" inputmode="decimal" value="9,25"><span class="u">%</span></div></div>
             </div>
             <div class="lab-out" id="ln-out"></div>
-            <p class="small">ICMS de 19,5% na compra; IBS + CBS de 9% na compra de 2027. Mude o PIS/Cofins para 0% e veja o "ganho" artificial que aparece quando o custo de 2026 é montado sem esse tributo.</p>
+            <p class="small">ICMS de 19,5% na compra; IBS + CBS de 9% na compra de 2027. Mude o PIS/Cofins para 3,65% (fornecedor cumulativo) e veja o ganho de transição que aparece quando o crédito de 9,25% supera o tributo embutido.</p>
           </div>
 
           <h3>Lucro Real em 2026: crédito já aproveitado</h3>
@@ -983,6 +1011,7 @@ table.ct .c-act button{padding:4px 9px;font-size:.8rem}
             <tbody>
               <tr><td>ICMS da compra</td><td>19,5%</td><td>Usado só pelo botão Preencher pelas alíquotas</td></tr>
               <tr><td>O ICMS incide sobre IBS e CBS</td><td>Desligado</td><td>O ICMS da venda passa a ser calculado sobre E + CBS + IBS</td></tr>
+              <tr><td>Aplicar o redutor ao Simples</td><td>Desligado</td><td>Aplica o redutor governamental à empresa do Simples com IBS/CBS por fora, contra a exceção do art. 472; exige justificativa</td></tr>
               <tr><td>Lucro fixo em R$</td><td>Desligado</td><td>Substitui a margem percentual por um lucro em reais por unidade</td></tr>
             </tbody>
           </table></div>
@@ -992,79 +1021,91 @@ table.ct .c-act button{padding:4px 9px;font-size:.8rem}
         <!-- Conversor -->
         <article class="msec" id="m-conversor">
           <div class="qh"><h2 style="flex:1 1 260px">Conversor de cotação</h2><button type="button" class="go" data-goconv>Abrir o conversor</button></div>
-          <p class="big">O conversor leva preços pesquisados em 2026 para o regime tributário de 2027 e calcula o preço de referência de uma licitação de 2027.</p>
-          <p>Ele resolve o problema inverso da calculadora. A calculadora parte da nota fiscal de compra do comerciante; o conversor parte do <b>preço cotado</b>, que já traz os tributos de 2026, e o transforma no preço que o mesmo fornecedor praticaria em 2027.</p>
+          <p class="big">O conversor estima quanto um preço pesquisado em 2026 valeria no regime tributário de 2027 e calcula o preço de referência de uma licitação de 2027.</p>
+          <p>Ele resolve o problema inverso da calculadora. A calculadora parte da nota fiscal de compra do comerciante; o conversor parte do <b>preço cotado</b>, que já traz os tributos de 2026, e estima o preço que o mesmo fornecedor praticaria em 2027 se repassasse a mudança tributária.</p>
 
-          <h3>Os três passos da conversão</h3>
+          <h3>Os passos da conversão</h3>
           <ol class="flow">
             <li><b>Tirar os tributos de 2026</b><span>ICMS e PIS/Cofins, ou DAS</span></li>
-            <li><b>Remover o resíduo</b><span>PIS/Cofins dos insumos</span></li>
+            <li><b>Remover o resíduo</b><span>informado, ou estimado por α × t</span></li>
             <li><b>Atualizar</b><span>opcional, sem tributos</span></li>
             <li><b>Aplicar os tributos de 2027</b><span>ICMS, CBS, IBS</span></li>
           </ol>
-          <p><b>1. Tirar os tributos de 2026.</b> Com ICMS e PIS/Cofins por dentro e o ICMS fora da base do PIS/Cofins (Tema 69 do STF), o valor sem tributos sai exato:</p>
+          <p><b>1. Tirar os tributos de 2026.</b> PIS e Cofins incidem sobre a receita bruta, ou seja, por dentro, e depois do Tema 69 do STF sem o ICMS na base. Com o ICMS também por dentro, o valor sem tributos sai exato:</p>
           <div class="fx">E<sub>2026</sub> = P<sub>2026</sub> × (1 − i) × (1 − p)</div>
           <p class="small">i = ICMS da UF de entrega; p = PIS + Cofins do fornecedor (3,65% no cumulativo, 9,25% no não cumulativo). No Simples: E = P × (1 − DAS de 2026).</p>
-          <p><b>2. Remover o resíduo cumulativo.</b> O fornecedor do Lucro Presumido não se creditava do PIS/Cofins embutido nos insumos, e esse valor estava no custo. Em 2027 ele vira crédito de CBS:</p>
-          <div class="fx">E<sub>2027</sub> = E<sub>2026</sub> × (1 − α × t)</div>
-          <p class="small">α = parcela do custo formada por insumos tributados; t = PIS/Cofins embutido nesses insumos (9,25% quando vêm de fornecedores não cumulativos). A margem do fornecedor se cancela, então não precisa ser conhecida. No Lucro Real e no Simples não há resíduo a remover.</p>
+          <p><b>2. Remover o resíduo de PIS/Cofins.</b> É o PIS/Cofins pago nas compras do fornecedor que ele não podia creditar em 2026 e que, em 2027, vira crédito de CBS. O melhor dado é o <b>resíduo informado</b>, demonstrado pela planilha de custos do fornecedor; ele é digitado no painel de ajustes da cotação. Sem esse dado, o programa usa uma <b>estimativa</b>:</p>
+          <div class="fx">Resíduo ≈ E<sub>2026</sub> × α × t</div>
+          <p class="small">α = parcela do custo formada por compras sem crédito de PIS/Cofins; t = PIS/Cofins embutido nessas compras (9,25% quando vêm de fornecedores não cumulativos). Como PIS/Cofins são calculados por dentro, 9,25% do custo de aquisição é a própria conta do tributo embutido, a mesma base do art. 381 da LC 214/2025. A incerteza está em α e t, que são premissas: por isso a memória e o texto para os autos identificam o resíduo como estimado.</p>
+          <div class="tbl"><table class="mt">
+            <thead><tr><th>Regime do fornecedor em 2026</th><th>Resíduo</th><th>α padrão (revenda)</th></tr></thead>
+            <tbody>
+              <tr><td>Lucro Presumido (cumulativo)</td><td>Nenhuma compra gerava crédito de PIS/Cofins</td><td>100%</td></tr>
+              <tr><td>Lucro Real (não cumulativo)</td><td>Só os gastos fora do conceito de insumo, que a CBS passa a creditar</td><td>0%</td></tr>
+              <tr><td>Simples, seguindo no DAS em 2027</td><td>Não há: continua sem crédito</td><td>—</td></tr>
+            </tbody>
+          </table></div>
+          <p class="small">Os valores de α mudam com o tipo de objeto: na indústria e nos serviços, o Lucro Real também tem resíduo, porque o conceito restrito de insumo deixava gastos sem crédito. Ajuste α do Lucro Presumido e α do Lucro Real nas premissas.</p>
           <p><b>3. Atualizar, se quiser.</b> O índice anual é aplicado só ao valor sem tributos, pelo número de dias entre a cotação e a divulgação do edital. Assim, a mudança de tributos não é corrigida pela inflação.</p>
           <p><b>4. Aplicar os tributos de 2027.</b></p>
           <div class="fx">P<sub>2027</sub> = E<sub>2027</sub> × [ <span class="frac"><span>1</span><span>1 − i</span></span> + (c + b) × (1 − r) ]</div>
-          <p class="small">c e b = CBS e IBS; r = redutor de compras governamentais. Fornecedor do Simples: P = E ÷ (1 − DAS de 2027).</p>
+          <p class="small">c e b = CBS e IBS; r = redutor de compras governamentais. Fornecedor do Simples: P = E ÷ (1 − DAS de 2027), sem redutor, porque o art. 472 da LC 214/2025 (redação da LC 227/2026) exclui as aquisições do Simples e do MEI.</p>
 
-          <h3>O regime de 2026 muda a cotação, mas não o preço de 2027</h3>
+          <h3>Exemplo: o regime de 2026 muda a cotação, mas não o preço estimado</h3>
           <div class="tbl"><table class="mt">
             <thead><tr><th>Fornecedor do cimento em 2026</th><th>Cotação 2026</th><th>Sem tributos</th><th>Resíduo</th><th>Preço 2027</th></tr></thead>
             <tbody>
-              <tr><td>Lucro Presumido (cumulativo)</td><td>R$ 54,58</td><td>R$ 42,34</td><td>R$ 3,92</td><td><b>R$ 50,15</b></td></tr>
-              <tr><td>Lucro Real (não cumulativo)</td><td>R$ 52,60</td><td>R$ 38,42</td><td>—</td><td><b>R$ 50,15</b></td></tr>
+              <tr><td>Lucro Presumido, α = 100%</td><td>R$ 54,58</td><td>R$ 42,34</td><td>R$ 3,92 (estimado)</td><td><b>R$ 50,15</b></td></tr>
+              <tr><td>Lucro Real, α = 0%</td><td>R$ 52,60</td><td>R$ 38,42</td><td>—</td><td><b>R$ 50,15</b></td></tr>
             </tbody>
           </table></div>
-          <p>As duas cotações descrevem o mesmo produto com o mesmo valor econômico. A do Lucro Presumido é mais cara em 2026 por causa do resíduo de PIS/Cofins, e por isso cai mais na conversão.</p>
+          <p>As duas cotações descrevem o mesmo produto com o mesmo valor econômico. A do Lucro Presumido é mais cara em 2026 por causa do resíduo, e por isso cai mais na conversão. A convergência depende das premissas: com α = 0% para o Lucro Presumido, a primeira cotação iria a R$ 55,27.</p>
 
           <h3>Como preencher</h3>
           <dl class="defs">
-            <dt>Divulgação do edital</dt><dd>Data prevista. Define a validade de cada fonte e o período de atualização.</dd>
+            <dt>Data da pesquisa de preços</dt><dd>Referência do prazo das contratações similares (inciso II).</dd>
+            <dt>Divulgação do edital</dt><dd>Referência dos prazos das demais fontes e do período de atualização.</dd>
             <dt>ICMS da UF de entrega</dt><dd>Alíquota interna do destino. Em venda interestadual à administração, que não é contribuinte, o fornecedor recolhe o diferencial de alíquota e a carga total fica igual à alíquota interna do destino.</dd>
-            <dt>CBS, IBS e redutor</dt><dd>Alíquotas cheias do ano da licitação e o redutor de compras governamentais.</dd>
-            <dt>Tipo de objeto (α)</dt><dd>Preenche a parcela do custo em insumos tributados. Os valores padrão são pontos de partida: revenda 100%, fornecimento com industrialização 60%, serviço com materiais 30%, serviço de mão de obra 10%. Ajuste ao caso.</dd>
+            <dt>CBS, IBS e redutor</dt><dd>Alíquotas cheias do ano da licitação e o redutor de compras governamentais. Confira as exceções do art. 472: Simples e MEI, compras presenciais com dispensa e alíquotas uniformes de regimes específicos.</dd>
+            <dt>Tipo de objeto</dt><dd>Preenche α do Lucro Presumido e α do Lucro Real: revenda 100% e 0%; fornecimento com industrialização 60% e 10%; serviço com materiais 30% e 10%; serviço de mão de obra 10% e 5%. São pontos de partida, a ajustar ao caso.</dd>
+            <dt>Regime não informado</dt><dd>Escolha o cenário adotado. O padrão é Lucro Real porque é o único que não depende de α. A faixa entre os três regimes fica sempre visível na linha.</dd>
             <dt>Preço de referência</dt><dd>Mediana, média ou menor preço das cotações usadas.</dd>
-            <dt>Premissas avançadas</dt><dd>Alíquotas de PIS/Cofins de 2026, t, DAS de 2026 e de 2027 e o limite de desvio da mediana que dispara o alerta.</dd>
+            <dt>Painel de ajustes</dt><dd>Ao clicar numa cotação: resíduo informado (substitui α × t) e, se a fonte estiver fora do prazo, a justificativa para mantê-la.</dd>
           </dl>
-          <p>Na tabela, cada linha é uma fonte de preço: nome, tipo de fonte, data, preço cotado e regime do fornecedor em 2026. Clique numa linha para ver a memória de cálculo dela.</p>
 
           <h3>Validade das fontes</h3>
           <div class="tbl"><table class="mt">
-            <thead><tr><th>Tipo de fonte</th><th>Inciso</th><th>Prazo antes da divulgação do edital</th></tr></thead>
+            <thead><tr><th>Tipo de fonte</th><th>Inciso</th><th>Prazo</th></tr></thead>
             <tbody>
               <tr><td>Painel de Preços ou sistema oficial</td><td>I</td><td>Sem prazo fixo; usar o dado atualizado</td></tr>
-              <tr><td>Contratação similar da administração</td><td>II</td><td>1 ano</td></tr>
-              <tr><td>Mídia especializada ou sítio eletrônico</td><td>III</td><td>6 meses</td></tr>
-              <tr><td>Pesquisa direta com fornecedor</td><td>IV</td><td>6 meses</td></tr>
-              <tr><td>Nota fiscal eletrônica</td><td>V</td><td>1 ano</td></tr>
+              <tr><td>Contratação similar da administração</td><td>II</td><td>1 ano antes da <b>data da pesquisa de preços</b></td></tr>
+              <tr><td>Mídia especializada ou sítio eletrônico</td><td>III</td><td>6 meses antes da divulgação do edital</td></tr>
+              <tr><td>Pesquisa direta com fornecedor</td><td>IV</td><td>6 meses antes da divulgação do edital</td></tr>
+              <tr><td>Nota fiscal eletrônica</td><td>V</td><td>1 ano antes da divulgação do edital</td></tr>
             </tbody>
           </table></div>
-          <p class="small">Art. 23, § 1º, da Lei 14.133/2021 e art. 5º da IN SEGES/ME 65/2021. Cotação vencida ou com data posterior ao edital fica fora do preço de referência. Para um edital de março de 2027, a pesquisa direta com fornecedores só aproveita cotações a partir de setembro de 2026.</p>
+          <p class="small">Art. 23, § 1º, da Lei 14.133/2021 e art. 5º da IN SEGES/ME 65/2021. A fonte vencida sai do cálculo, mas pode ser mantida com justificativa registrada no painel de ajustes, a critério da análise crítica. Data posterior ao edital não pode ser usada.</p>
 
           <h3>Situações e análise crítica</h3>
           <div class="tbl"><table class="mt">
             <thead><tr><th>Selo</th><th>Significado</th></tr></thead>
             <tbody>
               <tr><td><span class="bd ok">válida</span></td><td>Dentro do prazo e próxima da mediana</td></tr>
-              <tr><td><span class="bd bad">vencida</span></td><td>Fora do prazo da fonte; não entra no cálculo</td></tr>
-              <tr><td><span class="bd warn">acima da mediana</span></td><td>Desvio maior que o limite das premissas; entra até você desmarcar "Usar"</td></tr>
-              <tr><td><span class="bd info">regime estimado</span></td><td>Regime não informado: média dos cenários Lucro Presumido e Lucro Real, com a faixa dos três regimes</td></tr>
+              <tr><td><span class="bd bad">vencida</span></td><td>Fora do prazo da fonte; não entra no cálculo sem justificativa</td></tr>
+              <tr><td><span class="bd warn">fora do prazo, justificada</span></td><td>Vencida, mas mantida com justificativa, que vai para a cópia dos autos</td></tr>
+              <tr><td><span class="bd warn">acima da mediana</span></td><td>Desvio maior que o limite; entra até você desmarcar "Usar"</td></tr>
+              <tr><td><span class="bd info">regime estimado</span></td><td>Regime não informado: usa o cenário escolhido nas premissas</td></tr>
+              <tr><td><span class="bd info">resíduo informado</span></td><td>O resíduo foi digitado; não usa a estimativa α × t</td></tr>
               <tr><td><span class="bd info">já em 2027</span></td><td>Cotação feita no novo regime: só a atualização é aplicada</td></tr>
             </tbody>
           </table></div>
-          <p>O conversor sinaliza, mas não descarta sozinho as cotações distantes da mediana. A decisão de considerá-las excessivas ou inexequíveis é da análise crítica de quem faz a pesquisa. O botão <b>Copiar para os autos</b> gera um texto com premissas, cotações, situação de cada uma, estatísticas e método, pronto para o processo.</p>
+          <p>O conversor sinaliza, mas não descarta sozinho as cotações distantes da mediana: a decisão é da análise crítica. <b>Copiar para os autos</b> gera um texto com premissas, cotações, situação, resíduo (informado ou estimado), justificativas, estatísticas e método.</p>
 
           <h3>Limites do conversor</h3>
           <ul>
-            <li>O resultado é uma estimativa de neutralidade tributária: supõe que o fornecedor repassa a mudança de tributos ao preço. Não substitui uma pesquisa de preços feita em 2027.</li>
-            <li>α é a premissa mais sensível. Quanto maior α, maior a queda das cotações de fornecedores do Lucro Presumido.</li>
-            <li>Em obras e serviços com BDI, os tributos estão dentro do BDI; a conversão passa pela troca da parcela tributária do BDI, que este conversor não faz.</li>
+            <li>O resultado é uma estimativa de neutralidade tributária: supõe que o fornecedor repassa a mudança de tributos ao preço e que o fabricante mantém o mesmo valor econômico. Não substitui uma pesquisa de preços feita em 2027.</li>
+            <li>Sem resíduo informado, α é a premissa mais sensível. Quanto maior α, maior a queda das cotações de fornecedores sem crédito em 2026.</li>
+            <li>O conversor trabalha com preços finais e parâmetros agregados. Não converte composições analíticas de custos; em obras e serviços com BDI, a conversão passa pela troca da parcela tributária do BDI.</li>
             <li>Cada tabela trata um item. Para outro item, copie a memória e monte uma nova tabela.</li>
           </ul>
           <p class="small">Os dados que vêm preenchidos no conversor são um exemplo ilustrativo. A tabela e as premissas ficam guardadas apenas neste navegador.</p>
@@ -1073,56 +1114,59 @@ table.ct .c-act button{padding:4px 9px;font-size:.8rem}
         <!-- Revisão de ata -->
         <article class="msec" id="m-ata">
           <div class="qh"><h2 style="flex:1 1 260px">Revisão de ata de registro de preços</h2><button type="button" class="go" data-goata>Abrir a revisão de ata</button></div>
-          <p class="big">A aba revisa os preços registrados de uma ata vigente em 2026 que continua a ser executada em 2027 e mede o impacto da reforma no saldo a fornecer.</p>
-          <p>A conta é a mesma do conversor de cotação, com três diferenças: o regime do fornecedor registrado é conhecido; cada item tem saldo, ICMS, alíquota de IBS/CBS e α próprios; e não há atualização monetária, porque reajuste por índice é outro instituto.</p>
+          <p class="big">A aba estima o impacto tributário da reforma nos preços registrados de uma ata vigente em 2026 que continua a ser executada em 2027. O valor é uma estimativa: sozinho, não comprova o desequilíbrio.</p>
+          <p>A conta é a mesma do conversor, com três diferenças: o regime do fornecedor registrado é conhecido; cada item tem saldo, ICMS, alíquota de IBS/CBS, α e resíduo próprios; e não há atualização monetária, porque reajuste por índice é outro instituto.</p>
 
-          <h3>Fundamento legal</h3>
+          <h3>O fundamento legal depende da data da proposta</h3>
           <div class="tbl"><table class="mt">
-            <thead><tr><th>Norma</th><th>O que diz para este caso</th></tr></thead>
+            <thead><tr><th>Data da proposta</th><th>Enquadramento</th><th>Como o programa trata</th></tr></thead>
             <tbody>
-              <tr><td>Lei 14.133/2021, art. 134</td><td>Criação, alteração ou extinção de tributos com repercussão comprovada altera os preços contratados, para mais ou para menos.</td></tr>
-              <tr><td>Decreto 11.462/2023, art. 25, II</td><td>Os preços registrados podem ser alterados quando houver criação, alteração ou extinção de tributos com repercussão comprovada.</td></tr>
-              <tr><td>Decreto 11.462/2023, art. 26</td><td>Se o preço registrado ficar acima do mercado, o gerenciador convoca o fornecedor para negociar a redução. Se ele não aceitar, fica liberado do item sem penalidade, e o cadastro de reserva é consultado. Contratos decorrentes são revistos à parte.</td></tr>
-              <tr><td>LC 214/2025, arts. 373 a 377</td><td>O reequilíbrio considera a carga tributária efetiva de IBS e CBS, com a não cumulatividade e a transição. A redução de carga autoriza revisão de ofício (art. 375); o aumento depende de pedido do contratado, com cálculos técnicos e decisão em até 90 dias, prorrogáveis uma vez (art. 376).</td></tr>
+              <tr><td>Antes de 16/1/2025</td><td>Regime especial dos arts. 373 a 377 da LC 214/2025. Ata assinada depois dessa data: no que couber (art. 373, § 1º).</td><td>Redução de carga: revisão de ofício com demonstração objetiva e manifestação do fornecedor (art. 375). Aumento: pedido do fornecedor com cálculos técnicos, decisão em até 90 dias (art. 376).</td></tr>
+              <tr><td>De 16/1/2025 até a véspera dos efeitos</td><td>Fora do regime especial (art. 373). Regra geral: art. 134 da Lei 14.133/2021 e art. 25, II, do Decreto 11.462/2023.</td><td>Alerta: a revisão por tributo exige alteração posterior à proposta com repercussão comprovada; como a reforma já estava publicada, é preciso avaliar se a proposta a considerou. Indica o caminho pelo preço de mercado: art. 26 (redução negociada) ou art. 27 (pedido do fornecedor com comprovação).</td></tr>
+              <tr><td>No início dos efeitos ou depois</td><td>Preço já formado no novo regime</td><td>Revisão tributária não aplicável. Os valores aparecem só como simulação.</td></tr>
             </tbody>
           </table></div>
-          <p class="small">O Decreto 11.462/2023 rege o registro de preços federal. Estados e municípios devem aplicar o regulamento próprio, quando houver.</p>
+          <p class="small">Como a ata dura um ano, prorrogável por mais um, quase toda ata executada em 2027 terá proposta posterior à LC 214/2025. O Decreto 11.462/2023 rege o registro de preços federal; estados e municípios aplicam o regulamento próprio.</p>
 
           <h3>Como preencher</h3>
           <dl class="defs">
-            <dt>Regime do fornecedor</dt><dd>Escolha a transição de 2026 para 2027: Lucro Presumido ou Lucro Real para o regime regular; ou Simples para o Simples com IBS/CBS no DAS ou por fora.</dd>
-            <dt>Data da proposta</dt><dd>Se for posterior ao início dos efeitos, o preço já foi formado no novo regime e a revisão tributária não se aplica.</dd>
-            <dt>Início dos efeitos</dt><dd>Data a partir da qual vale o preço revisado (em regra, 1º/1/2027). O que foi fornecido antes segue o preço registrado.</dd>
-            <dt>Saldo 2027</dt><dd>Quantidade ainda a fornecer a partir do início dos efeitos. O impacto financeiro é calculado sobre ela.</dd>
-            <dt>ICMS e α do item</dt><dd>Em branco, o item usa os valores padrão das premissas. Preencha quando o item tiver alíquota de ICMS própria ou outra proporção de insumos.</dd>
+            <dt>Regime do fornecedor</dt><dd>Transição de 2026 para 2027: Lucro Presumido ou Lucro Real para o regime regular; ou Simples para o Simples com IBS/CBS no DAS ou por fora.</dd>
+            <dt>Data da proposta</dt><dd>Define o enquadramento legal (quadro acima).</dd>
+            <dt>Início dos efeitos</dt><dd>Data a partir da qual vale o preço estimado (em regra, 1º/1/2027). O que foi fornecido antes segue o preço registrado.</dd>
+            <dt>Saldo 2027</dt><dd>Quantidade ainda a fornecer a partir do início dos efeitos.</dd>
+            <dt>ICMS e α do item</dt><dd>Em branco, o item usa o padrão: ICMS das premissas, α do Lucro Presumido e Simples, ou α do Lucro Real, conforme o regime.</dd>
             <dt>IBS/CBS do item</dt><dd>Cheia, redução de 60% ou zero, conforme o enquadramento do item na LC 214/2025. A redução se soma ao redutor de compras governamentais.</dd>
+            <dt>Resíduo informado</dt><dd>No painel de ajustes do item, digite o resíduo demonstrado pela planilha de custos do fornecedor. Ele substitui a estimativa α × t.</dd>
+            <dt>Redutor e Simples</dt><dd>O redutor não é aplicado ao fornecedor do Simples. Há uma opção nas premissas avançadas para aplicá-lo, com justificativa.</dd>
           </dl>
+          <p class="small">Dois exemplos estão disponíveis: ata com proposta de 2026 (regra geral, com alerta de previsibilidade) e ata com proposta de 2024 (regime especial da LC 214/2025, prorrogada até fevereiro de 2027).</p>
 
           <h3>Como a conta muda por regime</h3>
           <div class="tbl"><table class="mt">
-            <thead><tr><th>Regime (2026 → 2027)</th><th>Tributos de 2026 retirados</th><th>Resíduo removido</th><th>Tributos de 2027</th></tr></thead>
+            <thead><tr><th>Regime (2026 → 2027)</th><th>Tributos de 2026 retirados</th><th>Resíduo</th><th>Tributos de 2027</th></tr></thead>
             <tbody>
-              <tr><td>Lucro Presumido → regular</td><td>ICMS e PIS/Cofins 3,65%</td><td>Sim: α × t</td><td>ICMS, CBS e IBS</td></tr>
-              <tr><td>Lucro Real → regular</td><td>ICMS e PIS/Cofins 9,25%</td><td>Não</td><td>ICMS, CBS e IBS</td></tr>
-              <tr><td>Simples → IBS/CBS no DAS</td><td>DAS de 2026</td><td>Não</td><td>DAS de 2027</td></tr>
-              <tr><td>Simples → IBS/CBS por fora</td><td>DAS de 2026</td><td>Sim: α × t</td><td>DAS sem IBS/CBS, mais CBS e IBS por fora</td></tr>
+              <tr><td>Lucro Presumido → regular</td><td>ICMS e PIS/Cofins 3,65%</td><td>Sim</td><td>ICMS, CBS e IBS com redutor</td></tr>
+              <tr><td>Lucro Real → regular</td><td>ICMS e PIS/Cofins 9,25%</td><td>Só gastos sem crédito (α do Lucro Real)</td><td>ICMS, CBS e IBS com redutor</td></tr>
+              <tr><td>Simples → IBS/CBS no DAS</td><td>DAS de 2026</td><td>Não</td><td>DAS de 2027, sem redutor</td></tr>
+              <tr><td>Simples → IBS/CBS por fora</td><td>DAS de 2026</td><td>Sim</td><td>DAS sem IBS/CBS, mais CBS e IBS por fora, sem redutor</td></tr>
             </tbody>
           </table></div>
 
           <h3>Leitura do resultado</h3>
           <ul>
-            <li>A tabela mostra, por item, o preço revisado, a variação e o impacto no saldo. A linha de total soma o saldo a preços registrados e revisados.</li>
-            <li>O quadro de impacto indica o sentido da revisão. <b>Para menos:</b> revisão de ofício e negociação com o fornecedor. <b>Para mais:</b> depende de pedido do fornecedor com demonstração técnica.</li>
-            <li>Ao clicar num item, a memória mostra as etapas com os números usados.</li>
-            <li><b>Copiar para os autos</b> gera a planilha de revisão em texto, com premissas, itens, totais, método e fundamentos.</li>
+            <li>A tabela mostra, por item, o preço estimado em 2027, a variação e o impacto no saldo, com a linha de total.</li>
+            <li>O quadro de impacto mostra o enquadramento legal e o caminho cabível. Com proposta posterior aos efeitos, mostra "Revisão tributária não aplicável".</li>
+            <li>A memória de cada item identifica se o resíduo foi informado ou estimado.</li>
+            <li><b>Copiar para os autos</b> gera o texto com premissas, itens, resíduo de cada item, totais, método e enquadramento.</li>
           </ul>
 
           <h3>Cuidados</h3>
           <ul>
-            <li>Propostas apresentadas depois da LC 214/2025 podem já ter considerado a reforma. A revisão exige repercussão comprovada sobre o preço registrado.</li>
-            <li>O fornecedor que entrega em 2027 mercadoria comprada em 2026 tem crédito presumido de CBS sobre o estoque (art. 381 da LC 214/2025). Como esse crédito é neutro, o preço revisado não depende da origem da mercadoria.</li>
-            <li>α é a premissa mais sensível nos fornecedores sem crédito de PIS/Cofins em 2026. Na revenda de mercadorias, fica perto de 100%.</li>
-            <li>Os itens e o fornecedor que vêm preenchidos são um exemplo ilustrativo. A tabela fica guardada apenas neste navegador.</li>
+            <li>O valor estima o efeito tributário. A comprovação do desequilíbrio depende da carga efetiva do fornecedor, com os créditos que ele de fato apropria e utiliza.</li>
+            <li>Mercadoria entregue em 2027 a partir de estoque de 2026: o crédito presumido de CBS (art. 381) só neutraliza o custo quando a compra veio de fornecedor não cumulativo e o crédito é usado por inteiro. Fora disso, o efeito pode ser diferente.</li>
+            <li>Sem resíduo informado, α é a premissa mais sensível nos fornecedores sem crédito de PIS/Cofins em 2026.</li>
+            <li>Contratos já assinados com base na ata são avaliados à parte (art. 26, § 4º, e art. 27, § 6º, do Decreto 11.462/2023).</li>
+            <li>Os itens e o fornecedor que vêm preenchidos são exemplos ilustrativos. A tabela fica guardada apenas neste navegador.</li>
           </ul>
         </article>
 
@@ -1135,9 +1179,9 @@ table.ct .c-act button{padding:4px 9px;font-size:.8rem}
             <div class="case"><span class="cl">B</span><div><b>Compra em 2027</b><span>Regime regular · créditos da nota</span></div><b class="cp">R$ 50,15</b><button type="button" data-case="B">Carregar</button></div>
             <div class="case"><span class="cl">C</span><div><b>Estoque, Lucro Real em 2026</b><span>Regime regular · PIS/Cofins já creditado</span></div><b class="cp">R$ 50,15</b><button type="button" data-case="C">Carregar</button></div>
             <div class="case"><span class="cl">D</span><div><b>Compra em 2027, Simples</b><span>IBS/CBS no DAS de 8%</span></div><b class="cp">R$ 55,64</b><button type="button" data-case="D">Carregar</button></div>
-            <div class="case"><span class="cl">E</span><div><b>Compra em 2027, Simples</b><span>IBS/CBS por fora · DAS de 5%</span></div><b class="cp">R$ 53,42</b><button type="button" data-case="E">Carregar</button></div>
+            <div class="case"><span class="cl">E</span><div><b>Compra em 2027, Simples</b><span>IBS/CBS por fora · DAS de 5%</span></div><b class="cp">R$ 54,77</b><button type="button" data-case="E">Carregar</button></div>
           </div>
-          <p>A, B e C chegam ao mesmo preço porque o custo líquido é o mesmo (R$ 32,02). Em D e E, o comerciante do Simples não recupera o ICMS da compra (nem o IBS/CBS, em D), então o custo e o preço sobem.</p>
+          <p>A, B e C chegam ao mesmo preço porque o custo líquido é o mesmo (R$ 32,02). Em D e E, o comerciante do Simples não recupera o ICMS da compra (nem o IBS/CBS, em D) e não tem o redutor de compras governamentais, então o custo e o preço sobem.</p>
           <p class="small">No caso A, a carga desta venda sai negativa (−0,16%): a nota de 2026 trazia ICMS e PIS/Cofins maiores, que voltam agora como crédito. No caso C, a carga parece alta (6,34%) porque o crédito de PIS/Cofins dessa compra foi aproveitado em 2026, fora da apuração de 2027.</p>
         </article>
 
@@ -1152,6 +1196,8 @@ table.ct .c-act button{padding:4px 9px;font-size:.8rem}
           <h2>Limites e fontes</h2>
           <ul>
             <li><b>Alíquotas:</b> confirme CBS, IBS e o redutor vigentes no ano da venda.</li>
+            <li><b>Redutor de compras governamentais:</b> não se aplica a aquisições do Simples e do MEI, a compras presenciais com dispensa de licitação nem a operações com alíquotas uniformes de regimes específicos (art. 472 da LC 214/2025, com a redação da LC 227/2026).</li>
+            <li><b>Resíduo de PIS/Cofins:</b> no conversor e na revisão de ata, α × t é uma estimativa. Use o resíduo informado sempre que houver planilha de custos do fornecedor.</li>
             <li><b>Incidência recíproca:</b> o padrão supõe que ICMS e IBS/CBS não incidem um sobre o outro. Teste a hipótese contrária nas premissas avançadas.</li>
             <li><b>Crédito presumido:</b> depende do enquadramento em 31/12/2026, do inventário, do tipo de bem (bens novos para revenda, sem alíquota zero, isenção ou suspensão na compra) e da valoração pelo custo de aquisição.</li>
             <li><b>Uso dos créditos:</b> créditos parcelados ou acumulados têm custo financeiro. Ajuste a pergunta 5 quando a sua CBS mensal não absorver o crédito.</li>
@@ -1165,6 +1211,10 @@ table.ct .c-act button{padding:4px 9px;font-size:.8rem}
             <li><a href="https://blog.econeteditora.com.br/credito-presumido-cbs-estoques-2027/" target="_blank" rel="noopener">Crédito presumido de CBS sobre estoques em 2027 (Econet)</a> — inventário, prazos, parcelas e restrições</li>
             <li>Lei nº 14.133/2021, art. 134 — alteração de preços por criação, alteração ou extinção de tributos</li>
             <li>STF, RE 574.706 (Tema 69) — exclusão do ICMS da base do PIS/Cofins</li>
+            <li><a href="https://www.legjur.com/legislacao/art/lec_00002142025-373" target="_blank" rel="noopener">LC 214/2025, art. 373</a> — alcance do capítulo de reequilíbrio de contratos administrativos</li>
+            <li><a href="https://www.legjur.com/legislacao/art/lec_00002142025-472" target="_blank" rel="noopener">LC 214/2025, art. 472, com a redação da LC 227/2026</a> — redutor de compras governamentais e exceções</li>
+            <li><a href="https://www.legjur.com/legislacao/art/dec_00114622023-25" target="_blank" rel="noopener">Decreto 11.462/2023, arts. 25</a>, <a href="https://www.legjur.com/legislacao/art/dec_00114622023-26" target="_blank" rel="noopener">26</a> e <a href="https://www.legjur.com/legislacao/art/dec_00114622023-27" target="_blank" rel="noopener">27</a> — alteração dos preços registrados</li>
+            <li>Lei nº 14.133/2021, art. 23, § 1º, e IN SEGES/ME 65/2021, art. 5º — parâmetros e prazos da pesquisa de preços</li>
           </ul>
         </article>
       </div>
@@ -1225,7 +1275,7 @@ function read(){
     pc26:num('pc26')/100, nota:num('nota'), icmsC:num('icmsC'), ibsC:num('ibsC'), cbsC:num('cbsC'),
     m:num('margem')/100, iV:num('icmsV')/100, cbs:num('cbs')/100, ibs:num('ibs')/100,
     gov:$('gov').checked, red:num('red')/100, das:num('das')/100, k:Number($('k').value)/100,
-    icmsCp:num('icmsCompraPct')/100, icmsOnIva:$('icmsOnIva').checked, lf:$('lucroFixoOn').checked, L:num('lucroFixo')};
+    icmsCp:num('icmsCompraPct')/100, icmsOnIva:$('icmsOnIva').checked, lf:$('lucroFixoOn').checked, L:num('lucroFixo'), redSN:$('redSN').checked};
 }
 function vis(s){
   return {
@@ -1235,7 +1285,8 @@ function vis(s){
     ibsC: s.orig==='compra' && s.r27!=='puro',
     icmsV: s.r27==='regular',
     iva: s.r27!=='puro',
-    red: s.r27!=='puro' && s.gov,
+    red: s.gov && (s.r27==='regular' || (s.r27==='hibrido' && s.redSN)),
+    redExc: s.gov && s.r27!=='regular' && !(s.r27==='hibrido' && s.redSN),
     das: s.r27!=='regular',
     pres: s.orig==='estoque' && s.r26==='cumulativo' && s.r27!=='puro'
   };
@@ -1366,6 +1417,7 @@ function buildSteps(r){
     n3.push('No Simples com IBS/CBS no DAS, a alíquota efetiva já inclui IBS e CBS. Esta calculadora não aplica o redutor de compras governamentais ao DAS.');
   }
   if(v.red) n3.push('O redutor de compras governamentais de '+P(s.red)+' reduz IBS e CBS da venda: a alíquota conjunta cai de '+P(s.cbs+s.ibs)+' para '+P((s.cbs+s.ibs)*r.f)+'.');
+  if(v.redExc) n3.push('Venda à administração por empresa do Simples: o redutor de compras governamentais não é aplicado (art. 472, parágrafo único, da LC 214/2025, com a redação da LC 227/2026).');
   rows3.push(['= Preço final de venda', 'soma das linhas acima', R2(r.Pf), 'total']);
   st.push({t:'Tributos da venda e preço final', lead:'Sobre o valor sem tributos entram os tributos que você cobra do cliente.', rows:rows3, notes:n3});
 
@@ -1423,7 +1475,8 @@ function premissas(r){
   if(s.orig==='estoque' && s.r26==='naocum') L.push(['Saldos de PIS/Cofins não usados até 31/12/2026 podem compensar CBS a partir de 2027 (art. 378 da LC 214/2025).', '']);
   if(s.orig==='estoque' && s.r26!=='simples' && s.r27!=='regular') L.push(['Houve mudança para o Simples entre 2026 e 2027. Confirme com seu contador o tratamento dos créditos de ICMS já apropriados.', 'alert']);
   if(s.r27==='puro') L.push(['Cliente em regime regular só se credita do IBS/CBS que você efetivamente recolheu no DAS. Isso pode pesar na negociação com empresas.', '']);
-  if(v.red) L.push(['O redutor de '+P(s.red)+' foi informado por você. Confirme o percentual vigente para o ano da venda.', '']);
+  if(v.red) L.push(['O redutor de '+P(s.red)+' foi informado por você. Confirme o percentual vigente para o ano da venda e se a compra não está entre as exceções do art. 472 (por exemplo, compra presencial com dispensa de licitação).', '']);
+  if(v.red && s.r27==='hibrido') L.push(['Você aplicou o redutor a uma empresa do Simples. O art. 472 da LC 214/2025, com a redação da LC 227/2026, exclui as aquisições sujeitas ao Simples Nacional: registre a justificativa.', 'alert']);
   if(s.orig==='compra') L.push(['O preço depende do valor que o fornecedor cobra em 2027. Use os valores da nota real.', '']);
   return L;
 }
@@ -1557,7 +1610,7 @@ function loadCase(k){
   $('das').value = c.das || '8';
   $('margem').value = '20'; $('icmsV').value = '19,5'; $('cbs').value = '8,9'; $('ibs').value = '0,1';
   $('gov').checked = true; $('red').value = '30'; $('k').value = '100';
-  $('icmsCompraPct').value = '19,5'; $('icmsOnIva').checked = false; $('lucroFixoOn').checked = false;
+  $('icmsCompraPct').value = '19,5'; $('icmsOnIva').checked = false; $('lucroFixoOn').checked = false; $('redSN').checked = false;
   loadExample(); render(); showTab('calc');
   const out = $('out');
   requestAnimationFrame(()=>{ scrollTo(window.innerWidth < 880 ? out : document.querySelector('.wrap')); flash(out.querySelector('.hero')); });
@@ -1602,8 +1655,8 @@ function labNeutro(){
   const icms27 = c2(V2*i/(1-i)), iva27 = c2(V2*iva), nota27 = c2(V2 + icms27 + iva27), c27 = V2;
   const d = c26 - c27;
   let msg;
-  if(Math.abs(d) < 0.005) msg = '<span class="ok">Custos iguais.</span> O crédito presumido só devolve o PIS/Cofins que o fornecedor embutiu em 2026.';
-  else if(d < 0) msg = '<span class="warn">O estoque parece '+R2(-d)+' mais barato.</span> Esse "ganho" aparece porque o crédito de 9,25% é maior que o PIS/Cofins realmente embutido na nota de 2026.';
+  if(Math.abs(d) < 0.005) msg = '<span class="ok">Custos iguais.</span> Com 9,25% embutido pelo fornecedor e o crédito usado por inteiro, o crédito presumido devolve exatamente o PIS/Cofins de 2026.';
+  else if(d < 0) msg = '<span class="warn">O estoque fica '+R2(-d)+' mais barato.</span> O crédito de 9,25% é maior que o PIS/Cofins realmente embutido na nota de 2026: é um ganho de transição, se o crédito for usado por inteiro.';
   else msg = '<span class="warn">O estoque fica '+R2(d)+' mais caro.</span> O crédito de 9,25% não cobre todo o PIS/Cofins embutido pelo fornecedor.';
   out.innerHTML =
     '<div class="box"><h4>Estoque comprado em 2026</h4>'+kv('Nota', R2(nota26))+kv('(−) ICMS', R2(icms26))+kv('(−) Presumido 9,25%', R2(pres))+kv('Custo líquido', R2(c26))+'</div>'+
@@ -1623,7 +1676,7 @@ const QUIZ = [
   {q:'Uma empresa do Lucro Real em 2026 tem crédito presumido sobre o estoque?', o:['Sim, de 9,25%','Não, o crédito de PIS/Cofins dessa compra já foi aproveitado em 2026'], c:1,
    e:'O crédito presumido é para quem estava no regime cumulativo. No Lucro Real, o crédito já saiu do custo em 2026; saldos não usados seguem o art. 378.'},
   {q:'No exemplo do cimento, por que o estoque de 2026 e a compra de 2027 chegam ao mesmo preço?', o:['O crédito presumido devolve o PIS/Cofins que o fornecedor embutiu em 2026','A CBS de 2027 é igual ao PIS/Cofins de 2026'], c:0,
-   e:'Com o estoque valorado com o PIS/Cofins do fornecedor, o custo líquido fica em R$ 32,02 nos dois casos. Veja o laboratório da seção Estoque de 2026.'},
+   e:'Com o estoque comprado de fornecedor não cumulativo (9,25% embutido) e o crédito usado por inteiro, o custo líquido fica em R$ 32,02 nos dois casos. Se o fornecedor fosse cumulativo ou o crédito não fosse absorvido, os preços seriam diferentes. Veja o laboratório da seção Estoque de 2026.'},
   {q:'No conversor, por que a cotação de 2026 de um fornecedor do Lucro Presumido cai mais do que a de um fornecedor do Lucro Real?', o:['Porque o Lucro Presumido terá alíquota menor de CBS em 2027','Porque o preço dele carregava o PIS/Cofins dos insumos, que em 2027 vira crédito de CBS'], c:1,
    e:'O fornecedor cumulativo não se creditava do PIS/Cofins embutido nos insumos. Esse resíduo sai do custo em 2027: E₂₀₂₇ = E₂₀₂₆ × (1 − α × t). No exemplo do cimento, as duas cotações chegam a R$ 50,15.'}
 ];
@@ -1647,26 +1700,31 @@ render();
 try{ if(location.hash === '#manual') showTab('man'); if(location.hash === '#conversor') showTab('conv'); if(location.hash === '#ata') showTab('ata'); }catch(e){}
 
 /* ===== Conversor de cotação 2026 → 2027 ===== */
-const CV_KEY = 'precoiva-pro-conversor-v1';
+const CV_KEY = 'precoiva-pro-conversor-v2';
 const pn = s => { s = String(s == null ? '' : s).trim().replace(/\s/g,''); if(!s) return NaN; if(s.includes(',')) s = s.replace(/\./g,'').replace(',', '.'); return parseFloat(s); };
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
-// Fontes de preço (art. 23, § 1º, da Lei 14.133/2021 e art. 5º da IN SEGES/ME 65/2021) e prazo máximo antes da divulgação do edital
+const blank = v => String(v == null ? '' : v).trim() === '';
+const LC214 = new Date(Date.UTC(2025, 0, 16)); // publicação e vigência da LC 214/2025
+// Fontes de preço (art. 23, § 1º, da Lei 14.133/2021 e art. 5º da IN SEGES/ME 65/2021).
+// base: data a partir da qual o prazo é contado ('pesq' = data da pesquisa de preços; 'edital' = divulgação do edital)
 const TIPOS = {
   I:  {nome:'Sistema oficial (I)', longo:'Painel de Preços ou sistema oficial', meses:null},
-  II: {nome:'Contratação similar (II)', longo:'contratação similar da administração', meses:12},
-  III:{nome:'Mídia especializada (III)', longo:'mídia especializada ou sítio eletrônico', meses:6},
-  IV: {nome:'Fornecedor (IV)', longo:'pesquisa direta com fornecedor', meses:6},
-  V:  {nome:'Nota fiscal (V)', longo:'nota fiscal eletrônica', meses:12}
+  II: {nome:'Contratação similar (II)', longo:'contratação similar da administração', meses:12, base:'pesq'},
+  III:{nome:'Mídia especializada (III)', longo:'mídia especializada ou sítio eletrônico', meses:6, base:'edital'},
+  IV: {nome:'Fornecedor (IV)', longo:'pesquisa direta com fornecedor', meses:6, base:'edital'},
+  V:  {nome:'Nota fiscal (V)', longo:'nota fiscal eletrônica', meses:12, base:'edital'}
 };
 const REGS = {pres:'Lucro Presumido', real:'Lucro Real', simp:'Simples Nacional', ni:'Não informado'};
-const CV_DEF = {item:'Cimento CP-II 50 kg', un:'saco', edital:'2027-03-15', icms:'19,5', cbs:'8,9', ibs:'0,1', red:'30', obj:'100', alfa:'100', crit:'med', idx:'0', pcum:'3,65', pncum:'9,25', t:'9,25', d26:'8', d27:'8', dev:'25'};
+const NI = {real:'Lucro Real', pres:'Lucro Presumido', simp:'Simples Nacional', avg:'média de Presumido e Real'};
+const ALFA_R = {'100':'0', '60':'10', '30':'10', '10':'5'}; // α padrão do Lucro Real por tipo de objeto
+const CV_DEF = {item:'Cimento CP-II 50 kg', un:'saco', pesq:'2027-02-15', edital:'2027-03-15', icms:'19,5', cbs:'8,9', ibs:'0,1', red:'30', obj:'100', alfa:'100', alfaR:'0', ni:'real', crit:'med', idx:'0', pcum:'3,65', pncum:'9,25', t:'9,25', d26:'8', d27:'8', dev:'25'};
 const CV_EX = [
-  {use:true, src:'Fornecedor A', tipo:'IV', data:'2026-10-05', p:'54,58', reg:'pres'},
-  {use:true, src:'Fornecedor B', tipo:'IV', data:'2026-11-12', p:'52,60', reg:'real'},
-  {use:true, src:'Fornecedor C', tipo:'IV', data:'2026-12-02', p:'51,90', reg:'simp'},
-  {use:true, src:'Pregão 12/2026 · Prefeitura X', tipo:'II', data:'2026-06-30', p:'53,10', reg:'ni'},
-  {use:true, src:'Revista de preços', tipo:'III', data:'2026-08-10', p:'61,00', reg:'ni'},
-  {use:true, src:'Fornecedor D', tipo:'IV', data:'2026-12-01', p:'72,00', reg:'pres'}
+  {use:true, src:'Fornecedor A', tipo:'IV', data:'2026-10-05', p:'54,58', reg:'pres', resid:'', just:''},
+  {use:true, src:'Fornecedor B', tipo:'IV', data:'2026-11-12', p:'52,60', reg:'real', resid:'', just:''},
+  {use:true, src:'Fornecedor C', tipo:'IV', data:'2026-12-02', p:'51,90', reg:'simp', resid:'', just:''},
+  {use:true, src:'Pregão 12/2026 · Prefeitura X', tipo:'II', data:'2026-06-30', p:'53,10', reg:'ni', resid:'', just:''},
+  {use:true, src:'Revista de preços', tipo:'III', data:'2026-08-10', p:'61,00', reg:'ni', resid:'', just:''},
+  {use:true, src:'Fornecedor D', tipo:'IV', data:'2026-12-01', p:'72,00', reg:'pres', resid:'', just:''}
 ];
 const CV_FIELDS = Object.keys(CV_DEF);
 let cvRows = [], cvSel = 0, cvLast = null;
@@ -1677,10 +1735,7 @@ const fD = dt => dt ? dt.toLocaleDateString('pt-BR', {timeZone:'UTC'}) : '—';
 const pct = x => (x > 0 ? '+' : '') + P(x);
 
 function cvSave(){
-  try{
-    const params = {}; CV_FIELDS.forEach(k => params[k] = $('cv-'+k).value);
-    localStorage.setItem(CV_KEY, JSON.stringify({params, rows: cvRows}));
-  }catch(e){}
+  try{ const params = {}; CV_FIELDS.forEach(k => params[k] = $('cv-'+k).value); localStorage.setItem(CV_KEY, JSON.stringify({params, rows: cvRows})); }catch(e){}
 }
 function cvLoad(){
   let data = null;
@@ -1692,25 +1747,28 @@ function cvLoad(){
 
 function cvParams(){
   const g = k => $('cv-'+k).value;
-  return {item:g('item'), un:g('un'), editalS:g('edital'), ed:toDate(g('edital')),
+  return {item:g('item'), un:g('un'), pesq:toDate(g('pesq')), ed:toDate(g('edital')),
     i:pn(g('icms'))/100, c:pn(g('cbs'))/100, b:pn(g('ibs'))/100, r:pn(g('red'))/100,
-    alfa:pn(g('alfa'))/100, crit:g('crit'), idx:pn(g('idx'))/100,
+    alfa:pn(g('alfa'))/100, alfaR:pn(g('alfaR'))/100, ni:g('ni'), crit:g('crit'), idx:pn(g('idx'))/100,
     pcum:pn(g('pcum'))/100, pncum:pn(g('pncum'))/100, t:pn(g('t'))/100,
     d26:pn(g('d26'))/100, d27:pn(g('d27'))/100, dev:pn(g('dev'))/100};
 }
 function cvCheck(p){
   const bad = [];
   const rate = (x, name, max) => { if(!(isFinite(x) && x >= 0 && x < (max || 1))) bad.push(name); };
+  if(!p.pesq) bad.push('data da pesquisa de preços');
   if(!p.ed) bad.push('data de divulgação do edital');
+  if(p.pesq && p.ed && p.pesq > p.ed) bad.push('a data da pesquisa não pode ser posterior à divulgação do edital');
   rate(p.i, 'ICMS'); rate(p.c, 'CBS'); rate(p.b, 'IBS'); rate(p.r, 'redutor', 1.0001);
-  rate(p.alfa, 'custo em insumos (α)', 1.0001); rate(p.idx, 'índice anual', 10);
+  rate(p.alfa, 'α do Lucro Presumido', 1.0001); rate(p.alfaR, 'α do Lucro Real', 1.0001); rate(p.idx, 'índice anual', 10);
   rate(p.pcum, 'PIS + Cofins cumulativo'); rate(p.pncum, 'PIS + Cofins não cumulativo'); rate(p.t, 'PIS/Cofins dos insumos');
   rate(p.d26, 'DAS 2026'); rate(p.d27, 'DAS 2027'); rate(p.dev, 'desvio da mediana', 10);
   return bad;
 }
 
 // Converte um preço de 2026 num cenário de regime do fornecedor. Valores arredondados a centavos em cada etapa.
-function cvScenario(P26, reg, upd, p){
+// resid: resíduo de PIS/Cofins informado (R$ por unidade) ou null para a estimativa α × t.
+function cvScenario(P26, reg, upd, p, resid){
   const s = {reg, P26};
   if(reg === 'simp'){
     s.das26 = c2(P26 * p.d26); s.E26 = c2(P26 - s.das26);
@@ -1721,7 +1779,10 @@ function cvScenario(P26, reg, upd, p){
   } else {
     s.p26 = reg === 'pres' ? p.pcum : p.pncum;
     s.icms26 = c2(P26 * p.i); s.pc26 = c2((P26 - s.icms26) * s.p26); s.E26 = c2(P26 - s.icms26 - s.pc26);
-    s.res = reg === 'pres' ? c2(s.E26 * p.alfa * p.t) : 0; s.Ea = c2(s.E26 - s.res);
+    s.alfa = reg === 'pres' ? p.alfa : p.alfaR;
+    s.resInf = resid != null;
+    s.res = s.resInf ? Math.min(c2(resid), s.E26) : c2(s.E26 * s.alfa * p.t);
+    s.Ea = c2(s.E26 - s.res);
     s.upd = c2(s.Ea * upd); s.E27 = c2(s.Ea + s.upd);
     const f = 1 - p.r;
     s.icms27 = c2(s.E27 * p.i / (1 - p.i)); s.cbs27 = c2(s.E27 * p.c * f); s.ibs27 = c2(s.E27 * p.b * f);
@@ -1734,12 +1795,20 @@ function cvRow(row, p){
   const o = {row, P26:c2(pn(row.p)), dt:toDate(row.data), badges:[], valid:true};
   if(!(o.P26 > 0)){ o.err = 'informe o preço'; o.valid = false; return o; }
   if(!o.dt){ o.err = 'informe a data'; o.valid = false; return o; }
+  const resid = blank(row.resid) ? null : pn(row.resid);
+  if(resid != null && !(resid >= 0 && resid < o.P26)){ o.err = 'resíduo informado inválido'; o.valid = false; return o; }
+  o.resid = resid;
   const tp = TIPOS[row.tipo] || TIPOS.IV;
-  o.tp = tp;
+  o.tp = tp; o.just = String(row.just || '').trim();
   if(o.dt > p.ed){ o.badges.push(['bad','data posterior ao edital']); o.valid = false; }
   else if(tp.meses){
+    o.ref = tp.base === 'pesq' ? p.pesq : p.ed;
     o.limite = addMonths(o.dt, tp.meses);
-    if(o.limite < p.ed){ o.badges.push(['bad','vencida (limite de '+tp.meses+' meses)']); o.valid = false; }
+    if(o.limite < o.ref){
+      o.vencida = true;
+      if(o.just) o.badges.push(['warn','fora do prazo, justificada']);
+      else { o.badges.push(['bad','vencida (limite de '+tp.meses+' meses)']); o.valid = false; }
+    }
   } else o.badges.push(['info','sem prazo fixo']);
   o.yr27 = o.dt.getUTCFullYear() >= 2027;
   o.days = o.dt <= p.ed ? Math.round((p.ed - o.dt) / 864e5) : 0;
@@ -1749,14 +1818,18 @@ function cvRow(row, p){
     o.upd = c2(o.P26 * o.updRate); o.P27 = c2(o.P26 + o.upd);
   } else if(row.reg === 'ni'){
     o.mode = 'ni';
-    o.sc = {pres:cvScenario(o.P26,'pres',o.updRate,p), real:cvScenario(o.P26,'real',o.updRate,p), simp:cvScenario(o.P26,'simp',o.updRate,p)};
-    o.P27 = c2((o.sc.pres.P27 + o.sc.real.P27) / 2);
+    o.sc = {pres:cvScenario(o.P26,'pres',o.updRate,p,resid), real:cvScenario(o.P26,'real',o.updRate,p,resid), simp:cvScenario(o.P26,'simp',o.updRate,p,null)};
+    o.P27 = p.ni === 'avg' ? c2((o.sc.pres.P27 + o.sc.real.P27) / 2) : o.sc[p.ni].P27;
     const all = [o.sc.pres.P27, o.sc.real.P27, o.sc.simp.P27];
     o.lo = Math.min.apply(null, all); o.hi = Math.max.apply(null, all);
-    o.badges.push(['info','regime estimado']);
+    o.badges.push(['info','regime estimado: '+NI[p.ni]]);
   } else {
-    o.mode = 'one'; o.sc1 = cvScenario(o.P26, row.reg, o.updRate, p); o.P27 = o.sc1.P27;
+    o.mode = 'one'; o.sc1 = cvScenario(o.P26, row.reg, o.updRate, p, row.reg === 'simp' ? null : resid); o.P27 = o.sc1.P27;
   }
+  // A conversão desta linha depende da estimativa α × t?
+  if(o.mode === 'one') o.estimado = o.sc1.reg !== 'simp' && !o.sc1.resInf && o.sc1.res > 0;
+  else if(o.mode === 'ni') o.estimado = resid == null && (p.ni === 'pres' ? o.sc.pres.res > 0 : p.ni === 'real' ? o.sc.real.res > 0 : p.ni === 'avg' ? (o.sc.pres.res > 0 || o.sc.real.res > 0) : false);
+  else o.estimado = false;
   o.varr = o.P27 / o.P26 - 1;
   return o;
 }
@@ -1765,17 +1838,16 @@ const median = a => { const s = a.slice().sort((x,y) => x-y), n = s.length; retu
 
 function cvCompute(){
   const p = cvParams(), bad = cvCheck(p);
-  if(bad.length) return {p, error:'Confira nas premissas: ' + bad.join(', ') + '.'};
+  if(bad.length) return {p, error:'Confira nas premissas: ' + bad.join('; ') + '.'};
   const items = cvRows.map(r => cvRow(r, p));
   const usable = () => items.filter(o => o.valid && o.row.use);
-  const used0 = usable();
-  const med0 = median(used0.map(o => o.P27));
+  const med0 = median(usable().map(o => o.P27));
   items.forEach(o => {
     if(!o.valid || !isFinite(med0)) return;
     const d = o.P27 / med0 - 1;
     o.dev = d;
     if(Math.abs(d) > p.dev) o.badges.push(['warn', (d > 0 ? 'acima' : 'abaixo') + ' da mediana: ' + pct(d)]);
-    else o.badges.unshift(['ok','válida']);
+    else if(!o.vencida) o.badges.unshift(['ok','válida']);
   });
   const used = usable(), vals = used.map(o => o.P27);
   const res = {p, items, used};
@@ -1808,12 +1880,13 @@ function cvRenderRows(){
     '</tr>').join('');
   $('cv-empty').hidden = cvRows.length > 0;
   if(cvSel >= cvRows.length) cvSel = Math.max(0, cvRows.length - 1);
-  cvUpdate();
+  cvUpdate(true);
 }
 
-function cvUpdate(){
+function cvUpdate(forceEdit){
   const res = cvCompute(); cvLast = res;
   const sum = $('cv-sum'), memo = $('cv-memo');
+  if(forceEdit || !$('cv-edit').contains(document.activeElement)) cvRenderEdit(res);
   if(res.error){
     sum.innerHTML = '<div class="err">'+res.error+'</div>'; memo.innerHTML = '';
     cvRows.forEach((r,i) => { $('cv-f-'+i).textContent = ''; $('cv-p-'+i).textContent = ''; $('cv-s-'+i).innerHTML = ''; });
@@ -1825,16 +1898,37 @@ function cvUpdate(){
     if(o.err){ $('cv-f-'+i).textContent = '—'; $('cv-p-'+i).textContent = '—'; $('cv-s-'+i).innerHTML = '<span class="bd bad">'+o.err+'</span>'; return; }
     $('cv-f-'+i).textContent = pct(o.varr);
     $('cv-p-'+i).innerHTML = R2(o.P27) + (o.mode === 'ni' ? '<span class="rng">faixa '+f2(o.lo)+' a '+f2(o.hi)+'</span>' : '');
-    $('cv-s-'+i).innerHTML = o.badges.map(b => '<span class="bd '+b[0]+'">'+esc(b[1])+'</span>').join('') + (!o.row.use && o.valid ? '<span class="bd info">desmarcada</span>' : '');
+    const extra = (o.resid != null ? '<span class="bd info">resíduo informado</span>' : '') + (!o.row.use && o.valid ? '<span class="bd info">desmarcada</span>' : '');
+    $('cv-s-'+i).innerHTML = o.badges.map(b => '<span class="bd '+b[0]+'">'+esc(b[1])+'</span>').join('') + extra;
   });
   cvRenderSummary(res); cvRenderMemo(res);
+}
+
+function cvRenderEdit(res){
+  const box = $('cv-edit'), r = cvRows[cvSel], o = res && res.items ? res.items[cvSel] : null;
+  if(!r){ box.innerHTML = ''; return; }
+  const vencida = !!(o && o.vencida), hasJ = !blank(r.just);
+  const resApplies = r.reg !== 'simp';
+  box.innerHTML = '<section class="edit'+(vencida && !hasJ ? ' warn' : '')+'"><h3>Ajustes da cotação '+(cvSel+1)+(r.src ? ' · '+esc(r.src) : '')+'</h3>'+
+    (resApplies
+      ? '<div class="fld"><label for="cv-resid">Resíduo de PIS/Cofins informado (R$ por '+esc($('cv-un').value || 'unidade')+')</label><div class="inp" style="max-width:220px"><span class="u">R$</span><input id="cv-resid" inputmode="decimal" autocomplete="off" value="'+esc(r.resid || '')+'"></div>'+
+        '<small class="hint">Em branco, o programa usa a estimativa α × t. Preencha quando houver demonstração dos custos do fornecedor.</small></div>'
+      : '<p class="small" style="margin:0">Fornecedor do Simples que segue com IBS/CBS no DAS: não há resíduo a remover.</p>')+
+    (vencida || hasJ
+      ? '<div class="fld"><label for="cv-just">Justificativa para usar esta fonte fora do prazo</label><textarea id="cv-just">'+esc(r.just || '')+'</textarea>'+
+        '<small class="hint">Preenchida, a cotação volta ao cálculo com o selo "fora do prazo, justificada", e o texto vai para a cópia dos autos.</small></div>'
+      : '')+
+  '</section>';
 }
 
 function cvRenderSummary(res){
   const p = res.p, un = esc(p.un || 'unidade'), crit = {med:'mediana', avg:'média', min:'menor preço'}[p.crit];
   if(!res.n){ $('cv-sum').innerHTML = '<div class="err">Nenhuma cotação válida e marcada para usar. Confira as datas, os preços e a coluna "Usar".</div>'; return; }
   const excl = res.items.filter(o => !o.valid || !o.row.use);
-  const flag = res.items.filter(o => o.valid && o.row.use && o.badges.some(b => b[0] === 'warn'));
+  const flag = res.items.filter(o => o.valid && o.row.use && o.badges.some(b => b[0] === 'warn' && b[1].indexOf('mediana') > 0));
+  const just = res.items.filter(o => o.valid && o.row.use && o.vencida);
+  const est = res.used.filter(o => o.estimado).length;
+  const hasNi = res.used.some(o => o.mode === 'ni');
   const sorted = res.used.map(o => o.P27).sort((a,b) => a-b);
   const midIdx = sorted.length % 2 ? [(sorted.length-1)/2] : [sorted.length/2-1, sorted.length/2];
   let h = '<section class="hero"><div class="lbl">Preço de referência 2027 · '+crit+'</div>'+
@@ -1846,14 +1940,25 @@ function cvRenderSummary(res){
   h += '<section class="memo"><div class="memo-h"><div><h2>Preço de referência</h2><p>'+esc(p.item || 'Item')+' · valores convertidos para 2027</p></div><button type="button" id="cv-copy">Copiar para os autos</button></div>'+
     '<div class="step"><h3><span class="n">A</span>Cotações usadas, em ordem</h3><div class="cv-list">'+sorted.map((v,k) => '<span class="'+(midIdx.includes(k) ? 'mid' : '')+'">'+f2(v)+'</span>').join('')+'</div>'+
     '<p class="note">Mediana: '+(sorted.length % 2 ? 'valor central da lista' : 'média dos dois valores centrais')+' = '+R2(res.med)+'. Média: '+R2(res.avg)+'. Menor preço: '+R2(res.min)+'. Critério adotado: '+crit+'.</p></div>';
-  if(excl.length || flag.length){
-    h += '<div class="step"><h3><span class="n">B</span>Análise crítica</h3><ul class="premissas">'+
+  const prem = [];
+  if(est) prem.push(est+' cotação(ões) usam o resíduo estimado (α × t). É uma estimativa: substitua pelo resíduo informado quando houver demonstração de custos.');
+  if(hasNi) prem.push('Regime não informado: cenário adotado = '+NI[p.ni]+'. A faixa entre os três regimes aparece em cada linha.');
+  prem.push('Estimativa de neutralidade tributária: supõe que o fornecedor repassa a mudança de tributos ao preço. Não substitui pesquisa de preços feita em 2027.');
+  h += '<div class="step"><h3><span class="n">B</span>Premissas desta estimativa</h3><ul class="premissas">'+prem.map(x => '<li>'+x+'</li>').join('')+'</ul></div>';
+  if(excl.length || flag.length || just.length){
+    h += '<div class="step"><h3><span class="n">C</span>Análise crítica</h3><ul class="premissas">'+
       excl.map(o => '<li class="alert">'+esc(o.row.src || 'Cotação')+': fora do cálculo ('+(o.err || (!o.valid ? o.badges.filter(b => b[0]==='bad').map(b => b[1]).join('; ') : 'desmarcada'))+').</li>').join('')+
+      just.map(o => '<li>'+esc(o.row.src || 'Cotação')+': fora do prazo, mantida com justificativa: "'+esc(o.just)+'"</li>').join('')+
       flag.map(o => '<li class="alert">'+esc(o.row.src || 'Cotação')+': '+pct(o.dev)+' em relação à mediana. Avalie se é excessiva ou inexequível e desmarque "Usar" se for o caso.</li>').join('')+
       '</ul></div>';
   }
   $('cv-sum').innerHTML = h;
   $('cv-copy').addEventListener('click', cvCopy);
+}
+
+function cvResidRows(sc, p){
+  if(sc.resInf) return [['(−) Resíduo informado', 'valor demonstrado para este fornecedor', R2(sc.res), 'minus']];
+  return [['(−) Resíduo estimado (α × t)', f2(sc.E26)+' × '+P(sc.alfa)+' (α) × '+P(p.t)+' (t)', R2(sc.res), 'minus']];
 }
 
 function cvStepsFor(o, p){
@@ -1868,9 +1973,11 @@ function cvStepsFor(o, p){
   }
   if(o.mode === 'ni'){
     const rows = ['pres','real','simp'].map(k => { const s = o.sc[k]; return '<tr><td>'+REGS[k]+'</td><td>'+f2(s.E26)+'</td><td>'+f2(s.res)+'</td><td>'+f2(s.E27)+'</td><td>'+f2(s.P27)+'</td></tr>'; }).join('');
-    st.push({t:'Regime do fornecedor não informado', lead:'A cotação é convertida nos três regimes possíveis. O valor adotado é a média dos cenários Lucro Presumido e Lucro Real; o Simples entra só na faixa.', html:
+    const adot = p.ni === 'avg' ? 'Adotado: ('+f2(o.sc.pres.P27)+' + '+f2(o.sc.real.P27)+') ÷ 2' : 'Adotado: cenário '+NI[p.ni];
+    st.push({t:'Regime do fornecedor não informado', lead:'A cotação é convertida nos três regimes possíveis. O valor adotado segue o cenário escolhido nas premissas: '+NI[p.ni]+'.', html:
       '<div class="tbl"><table class="scen"><thead><tr><th>Cenário</th><th>Sem tributos 2026</th><th>Resíduo</th><th>Base 2027</th><th>Preço 2027</th></tr></thead><tbody>'+rows+
-      '<tr class="adot"><td>Adotado: ('+f2(o.sc.pres.P27)+' + '+f2(o.sc.real.P27)+') ÷ 2</td><td></td><td></td><td></td><td>'+f2(o.P27)+'</td></tr></tbody></table></div>', notes:['Faixa entre os três cenários: '+R2(o.lo)+' a '+R2(o.hi)+'. Para reduzir a incerteza, peça ao fornecedor o regime tributário na próxima cotação.']});
+      '<tr class="adot"><td>'+adot+'</td><td></td><td></td><td></td><td>'+f2(o.P27)+'</td></tr></tbody></table></div>',
+      notes:['Faixa entre os três cenários: '+R2(o.lo)+' a '+R2(o.hi)+'. O cenário adotado é uma premissa: registre a razão da escolha ou peça ao fornecedor o regime tributário.'+(o.resid == null ? ' Os resíduos dos cenários Presumido e Real são estimados por α × t.' : ' O resíduo informado foi aplicado aos cenários Presumido e Real.')]});
     return st;
   }
   if(sc.reg === 'simp'){
@@ -1884,13 +1991,14 @@ function cvStepsFor(o, p){
       ['(−) ICMS por dentro', f2(o.P26)+' × '+P(p.i), R2(sc.icms26), 'minus'],
       ['(−) PIS + Cofins ('+(sc.reg === 'pres' ? 'cumulativo' : 'não cumulativo')+')', '('+f2(o.P26)+' − '+f2(sc.icms26)+') × '+P(sc.p26), R2(sc.pc26), 'minus'],
       ['= Valor sem tributos em 2026', '', R2(sc.E26), 'total']], notes:[]});
-    if(sc.reg === 'pres'){
-      st.push({t:'Remover o resíduo de PIS/Cofins', lead:'No regime cumulativo, o fornecedor não se creditava do PIS/Cofins embutido nos insumos. Em 2027 esse valor vira crédito de CBS e sai do custo.', rows:[
-        ['Valor sem tributos em 2026', '', R2(sc.E26), ''],
-        ['(−) Resíduo cumulativo', f2(sc.E26)+' × '+P(p.alfa)+' (α) × '+P(p.t)+' (t)', R2(sc.res), 'minus'],
-        ['= Valor sem tributos ajustado', '', R2(sc.Ea), 'total']], notes:['A margem do fornecedor se cancela nessa conta: E₂₀₂₇ = E₂₀₂₆ × (1 − α × t).']});
+    if(sc.res > 0){
+      st.push({t:'Remover o resíduo de PIS/Cofins', lead: sc.reg === 'pres'
+          ? 'No regime cumulativo, o fornecedor não se creditava do PIS/Cofins embutido nos insumos. Em 2027 esse valor vira crédito de CBS e sai do custo.'
+          : 'No Lucro Real, parte dos gastos não gerava crédito de PIS/Cofins (conceito restrito de insumo). Em 2027 a CBS passa a creditá-los.',
+        rows:[['Valor sem tributos em 2026', '', R2(sc.E26), '']].concat(cvResidRows(sc, p), [['= Valor sem tributos ajustado', '', R2(sc.Ea), 'total']]),
+        notes:[sc.resInf ? 'Resíduo informado: substitui a estimativa α × t.' : 'Estimativa: α e t são premissas, não dados do fornecedor. Informe o resíduo efetivo no painel de ajustes quando houver demonstração de custos. A margem do fornecedor se cancela nessa conta: E₂₀₂₇ = E₂₀₂₆ × (1 − α × t).']});
     } else {
-      st.push({t:'Resíduo de PIS/Cofins', lead:'Fornecedor do Lucro Real: ele já se creditava do PIS/Cofins dos insumos em 2026. Não há resíduo a remover.', rows:[], notes:[]});
+      st.push({t:'Resíduo de PIS/Cofins', lead: sc.reg === 'real' ? 'Fornecedor do Lucro Real com α = 0%: todo o PIS/Cofins dos insumos já era creditado em 2026. Não há resíduo a remover.' : 'Resíduo zero com os dados informados.', rows:[], notes:[]});
     }
   }
   if(sc.upd > 0){
@@ -1900,7 +2008,7 @@ function cvStepsFor(o, p){
       ['= Valor na data do edital', fD(p.ed), R2(sc.E27), 'total']], notes:[]});
   }
   if(sc.reg === 'simp'){
-    st.push({t:'Aplicar os tributos de 2027', lead:'O fornecedor continua no Simples, com IBS e CBS dentro do DAS.', rows:[
+    st.push({t:'Aplicar os tributos de 2027', lead:'O fornecedor continua no Simples, com IBS e CBS dentro do DAS. O redutor de compras governamentais não se aplica (art. 472, parágrafo único, da LC 214/2025).', rows:[
       ['Valor sem tributos', '', R2(sc.E27), ''],
       ['(+) DAS 2027 por dentro', f2(sc.E27)+' ÷ '+P(1-p.d27)+' − '+f2(sc.E27), R2(sc.das27), ''],
       ['= Preço convertido para 2027', '', R2(sc.P27), 'total']], notes:[]});
@@ -1922,8 +2030,13 @@ function cvRenderMemo(res){
   if(!o){ memo.innerHTML = ''; return; }
   if(o.err){ memo.innerHTML = '<div class="err">Cotação '+(cvSel+1)+': '+o.err+'.</div>'; return; }
   const p = res.p, steps = cvStepsFor(o, p);
-  let validade = o.tp.meses ? 'Prazo: até '+o.tp.meses+' meses antes da divulgação do edital ('+fD(p.ed)+'); esta fonte vale até '+fD(o.limite)+'.' : 'Sistema oficial: sem prazo fixo na norma; use o dado mais recente e atualizado.';
+  let validade;
   if(o.dt > p.ed) validade = 'A data da cotação é posterior à divulgação do edital.';
+  else if(!o.tp.meses) validade = 'Sistema oficial: sem prazo fixo na norma; use o dado mais recente e atualizado.';
+  else {
+    validade = 'Prazo: até '+o.tp.meses+' meses antes da '+(o.tp.base === 'pesq' ? 'data da pesquisa de preços ('+fD(p.pesq)+')' : 'divulgação do edital ('+fD(p.ed)+')')+'; esta fonte vale até '+fD(o.limite)+'.';
+    if(o.vencida) validade += o.just ? ' Fora do prazo, mantida com justificativa.' : ' Vencida: fica fora do cálculo, salvo justificativa no painel de ajustes.';
+  }
   let h = '<section class="memo"><div class="memo-h"><div><h2>Memória da cotação '+(cvSel+1)+'</h2><p>'+esc(o.row.src || 'Sem nome')+' · '+REGS[o.row.reg]+' em 2026</p></div></div>'+
     '<div class="step"><p class="note">'+validade+(o.valid ? '' : ' <b>Fora do preço de referência.</b>')+'</p></div>';
   steps.forEach((st,i) => {
@@ -1939,50 +2052,56 @@ function cvCopy(){
   const res = cvLast; if(!res || res.error || !res.n) return;
   const p = res.p, crit = {med:'mediana', avg:'média', min:'menor preço'}[p.crit];
   let t = 'PREÇOIVA PRO · CONVERSÃO DE COTAÇÕES 2026 → 2027\n';
-  t += 'Item: '+(p.item || '')+' ('+(p.un || 'unidade')+')\nDivulgação do edital: '+fD(p.ed)+'\n';
-  t += 'Premissas: ICMS '+P(p.i)+'; CBS '+P(p.c)+'; IBS '+P(p.b)+'; redutor '+P(p.r)+'; α '+P(p.alfa)+'; t '+P(p.t)+'; PIS+Cofins 2026 '+P(p.pcum)+' (cumulativo) e '+P(p.pncum)+' (não cumulativo); DAS '+P(p.d26)+' (2026) e '+P(p.d27)+' (2027); atualização '+P(p.idx)+' a.a.\n\n';
+  t += 'Item: '+(p.item || '')+' ('+(p.un || 'unidade')+')\nData da pesquisa de preços: '+fD(p.pesq)+' · Divulgação do edital: '+fD(p.ed)+'\n';
+  t += 'Premissas: ICMS '+P(p.i)+'; CBS '+P(p.c)+'; IBS '+P(p.b)+'; redutor '+P(p.r)+' (não aplicado a fornecedor do Simples); α do Lucro Presumido '+P(p.alfa)+'; α do Lucro Real '+P(p.alfaR)+'; t '+P(p.t)+'; PIS+Cofins 2026 '+P(p.pcum)+' (cumulativo) e '+P(p.pncum)+' (não cumulativo); DAS '+P(p.d26)+' (2026) e '+P(p.d27)+' (2027); atualização '+P(p.idx)+' a.a.; regime não informado: cenário '+NI[p.ni]+'.\n\n';
   t += 'COTAÇÕES\n';
   res.items.forEach((o,i) => {
     t += (i+1)+'. '+(o.row.src || '')+' | '+(TIPOS[o.row.tipo] || TIPOS.IV).nome+' | '+fD(o.dt)+' | '+REGS[o.row.reg]+' | 2026: '+(o.P26 > 0 ? R2(o.P26) : '—')+
       ' | 2027: '+(o.P27 ? R2(o.P27) : '—')+(o.mode === 'ni' ? ' (faixa '+f2(o.lo)+' a '+f2(o.hi)+')' : '')+
-      ' | '+(o.valid && o.row.use ? 'usada' : 'fora do cálculo')+(o.badges.length ? ' | '+o.badges.map(b => b[1]).join('; ') : '')+'\n';
+      ' | '+(o.valid && o.row.use ? 'usada' : 'fora do cálculo')+(o.badges && o.badges.length ? ' | '+o.badges.map(b => b[1]).join('; ') : '')+
+      (o.resid != null ? ' | resíduo informado '+R2(o.resid) : (o.estimado ? ' | resíduo estimado (α × t)' : ''))+
+      (o.just ? ' | justificativa: '+o.just : '')+'\n';
   });
   t += '\nRESULTADO\nCotações usadas: '+res.n+'\nMediana: '+R2(res.med)+'\nMédia: '+R2(res.avg)+'\nMenor preço: '+R2(res.min)+'\nCoeficiente de variação: '+(res.cv != null ? P(res.cv) : '—')+'\n';
   t += 'PREÇO DE REFERÊNCIA 2027 ('+crit+'): '+R2(res.ref)+' por '+(p.un || 'unidade')+'\n\n';
-  t += 'MÉTODO\n1. Retirada dos tributos de 2026 (ICMS e PIS/Cofins por dentro; ICMS fora da base do PIS/Cofins, Tema 69 do STF; DAS no Simples).\n2. Remoção do resíduo de PIS/Cofins dos insumos do fornecedor cumulativo: E × (1 − α × t).\n3. Atualização do valor sem tributos, quando informada.\n4. Aplicação dos tributos de 2027 (ICMS por dentro; IBS e CBS por fora, com redutor de compras governamentais).\nRegime não informado: média dos cenários Lucro Presumido e Lucro Real.\nPrazos das fontes: art. 23, § 1º, da Lei 14.133/2021 e art. 5º da IN SEGES/ME 65/2021.\nEstimativa de neutralidade tributária; não substitui pesquisa de preços realizada em 2027.';
+  t += 'MÉTODO\n1. Retirada dos tributos de 2026 (ICMS e PIS/Cofins por dentro; ICMS fora da base do PIS/Cofins, Tema 69 do STF; DAS no Simples).\n2. Remoção do resíduo de PIS/Cofins dos insumos sem crédito em 2026: valor informado ou estimativa E × α × t (α e t são premissas).\n3. Atualização do valor sem tributos, quando informada.\n4. Aplicação dos tributos de 2027 (ICMS por dentro; IBS e CBS por fora, com redutor de compras governamentais, exceto para fornecedor do Simples, art. 472 da LC 214/2025).\nRegime não informado: cenário '+NI[p.ni]+'.\nPrazos das fontes: art. 23, § 1º, da Lei 14.133/2021 e art. 5º da IN SEGES/ME 65/2021 (contratações similares: 1 ano antes da data da pesquisa de preços; mídia especializada e fornecedores: 6 meses antes da divulgação do edital; notas fiscais: 1 ano antes da divulgação do edital).\nEstimativa de neutralidade tributária; não substitui pesquisa de preços realizada em 2027.';
   const b = $('cv-copy');
   const done = ok => { b.textContent = ok ? 'Copiado' : 'Selecione e copie (Ctrl+C)'; setTimeout(() => { if($('cv-copy')) $('cv-copy').textContent = 'Copiar para os autos'; }, 2200); };
   try{ navigator.clipboard.writeText(t).then(() => done(true), () => { fallback(t); done(false); }); }catch(e){ fallback(t); done(false); }
 }
 
 // Eventos do conversor
-$('cv-rows').addEventListener('input', e => {
+const cvRowEv = e => {
   const tr = e.target.closest('tr'), k = e.target.dataset.k; if(!tr || !k) return;
   const i = +tr.dataset.i; cvRows[i][k] = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
-  cvSel = i; cvUpdate(); cvSave();
-});
-$('cv-rows').addEventListener('change', e => {
-  const tr = e.target.closest('tr'), k = e.target.dataset.k; if(!tr || !k) return;
-  const i = +tr.dataset.i; cvRows[i][k] = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
-  cvSel = i; cvUpdate(); cvSave();
-});
+  const changed = cvSel !== i; cvSel = i; cvUpdate(changed || k === 'reg' || k === 'data' || k === 'tipo'); cvSave();
+};
+$('cv-rows').addEventListener('input', cvRowEv);
+$('cv-rows').addEventListener('change', cvRowEv);
 $('cv-rows').addEventListener('click', e => {
   const del = e.target.closest('[data-del]');
   if(del){ cvRows.splice(+del.dataset.del, 1); cvRenderRows(); cvSave(); return; }
   const tr = e.target.closest('tr'); if(!tr) return;
-  const i = +tr.dataset.i; if(i !== cvSel){ cvSel = i; cvUpdate(); }
+  const i = +tr.dataset.i; if(i !== cvSel){ cvSel = i; cvUpdate(true); }
 });
+$('cv-edit').addEventListener('input', e => {
+  const r = cvRows[cvSel]; if(!r) return;
+  if(e.target.id === 'cv-resid') r.resid = e.target.value;
+  if(e.target.id === 'cv-just') r.just = e.target.value;
+  cvUpdate(); cvSave();
+});
+$('cv-edit').addEventListener('focusout', () => setTimeout(() => { if(!$('cv-edit').contains(document.activeElement)) cvRenderEdit(cvLast); }, 0));
 $('cf').addEventListener('input', e => {
   if(e.target.id === 'cv-alfa'){ const v = String(pn(e.target.value)); const opt = Array.from($('cv-obj').options).find(o => o.value === v); $('cv-obj').value = opt ? v : 'x'; }
-  cvUpdate(); cvSave();
+  cvUpdate(true); cvSave();
 });
 $('cf').addEventListener('change', e => {
-  if(e.target.id === 'cv-obj' && e.target.value !== 'x') $('cv-alfa').value = e.target.value;
-  cvUpdate(); cvSave();
+  if(e.target.id === 'cv-obj' && e.target.value !== 'x'){ $('cv-alfa').value = e.target.value; $('cv-alfaR').value = ALFA_R[e.target.value] || '0'; }
+  cvUpdate(true); cvSave();
 });
 $('cf').addEventListener('submit', e => e.preventDefault());
 $('cv-add').addEventListener('click', () => {
-  cvRows.push({use:true, src:'', tipo:'IV', data:'', p:'', reg:'ni'});
+  cvRows.push({use:true, src:'', tipo:'IV', data:'', p:'', reg:'ni', resid:'', just:''});
   cvSel = cvRows.length - 1; cvRenderRows(); cvSave();
   const last = document.querySelector('#cv-rows tr:last-child input[data-k="src"]'); if(last) last.focus();
 });
@@ -1996,67 +2115,88 @@ document.querySelectorAll('[data-goconv]').forEach(b => b.addEventListener('clic
 cvLoad(); cvRenderRows();
 
 /* ===== Revisão de ata de registro de preços ===== */
-const AR_KEY = 'precoiva-pro-ata-v1';
+const AR_KEY = 'precoiva-pro-ata-v2';
 const AR_REGS = {pres:'Lucro Presumido → regime regular', real:'Lucro Real → regime regular', sdas:'Simples → Simples com IBS/CBS no DAS', shib:'Simples → Simples com IBS/CBS por fora'};
 const AR_IVR = {'0':'Cheia', '60':'Redução 60%', '100':'Zero'};
-const AR_DEF = {ata:'12/2026', forn:'Distribuidora Exemplo Ltda.', prop:'2026-03-10', reg:'pres', ef:'2027-01-01', cbs:'8,9', ibs:'0,1', red:'30', icms:'19,5', obj:'100', alfa:'100', pcum:'3,65', pncum:'9,25', t:'9,25', d26:'8', d27:'8', d27h:'5'};
+const AR_DEF = {ata:'12/2026', forn:'Distribuidora Exemplo Ltda.', prop:'2026-03-10', reg:'pres', ef:'2027-01-01', cbs:'8,9', ibs:'0,1', red:'30', icms:'19,5', obj:'100', alfa:'100', alfaR:'0', redSN:'', pcum:'3,65', pncum:'9,25', t:'9,25', d26:'8', d27:'8', d27h:'5'};
 const AR_EX = [
-  {n:'1', desc:'Cimento CP-II 50 kg', un:'saco', qtd:'800', p:'54,58', icms:'', ivr:'0', alfa:''},
-  {n:'2', desc:'Areia média lavada', un:'m³', qtd:'120', p:'145,00', icms:'', ivr:'0', alfa:''},
-  {n:'3', desc:'Tijolo cerâmico 8 furos 9×19×19 cm', un:'milheiro', qtd:'40', p:'980,00', icms:'', ivr:'0', alfa:''},
-  {n:'4', desc:'Vergalhão CA-50 10 mm, barra 12 m', un:'barra', qtd:'300', p:'62,40', icms:'', ivr:'0', alfa:''},
-  {n:'5', desc:'Tinta acrílica fosca 18 L', un:'lata', qtd:'60', p:'389,90', icms:'', ivr:'0', alfa:''},
-  {n:'6', desc:'Papel A4 75 g/m²', un:'resma', qtd:'500', p:'32,90', icms:'', ivr:'0', alfa:''},
-  {n:'7', desc:'Disjuntor monopolar 20 A', un:'unidade', qtd:'150', p:'18,70', icms:'', ivr:'0', alfa:''}
-];
+  {n:'1', desc:'Cimento CP-II 50 kg', un:'saco', qtd:'800', p:'54,58'},
+  {n:'2', desc:'Areia média lavada', un:'m³', qtd:'120', p:'145,00'},
+  {n:'3', desc:'Tijolo cerâmico 8 furos 9×19×19 cm', un:'milheiro', qtd:'40', p:'980,00'},
+  {n:'4', desc:'Vergalhão CA-50 10 mm, barra 12 m', un:'barra', qtd:'300', p:'62,40'},
+  {n:'5', desc:'Tinta acrílica fosca 18 L', un:'lata', qtd:'60', p:'389,90'},
+  {n:'6', desc:'Papel A4 75 g/m²', un:'resma', qtd:'500', p:'32,90'},
+  {n:'7', desc:'Disjuntor monopolar 20 A', un:'unidade', qtd:'150', p:'18,70'}
+].map(r => Object.assign({icms:'', ivr:'0', alfa:'', resid:''}, r));
+// Segundo exemplo: proposta anterior à LC 214/2025, ata prorrogada até fevereiro de 2027 (saldo menor)
+const AR_EX24_PARAMS = {ata:'03/2025', prop:'2024-12-10'};
+const AR_EX24_QTD = ['200','30','10','80','15','120','40'];
 const AR_FIELDS = Object.keys(AR_DEF);
 let arRows = [], arSel = 0, arLast = null;
 const fq = x => new Intl.NumberFormat('pt-BR', {maximumFractionDigits:3}).format(x);
 const sR = x => (x > 0 ? '+' : x < 0 ? '−' : '') + R2(Math.abs(x));
+const arGet = k => { const el = $('ar-'+k); return el.type === 'checkbox' ? (el.checked ? '1' : '') : el.value; };
+const arSet = (k, v) => { const el = $('ar-'+k); if(el.type === 'checkbox') el.checked = v === '1' || v === true; else el.value = v; };
 
 function arSave(){
-  try{ const params = {}; AR_FIELDS.forEach(k => params[k] = $('ar-'+k).value); localStorage.setItem(AR_KEY, JSON.stringify({params, rows: arRows})); }catch(e){}
+  try{ const params = {}; AR_FIELDS.forEach(k => params[k] = arGet(k)); localStorage.setItem(AR_KEY, JSON.stringify({params, rows: arRows})); }catch(e){}
 }
 function arLoad(){
   let data = null;
   try{ data = JSON.parse(localStorage.getItem(AR_KEY) || 'null'); }catch(e){}
   const params = Object.assign({}, AR_DEF, data && data.params || {});
-  AR_FIELDS.forEach(k => $('ar-'+k).value = params[k]);
+  AR_FIELDS.forEach(k => arSet(k, params[k]));
   arRows = (data && Array.isArray(data.rows)) ? data.rows : AR_EX.map(r => Object.assign({}, r));
 }
 function arParams(){
   const g = k => $('ar-'+k).value;
   return {ata:g('ata'), forn:g('forn'), prop:toDate(g('prop')), ef:toDate(g('ef')), reg:g('reg'),
-    c:pn(g('cbs'))/100, b:pn(g('ibs'))/100, r:pn(g('red'))/100, icms:pn(g('icms'))/100, alfa:pn(g('alfa'))/100,
+    c:pn(g('cbs'))/100, b:pn(g('ibs'))/100, r:pn(g('red'))/100, icms:pn(g('icms'))/100,
+    alfa:pn(g('alfa'))/100, alfaR:pn(g('alfaR'))/100, redSN:$('ar-redSN').checked,
     pcum:pn(g('pcum'))/100, pncum:pn(g('pncum'))/100, t:pn(g('t'))/100, d26:pn(g('d26'))/100, d27:pn(g('d27'))/100, d27h:pn(g('d27h'))/100};
 }
 function arCheck(p){
   const bad = [], rate = (x, name, max) => { if(!(isFinite(x) && x >= 0 && x < (max || 1))) bad.push(name); };
   if(!p.ef) bad.push('início dos efeitos');
-  rate(p.c, 'CBS'); rate(p.b, 'IBS'); rate(p.r, 'redutor', 1.0001); rate(p.icms, 'ICMS padrão'); rate(p.alfa, 'α padrão', 1.0001);
+  rate(p.c, 'CBS'); rate(p.b, 'IBS'); rate(p.r, 'redutor', 1.0001); rate(p.icms, 'ICMS padrão');
+  rate(p.alfa, 'α padrão (Presumido e Simples)', 1.0001); rate(p.alfaR, 'α padrão do Lucro Real', 1.0001);
   rate(p.pcum, 'PIS + Cofins cumulativo'); rate(p.pncum, 'PIS + Cofins não cumulativo'); rate(p.t, 'PIS/Cofins dos insumos');
   rate(p.d26, 'DAS 2026'); rate(p.d27, 'DAS 2027'); rate(p.d27h, 'DAS 2027 sem IBS/CBS');
   return bad;
 }
 const regular26 = reg => reg === 'pres' || reg === 'real';
+// Fundamento legal conforme a data da proposta
+function arBasis(p){
+  if(!p.prop) return 'nodate';
+  if(p.prop >= p.ef) return 'na';
+  if(p.prop < LC214) return 'lc214';
+  return 'l14133';
+}
 
 function arItem(it, p){
   const o = {it, P26:c2(pn(it.p)), q:pn(it.qtd)};
-  o.i = String(it.icms).trim() === '' ? p.icms : pn(it.icms)/100;
-  o.alfa = String(it.alfa).trim() === '' ? p.alfa : pn(it.alfa)/100;
+  o.i = blank(it.icms) ? p.icms : pn(it.icms)/100;
+  o.alfa = blank(it.alfa) ? (p.reg === 'real' ? p.alfaR : p.alfa) : pn(it.alfa)/100;
   o.fIt = 1 - (Number(it.ivr) || 0)/100;
+  o.resid = blank(it.resid) ? null : pn(it.resid);
   if(!(o.P26 > 0)){ o.err = 'informe o preço registrado'; return o; }
   if(!(o.q >= 0)){ o.err = 'informe o saldo'; return o; }
   if(!(o.i >= 0 && o.i < 1)){ o.err = 'ICMS inválido'; return o; }
   if(!(o.alfa >= 0 && o.alfa <= 1)){ o.err = 'α inválido'; return o; }
+  if(o.resid != null && !(o.resid >= 0 && o.resid < o.P26)){ o.err = 'resíduo informado inválido'; return o; }
   const s = o;
   if(regular26(p.reg)){
     s.p26 = p.reg === 'pres' ? p.pcum : p.pncum;
     s.icms26 = c2(s.P26 * s.i); s.pc26 = c2((s.P26 - s.icms26) * s.p26); s.E26 = c2(s.P26 - s.icms26 - s.pc26);
   } else { s.das26 = c2(s.P26 * p.d26); s.E26 = c2(s.P26 - s.das26); }
-  s.res = (p.reg === 'pres' || p.reg === 'shib') ? c2(s.E26 * s.alfa * p.t) : 0;
+  s.hasRes = p.reg !== 'sdas';
+  s.resInf = s.hasRes && s.resid != null;
+  s.res = !s.hasRes ? 0 : s.resInf ? Math.min(c2(s.resid), s.E26) : c2(s.E26 * s.alfa * p.t);
+  s.estimado = s.hasRes && !s.resInf && s.res > 0;
   s.E27 = c2(s.E26 - s.res);
-  s.f = (1 - p.r) * s.fIt;
+  // Redutor de compras governamentais: não se aplica ao Simples (art. 472, parágrafo único, da LC 214/2025)
+  s.rEff = regular26(p.reg) ? p.r : (p.reg === 'shib' && p.redSN ? p.r : 0);
+  s.f = (1 - s.rEff) * s.fIt;
   if(regular26(p.reg)){
     s.icms27 = c2(s.E27 * s.i / (1 - s.i)); s.cbs27 = c2(s.E27 * p.c * s.f); s.ibs27 = c2(s.E27 * p.b * s.f);
     s.P27 = c2(s.E27 + s.icms27 + s.cbs27 + s.ibs27);
@@ -2074,10 +2214,11 @@ function arCompute(){
   const p = arParams(), bad = arCheck(p);
   if(bad.length) return {p, error:'Confira nas premissas: ' + bad.join(', ') + '.'};
   const items = arRows.map(r => arItem(r, p)), ok = items.filter(o => !o.err);
-  const res = {p, items, ok};
+  const res = {p, items, ok, basis:arBasis(p)};
   res.v26 = c2(ok.reduce((a,o) => a + o.v26, 0)); res.v27 = c2(ok.reduce((a,o) => a + o.v27, 0)); res.imp = c2(res.v27 - res.v26);
   res.pct = res.v26 > 0 ? res.v27 / res.v26 - 1 : 0;
   res.down = ok.filter(o => o.d < 0).length; res.up = ok.filter(o => o.d > 0).length;
+  res.est = ok.filter(o => o.estimado).length;
   return res;
 }
 
@@ -2097,15 +2238,29 @@ function arRenderRows(){
     '</tr>').join('');
   $('ar-empty').hidden = arRows.length > 0;
   if(arSel >= arRows.length) arSel = Math.max(0, arRows.length - 1);
-  arUpdate();
+  arUpdate(true);
 }
 
-function arUpdate(){
+function arRenderEdit(res){
+  const box = $('ar-edit'), r = arRows[arSel];
+  if(!r || !res || res.error){ box.innerHTML = ''; return; }
+  const p = res.p;
+  box.innerHTML = '<section class="edit"><h3>Ajustes do item '+esc(r.n || arSel+1)+(r.desc ? ' · '+esc(r.desc) : '')+'</h3>'+
+    (p.reg === 'sdas'
+      ? '<p class="small" style="margin:0">Fornecedor que segue no Simples com IBS/CBS no DAS: não há resíduo a remover.</p>'
+      : '<div class="fld"><label for="ar-resid">Resíduo de PIS/Cofins informado (R$ por '+esc(r.un || 'unidade')+')</label><div class="inp" style="max-width:220px"><span class="u">R$</span><input id="ar-resid" inputmode="decimal" autocomplete="off" value="'+esc(r.resid || '')+'"></div>'+
+        '<small class="hint">Em branco, o programa usa a estimativa α × t. Preencha com o valor demonstrado na planilha de custos do fornecedor.</small></div>')+
+  '</section>';
+}
+
+function arUpdate(forceEdit){
   const res = arCompute(); arLast = res;
   const p = res.p;
+  if(forceEdit || !$('ar-edit').contains(document.activeElement)) arRenderEdit(res);
   const ph = (k, v) => document.querySelectorAll('#ar-rows input[data-k="'+k+'"]').forEach(el => el.placeholder = v);
   if(isFinite(p.icms)) ph('icms', fq(p.icms*100));
-  if(isFinite(p.alfa)) ph('alfa', fq(p.alfa*100));
+  const aDef = p.reg === 'real' ? p.alfaR : p.alfa;
+  if(isFinite(aDef)) ph('alfa', fq(aDef*100));
   let tf = document.querySelector('#ar-table tfoot'); if(tf) tf.remove();
   if(res.error){
     $('ar-sum').innerHTML = '<div class="err">'+res.error+'</div>'; $('ar-memo').innerHTML = '';
@@ -2117,39 +2272,62 @@ function arUpdate(){
     if(tr) tr.classList.toggle('sel', i === arSel);
     const P_ = $('ar-p-'+i), V_ = $('ar-v-'+i), M_ = $('ar-m-'+i);
     if(o.err){ P_.innerHTML = '<span class="bd bad">'+o.err+'</span>'; V_.textContent = ''; M_.textContent = ''; return; }
-    P_.textContent = R2(o.P27); V_.textContent = pct(o.varr); M_.textContent = sR(o.imp);
+    P_.innerHTML = R2(o.P27) + (o.resInf ? '<span class="rng">resíduo informado</span>' : '');
+    V_.textContent = pct(o.varr); M_.textContent = sR(o.imp);
     [V_, M_].forEach(el => { el.classList.toggle('down', o.d < 0); el.classList.toggle('up', o.d > 0); });
   });
   if(res.ok.length){
+    const cls = res.imp < 0 ? 'down' : res.imp > 0 ? 'up' : '';
     tf = document.createElement('tfoot');
-    tf.innerHTML = '<tr><td colspan="4">Valor do saldo</td><td class="r">'+R2(res.v26)+'</td><td colspan="3"></td><td class="r">'+R2(res.v27)+'</td>'+
-      '<td class="r '+(res.imp < 0 ? 'down' : res.imp > 0 ? 'up' : '')+'">'+pct(res.pct)+'</td><td class="r '+(res.imp < 0 ? 'down' : res.imp > 0 ? 'up' : '')+'">'+sR(res.imp)+'</td><td></td></tr>';
+    tf.innerHTML = '<tr><td colspan="4">Valor do saldo'+(res.basis === 'na' ? ' (simulação)' : '')+'</td><td class="r">'+R2(res.v26)+'</td><td colspan="3"></td><td class="r">'+R2(res.v27)+'</td>'+
+      '<td class="r '+cls+'">'+pct(res.pct)+'</td><td class="r '+cls+'">'+sR(res.imp)+'</td><td></td></tr>';
     $('ar-table').appendChild(tf);
   }
   arRenderSummary(res); arRenderMemo(res);
 }
 
+function arBasisHtml(res){
+  const p = res.p, down = res.imp < 0, up = res.imp > 0;
+  if(res.basis === 'nodate') return '<div class="basis"><b class="t">Fundamento legal indefinido</b>Informe a data da proposta: ela define se se aplica o regime especial da LC 214/2025 ou a regra geral da Lei 14.133/2021.</div>';
+  if(res.basis === 'lc214'){
+    return '<div class="dir '+(down ? 'down' : 'up')+'"><b>Proposta anterior à LC 214/2025: regime especial dos arts. 373 a 377.</b> '+
+      (down ? 'A carga tributária estimada diminui. A lei autoriza revisão de ofício, com demonstração objetiva da redução da carga efetiva e manifestação do fornecedor (art. 375).'
+            : up ? 'A carga tributária estimada aumenta. O fornecedor pode pleitear o reequilíbrio durante a vigência, com cálculos técnicos; a decisão sai em até 90 dias, prorrogáveis uma vez (art. 376).' : 'Sem variação estimada.')+
+      ' Se a ata foi assinada depois de 16/1/2025, o regime especial vale no que couber (art. 373, § 1º).</div>';
+  }
+  return '<div class="basis"><b class="t">Proposta posterior à LC 214/2025: fora do regime especial (art. 373).</b>'+
+    'A revisão por tributo depende de alteração posterior à proposta, com repercussão comprovada sobre o preço registrado (art. 134 da Lei 14.133/2021; art. 25, II, do Decreto 11.462/2023). Como a reforma já estava publicada em '+fD(p.prop)+', avalie se a proposta considerou os tributos de 2027.</div>'+
+    (down ? '<div class="dir down"><b>Caminho pelo preço de mercado.</b> Se o preço registrado ficar acima do praticado no mercado, o gerenciador convoca o fornecedor para negociar a redução. Se ele não aceitar, fica liberado do item sem penalidade e o cadastro de reserva é consultado (art. 26 do Decreto 11.462/2023). O preço estimado aqui serve como referência, a confirmar por pesquisa de preços.</div>'
+      : up ? '<div class="dir up"><b>Caminho pelo preço de mercado.</b> O fornecedor pode pedir a alteração comprovando fato superveniente, com documentos ou planilha de custos. Sem comprovação, o pedido é indeferido e a ata deve ser cumprida (art. 27 do Decreto 11.462/2023).</div>' : '');
+}
+
 function arRenderSummary(res){
   const p = res.p;
   if(!res.ok.length){ $('ar-sum').innerHTML = '<div class="err">Nenhum item com preço e saldo válidos.</div>'; return; }
-  const dir = res.imp < 0 ? 'down' : res.imp > 0 ? 'up' : '';
-  const efAnt = new Date(p.ef.getTime() - 864e5);
-  let h = '<section class="hero"><div class="lbl">Impacto da revisão no saldo da ata '+esc(p.ata)+'</div>'+
-    '<div class="price">'+sR(res.imp)+'<small>'+pct(res.pct)+'</small></div>'+
-    '<div class="stats"><div class="stat"><span>Saldo a preços registrados</span><b>'+R2(res.v26)+'</b></div>'+
-    '<div class="stat"><span>Saldo a preços revisados</span><b>'+R2(res.v27)+'</b></div>'+
+  const efAnt = new Date(p.ef.getTime() - 864e5), na = res.basis === 'na', sim = na ? ' (simulação)' : '';
+  let h = '<section class="hero"><div class="lbl">Impacto tributário estimado no saldo da ata '+esc(p.ata)+'</div>';
+  if(na){
+    h += '<div class="na">Revisão tributária não aplicável</div>'+
+      '<p class="lead" style="margin:0">A proposta, de '+fD(p.prop)+', é posterior ao início dos efeitos ('+fD(p.ef)+'): o preço registrado já foi formado com os tributos de 2027. Os valores abaixo são apenas simulação.</p>';
+  } else {
+    h += '<div class="price">'+sR(res.imp)+'<small>'+pct(res.pct)+'</small></div>';
+  }
+  h += '<div class="stats"><div class="stat"><span>Saldo a preços registrados</span><b>'+R2(res.v26)+'</b></div>'+
+    '<div class="stat"><span>Saldo a preços estimados'+sim+'</span><b>'+R2(res.v27)+'</b></div>'+
     '<div class="stat"><span>Itens que reduzem · aumentam</span><b>'+res.down+' · '+res.up+'</b></div></div>';
-  if(dir === 'down') h += '<div class="dir down"><b>Revisão para menos, em favor da administração.</b> A carga tributária efetiva diminui. Cabe revisão de ofício, com demonstração objetiva e contraditório do fornecedor (art. 375 da LC 214/2025). No registro de preços, o gerenciador convoca o fornecedor para negociar a redução; se ele não aceitar, fica liberado do item sem penalidade e o cadastro de reserva é consultado (art. 26 do Decreto 11.462/2023).</div>';
-  else if(dir === 'up') h += '<div class="dir up"><b>Revisão para mais, a pedido do fornecedor.</b> A carga tributária efetiva aumenta. O fornecedor pode pleitear o reequilíbrio com cálculos técnicos, durante a vigência; a decisão sai em até 90 dias, prorrogáveis uma vez (art. 376 da LC 214/2025).</div>';
+  if(!na) h += arBasisHtml(res);
   h += '</section>';
   const cuid = [];
-  cuid.push('Fundamento: art. 134 da Lei 14.133/2021 e art. 25, II, do Decreto 11.462/2023, que admitem alterar preços registrados por criação, alteração ou extinção de tributos com repercussão comprovada; arts. 373 a 377 da LC 214/2025 para a carga efetiva de IBS e CBS.');
-  cuid.push('Os fornecimentos até '+fD(efAnt)+' seguem o preço registrado. O preço revisado vale a partir de '+fD(p.ef)+'.');
-  cuid.push('Contratos já assinados com base na ata precisam de termo aditivo próprio (art. 26, § 4º, do Decreto 11.462/2023).');
-  if(p.prop && p.prop >= p.ef) cuid.push('<b>A proposta é posterior ao início dos efeitos:</b> o preço já foi formado no novo regime e a revisão tributária não se aplica.');
-  else if(p.prop) cuid.push('Proposta de '+fD(p.prop)+', posterior à LC 214/2025: verifique se a proposta já considerou a reforma. A revisão exige repercussão comprovada sobre o preço registrado.');
+  cuid.push('O valor é uma estimativa do efeito tributário. Sozinho, não comprova o desequilíbrio: a comprovação depende da carga efetiva do fornecedor, com os créditos que ele de fato apropria e utiliza.');
+  if(res.est) cuid.push(res.est+' item(ns) usam o resíduo estimado (α × t). Substitua pelo resíduo informado quando o fornecedor demonstrar seus custos.');
+  if(p.reg === 'shib' && !p.redSN && p.r > 0) cuid.push('Fornecedor do Simples: o redutor de compras governamentais não foi aplicado (art. 472, parágrafo único, da LC 214/2025, com a redação da LC 227/2026).');
+  if(p.reg === 'shib' && p.redSN) cuid.push('<b>Você aplicou o redutor a um fornecedor do Simples.</b> O art. 472 da LC 214/2025, com a redação da LC 227/2026, exclui essas aquisições: registre a justificativa.');
+  if(regular26(p.reg) && p.r > 0) cuid.push('Confirme o redutor vigente e se a compra não está entre as exceções do art. 472 (por exemplo, compra presencial com dispensa de licitação ou item com alíquota uniforme de regime específico).');
+  cuid.push('Fornecimentos até '+fD(efAnt)+' seguem o preço registrado. O preço revisado, se admitido, vale a partir de '+fD(p.ef)+'.');
+  cuid.push('Contratos já assinados com base na ata são avaliados à parte (art. 26, § 4º, e art. 27, § 6º, do Decreto 11.462/2023).');
+  cuid.push('Mercadoria vendida em 2027 a partir de estoque de 2026: o crédito presumido de CBS (art. 381) só neutraliza o custo quando a compra veio de fornecedor não cumulativo e o crédito é usado por inteiro. Fora disso, o efeito pode ser diferente.');
   if(res.ok.some(o => o.fIt < 1) && p.reg === 'sdas') cuid.push('Itens com alíquota reduzida de IBS/CBS: no Simples com IBS/CBS no DAS, a redução não é calculada; ajuste o DAS se for o caso.');
-  cuid.push('Reajuste por índice é outro instituto e não entra nesta revisão.');
+  cuid.push('O Decreto 11.462/2023 rege o registro de preços federal; estados e municípios aplicam o regulamento próprio. Reajuste por índice é outro instituto e não entra nesta revisão.');
   h += '<section class="memo"><div class="memo-h"><div><h2>Fundamentos e cuidados</h2><p>'+esc(p.forn || 'Fornecedor')+' · '+AR_REGS[p.reg]+'</p></div><button type="button" id="ar-copy">Copiar para os autos</button></div>'+
     '<div class="step"><ul class="premissas">'+cuid.map(c => '<li>'+c+'</li>').join('')+'</ul></div></section>';
   $('ar-sum').innerHTML = h;
@@ -2161,26 +2339,30 @@ function arRenderMemo(res){
   if(!o){ memo.innerHTML = ''; return; }
   if(o.err){ memo.innerHTML = '<div class="err">Item '+esc(o.it.n || arSel+1)+': '+o.err+'.</div>'; return; }
   const st = [];
-  const fTxt = (p.r > 0 ? ' × (1 − '+P(p.r)+')' : '') + (o.fIt < 1 ? ' × (1 − '+P(1 - o.fIt)+')' : '');
+  const fTxt = (o.rEff > 0 ? ' × (1 − '+P(o.rEff)+')' : '') + (o.fIt < 1 ? ' × (1 − '+P(1 - o.fIt)+')' : '');
   if(regular26(p.reg)){
     st.push({t:'Tirar os tributos de 2026', lead:'ICMS e PIS/Cofins estavam por dentro do preço registrado, com o ICMS fora da base do PIS/Cofins (Tema 69 do STF).', rows:[
-      ['Preço registrado', 'proposta de 2026', R2(o.P26), ''],
+      ['Preço registrado', 'proposta de '+(p.prop ? fD(p.prop) : 'data não informada'), R2(o.P26), ''],
       ['(−) ICMS por dentro', f2(o.P26)+' × '+P(o.i), R2(o.icms26), 'minus'],
       ['(−) PIS + Cofins ('+(p.reg === 'pres' ? 'cumulativo' : 'não cumulativo')+')', '('+f2(o.P26)+' − '+f2(o.icms26)+') × '+P(o.p26), R2(o.pc26), 'minus'],
       ['= Valor sem tributos', '', R2(o.E26), 'total']], notes:[]});
   } else {
     st.push({t:'Tirar os tributos de 2026', lead:'Fornecedor do Simples: o DAS de 2026 incide sobre o preço.', rows:[
-      ['Preço registrado', 'proposta de 2026', R2(o.P26), ''],
+      ['Preço registrado', 'proposta de '+(p.prop ? fD(p.prop) : 'data não informada'), R2(o.P26), ''],
       ['(−) DAS 2026', f2(o.P26)+' × '+P(p.d26), R2(o.das26), 'minus'],
       ['= Valor sem tributos', '', R2(o.E26), 'total']], notes:[]});
   }
   if(o.res > 0){
-    st.push({t:'Remover o resíduo de PIS/Cofins', lead:(p.reg === 'pres' ? 'No regime cumulativo' : 'No Simples')+', o fornecedor não se creditava do PIS/Cofins embutido nos insumos. Em 2027 esse valor vira crédito de CBS e sai do custo.', rows:[
+    const lead = p.reg === 'pres' ? 'No regime cumulativo, o fornecedor não se creditava do PIS/Cofins embutido nos insumos. Em 2027 esse valor vira crédito de CBS e sai do custo.'
+      : p.reg === 'real' ? 'No Lucro Real, parte dos gastos não gerava crédito de PIS/Cofins (conceito restrito de insumo). Em 2027 a CBS passa a creditá-los.'
+      : 'No Simples, o fornecedor não se creditava do PIS/Cofins dos insumos. Recolhendo IBS e CBS por fora em 2027, passa a ter crédito.';
+    st.push({t:'Remover o resíduo de PIS/Cofins', lead, rows:[
       ['Valor sem tributos', '', R2(o.E26), ''],
-      ['(−) Resíduo cumulativo', f2(o.E26)+' × '+P(o.alfa)+' (α) × '+P(p.t)+' (t)', R2(o.res), 'minus'],
-      ['= Valor sem tributos ajustado', '', R2(o.E27), 'total']], notes:[]});
+      o.resInf ? ['(−) Resíduo informado', 'valor demonstrado pelo fornecedor', R2(o.res), 'minus'] : ['(−) Resíduo estimado (α × t)', f2(o.E26)+' × '+P(o.alfa)+' (α) × '+P(p.t)+' (t)', R2(o.res), 'minus'],
+      ['= Valor sem tributos ajustado', '', R2(o.E27), 'total']],
+      notes:[o.resInf ? 'Resíduo informado: substitui a estimativa α × t.' : 'Estimativa: α e t são premissas, não dados do fornecedor. Informe o resíduo demonstrado no painel de ajustes do item.']});
   } else {
-    st.push({t:'Resíduo de PIS/Cofins', lead: p.reg === 'real' ? 'Fornecedor do Lucro Real: já se creditava do PIS/Cofins dos insumos. Não há resíduo a remover.' : p.reg === 'sdas' ? 'Com IBS e CBS no DAS, o fornecedor continua sem crédito na compra em 2027. Não há resíduo a remover.' : 'Sem resíduo com α = 0%.', rows:[], notes:[]});
+    st.push({t:'Resíduo de PIS/Cofins', lead: p.reg === 'real' ? 'Fornecedor do Lucro Real com α = 0%: todo o PIS/Cofins dos insumos já era creditado. Não há resíduo a remover.' : p.reg === 'sdas' ? 'Com IBS e CBS no DAS, o fornecedor continua sem crédito na compra em 2027. Não há resíduo a remover.' : 'Resíduo zero com os dados informados.', rows:[], notes:[]});
   }
   if(regular26(p.reg)){
     st.push({t:'Aplicar os tributos de 2027', lead:'ICMS por dentro; IBS e CBS por fora, com o redutor de compras governamentais'+(o.fIt < 1 ? ' e a redução de alíquota do item' : '')+'.', rows:[
@@ -2188,47 +2370,53 @@ function arRenderMemo(res){
       ['(+) ICMS por dentro', f2(o.E27)+' × '+P(o.i)+' ÷ '+P(1-o.i), R2(o.icms27), ''],
       ['(+) CBS', f2(o.E27)+' × '+P(p.c)+fTxt, R2(o.cbs27), ''],
       ['(+) IBS', f2(o.E27)+' × '+P(p.b)+fTxt, R2(o.ibs27), ''],
-      ['= Preço revisado', 'soma das linhas acima', R2(o.P27), 'total']], notes:[]});
+      ['= Preço estimado em 2027', 'soma das linhas acima', R2(o.P27), 'total']], notes:[]});
   } else if(p.reg === 'sdas'){
-    st.push({t:'Aplicar os tributos de 2027', lead:'O fornecedor continua no Simples, com IBS e CBS dentro do DAS.', rows:[
+    st.push({t:'Aplicar os tributos de 2027', lead:'O fornecedor continua no Simples, com IBS e CBS dentro do DAS. O redutor de compras governamentais não se aplica.', rows:[
       ['Valor sem tributos', '', R2(o.E27), ''],
       ['(+) DAS 2027 por dentro', f2(o.E27)+' ÷ '+P(1-p.d27)+' − '+f2(o.E27), R2(o.das27), ''],
-      ['= Preço revisado', '', R2(o.P27), 'total']], notes:[]});
+      ['= Preço estimado em 2027', '', R2(o.P27), 'total']], notes:[]});
   } else {
-    st.push({t:'Aplicar os tributos de 2027', lead:'Simples com IBS e CBS por fora: o DAS sem IBS/CBS vem por dentro; IBS e CBS por fora, sobre o valor com DAS.', rows:[
+    st.push({t:'Aplicar os tributos de 2027', lead:'Simples com IBS e CBS por fora: o DAS sem IBS/CBS vem por dentro; IBS e CBS por fora, sobre o valor com DAS. '+(p.redSN ? 'Redutor aplicado por opção do usuário, com justificativa.' : 'Sem o redutor de compras governamentais (art. 472, parágrafo único, da LC 214/2025).'), rows:[
       ['Valor sem tributos', '', R2(o.E27), ''],
       ['(+) DAS 2027 por dentro', f2(o.E27)+' ÷ '+P(1-p.d27h)+' − '+f2(o.E27), R2(o.das27), ''],
       ['(+) CBS', f2(o.S)+' × '+P(p.c)+fTxt, R2(o.cbs27), ''],
       ['(+) IBS', f2(o.S)+' × '+P(p.b)+fTxt, R2(o.ibs27), ''],
-      ['= Preço revisado', 'soma das linhas acima', R2(o.P27), 'total']], notes:[]});
+      ['= Preço estimado em 2027', 'soma das linhas acima', R2(o.P27), 'total']], notes:[]});
   }
-  st.push({t:'Impacto no saldo da ata', lead:'', rows:[
+  st.push({t:'Impacto estimado no saldo', lead:'', rows:[
     ['Diferença por '+esc(o.it.un || 'unidade'), f2(o.P27)+' − '+f2(o.P26), sR(o.d), ''],
     ['Variação do preço', f2(o.P27)+' ÷ '+f2(o.P26)+' − 1', pct(o.varr), ''],
     ['= Impacto no saldo', (o.d > 0 ? '+' : '')+f2(o.d)+' × '+fq(o.q)+' '+esc(o.it.un || ''), sR(o.imp), 'total']], notes:[]});
   let h = '<section class="memo"><div class="memo-h"><div><h2>Memória do item '+esc(o.it.n || arSel+1)+'</h2><p>'+esc(o.it.desc || 'Sem descrição')+'</p></div></div>';
   st.forEach((s,i) => {
     h += '<div class="step"><h3><span class="n">'+(i+1)+'</span>'+s.t+'</h3>'+(s.lead ? '<p class="lead">'+s.lead+'</p>' : '')+
-      (s.rows.length ? '<div class="tbl"><table class="calc"><tbody>'+s.rows.map(rw => '<tr class="'+rw[3]+'"><td>'+rw[0]+(rw[1] ? '<div class="f">'+rw[1]+'</div>' : '')+'</td><td class="v">'+(rw[3] === 'minus' ? '− ' : '')+rw[2]+'</td></tr>').join('')+'</tbody></table></div>' : '')+'</div>';
+      (s.rows.length ? '<div class="tbl"><table class="calc"><tbody>'+s.rows.map(rw => '<tr class="'+rw[3]+'"><td>'+rw[0]+(rw[1] ? '<div class="f">'+rw[1]+'</div>' : '')+'</td><td class="v">'+(rw[3] === 'minus' ? '− ' : '')+rw[2]+'</td></tr>').join('')+'</tbody></table></div>' : '')+
+      (s.notes || []).map(n => '<p class="note">'+n+'</p>').join('')+'</div>';
   });
   memo.innerHTML = h + '</section>';
 }
 
 function arCopy(){
   const res = arLast; if(!res || res.error || !res.ok.length) return;
-  const p = res.p;
-  let t = 'PREÇOIVA PRO · REVISÃO DE PREÇOS REGISTRADOS (REFORMA TRIBUTÁRIA)\n';
+  const p = res.p, na = res.basis === 'na';
+  let t = 'PREÇOIVA PRO · IMPACTO TRIBUTÁRIO ESTIMADO EM ATA DE REGISTRO DE PREÇOS\n';
   t += 'Ata nº '+(p.ata || '')+' · Fornecedor: '+(p.forn || '')+'\nRegime do fornecedor: '+AR_REGS[p.reg]+'\nData da proposta: '+fD(p.prop)+' · Início dos efeitos: '+fD(p.ef)+'\n';
-  t += 'Premissas: CBS '+P(p.c)+'; IBS '+P(p.b)+'; redutor de compras governamentais '+P(p.r)+'; ICMS padrão '+P(p.icms)+'; α padrão '+P(p.alfa)+'; t '+P(p.t)+'; PIS+Cofins 2026 '+P(p.pcum)+' (cumulativo) e '+P(p.pncum)+' (não cumulativo); DAS '+P(p.d26)+' (2026), '+P(p.d27)+' (2027) e '+P(p.d27h)+' (2027 sem IBS/CBS).\n\n';
-  t += 'ITENS (item | descrição | unidade | saldo | preço registrado | preço revisado | variação | impacto no saldo)\n';
+  t += 'Premissas: CBS '+P(p.c)+'; IBS '+P(p.b)+'; redutor de compras governamentais '+P(p.r)+(p.reg === 'shib' ? (p.redSN ? ' (aplicado ao Simples por opção, com justificativa)' : ' (não aplicado: fornecedor do Simples)') : p.reg === 'sdas' ? ' (não aplicado: fornecedor do Simples)' : '')+'; ICMS padrão '+P(p.icms)+'; α padrão '+P(p.reg === 'real' ? p.alfaR : p.alfa)+'; t '+P(p.t)+'; PIS+Cofins 2026 '+P(p.pcum)+' (cumulativo) e '+P(p.pncum)+' (não cumulativo); DAS '+P(p.d26)+' (2026), '+P(p.d27)+' (2027) e '+P(p.d27h)+' (2027 sem IBS/CBS).\n\n';
+  t += 'ITENS (item | descrição | unidade | saldo | preço registrado | preço estimado 2027 | variação | impacto no saldo | resíduo)\n';
   res.items.forEach(o => {
     t += (o.it.n || '')+' | '+(o.it.desc || '')+' | '+(o.it.un || '')+' | '+(isFinite(o.q) ? fq(o.q) : '—')+' | '+(o.P26 > 0 ? R2(o.P26) : '—')+' | '+
-      (o.err ? o.err : R2(o.P27)+' | '+pct(o.varr)+' | '+sR(o.imp))+
-      ((String(o.it.icms).trim() !== '' || String(o.it.alfa).trim() !== '' || o.fIt < 1) && !o.err ? ' | ICMS '+P(o.i)+', α '+P(o.alfa)+', '+AR_IVR[String(o.it.ivr)] : '')+'\n';
+      (o.err ? o.err : R2(o.P27)+' | '+pct(o.varr)+' | '+sR(o.imp)+' | '+(o.resInf ? 'informado '+R2(o.res) : o.estimado ? 'estimado (α × t) '+R2(o.res) : 'sem resíduo'))+
+      ((!blank(o.it.icms) || !blank(o.it.alfa) || o.fIt < 1) && !o.err ? ' | ICMS '+P(o.i)+', α '+P(o.alfa)+', IBS/CBS '+AR_IVR[String(o.it.ivr)] : '')+'\n';
   });
-  t += '\nTOTAL DO SALDO\nA preços registrados: '+R2(res.v26)+'\nA preços revisados: '+R2(res.v27)+'\nImpacto: '+sR(res.imp)+' ('+pct(res.pct)+')\n\n';
-  t += 'MÉTODO\n1. Retirada dos tributos de 2026 do preço registrado (ICMS e PIS/Cofins por dentro, ICMS fora da base do PIS/Cofins, Tema 69 do STF; DAS no Simples).\n2. Remoção do resíduo de PIS/Cofins dos insumos para fornecedor sem crédito em 2026 que passa a ter crédito em 2027: E × (1 − α × t).\n3. Aplicação dos tributos de 2027 (ICMS por dentro; IBS e CBS por fora, com redutor de compras governamentais e redução de alíquota do item, quando houver).\n4. Impacto = (preço revisado − preço registrado) × saldo a executar.\n\n';
-  t += 'FUNDAMENTOS\nArt. 134 da Lei 14.133/2021; art. 25, II, e art. 26 do Decreto 11.462/2023; arts. 373 a 377 da LC 214/2025.\nFornecimentos anteriores ao início dos efeitos seguem o preço registrado. Contratos decorrentes da ata exigem termo aditivo próprio.';
+  t += '\nTOTAL DO SALDO'+(na ? ' (SIMULAÇÃO: REVISÃO TRIBUTÁRIA NÃO APLICÁVEL)' : '')+'\nA preços registrados: '+R2(res.v26)+'\nA preços estimados: '+R2(res.v27)+'\nImpacto tributário estimado: '+sR(res.imp)+' ('+pct(res.pct)+')\n\n';
+  t += 'MÉTODO\n1. Retirada dos tributos de 2026 do preço registrado (ICMS e PIS/Cofins por dentro, ICMS fora da base do PIS/Cofins, Tema 69 do STF; DAS no Simples).\n2. Remoção do resíduo de PIS/Cofins dos insumos sem crédito em 2026: valor informado ou estimativa E × α × t (α e t são premissas).\n3. Aplicação dos tributos de 2027 (ICMS por dentro; IBS e CBS por fora, com redutor de compras governamentais, exceto para fornecedor do Simples, e redução de alíquota do item, quando houver).\n4. Impacto = (preço estimado − preço registrado) × saldo a executar.\n\n';
+  t += 'ENQUADRAMENTO\n';
+  if(res.basis === 'na') t += 'Proposta posterior ao início dos efeitos: o preço registrado já foi formado no novo regime. Revisão tributária não aplicável.\n';
+  else if(res.basis === 'lc214') t += 'Proposta anterior à LC 214/2025 (16/1/2025): regime especial dos arts. 373 a 377 (no que couber, art. 373, § 1º, se a ata foi assinada depois). Redução de carga: revisão de ofício com contraditório (art. 375). Aumento: pedido do fornecedor com cálculos técnicos (art. 376).\n';
+  else if(res.basis === 'l14133') t += 'Proposta posterior à LC 214/2025: fora do regime especial (art. 373). Revisão por tributo exige alteração posterior à proposta com repercussão comprovada (art. 134 da Lei 14.133/2021; art. 25, II, do Decreto 11.462/2023); avaliar se a proposta já considerou a reforma. Alternativa pelo preço de mercado: art. 26 (redução negociada) ou art. 27 (pedido do fornecedor com comprovação) do Decreto 11.462/2023.\n';
+  else t += 'Data da proposta não informada: enquadramento legal indefinido.\n';
+  t += 'O valor é estimativa do efeito tributário e não comprova, sozinho, o desequilíbrio. Fornecimentos anteriores ao início dos efeitos seguem o preço registrado. Contratos decorrentes da ata são avaliados à parte.';
   const b = $('ar-copy');
   const done = ok => { b.textContent = ok ? 'Copiado' : 'Selecione e copie (Ctrl+C)'; setTimeout(() => { if($('ar-copy')) $('ar-copy').textContent = 'Copiar para os autos'; }, 2200); };
   try{ navigator.clipboard.writeText(t).then(() => done(true), () => { fallback(t); done(false); }); }catch(e){ fallback(t); done(false); }
@@ -2236,7 +2424,7 @@ function arCopy(){
 
 const arRowEv = e => {
   const tr = e.target.closest('tr'), k = e.target.dataset.k; if(!tr || !k) return;
-  const i = +tr.dataset.i; arRows[i][k] = e.target.value; arSel = i; arUpdate(); arSave();
+  const i = +tr.dataset.i; arRows[i][k] = e.target.value; const changed = arSel !== i; arSel = i; arUpdate(changed); arSave();
 };
 $('ar-rows').addEventListener('input', arRowEv);
 $('ar-rows').addEventListener('change', arRowEv);
@@ -2244,21 +2432,30 @@ $('ar-rows').addEventListener('click', e => {
   const del = e.target.closest('[data-del]');
   if(del){ arRows.splice(+del.dataset.del, 1); arRenderRows(); arSave(); return; }
   const tr = e.target.closest('tr'); if(!tr) return;
-  const i = +tr.dataset.i; if(i !== arSel){ arSel = i; arUpdate(); }
+  const i = +tr.dataset.i; if(i !== arSel){ arSel = i; arUpdate(true); }
 });
-$('af').addEventListener('input', () => { arUpdate(); arSave(); });
-$('af').addEventListener('change', e => {
-  if(e.target.id === 'ar-obj') $('ar-alfa').value = e.target.value;
+$('ar-edit').addEventListener('input', e => {
+  const r = arRows[arSel]; if(!r) return;
+  if(e.target.id === 'ar-resid') r.resid = e.target.value;
   arUpdate(); arSave();
+});
+$('af').addEventListener('input', () => { arUpdate(true); arSave(); });
+$('af').addEventListener('change', e => {
+  if(e.target.id === 'ar-obj'){ $('ar-alfa').value = e.target.value; $('ar-alfaR').value = ALFA_R[e.target.value] || '0'; }
+  arUpdate(true); arSave();
 });
 $('af').addEventListener('submit', e => e.preventDefault());
 $('ar-add').addEventListener('click', () => {
   const n = arRows.reduce((m,r) => Math.max(m, parseInt(r.n, 10) || 0), 0) + 1;
-  arRows.push({n:String(n), desc:'', un:'unidade', qtd:'', p:'', icms:'', ivr:'0', alfa:''});
+  arRows.push({n:String(n), desc:'', un:'unidade', qtd:'', p:'', icms:'', ivr:'0', alfa:'', resid:''});
   arSel = arRows.length - 1; arRenderRows(); arSave();
   const last = document.querySelector('#ar-rows tr:last-child input[data-k="desc"]'); if(last) last.focus();
 });
-$('ar-ex').addEventListener('click', () => { AR_FIELDS.forEach(k => $('ar-'+k).value = AR_DEF[k]); arRows = AR_EX.map(r => Object.assign({}, r)); arSel = 0; arRenderRows(); arSave(); });
+$('ar-ex').addEventListener('click', () => { AR_FIELDS.forEach(k => arSet(k, AR_DEF[k])); arRows = AR_EX.map(r => Object.assign({}, r)); arSel = 0; arRenderRows(); arSave(); });
+$('ar-ex24').addEventListener('click', () => {
+  AR_FIELDS.forEach(k => arSet(k, AR_EX24_PARAMS[k] != null ? AR_EX24_PARAMS[k] : AR_DEF[k]));
+  arRows = AR_EX.map((r,i) => Object.assign({}, r, {qtd:AR_EX24_QTD[i]})); arSel = 0; arRenderRows(); arSave();
+});
 $('ar-clear').addEventListener('click', () => { arRows = []; arSel = 0; arRenderRows(); arSave(); });
 $('ar-help').addEventListener('click', () => goManual('m-ata'));
 document.querySelectorAll('[data-goata]').forEach(b => b.addEventListener('click', () => { showTab('ata'); requestAnimationFrame(() => scrollTo($('view-ata'))); }));
