@@ -13,6 +13,8 @@ Este arquivo registra o estado atual do site, dos aplicativos publicados, da est
 
 ## Resumo do site
 
+Em 31/10/2026, atualizado `PrecoIVA Pro` na rota `/precoiva-pro/`, com copia integral de `C:\Users\ACER\Documents\Downloads\PrecoIVA_Alinhamento_Conversor_e_Atas.html` para `precoiva-pro/index.html`. Mantidos card 108, filtro Orcamento, busca, rodape e os demais aplicativos. Backup anterior: `backups/precoiva-pro-before-alinhamento-conversor-atas-20261031-161501.html`. Validada a sintaxe do JavaScript e a identidade da copia; regras e premissas preservadas conforme o anexo, sem validacao fiscal independente.
+
 Em 31/10/2026, atualizado `PrecoIVA Pro` na rota `/precoiva-pro/`, com copia integral de `C:\Users\ACER\Documents\Downloads\PrecoIVA_Atas_Redutor_Corrigido.html` para `precoiva-pro/index.html`. Mantidos card 108, menu Orcamento, busca e rodape. Backup anterior: `backups/precoiva-pro-before-atas-redutor-20261031-161108.html`. Validada a sintaxe do JavaScript e a identidade da copia; regras e premissas tributarias preservadas conforme o anexo, sem validacao fiscal independente. Nenhum outro aplicativo alterado.
 
 Em 31/10/2026, atualizado `PrecoIVA Pro` na rota `/precoiva-pro/`, com copia integral de `C:\Users\ACER\Documents\Downloads\PrecoIVA_Parametros_Atualizados.html` para `precoiva-pro/index.html`. Mantidos card 108, menu Orcamento, busca, rodape e todos os demais aplicativos. Backup anterior: `backups/precoiva-pro-before-parametros-atualizados-20261031-154933.html`. As premissas e regras tributarias foram preservadas conforme o anexo; a publicacao nao representa validacao fiscal independente.
