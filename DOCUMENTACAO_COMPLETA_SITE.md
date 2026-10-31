@@ -13,6 +13,8 @@ Este arquivo registra o estado atual do site, dos aplicativos publicados, da est
 
 ## Resumo do site
 
+Em 31/10/2026, incluido card 109 `Consultor de Precos Governamentais 1.3.0` no filtro Orcamento, em Todos, busca e rodape. Rota `/consultor-precos/`, arquivo local `consultor-precos/index.html`. Fonte: `C:\Users\ACER\Documents\Downloads\consultor-precos-fontes.zip`, preservada em `backups/consultor-precos-fontes-original-20261031.zip` e extraida em `_tmp_consultor_precos_20261031/`. Geracao pelo `build.js` original (20 modulos) e 47 testes jsdom aprovados nas tres suites, com respostas de APIs simuladas. Backup da home: `backups/index-before-consultor-precos-<data-hora>.html`. Nenhum instalador foi executado. Publicado HTML standalone sem alterar regras do aplicativo. Importante: o pacote vem com `CP.PROXY_PADRAO` vazio. Consultas diretas dependem do CORS e da disponibilidade das APIs; para contornar bloqueios e oferecer todas as buscas online, configurar um proxy em nuvem em Configuracoes (codigo de Worker incluido no app). NF-e do Portal da Transparencia exige chave do proprio usuario. Nao foi provisionado proxy externo nem cadastrada chave. Operacoes de importacao, cesta, analise e relatorios permanecem disponiveis localmente. Estes testes nao certificam acesso real a todas as fontes externas.
+
 Em 31/10/2026, atualizados `Credito de IVA no SICRO` para v1.1 e `Credito de IVA no SINAPI` para v2.6 com os anexos integrais `C:\Users\ACER\Documents\Downloads\Credito_IVA_SICRO_v1_1.html` e `C:\Users\ACER\Documents\Downloads\Credito_IVA_SINAPI_v2_6_Setembro_2026.html`. Rotas e arquivos locais preservados: `/credito-iva-sicro/` e `/credito-iva-sinapi/`, cada um em seu `index.html`. Mantidos cards, filtro Orcamento, busca e rodape; nenhum outro aplicativo alterado. Backups anteriores: `backups/credito-iva-sicro-before-v11-20261031-122629.html` e `backups/credito-iva-sinapi-before-v26-20261031-122629.html`.
 
 Em 21/10/2026, atualizado `PrecoIVA Pro` com a fonte integral `C:\Users\ACER\Documents\Downloads\PreçoIVA Pro (4).html`, na rota `/precoiva-pro/`. Mantidos card 108, filtro Orcamento, busca e rodape. Backup anterior: `backups/precoiva-pro-before-anexo4-20261021-222033.html`. Nenhum outro aplicativo alterado.
@@ -47,7 +49,7 @@ O site `www.obrasinteligentes.ia.br` e uma pagina estatica hospedada na Hostinge
 C:\Obras Inteligentes\index.html
 ```
 
-A tela inicial possui atualmente 108 cards de aplicativos. Cada card aponta para uma rota estatica dentro do dominio. A regra geral e:
+A tela inicial possui atualmente 109 cards de aplicativos. Cada card aponta para uma rota estatica dentro do dominio. A regra geral e:
 
 ```text
 https://www.obrasinteligentes.ia.br/nome-da-rota/
