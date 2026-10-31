@@ -543,7 +543,7 @@ table.ct .c-act button{padding:4px 9px;font-size:.8rem}
         <div class="row" id="blk-iva">
           <div class="fld">
             <label for="cbs">CBS</label>
-            <div class="inp"><input id="cbs" inputmode="decimal" autocomplete="off" value="8,9"><span class="u">%</span></div>
+            <div class="inp"><input id="cbs" inputmode="decimal" autocomplete="off" value="11,2"><span class="u">%</span></div>
           </div>
           <div class="fld">
             <label for="ibs">IBS</label>
@@ -555,7 +555,7 @@ table.ct .c-act button{padding:4px 9px;font-size:.8rem}
           <div class="sub" id="blk-red">
             <div class="fld">
               <label for="red">Redutor de compras governamentais</label>
-              <div class="inp"><input id="red" inputmode="decimal" autocomplete="off" value="30"><span class="u">%</span></div>
+              <div class="inp"><input id="red" inputmode="decimal" autocomplete="off" value="44,2"><span class="u">%</span></div>
               <small>Reduz as alíquotas de IBS e CBS da venda.</small>
             </div>
           </div>
@@ -607,9 +607,9 @@ table.ct .c-act button{padding:4px 9px;font-size:.8rem}
             <div class="fld"><label for="cv-pesq">Data da pesquisa de preços</label><div class="inp"><input id="cv-pesq" type="date"></div></div>
             <div class="fld"><label for="cv-edital">Divulgação do edital</label><div class="inp"><input id="cv-edital" type="date"></div></div>
             <div class="fld"><label for="cv-icms">ICMS da UF de entrega</label><div class="inp"><input id="cv-icms" inputmode="decimal" autocomplete="off"><span class="u">%</span></div></div>
-            <div class="fld"><label for="cv-cbs">CBS</label><div class="inp"><input id="cv-cbs" inputmode="decimal" autocomplete="off"><span class="u">%</span></div></div>
-            <div class="fld"><label for="cv-ibs">IBS</label><div class="inp"><input id="cv-ibs" inputmode="decimal" autocomplete="off"><span class="u">%</span></div></div>
-            <div class="fld"><label for="cv-red">Redutor de compras governamentais</label><div class="inp"><input id="cv-red" inputmode="decimal" autocomplete="off"><span class="u">%</span></div></div>
+            <div class="fld"><label for="cv-cbs">CBS</label><div class="inp"><input id="cv-cbs" inputmode="decimal" autocomplete="off" value="11,2"><span class="u">%</span></div></div>
+            <div class="fld"><label for="cv-ibs">IBS</label><div class="inp"><input id="cv-ibs" inputmode="decimal" autocomplete="off" value="0,1"><span class="u">%</span></div></div>
+            <div class="fld"><label for="cv-red">Redutor de compras governamentais</label><div class="inp"><input id="cv-red" inputmode="decimal" autocomplete="off" value="44,2"><span class="u">%</span></div></div>
           </div>
         </fieldset>
         <fieldset>
@@ -704,9 +704,9 @@ table.ct .c-act button{padding:4px 9px;font-size:.8rem}
         <fieldset>
           <legend><span class="q">2</span> Tributos e premissas</legend>
           <div class="cgrid">
-            <div class="fld"><label for="ar-cbs">CBS</label><div class="inp"><input id="ar-cbs" inputmode="decimal" autocomplete="off"><span class="u">%</span></div></div>
-            <div class="fld"><label for="ar-ibs">IBS</label><div class="inp"><input id="ar-ibs" inputmode="decimal" autocomplete="off"><span class="u">%</span></div></div>
-            <div class="fld"><label for="ar-red">Redutor de compras governamentais</label><div class="inp"><input id="ar-red" inputmode="decimal" autocomplete="off"><span class="u">%</span></div></div>
+            <div class="fld"><label for="ar-cbs">CBS</label><div class="inp"><input id="ar-cbs" inputmode="decimal" autocomplete="off" value="11,2"><span class="u">%</span></div></div>
+            <div class="fld"><label for="ar-ibs">IBS</label><div class="inp"><input id="ar-ibs" inputmode="decimal" autocomplete="off" value="0,1"><span class="u">%</span></div></div>
+            <div class="fld"><label for="ar-red">Redutor de compras governamentais</label><div class="inp"><input id="ar-red" inputmode="decimal" autocomplete="off" value="44,2"><span class="u">%</span></div></div>
             <div class="fld"><label for="ar-icms">ICMS padrão dos itens</label><div class="inp"><input id="ar-icms" inputmode="decimal" autocomplete="off"><span class="u">%</span></div></div>
             <div class="fld span2"><label for="ar-obj">Tipo de objeto (α padrão)</label>
               <select id="ar-obj" class="sel">
@@ -1173,16 +1173,16 @@ table.ct .c-act button{padding:4px 9px;font-size:.8rem}
         <!-- 7 -->
         <article class="msec" id="m-exemplos">
           <h2>Exemplos para carregar</h2>
-          <p>Saco de cimento com o mesmo valor do fabricante (R$ 32,02), margem de 20%, ICMS de 19,5%, CBS de 8,9%, IBS de 0,1% e venda à administração pública com redutor de 30%. Clique em <b>Carregar</b> para ver o caso na calculadora, com a memória completa.</p>
+          <p>Saco de cimento com o mesmo valor do fabricante (R$ 32,02), margem de 20%, ICMS de 19,5%, CBS de 11,2%, IBS de 0,1% e venda à administração pública com redutor de 44,2%. Clique em <b>Carregar</b> para ver o caso na calculadora, com a memória completa.</p>
           <div class="cases">
-            <div class="case"><span class="cl">A</span><div><b>Estoque, Lucro Presumido em 2026</b><span>Regime regular · crédito presumido</span></div><b class="cp">R$ 50,15</b><button type="button" data-case="A">Carregar</button></div>
-            <div class="case"><span class="cl">B</span><div><b>Compra em 2027</b><span>Regime regular · créditos da nota</span></div><b class="cp">R$ 50,15</b><button type="button" data-case="B">Carregar</button></div>
-            <div class="case"><span class="cl">C</span><div><b>Estoque, Lucro Real em 2026</b><span>Regime regular · PIS/Cofins já creditado</span></div><b class="cp">R$ 50,15</b><button type="button" data-case="C">Carregar</button></div>
-            <div class="case"><span class="cl">D</span><div><b>Compra em 2027, Simples</b><span>IBS/CBS no DAS de 8%</span></div><b class="cp">R$ 55,64</b><button type="button" data-case="D">Carregar</button></div>
-            <div class="case"><span class="cl">E</span><div><b>Compra em 2027, Simples</b><span>IBS/CBS por fora · DAS de 5%</span></div><b class="cp">R$ 54,77</b><button type="button" data-case="E">Carregar</button></div>
+            <div class="case"><span class="cl">A</span><div><b>Estoque, Lucro Presumido em 2026</b><span>Regime regular · crédito presumido</span></div><b class="cp">Ver cálculo</b><button type="button" data-case="A">Carregar</button></div>
+            <div class="case"><span class="cl">B</span><div><b>Compra em 2027</b><span>Regime regular · créditos da nota</span></div><b class="cp">Ver cálculo</b><button type="button" data-case="B">Carregar</button></div>
+            <div class="case"><span class="cl">C</span><div><b>Estoque, Lucro Real em 2026</b><span>Regime regular · PIS/Cofins já creditado</span></div><b class="cp">Ver cálculo</b><button type="button" data-case="C">Carregar</button></div>
+            <div class="case"><span class="cl">D</span><div><b>Compra em 2027, Simples</b><span>IBS/CBS no DAS de 8%</span></div><b class="cp">Ver cálculo</b><button type="button" data-case="D">Carregar</button></div>
+            <div class="case"><span class="cl">E</span><div><b>Compra em 2027, Simples</b><span>IBS/CBS por fora · DAS de 5%</span></div><b class="cp">Ver cálculo</b><button type="button" data-case="E">Carregar</button></div>
           </div>
           <p>A, B e C chegam ao mesmo preço porque o custo líquido é o mesmo (R$ 32,02). Em D e E, o comerciante do Simples não recupera o ICMS da compra (nem o IBS/CBS, em D) e não tem o redutor de compras governamentais, então o custo e o preço sobem.</p>
-          <p class="small">No caso A, a carga desta venda sai negativa (−0,16%): a nota de 2026 trazia ICMS e PIS/Cofins maiores, que voltam agora como crédito. No caso C, a carga parece alta (6,34%) porque o crédito de PIS/Cofins dessa compra foi aproveitado em 2026, fora da apuração de 2027.</p>
+          <p class="small">Os valores e a carga tributária de cada caso são recalculados ao carregar, com CBS de 11,2%, IBS de 0,1% e redutor de 44,2% quando aplicável.</p>
         </article>
 
         <!-- 8 -->
@@ -1608,8 +1608,8 @@ function loadCase(k){
   if(c.r26) setRadio('r26', c.r26);
   if(c.pc26) $('pc26').value = c.pc26;
   $('das').value = c.das || '8';
-  $('margem').value = '20'; $('icmsV').value = '19,5'; $('cbs').value = '8,9'; $('ibs').value = '0,1';
-  $('gov').checked = true; $('red').value = '30'; $('k').value = '100';
+  $('margem').value = '20'; $('icmsV').value = '19,5'; $('cbs').value = '11,2'; $('ibs').value = '0,1';
+  $('gov').checked = true; $('red').value = '44,2'; $('k').value = '100';
   $('icmsCompraPct').value = '19,5'; $('icmsOnIva').checked = false; $('lucroFixoOn').checked = false; $('redSN').checked = false;
   loadExample(); render(); showTab('calc');
   const out = $('out');
@@ -1678,7 +1678,7 @@ const QUIZ = [
   {q:'No exemplo do cimento, por que o estoque de 2026 e a compra de 2027 chegam ao mesmo preço?', o:['O crédito presumido devolve o PIS/Cofins que o fornecedor embutiu em 2026','A CBS de 2027 é igual ao PIS/Cofins de 2026'], c:0,
    e:'Com o estoque comprado de fornecedor não cumulativo (9,25% embutido) e o crédito usado por inteiro, o custo líquido fica em R$ 32,02 nos dois casos. Se o fornecedor fosse cumulativo ou o crédito não fosse absorvido, os preços seriam diferentes. Veja o laboratório da seção Estoque de 2026.'},
   {q:'No conversor, por que a cotação de 2026 de um fornecedor do Lucro Presumido cai mais do que a de um fornecedor do Lucro Real?', o:['Porque o Lucro Presumido terá alíquota menor de CBS em 2027','Porque o preço dele carregava o PIS/Cofins dos insumos, que em 2027 vira crédito de CBS'], c:1,
-   e:'O fornecedor cumulativo não se creditava do PIS/Cofins embutido nos insumos. Esse resíduo sai do custo em 2027: E₂₀₂₇ = E₂₀₂₆ × (1 − α × t). No exemplo do cimento, as duas cotações chegam a R$ 50,15.'}
+   e:'O fornecedor cumulativo não se creditava do PIS/Cofins embutido nos insumos. Esse resíduo sai do custo em 2027: E₂₀₂₇ = E₂₀₂₆ × (1 − α × t). No exemplo do cimento, as duas cotações são recalculadas com as alíquotas e o redutor informados.'}
 ];
 function renderQuiz(){
   const box = $('quiz');
@@ -1717,7 +1717,7 @@ const TIPOS = {
 const REGS = {pres:'Lucro Presumido', real:'Lucro Real', simp:'Simples Nacional', ni:'Não informado'};
 const NI = {real:'Lucro Real', pres:'Lucro Presumido', simp:'Simples Nacional', avg:'média de Presumido e Real'};
 const ALFA_R = {'100':'0', '60':'10', '30':'10', '10':'5'}; // α padrão do Lucro Real por tipo de objeto
-const CV_DEF = {item:'Cimento CP-II 50 kg', un:'saco', pesq:'2027-02-15', edital:'2027-03-15', icms:'19,5', cbs:'8,9', ibs:'0,1', red:'30', obj:'100', alfa:'100', alfaR:'0', ni:'real', crit:'med', idx:'0', pcum:'3,65', pncum:'9,25', t:'9,25', d26:'8', d27:'8', dev:'25'};
+const CV_DEF = {item:'Cimento CP-II 50 kg', un:'saco', pesq:'2027-02-15', edital:'2027-03-15', icms:'19,5', cbs:'11,2', ibs:'0,1', red:'44,2', obj:'100', alfa:'100', alfaR:'0', ni:'real', crit:'med', idx:'0', pcum:'3,65', pncum:'9,25', t:'9,25', d26:'8', d27:'8', dev:'25'};
 const CV_EX = [
   {use:true, src:'Fornecedor A', tipo:'IV', data:'2026-10-05', p:'54,58', reg:'pres', resid:'', just:''},
   {use:true, src:'Fornecedor B', tipo:'IV', data:'2026-11-12', p:'52,60', reg:'real', resid:'', just:''},
@@ -1735,12 +1735,14 @@ const fD = dt => dt ? dt.toLocaleDateString('pt-BR', {timeZone:'UTC'}) : '—';
 const pct = x => (x > 0 ? '+' : '') + P(x);
 
 function cvSave(){
-  try{ const params = {}; CV_FIELDS.forEach(k => params[k] = $('cv-'+k).value); localStorage.setItem(CV_KEY, JSON.stringify({params, rows: cvRows})); }catch(e){}
+  try{ const params = {}; CV_FIELDS.forEach(k => params[k] = $('cv-'+k).value); localStorage.setItem(CV_KEY, JSON.stringify({defaultsVersion:1, params, rows: cvRows})); }catch(e){}
 }
 function cvLoad(){
   let data = null;
   try{ data = JSON.parse(localStorage.getItem(CV_KEY) || 'null'); }catch(e){}
   const params = Object.assign({}, CV_DEF, data && data.params || {});
+  if(data?.defaultsVersion !== 1 && params.cbs === '8,9') params.cbs = '11,2';
+  if(data?.defaultsVersion !== 1 && params.red === '30') params.red = '44,2';
   CV_FIELDS.forEach(k => $('cv-'+k).value = params[k]);
   cvRows = (data && Array.isArray(data.rows)) ? data.rows : CV_EX.map(r => Object.assign({}, r));
 }
@@ -2118,7 +2120,7 @@ cvLoad(); cvRenderRows();
 const AR_KEY = 'precoiva-pro-ata-v2';
 const AR_REGS = {pres:'Lucro Presumido → regime regular', real:'Lucro Real → regime regular', sdas:'Simples → Simples com IBS/CBS no DAS', shib:'Simples → Simples com IBS/CBS por fora'};
 const AR_IVR = {'0':'Cheia', '60':'Redução 60%', '100':'Zero'};
-const AR_DEF = {ata:'12/2026', forn:'Distribuidora Exemplo Ltda.', prop:'2026-03-10', reg:'pres', ef:'2027-01-01', cbs:'8,9', ibs:'0,1', red:'30', icms:'19,5', obj:'100', alfa:'100', alfaR:'0', redSN:'', pcum:'3,65', pncum:'9,25', t:'9,25', d26:'8', d27:'8', d27h:'5'};
+const AR_DEF = {ata:'12/2026', forn:'Distribuidora Exemplo Ltda.', prop:'2026-03-10', reg:'pres', ef:'2027-01-01', cbs:'11,2', ibs:'0,1', red:'44,2', icms:'19,5', obj:'100', alfa:'100', alfaR:'0', redSN:'', pcum:'3,65', pncum:'9,25', t:'9,25', d26:'8', d27:'8', d27h:'5'};
 const AR_EX = [
   {n:'1', desc:'Cimento CP-II 50 kg', un:'saco', qtd:'800', p:'54,58'},
   {n:'2', desc:'Areia média lavada', un:'m³', qtd:'120', p:'145,00'},
@@ -2139,12 +2141,14 @@ const arGet = k => { const el = $('ar-'+k); return el.type === 'checkbox' ? (el.
 const arSet = (k, v) => { const el = $('ar-'+k); if(el.type === 'checkbox') el.checked = v === '1' || v === true; else el.value = v; };
 
 function arSave(){
-  try{ const params = {}; AR_FIELDS.forEach(k => params[k] = arGet(k)); localStorage.setItem(AR_KEY, JSON.stringify({params, rows: arRows})); }catch(e){}
+  try{ const params = {}; AR_FIELDS.forEach(k => params[k] = arGet(k)); localStorage.setItem(AR_KEY, JSON.stringify({defaultsVersion:1, params, rows: arRows})); }catch(e){}
 }
 function arLoad(){
   let data = null;
   try{ data = JSON.parse(localStorage.getItem(AR_KEY) || 'null'); }catch(e){}
   const params = Object.assign({}, AR_DEF, data && data.params || {});
+  if(data?.defaultsVersion !== 1 && params.cbs === '8,9') params.cbs = '11,2';
+  if(data?.defaultsVersion !== 1 && params.red === '30') params.red = '44,2';
   AR_FIELDS.forEach(k => arSet(k, params[k]));
   arRows = (data && Array.isArray(data.rows)) ? data.rows : AR_EX.map(r => Object.assign({}, r));
 }
