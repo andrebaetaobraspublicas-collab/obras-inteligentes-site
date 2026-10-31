@@ -2141,16 +2141,18 @@ const arGet = k => { const el = $('ar-'+k); return el.type === 'checkbox' ? (el.
 const arSet = (k, v) => { const el = $('ar-'+k); if(el.type === 'checkbox') el.checked = v === '1' || v === true; else el.value = v; };
 
 function arSave(){
-  try{ const params = {}; AR_FIELDS.forEach(k => params[k] = arGet(k)); localStorage.setItem(AR_KEY, JSON.stringify({defaultsVersion:1, params, rows: arRows})); }catch(e){}
+  try{ const params = {}; AR_FIELDS.forEach(k => params[k] = arGet(k)); localStorage.setItem(AR_KEY, JSON.stringify({defaultsVersion:2, params, rows: arRows})); }catch(e){}
 }
 function arLoad(){
   let data = null;
   try{ data = JSON.parse(localStorage.getItem(AR_KEY) || 'null'); }catch(e){}
   const params = Object.assign({}, AR_DEF, data && data.params || {});
-  if(data?.defaultsVersion !== 1 && params.cbs === '8,9') params.cbs = '11,2';
-  if(data?.defaultsVersion !== 1 && params.red === '30') params.red = '44,2';
+  if((Number(data?.defaultsVersion) || 0) < 1 && params.cbs === '8,9') params.cbs = '11,2';
+  // Corrige uma vez os redutores antigos persistidos, sem impedir edições futuras.
+  if((Number(data?.defaultsVersion) || 0) < 2 && [10, 30].includes(pn(params.red))) params.red = '44,2';
   AR_FIELDS.forEach(k => arSet(k, params[k]));
   arRows = (data && Array.isArray(data.rows)) ? data.rows : AR_EX.map(r => Object.assign({}, r));
+  arSave();
 }
 function arParams(){
   const g = k => $('ar-'+k).value;
