@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PNCP Analytics Local</title>
+<meta name="description" content="Painel dinâmico para consolidação de dados abertos do PNCP.">
+<style>
+:root{
+  --bg:#eef3f8;--panel:#fff;--text:#172235;--muted:#66748a;--line:#dce4ee;
+  --blue:#155fba;--blue2:#0d488f;--green:#0f8b68;--orange:#c07a18;--red:#c94444;
+  --shadow:0 10px 28px rgba(27,48,79,.09);--radius:15px
+}
+*{box-sizing:border-box} body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;color:var(--text);background:var(--bg)}
+button,input,select{font:inherit}.hidden{display:none!important}
+header{background:linear-gradient(135deg,#092950,#115ca3);color:#fff;padding:22px 28px;box-shadow:var(--shadow)}
+.header-row{max-width:1500px;margin:auto;display:flex;justify-content:space-between;align-items:center;gap:20px}
+.brand h1{margin:0;font-size:23px}.brand p{margin:5px 0 0;opacity:.78;font-size:12px}
+.status{display:flex;align-items:center;gap:9px;padding:9px 13px;border:1px solid rgba(255,255,255,.25);border-radius:999px;font-size:12px}
+.dot{width:9px;height:9px;border-radius:50%;background:#a8b4c4}.dot.ok{background:#36d399}.dot.err{background:#ff7474}.dot.warn{background:#ffc857}
+main{max-width:1500px;margin:20px auto 45px;padding:0 20px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+.controls{padding:18px;margin-bottom:16px}
+.control-grid{display:grid;grid-template-columns:repeat(7,minmax(125px,1fr));gap:12px}
+.field{display:flex;flex-direction:column;gap:6px}.field.wide{grid-column:span 2}
+.field label{font-size:11px;color:var(--muted);font-weight:700}
+.field input,.field select{width:100%;border:1px solid var(--line);border-radius:9px;padding:9px 10px;background:#fff;color:var(--text);outline:none}
+.field input:focus,.field select:focus{border-color:#77a9df;box-shadow:0 0 0 3px rgba(21,95,186,.1)}
+.actions{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:15px;padding-top:14px;border-top:1px solid var(--line)}
+.actions-left,.actions-right{display:flex;gap:9px;flex-wrap:wrap}
+.btn{border:0;border-radius:9px;padding:10px 14px;font-size:12px;font-weight:750;cursor:pointer}
+.btn:disabled{opacity:.55;cursor:not-allowed}.primary{background:var(--blue);color:#fff}.primary:hover{background:var(--blue2)}
+.secondary{background:#e8f1fc;color:var(--blue)}.ghost{background:#fff;border:1px solid var(--line);color:var(--text)}
+.danger{background:#fff0f0;border:1px solid #f1cccc;color:var(--red)}
+.notice{margin-top:12px;padding:11px 13px;border-radius:10px;background:#eef6ff;border:1px solid #d3e7fc;color:#315474;font-size:11px;line-height:1.5}
+.progress-box{margin-top:13px}.progress-line{height:9px;background:#e9eef4;border-radius:99px;overflow:hidden}
+.progress-bar{height:100%;width:0;background:linear-gradient(90deg,#155fba,#19a789);transition:.25s}
+.progress-text{font-size:11px;color:var(--muted);margin-top:7px;display:flex;justify-content:space-between}
+.metrics{display:grid;grid-template-columns:repeat(7,1fr);gap:13px;margin-bottom:16px}
+.metric{padding:16px}.metric small{color:var(--muted);font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.04em}
+.metric strong{display:block;font-size:21px;margin-top:8px;letter-spacing:-.03em}.metric span{display:block;color:var(--muted);font-size:10px;margin-top:5px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.box{padding:18px}.box-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:13px}
+.box-head h2{font-size:14px;margin:0}.box-head span{font-size:10px;color:var(--muted)}
+.chart{height:285px;display:flex;align-items:flex-end;gap:8px;border-bottom:1px solid var(--line);padding:15px 4px 0}
+.col{flex:1;text-align:center;min-width:20px}.bar{min-height:3px;background:linear-gradient(180deg,#4d91df,#155fba);border-radius:6px 6px 0 0}
+.bar.green{background:linear-gradient(180deg,#45bea0,#0f8b68)}.bar.orange{background:linear-gradient(180deg,#e3aa4f,#c07a18)}
+.val{font-size:9px;font-weight:700;margin-bottom:5px;white-space:nowrap}.lbl{font-size:9px;color:var(--muted);margin-top:6px}
+.hbars{display:flex;flex-direction:column;gap:9px;max-height:330px;overflow:auto}
+.hrow{display:grid;grid-template-columns:190px 1fr 82px;gap:9px;align-items:center}
+.hname{font-size:10px;text-align:right}.track{height:13px;background:#edf1f5;border-radius:4px;overflow:hidden}
+.fill{height:100%;background:linear-gradient(90deg,#155fba,#4c94e6)}.hval{font-size:10px;font-weight:700}
+.pies{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.legend{display:flex;flex-direction:column;gap:9px}.legend-row{display:grid;grid-template-columns:10px 1fr auto;gap:8px;align-items:center;font-size:11px}
+.sw{width:10px;height:10px;border-radius:3px}.table-wrap{overflow:auto}
+table{width:100%;border-collapse:collapse;min-width:750px}th,td{padding:10px 11px;border-bottom:1px solid #e8edf3;text-align:left;font-size:11px}
+th{background:#f5f8fb;color:var(--muted);text-transform:uppercase;font-size:9px;letter-spacing:.04em}
+.num{text-align:right;font-variant-numeric:tabular-nums}.section-title{font-size:17px;margin:24px 0 12px}
+.empty{min-height:220px;display:grid;place-items:center;text-align:center;color:var(--muted);font-size:12px}
+.spinner{width:23px;height:23px;border:3px solid #d8e5f3;border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite;margin:auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+.modal{position:fixed;inset:0;background:rgba(5,15,30,.62);display:none;align-items:center;justify-content:center;padding:20px;z-index:50}
+.modal.open{display:flex}.modal-card{width:min(900px,96vw);max-height:90vh;overflow:auto;background:#fff;border-radius:15px;padding:20px}
+.modal-head{display:flex;justify-content:space-between;align-items:center}.modal-head h3{margin:0}.close{border:0;background:#edf1f5;border-radius:8px;width:35px;height:35px;cursor:pointer}
+.snapshots{display:flex;flex-direction:column;gap:10px;margin-top:15px}.snap{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:12px}
+.snap strong{font-size:12px}.snap small{display:block;color:var(--muted);margin-top:3px}
+footer{color:var(--muted);font-size:10px;text-align:center;padding:16px}
+@media(max-width:1250px){.control-grid{grid-template-columns:repeat(4,1fr)}.metrics{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:760px){header{padding:18px}.header-row{align-items:flex-start}.status{display:none}main{padding:0 12px}.control-grid{grid-template-columns:1fr 1fr}.field.wide{grid-column:span 2}.metrics{grid-template-columns:1fr 1fr}.grid,.pies{grid-template-columns:1fr}.actions{align-items:flex-start;flex-direction:column}.hrow{grid-template-columns:110px 1fr 65px}}
+
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:22px 0 14px}
+.tab{border:1px solid var(--line);background:var(--panel);color:var(--text);padding:10px 14px;border-radius:9px;font-size:12px;font-weight:750;cursor:pointer}
+.tab.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+.tab-panel{display:none}.tab-panel.active{display:block}
+.filter-row{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;align-items:end;margin-bottom:14px}
+.note{font-size:10px;color:var(--muted);line-height:1.5;margin-top:8px}
+.sortable{cursor:pointer;user-select:none}.sortable:hover{color:var(--blue)}
+
+
+.badge{display:inline-block;padding:4px 8px;border-radius:999px;font-size:10px;font-weight:700}
+.badge.green{background:#e3f6ed;color:#087653}.badge.orange{background:#fff1d7;color:#965d0b}.badge.gray{background:#edf1f5;color:#5f6b7a}
+</style>
+</head>
+<body>
+<header>
+ <div class="header-row">
+  <div class="brand"><h1>PNCP Analytics Local</h1><p>Base analítica local de estatísticas agregadas do PNCP</p></div>
+  <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end">
+      <div class="status"><span id="latestDot" class="dot"></span><span id="latestData">Último registro recebido: —</span></div>
+      <div class="status"><span id="dot" class="dot"></span><span id="status">Aguardando atualização</span></div>
+    </div>
+ </div>
+</header>
+
+<main>
+<section class="panel controls">
+ <div class="control-grid">
+  <div class="field"><label>Ano rápido</label><select id="year"></select></div>
+  <div class="field"><label>Data inicial</label><input id="start" type="date"></div>
+  <div class="field"><label>Data final</label><input id="end" type="date"></div>
+  <div class="field"><label>Esfera</label><select id="sphere"><option value="">Todas</option><option value="F">Federal</option><option value="E">Estadual/DF</option><option value="M">Municipal</option></select></div>
+  <div class="field"><label>UF</label><select id="uf"><option value="">Todas</option></select></div>
+  <div class="field"><label>Município/IBGE</label><input id="city" placeholder="Código IBGE opcional"></div>
+  <div class="field"><label>Páginas por combinação</label><select id="maxPages"><option value="1">1 (teste)</option><option value="5">5</option><option value="20" selected>20</option><option value="100">100</option><option value="0">Todas</option></select></div>
+  <div class="field wide"><label>URL-base da API</label><input id="apiBase" value="https://pncp.gov.br/api/consulta/v1"></div><div class="field wide"><label for="proxyBase">Proxy (opcional)</label><input id="proxyBase" value="" placeholder="Vazio: consulta direta ao PNCP"></div>
+  <div class="field wide"><label>Endpoint</label><input id="endpoint" value="/contratacoes/publicacao"></div>
+  <div class="field"><label>Tamanho da página</label><select id="pageSize"><option>10</option><option selected>50</option></select></div>
+  <div class="field"><label>Intervalo entre chamadas</label>
+      <select id="delay">
+        <option value="1000">1 segundo</option>
+        <option value="2000" selected>2 segundos</option>
+        <option value="3000">3 segundos</option>
+        <option value="5000">5 segundos</option>
+      </select>
+    </div>
+    <div class="field"><label>Pausa entre modalidades</label>
+      <select id="comboDelay">
+        <option value="2000">2 segundos</option>
+        <option value="4000" selected>4 segundos</option>
+        <option value="7000">7 segundos</option>
+      </select>
+    </div>
+    <div class="field"><label>Tentativas após HTTP 429</label>
+      <select id="retryCount">
+        <option value="3">3</option>
+        <option value="5" selected>5</option>
+        <option value="7">7</option>
+      </select>
+    </div>
+  <div class="field"><label>PIB do período (R$)</label><input id="gdp" type="number" placeholder="Opcional"></div>
+ </div>
+ <div class="actions">
+  <div class="actions-left">
+   <button id="refresh" class="btn primary">↻ Nova atualização</button><button id="resume" class="btn secondary">▶ Retomar atualização</button>
+   <button id="cancel" class="btn danger hidden">Cancelar</button>
+   <button id="demo" class="btn secondary">Carregar exemplo de 2025</button>
+   <button id="importBtn" class="btn ghost">Importar JSON</button>
+   <input id="importFile" type="file" accept=".json,application/json" class="hidden">
+  </div>
+  <div class="actions-right">
+   <button id="saveSnap" class="btn ghost">Salvar fotografia</button>
+   <button id="history" class="btn ghost">Fotografias salvas</button>
+   <button id="csv" class="btn ghost">Exportar CSV</button>
+   <button id="json" class="btn ghost">Exportar JSON</button>
+  </div>
+ </div>
+ <div class="notice"><strong>Como funciona:</strong> a atualização consulta diretamente a API pública do PNCP, mês a mês e por modalidade, e consolida apenas indicadores. O tamanho máximo da página é 50. Consultas extensas podem ser demoradas e sofrer limites do PNCP; a cobertura é indicada nos painéis. Não é necessário instalar o proxy local. Se sua rede ou a API bloquear a conexão direta, será necessário um proxy HTTPS compatível.</div>
+ <div id="freshnessNote" class="notice">
+      <strong>Interpretação dos zeros:</strong> considere a data do último dado encontrado no canto superior direito. 
+      Uma combinação sem registros só deve ser interpretada após verificar a cobertura mensal. HTTP 429 significa que o PNCP limitou a velocidade das consultas, não que o mês esteja sem dados.
+    </div>
+    <div id="progressBox" class="progress-box hidden"><div class="progress-line"><div id="progressBar" class="progress-bar"></div></div><div class="progress-text"><span id="progressLabel">Preparando...</span><span id="progressPct">0%</span></div></div>
+</section>
+
+<section class="metrics">
+ <article class="panel metric"><small>Valor consolidado</small><strong id="mValue">R$ 0</strong><span id="mValueSub">Homologado quando informado; estimado como alternativa</span></article>
+ <article class="panel metric"><small>Contratações</small><strong id="mCount">0</strong><span>Registros consolidados</span></article>
+ <article class="panel metric"><small>Valor médio</small><strong id="mAverage">R$ 0</strong><span>Por contratação</span></article>
+ <article class="panel metric"><small>Contratações diretas</small><strong id="mDirect">0%</strong><span>Dispensa + inexigibilidade</span></article>
+ <article class="panel metric"><small>Sistema de Registro de Preços</small><strong id="mSrp">0%</strong><span>Participação no valor</span></article>
+ <article class="panel metric"><small>Compras / PIB</small><strong id="mGdp">—</strong><span>Preencha o PIB para calcular</span></article><article class="panel metric"><small>Base local</small><strong id="mDbSize">0 KB</strong><span id="mDbCount">0 levantamentos armazenados</span></article>
+</section>
+
+<section class="grid">
+ <article class="panel box"><div class="box-head"><h2>Valor consolidado por mês</h2><span>R$</span></div><div id="valueChart" class="chart"></div></article>
+ <article class="panel box"><div class="box-head"><h2>Quantidade por mês</h2><span>contratações</span></div><div id="countChart" class="chart"></div></article>
+</section>
+
+<section class="grid">
+ <article class="panel box"><div class="box-head"><h2>Valor por esfera de governo</h2><span>participação</span></div><div id="sphereValue" class="legend"></div></article>
+ <article class="panel box"><div class="box-head"><h2>Quantidade por esfera de governo</h2><span>participação</span></div><div id="sphereCount" class="legend"></div></article>
+</section>
+
+<section class="grid">
+ <article class="panel box"><div class="box-head"><h2>Modalidades e procedimentos auxiliares</h2><span>quantidade</span></div><div id="modChart" class="hbars"></div></article>
+ <article class="panel box"><div class="box-head"><h2>Indicadores especiais</h2><span>contratações diretas e SRP</span></div><div class="table-wrap"><table><thead><tr><th>Indicador</th><th class="num">Quantidade</th><th class="num">Valor</th><th class="num">% do total</th></tr></thead><tbody id="specialTable"></tbody></table></div></article>
+</section>
+
+<h2 class="section-title">Detalhamento mensal</h2>
+<section class="panel box"><div class="table-wrap"><table><thead><tr><th>Mês</th><th class="num">Quantidade</th><th class="num">Valor consolidado</th><th class="num">Dispensas</th><th class="num">Inexigibilidades</th><th class="num">SRP</th></tr></thead><tbody id="monthlyTable"></tbody></table></div></section>
+
+
+
+
+<h2 class="section-title">Base analítica local</h2>
+<section class="panel box">
+ <div class="box-head"><h2>Levantamentos armazenados neste navegador</h2><span>IndexedDB — armazenamento local persistente</span></div>
+ <div class="filter-row">
+   <div class="field"><label>Levantamento salvo</label><select id="dbSnapshotSelect"><option value="">Selecione...</option></select></div>
+   <div class="field"><label>Descrição</label><input id="dbSnapshotName" placeholder="Ex.: PNCP nacional 2025"></div>
+   <button id="dbSaveCurrent" class="btn primary">Salvar levantamento atual</button>
+   <button id="dbLoadSelected" class="btn secondary">Abrir levantamento</button>
+   <button id="dbDeleteSelected" class="btn danger">Excluir</button>
+   <button id="dbExportAll" class="btn ghost">Backup da base</button>
+   <button id="dbImportAll" class="btn ghost">Restaurar backup</button>
+   <input id="dbImportFile" type="file" accept=".json,application/json" class="hidden">
+ </div>
+ <div class="notice">
+  A base local armazena somente estatísticas agregadas, não contratos, itens ou documentos individuais.
+  Os dados permanecem no perfil atual do navegador. Use “Backup da base” para criar uma cópia externa.
+ </div>
+ <div class="table-wrap" style="margin-top:14px"><table>
+  <thead><tr><th>Descrição</th><th>Período</th><th>Fonte</th><th class="num">Contratações</th><th class="num">Valor consolidado</th><th>Atualização</th><th>Cobertura</th></tr></thead>
+  <tbody id="dbTable"></tbody>
+ </table></div>
+</section>
+
+<h2 class="section-title">Cobertura da atualização</h2>
+<section class="panel box">
+ <div class="box-head"><h2>Situação de cada mês</h2><span>concluído, parcial ou não consultado</span></div>
+ <div class="table-wrap"><table>
+  <thead><tr><th>Mês</th><th>Status</th><th class="num">Modalidades concluídas</th><th class="num">Sem registros</th><th class="num">Falhas</th><th>Observação</th></tr></thead>
+  <tbody id="coverageTable"></tbody>
+ </table></div>
+ <div class="note">A data do cabeçalho é apenas a data máxima entre os registros efetivamente recebidos. Ela não prova que o PNCP não possua dados posteriores quando a cobertura estiver parcial.</div>
+</section>
+
+<div class="tabs">
+ <button class="tab active" data-tab="tabModalidades">Modalidades</button>
+ <button class="tab" data-tab="tabCriterios">Critérios de julgamento</button>
+ <button class="tab" data-tab="tabUfs">Unidades da Federação</button>
+ <button class="tab" data-tab="tabMunicipios">Municípios</button>
+</div>
+
+<section id="tabModalidades" class="tab-panel active">
+ <article class="panel box">
+  <div class="box-head"><h2>Modalidades de contratação</h2><span>quantidade, valor e participação</span></div>
+  <div class="table-wrap"><table>
+   <thead><tr><th>Modalidade</th><th class="num">Contratações</th><th class="num">Valor consolidado</th><th class="num">Valor médio</th><th class="num">% quantidade</th><th class="num">% valor</th></tr></thead>
+   <tbody id="modalitiesDetail"></tbody>
+  </table></div>
+ </article>
+</section>
+
+<section id="tabCriterios" class="tab-panel">
+ <article class="panel box">
+  <div class="box-head"><h2>Critérios de julgamento</h2><span>nomes lidos diretamente dos registros</span></div>
+  <div class="table-wrap"><table>
+   <thead><tr><th>Critério</th><th class="num">Contratações</th><th class="num">Valor consolidado</th><th class="num">Valor médio</th><th class="num">% quantidade</th><th class="num">% valor</th></tr></thead>
+   <tbody id="criteriaDetail"></tbody>
+  </table></div>
+  <div class="note">Critérios ausentes ou não reconhecidos são preservados na categoria “Não informado”, sem invenção de códigos.</div>
+ </article>
+</section>
+
+<section id="tabUfs" class="tab-panel">
+ <article class="panel box">
+  <div class="box-head"><h2>Contratações por UF</h2><span>ranking nacional</span></div>
+  <div class="table-wrap"><table>
+   <thead><tr><th>UF</th><th class="num">Contratações</th><th class="num">Valor consolidado</th><th class="num">Valor médio</th><th class="num">% quantidade</th><th class="num">% valor</th></tr></thead>
+   <tbody id="ufDetail"></tbody>
+  </table></div>
+ </article>
+</section>
+
+<section id="tabMunicipios" class="tab-panel">
+ <article class="panel box">
+  <div class="box-head"><h2>Contratações por município</h2><span>selecione ou pesquise uma UF</span></div>
+  <div class="filter-row">
+   <div class="field"><label>UF exibida</label><select id="municipalityUf"><option value="">Todas</option></select></div>
+   <div class="field"><label>Pesquisar município</label><input id="municipalitySearch" placeholder="Digite parte do nome"></div>
+   <div class="field"><label>Limite de linhas</label><select id="municipalityLimit"><option>25</option><option selected>100</option><option>500</option><option value="0">Todas</option></select></div>
+   <button id="exportMunicipalCsv" class="btn ghost">Exportar municípios</button>
+  </div>
+  <div class="table-wrap"><table>
+   <thead><tr><th>UF</th><th>Município</th><th>Código IBGE</th><th class="num">Contratações</th><th class="num">Valor consolidado</th><th class="num">Valor médio</th><th>Modalidade predominante</th><th>Critério predominante</th></tr></thead>
+   <tbody id="municipalityDetail"></tbody>
+  </table></div>
+ </article>
+</section>
+
+<footer>Os resultados dependem da qualidade e completude dos dados publicados no PNCP. O painel usa valor homologado quando o campo está presente; na ausência, usa o valor estimado e informa essa substituição. Os levantamentos são armazenados no IndexedDB do navegador. Faça backups periódicos para não depender exclusivamente do perfil local. A data exibida no cabeçalho corresponde ao registro mais recente efetivamente recebido, e não necessariamente ao encerramento do período solicitado.</footer>
+</main>
+
+<div id="modal" class="modal"><div class="modal-card"><div class="modal-head"><h3>Fotografias salvas</h3><button id="closeModal" class="close">✕</button></div><div id="snapshots" class="snapshots"></div></div></div>
+
+<script>
+const MODS={
+  1:"Leilão eletrônico",2:"Diálogo competitivo",3:"Concurso",4:"Concorrência eletrônica",
+  5:"Concorrência presencial",6:"Pregão eletrônico",7:"Pregão presencial",
+  8:"Dispensa de licitação",9:"Inexigibilidade",10:"Manifestação de interesse",
+  11:"Pré-qualificação",12:"Credenciamento",13:"Leilão presencial"
+};
+const MOD_IDS=Object.keys(MODS).map(Number);
+const UFS=["AC","AL","AP","AM","BA","CE","DF","ES","GO","MA","MT","MS","MG","PA","PB","PR","PE","PI","RJ","RN","RS","RO","RR","SC","SP","SE","TO"];
+const MONTHS=["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
+const COLORS=["#155fba","#0f8b68","#c07a18","#8b5fbf","#c94444","#388aa8"];
+let abortFlag=false;
+let current=emptyData();
+
+function emptyData(){
+ return {meta:{createdAt:null,start:null,end:null,source:"none",complete:false,latestPublicationDate:null,successfulCombinations:0,failedCombinations:0,emptyCombinations:0,nextTaskIndex:0,coverage:{},rateLimitCount:0},
+  totals:{count:0,value:0,homologated:0,estimated:0,homologatedCount:0,estimatedFallbackCount:0},
+  monthly:Array.from({length:12},(_,i)=>({month:i+1,count:0,value:0,directCount:0,directValue:0,inexCount:0,dispCount:0,srpCount:0,srpValue:0})),
+  modalities:{},criteria:{},ufs:{},municipalities:{},
+  spheres:{Federal:{count:0,value:0},Estadual:{count:0,value:0},Municipal:{count:0,value:0},Outros:{count:0,value:0}},
+  special:{directCount:0,directValue:0,credentialCount:0,credentialValue:0,srpCount:0,srpValue:0,directSrpCount:0,directSrpValue:0},rawRecords:0};
+}
+const $=s=>document.querySelector(s);
+function money(v,compact=false){
+ if(compact){
+  const n=Number(v)||0;if(Math.abs(n)>=1e12)return "R$ "+(n/1e12).toFixed(2).replace(".",",")+" tri";
+  if(Math.abs(n)>=1e9)return "R$ "+(n/1e9).toFixed(1).replace(".",",")+" bi";
+  if(Math.abs(n)>=1e6)return "R$ "+(n/1e6).toFixed(1).replace(".",",")+" mi";
+ }
+ return new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL",maximumFractionDigits:2}).format(Number(v)||0);
+}
+function number(v){return new Intl.NumberFormat("pt-BR").format(Number(v)||0)}
+function pct(v){return (Number(v)||0).toLocaleString("pt-BR",{minimumFractionDigits:1,maximumFractionDigits:1})+"%"}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms))}
+function ymd8(v){return String(v||"").replaceAll("-","")}
+function setStatus(type,text){$("#status").textContent=text;$("#dot").className="dot "+(type==="ok"?"ok":type==="err"?"err":"")}
+function toast(text){alert(text)}
+function get(o,paths,fb=null){for(const p of paths){let v=o;for(const k of p.split("."))v=v?.[k];if(v!==undefined&&v!==null&&v!=="")return v}return fb}
+function normalizeRecord(r,modId){
+ const sphereRaw=String(get(r,["orgaoEntidade.esferaId","esferaId","esferaNome"],""));
+ const sphereName=String(get(r,["orgaoEntidade.esferaNome","esferaNome"],"")).toLowerCase();
+ let sphere="Outros";
+ if(sphereRaw==="F"||sphereName.includes("federal"))sphere="Federal";
+ else if(sphereRaw==="E"||sphereName.includes("estad")||sphereName.includes("distrital"))sphere="Estadual";
+ else if(sphereRaw==="M"||sphereName.includes("municip"))sphere="Municipal";
+
+ const homologatedRaw=get(r,["valorTotalHomologado","valorHomologado","valorResultado"],null);
+ const estimatedRaw=get(r,["valorTotalEstimado","valorEstimado"],null);
+ const homologated=homologatedRaw===null?0:(Number(homologatedRaw)||0);
+ const estimated=estimatedRaw===null?0:(Number(estimatedRaw)||0);
+ const value=homologatedRaw!==null ? homologated : estimated;
+
+ const criterionName=String(get(r,[
+   "criterioJulgamentoNome","modoDisputaNome","criterioJulgamento",
+   "criterioJulgamentoId"
+ ],"Não informado"));
+
+ const uf=String(get(r,[
+   "unidadeOrgao.ufSigla","unidadeOrgao.ufNome","ufSigla","uf"
+ ],"Não informado")).toUpperCase();
+
+ const municipality=String(get(r,[
+   "unidadeOrgao.municipioNome","municipioNome","municipio"
+ ],"Não informado"));
+
+ const ibge=String(get(r,[
+   "unidadeOrgao.codigoIbge","unidadeOrgao.codigoMunicipioIbge",
+   "codigoMunicipioIbge","municipioCodigoIbge"
+ ],""));
+
+ const publicationDate=String(get(r,["dataPublicacaoPncp","dataPublicacaoPNCP","dataPublicacao"],"")).slice(0,10);
+ return {
+  value,homologated,estimated,usedEstimatedFallback:homologatedRaw===null,
+  publicationDate,
+  month:Number(publicationDate.slice(5,7))||0,
+  modality:Number(get(r,["modalidadeId","codigoModalidadeContratacao"],modId))||modId,
+  criterion:criterionName||"Não informado",sphere,uf,municipality,ibge,
+  srp:Boolean(get(r,["srp","sistemaRegistroPrecos","registroPreco"],false))
+ };
+}
+function incrementBucket(container,key,rec){
+ if(!container[key])container[key]={count:0,value:0,modalities:{},criteria:{}};
+ const b=container[key];b.count++;b.value+=rec.value;
+ b.modalities[rec.modality]=(b.modalities[rec.modality]||0)+1;
+ b.criteria[rec.criterion]=(b.criteria[rec.criterion]||0)+1;
+}
+function addRecord(rec){
+ current.rawRecords++;
+ if(rec.publicationDate && (!current.meta.latestPublicationDate || rec.publicationDate>current.meta.latestPublicationDate)){
+   current.meta.latestPublicationDate=rec.publicationDate;
+ }
+ current.totals.count++;current.totals.value+=rec.value;
+ current.totals.homologated+=rec.homologated;current.totals.estimated+=rec.estimated;
+ if(rec.usedEstimatedFallback)current.totals.estimatedFallbackCount++;else current.totals.homologatedCount++;
+
+ current.modalities[rec.modality]??={count:0,value:0};current.modalities[rec.modality].count++;current.modalities[rec.modality].value+=rec.value;
+ current.criteria[rec.criterion]??={count:0,value:0};current.criteria[rec.criterion].count++;current.criteria[rec.criterion].value+=rec.value;
+ incrementBucket(current.ufs,rec.uf,rec);
+
+ const municipalityKey=`${rec.uf}|${rec.ibge}|${rec.municipality}`;
+ if(!current.municipalities[municipalityKey])current.municipalities[municipalityKey]={uf:rec.uf,ibge:rec.ibge,name:rec.municipality,count:0,value:0,modalities:{},criteria:{}};
+ const mb=current.municipalities[municipalityKey];mb.count++;mb.value+=rec.value;
+ mb.modalities[rec.modality]=(mb.modalities[rec.modality]||0)+1;
+ mb.criteria[rec.criterion]=(mb.criteria[rec.criterion]||0)+1;
+
+ current.spheres[rec.sphere]??={count:0,value:0};current.spheres[rec.sphere].count++;current.spheres[rec.sphere].value+=rec.value;
+ if(rec.month>=1&&rec.month<=12){const m=current.monthly[rec.month-1];m.count++;m.value+=rec.value}
+ if(rec.modality===8||rec.modality===9){
+  current.special.directCount++;current.special.directValue+=rec.value;
+  if(rec.month){const m=current.monthly[rec.month-1];m.directCount++;m.directValue+=rec.value;if(rec.modality===8)m.dispCount++;else m.inexCount++}
+ }
+ if(rec.modality===12){current.special.credentialCount++;current.special.credentialValue+=rec.value}
+ if(rec.srp){current.special.srpCount++;current.special.srpValue+=rec.value;if(rec.month){current.monthly[rec.month-1].srpCount++;current.monthly[rec.month-1].srpValue+=rec.value}
+   if(rec.modality===8||rec.modality===9){current.special.directSrpCount++;current.special.directSrpValue+=rec.value}
+ }
+}
+function dateRanges(start,end){
+ const s=new Date(start+"T00:00:00"),e=new Date(end+"T00:00:00"),out=[];
+ let d=new Date(s.getFullYear(),s.getMonth(),1);
+ while(d<=e){
+  const ms=new Date(Math.max(d,s));const me=new Date(Math.min(new Date(d.getFullYear(),d.getMonth()+1,0),e));
+  out.push([ms.toISOString().slice(0,10),me.toISOString().slice(0,10)]);
+  d=new Date(d.getFullYear(),d.getMonth()+1,1);
+ }
+ return out;
+}
+function buildUrl(d1,d2,mod,page){
+ const u=new URL($("#apiBase").value.replace(/\/$/,"")+$("#endpoint").value);
+ u.searchParams.set("dataInicial",ymd8(d1));u.searchParams.set("dataFinal",ymd8(d2));
+ u.searchParams.set("codigoModalidadeContratacao",mod);u.searchParams.set("pagina",page);
+ u.searchParams.set("tamanhoPagina",$("#pageSize").value);
+ const sphere=$("#sphere").value,uf=$("#uf").value,city=$("#city").value.trim();
+ if(sphere)u.searchParams.set("esfera",sphere);if(uf)u.searchParams.set("uf",uf);if(city)u.searchParams.set("codigoMunicipioIbge",city);
+ return u.toString();
+}
+async function fetchJson(url){
+ const proxy=$("#proxyBase").value.trim();
+ const finalUrl=proxy ? proxy+encodeURIComponent(url) : url;
+ const maxRetries=Number($("#retryCount").value||5);
+
+ for(let attempt=0;attempt<=maxRetries;attempt++){
+   const c=new AbortController(),t=setTimeout(()=>c.abort(),120000);
+   try{
+     const r=await fetch(finalUrl,{signal:c.signal,headers:{Accept:"application/json"}});
+     const text=await r.text();
+
+     if(r.status===429){
+       current.meta.rateLimitCount=(current.meta.rateLimitCount||0)+1;
+       let retryAfter=Number(r.headers.get("Retry-After")||0);
+       if(!retryAfter){
+         try{
+           const parsed=JSON.parse(text);
+           retryAfter=Number(parsed.retryAfter||parsed.retry_after||0);
+         }catch{}
+       }
+       const waitMs=retryAfter>0 ? retryAfter*1000 : Math.min(120000,15000*Math.pow(2,attempt));
+       setStatus("","Limite do PNCP atingido — aguardando "+Math.round(waitMs/1000)+" s");
+       $("#progressLabel").textContent=`HTTP 429: pausa automática de ${Math.round(waitMs/1000)} s — tentativa ${attempt+1}/${maxRetries+1}`;
+       if(attempt>=maxRetries){
+         const err=new Error("HTTP 429 após "+(maxRetries+1)+" tentativas");
+         err.code=429;throw err;
+       }
+       await sleep(waitMs);
+       continue;
+     }
+
+     if(r.status===204 || !text.trim()) return {data:[],totalPaginas:1,__empty:true,__status:r.status};
+
+     if(!r.ok){
+       const err=new Error(`HTTP ${r.status}: ${text.slice(0,240)}`);
+       err.code=r.status;throw err;
+     }
+
+     const trimmed=text.trim();
+     if(trimmed.startsWith("<!DOCTYPE") || trimmed.startsWith("<html")){
+       throw new Error("A API devolveu HTML em vez de JSON.");
+     }
+
+     try{
+       const parsed=JSON.parse(text);
+       parsed.__status=r.status;
+       return parsed;
+     }catch{
+       if(trimmed==="null")return {data:[],totalPaginas:1,__empty:true,__status:r.status};
+       throw new Error("A resposta não é um JSON válido: "+text.slice(0,240));
+     }
+   }catch(e){
+     if(e.name==="AbortError" && attempt<maxRetries){
+       const waitMs=Math.min(60000,5000*Math.pow(2,attempt));
+       await sleep(waitMs);continue;
+     }
+     throw e;
+   }finally{clearTimeout(t)}
+ }
+}
+function taskKey(task){return `${task.d1}|${task.mod}`}
+function monthKeyFromDate(d){return String(d).slice(0,7)}
+function ensureCoverage(monthKey){
+ if(!current.meta.coverage)current.meta.coverage={};
+ if(!current.meta.coverage[monthKey])current.meta.coverage[monthKey]={success:0,empty:0,failed:0,status:"Não consultado",lastError:""};
+ return current.meta.coverage[monthKey];
+}
+function saveCheckpoint(tasks){
+ const checkpoint={current,tasks,filters:{
+   start:$("#start").value,end:$("#end").value,sphere:$("#sphere").value,uf:$("#uf").value,city:$("#city").value,
+   maxPages:$("#maxPages").value,pageSize:$("#pageSize").value,delay:$("#delay").value,comboDelay:$("#comboDelay").value,retryCount:$("#retryCount").value,
+   apiBase:$("#apiBase").value,endpoint:$("#endpoint").value,proxyBase:$("#proxyBase").value
+ }};
+ localStorage.setItem("pncp_v6_checkpoint",JSON.stringify(checkpoint));
+}
+function loadCheckpoint(){
+ try{return JSON.parse(localStorage.getItem("pncp_v6_checkpoint")||"null")}catch{return null}
+}
+function restoreFilters(f){
+ if(!f)return;
+ ["start","end","sphere","uf","city","maxPages","pageSize","delay","comboDelay","retryCount","apiBase","endpoint","proxyBase"].forEach(k=>{if($("#"+k)&&f[k]!==undefined)$("#"+k).value=f[k]});
+}
+
+async function updateData(resumeMode=false){
+ abortFlag=false;
+ let tasks,startIndex=0,previous=JSON.parse(JSON.stringify(current));
+
+ if(resumeMode){
+   const cp=loadCheckpoint();
+   if(!cp){alert("Não existe atualização interrompida para retomar.");return}
+   current=cp.current;tasks=cp.tasks;restoreFilters(cp.filters);startIndex=Number(current.meta.nextTaskIndex||0);
+ }else{
+   current=emptyData();
+   current.meta={createdAt:new Date().toISOString(),start:$("#start").value,end:$("#end").value,source:"PNCP API",complete:false,latestPublicationDate:null,successfulCombinations:0,failedCombinations:0,emptyCombinations:0,nextTaskIndex:0,coverage:{},rateLimitCount:0};
+   const ranges=dateRanges($("#start").value,$("#end").value);
+   tasks=ranges.flatMap(r=>MOD_IDS.map(mod=>({d1:r[0],d2:r[1],mod})));
+ }
+
+ $("#refresh").disabled=true;$("#resume").disabled=true;$("#cancel").classList.remove("hidden");$("#progressBox").classList.remove("hidden");
+ setStatus("",resumeMode?"Retomando atualização...":"Atualizando...");
+
+ let errors=[];
+ try{
+  for(let idx=startIndex;idx<tasks.length;idx++){
+   if(abortFlag)break;
+   const task=tasks[idx],monthKey=monthKeyFromDate(task.d1),coverage=ensureCoverage(monthKey);
+   let page=1,totalPages=1,limit=Number($("#maxPages").value);
+   let combinationHadData=false,combinationFailed=false,lastError="";
+
+   do{
+    if(abortFlag)break;
+    try{
+     const payload=await fetchJson(buildUrl(task.d1,task.d2,task.mod,page));
+     const list=payload.data||payload.content||payload.items||payload.resultados||(Array.isArray(payload)?payload:[]);
+     if(!Array.isArray(list))throw new Error("Formato inesperado: lista de dados não encontrada.");
+     if(list.length){combinationHadData=true;list.forEach(r=>addRecord(normalizeRecord(r,task.mod)))}
+     totalPages=Number(payload.totalPaginas||payload.totalPages||payload.quantidadePaginas||1)||1;
+     page++;
+    }catch(e){
+     console.error(e);lastError=e.message;combinationFailed=true;
+     errors.push(`${task.d1} — ${MODS[task.mod]} — ${e.message}`);
+     break;
+    }
+    await sleep(Number($("#delay").value));
+   }while(page<=totalPages&&(limit===0||page<=limit));
+
+   if(combinationFailed){
+     current.meta.failedCombinations++;coverage.failed++;coverage.lastError=lastError;
+   }else if(combinationHadData){
+     current.meta.successfulCombinations++;coverage.success++;
+   }else{
+     current.meta.emptyCombinations++;coverage.empty++;
+   }
+
+   const finished=coverage.success+coverage.empty+coverage.failed;
+   coverage.status=coverage.failed ? (finished===MOD_IDS.length?"Parcial":"Em andamento") : (finished===MOD_IDS.length?"Concluído":"Em andamento");
+   current.meta.nextTaskIndex=idx+1;
+   saveCheckpoint(tasks);
+
+   const p=Math.round((idx+1)/tasks.length*100);
+   $("#progressBar").style.width=p+"%";$("#progressPct").textContent=p+"%";
+   $("#progressLabel").textContent=`${MONTHS[new Date(task.d1+"T00:00:00").getMonth()]} — ${MODS[task.mod]} (${idx+1}/${tasks.length})`;
+   render();
+
+   if(combinationFailed && lastError.includes("429")){
+     setStatus("","PNCP limitou as consultas — atualização pausada");
+     alert("O PNCP manteve o bloqueio HTTP 429 mesmo após as tentativas automáticas.\n\nA atualização foi pausada e salva. Aguarde alguns minutos e clique em “Retomar atualização”.");
+     break;
+   }
+
+   await sleep(Number($("#comboDelay").value||4000));
+  }
+
+  current.meta.complete=current.meta.nextTaskIndex>=tasks.length && current.meta.failedCombinations===0;
+  if(current.meta.complete){
+    localStorage.removeItem("pncp_v6_checkpoint");
+    setStatus("ok","Atualização concluída");
+  }else if(abortFlag){
+    setStatus("","Atualização pausada — use Retomar");
+  }else{
+    setStatus(current.totals.count?"ok":"err",`Parcial — próxima combinação ${current.meta.nextTaskIndex+1}/${tasks.length}`);
+  }
+  render();
+  try{await saveCurrentToDb(true)}catch(dbError){console.error("Falha ao salvar automaticamente:",dbError)}
+
+ }catch(e){
+  console.error(e);
+  if(!current.totals.count){current=previous}
+  setStatus("err","Atualização interrompida");
+  alert("A atualização foi interrompida, mas o ponto de retomada foi salvo.\n\n"+e.message);
+ }finally{
+  $("#refresh").disabled=false;$("#resume").disabled=false;$("#cancel").classList.add("hidden");
+ }
+}
+function renderChart(id,arr,valueKey,colorClass="",formatter=v=>number(v)){
+ const el=$(id);const max=Math.max(1,...arr.map(x=>x[valueKey]||0));
+ el.innerHTML=arr.map((x,i)=>`<div class="col"><div class="val">${formatter(x[valueKey])}</div><div class="bar ${colorClass}" style="height:${Math.max(2,(x[valueKey]||0)/max*225)}px"></div><div class="lbl">${MONTHS[i]}</div></div>`).join("");
+}
+function renderLegend(id,entries,total,key){
+ $(id).innerHTML=entries.map(([name,obj],i)=>{const v=obj[key]||0,p=total?v/total*100:0;return `<div class="legend-row"><span class="sw" style="background:${COLORS[i%COLORS.length]}"></span><span>${name}</span><strong>${key==="value"?money(v,true):number(v)} — ${pct(p)}</strong></div>`}).join("")||'<div class="empty">Sem dados</div>';
+}
+
+function dominant(obj,labelFn=x=>x){
+ const entries=Object.entries(obj||{}).sort((a,b)=>b[1]-a[1]);
+ return entries.length?labelFn(entries[0][0]):"—";
+}
+function detailRows(data,labelFn){
+ const t=current.totals;
+ return Object.entries(data).sort((a,b)=>b[1].value-a[1].value).map(([key,v])=>`
+  <tr><td>${labelFn(key)}</td><td class="num">${number(v.count)}</td><td class="num">${money(v.value)}</td>
+  <td class="num">${money(v.count?v.value/v.count:0)}</td><td class="num">${pct(t.count?v.count/t.count*100:0)}</td>
+  <td class="num">${pct(t.value?v.value/t.value*100:0)}</td></tr>`).join("");
+}
+function renderMunicipalities(){
+ const uf=$("#municipalityUf")?.value||"";
+ const search=String($("#municipalitySearch")?.value||"").toLowerCase();
+ const limit=Number($("#municipalityLimit")?.value||100);
+ let rows=Object.values(current.municipalities||{}).filter(x=>(!uf||x.uf===uf)&&(!search||x.name.toLowerCase().includes(search)));
+ rows.sort((a,b)=>b.value-a.value);if(limit)rows=rows.slice(0,limit);
+ $("#municipalityDetail").innerHTML=rows.map(v=>`<tr><td>${v.uf}</td><td>${v.name}</td><td>${v.ibge||"—"}</td>
+  <td class="num">${number(v.count)}</td><td class="num">${money(v.value)}</td><td class="num">${money(v.count?v.value/v.count:0)}</td>
+  <td>${dominant(v.modalities,k=>MODS[k]||("Modalidade "+k))}</td><td>${dominant(v.criteria)}</td></tr>`).join("")||'<tr><td colspan="8">Sem dados municipais para o filtro.</td></tr>';
+}
+function renderDetails(){
+ $("#modalitiesDetail").innerHTML=detailRows(current.modalities,k=>MODS[k]||("Modalidade "+k));
+ $("#criteriaDetail").innerHTML=detailRows(current.criteria,k=>k);
+ $("#ufDetail").innerHTML=detailRows(current.ufs,k=>k);
+ renderMunicipalities();
+}
+
+function formatDateBr(v){
+ if(!v)return "—";
+ const p=String(v).slice(0,10).split("-");
+ return p.length===3?`${p[2]}/${p[1]}/${p[0]}`:v;
+}
+function renderFreshness(){
+ const latest=current.meta.latestPublicationDate;
+ const label=$("#latestData"),dot=$("#latestDot");
+ const coverage=current.meta.coverage||{};
+ const months=Object.values(coverage);
+ const completeMonths=months.filter(x=>x.status==="Concluído").length;
+ const partialMonths=months.filter(x=>x.status==="Parcial"||x.status==="Em andamento").length;
+
+ if(!latest){
+   label.textContent="Último registro recebido: não identificado";
+   dot.className="dot warn";
+   return;
+ }
+ label.textContent=`Último registro recebido: ${formatDateBr(latest)} — cobertura: ${completeMonths} mês(es) concluído(s), ${partialMonths} parcial(is)`;
+ dot.className="dot "+(current.meta.complete?"ok":"warn");
+}
+function renderCoverage(){
+ const coverage=current.meta.coverage||{};
+ $("#coverageTable").innerHTML=Array.from({length:12},(_,i)=>{
+   const key=`${String($("#start").value).slice(0,4)}-${String(i+1).padStart(2,"0")}`;
+   const c=coverage[key]||{success:0,empty:0,failed:0,status:"Não consultado",lastError:""};
+   const badge=c.status==="Concluído"?"green":c.status==="Parcial"||c.status==="Em andamento"?"orange":"gray";
+   return `<tr><td>${MONTHS[i]}</td><td><span class="badge ${badge}">${c.status}</span></td>
+    <td class="num">${number(c.success)}</td><td class="num">${number(c.empty)}</td><td class="num">${number(c.failed)}</td>
+    <td>${c.lastError?c.lastError.slice(0,120):"—"}</td></tr>`;
+ }).join("");
+}
+function render(){
+ const t=current.totals,s=current.special;
+ $("#mValue").textContent=money(t.value,true);$("#mCount").textContent=number(t.count);$("#mAverage").textContent=money(t.count?t.value/t.count:0,true);
+ $("#mDirect").textContent=pct(t.count?s.directCount/t.count*100:0);$("#mSrp").textContent=pct(t.value?s.srpValue/t.value*100:0);
+ const g=Number($("#gdp").value);$("#mGdp").textContent=g?pct(t.value/g*100):"—";
+ renderChart("#valueChart",current.monthly,"value","",v=>money(v,true));renderChart("#countChart",current.monthly,"count","green",number);
+ const spheres=Object.entries(current.spheres).filter(x=>x[1].count||x[1].value);renderLegend("#sphereValue",spheres,t.value,"value");renderLegend("#sphereCount",spheres,t.count,"count");
+ const mods=Object.entries(current.modalities).map(([id,v])=>[Number(id),v]).sort((a,b)=>b[1].count-a[1].count);
+ const max=Math.max(1,...mods.map(x=>x[1].count));
+ $("#modChart").innerHTML=mods.map(([id,v])=>`<div class="hrow"><span class="hname">${MODS[id]||("Modalidade "+id)}</span><span class="track"><span class="fill" style="display:block;width:${v.count/max*100}%"></span></span><span class="hval">${number(v.count)}</span></div>`).join("")||'<div class="empty">Sem dados</div>';
+ const rows=[
+  ["Dispensas e inexigibilidades",s.directCount,s.directValue,t.value?s.directValue/t.value*100:0],
+  ["Credenciamentos",s.credentialCount,s.credentialValue,t.value?s.credentialValue/t.value*100:0],
+  ["Diretas + credenciamento",s.directCount+s.credentialCount,s.directValue+s.credentialValue,t.value?(s.directValue+s.credentialValue)/t.value*100:0],
+  ["Sistema de Registro de Preços",s.srpCount,s.srpValue,t.value?s.srpValue/t.value*100:0],
+  ["Contratação direta via SRP",s.directSrpCount,s.directSrpValue,t.value?s.directSrpValue/t.value*100:0]
+ ];
+ $("#specialTable").innerHTML=rows.map(r=>`<tr><td>${r[0]}</td><td class="num">${number(r[1])}</td><td class="num">${money(r[2])}</td><td class="num">${pct(r[3])}</td></tr>`).join("");
+ $("#monthlyTable").innerHTML=current.monthly.map((m,i)=>`<tr><td>${MONTHS[i]}</td><td class="num">${number(m.count)}</td><td class="num">${money(m.value)}</td><td class="num">${number(m.dispCount)}</td><td class="num">${number(m.inexCount)}</td><td class="num">${number(m.srpCount)}</td></tr>`).join("");
+ $("#mValueSub").textContent=current.totals.estimatedFallbackCount?`${number(current.totals.homologatedCount)} com valor homologado; ${number(current.totals.estimatedFallbackCount)} usando valor estimado`:"Valor homologado informado nos registros";
+ renderDetails();
+ renderFreshness();
+ renderCoverage();
+}
+function demo(){
+ current=emptyData();current.meta={createdAt:new Date().toISOString(),start:"2025-01-01",end:"2025-12-31",source:"Exemplo da apresentação",complete:true,latestPublicationDate:"2025-12-31",successfulCombinations:156,failedCombinations:0,emptyCombinations:0,nextTaskIndex:156,coverage:{},rateLimitCount:0};
+ const vals=[86.2,84.2,74.9,62.7,67.8,77.6,92.4,101.6,122.7,107.9,104.8,127.2].map(x=>x*1e9);
+ const counts=[54460,77648,76097,83073,87286,82844,95537,92435,95240,97419,105157,88505];
+ vals.forEach((v,i)=>{current.monthly[i].value=v;current.monthly[i].count=counts[i]});
+ current.totals.value=1109906589720.20;current.totals.count=1035701;
+ current.spheres={Federal:{value:current.totals.value*.22,count:current.totals.count*.13},Estadual:{value:current.totals.value*.33,count:current.totals.count*.19},Municipal:{value:current.totals.value*.45,count:current.totals.count*.68}};
+ const mc={4:27602,5:1453,3:41,12:6748,2:3,8:540879,9:200863,10:40,11:19,6:251005,7:6436,1:434,13:129};
+ Object.entries(mc).forEach(([id,c])=>current.modalities[id]={count:c,value:0});
+ current.special.directCount=741742;current.special.directValue=264e9;current.special.credentialCount=6748;current.special.credentialValue=83e9;current.special.srpValue=470e9;current.special.srpCount=0;current.special.directSrpValue=5.3e9;
+ current.totals.homologated=current.totals.value;current.totals.homologatedCount=current.totals.count;
+ current.criteria={"Menor preço":{count:780000,value:720e9},"Maior desconto":{count:110000,value:150e9},"Técnica e preço":{count:8500,value:52e9},"Não informado":{count:137201,value:187.9065897202e9}};
+ current.ufs={"SP":{count:210000,value:260e9,modalities:{6:120000},criteria:{"Menor preço":150000}},"MG":{count:120000,value:115e9,modalities:{8:55000},criteria:{"Menor preço":80000}},"BA":{count:85000,value:80e9,modalities:{6:40000},criteria:{"Maior desconto":30000}},"ES":{count:24000,value:24e9,modalities:{4:8000},criteria:{"Menor preço":17000}}};
+ current.municipalities={"ES|3205309|Vitória":{uf:"ES",ibge:"3205309",name:"Vitória",count:4800,value:7.8e9,modalities:{6:2600,8:1200},criteria:{"Menor preço":3200}},"ES|3205200|Vila Velha":{uf:"ES",ibge:"3205200",name:"Vila Velha",count:3500,value:4.2e9,modalities:{6:2000},criteria:{"Menor preço":2500}}};
+
+ $("#start").value="2025-01-01";$("#end").value="2025-12-31";
+ for(let i=1;i<=12;i++)current.meta.coverage[`2025-${String(i).padStart(2,"0")}`]={success:13,empty:0,failed:0,status:"Concluído",lastError:""};
+ setStatus("ok","Exemplo de 2025 carregado");render();
+}
+function saveSnapshot(){
+ if(!current.meta.createdAt){toast("Atualize ou carregue dados antes de salvar.");return}
+ const snaps=JSON.parse(localStorage.getItem("pncp_stats_snaps")||"[]");snaps.unshift(JSON.parse(JSON.stringify(current)));localStorage.setItem("pncp_stats_snaps",JSON.stringify(snaps.slice(0,20)));toast("Fotografia salva no navegador.");
+}
+function showSnaps(){
+ const snaps=JSON.parse(localStorage.getItem("pncp_stats_snaps")||"[]");
+ $("#snapshots").innerHTML=snaps.length?snaps.map((s,i)=>`<div class="snap"><div><strong>${s.meta.start||"?"} a ${s.meta.end||"?"}</strong><small>${s.meta.source} — ${new Date(s.meta.createdAt).toLocaleString("pt-BR")} — ${number(s.totals.count)} registros</small></div><button class="btn secondary" onclick="loadSnap(${i})">Abrir</button><button class="btn danger" onclick="deleteSnap(${i})">Excluir</button></div>`).join(""):'<div class="empty">Nenhuma fotografia salva.</div>';
+ $("#modal").classList.add("open");
+}
+window.loadSnap=i=>{const a=JSON.parse(localStorage.getItem("pncp_stats_snaps")||"[]");current=a[i];$("#start").value=current.meta.start||"";$("#end").value=current.meta.end||"";render();setStatus("ok","Fotografia carregada");$("#modal").classList.remove("open")}
+window.deleteSnap=i=>{const a=JSON.parse(localStorage.getItem("pncp_stats_snaps")||"[]");a.splice(i,1);localStorage.setItem("pncp_stats_snaps",JSON.stringify(a));showSnaps()}
+function download(blob,name){const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+function exportJson(){download(new Blob([JSON.stringify(current,null,2)],{type:"application/json"}),`pncp_estatisticas_${Date.now()}.json`)}
+function exportCsv(){
+ const rows=[["Indicador","Quantidade","Valor"],["Total",current.totals.count,current.totals.value],["Contratações diretas",current.special.directCount,current.special.directValue],["Credenciamento",current.special.credentialCount,current.special.credentialValue],["SRP",current.special.srpCount,current.special.srpValue],[],["Mês","Quantidade","Valor","Dispensas","Inexigibilidades","SRP"]];
+ current.monthly.forEach((m,i)=>rows.push([MONTHS[i],m.count,m.value,m.dispCount,m.inexCount,m.srpCount]));
+ const csv="\uFEFF"+rows.map(r=>r.map(v=>`"${String(v??"").replaceAll('"','""')}"`).join(";")).join("\n");download(new Blob([csv],{type:"text/csv;charset=utf-8"}),`pncp_estatisticas_${Date.now()}.csv`);
+}
+function importJson(file){
+ const reader=new FileReader();reader.onload=()=>{try{const x=JSON.parse(reader.result);if(x.totals&&x.monthly){current=x}else{current=emptyData();const list=Array.isArray(x)?x:(x.data||x.content||x.items||[]);list.forEach(r=>addRecord(normalizeRecord(r,Number(get(r,["modalidadeId","codigoModalidadeContratacao"],0)))));current.meta={createdAt:new Date().toISOString(),source:"JSON importado",complete:true}}render();setStatus("ok","JSON importado")}catch(e){toast("Arquivo JSON inválido.")}};reader.readAsText(file);
+}
+function setYear(y){$("#start").value=`${y}-01-01`;$("#end").value=`${y}-12-31`}
+
+const DB_NAME="pncp_analytics_local";
+const DB_VERSION=1;
+const STORE_SNAPSHOTS="snapshots";
+
+function openAnalyticsDb(){
+ return new Promise((resolve,reject)=>{
+  const req=indexedDB.open(DB_NAME,DB_VERSION);
+  req.onupgradeneeded=()=>{
+   const db=req.result;
+   if(!db.objectStoreNames.contains(STORE_SNAPSHOTS)){
+    const store=db.createObjectStore(STORE_SNAPSHOTS,{keyPath:"id",autoIncrement:true});
+    store.createIndex("createdAt","createdAt",{unique:false});
+    store.createIndex("periodKey","periodKey",{unique:false});
+   }
+  };
+  req.onsuccess=()=>resolve(req.result);
+  req.onerror=()=>reject(req.error);
+ });
+}
+async function dbPutSnapshot(snapshot){
+ const db=await openAnalyticsDb();
+ return new Promise((resolve,reject)=>{
+  const tx=db.transaction(STORE_SNAPSHOTS,"readwrite");
+  const req=tx.objectStore(STORE_SNAPSHOTS).put(snapshot);
+  req.onsuccess=()=>resolve(req.result);
+  req.onerror=()=>reject(req.error);
+ });
+}
+async function dbGetAllSnapshots(){
+ const db=await openAnalyticsDb();
+ return new Promise((resolve,reject)=>{
+  const tx=db.transaction(STORE_SNAPSHOTS,"readonly");
+  const req=tx.objectStore(STORE_SNAPSHOTS).getAll();
+  req.onsuccess=()=>resolve(req.result||[]);
+  req.onerror=()=>reject(req.error);
+ });
+}
+async function dbGetSnapshot(id){
+ const db=await openAnalyticsDb();
+ return new Promise((resolve,reject)=>{
+  const tx=db.transaction(STORE_SNAPSHOTS,"readonly");
+  const req=tx.objectStore(STORE_SNAPSHOTS).get(Number(id));
+  req.onsuccess=()=>resolve(req.result);
+  req.onerror=()=>reject(req.error);
+ });
+}
+async function dbDeleteSnapshot(id){
+ const db=await openAnalyticsDb();
+ return new Promise((resolve,reject)=>{
+  const tx=db.transaction(STORE_SNAPSHOTS,"readwrite");
+  const req=tx.objectStore(STORE_SNAPSHOTS).delete(Number(id));
+  req.onsuccess=()=>resolve();
+  req.onerror=()=>reject(req.error);
+ });
+}
+function snapshotCoverageText(s){
+ const c=Object.values(s.data?.meta?.coverage||{});
+ const ok=c.filter(x=>x.status==="Concluído").length;
+ const partial=c.filter(x=>x.status==="Parcial"||x.status==="Em andamento").length;
+ return `${ok} concluído(s), ${partial} parcial(is)`;
+}
+async function refreshDbUi(){
+ try{
+  const rows=(await dbGetAllSnapshots()).sort((a,b)=>String(b.createdAt).localeCompare(String(a.createdAt)));
+  $("#dbSnapshotSelect").innerHTML='<option value="">Selecione...</option>'+rows.map(s=>`<option value="${s.id}">${s.name} — ${s.start} a ${s.end}</option>`).join("");
+  $("#dbTable").innerHTML=rows.map(s=>`<tr>
+   <td>${s.name}</td><td>${s.start||"—"} a ${s.end||"—"}</td><td>${s.source||"—"}</td>
+   <td class="num">${number(s.data?.totals?.count||0)}</td><td class="num">${money(s.data?.totals?.value||0)}</td>
+   <td>${s.createdAt?new Date(s.createdAt).toLocaleString("pt-BR"):"—"}</td><td>${snapshotCoverageText(s)}</td></tr>`).join("")||'<tr><td colspan="7">Nenhum levantamento armazenado.</td></tr>';
+  const serialized=JSON.stringify(rows);
+  const bytes=new Blob([serialized]).size;
+  $("#mDbSize").textContent=bytes<1024*1024?(bytes/1024).toFixed(1)+" KB":(bytes/1024/1024).toFixed(2)+" MB";
+  $("#mDbCount").textContent=`${rows.length} levantamento(s) armazenado(s)`;
+ }catch(e){
+  console.error(e);
+  $("#mDbCount").textContent="Base local indisponível";
+ }
+}
+async function saveCurrentToDb(auto=false){
+ if(!current?.meta?.createdAt || !current?.totals){if(!auto)alert("Não há levantamento carregado para salvar.");return}
+ const name=($("#dbSnapshotName")?.value||"").trim()||`PNCP ${current.meta.start||""} a ${current.meta.end||""}`;
+ const snapshot={
+  name,start:current.meta.start,end:current.meta.end,source:current.meta.source,
+  createdAt:new Date().toISOString(),periodKey:`${current.meta.start}|${current.meta.end}`,
+  complete:Boolean(current.meta.complete),data:JSON.parse(JSON.stringify(current))
+ };
+ await dbPutSnapshot(snapshot);
+ await refreshDbUi();
+ if(!auto)alert("Levantamento salvo na base analítica local.");
+}
+async function loadSelectedFromDb(){
+ const id=$("#dbSnapshotSelect").value;if(!id){alert("Selecione um levantamento.");return}
+ const snap=await dbGetSnapshot(id);if(!snap)return;
+ current=snap.data;
+ $("#start").value=current.meta.start||$("#start").value;
+ $("#end").value=current.meta.end||$("#end").value;
+ render();setStatus(current.meta.complete?"ok":"","Levantamento local carregado");
+}
+async function deleteSelectedFromDb(){
+ const id=$("#dbSnapshotSelect").value;if(!id){alert("Selecione um levantamento.");return}
+ if(!confirm("Excluir o levantamento selecionado da base local?"))return;
+ await dbDeleteSnapshot(id);await refreshDbUi();
+}
+async function exportDatabaseBackup(){
+ const rows=await dbGetAllSnapshots();
+ const payload={format:"PNCP_ANALYTICS_BACKUP",version:1,exportedAt:new Date().toISOString(),snapshots:rows};
+ download(new Blob([JSON.stringify(payload,null,2)],{type:"application/json"}),`pncp_analytics_backup_${Date.now()}.json`);
+}
+async function importDatabaseBackup(file){
+ const text=await file.text();
+ const payload=JSON.parse(text);
+ if(payload.format!=="PNCP_ANALYTICS_BACKUP"||!Array.isArray(payload.snapshots))throw new Error("Backup incompatível.");
+ for(const s of payload.snapshots){const copy={...s};delete copy.id;await dbPutSnapshot(copy)}
+ await refreshDbUi();
+ alert(`${payload.snapshots.length} levantamento(s) restaurado(s).`);
+}
+for(let y=new Date().getFullYear();y>=2021;y--)$("#year").insertAdjacentHTML("beforeend",`<option>${y}</option>`);
+$("#uf").innerHTML='<option value="">Todas</option>'+UFS.map(x=>`<option>${x}</option>`).join("");
+$("#municipalityUf").innerHTML='<option value="">Todas</option>'+UFS.map(x=>`<option>${x}</option>`).join("");
+setYear(new Date().getFullYear());$("#year").onchange=e=>setYear(e.target.value);
+$("#refresh").onclick=()=>updateData(false);$("#resume").onclick=()=>updateData(true);$("#cancel").onclick=()=>abortFlag=true;$("#demo").onclick=demo;$("#saveSnap").onclick=saveSnapshot;$("#history").onclick=showSnaps;
+$("#closeModal").onclick=()=>$("#modal").classList.remove("open");$("#modal").onclick=e=>{if(e.target.id==="modal")e.currentTarget.classList.remove("open")};
+$("#json").onclick=exportJson;$("#csv").onclick=exportCsv;$("#importBtn").onclick=()=>$("#importFile").click();$("#importFile").onchange=e=>e.target.files[0]&&importJson(e.target.files[0]);
+
+document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{
+ document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+ document.querySelectorAll(".tab-panel").forEach(x=>x.classList.remove("active"));
+ b.classList.add("active");$("#"+b.dataset.tab).classList.add("active");
+});
+$("#municipalityUf").onchange=renderMunicipalities;$("#municipalitySearch").oninput=renderMunicipalities;$("#municipalityLimit").onchange=renderMunicipalities;
+$("#exportMunicipalCsv").onclick=()=>{
+ const rows=[["UF","Município","Código IBGE","Contratações","Valor consolidado","Modalidade predominante","Critério predominante"]];
+ Object.values(current.municipalities||{}).sort((a,b)=>b.value-a.value).forEach(v=>rows.push([v.uf,v.name,v.ibge,v.count,v.value,dominant(v.modalities,k=>MODS[k]||k),dominant(v.criteria)]));
+ const csv="\uFEFF"+rows.map(r=>r.map(v=>`"${String(v??"").replaceAll('"','""')}"`).join(";")).join("\n");
+ download(new Blob([csv],{type:"text/csv;charset=utf-8"}),`pncp_municipios_${Date.now()}.csv`);
+};
+
+$("#dbSaveCurrent").onclick=()=>saveCurrentToDb(false);
+$("#dbLoadSelected").onclick=loadSelectedFromDb;
+$("#dbDeleteSelected").onclick=deleteSelectedFromDb;
+$("#dbExportAll").onclick=exportDatabaseBackup;
+$("#dbImportAll").onclick=()=>$("#dbImportFile").click();
+$("#dbImportFile").onchange=async e=>{
+ try{if(e.target.files[0])await importDatabaseBackup(e.target.files[0])}
+ catch(err){alert("Não foi possível restaurar o backup: "+err.message)}
+ e.target.value="";
+};
+$("#gdp").oninput=render;render();refreshDbUi();
+
+
+</script>
+</body>
+</html>
