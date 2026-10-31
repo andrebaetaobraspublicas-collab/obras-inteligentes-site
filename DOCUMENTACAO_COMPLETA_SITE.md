@@ -1,6 +1,6 @@
 # Documentacao completa do site Obras Inteligentes
 
-Atualizado em: 21/10/2026
+Atualizado em: 31/10/2026
 Dominio publicado: https://www.obrasinteligentes.ia.br/  
 Diretorio local principal: `C:\Obras Inteligentes`  
 Repositorio GitHub: `https://github.com/andrebaetaobraspublicas-collab/obras-inteligentes-site.git`  
@@ -12,6 +12,8 @@ Ultimo commit base verificado nesta documentacao: `c2d2bf7` - `Documenta site Ob
 Este arquivo registra o estado atual do site, dos aplicativos publicados, da estrutura local e do fluxo de publicacao. Ele deve ser lido por qualquer novo prompt/atendimento antes de continuar alteracoes no site.
 
 ## Resumo do site
+
+Em 31/10/2026, atualizados `Credito de IVA no SICRO` para v1.1 e `Credito de IVA no SINAPI` para v2.6 com os anexos integrais `C:\Users\ACER\Documents\Downloads\Credito_IVA_SICRO_v1_1.html` e `C:\Users\ACER\Documents\Downloads\Credito_IVA_SINAPI_v2_6_Setembro_2026.html`. Rotas e arquivos locais preservados: `/credito-iva-sicro/` e `/credito-iva-sinapi/`, cada um em seu `index.html`. Mantidos cards, filtro Orcamento, busca e rodape; nenhum outro aplicativo alterado. Backups anteriores: `backups/credito-iva-sicro-before-v11-20261031-122629.html` e `backups/credito-iva-sinapi-before-v26-20261031-122629.html`.
 
 Em 21/10/2026, atualizado `PrecoIVA Pro` com a fonte integral `C:\Users\ACER\Documents\Downloads\PreçoIVA Pro (4).html`, na rota `/precoiva-pro/`. Mantidos card 108, filtro Orcamento, busca e rodape. Backup anterior: `backups/precoiva-pro-before-anexo4-20261021-222033.html`. Nenhum outro aplicativo alterado.
 
