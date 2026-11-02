@@ -1,6 +1,6 @@
 # Documentacao completa do site Obras Inteligentes
 
-Atualizado em: 31/10/2026
+Atualizado em: 02/11/2026
 Dominio publicado: https://www.obrasinteligentes.ia.br/  
 Diretorio local principal: `C:\Obras Inteligentes`  
 Repositorio GitHub: `https://github.com/andrebaetaobraspublicas-collab/obras-inteligentes-site.git`  
@@ -12,6 +12,8 @@ Ultimo commit base verificado nesta documentacao: `c2d2bf7` - `Documenta site Ob
 Este arquivo registra o estado atual do site, dos aplicativos publicados, da estrutura local e do fluxo de publicacao. Ele deve ser lido por qualquer novo prompt/atendimento antes de continuar alteracoes no site.
 
 ## Resumo do site
+
+Em 02/11/2026, atualizado `CircuitoPro` com a fonte integral `C:\Users\ACER\Documents\Downloads\CircuitoPro_3_3_CAD_BIM.html` (3.3 CAD/BIM) para `circuitopro/index.html`, na rota `/circuitopro/`. Mantidos card existente, filtro Instalacoes Eletricas, busca e rodape; nenhum outro aplicativo alterado. Backup anterior: `backups/circuitopro-before-v33-cad-bim-20261102-122057.html`. Validada a sintaxe dos scripts executaveis e a identidade da copia; nenhum script externo referenciado pelo anexo. Publicacao nao representa homologacao dos calculos.
 
 Em 31/10/2026, atualizado `PrecoIVA Pro` na rota `/precoiva-pro/`, com copia integral de `C:\Users\ACER\Documents\Downloads\PrecoIVA_Alinhamento_Conversor_e_Atas.html` para `precoiva-pro/index.html`. Mantidos card 108, filtro Orcamento, busca, rodape e os demais aplicativos. Backup anterior: `backups/precoiva-pro-before-alinhamento-conversor-atas-20261031-161501.html`. Validada a sintaxe do JavaScript e a identidade da copia; regras e premissas preservadas conforme o anexo, sem validacao fiscal independente.
 
