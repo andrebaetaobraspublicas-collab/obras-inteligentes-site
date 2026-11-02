@@ -13,6 +13,8 @@ Este arquivo registra o estado atual do site, dos aplicativos publicados, da est
 
 ## Resumo do site
 
+Em 02/11/2026, criado filtro `Reforma Tributaria` ao lado de Orcamento e remanejados exclusivamente para ele os quatro aplicativos `/ivaeq-pro-servicos/`, `/precoiva-pro/`, `/credito-iva-sicro/` e `/credito-iva-sinapi/`. Eles deixaram o filtro Orcamento e continuam em Todos, busca e rodape. Nenhum arquivo interno dos aplicativos alterado, nenhum card removido ou duplicado (111 aplicativos mantidos). Backup da home anterior em `backups/index-before-reforma-tributaria-<data-hora>.html`.
+
 Em 02/11/2026, incluido card 111 `Calculadora de Superestrutura Ferroviaria` no filtro existente `Pavimentacao, Saneamento e Infraestrutura`, em Todos, na busca e no rodape. Rota `/superestrutura-ferroviaria/`, arquivo local `superestrutura-ferroviaria/index.html`. Fonte integral: `C:\Users\ACER\Documents\Downloads\calculadora-superestrutura-ferroviaria (1).html`. Preservados os calculos, avisos e a base SICRO embarcada do anexo; sem scripts externos. Backup da home: `backups/index-before-superestrutura-ferroviaria-20261102-135220.html`. Nao substitui outros aplicativos; a publicacao nao representa homologacao dos calculos.
 
 Em 02/11/2026, atualizado `CircuitoPro` com a fonte integral `C:\Users\ACER\Documents\Downloads\CircuitoPro_3_3_CAD_BIM.html` (3.3 CAD/BIM) para `circuitopro/index.html`, na rota `/circuitopro/`. Mantidos card existente, filtro Instalacoes Eletricas, busca e rodape; nenhum outro aplicativo alterado. Backup anterior: `backups/circuitopro-before-v33-cad-bim-20261102-122057.html`. Validada a sintaxe dos scripts executaveis e a identidade da copia; nenhum script externo referenciado pelo anexo. Publicacao nao representa homologacao dos calculos.
