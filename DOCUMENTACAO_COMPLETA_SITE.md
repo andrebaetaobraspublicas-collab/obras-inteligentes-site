@@ -13,6 +13,8 @@ Este arquivo registra o estado atual do site, dos aplicativos publicados, da est
 
 ## Resumo do site
 
+Em 07/11/2026, atualizado `GasesMed PRO BIM` para 1.3.1, na rota `/gasesmed-pro/`, com copia integral de `C:\Users\ACER\Documents\Downloads\GasesMed_PRO_BIM_v1_3_1.html` para `gasesmed-pro/index.html`. Mantidos card 112, menu `Instalacoes Hidrossanitarias, Gases Medicinais e Incendio`, busca e rodape. Backup anterior: `backups/gasesmed-pro-before-v131-20261107-142222.html`. Validada a sintaxe de 10 scripts executaveis (um bloco de dados preservado) e a identidade da copia. Nenhum outro aplicativo alterado; a publicacao nao representa homologacao dos calculos.
+
 Em 07/11/2026, incluido card 112 `GasesMed PRO BIM 1.1` na rota `/gasesmed-pro/`, arquivo local `gasesmed-pro/index.html`, com copia integral de `C:\Users\ACER\Documents\Downloads\GasesMed_PRO_BIM_v1_1 (1).html`. Menu anterior renomeado para `Instalacoes Hidrossanitarias, Gases Medicinais e Incendio`; preservados nele ReservatorioPro, BombaPro, HidroSan Pro e IncendioCalc, alem do novo aplicativo. Card tambem em Todos, busca e rodape. Backup da home: `backups/index-before-gasesmed-pro-20261107-114232.html`. Nenhum aplicativo existente substituido; publicacao nao representa homologacao dos calculos.
 
 Em 02/11/2026, criado filtro `Reforma Tributaria` ao lado de Orcamento e remanejados exclusivamente para ele os quatro aplicativos `/ivaeq-pro-servicos/`, `/precoiva-pro/`, `/credito-iva-sicro/` e `/credito-iva-sinapi/`. Eles deixaram o filtro Orcamento e continuam em Todos, busca e rodape. Nenhum arquivo interno dos aplicativos alterado, nenhum card removido ou duplicado (111 aplicativos mantidos). Backup da home anterior em `backups/index-before-reforma-tributaria-<data-hora>.html`.
