@@ -1,6 +1,6 @@
 # Documentacao completa do site Obras Inteligentes
 
-Atualizado em: 02/11/2026
+Atualizado em: 07/11/2026
 Dominio publicado: https://www.obrasinteligentes.ia.br/  
 Diretorio local principal: `C:\Obras Inteligentes`  
 Repositorio GitHub: `https://github.com/andrebaetaobraspublicas-collab/obras-inteligentes-site.git`  
@@ -12,6 +12,8 @@ Ultimo commit base verificado nesta documentacao: `c2d2bf7` - `Documenta site Ob
 Este arquivo registra o estado atual do site, dos aplicativos publicados, da estrutura local e do fluxo de publicacao. Ele deve ser lido por qualquer novo prompt/atendimento antes de continuar alteracoes no site.
 
 ## Resumo do site
+
+Em 07/11/2026, incluido card 112 `GasesMed PRO BIM 1.1` na rota `/gasesmed-pro/`, arquivo local `gasesmed-pro/index.html`, com copia integral de `C:\Users\ACER\Documents\Downloads\GasesMed_PRO_BIM_v1_1 (1).html`. Menu anterior renomeado para `Instalacoes Hidrossanitarias, Gases Medicinais e Incendio`; preservados nele ReservatorioPro, BombaPro, HidroSan Pro e IncendioCalc, alem do novo aplicativo. Card tambem em Todos, busca e rodape. Backup da home: `backups/index-before-gasesmed-pro-20261107-114232.html`. Nenhum aplicativo existente substituido; publicacao nao representa homologacao dos calculos.
 
 Em 02/11/2026, criado filtro `Reforma Tributaria` ao lado de Orcamento e remanejados exclusivamente para ele os quatro aplicativos `/ivaeq-pro-servicos/`, `/precoiva-pro/`, `/credito-iva-sicro/` e `/credito-iva-sinapi/`. Eles deixaram o filtro Orcamento e continuam em Todos, busca e rodape. Nenhum arquivo interno dos aplicativos alterado, nenhum card removido ou duplicado (111 aplicativos mantidos). Backup da home anterior em `backups/index-before-reforma-tributaria-<data-hora>.html`.
 
@@ -63,7 +65,7 @@ O site `www.obrasinteligentes.ia.br` e uma pagina estatica hospedada na Hostinge
 C:\Obras Inteligentes\index.html
 ```
 
-A tela inicial possui atualmente 111 cards de aplicativos. Cada card aponta para uma rota estatica dentro do dominio. A regra geral e:
+A tela inicial possui atualmente 112 cards de aplicativos. Cada card aponta para uma rota estatica dentro do dominio. A regra geral e:
 
 ```text
 https://www.obrasinteligentes.ia.br/nome-da-rota/
