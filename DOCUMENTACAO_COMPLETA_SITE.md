@@ -13,6 +13,8 @@ Este arquivo registra o estado atual do site, dos aplicativos publicados, da est
 
 ## Resumo do site
 
+Em 07/11/2026, incluido card 113 `NavioCalc PRO 2.0` na rota `/naviocalc-pro/`, arquivo local `naviocalc-pro/index.html`, com copia integral de `C:\Users\ACER\Documents\Downloads\NavioCalc_PRO_2.0.html`. Menu `Engenharia Mecanica` renomeado para `Engenharia Mecanica e Naval`, preservando os 11 aplicativos mecanicos existentes e incluindo o novo aplicativo; tambem disponivel em Todos, busca e rodape. Backup da home: `backups/index-before-naviocalc-pro-20261107-195617.html`. Apoio a estudos preliminares navais (casco 3D, hidrostatica, estabilidade, resistencia, potencia e estrutura), nao certificavel conforme o anexo. Nenhum aplicativo existente substituido; publicacao nao representa homologacao dos calculos.
+
 Em 07/11/2026, atualizado `TermoPro` na rota `/termopro/`, copiando integralmente `C:\Users\ACER\Documents\Downloads\TermoPro_CAD_BIM_4_3.html` para `termopro/index.html`. Mantidos card, busca, rodape e filtro `Ar condicionado, refrigeracao e ventilacao`. Backup anterior: `backups/termopro-before-cad-bim-43-20261107-165115.html`. O arquivo inclui recursos CAD/BIM 4.3, mas seu title ainda identifica TermoPro 3.7; preservado conforme enviado. Validada a sintaxe dos 10 scripts e a identidade da copia. Nenhum outro aplicativo alterado; publicacao nao representa homologacao dos calculos.
 
 Em 07/11/2026, atualizado `GasesMed PRO BIM` para 1.3.1, na rota `/gasesmed-pro/`, com copia integral de `C:\Users\ACER\Documents\Downloads\GasesMed_PRO_BIM_v1_3_1.html` para `gasesmed-pro/index.html`. Mantidos card 112, menu `Instalacoes Hidrossanitarias, Gases Medicinais e Incendio`, busca e rodape. Backup anterior: `backups/gasesmed-pro-before-v131-20261107-142222.html`. Validada a sintaxe de 10 scripts executaveis (um bloco de dados preservado) e a identidade da copia. Nenhum outro aplicativo alterado; a publicacao nao representa homologacao dos calculos.
@@ -69,7 +71,7 @@ O site `www.obrasinteligentes.ia.br` e uma pagina estatica hospedada na Hostinge
 C:\Obras Inteligentes\index.html
 ```
 
-A tela inicial possui atualmente 112 cards de aplicativos. Cada card aponta para uma rota estatica dentro do dominio. A regra geral e:
+A tela inicial possui atualmente 113 cards de aplicativos. Cada card aponta para uma rota estatica dentro do dominio. A regra geral e:
 
 ```text
 https://www.obrasinteligentes.ia.br/nome-da-rota/
