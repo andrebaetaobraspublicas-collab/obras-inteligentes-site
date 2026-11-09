@@ -1,6 +1,6 @@
 # Documentacao completa do site Obras Inteligentes
 
-Atualizado em: 07/11/2026
+Atualizado em: 09/11/2026
 Dominio publicado: https://www.obrasinteligentes.ia.br/  
 Diretorio local principal: `C:\Obras Inteligentes`  
 Repositorio GitHub: `https://github.com/andrebaetaobraspublicas-collab/obras-inteligentes-site.git`  
@@ -12,6 +12,8 @@ Ultimo commit base verificado nesta documentacao: `c2d2bf7` - `Documenta site Ob
 Este arquivo registra o estado atual do site, dos aplicativos publicados, da estrutura local e do fluxo de publicacao. Ele deve ser lido por qualquer novo prompt/atendimento antes de continuar alteracoes no site.
 
 ## Resumo do site
+
+Em 09/11/2026, incluido card 114 `QuantiObra` na rota `/quantiobra/`, arquivo local `quantiobra/index.html`, com copia integral de `C:\Users\ACER\Documents\Downloads\QuantiObra.html`. Um unico card associado ao array de categorias `["Orcamento", "Auditoria de Obras"]`: aparece em ambos filtros e uma unica vez em Todos, sem duplicacao de aplicativo. Incluido tambem na busca e no rodape. Backup da home: `backups/index-before-quantiobra-20261109-001911.html`. Preservados avisos legais, bases e regras de leitura/estimativa do anexo. Nenhum aplicativo existente substituido; publicacao nao representa homologacao dos quantitativos ou calculos.
 
 Em 07/11/2026, atualizado `NavioCalc PRO` para 2.5, na rota `/naviocalc-pro/`, copiando integralmente `C:\Users\ACER\Documents\Downloads\NavioCalc_PRO_2.5.html` para `naviocalc-pro/index.html`. Mantidos card 113, menu `Engenharia Mecanica e Naval`, busca e rodape. Backup anterior: `backups/naviocalc-pro-before-v25-20261107-203053.html`. Validada a sintaxe dos sete scripts e a identidade da copia. Nenhum outro aplicativo alterado; publicacao nao representa homologacao dos calculos.
 
@@ -73,7 +75,7 @@ O site `www.obrasinteligentes.ia.br` e uma pagina estatica hospedada na Hostinge
 C:\Obras Inteligentes\index.html
 ```
 
-A tela inicial possui atualmente 113 cards de aplicativos. Cada card aponta para uma rota estatica dentro do dominio. A regra geral e:
+A tela inicial possui atualmente 114 cards de aplicativos. Cada card aponta para uma rota estatica dentro do dominio. A regra geral e:
 
 ```text
 https://www.obrasinteligentes.ia.br/nome-da-rota/
