@@ -1,6 +1,6 @@
 # Documentacao completa do site Obras Inteligentes
 
-Atualizado em: 09/11/2026
+Atualizado em: 12/11/2026
 Dominio publicado: https://www.obrasinteligentes.ia.br/  
 Diretorio local principal: `C:\Obras Inteligentes`  
 Repositorio GitHub: `https://github.com/andrebaetaobraspublicas-collab/obras-inteligentes-site.git`  
@@ -12,6 +12,8 @@ Ultimo commit base verificado nesta documentacao: `c2d2bf7` - `Documenta site Ob
 Este arquivo registra o estado atual do site, dos aplicativos publicados, da estrutura local e do fluxo de publicacao. Ele deve ser lido por qualquer novo prompt/atendimento antes de continuar alteracoes no site.
 
 ## Resumo do site
+
+Em 12/11/2026, incluido o card 116 `AcustiCalc Pro 1.1` na rota `/acusticalc-pro/`, com copia integral do HTML enviado. O filtro foi renomeado para `Arquitetura, Acustica e Design de Interiores` e preserva Ambienta e SolarIncidence Pro. O novo aplicativo tambem consta em Todos, na busca e no rodape. Backup da home: `backups/index-before-acusticalc-pro-20261112.html`.
 
 Em 09/11/2026, incluido card 115 `DroneCalc PRO 1.5` na rota `/dronecalc-pro/`, com copia integral de `C:\Users\ACER\Documents\Downloads\DroneCalc_PRO_v1_5.html` para `dronecalc-pro/index.html`. Categoria renomeada para `Engenharia Mecanica, Aeronautica e Naval`, preservando os aplicativos existentes. Incluido em Todos, busca e rodape. Backup da home: `backups/index-before-dronecalc-pro-20261109-020411.html`. Apoio ao projeto conceitual de drones; avisos, modelos e premissas do anexo preservados. Publicacao nao representa homologacao dos calculos ou certificacao aeronautica.
 
