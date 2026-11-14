@@ -1,6 +1,6 @@
 # Documentacao completa do site Obras Inteligentes
 
-Atualizado em: 13/11/2026
+Atualizado em: 14/11/2026
 Dominio publicado: https://www.obrasinteligentes.ia.br/  
 Diretorio local principal: `C:\Obras Inteligentes`  
 Repositorio GitHub: `https://github.com/andrebaetaobraspublicas-collab/obras-inteligentes-site.git`  
@@ -12,6 +12,8 @@ Ultimo commit base verificado nesta documentacao: `c2d2bf7` - `Documenta site Ob
 Este arquivo registra o estado atual do site, dos aplicativos publicados, da estrutura local e do fluxo de publicacao. Ele deve ser lido por qualquer novo prompt/atendimento antes de continuar alteracoes no site.
 
 ## Resumo do site
+
+Em 14/11/2026, incluido o card 118 `AditivoPro 1.1` na rota `/aditivopro/`, com copia integral do HTML enviado. Disponivel no filtro `Gestao de Obras e de Contratos`, na listagem geral, na busca e no rodape. Backup da home: `backups/index-before-aditivopro-20261114.html`.
 
 Em 13/11/2026, incluido o card 117 `AntenaCalc PRO 1.3` na rota `/antenacalc-pro/`, com copia integral do HTML enviado. O filtro `Instalacoes Eletricas` foi renomeado para `Instalacoes Eletricas e de Telecomunicacoes`, preservando os dez aplicativos anteriores. O novo aplicativo consta em Todos, na busca e no rodape. Backup da home: `backups/index-before-antenacalc-pro-20261113.html`.
 
