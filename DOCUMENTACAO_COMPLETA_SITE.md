@@ -1,6 +1,6 @@
 # Documentacao completa do site Obras Inteligentes
 
-Atualizado em: 14/11/2026
+Atualizado em: 20/11/2026
 Dominio publicado: https://www.obrasinteligentes.ia.br/  
 Diretorio local principal: `C:\Obras Inteligentes`  
 Repositorio GitHub: `https://github.com/andrebaetaobraspublicas-collab/obras-inteligentes-site.git`  
@@ -12,6 +12,8 @@ Ultimo commit base verificado nesta documentacao: `c2d2bf7` - `Documenta site Ob
 Este arquivo registra o estado atual do site, dos aplicativos publicados, da estrutura local e do fluxo de publicacao. Ele deve ser lido por qualquer novo prompt/atendimento antes de continuar alteracoes no site.
 
 ## Resumo do site
+
+Em 20/11/2026, incluido o card 119 `PeleCalc Pro` na rota `/pelecalc-pro/`, com copia integral de `C:\Users\ACER\Documents\Downloads\PeleCalcPro (1).html`. Categoria renomeada para `Arquitetura, Acustica, Fachadas e Design de Interiores`, preservando Ambienta, SolarIncidence Pro e AcustiCalc Pro. Incluido tambem em Todos, busca e rodape. Backup da home: `backups/index-before-pelecalc-pro-20261120.html`. Preservados os avisos legais e as limitacoes do anexo; publicacao nao representa homologacao dos calculos.
 
 Em 14/11/2026, incluido o card 118 `AditivoPro 1.1` na rota `/aditivopro/`, com copia integral do HTML enviado. Disponivel no filtro `Gestao de Obras e de Contratos`, na listagem geral, na busca e no rodape. Backup da home: `backups/index-before-aditivopro-20261114.html`.
 
