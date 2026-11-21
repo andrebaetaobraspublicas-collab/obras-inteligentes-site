@@ -1,6 +1,6 @@
 # Documentacao completa do site Obras Inteligentes
 
-Atualizado em: 20/11/2026
+Atualizado em: 21/11/2026
 Dominio publicado: https://www.obrasinteligentes.ia.br/  
 Diretorio local principal: `C:\Obras Inteligentes`  
 Repositorio GitHub: `https://github.com/andrebaetaobraspublicas-collab/obras-inteligentes-site.git`  
@@ -12,6 +12,8 @@ Ultimo commit base verificado nesta documentacao: `c2d2bf7` - `Documenta site Ob
 Este arquivo registra o estado atual do site, dos aplicativos publicados, da estrutura local e do fluxo de publicacao. Ele deve ser lido por qualquer novo prompt/atendimento antes de continuar alteracoes no site.
 
 ## Resumo do site
+
+Em 21/11/2026, incluido o card 121 `PluvioCalc Pro` na rota `/pluviocalc-pro/`, com copia integral de `C:\Users\ACER\Documents\Downloads\PluvioCalc_Pro.html`. Disponivel em Todos, no filtro `Instalacoes Hidrossanitarias, Gases Medicinais e Incendio`, na busca e no rodape. Backup da home: `backups/index-before-pluviocalc-pro-20261121.html`. Preservados os avisos legais e as premissas do anexo.
 
 Em 20/11/2026, incluido o card 120 `CabeamentoCalc Pro` na rota `/cabeamentocalc-pro/`, com copia integral de `C:\Users\ACER\Documents\Downloads\CabeamentoCalcPro (1).html`. Filtro renomeado para `Instalacoes Eletricas e Comunicacao de Dados`, preservando os onze aplicativos existentes. Incluido tambem em Todos, busca e rodape. Backup da home: `backups/index-before-cabeamentocalc-pro-20261120.html`. Nenhum aplicativo existente alterado.
 
